@@ -1,0 +1,265 @@
+<!DOCTYPE HTML>
+<html lang="en"><!--G06#016 - Serena - Fifteen-->
+
+	<head>
+		<title>Fifteen</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="WIDTH=device-WIDTH, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	</head>
+
+	<body id="body">
+		<div id = "Fifteen">
+			<canvas id="board">
+				Upgrade Browser
+			</canvas>
+		</div>
+		<script>
+			const COLOR_1 = "#a7ffa7";
+			const COLOR_2 = "#efefef";
+			const BACKGROUND_COLOR = "#af67df";
+			const FRAME_COLOR = "#000000";
+			const BORDER_COLOR = "#ff9f00";
+			const WINNING_COLOR = "#00ff00"
+			const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
+			const UNIT = DESKTOP ? 5 : 3;
+			const DIVISION_WIDTH = UNIT;
+			const BORDER_WIDTH = 4*UNIT;
+			const MARGIN_DIM = 2*UNIT;
+			const SIDE = 20*UNIT;
+			const IDS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "0"];
+			const ORIZONTAL_PATCH = DESKTOP ? 95*UNIT : 0;
+			const ORIZONTAL_CONST = ORIZONTAL_PATCH + DIVISION_WIDTH + BORDER_WIDTH + MARGIN_DIM;
+			const ORIZONTAL_DELTAS = [0, 0, 0, 0, 0, 0, 0, 0, 0, -5*UNIT, -4*UNIT, -5*UNIT, -5*UNIT, -5*UNIT, -5*UNIT, -5*UNIT];
+			const WIDTH = (ORIZONTAL_CONST + MARGIN_DIM + (4*SIDE) + (5*DIVISION_WIDTH) + (2*BORDER_WIDTH));
+			const HEIGHT = (2*MARGIN_DIM + (4*SIDE) + (5*DIVISION_WIDTH) + (2*BORDER_WIDTH));
+			const BUTTON_HEIGHT = (10*UNIT) + "px";
+			//const BTN_COLOR = "ffff3f";
+			const BTN_COLOR = "ffffff";
+			//const BTN_TEXT_COLOR = "#0000ff";
+			const BTN_TEXT_COLOR = "#000000";
+			let cursorX;
+			let cursorY;
+			let shuffledIDS = [];
+			let shuffledString = "123456789abcdef0";
+			let r1 = 3;
+			let c1 = 3;
+			let counterMoves;
+			let gameFinished;
+			let begun = false;
+			let button;
+
+			function drawBoard(){
+				document.body.style.background = BACKGROUND_COLOR;
+				shuffleArray();
+				for(let i = 0; i < 16; i++){
+					document.getElementById("body").innerHTML += ("<div id=\"" + (IDS[i]) + "\" style=\"position: absolute; WIDTH: 10%; HEIGHT: 10%; font-size: " + UNIT + "rem; left:" + (ORIZONTAL_CONST + ORIZONTAL_DELTAS[i] + SIDE/2 + BORDER_WIDTH + DIVISION_WIDTH + ((SIDE + DIVISION_WIDTH)*(i%4))) + "px; top:" + ((DIVISION_WIDTH + BORDER_WIDTH + MARGIN_DIM + 10) + ((SIDE + DIVISION_WIDTH)*(parseInt(i/4)))) + "px; z-index:1; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;\">" + ((IDS[i] == "0") ? "" : parseInt("0x" + IDS[i])) + "</div>");
+				}
+				let board = document.getElementById("board");
+				board.width = WIDTH;
+				board.height = HEIGHT;
+				board.setAttribute("onclick", "select()");
+				board.setAttribute("onkeypress", "select()");
+				if(board && board.getContext("2d")){
+					let context = board.getContext("2d");
+					context.fillStyle = BORDER_COLOR;
+					context.fillRect(ORIZONTAL_CONST + MARGIN_DIM, MARGIN_DIM, (SIDE*4) + (DIVISION_WIDTH*5) + (BORDER_WIDTH*2), (SIDE*4) + (DIVISION_WIDTH*5) + (BORDER_WIDTH*2));
+					context.fillStyle = FRAME_COLOR;
+					context.fillRect(ORIZONTAL_CONST + MARGIN_DIM + BORDER_WIDTH, MARGIN_DIM + BORDER_WIDTH, (SIDE*4) + (DIVISION_WIDTH*5) + (BORDER_WIDTH*0), (SIDE*4) + (DIVISION_WIDTH*5) + (BORDER_WIDTH*0));
+				}
+				document.onmousemove = function(e){cursorX = e.pageX;cursorY = e.pageY;}
+				counterMoves = 0;
+				gameFinished = false;
+				setTimeout(function(){shuffleTiles();}, 500);
+
+				button = document.createElement("button");
+				button.setAttribute("id", "shuffleBtn");
+				button.setAttribute("style", "position: absolute; top: " + (DESKTOP ? 98 : 100)*UNIT + "px; left:" + (DESKTOP ? 106 : 12)*UNIT + "px; WIDTH:" + 45*UNIT + "px; HEIGHT: " + 10*UNIT + "px;" + "font-size: " + 5*UNIT + "px;" + "background-color: " + BTN_COLOR + ";" + "color: " + BTN_TEXT_COLOR + ";");
+				button.setAttribute("onclick", "shuffleTiles();");
+				button.innerHTML = "Shuffle";
+				document.querySelector("#body").appendChild(button);
+
+				button = document.createElement("button");
+				button.setAttribute("id", "restartBtn");
+				button.setAttribute("style", "position: absolute; top: " + (DESKTOP ? 98 : 100)*UNIT + "px; left:" + (DESKTOP ? 153 : 59)*UNIT + "px; WIDTH:" + 45*UNIT + "px; HEIGHT: " + 10*UNIT + "px;" + "font-size: " + 5*UNIT + "px;" + "background-color: " + BTN_COLOR + ";" + "color: " + BTN_TEXT_COLOR + ";");
+				button.setAttribute("onclick", "restart();");
+				button.innerHTML = "Restart";
+				document.querySelector("#body").appendChild(button);
+			}
+
+			function drawCell(row, column, color){
+				document.body.style.background = BACKGROUND_COLOR;
+				let board = document.getElementById("board");
+				if(board && board.getContext("2d")){
+					let context = board.getContext("2d");
+					context.fillStyle = color;
+					let x0 = ORIZONTAL_CONST + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + (column*SIDE) + (column*DIVISION_WIDTH);
+					let y0 = BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + (row*SIDE) + (row*DIVISION_WIDTH);
+					context.fillRect(x0, y0, SIDE, SIDE);
+				}
+			}
+
+			function drawTile(row, column, tile){
+				let tileNumber = parseInt(Number("0x" + tile));
+				let targetTileId = ((row*4 + column + 1)%16).toString(16);
+				drawCell(row, column, (tile == "0") ? BORDER_COLOR : (((tileNumber + parseInt((tileNumber - 1)/4))%2 == 1) ? COLOR_1 : COLOR_2));
+				document.getElementById(targetTileId).innerHTML = ((tile == "0") ? "" : tileNumber);
+				document.getElementById(targetTileId).style = ("position: absolute; WIDTH: 10%; HEIGHT: 10%; font-size: " + UNIT + "rem; left:" + (ORIZONTAL_CONST + ORIZONTAL_DELTAS[tileNumber - 1] + SIDE/2 + BORDER_WIDTH + DIVISION_WIDTH + ((SIDE + DIVISION_WIDTH)*(column))) + "px; top:" + ((DIVISION_WIDTH + BORDER_WIDTH + MARGIN_DIM + 10) + ((SIDE + DIVISION_WIDTH)*row)) + "px; z-index:1; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;");
+				document.getElementById(targetTileId).setAttribute("onclick", "select()");
+				document.getElementById(targetTileId).setAttribute("onkeypress", "select()");
+				if(document.getElementById(tile).innerHTML == "0"){
+					document.getElementById(tile).innerHTML = "";
+				}
+			}
+
+			drawBoard();
+
+			function drawCells(){
+				for(let i = 0; i < 4; i++){
+					for(let j = 0; j < 4; j++){
+						drawCell(i, j, ((4*i + j == 15) ? BORDER_COLOR : ((i + j)%2 == 0) ? COLOR_1 : COLOR_2));
+					}
+				}
+			}
+
+			drawCells();
+
+			function swapTiles(tile1, tile2){//SCAMBIA DUE TESSERE. L'ID INDICA LA POSIZIONE, NON IL CONTENUTO.
+				let tileNumber1 = ((parseInt(Number("0x" + tile1)) + 15)%16);
+				let tileNumber2 = ((parseInt(Number("0x" + tile2)) + 15)%16);
+				let number1 = document.getElementById(tile1).innerHTML == "" ? 0 : document.getElementById(tile1).innerHTML;
+				let number2 = document.getElementById(tile2).innerHTML == "" ? 0 : document.getElementById(tile2).innerHTML;
+				drawTile(parseInt(tileNumber1/4), tileNumber1%4, parseInt(number2).toString(16));
+				drawTile(parseInt(tileNumber2/4), tileNumber2%4, parseInt(number1).toString(16));
+				begun = true;
+				if(document.getElementById(tile1).innerHTML == "0"){
+					document.getElementById(tile1).innerHTML = "";
+				}
+				if(document.getElementById(tile2).innerHTML == "0"){
+					document.getElementById(tile2).innerHTML = "";
+				}
+			}
+
+			function select(){
+				if(!gameFinished){
+					let row = getRow();
+					let column = getColumn();
+					let k = (row - r1)*(row - r1) + (column - c1)*(column - c1);
+					if(k==1){
+						swapTiles(((4*row + column + 1)%16).toString(16), ((4*r1 + c1 + 1)%16).toString(16));
+						r1 = row;
+						c1 = column;
+					}
+					for(let i = 0; i < 16; i++){
+						if(document.getElementById(IDS[i]).innerHTML == "0"){
+							document.getElementById(IDS[i]).style.left = (7/2)*SIDE + ORIZONTAL_PATCH + 5*DIVISION_WIDTH + 2*BORDER_WIDTH + 1*MARGIN_DIM - 25;
+						}
+					}
+					counterMoves++;
+					if(begun&&isGameFinished()){
+						gameFinished = true;
+						document.body.style.background = WINNING_COLOR;
+						setTimeout(function(){ alert("You win with " + counterMoves + " moves!"); }, 100);
+					}
+				}
+			}
+
+			function isGameFinished(){
+				if(shuffledIDS == null){
+					return false;
+				}
+				for(let i = 0; i < 16; i++){
+					if(document.getElementById(IDS[i]).innerHTML != ((i+1)%16)){
+						return false;
+					}
+				}
+				return true;
+			}
+
+			function shuffleString(){
+				const ALPHABET = "123456789abcdef0";
+				let inputString = ALPHABET;
+				let outputString = "";
+				let temp;
+				let randomIndex;
+				for(let i = 0; i < ALPHABET.length; i++){
+					temp = "";
+					randomIndex = parseInt(Math.random()*(inputString.length));
+					for(let j = 0; j < inputString.length; j++){
+						if(j == randomIndex){
+							outputString += inputString.charAt(randomIndex);
+						}else{
+							temp += inputString.charAt(j);
+						}
+					}
+					inputString = temp;
+				}
+				shuffledString = outputString;
+			}
+
+			function shuffleArray(){
+				shuffleString();
+				shuffledIDS = [];
+				for(let i = 0; i < 16; i++){
+					shuffledIDS.push(shuffledString.charAt(i));
+				}
+			}
+
+			function shuffledArrayIsOk() {
+				let counter = 0;
+				for(let i = 0; i < shuffledIDS.length; i++){
+					if(shuffledIDS[i] == 0){
+						counter += parseInt(i/4) + 1;
+					}
+				}
+				for(let i = 0; i < shuffledIDS.length; i++) {
+					for(let j = i + 1; j < shuffledIDS.length; j++) {
+						if(shuffledIDS[i] == 0 || shuffledIDS[j] == 0){
+							continue;
+						}
+						if (shuffledIDS[i] > shuffledIDS[j]) {
+							counter++;
+						}
+					}
+				}
+				return (counter%2 == 0);
+			}
+
+			function shuffleTiles() {
+				if(!gameFinished){
+					shuffleArray();
+					while(!shuffledArrayIsOk()){
+						setTimeout(shuffleArray(), 250);
+					}
+					for(let i = 0; i < 4; i++){
+						for(let j = 0; j < 4; j++){
+							drawTile(i, j, shuffledIDS[(i * 4 + j) % 16]);
+						}
+					}
+					let index;
+					for(let i = 0; i < 16; i++) {
+						if (shuffledIDS[i] == "0") {
+							index = i;
+						}
+					}
+					document.getElementById(((parseInt(index) + 1)%16).toString(16)).style.left = (7/2)*SIDE + ORIZONTAL_PATCH + 5*DIVISION_WIDTH + 2*BORDER_WIDTH + 1*MARGIN_DIM - 25;
+					r1 = parseInt(index/4);
+					c1 = parseInt(index)%4;
+					counterMoves = -1;
+				}
+			}
+
+			function getRow(){
+				return parseInt((cursorY - (BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM))/(SIDE + DIVISION_WIDTH));
+			}
+
+			function getColumn(){
+				return parseInt((cursorX - (ORIZONTAL_CONST + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM))/(SIDE + DIVISION_WIDTH));
+			}
+
+			function restart(){
+				window.location.reload();
+			}
+		</script>
+	</body>
+</html>

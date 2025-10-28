@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en"><!--T03#011 - Roberto - Days-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<title>Days</title>
+	</head>
+	<body style="background-color:#ccccff;">
+		<form>
+			<button type="button" onclick="getTodayDate(0)"> Today </button>
+			<input type="text" size="7" id="firstDate"/>
+			<button type="button" onclick="getDayOfTheWeek()"> → </button>
+			<input type="text" size="10" id="dayOfTheWeek" disabled spellcheck="false"><br><br><br><br>
+			<button type="button" onclick="getFullTodayDate()"> Full Today Date: </button>
+			<input type="text" size="14" id="todayDate" disabled spellcheck="false"><br><br><br><br>
+			<button type="button" onclick="getTodayDate(1)"> Today </button>
+			<input type="text" size="7" id="secondDate"/>
+			<button type="button" onclick="getTodayDate(2)"> Today </button>
+			<input type="text" size="7" id="thirdDate"/><br><br>
+			<button type="button" onclick="getDaysOfDifference()"> Days of difference: </button>
+			<input type="text" size="7" id="daysOfDifference" disabled spellcheck="false"/><br><br><br><br>
+			<button type="button" onclick="clearFields()"> Clear </button>
+		</form>
+	</body>
+	<script>
+		const DAYS_OF_THE_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+		const NUMBER_OF_DAY_OF_EACH_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+		function isLeapYear(year){
+			let flag = false;
+			if (year < 1582) {
+				return false;
+			}
+			if (year % 4 == 0) {
+				flag = true;
+			}
+			if (year % 100 == 0) {
+				flag = false;
+			}
+			if (year % 400 == 0) {
+				flag = true;
+			}
+			return flag;
+		}
+
+		function getYear(date){
+			if(date.split("/").length == 3){
+				let year = parseInt(date.split("/")[2]);
+				if(year > 0 && year < 4000){
+					return year;
+				}
+			}
+			return -1;
+		}
+
+		function getMonth(date){
+			if(date.split("/").length == 3){
+				let month = parseInt(date.split("/")[1]);
+				if(month > 0 && month < 13){
+					return month;
+				}
+			}
+			return -1;
+		}
+
+		function getDay(date){
+			if(date.split("/").length == 3){
+				let day = parseInt(date.split("/")[0]);
+				if(day > 0 && day <= NUMBER_OF_DAY_OF_EACH_MONTH[getMonth(date) - 1] + (getMonth(date) == 2 && isLeapYear(getYear(date)) ? 1 : 0)){
+					return day;
+				}
+			}
+			return -1;
+		}
+
+		function isCorrectDate(date){
+			if (date.indexOf("/") > -1) {
+				if (date.split("/").length == 3) {
+					let year = getYear(date);
+					if (year < 1 || year > 3999) {
+						return false;
+					}
+					let month = getMonth(date);
+					if (month < 1 || month > 12) {
+						return false;
+					}
+					let day = getDay(date);
+					if (day < 1 || day > NUMBER_OF_DAY_OF_EACH_MONTH[month - 1] + (getMonth(date) == 2 && isLeapYear(getYear(date)) ? 1 : 0)) {
+						return false;
+					}
+					if (getYear(date) == 1582) {
+						if (getMonth(date) == 10) {
+							if (getDay(date) > 4 && getDay(date) < 15) {
+								return false;
+							}
+						}
+					}
+					return true;
+				}
+			}
+			return false;
+		}
+
+		function getDays(date) {
+			if (isCorrectDate(date)) {
+				let days = getDay(date);
+				if (getYear(date) == 1582 && getMonth(date) == 10 && getDay(date) > 14) {
+					days -= 10;
+				}
+				for (let i = 1; i < getYear(date); i++) {
+					if (i == 1582) {
+						days += 355;
+					} else {
+						days += (365 + (isLeapYear(i) ? 1 : 0));
+					}
+				}
+				for (let i = 1; i < getMonth(date); i++) {
+					if (getYear(date) == 1582 && i == 10) {
+						days += 21;
+					} else {
+						days += NUMBER_OF_DAY_OF_EACH_MONTH[i - 1];
+						if ((i == 2) && isLeapYear(getYear(date))) {
+							days++;
+						}
+					}
+				}
+				return days;
+			}
+			return -1;
+		}
+
+		function getDayOfTheWeek(){
+			let firstinput = document.getElementById("firstDate");
+			document.getElementById("dayOfTheWeek").value = (getDays(firstinput.value) < 0) ? "Wrong date." : DAYS_OF_THE_WEEK[(getDays(firstinput.value) + 1) % 7];
+		}
+
+		function getFullTodayDate(){
+			const d = new Date();
+			let date = d.getDate() + "/" + (d.getMonth() + 1) + "/" + (d.getYear() + 1900);			
+			document.getElementById("todayDate").value = (DAYS_OF_THE_WEEK[(getDays(date) + 1) % 7]+ " " + date);
+		}
+
+		function getTodayDate(field){
+			const d = new Date();
+			document.querySelector(field == 0 ? "#firstDate" : field == 1 ? "#secondDate" : "#thirdDate").value = d.getDate() + "/" + (d.getMonth() + 1) + "/" + (d.getYear() + 1900);
+		}
+
+		function getDaysOfDifference(){
+			let days1 = getDays(document.getElementById("secondDate").value);
+			let days2 = getDays(document.getElementById("thirdDate").value);
+			document.getElementById("daysOfDifference").value = (days1 >= 0 && days2 >= 0) ? (days1 > days2 ? (days1 - days2) : (days2 - days1)) : "Wrong input.";
+		}
+
+		function clearFields(){
+			document.getElementById("firstDate").value = "";
+			document.getElementById("dayOfTheWeek").value = "";
+			document.getElementById("todayDate").value = "";
+			document.getElementById("secondDate").value = "";
+			document.getElementById("thirdDate").value = "";
+			document.getElementById("daysOfDifference").value = "";
+		}
+	</script>
+</html>

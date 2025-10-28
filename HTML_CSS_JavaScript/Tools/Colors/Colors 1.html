@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en"><!--L01#005 - Irene - Colors-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<title>Colors and their codes</title>
+		<style>
+			#optionZone {
+				background-color: #ffffff;
+				text-align: center;
+			}
+
+			.slider {
+				-webkit-appearance: none;
+				-moz-appearance: none;
+				appearance: none;
+				width: 85%
+			}
+
+			.slider::-webkit-slider-thumb {
+				-webkit-appearance: none;
+				width: 25px;
+				background: #0075FF;
+				height: 15px;
+			}
+
+			.slider::-moz-range-thumb {
+				width: 25px;
+				height: 15px;
+				background: #0075FF;
+			}
+
+			.slider.red::-webkit-slider-thumb {
+				background: #FF0000;
+			}
+
+			.slider.red::-moz-range-thumb {
+				background: #FF0000;
+			}
+			
+			.slider.green::-webkit-slider-thumb {
+				background: #00FF00;
+			}
+
+			.slider.green::-moz-range-thumb {
+				background: #00FF00;
+			}
+
+			.slider.blue::-webkit-slider-thumb {
+				background: #0000FF;
+			}
+
+			.slider.blue::-moz-range-thumb {
+				background: #0000FF;
+			}
+
+			.slider.gray::-webkit-slider-thumb {
+				background: #3F3F3F;
+			}
+
+			.slider.gray::-moz-range-thumb {
+				background: #3F3F3F;
+			}
+
+			.slider.light::-webkit-slider-thumb {
+				background: #8F8F8F;
+			}
+
+			.slider.light::-moz-range-thumb {
+				background: #8F8F8F;
+			}
+
+			.slider.cyan::-webkit-slider-thumb {
+				background: #00FFFF;
+			}
+
+			.slider.cyan::-moz-range-thumb {
+				background: #00FFFF;
+			}
+			
+			.slider.magenta::-webkit-slider-thumb {
+				background: #FF00FF;
+			}
+
+			.slider.magenta::-moz-range-thumb {
+				background: #FF00FF;
+			}
+
+			.slider.yellow::-webkit-slider-thumb {
+				background: #FFFF00;
+			}
+
+			.slider.yellow::-moz-range-thumb {
+				background: #FFFF00;
+			}
+
+			.slider.black::-webkit-slider-thumb {
+				background: #000000;
+			}
+
+			.slider.black::-moz-range-thumb {
+				background: #000000;
+			}
+
+			output {
+				background: #FFFF00;
+				width: 45px;
+				display: inline-block;
+				text-align: center;
+			}
+
+			.redButtons{
+				background-color:#FF0000;
+				color:#FFD580;
+			}
+
+			.greenButtons{
+				background-color:#00FF00;
+				color:#0000FF;
+			}
+
+			.blueButtons{
+				background-color:#0000FF;
+				color:#FFFF00;
+			}
+
+			.grayButtons{
+				background-color:#7F7F7F;
+				color:#000000;
+			}
+
+			.slider.red {
+				background: #00FFFF;
+			}
+
+			.slider.green {
+				background: #FF00FF;
+			}
+
+			.slider.blue {
+				background: #FFFF00;
+			}
+
+			.slider.gray {
+				background: #8F8F8F;
+			}
+
+			.slider.light {
+				background: #FFFFFF;
+			}
+
+			.slider.cyan {
+				background: #FF0000;
+			}
+
+			.slider.magenta {
+				background: #00FF00;
+			}
+
+			.slider.yellow {
+				background: #0000FF;
+			}
+
+			.slider.black {
+				background: #FFFFFF;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="optionZone">
+			<b><output id="valueHexCode" style="width: 75px;"></output></b>
+			<button type="button" onclick="revert()">Revert</button>
+			<button type="button" onclick="random()">Random</button>
+			<button type="button" onclick="setColor(255, 255, 255)">White</button>
+			<button type="button" onclick="setColor(0, 0, 0)">Black</button><br><br>
+			<div>
+				<input type="range" id="red"     class="slider red"     name="red"     oninput="setAndPatch(0)"/> <b> <output id="valueR">    </output> </b> <br> <br>
+				<input type="range" id="green"   class="slider green"   name="green"   oninput="setAndPatch(1)"/> <b> <output id="valueG">    </output> </b> <br> <br>
+				<input type="range" id="blue"    class="slider blue"    name="blue"    oninput="setAndPatch(2)"/> <b> <output id="valueB">    </output> </b> <br> <br> <br> <br>
+				<input type="range" id="gray"    class="slider gray"    name="gray"    oninput="setAndPatch(3)"/> <b> <output id="valueGray"> </output> </b> <br> <br>
+				<input type="range" id="light"   class="slider light"   name="light"   oninput="setAndPatch(4)"/> <b> <output id="valueLight"></output> </b> <br> <br> <br> <br>
+				<input type="range" id="cyan"    class="slider cyan"    name="cyan"    oninput="setAndPatch(5)"/> <b> <output id="valueC">    </output> </b> <br> <br>
+				<input type="range" id="magenta" class="slider magenta" name="magenta" oninput="setAndPatch(6)"/> <b> <output id="valueM">    </output> </b> <br> <br>
+				<input type="range" id="yellow"  class="slider yellow"  name="yellow"  oninput="setAndPatch(7)"/> <b> <output id="valueY">    </output> </b> <br> <br>
+				<input type="range" id="black"   class="slider black"   name="black"   oninput="setAndPatch(8)"/> <b> <output id="valueK">    </output> </b> <br> <br> <br> <br>
+			</div>
+			<button type="button" class="redButtons" onclick="changeColor(0,-20);"><b>-20</b></button>
+			<button type="button" class="redButtons" onclick="changeColor(0,-10);"><b>-10</b></button>
+			<button type="button" class="redButtons" onclick="changeColor(0, -5);"><b> -5</b></button>
+			<button type="button" class="redButtons" onclick="changeColor(0, -2);"><b> -2</b></button>
+			<button type="button" class="redButtons" onclick="changeColor(0, -1);"><b> -1</b></button>
+			<button type="button" class="redButtons" onclick="changeColor(0,  1);"><b> +1</b></button>
+			<button type="button" class="redButtons" onclick="changeColor(0,  2);"><b> +2</b></button>
+			<button type="button" class="redButtons" onclick="changeColor(0,  5);"><b> +5</b></button>
+			<button type="button" class="redButtons" onclick="changeColor(0, 10);"><b>+10</b></button>
+			<button type="button" class="redButtons" onclick="changeColor(0, 20);"><b>+20</b></button>
+			<br><br>
+			<button type="button" class="greenButtons" onclick="changeColor(1,-20);"><b>-20</b></button>
+			<button type="button" class="greenButtons" onclick="changeColor(1,-10);"><b>-10</b></button>
+			<button type="button" class="greenButtons" onclick="changeColor(1, -5);"><b> -5</b></button>
+			<button type="button" class="greenButtons" onclick="changeColor(1, -2);"><b> -2</b></button>
+			<button type="button" class="greenButtons" onclick="changeColor(1, -1);"><b> -1</b></button>
+			<button type="button" class="greenButtons" onclick="changeColor(1,  1);"><b> +1</b></button>
+			<button type="button" class="greenButtons" onclick="changeColor(1,  2);"><b> +2</b></button>
+			<button type="button" class="greenButtons" onclick="changeColor(1,  5);"><b> +5</b></button>
+			<button type="button" class="greenButtons" onclick="changeColor(1, 10);"><b>+10</b></button>
+			<button type="button" class="greenButtons" onclick="changeColor(1, 20);"><b>+20</b></button>
+			<br><br>
+			<button type="button" class="blueButtons" onclick="changeColor(2,-20);"><b>-20</b></button>
+			<button type="button" class="blueButtons" onclick="changeColor(2,-10);"><b>-10</b></button>
+			<button type="button" class="blueButtons" onclick="changeColor(2, -5);"><b> -5</b></button>
+			<button type="button" class="blueButtons" onclick="changeColor(2, -2);"><b> -2</b></button>
+			<button type="button" class="blueButtons" onclick="changeColor(2, -1);"><b> -1</b></button>
+			<button type="button" class="blueButtons" onclick="changeColor(2,  1);"><b> +1</b></button>
+			<button type="button" class="blueButtons" onclick="changeColor(2,  2);"><b> +2</b></button>
+			<button type="button" class="blueButtons" onclick="changeColor(2,  5);"><b> +5</b></button>
+			<button type="button" class="blueButtons" onclick="changeColor(2, 10);"><b>+10</b></button>
+			<button type="button" class="blueButtons" onclick="changeColor(2, 20);"><b>+20</b></button>
+			<br><br>
+			<button type="button" class="grayButtons" onclick="changeGray(-20);"><b>-20</b></button>
+			<button type="button" class="grayButtons" onclick="changeGray(-10);"><b>-10</b></button>
+			<button type="button" class="grayButtons" onclick="changeGray( -5);"><b> -5</b></button>
+			<button type="button" class="grayButtons" onclick="changeGray( -2);"><b> -2</b></button>
+			<button type="button" class="grayButtons" onclick="changeGray( -1);"><b> -1</b></button>
+			<button type="button" class="grayButtons" onclick="changeGray(  1);"><b> +1</b></button>
+			<button type="button" class="grayButtons" onclick="changeGray(  2);"><b> +2</b></button>
+			<button type="button" class="grayButtons" onclick="changeGray(  5);"><b> +5</b></button>
+			<button type="button" class="grayButtons" onclick="changeGray( 10);"><b>+10</b></button>
+			<button type="button" class="grayButtons" onclick="changeGray( 20);"><b>+20</b></button>
+		</div>
+	</body>
+	<script>
+		//VANNO ANCORA SISTEMATI DEI COMPORTAMENTI STRANI
+		const VALUES = [
+			document.querySelector("#valueR"), 
+			document.querySelector("#valueG"), 
+			document.querySelector("#valueB"), 
+			document.querySelector("#valueGray"), 
+			document.querySelector("#valueLight"), 
+			document.querySelector("#valueC"), 
+			document.querySelector("#valueM"), 
+			document.querySelector("#valueY"), 
+			document.querySelector("#valueK"), 
+			document.querySelector("#valueHexCode")];
+		const INPUTS = [
+			document.querySelector("#red"), 
+			document.querySelector("#green"), 
+			document.querySelector("#blue"), 
+			document.querySelector("#gray"), 
+			document.querySelector("#light"), 
+			document.querySelector("#cyan"), 
+			document.querySelector("#magenta"), 
+			document.querySelector("#yellow"), 
+			document.querySelector("#black")];
+		const RANGES = ["red", "green", "blue", "gray", "light", "cyan", "magenta", "yellow", "black"];
+
+		for(let i = 0; i < 5; i++){
+			document.getElementById(RANGES[i]).min = 0;
+			document.getElementById(RANGES[i]).max = 255;
+			document.getElementById(RANGES[i]).value = 255;
+			document.getElementById(RANGES[i]).step = 1;
+		}
+		for(let i = 5; i < 9; i++){
+			document.getElementById(RANGES[i]).min = 0;
+			document.getElementById(RANGES[i]).max = 1;
+			document.getElementById(RANGES[i]).value = 0;
+			document.getElementById(RANGES[i]).step = 0.001;
+		}
+
+		for(let i = 0; i < VALUES.length - 1; i++){
+			VALUES[i].textContent = INPUTS[i].value;
+		}
+
+		function setOptionZoneContent(){
+			VALUES[9].textContent = getColor();
+		}
+
+		setOptionZoneContent();
+
+		function setAndPatch(component){//DA AGGIUSTARE
+			if(component == 3){
+				setGray();
+				return;
+			}
+			if(component == 4){
+				setBrightness();
+				return;
+			}
+			VALUES[component].textContent = INPUTS[component].value;
+			if(component < 3){
+				setColor(parseInt(INPUTS[0].value), parseInt(INPUTS[1].value), parseInt(INPUTS[2].value));
+			}
+			if(component > 4 && component < 9){
+				setColor_B(parseFloat(INPUTS[5].value), parseFloat(INPUTS[6].value), parseFloat(INPUTS[7].value), parseFloat(INPUTS[8].value));
+			}
+			patchGrayVALUES();
+			document.body.style.backgroundColor = getColor();
+			document.querySelector("#optionZone").style.backgroundColor = getColor();
+			patchLightVALUES();
+			setOptionZoneContent();
+		}
+
+		function setGray(){
+			VALUES[3].textContent = INPUTS[3].value;
+			document.body.style.backgroundColor = getGray();
+			for(let i = 0; i < 3; i++){
+				INPUTS[i].value = INPUTS[3].value;
+				VALUES[i].textContent = INPUTS[3].value;
+			}
+			setColor(INPUTS[3].value, INPUTS[3].value, INPUTS[3].value);
+			document.querySelector("#optionZone").style.backgroundColor = getColor();
+			setOptionZoneContent();
+			patchLightVALUES();
+		}
+
+		function setBrightness(){
+			if(isPossibleToModifyLight()){
+				if(parseInt(INPUTS[4].value) != parseInt(VALUES[4].textContent)){
+					for(let i = 0; i < 3; i++){
+						INPUTS[i].value = (parseInt(INPUTS[i].value) + parseInt(INPUTS[4].value) - parseInt(VALUES[4].textContent));
+						VALUES[i].textContent = INPUTS[i].value;
+					}
+				}
+				setColor(INPUTS[0].value, INPUTS[1].value, INPUTS[2].value);
+				VALUES[4].textContent = INPUTS[4].value;
+				patchGrayVALUES();
+				document.querySelector("#optionZone").style.backgroundColor = getColor();
+				document.body.style.backgroundColor = getColor();
+				setOptionZoneContent();
+				patchLightVALUES();
+			}
+			INPUTS[4].value = parseInt(VALUES[4].textContent);
+		}
+
+		function getColor(){
+			sRed = patchString(parseInt(VALUES[0].textContent).toString(16));
+			sGreen = patchString(parseInt(VALUES[1].textContent).toString(16));
+			sBlue = patchString(parseInt(VALUES[2].textContent).toString(16));
+			return ("#" + sRed + sGreen + sBlue);
+		}
+
+		function getGray(){
+			sRed = patchString(parseInt(VALUES[3].textContent).toString(16));
+			sGreen = patchString(parseInt(VALUES[3].textContent).toString(16));
+			sBlue = patchString(parseInt(VALUES[3].textContent).toString(16));
+			return ("#" + sRed + sGreen + sBlue);
+		}
+
+		function patchString(string){
+			return string.length == 1 ? ("0" + string) : string;
+		}
+
+		function patchGrayVALUES(){
+			INPUTS[3].value = parseInt((parseInt(VALUES[0].value) + parseInt(VALUES[1].value) + parseInt(VALUES[2].value))/3);
+			VALUES[3].textContent = parseInt((parseInt(VALUES[0].value) + parseInt(VALUES[1].value) + parseInt(VALUES[2].value))/3);
+		}
+
+		function getMin(){
+			let min = (parseInt(INPUTS[0].value) <= parseInt(INPUTS[1].value)) ? parseInt(INPUTS[0].value) : parseInt(INPUTS[1].value);
+			min = ((min <= parseInt(INPUTS[2].value)) ? min : parseInt(INPUTS[2].value));
+			return min
+		}
+
+		function getMax(){
+			let max = (parseInt(INPUTS[0].value) >= parseInt(INPUTS[1].value)) ? parseInt(INPUTS[0].value) : parseInt(INPUTS[1].value);
+			max = ((max >= parseInt(INPUTS[2].value)) ? max : parseInt(INPUTS[2].value));
+			return max
+		}
+
+		function patchLightVALUES(){
+			INPUTS[4].value = parseInt((getMax() + getMin())/2);
+			VALUES[4].textContent = INPUTS[4].value;
+		}
+
+		function isPossibleToModifyLight(){
+			if((parseInt(INPUTS[4].value) > parseInt(VALUES[4].textContent))&&(getMax() == 255)){
+				return false;
+			}
+			if((parseInt(INPUTS[4].value) < parseInt(VALUES[4].textContent))&&(getMin() == 0)){
+				return false;
+			}
+			return true;
+		}
+
+		function setColor(red, green, blue){
+			VALUES[0].textContent = INPUTS[0].value = red;
+			VALUES[1].textContent = INPUTS[1].value = green;
+			VALUES[2].textContent = INPUTS[2].value = blue;
+
+			fRed   = parseFloat(red)/255;
+			fGreen = parseFloat(green)/255;
+			fBlue  = parseFloat(blue)/255;
+			fMax   = (fRed > fGreen) ? (fRed > fBlue ? fRed : fBlue) : (fGreen > fBlue ? fGreen : fBlue);
+
+			black   = parseFloat(parseInt((1 - fMax)*1000))/1000;
+			cyan    = parseFloat(parseInt((1 - fRed -   black)*1000)/1000);
+			magenta = parseFloat(parseInt((1 - fGreen - black)*1000)/1000);
+			yellow  = parseFloat(parseInt((1 - fBlue -  black)*1000)/1000);
+
+			VALUES[5].textContent = INPUTS[5].value = cyan;
+			VALUES[6].textContent = INPUTS[6].value = magenta;
+			VALUES[7].textContent = INPUTS[7].value = yellow;
+			VALUES[8].textContent = INPUTS[8].value = black;
+
+			setOptionZoneContent();
+
+			document.body.style.backgroundColor = getColor();
+			document.querySelector("#optionZone").style.backgroundColor = getColor();
+			patchLightVALUES();
+			patchGrayVALUES();
+		}
+
+		function setColor_B(cyan, magenta, yellow, black){
+			setColor(parseInt((1 - parseFloat(cyan))*(1 - parseFloat(black))*255), parseInt((1 - parseFloat(magenta))*(1 - parseFloat(black))*255), parseInt((1 - parseFloat(yellow))*(1 - parseFloat(black))*255));
+		}
+
+		function revert(){
+			setColor(INPUTS[0].value = 255 - INPUTS[0].value, INPUTS[1].value = 255 - INPUTS[1].value, INPUTS[2].value = 255 - INPUTS[2].value);
+		}
+
+		function random(){
+			setColor(INPUTS[0].value = parseInt(Math.random()*256), INPUTS[1].value = parseInt(Math.random()*256), INPUTS[2].value = parseInt(Math.random()*256));
+		}
+
+		function changeColor(color, delta){
+			let input = parseInt(INPUTS[color].value) + parseInt(delta);
+			let red, green, blue;
+			if(input >= 0 && input <= 255){
+				red   = ((color == 0) ? (input) : (INPUTS[0].value));
+				green = ((color == 1) ? (input) : (INPUTS[1].value));
+				blue  = ((color == 2) ? (input) : (INPUTS[2].value));
+				setColor(red, green, blue);
+			}
+		}
+
+		function changeGray(delta){
+			let i0 = parseInt(INPUTS[0].value);
+			let i1 = parseInt(INPUTS[1].value);
+			let i2 = parseInt(INPUTS[2].value);
+			let minInput = (i0 < i1) ? ((i0 < i2) ? i0 : i2) : ((i1 < i2) ? i1 : i2);
+			let maxInput = (i0 > i1) ? ((i0 > i2) ? i0 : i2) : ((i1 > i2) ? i1 : i2);
+			let red, green, blue;
+			if((minInput + parseInt(delta) >= 0) && (maxInput + parseInt(delta) <= 255)){
+				setColor(parseInt(INPUTS[0].value) + parseInt(delta), parseInt(INPUTS[1].value) + parseInt(delta), parseInt(INPUTS[2].value) + parseInt(delta));
+			}
+		}
+	</script>
+</html>

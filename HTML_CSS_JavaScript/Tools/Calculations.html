@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en"><!--T01#006 - Claudia - Calculations-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<title>Some computations</title>
+	</head>
+	<body style="background-color:#ccffcc;"><!--"background-color:#ff9999;"-->
+		<div class="container" style="display: flex; gap: 0px;">
+			<form style="border: 1px solid #cfc; padding: 20px;">
+				Is this a composite number?<br>
+				<button type="button" id="primalityTestButton" onclick="checkNumber()">Number:</button>
+				<input type="number" id="firstNumber"/><br>
+				<output id="isPrime"></output><br><br><br>
+				
+				What is its square root?<br>
+				<button type="button" id="squareRootButton" onclick="squareRoot()">Number:</button>
+				<input type="number" id="secondNumber"/><br>
+				<output id="sqrt"></output><br><br><br>
+				
+				What is its factorization?<br>
+				<button type="button" id="factorization" onclick="factorize()">Number:</button>
+				<input type="number" id="thirdNumber"/><br>
+				<output id="scomposition"></output><br><br><br>
+				
+				First number<br>
+				<input type="number" id="fourthNumber"/><br>
+				Latter number<br>
+				<input type="number" id="fifthNumber"/><br>
+				<button type="button" id="Bezout" onclick="computeBezoutRelation()">Compute</button>
+				<output id="BezoutsRelation"></output><br><br><br><br>
+				
+				Apply Fermat's primality test<br>
+				<button type="button" id="primalityTestOfFermatButton" onclick="applyFermatsPrimalityTest()">Number:</button>
+				<input type="number" id="sixthNumber"/><br>
+				<output id="mayBePrime"></output><br><br><br>
+				<div id="bigNumber"></div>
+				
+				<label for="seventhNumber">Number of sides:</label>
+				<input type="number" id="seventhNumber"><br>
+				<label for="eighthNumber">Length of each side:</label>
+				<input type="number" id="eighthNumber"><br>
+				<button type="button" id="calculateAreaButton" onclick="calculatePolygonArea()">Compute polygon area</button>
+				<output id="polygonArea"></output><br><br><br>
+				
+				Is it a sum of two squares?<br>
+				<button type="button" id="sumOfSquares" onclick="writeAsSumOfSquares()">Number:</button>
+				<input type="number" id="ninthNumber"/><br>
+				<div id="squares"></div>
+			</form>
+			<form style="border: 1px solid #cfc; padding: 20px;">
+				<label for="numberOfSides">Number of sides: </label>
+				<select id="numberOfSides"></select>
+				<input id="diagonals" type="checkbox" onChange="flag = !flag; drawPolygon();">With diagonals</input>
+				<canvas id="canvas" width="800" height="800"></canvas>
+			</form>
+		</div>
+	</body>
+	<script>
+		const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
+		if(!DESKTOP){
+			document.getElementById("canvas").width = 400;
+			document.getElementById("canvas").height = 400;
+		}
+		let flag = false;
+		function fillSelectOption(){
+			for(let i = 3; i <= 60; i++){
+				document.getElementById("numberOfSides").innerHTML += "<option value=\"" + i + "\"> " + i + " </option>";
+			}
+		}
+		function drawPolygon() {
+			const numberOfSides = parseInt(document.getElementById('numberOfSides').value);
+			const canvas = document.getElementById('canvas');
+			const ctx = canvas.getContext('2d');
+			const centerX = canvas.width / 2;
+			const centerY = canvas.height / 2;
+			const radius = DESKTOP ? 300 : 150;
+			const angleStep = (2 * Math.PI) / numberOfSides;
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			let vertices = [];
+			for (let i = 0; i < numberOfSides; i++) {
+				const angle = (-0.5 * Math.PI) + (i * angleStep);
+				const x = centerX + radius * Math.cos(angle);
+				const y = centerY + radius * Math.sin(angle);
+				vertices.push({ x, y });
+			}
+			ctx.beginPath();
+			ctx.moveTo(vertices[0].x, vertices[0].y);
+			for (let i = 1; i < numberOfSides; i++) {
+				ctx.lineTo(vertices[i].x, vertices[i].y);
+			}
+			ctx.closePath();
+			ctx.stroke();
+			if(flag){
+				for (let i = 0; i < vertices.length; i++) {
+					for (let j = i + 2; j < vertices.length; j++) {
+						if (i === 0 && j === vertices.length - 1) continue;
+						ctx.beginPath();
+						ctx.moveTo(vertices[i].x, vertices[i].y);
+						ctx.lineTo(vertices[j].x, vertices[j].y);
+						ctx.stroke();
+					}
+				}
+			}
+		}
+		document.getElementById('numberOfSides').addEventListener('change', drawPolygon);
+		fillSelectOption();
+		drawPolygon();
+
+		let inputString;
+		let outputString;
+
+		function checkNumber(){
+			inputString = document.getElementById("firstNumber").value;
+			clearAll();
+			document.getElementById("firstNumber").value = inputString;
+			if(document.getElementById("firstNumber").value.length == 0){
+				document.getElementById("isPrime").value = "Invalid input. Be carefull, please.";
+			}else{
+				const number = parseInt(document.getElementById("firstNumber").value);
+				outputString = " is prime.";
+				if(number < 1){
+					outputString = " is not good.";
+				}
+				if(number == 1){
+					outputString = " is neither prime nor composite.";
+				}
+				if(number >= 3){
+					for(let i = 2; i*i <= number; i++){
+						if(number % i == 0){
+							outputString = " is composite.";
+							break;
+						}
+					}
+				}
+				document.getElementById("isPrime").value = "The number " + number + outputString;
+			}
+		}
+
+		document.getElementById("firstNumber").addEventListener("keypress", function(event) {
+			if (event.key === "Enter") {
+				event.preventDefault();
+				document.getElementById("primalityTestButton").click();
+			}
+		});
+
+		function squareRoot(){
+			inputString = document.getElementById("secondNumber").value;
+			clearAll();
+			document.getElementById("secondNumber").value = inputString;
+			if(document.getElementById("secondNumber").value.length == 0){
+				document.getElementById("sqrt").value = "Invalid input. Be carefull, please.";
+			}else{
+				const number = parseInt(document.getElementById("secondNumber").value);
+				if(number < 0){
+					outputString = "Invalid input. Be carefull, please.";
+				}else{
+					m = parseInt(Math.sqrt(number));
+					if(m*m == number){
+						outputString = (number + " = " + m + '\u00B2');
+					}else{
+						outputString = (number + " = " + m + '\u00B2'+ " + " + (number - (m*m)));
+					}
+				}
+				document.getElementById("sqrt").value = outputString;
+			}
+		}
+
+		document.getElementById("secondNumber").addEventListener("keypress", function(event) {
+			if (event.key === "Enter") {
+				event.preventDefault();
+				document.getElementById("squareRootButton").click();
+			}
+		});
+
+		function factorize(){
+			inputString = document.getElementById("thirdNumber").value;
+			clearAll();
+			document.getElementById("thirdNumber").value = inputString;
+			outputString = "";
+			let m;
+			let exp;
+			let prime = true;
+			let counter = 0;
+			if(document.getElementById("thirdNumber").value.length == 0){
+				document.getElementById("scomposition").value = "Invalid input. Be carefull, please.";
+			}else{
+				const number = parseInt(document.getElementById("thirdNumber").value);
+				m = number;
+				if(m <= 0){
+					document.getElementById("scomposition").value = "Invalid input. Be carefull, please.";
+				}else{
+					if(m == 1){
+						document.getElementById("scomposition").value = ":-/";
+					}else{
+						exp = 0;
+						while(m%2 == 0){
+							m = m/2;
+							exp = exp + 1;
+						}
+						if(exp > 0){
+							if(m > 1){
+								prime = false;
+							}
+							counter = 1;
+							if(exp == 1){
+								outputString = "2";
+							}else{
+								outputString = "2^" + exp + "";
+							}
+							if(m > 1){
+								if(exp > 1){
+									outputString = "(" + outputString + ") * ";
+								}else{
+									outputString = outputString + " * ";
+								}
+							}
+						}
+						let div = 3;
+						while(div*div <= m){
+							document.getElementById("scomposition").value = "...";
+							exp = 0;
+							if(m%div == 0){
+								counter = counter + 1;
+							}
+							while(m%div == 0){
+								m = m/div;
+								exp = exp + 1;
+								prime = false;
+							}
+							if(exp > 0){
+								if(exp == 1){
+									outputString = outputString + div;
+								}else{
+									if(counter > 1 || m > 1){
+										outputString = outputString + "(" + div + "^" + exp + ")";
+									}else{
+										outputString = div + "^" + exp;
+									}
+								}
+								if(m > 1){
+									outputString = outputString + " * ";
+								}
+							}
+							div = div + 2;
+						}
+						if(m > 1){
+							outputString = outputString + m;
+						}
+						if(prime){
+							if(number == 2 || number % 4 == 1){
+								document.getElementById("scomposition").value = "Male prime number! :-D";
+							}else{
+								document.getElementById("scomposition").value = "Prime number! :-D";
+							}
+						}else{
+							document.getElementById("scomposition").value = number + " = " + outputString;
+						}
+					}
+				}
+			}
+		}
+
+		document.getElementById("thirdNumber").addEventListener("keypress", function(event) {
+			if (event.key === "Enter") {
+				event.preventDefault();
+				document.getElementById("factorization").click();
+			}
+		});
+
+		function computeBezoutRelation(){
+			let input1 = document.getElementById("fourthNumber").value;
+			let input2 = document.getElementById("fifthNumber").value;
+			clearAll();
+			document.getElementById("fourthNumber").value = input1;
+			document.getElementById("fifthNumber").value = input2;
+			let correctinput = true;
+			if(document.getElementById("fourthNumber").value.length == 0){
+				correctinput = false;
+			}
+			if(document.getElementById("fifthNumber").value.length == 0){
+				correctinput = false;
+			}
+			const number1 = parseInt(document.getElementById("fourthNumber").value);
+			const number2 = parseInt(document.getElementById("fifthNumber").value);
+			let n1 = number1;
+			let f1 = 0;
+			let n2 = number2;
+			let f2 = 0;
+			let gcd;
+			let k = 0;
+			if((number1 < 1)||(number2 < 1)){
+				correctinput = false;
+			}
+			if(correctinput){
+				while(n1 != n2){
+					if(n1 > n2){
+						n1 -= n2;
+					}else{
+						n2 -= n1;
+					}
+				}
+				gcd = n1;
+				while(k != gcd && k != -gcd){
+					//k = k < 0 ? -k : k;
+					if(f1*number1 < f2*number2){
+						f1 = f1 + 1;
+					}else{
+						f2 = f2 + 1;
+					}
+					k = f1*number1 - f2*number2;
+				}
+				if(k > 0){
+					document.getElementById("BezoutsRelation").value = "(" + f1 + ")" + "*" + number1 + " + (-" + f2 + ")" + "*" + number2 + " = " + gcd;
+				}else{
+					document.getElementById("BezoutsRelation").value = "(-" + f1 + ")" + "*" + number1 + " + (" + f2 + ")" + "*" + number2 + " = " + gcd;
+				}
+			}
+			document.getElementById("BezoutsRelation").value = (correctinput ? document.getElementById("BezoutsRelation").value : "Invalid input. Be carefull, please.");
+		}
+
+		document.getElementById("fourthNumber").addEventListener("keypress", function(event) {
+			if (event.key === "Enter") {
+				event.preventDefault();
+				document.getElementById("Bezout").click();
+			}
+		});
+
+		document.getElementById("fifthNumber").addEventListener("keypress", function(event) {
+			if (event.key === "Enter") {
+				event.preventDefault();
+				document.getElementById("Bezout").click();
+			}
+		});
+
+		document.getElementById("sixthNumber").addEventListener("keypress", function(event) {
+			if (event.key === "Enter") {
+				event.preventDefault();
+				document.getElementById("primalityTestOfFermatButton").click();
+			}
+		});
+
+		function applyFermatsPrimalityTest() {
+			let inputString = document.getElementById("sixthNumber").value.trim();
+			clearAll();
+			document.getElementById("sixthNumber").value = inputString;
+			if (!/^\d+$/.test(inputString)) {
+				document.getElementById("mayBePrime").value = "Wrong input.";
+				return;
+			}
+			let number = BigInt(inputString);
+			if (number <= 1n) {
+				document.getElementById("mayBePrime").value = "The number must be greater than \"1\".";
+				return;
+			}
+			function modularExponentiation(base, exp, mod) {
+				let result = 1n;
+				base = base % mod;
+				while (exp > 0n) {
+				if (exp % 2n === 1n) {
+						result = (result * base) % mod;
+					}
+					exp = exp / 2n;
+					base = (base * base) % mod;
+				}
+				return result;
+			}
+			let isProbablyPrime = true;
+			let limit = 20;
+			for (let i = 2; i <= limit; i++) {
+				let base = BigInt(i);
+				if (base >= number) break;
+				if (modularExponentiation(base, number - 1n, number) !== 1n) {
+					isProbablyPrime = false;
+					break;
+				}
+			}
+			if (isProbablyPrime) {
+				document.getElementById("mayBePrime").value = "The number " + inputString + " seems to be prime.";
+			} else {
+				document.getElementById("mayBePrime").value = "The number " + inputString + " is composite.";
+			}
+		}
+
+		function calculatePolygonArea() {
+			let numSidesInput = document.getElementById("seventhNumber").value.trim();
+			let sideLengthInput = document.getElementById("eighthNumber").value.trim();
+			clearAll();
+			document.getElementById("seventhNumber").value = numSidesInput;
+			document.getElementById("eighthNumber").value = sideLengthInput;
+			let resultElement = document.getElementById("polygonArea");
+			if (!/^\d+$/.test(numSidesInput) || !/^\d*\.?\d+$/.test(sideLengthInput)) {
+				resultElement.value = "Wrong input.";
+				return;
+			}
+			let numSides = parseInt(numSidesInput);
+			let sideLength = parseFloat(sideLengthInput);
+			if (numSides < 3) {
+				resultElement.value = "A polygon has to have at leas three sides.";
+				return;
+			}
+			if (sideLength <= 0) {
+				resultElement.value = "Side length has to be bigger than zero.";
+				return;
+			}
+			let area = (numSides * Math.pow(sideLength, 2)) / (4 * Math.tan(Math.PI / numSides));
+			//resultElement.value = "The area is: " + area.toFixed(2) + " squared unity.";
+			resultElement.value = "The area is: " + area;
+		}
+
+		document.getElementById("seventhNumber").addEventListener("keypress", function(event) {
+			if (event.key === "Enter") {
+				event.preventDefault();
+				document.getElementById("calculateAreaButton").click();
+			}
+		});
+
+		document.getElementById("eighthNumber").addEventListener("keypress", function(event) {
+			if (event.key === "Enter") {
+				event.preventDefault();
+				document.getElementById("calculateAreaButton").click();
+			}
+		});
+
+		function writeAsSumOfSquares(){
+			inputString = document.getElementById("ninthNumber").value;
+			clearAll();
+			document.getElementById("ninthNumber").value = inputString;
+			let squaresDivElement = document.getElementById("squares");
+			let outputString = "";
+			if(inputString.length == 0){
+				testo = "Invalid input. Be carefull, please.";
+			}else{
+				const number = parseInt(document.getElementById("ninthNumber").value);
+				if(number < 0){
+					outputString = "Invalid input. Be carefull, please.";
+				}else{
+					for(let i = 0; i*i <= number/2; i++){
+						let j = parseInt(Math.sqrt(number - i*i));
+						if(i*i + j*j == number){
+							outputString = outputString + ("<div>" + j + '\u00B2' + " + " + i + '\u00B2' + "<\div>");
+						}
+					}
+				}
+			}
+			squaresDivElement.innerHTML = (outputString == "" ? "No way, sorry." : outputString);
+		}
+
+		document.getElementById("ninthNumber").addEventListener("keypress", function(event) {
+			if (event.key === "Enter") {
+				event.preventDefault();
+				document.getElementById("sumOfSquares").click();
+			}
+		});
+
+		function clearAll(){//TO UPDATE EVERY TIME A NEW METHOD APPEARS
+			document.getElementById("isPrime").value = "";
+			document.getElementById("sqrt").value = "";
+			document.getElementById("scomposition").value = "";
+			document.getElementById("squares").innerHTML = "";
+			document.getElementById("BezoutsRelation").value = "";
+			document.getElementById("bigNumber").value = "";
+			document.getElementById("mayBePrime").value = "";
+			document.getElementById("polygonArea").value = "";
+			
+			document.getElementById("firstNumber").value = "";
+			document.getElementById("secondNumber").value = "";
+			document.getElementById("thirdNumber").value = "";
+			document.getElementById("fourthNumber").value = "";
+			document.getElementById("fifthNumber").value = "";
+			document.getElementById("sixthNumber").value = "";
+			document.getElementById("seventhNumber").value = "";
+			document.getElementById("eighthNumber").value = "";
+			document.getElementById("ninthNumber").value = "";
+		}
+	</script>
+</html>

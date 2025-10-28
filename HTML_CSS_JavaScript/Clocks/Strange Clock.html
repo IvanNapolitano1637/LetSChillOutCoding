@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en"><!--C04#017 - Paolo - Strange Clock-->
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clock</title>
+  </head>
+
+  <body style="margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: Arial, sans-serif;">
+
+    <svg id="panel"></svg>
+
+    <div id="timeCounter" class="centro"></div>
+
+    <script>
+
+		const COLORS = ["#FF0000","#00FF00","#0000FF","#FFFF00","#FF00FF","#00FFFF","#00AF00","#7F007F","#FFAFAF","#FFCF4F","#FF7F00","#7F3F00"];
+		const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
+		const UNIT = DESKTOP ? 10 : 5;
+		const SIDE = 5*UNIT;
+		const GRID_HEIGHT = SIDE;
+		const GRID_WIDTH = SIDE*COLORS.length;
+		const FONT_SIZE = UNIT;
+		const BACKGROUND_COLOR = "#000000";
+		const PADDING = 8*UNIT;
+		setInterval(setTimeCounter, 200);
+		
+		function setPantone(){
+			const svg = document.querySelector("svg");
+			const svgns = "http://www.w3.org/2000/svg";
+			let panel;
+			svg.setAttribute("width", GRID_WIDTH);
+			svg.setAttribute("height", GRID_HEIGHT);
+			for(let i = 0; i < COLORS.length; i++){
+				panel = document.createElementNS(svgns, "rect");
+				panel.setAttribute("width", SIDE);
+				panel.setAttribute("height", SIDE);
+				panel.setAttribute("x", i*SIDE);
+				panel.setAttribute("y", 0);
+				panel.style.fill = COLORS[i];
+				svg.appendChild(panel);
+			}
+		}
+		setPantone();
+		
+		function setTimeCounter(){
+			const CURRENT_DATE = new Date();
+			let dayDiv = ("<div id='day' style='color:" + COLORS[(CURRENT_DATE.getMonth())%12] + "; display: inline-block;'>" + CURRENT_DATE.getDate() + "</div>");
+			let minutesDiv = ("<div id='minutes' style='color:" + COLORS[(CURRENT_DATE.getHours() + 11)%12] + "; display: inline-block;'>" + CURRENT_DATE.getMinutes() + "</div>");
+			let separatorDiv = ("<div style='color: white; display: inline-block;'>π</div>");
+			document.getElementById("timeCounter").innerHTML = dayDiv + separatorDiv + minutesDiv;
+		}
+		
+		function setTimeCounterStyle(){
+			document.getElementById("timeCounter").style = "text-align: center; font-size: " + FONT_SIZE + "rem; background-color: " + BACKGROUND_COLOR + "; padding: " + PADDING + "px;";
+		}
+		setTimeCounterStyle();
+
+    </script>
+  </body>
+</html>

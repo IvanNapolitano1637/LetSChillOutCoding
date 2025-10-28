@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en"><!--G05#014 - Federico - Modular Matching-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Modular Matching Game</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+				flex-direction: column;
+				margin: 0;
+			}
+			.cell {
+				background-color: #f0f0f0;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-size: 1.5em;
+				cursor: pointer;
+				user-select: none;
+				border-radius: 5px;
+				border: 1px solid #999;
+				transition: background-color 0.3s;
+			}
+			.matched {
+				background-color: #8bc34a;
+				cursor: default;
+				color: #fff;
+			}
+			.revealed {
+				background-color: #ff9800;
+				color: #fff;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="info" style="margin-bottom: 20px; font-size: 1.2em; visibility: hidden;">
+			Errori: <span id="errors">0</span> / <span id="maxErrors">5</span>
+		</div>
+		<div class="grid">
+		</div>
+		<script>
+			document.addEventListener('DOMContentLoaded', () => {
+				const P = 97;
+				const NUMBER_OF_COLUMN = 7;
+				const CELL_WIDTH = "150px";
+				const CELL_HEIGHT = "40px";
+				const GRID = document.querySelector('.grid');
+				GRID.style = "display: grid; grid-template-columns: repeat(" + NUMBER_OF_COLUMN + ", " + CELL_WIDTH + "); grid-gap: 5px";
+				//const maxErrors = 5;
+				//const maxNumberOfErrors = 86400;
+				const maxNumberOfErrors = 5;
+				let currentErrors = 0;
+				const errorsDisplay = document.getElementById('errors');
+				document.getElementById('maxErrors').textContent = maxNumberOfErrors;
+				document.querySelector('.info').style = "margin-bottom: 20px; font-size: 1.2em; visibility: " + ((maxNumberOfErrors > 1000)? "hidden" : "visible") + ";";
+				const numbers = [];
+				const pairs = [];
+
+				function modInverse(a, p) {
+					a = a % p;
+					for (let x = 1; x < p; x++) {
+						if ((a * x) % p === 1) {
+							return x;
+						}
+					}
+					return -1;
+				}
+
+				for (let i = 1; i < P; i++) {
+					let inverse = modInverse(i, P);
+					if (inverse !== -1 && !numbers.includes(i) && !numbers.includes(inverse)) {
+						numbers.push(i, inverse);
+						pairs.push([i, inverse]);
+					}
+				}
+				numbers.sort((a, b) => a - b);
+				let selectedCells = [];
+				let matchedPairs = 0;
+				numbers.forEach((number, index) => {
+					const cell = document.createElement('div');
+					cell.style.height = CELL_HEIGHT;
+					cell.style.width = CELL_WIDTH;
+					cell.classList.add('cell');
+					cell.dataset.number = number;
+					cell.innerText = number;
+					cell.addEventListener('click', () => {
+						if (selectedCells.length < 2 && !cell.classList.contains('matched') && !cell.classList.contains('revealed')) {
+							cell.classList.add('revealed');
+							selectedCells.push(cell);
+							if (selectedCells.length === 2) {
+								setTimeout(checkMatch, 500);
+							}
+						}
+					});
+					GRID.appendChild(cell);
+				});
+
+				function checkMatch() {
+					const [cell1, cell2] = selectedCells;
+					const num1 = parseInt(cell1.dataset.number);
+					const num2 = parseInt(cell2.dataset.number);
+					if ((num1 === num2 && (num1 === 1 || num1 === P - 1)) || (num1 * num2) % P === 1) {
+						cell1.classList.add('matched');
+						cell2.classList.add('matched');
+						cell1.classList.remove('revealed');
+						cell2.classList.remove('revealed');
+						matchedPairs++;
+						cell1.innerText = num1 + " * " + num2 + " = 1";
+						cell2.innerText = num2 + " * " + num1 + " = 1";
+						if (matchedPairs === pairs.length) {
+							setTimeout(function(){ alert('Hai vinto!'); }, 250);
+						}
+					} else {
+						currentErrors++;
+						errorsDisplay.textContent = currentErrors;
+						if (currentErrors >= maxNumberOfErrors) {
+							alert('Hai perso! Hai raggiunto il numero massimo di errori.');
+							resetGame();
+							return;
+						}
+						cell1.classList.remove('revealed');
+						cell2.classList.remove('revealed');
+					}
+					selectedCells = [];
+				}
+
+				function resetGame() {
+					GRID.innerHTML = '';
+					currentErrors = 0;
+					errorsDisplay.textContent = currentErrors;
+					selectedCells = [];
+					matchedPairs = 0;
+					numbers.sort((a, b) => a - b);
+					numbers.forEach((number) => {
+						const cell = document.createElement('div');
+						cell.classList.add('cell');
+						cell.dataset.number = number;
+						cell.innerText = number;
+						cell.addEventListener('click', () => {
+							if (selectedCells.length < 2 && !cell.classList.contains('matched') && !cell.classList.contains('revealed')) {
+								cell.classList.add('revealed');
+								selectedCells.push(cell);
+								if (selectedCells.length === 2) {
+									setTimeout(checkMatch, 500);
+								}
+							}
+						});
+						GRID.appendChild(cell);
+					});
+				}
+			});
+		</script>
+	</body>
+</html>
