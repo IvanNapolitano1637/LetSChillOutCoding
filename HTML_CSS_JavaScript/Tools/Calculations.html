@@ -213,7 +213,7 @@
 								outputString = "2";
 							}else{
 								iExp = exp
-								while(iExp >= 1){
+								while(iExp > 0){
 									sExp = expDigits[iExp%10] + sExp;
 									iExp = Math.floor(iExp/10);
 								}
@@ -241,7 +241,7 @@
 									outputString = outputString + div;
 								}else{
 									iExp = exp
-									while(iExp >= 1){
+									while(iExp > 0){
 										sExp = expDigits[iExp%10] + sExp;
 										iExp = Math.floor(iExp/10);
 									}
