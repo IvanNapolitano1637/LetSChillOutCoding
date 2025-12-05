@@ -215,7 +215,7 @@
 								iExp = exp
 								while(iExp >= 1){
 									sExp = expDigits[iExp%10] + sExp;
-									iExp = iExp/10;
+									iExp = Math.floor(iExp/10);
 								}
 								outputString = "2" + sExp + "";
 							}
@@ -227,6 +227,7 @@
 						while(div*div <= m){
 							document.getElementById("scomposition").value = "...";
 							exp = 0;
+							sExp = "";
 							if(m%div == 0){
 								counter = counter + 1;
 							}
@@ -242,7 +243,7 @@
 									iExp = exp
 									while(iExp >= 1){
 										sExp = expDigits[iExp%10] + sExp;
-										iExp = iExp/10;
+										iExp = Math.floor(iExp/10);
 									}
 									outputString = ( (counter > 1 || m > 1) ? outputString : "" ) + div + sExp;
 								}
