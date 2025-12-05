@@ -183,6 +183,10 @@
 			let exp;
 			let prime = true;
 			let counter = 0;
+			const times = "×";
+			const expDigits = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
+			let iExp
+			let sExp
 			if(document.getElementById("thirdNumber").value.length == 0){
 				document.getElementById("scomposition").value = "Invalid input. Be carefull, please.";
 			}else{
@@ -195,26 +199,28 @@
 						document.getElementById("scomposition").value = ":-/";
 					}else{
 						exp = 0;
+						sExp = "";
 						while(m%2 == 0){
 							m = m/2;
 							exp = exp + 1;
 						}
 						if(exp > 0){
-							if(m > 1){
+							if(m > 1 || exp > 1){
 								prime = false;
 							}
 							counter = 1;
 							if(exp == 1){
 								outputString = "2";
 							}else{
-								outputString = "2^" + exp + "";
+								iExp = exp
+								while(iExp >= 1){
+									sExp = expDigits[iExp%10] + sExp;
+									iExp = iExp/10;
+								}
+								outputString = "2" + sExp + "";
 							}
 							if(m > 1){
-								if(exp > 1){
-									outputString = "(" + outputString + ") * ";
-								}else{
-									outputString = outputString + " * ";
-								}
+								outputString += " " + times + " ";
 							}
 						}
 						let div = 3;
@@ -233,14 +239,15 @@
 								if(exp == 1){
 									outputString = outputString + div;
 								}else{
-									if(counter > 1 || m > 1){
-										outputString = outputString + "(" + div + "^" + exp + ")";
-									}else{
-										outputString = div + "^" + exp;
+									iExp = exp
+									while(iExp >= 1){
+										sExp = expDigits[iExp%10] + sExp;
+										iExp = iExp/10;
 									}
+									outputString = ( (counter > 1 || m > 1) ? outputString : "" ) + div + sExp;
 								}
 								if(m > 1){
-									outputString = outputString + " * ";
+									outputString = outputString + " " + times + " ";
 								}
 							}
 							div = div + 2;
