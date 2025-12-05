@@ -174,6 +174,18 @@
 			}
 		});
 
+		function getExp(iExp){
+			const expDigits = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
+			let sExp = "";
+			if(iExp > 1){
+				while(iExp > 0){
+					sExp = expDigits[iExp%10] + sExp;
+					iExp = Math.floor(iExp/10);
+				}
+			}
+			return sExp;
+		}
+
 		function factorize(){
 			inputString = document.getElementById("thirdNumber").value;
 			clearAll();
@@ -184,9 +196,6 @@
 			let prime = true;
 			let counter = 0;
 			const times = "×";
-			const expDigits = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
-			let iExp
-			let sExp
 			if(document.getElementById("thirdNumber").value.length == 0){
 				document.getElementById("scomposition").value = "Invalid input. Be carefull, please.";
 			}else{
@@ -199,35 +208,19 @@
 						document.getElementById("scomposition").value = ":-/";
 					}else{
 						exp = 0;
-						sExp = "";
 						while(m%2 == 0){
 							m = m/2;
 							exp = exp + 1;
 						}
 						if(exp > 0){
-							if(m > 1 || exp > 1){
-								prime = false;
-							}
+							prime = (m > 1 || exp > 1) ? false : prime;
 							counter = 1;
-							if(exp == 1){
-								outputString = "2";
-							}else{
-								iExp = exp
-								while(iExp > 0){
-									sExp = expDigits[iExp%10] + sExp;
-									iExp = Math.floor(iExp/10);
-								}
-								outputString = "2" + sExp + "";
-							}
-							if(m > 1){
-								outputString += " " + times + " ";
-							}
+							outputString = "2" + getExp(exp) + "" + ((m > 1) ? (" " + times + " ") : "");
 						}
 						let div = 3;
 						while(div*div <= m){
 							document.getElementById("scomposition").value = "...";
 							exp = 0;
-							sExp = "";
 							if(m%div == 0){
 								counter = counter + 1;
 							}
@@ -237,25 +230,11 @@
 								prime = false;
 							}
 							if(exp > 0){
-								if(exp == 1){
-									outputString = outputString + div;
-								}else{
-									iExp = exp
-									while(iExp > 0){
-										sExp = expDigits[iExp%10] + sExp;
-										iExp = Math.floor(iExp/10);
-									}
-									outputString = ( (counter > 1 || m > 1) ? outputString : "" ) + div + sExp;
-								}
-								if(m > 1){
-									outputString = outputString + " " + times + " ";
-								}
+								outputString = ( (counter > 1 || m > 1) ? outputString : "" ) + div + getExp(exp) + ((m > 1) ? (" " + times + " ") : "");
 							}
 							div = div + 2;
 						}
-						if(m > 1){
-							outputString = outputString + m;
-						}
+						outputString = outputString + ((m > 1) ? m : "");
 						if(prime){
 							if(number == 2 || number % 4 == 1){
 								document.getElementById("scomposition").value = "Male prime number! :-D";
