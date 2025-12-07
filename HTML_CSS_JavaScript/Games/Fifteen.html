@@ -48,6 +48,7 @@
 			let gameFinished;
 			let begun = false;
 			let button;
+			let isSolving = false;
 
 			function drawBoard(){
 				document.body.style.background = BACKGROUND_COLOR;
@@ -74,16 +75,23 @@
 
 				button = document.createElement("button");
 				button.setAttribute("id", "shuffleBtn");
-				button.setAttribute("style", "position: absolute; top: " + (DESKTOP ? 98 : 100)*UNIT + "px; left:" + (DESKTOP ? 106 : 12)*UNIT + "px; WIDTH:" + 45*UNIT + "px; HEIGHT: " + 10*UNIT + "px;" + "font-size: " + 5*UNIT + "px;" + "background-color: " + BTN_COLOR + ";" + "color: " + BTN_TEXT_COLOR + ";");
+				button.setAttribute("style", "position: absolute; top: " + (DESKTOP ? 99 : 100)*UNIT + "px; left:" + (DESKTOP ? 106 : 12)*UNIT + "px; WIDTH:" + 45*UNIT + "px; HEIGHT: " + 10*UNIT + "px;" + "font-size: " + 5*UNIT + "px;" + "background-color: " + BTN_COLOR + ";" + "color: " + BTN_TEXT_COLOR + ";");
 				button.setAttribute("onclick", "shuffleTiles();");
 				button.innerHTML = "Shuffle";
 				document.querySelector("#body").appendChild(button);
 
 				button = document.createElement("button");
 				button.setAttribute("id", "restartBtn");
-				button.setAttribute("style", "position: absolute; top: " + (DESKTOP ? 98 : 100)*UNIT + "px; left:" + (DESKTOP ? 153 : 59)*UNIT + "px; WIDTH:" + 45*UNIT + "px; HEIGHT: " + 10*UNIT + "px;" + "font-size: " + 5*UNIT + "px;" + "background-color: " + BTN_COLOR + ";" + "color: " + BTN_TEXT_COLOR + ";");
+				button.setAttribute("style", "position: absolute; top: " + (DESKTOP ? 99 : 100)*UNIT + "px; left:" + (DESKTOP ? 153 : 59)*UNIT + "px; WIDTH:" + 45*UNIT + "px; HEIGHT: " + 10*UNIT + "px;" + "font-size: " + 5*UNIT + "px;" + "background-color: " + BTN_COLOR + ";" + "color: " + BTN_TEXT_COLOR + ";");
 				button.setAttribute("onclick", "restart();");
 				button.innerHTML = "Restart";
+				document.querySelector("#body").appendChild(button);
+
+				button = document.createElement("button");
+				button.setAttribute("id", "solveBtn");
+				button.setAttribute("style", "position: absolute; top: " + (DESKTOP ? 111 : 112)*UNIT + "px; left:" + (DESKTOP ? 130 : 36)*UNIT + "px; WIDTH:" + 45*UNIT + "px; HEIGHT: " + 10*UNIT + "px;" + "font-size: " + 5*UNIT + "px;" + "background-color: " + BTN_COLOR + ";" + "color: " + BTN_TEXT_COLOR + ";");
+				button.setAttribute("onclick", "solve();");
+				button.innerHTML = "Solve";
 				document.querySelector("#body").appendChild(button);
 			}
 
@@ -259,6 +267,188 @@
 
 			function restart(){
 				window.location.reload();
+			}
+
+			function solve() {
+				if (isSolving || gameFinished){
+					return;
+				}
+				let btn = document.getElementById("solveBtn");
+				if(btn) {
+					btn.innerHTML = "Wait...";
+					btn.disabled = true;
+				}
+				isSolving = true;
+				let currentState = [];
+				for(let i = 0; i < 16; i++) {
+					let posId = ((i + 1) % 16).toString(16); 
+					let val = document.getElementById(posId).innerHTML;
+					currentState.push(val === "" ? 0 : parseInt(val));
+				}
+				setTimeout(() => {
+					try {
+						let solutionPath = idaStar(currentState);
+						
+						if (solutionPath && solutionPath.length > 0) {
+							animateSolution(solutionPath);
+						} else {
+							alert("Already solved or unsolvable state detected.");
+							resetUI();
+						}
+					} catch (e) {
+						console.error(e);
+						alert("Error finding solution.");
+						resetUI();
+					}
+				}, 100);
+			}
+
+			function resetUI() {
+				isSolving = false;
+				let btn = document.getElementById("solveBtn");
+				if(btn) {
+					btn.innerHTML = "Solve";
+					btn.disabled = false;
+				}
+			}
+
+			function animateSolution(moves) {
+				let i = 0;
+				let interval = setInterval(function() {
+					if (i >= moves.length) {
+						clearInterval(interval);
+						resetUI();
+						return;
+					}
+					let moveDir = moves[i];
+					let zeroIndex = r1 * 4 + c1;
+					let targetIndex;
+					//////////////////////////////////////////////////////////////////////
+					if (moveDir === "U") targetIndex = zeroIndex - 4;
+					if (moveDir === "D") targetIndex = zeroIndex + 4;
+					if (moveDir === "L") targetIndex = zeroIndex - 1;
+					if (moveDir === "R") targetIndex = zeroIndex + 1;
+					//////////////////////////////////////////////////////////////////////
+					let targetPosId = ((targetIndex + 1) % 16).toString(16);
+					let zeroPosId = ((zeroIndex + 1) % 16).toString(16);
+					swapTiles(targetPosId, zeroPosId);
+					r1 = Math.floor(targetIndex / 4);
+					c1 = targetIndex % 4;
+					counterMoves++;
+					if (isGameFinished()) {
+						gameFinished = true;
+						document.body.style.background = WINNING_COLOR;
+						clearInterval(interval);
+						resetUI();
+						setTimeout(function(){ alert("Solved in " + counterMoves + " moves!"); }, 100);
+					}
+					i++;
+				}, 180);
+			}
+
+			function idaStar(initialState) {
+				let zeroPos = initialState.indexOf(0);
+				let bound = getHeuristic(initialState);
+				let path = [];
+				while (true) {
+					let t = search(initialState, 0, bound, path, zeroPos);
+					if (t === "FOUND"){
+						return path;
+					}
+					if (t === Infinity){
+						return null;
+					}
+					if (t > 80){
+						return null;
+					}
+					bound = t;
+				}
+			}
+
+			function search(state, g, bound, path, zeroIdx) {
+				let h = getHeuristic(state);
+				let f = g + h;
+				if (f > bound) return f;
+				if (h === 0) return "FOUND";
+				let min = Infinity;
+				let moves = [];
+				let r = Math.floor(zeroIdx / 4);
+				let c = zeroIdx % 4;
+				if (r > 0){
+					moves.push({ dir: "U", idx: zeroIdx - 4 });
+				}
+				if (c > 0){
+					moves.push({ dir: "L", idx: zeroIdx - 1 });
+				}
+				if (r < 3){
+					moves.push({ dir: "D", idx: zeroIdx + 4 });
+				}
+				if (c < 3){
+					moves.push({ dir: "R", idx: zeroIdx + 1 });
+				}
+				for (let move of moves) {
+					let lastMove = path[path.length - 1];
+					if (lastMove === "D" && move.dir === "U"){
+						continue;
+					}
+					if (lastMove === "U" && move.dir === "D"){
+						continue;
+					}
+					if (lastMove === "R" && move.dir === "L"){
+						continue;
+					}
+					if (lastMove === "L" && move.dir === "R"){
+						continue;
+					}
+					let savedVal = state[move.idx];
+					state[zeroIdx] = savedVal;
+					state[move.idx] = 0;
+					path.push(move.dir);
+					let t = search(state, g + 1, bound, path, move.idx);
+					if (t === "FOUND"){
+						return "FOUND";
+					}
+					if (t < min){
+						min = t;
+					}
+					path.pop();
+					state[move.idx] = savedVal;
+					state[zeroIdx] = 0;
+				}
+				return min;
+			}
+
+			function getHeuristic(state) {
+				let md = 0;
+				let lc = 0;
+				for (let i = 0; i < 16; i++) {
+					let val = state[i];
+					if (val === 0){
+						continue;
+					}
+					let r = Math.floor(i / 4);
+					let c = i % 4;
+					let tr = Math.floor((val - 1) / 4);
+					let tc = (val - 1) % 4;
+					md += Math.abs(r - tr) + Math.abs(c - tc);
+					if (r === tr) {
+						for (let k = i + 1; k < r * 4 + 4; k++) {
+							let valK = state[k];
+							if (valK !== 0 && Math.floor((valK - 1) / 4) === r && val > valK) {
+								lc += 2;
+							}
+						}
+					}
+					if (c === tc) {
+						for (let k = i + 4; k < 16; k += 4) {
+							let valK = state[k];
+							if (valK !== 0 && (valK - 1) % 4 === c && val > valK) {
+								lc += 2;
+							}
+						}
+					}
+				}
+				return md + lc;
 			}
 		</script>
 	</body>
