@@ -323,12 +323,18 @@
 					let moveDir = moves[i];
 					let zeroIndex = r1 * 4 + c1;
 					let targetIndex;
-					//////////////////////////////////////////////////////////////////////
-					if (moveDir === "U") targetIndex = zeroIndex - 4;
-					if (moveDir === "D") targetIndex = zeroIndex + 4;
-					if (moveDir === "L") targetIndex = zeroIndex - 1;
-					if (moveDir === "R") targetIndex = zeroIndex + 1;
-					//////////////////////////////////////////////////////////////////////
+					if (moveDir === "U"){
+						targetIndex = zeroIndex - 4;
+					}
+					if (moveDir === "D"){
+						targetIndex = zeroIndex + 4;
+					}
+					if (moveDir === "L"){
+						targetIndex = zeroIndex - 1;
+					}
+					if (moveDir === "R"){
+						targetIndex = zeroIndex + 1;
+					}
 					let targetPosId = ((targetIndex + 1) % 16).toString(16);
 					let zeroPosId = ((zeroIndex + 1) % 16).toString(16);
 					swapTiles(targetPosId, zeroPosId);
