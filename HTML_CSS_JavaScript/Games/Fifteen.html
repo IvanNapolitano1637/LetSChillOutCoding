@@ -374,8 +374,12 @@
 			function search(state, g, bound, path, zeroIdx) {
 				let h = getHeuristic(state);
 				let f = g + h;
-				if (f > bound) return f;
-				if (h === 0) return "FOUND";
+				if (f > bound){
+					return f;
+				}
+				if (h === 0){
+					return "FOUND";
+				}
 				let min = Infinity;
 				let moves = [];
 				let r = Math.floor(zeroIdx / 4);
