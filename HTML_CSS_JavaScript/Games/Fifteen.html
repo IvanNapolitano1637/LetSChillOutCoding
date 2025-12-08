@@ -153,7 +153,7 @@
 					let row = getRow();
 					let column = getColumn();
 					let k = (row - r1)*(row - r1) + (column - c1)*(column - c1);
-					if(k==1){
+					if(k == 1){
 						swapTiles(((4*row + column + 1)%16).toString(16), ((4*r1 + c1 + 1)%16).toString(16));
 						r1 = row;
 						c1 = column;
@@ -177,7 +177,7 @@
 					return false;
 				}
 				for(let i = 0; i < 16; i++){
-					if(document.getElementById(IDS[i]).innerHTML != ((i+1)%16)){
+					if(document.getElementById(IDS[i]).innerHTML != ((i + 1)%16)){
 						return false;
 					}
 				}
@@ -241,7 +241,7 @@
 					}
 					for(let i = 0; i < 4; i++){
 						for(let j = 0; j < 4; j++){
-							drawTile(i, j, shuffledIDS[(i * 4 + j) % 16]);
+							drawTile(i, j, shuffledIDS[(i*4 + j)%16]);
 						}
 					}
 					let index;
@@ -281,7 +281,7 @@
 				isSolving = true;
 				let currentState = [];
 				for(let i = 0; i < 16; i++) {
-					let posId = ((i + 1) % 16).toString(16); 
+					let posId = ((i + 1)%16).toString(16); 
 					let val = document.getElementById(posId).innerHTML;
 					currentState.push(val === "" ? 0 : parseInt(val));
 				}
@@ -321,7 +321,7 @@
 						return;
 					}
 					let moveDir = moves[i];
-					let zeroIndex = r1 * 4 + c1;
+					let zeroIndex = r1*4 + c1;
 					let targetIndex;
 					if (moveDir === "U"){
 						targetIndex = zeroIndex - 4;
@@ -335,11 +335,11 @@
 					if (moveDir === "R"){
 						targetIndex = zeroIndex + 1;
 					}
-					let targetPosId = ((targetIndex + 1) % 16).toString(16);
-					let zeroPosId = ((zeroIndex + 1) % 16).toString(16);
+					let targetPosId = ((targetIndex + 1)%16).toString(16);
+					let zeroPosId = ((zeroIndex + 1)%16).toString(16);
 					swapTiles(targetPosId, zeroPosId);
-					r1 = Math.floor(targetIndex / 4);
-					c1 = targetIndex % 4;
+					r1 = Math.floor(targetIndex/4);
+					c1 = targetIndex%4;
 					counterMoves++;
 					if (isGameFinished()) {
 						gameFinished = true;
@@ -383,7 +383,7 @@
 				let min = Infinity;
 				let moves = [];
 				let r = Math.floor(zeroIdx / 4);
-				let c = zeroIdx % 4;
+				let c = zeroIdx%4;
 				if (r > 0){
 					moves.push({ dir: "U", idx: zeroIdx - 4 });
 				}
@@ -436,15 +436,15 @@
 					if (val === 0){
 						continue;
 					}
-					let r = Math.floor(i / 4);
-					let c = i % 4;
-					let tr = Math.floor((val - 1) / 4);
-					let tc = (val - 1) % 4;
+					let r = Math.floor(i/4);
+					let c = i%4;
+					let tr = Math.floor((val - 1)/4);
+					let tc = (val - 1)%4;
 					md += Math.abs(r - tr) + Math.abs(c - tc);
 					if (r === tr) {
-						for (let k = i + 1; k < r * 4 + 4; k++) {
+						for (let k = i + 1; k < r*4 + 4; k++) {
 							let valK = state[k];
-							if (valK !== 0 && Math.floor((valK - 1) / 4) === r && val > valK) {
+							if (valK !== 0 && Math.floor((valK - 1)/4) === r && val > valK) {
 								lc += 2;
 							}
 						}
@@ -452,7 +452,7 @@
 					if (c === tc) {
 						for (let k = i + 4; k < 16; k += 4) {
 							let valK = state[k];
-							if (valK !== 0 && (valK - 1) % 4 === c && val > valK) {
+							if (valK !== 0 && (valK - 1)%4 === c && val > valK) {
 								lc += 2;
 							}
 						}
