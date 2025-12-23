@@ -1,167 +1,217 @@
 <!DOCTYPE HTML>
 <html lang="en"><!--G02#003 - Marco - Game of Life-->
-
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta http-equiv="X-UA-Compatible" content="ie=edge">
 		<title>Conway's Game of Life</title>
-		<meta charset="utf-8">
+		<style>
+			body{
+				background: #9999ff;
+				text-align: center;
+				font-family: sans-serif;
+			}
+			canvas{
+				border: 2px solid #0000ff;
+				cursor: crosshair;
+				display: block;
+				margin: 10px auto;
+				background: #000;
+			}
+			button, select{
+				padding: 8px 12px;
+				font-weight: bold;
+				cursor: pointer;
+				margin: 5px;
+				border-radius: 5px;
+			}
+			.controls{
+				background: rgba(255,255,255,0.3);
+				padding: 15px;
+				display: inline-block;
+				border-radius: 10px;
+				border: 1px solid #777;
+			}
+			.speed-box{
+				margin-top: 10px;
+				font-weight: bold;
+			}
+			input[type=range]{
+				vertical-align: middle;
+				cursor: pointer;
+			}
+		</style>
 	</head>
-	
 	<body>
-	
-		<canvas id="universe" onclick="select()" onkeypress="select()">
-			Upgrade Browser
-		</canvas>
-		
+
+		<canvas id="universe">Aggiorna il browser</canvas>
+
+		<div class="controls">
+			<button type="button" onclick="refreshPage()">Reset</button>
+			<button type="button" onclick="nextGeneration()">Next</button>
+			<button type="button" id="life" onclick="live()">Start</button>
+
+			<select id="patterns" onchange="loadPattern(this.value)">
+				<option value="">-- Carica Schema --</option>
+				<option value="glider">Glider</option>
+				<option value="exploder">Small Exploder</option>
+				<option value="row">10 Cell Row</option>
+			</select>
+
+			<div class="speed-box">
+				Lento <input type="range" id="speedSlider" min="10" max="1000" value="200" step="10" oninput="updateSpeed(this.value)"> Veloce
+				<span id="speedVal">200</span> ms
+			</div>
+		</div>
+
 		<script>
 			//I don't like it too much...
-			window.onload = drawUniverse;
-			const SIDE = 20;
-			const GRID_THICKNESS = 2;
-			const ROW_NUMBER = 64;
-			const COLUMN_NUMBER = 32;
-			const GRID_COLOR = "#0000ff"
-			const ALIVE_COLOR = "#00ff00"
-			const DEAD_COLOR = "#000000"
-			const MILLISECONDS = 1000;
-			let cursorX;
-			let cursorY;
+			const SIDE = 15;
+			const GRID_THICKNESS = 1;
+			const ROW_NUMBER = 50;
+			const COLUMN_NUMBER = 40;
+			const ALIVE_COLOR = "#00ff00";
+			const DEAD_COLOR = "#000000";
+
 			let grid = [];
 			let dummyGrid = [];
 			let goOnAlone = false;
 			let nIntervId;
+			let currentInterval = 200;
+			let canvas, context;
+
+			window.onload = function(){
+				canvas = document.getElementById("universe");
+				context = canvas.getContext("2d");
+				canvas.addEventListener("mousedown", select);
+				drawUniverse();
+			};
+
+			function updateSpeed(val){
+				currentInterval = 1010 - val; 
+				document.getElementById("speedVal").innerText = currentInterval;
+
+				if(goOnAlone){
+					clearInterval(nIntervId);
+					nIntervId = setInterval(nextGeneration, currentInterval);
+				}
+			}
 
 			function drawSquare(row, column, color){
-				if(universe && universe.getContext("2d")){
-					let context = universe.getContext("2d");
-					context.fillStyle = color;
-					context.fillRect((SIDE*row)+((row + 1)*GRID_THICKNESS), (SIDE*column)+((column + 1)*GRID_THICKNESS), SIDE, SIDE);
-				}
+				context.fillStyle = color;
+				context.fillRect(
+					(row*(SIDE + GRID_THICKNESS)) + GRID_THICKNESS,
+					(column*(SIDE + GRID_THICKNESS)) + GRID_THICKNESS,
+					SIDE, SIDE
+				);
 			}
 
 			function drawUniverse(){
-				document.body.style.background = "#9999ff";
-				for(let i = 0; i < ROW_NUMBER + 2; i++){
+				canvas.width =(SIDE*ROW_NUMBER) +((ROW_NUMBER + 1)*GRID_THICKNESS);
+				canvas.height =(SIDE*COLUMN_NUMBER) +((COLUMN_NUMBER + 1)*GRID_THICKNESS);
+				context.fillStyle = "#333";
+				context.fillRect(0, 0, canvas.width, canvas.height);
+
+				for(let i = 0; i < ROW_NUMBER; i++){
 					grid[i] = [];
 					dummyGrid[i] = [];
-					for(let j = 0; j < COLUMN_NUMBER + 2; j++){
-						grid[i][j] = {alive: false};
-						dummyGrid[i][j] = {alive: false};
-					}
-				}
-				document.onmousemove = function(e){
-					cursorX = e.pageX;
-					cursorY = e.pageY;
-				}
-				let universe = document.getElementById("universe");
-				universe.width = getWidth();
-				universe.height = getHeight();
-				if(universe && universe.getContext("2d")){
-					let context = universe.getContext("2d");
-					context.fillStyle = GRID_COLOR;
-					context.fillRect(0, 0, getWidth(), getHeight());
-				}
-				for(let row = 0; row < ROW_NUMBER; row++){
-					for(let column = 0; column < COLUMN_NUMBER; column++){
-						drawSquare(row, column, DEAD_COLOR);
+					for(let j = 0; j < COLUMN_NUMBER; j++){
+						grid[i][j] = false;
+						dummyGrid[i][j] = false;
+						drawSquare(i, j, DEAD_COLOR);
 					}
 				}
 			}
 
-			function select(){
-				//I ADDED A PATCH TO FIX A POINTING ERROR. I DON'T KNOW WHY IT WAS THERE AND WHY "7" IS THE RIGHT VALUE.
-				let row = parseInt((cursorX - GRID_THICKNESS - 7)/(SIDE + GRID_THICKNESS));
-				let column = parseInt((cursorY - GRID_THICKNESS - 7)/(SIDE + GRID_THICKNESS));
-				grid[row + 1][column + 1].alive = !grid[row + 1][column + 1].alive;
-				drawSquare(row, column, (grid[row + 1][column + 1].alive ? ALIVE_COLOR : DEAD_COLOR));
+			function loadPattern(type){
+				if(!type) return;
+				refreshPage();
+				const midX = Math.floor(ROW_NUMBER/2);
+				const midY = Math.floor(COLUMN_NUMBER/2);
+				let coords = [];
+				if(type === "glider"){
+					coords = [[0,1], [1,2], [2,0], [2,1], [2,2]];
+				}else if(type === "exploder"){
+					coords = [[0,0], [0,1], [0,2], [-1,1], [1,1], [0,3], [0,4]];
+				}else if(type === "row"){
+					coords = [[-4,0], [-3,0], [-2,0], [-1,0], [0,0], [1,0], [2,0], [3,0], [4,0], [5,0]];
+				}
+
+				coords.forEach(([dx, dy]) => {
+					let x = midX + dx; let y = midY + dy;
+					if(x >= 0 && x < ROW_NUMBER && y >= 0 && y < COLUMN_NUMBER){
+						grid[x][y] = true;
+						drawSquare(x, y, ALIVE_COLOR);
+					}
+				});
+				document.getElementById("patterns").value = ""; 
 			}
 
-			function refreshPage(){
-				drawUniverse();
-				document.getElementById("life").innerHTML = "Start";
-				clearInterval(nIntervId);
-				nIntervId = null;				
-				goOnAlone = false;
-			}
-
-			function getWidth(){
-				return ((SIDE*ROW_NUMBER) + ((ROW_NUMBER + 1)*GRID_THICKNESS));
-			}
-
-			function getHeight(){
-				return ((SIDE*COLUMN_NUMBER) + ((COLUMN_NUMBER + 1)*GRID_THICKNESS));
+			function select(e){
+				const rect = canvas.getBoundingClientRect();
+				const x = e.clientX - rect.left;
+				const y = e.clientY - rect.top;
+				let row = Math.floor(x/(SIDE + GRID_THICKNESS));
+				let col = Math.floor(y/(SIDE + GRID_THICKNESS));
+				if(row >= 0 && row < ROW_NUMBER && col >= 0 && col < COLUMN_NUMBER){
+					grid[row][col] = !grid[row][col];
+					drawSquare(row, col, grid[row][col] ? ALIVE_COLOR : DEAD_COLOR);
+				}
 			}
 
 			function nextGeneration(){
-				for(let i = 1; i <= ROW_NUMBER; i++){
-					for(let j = 1; j <= COLUMN_NUMBER; j++){
-						let counter = -(grid[i][j].alive ? 1 : 0);
-						for(let s = -1; s <= 1; s++){
-							for(let t = -1; t <= 1; t++){
-								counter += (grid[i + s][j + t].alive ? 1 : 0);
-							}
-						}
-						if(grid[i][j].alive){
-							if(counter > 3){
-								dummyGrid[i][j].alive = false;
-							}else if(counter < 2){
-								dummyGrid[i][j].alive = false;
-							}else{
-								dummyGrid[i][j].alive = true;
-							}
+				for(let i = 0; i < ROW_NUMBER; i++){
+					for(let j = 0; j < COLUMN_NUMBER; j++){
+						let neighbors = countNeighbors(i, j);
+						if(grid[i][j]){
+							dummyGrid[i][j] =(neighbors === 2 || neighbors === 3);
 						}else{
-							if(counter == 3){
-								dummyGrid[i][j].alive = true;
-							}else{
-								dummyGrid[i][j].alive = false;
-							}
+							dummyGrid[i][j] =(neighbors === 3);
 						}
 					}
 				}
-				for(let i = 0; i < ROW_NUMBER + 2; i++){
-					grid[i][0].alive = true;
-					grid[i][COLUMN_NUMBER + 1].alive = true;
-				}
-				for(let i = 0; i < COLUMN_NUMBER + 2; i++){
-					grid[0][i].alive = true;
-					grid[ROW_NUMBER + 1][i].alive = true;
-				}
-				for(let i = 0; i < ROW_NUMBER + 2; i++){
-					for(let j = 0; j < COLUMN_NUMBER + 2; j++){
-						grid[i][j].alive = dummyGrid[i][j].alive;
-					}
-				}
-				for(let i = 1; i <= ROW_NUMBER; i++){
-					for(let j = 1; j <= COLUMN_NUMBER; j++){
-						drawSquare(i - 1, j - 1, grid[i][j].alive ? ALIVE_COLOR : DEAD_COLOR);
+				for(let i = 0; i < ROW_NUMBER; i++){
+					for(let j = 0; j < COLUMN_NUMBER; j++){
+						grid[i][j] = dummyGrid[i][j];
+						drawSquare(i, j, grid[i][j] ? ALIVE_COLOR : DEAD_COLOR);
 					}
 				}
 			}
 
+			function countNeighbors(x, y){
+				let count = 0;
+				for(let i = -1; i <= 1; i++){
+					for(let j = -1; j <= 1; j++){
+						if(i === 0 && j === 0){
+							continue;
+						}
+						let r = x + i, c = y + j;
+						if(r >= 0 && r < ROW_NUMBER && c >= 0 && c < COLUMN_NUMBER && grid[r][c]){
+							count++;
+						}
+					}
+				}
+				return count;
+			}
+
 			function live(){
+				const btn = document.getElementById("life");
 				if(!goOnAlone){
 					goOnAlone = true;
-					nIntervId = setInterval(nextGeneration, MILLISECONDS);
-					document.getElementById("life").innerHTML = "Stop";
+					nIntervId = setInterval(nextGeneration, currentInterval);
+					btn.innerHTML = "Stop";
+					btn.style.backgroundColor = "#ff4444";
 				}else{
 					goOnAlone = false;
 					clearInterval(nIntervId);
-					nIntervId = null;
-					document.getElementById("life").innerHTML = "Start";
+					btn.innerHTML = "Start";
+					btn.style.backgroundColor = "";
 				}
 			}
+
+			function refreshPage(){
+				if(goOnAlone) live();
+				drawUniverse();
+			}
 		</script>
-		
-		<form action="#">
-		
-			<button type="button" id="refresh" onclick="refreshPage()">Reset</button>
-			<button type="button" id="next" onclick="nextGeneration()">Next</button>
-			<button type="button" id="life" onclick="live()">Start</button>
-		
-		</form>
-		
 	</body>
-	
 </html>

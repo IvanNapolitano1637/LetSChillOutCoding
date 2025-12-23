@@ -4,22 +4,21 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=1024">
 		<meta http-equiv="X-UA-Compatible" content="ie=edge">
-		<title id = "title">Clock</title>
+		<title id="title">Clock</title>
 		<style>
-			*, *::after, *::before {
+			*, *::after, *::before{
 				box-sizing: border-box;
 				font-family: Gotham Rounded, sans-serif;
 			}
-
-			body {
+			body{
 				display: flex;
 				justify-content: center;
 				align-items: center;
 				min-height: 100vh;
 				overflow: hidden;
+				transition: background-color 2s ease-in-out;
 			}
-
-			.clock {
+			.clock{
 				width: 600px;
 				height: 600px;
 				background-color: rgba(255, 255, 255, .8);
@@ -27,8 +26,7 @@
 				border: 2px solid black;
 				position: relative;
 			}
-
-			.clock .number {
+			.clock .number{
 				--rotation: 0;
 				position: absolute;
 				width: 100%;
@@ -37,8 +35,7 @@
 				transform: rotate(var(--rotation));
 				font-size: 2.5rem;
 			}
-
-			.clock .hand {
+			.clock .hand{
 				--rotation: 0;
 				position: absolute;
 				bottom: 50%;
@@ -48,10 +45,9 @@
 				border-top-right-radius: 10px;
 				transform-origin: bottom;
 				z-index: 10;
-				transform: translateX(-50%) rotate(calc(var(--rotation) * 1deg));
+				transform: translateX(-50%) rotate(calc(var(--rotation)*1deg));
 			}
-
-			.clock::after {
+			.clock::after{
 				content: '';
 				position: absolute;
 				background-color: black;
@@ -63,20 +59,17 @@
 				transform: translate(-50%, -50%);
 				border-radius: 50%;
 			}
-
-			.clock .hand.second {
+			.clock .hand.second{
 				width: 3px;
 				height: 45%;
 				background-color: red;
 			}
-
-			.clock .hand.minute {
+			.clock .hand.minute{
 				width: 7px;
 				height: 40%;
 				background-color: black;
 			}
-
-			.clock .hand.hour {
+			.clock .hand.hour{
 				width: 10px;
 				height: 35%;
 				background-color: black;
@@ -85,117 +78,118 @@
 	</head>
 	<body>
 		<div id="firstDiv">
-			<div id = "clockDial" class="clock">
+			<div id="clockDial" class="clock">
 				<div class="hand hour" data-hour-hand></div>
 				<div class="hand minute" data-minute-hand></div>
 				<div class="hand second" data-second-hand></div>
 			</div>
-			<form action="#">
+			<form action="#" id="controlsForm">
 				<br>
 				<button type="button" id="btnClockDirection" onclick="changeClockDirection()">Turn to clockwise</button><br><br>
-				<button type="button" id="btnColors" onclick="changeColorsRules()">Colors' rule: first</button><br><br>
+				<button type="button" id="btnColors" onclick="changeColorsRules()">Colors' rule: random</button><br><br>
 				<button type="button" id="btnMidnightNumber" onclick="changeMidnightNumber()">Change midnight number</button>
 			</form>
 		</div>
 		<script>
 			//Original page I copied from: https://www.youtube.com/watch?v=Ki0XXrlKlHY&t=7s&ab_channel=WebDevSimplified
-			setInterval(setClock, 1000);
-			let choice = 8;//{1;2;3;4;5;6;7;8}
+			setInterval(setClock, 200);
+			let choice = 9; 
 			let clockwise = false;
 			let fromZero = true;
-			let done = false;
-			let color;
 			let settledColor = false;
- 			const FLAG = true;
+			const FLAG = true; 
 			const ANALOG = true;
+			const HOUR_HAND = document.querySelector('[data-hour-hand]');
+			const MINUTE_HAND = document.querySelector('[data-minute-hand]');
+			const SECOND_HAND = document.querySelector('[data-second-hand]');
+			const NIGHT_COLOR = "#1a1a2e";
+			const SUNRISE_COLOR = "#ff9e5e";
+			const DAY_COLOR = "#87ceeb";
+			const SUNSET_COLOR = "#e66465";
 
-			function begin(){
-				document.getElementById("clockDial").innerHTML = "";
-				document.getElementById("clockDial").classList.add("clock");
-				document.getElementById("clockDial").innerHTML += "<div class=\"hand hour\" data-hour-hand></div>";
-				document.getElementById("clockDial").innerHTML += "<div class=\"hand minute\" data-minute-hand></div>";
-				document.getElementById("clockDial").innerHTML += "<div class=\"hand second\" data-second-hand></div>";
+			function drawNumbers(){
+				const oldNumbers = document.querySelectorAll('.number');
+				oldNumbers.forEach(n => n.remove());
+
+				const dial = document.getElementById("clockDial");
+				for(let i = 0; i < 24; i++){
+					let val = fromZero ? i :(i === 0 ? 24 : i);
+					let degrees = clockwise ?(15*i) :(360 - 15*i);
+
+					let numDiv = document.createElement('div');
+					numDiv.className = 'number';
+					numDiv.style.setProperty('--rotation', degrees + 'deg');
+
+					if(i%2 === 0){
+						numDiv.innerHTML = val + "<br>" +((i/2*5)%60);
+					}else{
+						numDiv.innerHTML = val;
+					}
+					dial.appendChild(numDiv);
+				}
+				document.getElementById("title").innerHTML = clockwise ? "24h clock" : "Reversed 24h clock";
 			}
 
-			function setClock() {
+			function setClock(){
 				const currentDate = new Date();
-				const secondsRatio = currentDate.getSeconds() / 60;
-				const minutesRatio = (secondsRatio*(ANALOG ? 1 : 0) + currentDate.getMinutes()) / 60;
-				const hoursRatio = (minutesRatio*(ANALOG ? 1 : 0) + currentDate.getHours()) / 24;
+				const secondsRatio = currentDate.getSeconds()/60;
+				const minutesRatio =(secondsRatio*(ANALOG ? 1 : 0) + currentDate.getMinutes())/60;
+				const hoursRatio =(minutesRatio*(ANALOG ? 1 : 0) + currentDate.getHours())/24;
+
+				setRotation(SECOND_HAND, secondsRatio);
+				setRotation(MINUTE_HAND, minutesRatio);
+				setRotation(HOUR_HAND, hoursRatio);
+
 				const colors_1 = ['#f00', '#ff0', '#0f0', '#0ff', '#00f', '#f0f'];
 				const colors_2 = ['#f00', '#f30', '#f60', '#f90', '#fc0', '#ff0', '#cf0', '#9f0', '#6f0', '#3f0', '#0f0', '#0f3', '#0f6', '#0f9', '#0fc', '#0ff', '#0cf', '#09f', '#06f', '#03f', '#00f', '#30f', '#60f', '#90f', '#c0f', '#f0f', '#f0c', '#f09', '#f06', '#f03'];
 				const colors_3 = ['#000', '#a60', '#f00', '#f90', '#ff0', '#0f0', '#00f', '#b0b' , '#777', '#fff'];
-				setRotation(document.querySelector('[data-second-hand]'), secondsRatio);
-				setRotation(document.querySelector('[data-minute-hand]'), minutesRatio);
-				setRotation(document.querySelector('[data-hour-hand]'), hoursRatio);
-				if(!done){
-					for(let i = 0 + (fromZero? 0 : 1); i < 24 + (fromZero ? 0 : 1); i++){
-						let degrees = clockwise ? (15*i) : (360-15*i);
-						if(i%2==0){
-							document.getElementById("clockDial").innerHTML += ("<div id=\"number" + i + "\" class=\"number\"style = \"--rotation: " + degrees + "deg;\">" + i + "<br>" + ((i/2*5)%60) + "</div>");
-						}else{
-							document.getElementById("clockDial").innerHTML += ("<div id=\"number" + i + "\" class=\"number\"style = \"--rotation: " + degrees + "deg;\">" + i + "</div>");
-						}
-					}
-					document.getElementById("title").innerHTML = clockwise ? "24h clock" : "Reversed 24h clock";
-					done = true;
-				}
-				if(choice == 1){
-					document.body.style.backgroundColor = colors_1[(currentDate.getHours())%6];
-				}else if(choice == 2){
-					document.body.style.backgroundColor = colors_1[(currentDate.getSeconds())%6];
-				}else if(choice == 3){
-					document.body.style.backgroundColor = colors_2[(currentDate.getSeconds())%30];
-				}else if(choice == 4){
-					document.body.style.backgroundColor = colors_3[(currentDate.getSeconds())%10];
-				}else if(choice == 5){
-					document.body.style.backgroundColor = colors_3[(currentDate.getSeconds())/6];
-				}else if(choice == 6){
-					document.body.style.backgroundColor = colors_3[parseInt(currentDate.getMinutes()/6)];
-				}else if(choice == 7){
-					document.body.style.backgroundColor = colors_3[parseInt(((currentDate.getHours()*3600) + (currentDate.getMinutes()*60) + (currentDate.getSeconds()))/8640)];
-				}else if(choice == 8){
-					if(!settledColor){
-						settledColor = true;
-						document.body.style.backgroundColor = "#" + [...Array(6)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
-					}
-				}
+
+				if(choice === 1) document.body.style.backgroundColor = colors_1[currentDate.getHours()%6];
+				else if(choice === 2) document.body.style.backgroundColor = colors_1[currentDate.getSeconds()%6];
+				else if(choice === 3) document.body.style.backgroundColor = colors_2[currentDate.getSeconds()%30];
+				else if(choice === 4) document.body.style.backgroundColor = colors_3[currentDate.getSeconds()%10];
+				else if(choice === 5) document.body.style.backgroundColor = colors_3[Math.floor(currentDate.getSeconds()/6)];
+				else if(choice === 6) document.body.style.backgroundColor = colors_3[Math.floor(currentDate.getMinutes()/6)];
+				else if(choice === 7) document.body.style.backgroundColor = colors_3[Math.floor(((currentDate.getHours()*3600) +(currentDate.getMinutes()*60) +(currentDate.getSeconds()))/8640)];
+				else if(choice === 8 && !settledColor){
+					settledColor = true;
+					document.body.style.backgroundColor = "#" + [...Array(6)].map(() => Math.floor(Math.random()*16).toString(16)).join('');
+				}else if(choice === 9){
+                    const hour = currentDate.getHours();
+					document.body.style.backgroundColor =(hour >= 20 || hour < 5) ? NIGHT_COLOR :(hour >= 5 && hour < 8) ? SUNRISE_COLOR :(hour >= 8 && hour < 17) ? DAY_COLOR : SUNSET_COLOR;
+                }
+
 				if(FLAG){
-					document.getElementById("btnClockDirection").hidden += "hidden";
-					document.getElementById("btnColors").hidden += "hidden";
-					document.getElementById("btnMidnightNumber").hidden += "hidden";
+					document.getElementById("controlsForm").style.display = "none";
 					document.getElementById("clockDial").onclick = changeClockDirection;
 				}
 			}
 
-			function setRotation(element, rotationRatio) {
-				element.style.setProperty('--rotation', clockwise ? (rotationRatio * 360) : (360 - rotationRatio * 360))
+			function setRotation(element, rotationRatio){
+				let deg = clockwise ?(rotationRatio*360) :(360 - rotationRatio*360);
+				element.style.setProperty('--rotation', deg);
 			}
 
-			function changeColorsRules() {
-				choice = choice == 1 ? 2 : choice == 2 ? 3 : 1;
-				document.getElementById("btnColors").textContent = "Colors' rule: "+(choice == 1 ? "First" : choice == 2 ? "Second" : "Third");
+			function changeColorsRules(){
+				choice = choice >= 9 ? 1 : choice + 1;
+				settledColor = false;
+				const labels = ["", "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth"];
+				document.getElementById("btnColors").textContent = "Colors' rule: " + labels[choice];
 			}
 
-			function changeClockDirection() {
-				begin();
-				done = false;
-				document.getElementById("btnClockDirection").textContent = clockwise ? "Turn to clockwise" : "Turn to reversed clockwise";
-				document.getElementById("title").textContent = clockwise ? "24h clock" : "Reversed 24h clock";
+			function changeClockDirection(){
 				clockwise = !clockwise;
-				setClock();
+				document.getElementById("btnClockDirection").textContent = clockwise ? "Turn to reversed clockwise" : "Turn to clockwise";
+				drawNumbers();
 			}
 
-			function changeMidnightNumber() {
-				done = false;
-				document.getElementById("clockDial").innerHTML = "";
-				begin();
+			function changeMidnightNumber(){
 				fromZero = !fromZero;
-				setClock();
+				drawNumbers();
 			}
 
-			setClock()
+			drawNumbers();
+			setClock();
 		</script>
-		<br>
 	</body>
 </html>

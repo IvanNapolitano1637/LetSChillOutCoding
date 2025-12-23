@@ -3,226 +3,166 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta http-equiv="X-UA-Compatible" content="ie=edge">
 		<title>Colors</title>
+		<style>
+			body{
+				margin: 0;
+				transition: background-color 0.2s;
+				min-height: 100vh;
+			}
+			#optionZone{
+				padding: 20px;
+				border-bottom: 2px solid #333;
+			}
+			.color-row{
+				padding: 10px;
+				margin: 5px 0;
+				border-radius: 8px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				flex-wrap: wrap;
+			}
+			output{
+				display: inline-block;
+				width: 25px;
+				border-radius: 3px;
+				font-family: monospace;
+				margin: 0 8px 0 2px;
+			}
+			button{
+				cursor: pointer;
+				padding: 5px 10px;
+				font-weight: bold;
+			}
+			.nav-buttons button{
+				width: 120px;
+				height: 40px;
+				font-size: 1.1em;
+				margin: 5px;
+			}
+		</style>
 	</head>
 	<body>
 		<div id="optionZone" style="background-color:#FFFFFF; text-align:center;">
-			<br><b><h1 id="valueHexCode" style="background: #FFFF00; text-align:center;">Background page color hex code: #FFFFFF</h1></b>
-			<div style="background-color: #FF0000; text-align: center;">
+			<h1 id="valueHexCode" style="background: #FFFF00; padding: 10px; margin: 0 0 20px 0;">Background page color hex code: #FFFFFF</h1>
+
+			<div class="color-row" style="background-color: #FF0000;">
 				<button type="button" onclick="changeColor(0,-1)">(-)</button>
-				<input type="radio" id="R00" name="Red" value="00"/><output style="background: #FDCE98; margin-right: 8px;"><b>00</b></output>
-				<input type="radio" id="R11" name="Red" value="11"/><output style="background: #FDCE98; margin-right: 8px;"><b>11</b></output>
-				<input type="radio" id="R22" name="Red" value="22"/><output style="background: #FDCE98; margin-right: 8px;"><b>22</b></output>
-				<input type="radio" id="R33" name="Red" value="33"/><output style="background: #FDCE98; margin-right: 8px;"><b>33</b></output>
-				<input type="radio" id="R44" name="Red" value="44"/><output style="background: #FDCE98; margin-right: 8px;"><b>44</b></output>
-				<input type="radio" id="R55" name="Red" value="55"/><output style="background: #FDCE98; margin-right: 8px;"><b>55</b></output>
-				<input type="radio" id="R66" name="Red" value="66"/><output style="background: #FDCE98; margin-right: 8px;"><b>66</b></output>
-				<input type="radio" id="R77" name="Red" value="77"/><output style="background: #FDCE98; margin-right: 8px;"><b>77</b></output>
-				<input type="radio" id="R88" name="Red" value="88"/><output style="background: #FDCE98; margin-right: 8px;"><b>88</b></output>
-				<input type="radio" id="R99" name="Red" value="99"/><output style="background: #FDCE98; margin-right: 8px;"><b>99</b></output>
-				<input type="radio" id="Raa" name="Red" value="aa"/><output style="background: #FDCE98; margin-right: 8px;"><b>AA</b></output>
-				<input type="radio" id="Rbb" name="Red" value="bb"/><output style="background: #FDCE98; margin-right: 8px;"><b>BB</b></output>
-				<input type="radio" id="Rcc" name="Red" value="cc"/><output style="background: #FDCE98; margin-right: 8px;"><b>CC</b></output>
-				<input type="radio" id="Rdd" name="Red" value="dd"/><output style="background: #FDCE98; margin-right: 8px;"><b>DD</b></output>
-				<input type="radio" id="Ree" name="Red" value="ee"/><output style="background: #FDCE98; margin-right: 8px;"><b>EE</b></output>
-				<input type="radio" id="Rff" name="Red" value="ff" checked="yes"/><output style="background: #FDCE98"><b>FF</b></output>
+				<script>
+					const vals = ['00','11','22','33','44','55','66','77','88','99','aa','bb','cc','dd','ee','ff'];
+					vals.forEach(v => {
+						let chk = v === 'ff' ? 'checked' : '';
+						document.write(`<input type="radio" name="Red" value="${v}" ${chk} onchange="changeBackgroundColor()"><output style="background:#FDCE98"><b>${v.toUpperCase()}</b></output>`);
+					});
+				</script>
 				<button type="button" onclick="changeColor(0,1)">(+)</button>
 			</div>
-			<br>
-			<div style="background-color: #00FF00; text-align: center;">
+
+			<div class="color-row" style="background-color: #00FF00;">
 				<button type="button" onclick="changeColor(1,-1)">(-)</button>
-				<input type="radio" id="G00" name="Green" value="00"/><output style="background: #FFF500; margin-right: 8px;"><b>00</b></output>
-				<input type="radio" id="G11" name="Green" value="11"/><output style="background: #FFF500; margin-right: 8px;"><b>11</b></output>
-				<input type="radio" id="G22" name="Green" value="22"/><output style="background: #FFF500; margin-right: 8px;"><b>22</b></output>
-				<input type="radio" id="G33" name="Green" value="33"/><output style="background: #FFF500; margin-right: 8px;"><b>33</b></output>
-				<input type="radio" id="G44" name="Green" value="44"/><output style="background: #FFF500; margin-right: 8px;"><b>44</b></output>
-				<input type="radio" id="G55" name="Green" value="55"/><output style="background: #FFF500; margin-right: 8px;"><b>55</b></output>
-				<input type="radio" id="G66" name="Green" value="66"/><output style="background: #FFF500; margin-right: 8px;"><b>66</b></output>
-				<input type="radio" id="G77" name="Green" value="77"/><output style="background: #FFF500; margin-right: 8px;"><b>77</b></output>
-				<input type="radio" id="G88" name="Green" value="88"/><output style="background: #FFF500; margin-right: 8px;"><b>88</b></output>
-				<input type="radio" id="G99" name="Green" value="99"/><output style="background: #FFF500; margin-right: 8px;"><b>99</b></output>
-				<input type="radio" id="Gaa" name="Green" value="aa"/><output style="background: #FFF500; margin-right: 8px;"><b>AA</b></output>
-				<input type="radio" id="Gbb" name="Green" value="bb"/><output style="background: #FFF500; margin-right: 8px;"><b>BB</b></output>
-				<input type="radio" id="Gcc" name="Green" value="cc"/><output style="background: #FFF500; margin-right: 8px;"><b>CC</b></output>
-				<input type="radio" id="Gdd" name="Green" value="dd"/><output style="background: #FFF500; margin-right: 8px;"><b>DD</b></output>
-				<input type="radio" id="Gee" name="Green" value="ee"/><output style="background: #FFF500; margin-right: 8px;"><b>FF</b></output>
-				<input type="radio" id="Gff" name="Green" value="ff" checked="yes"/><output style="background: #FFF500;"><b>FF</b></output>
+				<script>
+					vals.forEach(v => {
+						let chk = v === 'ff' ? 'checked' : '';
+						document.write(`<input type="radio" name="Green" value="${v}" ${chk} onchange="changeBackgroundColor()"><output style="background:#FFF500"><b>${v.toUpperCase()}</b></output>`);
+					});
+				</script>
 				<button type="button" onclick="changeColor(1,1)">(+)</button>
 			</div>
-			<br>
-			<div style="background-color: #0000FF; text-align: center;">
+
+			<div class="color-row" style="background-color: #0000FF;">
 				<button type="button" onclick="changeColor(2,-1)">(-)</button>
-				<input type="radio" id="B00" name="Blue" value="00"/><output style="background: #56DDFF; margin-right: 8px;"><b>00</b></output>
-				<input type="radio" id="B11" name="Blue" value="11"/><output style="background: #56DDFF; margin-right: 8px;"><b>11</b></output>
-				<input type="radio" id="B22" name="Blue" value="22"/><output style="background: #56DDFF; margin-right: 8px;"><b>22</b></output>
-				<input type="radio" id="B33" name="Blue" value="33"/><output style="background: #56DDFF; margin-right: 8px;"><b>33</b></output>
-				<input type="radio" id="B44" name="Blue" value="44"/><output style="background: #56DDFF; margin-right: 8px;"><b>44</b></output>
-				<input type="radio" id="B55" name="Blue" value="55"/><output style="background: #56DDFF; margin-right: 8px;"><b>55</b></output>
-				<input type="radio" id="B66" name="Blue" value="66"/><output style="background: #56DDFF; margin-right: 8px;"><b>66</b></output>
-				<input type="radio" id="B77" name="Blue" value="77"/><output style="background: #56DDFF; margin-right: 8px;"><b>77</b></output>
-				<input type="radio" id="B88" name="Blue" value="88"/><output style="background: #56DDFF; margin-right: 8px;"><b>88</b></output>
-				<input type="radio" id="B99" name="Blue" value="99"/><output style="background: #56DDFF; margin-right: 8px;"><b>99</b></output>
-				<input type="radio" id="Baa" name="Blue" value="aa"/><output style="background: #56DDFF; margin-right: 8px;"><b>AA</b></output>
-				<input type="radio" id="Bbb" name="Blue" value="bb"/><output style="background: #56DDFF; margin-right: 8px;"><b>BB</b></output>
-				<input type="radio" id="Bcc" name="Blue" value="cc"/><output style="background: #56DDFF; margin-right: 8px;"><b>CC</b></output>
-				<input type="radio" id="Bdd" name="Blue" value="dd"/><output style="background: #56DDFF; margin-right: 8px;"><b>DD</b></output>
-				<input type="radio" id="Bee" name="Blue" value="ee"/><output style="background: #56DDFF; margin-right: 8px;"><b>EE</b></output>
-				<input type="radio" id="Bff" name="Blue" value="ff" checked="yes"/><output style="background: #56DDFF"><b>FF</b></output>
+				<script>
+					vals.forEach(v => {
+						let chk = v === 'ff' ? 'checked' : '';
+						document.write(`<input type="radio" name="Blue" value="${v}" ${chk} onchange="changeBackgroundColor()"><output style="background:#56DDFF"><b>${v.toUpperCase()}</b></output>`);
+					});
+				</script>
 				<button type="button" onclick="changeColor(2,1)">(+)</button>
 			</div>
 		</div>
-		<br><br>
-		<div style="text-align: center">
-			<button type="button" onclick="color(0,0,0)" style="width: 100px; height: 30px; font-size:120%;">Black</button>
-			<button type="button" onclick="color(15,15,15)" style="width: 100px; height: 30px; font-size:120%;">White</button>
+
+		<div class="nav-buttons" style="text-align: center; padding: 20px;">
+			<button type="button" onclick="color(0,0,0)">Black</button>
+			<button type="button" onclick="color(15,15,15)">White</button><br>
+			<button type="button" onclick="color(15,0,0)">Red</button>
+			<button type="button" onclick="color(0,15,0)">Green</button>
+			<button type="button" onclick="color(0,0,15)">Blue</button><br>
+			<button type="button" onclick="color(0,15,15)">Cyan</button>
+			<button type="button" onclick="color(15,0,15)">Magenta</button>
+			<button type="button" onclick="color(15,15,0)">Yellow</button><br>
+			<button type="button" onclick="darkerAll()">Darker</button>
+			<button type="button" onclick="brighterAll()">Brighter</button><br>
+			<button type="button" onclick="random()">Random</button>
 		</div>
-		<br>
-		<div style="text-align: center">
-			<button type="button" onclick="color(15,0,0)" style="width: 100px; height: 30px; font-size:120%;">Red</button>
-			<button type="button" onclick="color(0,15,0)" style="width: 100px; height: 30px; font-size:120%;">Green</button>
-			<button type="button" onclick="color(0,0,15)" style="width: 100px; height: 30px; font-size:120%;">Blue</button>
-		</div>
-		<br>
-		<div style="text-align: center">
-			<button type="button" onclick="color(0,15,15)" style="width: 100px; height: 30px; font-size:120%;">Cyan</button>
-			<button type="button" onclick="color(15,0,15)" style="width: 100px; height: 30px; font-size:120%;">Magenta</button>
-			<button type="button" onclick="color(15,15,0)" style="width: 100px; height: 30px; font-size:120%;">Yellow</button>
-		</div>
-		<br>
-		<div style="text-align: center">
-			<button type="button" onclick="darkerAll()" style="width: 100px; height: 30px; font-size:120%;">Darker</button>
-			<button type="button" onclick="brighterAll()" style="width: 100px; height: 30px; font-size:120%;">Brighter</button>
-		</div>
-		<br>
-		<div style="text-align: center">
-			<button type="button" onclick="random()" style="width: 100px; height: 30px; font-size:120%;">Random</button>
-		</div>
-	</body>
+
 	<script>
-		const CHOICE = !true;
 		const basicColors = ['Red', 'Green', 'Blue'];
 
 		function getColor(){
-			let backgroundColor = "#";
-			for(let i = 0; i < basicColors.length; i++){
-				let ele = document.getElementsByName(basicColors[i]);
-				for(let j = 0; j < ele.length; j++){
-					if(ele[j].checked){
-						backgroundColor += ele[j].value;
-					}
-				}
-			}
-			return backgroundColor;
+			let hex = "#";
+			basicColors.forEach(name => {
+				const active = document.querySelector(`input[name="${name}"]:checked`);
+				hex += active ? active.value : "00";
+			});
+			return hex.toUpperCase();
 		}
 
 		function changeBackgroundColor(){
-			document.body.style.backgroundColor = getColor();
-			document.getElementById("valueHexCode").innerText = "Background page color hex code: " + getColor().toUpperCase();
-			document.getElementById("optionZone").style.backgroundColor = getColor();
+			const color = getColor();
+			document.body.style.backgroundColor = color;
+			document.getElementById("valueHexCode").innerText = "Background page color hex code: " + color;
+			document.getElementById("optionZone").style.backgroundColor = color;
 		}
 
-		for(let i = 0; i < basicColors.length; i++){
-			document.querySelectorAll('input[name=\'' + basicColors[i] + '\']').forEach((radio) => {
-				radio.addEventListener('click', (event) => {
-					if (event.target.checked) {
-						changeBackgroundColor();
-					}
-				});
-			});
-		}
-
-		function brighterBasic(basicColor){//MUTANDA
-			let flag = (document.getElementsByName(basicColors[basicColor])[document.getElementsByName(basicColors[basicColor]).length - 1].checked == false);
-			if(CHOICE){
-				flag = true;
-			}
-			if(flag){
-				let ele = document.getElementsByName(basicColors[basicColor]);
-				for(let j = ele.length - 2; j >= 0; j--){
-					if(ele[j].checked){
-						ele[j].checked = false;
-						ele[j + 1].checked = true;
-					}
+		function brighterBasic(idx){
+			let ele = document.getElementsByName(basicColors[idx]);
+			for(let j = ele.length - 2; j >= 0; j--){
+				if(ele[j].checked){
+					ele[j].checked = false;
+					ele[j + 1].checked = true;
+					break;
 				}
-				changeBackgroundColor();
 			}
-		}
-
-		function brighterAll(){
-			let flag = true;
-			for(let i = 0; i < basicColors.length; i++){
-				flag = flag && (document.getElementsByName(basicColors[i])[document.getElementsByName(basicColors[i]).length - 1].checked == false);
-			}
-			if(CHOICE){
-				flag = true;
-			}
-			if(flag){
-				brighterBasic(0);
-				brighterBasic(1);
-				brighterBasic(2);
-			}
-		}
-
-		function darkerBasic(basicColor){//MUTANDA
-			let flag = (document.getElementsByName(basicColors[basicColor])[0].checked == false);
-			if(CHOICE){
-				flag = true;
-			}
-			if(flag){
-				let ele = document.getElementsByName(basicColors[basicColor]);
-				for(let j = 1; j < ele.length; j++){
-					if(ele[j].checked){
-						ele[j].checked = false;
-						ele[j - 1].checked = true;
-					}
-				}
-				changeBackgroundColor();
-			}
-		}
-
-		function darkerAll(){
-			let flag = true;
-			for(let i = 0; i < basicColors.length; i++){
-				flag = flag && (document.getElementsByName(basicColors[i])[0].checked == false);
-			}
-			if(CHOICE){
-				flag = true;
-			}
-			if(flag){
-				darkerBasic(0);
-				darkerBasic(1);
-				darkerBasic(2);
-			}
-		}
-
-		function color(var1, var2, var3){
-			document.getElementsByName("Red")[var1].checked = true;
-			document.getElementsByName("Green")[var2].checked = true;
-			document.getElementsByName("Blue")[var3].checked = true;
-			document.getElementById("valueHexCode").innerText = "Background page components color: " + getColor().toUpperCase();
 			changeBackgroundColor();
 		}
 
-		function changeColor(basicColor, delta){
-			if(delta > 0){
-				brighterBasic(basicColor);
-			}
-			if(delta < 0){
-				darkerBasic(basicColor);
+		function darkerBasic(idx){
+			let ele = document.getElementsByName(basicColors[idx]);
+			for(let j = 1; j < ele.length; j++){
+				if(ele[j].checked){
+					ele[j].checked = false;
+					ele[j - 1].checked = true;
+					break;
+				}
 			}
 			changeBackgroundColor();
+		}
+
+		function brighterAll(){ [0,1,2].forEach(i => brighterBasic(i)); }
+		function darkerAll(){ [0,1,2].forEach(i => darkerBasic(i)); }
+
+		function color(r, g, b){
+			document.getElementsByName("Red")[r].checked = true;
+			document.getElementsByName("Green")[g].checked = true;
+			document.getElementsByName("Blue")[b].checked = true;
+			changeBackgroundColor();
+		}
+
+		function changeColor(idx, delta){
+			delta > 0 ? brighterBasic(idx) : darkerBasic(idx);
 		}
 
 		function random(){
-			for(let i = 0; i < basicColors.length; i++){
-				ele = document.getElementsByName(basicColors[i]);
-				value = parseInt(Math.random()*ele.length);
-				for(let j = 0; j < ele.length; j++){
-					ele[j].checked = (j == value);
-				}
-				changeBackgroundColor();
-			}
+			basicColors.forEach(name => {
+				let ele = document.getElementsByName(name);
+				let r = Math.floor(Math.random()*ele.length);
+				ele[r].checked = true;
+			});
+			changeBackgroundColor();
 		}
+
+		changeBackgroundColor();
 	</script>
+	</body>
 </html>

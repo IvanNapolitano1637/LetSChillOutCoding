@@ -1,146 +1,177 @@
 <!DOCTYPE html>
 <html lang="en"><!--L04#018 - Mario - Colors-->
-
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta http-equiv="X-UA-Compatible" content="ie=edge">
 		<title>Colors</title>
+		<style>
+			body{ 
+				transition: background-color 0.3s, color 0.3s; 
+				text-align: center; 
+				font-family: 'Segoe UI', Arial, sans-serif; 
+				padding: 20px; 
+				margin: 0;
+				min-height: 100vh;
+			}
+			#headerContainer{
+				padding: 15px;
+				display: inline-block;
+				border-radius: 10px;
+				margin-bottom: 20px;
+				transition: background 0.3s;
+			}
+			button{ 
+				cursor: pointer; 
+				margin: 4px; 
+				border: 2px solid rgba(0,0,0,0.1); 
+				border-radius: 8px;
+				font-weight: bold;
+				transition: all 0.2s;
+				height: 40px;
+			}
+			button:hover{
+				transform: translateY(-2px);
+				box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+			}
+			.num-label{
+				font-size: 0.9em;
+				padding: 2px 6px;
+				color: inherit;
+			}
+			.control-panel{
+				background: rgba(255, 255, 255, 0.2);
+				backdrop-filter: blur(5px);
+				padding: 20px;
+				border-radius: 15px;
+				display: inline-block;
+				border: 1px solid rgba(255,255,255,0.3);
+			}
+		</style>
 	</head>
+
 	<body>
+		<div id="headerContainer">
+			<b style="font-size: 1.5em;">HEX: <output id="valueHexCode">#FFFFFF</output></b>
+		</div>
+		<br>
+		<div id="mainPanel" class="control-panel">
+			</div>
 	</body>
+
 	<script>
 		const COMPONENTS = ['00', '3F', '7F', 'BF', 'FF'];
-		//const LABLES = ['0', '1', '2', '3', '4'];
-		const BUTTONS_COLORS = ['#FF0000', '#00FF00', '#0000FF'];
-        const BUTTON_WIDTH_1 = 70;
-        const BUTTON_WIDTH_2 = 175;
-        const BUTTON_WIDTH_3 = 350;
-		const CHOICE = !true;
-		let actualComponents = [COMPONENTS.length - 1, COMPONENTS.length - 1, COMPONENTS.length - 1];
-
-		function addSomeBr(howMuch){
-			for(let i = 0; i < howMuch; i++){
-				document.body.appendChild(document.createElement("br"));
-			}
-		}
-
-		function addButton(style, onClickFunction, title){
-			let element = document.createElement("button");
-			element.style = style;
-			element.addEventListener("click", onClickFunction);
-			element.innerHTML = title;
-			document.body.appendChild(element);
-		}
+		const BUTTONS_COLORS = ['#FF4136', '#2ECC40', '#0074D9'];
+		const BUTTON_WIDTH_1 = 65;
+		const BUTTON_WIDTH_2 = 165;
+		const BUTTON_WIDTH_3 = 340;
+		
+		let actualComponents = [4, 4, 4];
 
 		function fillBody(){
-			let element;
-			let innerElement;
-			document.body.innerHTML += "<b><output id=\"valueHexCode\" style=\"background: #FFFF00\">#FFFFFF</output></b>";
-			addSomeBr(3);
+			const panel = document.getElementById("mainPanel");
+
+			for(let i = 0; i < 3; i++){
+				let row = document.createElement("div");
+				for(let j = 0; j < 5; j++){
+					let btn = document.createElement("button");
+					btn.id = i + "-" + j;
+					btn.style.width = BUTTON_WIDTH_1 + "px";
+					btn.innerHTML = `<span class="num-label">${j}</span>`;
+					btn.onclick =() => setBackgroundColor(i, j);
+					row.appendChild(btn);
+				}
+				panel.appendChild(row);
+			}
+
+
+			const footer = document.createElement("div");
+			footer.style.marginTop = "15px";
+
+			const btnConfigs = [
+				{ text: "BLACK", cmd: setBlack, w: BUTTON_WIDTH_2 },
+				{ text: "WHITE", cmd: setWhite, w: BUTTON_WIDTH_2 },
+				{ text: "DARKER", cmd: darker, w: BUTTON_WIDTH_2 },
+				{ text: "BRIGHTER", cmd: brighter, w: BUTTON_WIDTH_2 },
+				{ text: "RANDOM", cmd: setRandomBackgroundColor, w: BUTTON_WIDTH_3 }
+			];
+
+			btnConfigs.forEach((cfg, index) => {
+				let b = document.createElement("button");
+				b.style.width = cfg.w + "px";
+				b.textContent = cfg.text;
+				b.onclick = cfg.cmd;
+				footer.appendChild(b);
+				if(index === 1 || index === 3) footer.appendChild(document.createElement("br"));
+			});
+
+			panel.appendChild(footer);
+			updateInterface();
+		}
+
+		function setBackgroundColor(channel, index){
+			actualComponents[channel] = index;
+			updateInterface();
+		}
+
+		function updateInterface(){
+			const r = parseInt(COMPONENTS[actualComponents[0]], 16);
+			const g = parseInt(COMPONENTS[actualComponents[1]], 16);
+			const b = parseInt(COMPONENTS[actualComponents[2]], 16);
+
+			const hex = "#" + 
+				COMPONENTS[actualComponents[0]] + 
+				COMPONENTS[actualComponents[1]] + 
+				COMPONENTS[actualComponents[2]];
+
+			document.body.style.backgroundColor = hex;
+			document.getElementById("valueHexCode").textContent = hex;
+
+			const brightness =(r*299 + g*587 + b*114)/1000;
+			const textColor = brightness > 125 ? "black" : "white";
+			const labelBg = brightness > 125 ? "rgba(255,255,0,0.8)" : "rgba(255,255,0,1)";
+
+			document.body.style.color = textColor;
+			document.getElementById("headerContainer").style.background = brightness > 125 ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.3)";
+
 			for(let i = 0; i < 3; i++){
 				for(let j = 0; j < 5; j++){
-					element = document.createElement("button");
-					element.id = i + "" + j;
-					element.style = "width:" + BUTTON_WIDTH_1 + "px; background-color:" + BUTTONS_COLORS[i] + ";";
-					innerElement = document.createElement("output");
-					innerElement.style = "background: #FFFF00";
-					//innerElement.innerHTML = "<b>" + LABLES[j] + "</b>"
-					innerElement.innerHTML = "<b>" + j + "</b>"
-					element.appendChild(innerElement);
-					document.body.appendChild(element);
-				}
-				addSomeBr(2);
-			}
-			addSomeBr(1);
-			addButton("width:" + BUTTON_WIDTH_2 + "px;", function() {setBlack();}, "BLACK");
-			addButton("width:" + BUTTON_WIDTH_2 + "px;", function() {setWhite();}, "WHITE");
-			addSomeBr(2);
-			addButton("width:" + BUTTON_WIDTH_2 + "px;", function() {darker();}, "DARKER");
-			addButton("width:" + BUTTON_WIDTH_2 + "px;", function() {brighter();}, "BRIGHTER");
-			addSomeBr(2);
-			addButton("width:" + BUTTON_WIDTH_3 + "px;", function() {setRandomBackgroundColor();}, "RANDOM");
-			document.getElementById("04").style.background = "#FFFF00";
-			document.getElementById("14").style.background = "#FFFF00";
-			document.getElementById("24").style.background = "#FFFF00";
-		}
-
-		fillBody();
-
-		function setBackgroundColor(var1, var2){
-			let backgroundColor = "#";
-			actualComponents[parseInt(var1)] = parseInt(var2);
-			let buttonColor;
-			for(let i = 0; i < actualComponents.length; i++){
-				backgroundColor += COMPONENTS[actualComponents[i]];
-			}
-			document.body.style.backgroundColor = backgroundColor;
-			document.getElementById("valueHexCode").value = backgroundColor;
-			for(let i = 0; i < 5; i++){
-				document.getElementById(var1 + "" + i).style.background = BUTTONS_COLORS[var1];
-			}
-			document.getElementById(var1 + "" + var2).style.background = "#FFFF00";
-		}
-
-		function addFunctionsToTheButtons(){
-			for(let i = 0; i < 3; i++){
-				for(let j = 0; j < 5; j++){
-					document.getElementById(i + "" + j).addEventListener("click", function() {
-						setBackgroundColor(i, j);
-					});
+					let btn = document.getElementById(i + "-" + j);
+					if(actualComponents[i] === j){
+						btn.style.backgroundColor = "#FFFF00";
+						btn.style.color = "black";
+						btn.style.borderColor = "black";
+					}else{
+						btn.style.backgroundColor = BUTTONS_COLORS[i];
+						btn.style.color = "white";
+						btn.style.borderColor = "transparent";
+					}
 				}
 			}
 		}
 
-		addFunctionsToTheButtons();
-
-		function setRandomBackgroundColor(){
-			let value;
-			for(let i = 0; i < 3; i++){
-				value = parseInt(Math.random()*5);
-				setBackgroundColor(i, value);
-			}
+		function setRandomBackgroundColor(){ 
+			actualComponents = actualComponents.map(() => Math.floor(Math.random()*5)); 
+			updateInterface(); 
 		}
 
-		function brighter(){
-			let flag = true;
-			for(let i = 0; i < actualComponents.length; i++){
-				flag = flag && (actualComponents[i] != COMPONENTS.length - 1);
-			}
-			flag = CHOICE ? true : flag;
-			if(flag){
-				for(let i = 0; i < actualComponents.length; i++){
-					actualComponents[i] = ((actualComponents[i] != COMPONENTS.length - 1) ? (1 + parseInt(actualComponents[i])) : parseInt(actualComponents[i]));
-					setBackgroundColor(i, actualComponents[i]);
-				}
-			}
+		function brighter(){ 
+			actualComponents = actualComponents.map(v => Math.min(v + 1, 4)); 
+			updateInterface(); 
 		}
 
-		function darker(){
-			let flag = true;
-			for(let i = 0; i < actualComponents.length; i++){
-				flag = flag && (actualComponents[i] != 0);
-			}
-			flag = CHOICE ? true : flag;
-			if(flag){
-				for(let i = 0; i < actualComponents.length; i++){
-					actualComponents[i] = ((actualComponents[i] != 0) ? (parseInt(actualComponents[i]) - 1) : parseInt(actualComponents[i]));
-					setBackgroundColor(i, actualComponents[i]);
-				}
-			}
+		function darker(){ 
+			actualComponents = actualComponents.map(v => Math.max(v - 1, 0)); 
+			updateInterface(); 
 		}
 
 		function setBlack(){
-			for(let i = 0; i < actualComponents.length; i++){
-				setBackgroundColor(i, 0);
-			}
+			actualComponents = [0,0,0]; updateInterface();
 		}
 
 		function setWhite(){
-			for(let i = 0; i < actualComponents.length; i++){
-				setBackgroundColor(i, COMPONENTS.length - 1);
-			}
+			actualComponents = [4,4,4]; updateInterface();
 		}
 
+		fillBody();
 	</script>
 </html>

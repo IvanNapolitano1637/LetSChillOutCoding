@@ -3,25 +3,112 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Sounds</title>
+		<title>Sounds Lab</title>
 		<style>
-			body { background: #BFBFFF; }
-			output { background: #FFFF7F; }
-			button { background-color: #FFBFBF; }
-
-			#frequencyRange { width: 1400px; }
-			@media (max-width: 600px) { #frequencyRange { width: 250px; } }
-
-			#keyboard {
+			body{
+				background: #BFBFFF;
+				font-family: sans-serif;
+				padding: 20px;
+			}
+			output{
+				background: #FFFF7F;
+				padding: 2px 4px;
+				border-radius: 3px;
+			}
+			button{
+				background-color: #FFBFBF;
+				border: 1px solid #999;
+				cursor: pointer;
+				padding: 6px 12px;
+				margin: 2px;
+				border-radius: 4px;
+			}
+			.row{
+				margin-bottom: 15px;
+				display: block;
+			}
+			.flex-row{
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				margin-bottom: 15px;
+				flex-wrap: nowrap;
+			}
+			.section-title{
+				font-weight: bold;
+				border-bottom: 1px solid #777;
+				margin-bottom: 10px;
+				display: block;
+				color: #333;
+				padding-top: 10px;
+			}
+			#scope{
+				background: #222;
+				border: 2px solid #555;
+				display: block;
+				width: 100%;
+				max-width: 1400px;
+				height: 150px;
+				margin-bottom: 20px;
+				border-radius: 8px;
+			}
+			.freq-slider{
+				width: 90%;
+				max-width: 1300px;
+			}
+			.full-width-slider{
+				width: 100%;
+				max-width: 1400px;
+			}
+			.slider-container{
+				display: flex;
+				flex-direction: column;
+				align-items: flex-start;
+				gap: 2px;
+				margin-bottom: 15px;
+			}
+			.slider-label{
+				min-width: unset;
+				font-size: 0.85em;
+				color: #444;
+			}
+			.slider-container{
+				display: flex;
+				flex-direction: column;
+				align-items: stretch;
+				gap: 5px;
+				margin-bottom: 12px;
+			}
+			.label-row{
+				display: flex;
+				justify-content: flex-start;
+				gap: 8px;
+				align-items: center;
+			}
+			.slider-label{
+				min-width: unset;
+				font-weight: bold;
+				font-size: 0.9em;
+			}
+			.full-width-slider{
+				width: 100%;
+				margin: 0;
+			}
+			#keyboard{
 				display: flex;
 				justify-content: flex-start;
 				position: relative;
-				height: 200px;
+				height: 180px;
+				margin-top: 30px;
 			}
-
-			#keyboard button.white {
+			#keyboard button{
+				-webkit-tap-highlight-color: transparent;
+				touch-action: none;
+				user-select: none;
+			}
+			#keyboard button.white{
 				flex: 0 0 50px;
-				height: 200px;
+				height: 180px;
 				display: flex;
 				flex-direction: column;
 				justify-content: flex-end;
@@ -34,10 +121,9 @@
 				box-sizing: border-box;
 				transition: transform 0.05s;
 			}
-
-			#keyboard button.black {
+			#keyboard button.black{
 				width: 35px;
-				height: 120px;
+				height: 110px;
 				background-color: #BFBFBF;
 				position: absolute;
 				top: 0;
@@ -45,332 +131,539 @@
 				border: 1px solid #666;
 				box-sizing: border-box;
 				transition: transform 0.05s;
+				text-align: left;
+				padding-left: 5px;
 			}
-
-			#keyboard button#Csharp4 { left: 35px; }
-			#keyboard button#Dsharp4 { left: 85px; }
-			#keyboard button#Fsharp4 { left: 185px; }
-			#keyboard button#Gsharp4 { left: 235px; }
-			#keyboard button#Asharp4 { left: 285px; }
-
-			#keyboard button.white:active,
-			#keyboard button.white.pressed { transform: translateY(4px); }
-			#keyboard button.black:active,
-			#keyboard button.black.pressed { transform: translateY(4px); }
+			#keyboard button#Csharp4{
+				left: 33px;
+			}
+			#keyboard button#Dsharp4{
+				left: 88px;
+			} 
+			#keyboard button#Fsharp4{
+				left: 196px;
+			}
+			#keyboard button#Gsharp4{
+				left: 250px;
+			}
+			#keyboard button#Asharp4{
+				left: 304px;
+			}
+			#keyboard button.pressed{
+				transform: translateY(4px);
+				background-color: #FFD2D2 !important;
+			}
+			.flex-row[style*="align-items: flex-start;"]{
+				display: flex;
+				flex-direction: row;
+			}
+			@media(max-width: 600px){
+				.flex-row[style*="align-items: flex-start;"]{
+					flex-direction: column;
+				}
+				.row[style*="flex-grow: 1;"]{
+					width: 100%;
+					margin-top: 20px;
+				}
+				.full-width-slider{
+					width: 100%;
+				}
+			}
+			.flex-column{
+				display: flex;
+				flex-direction: column;
+				align-items: flex-start;
+				gap: 8px;
+				margin-bottom: 15px;
+			}
+			.flex-column b{
+				color: #333;
+				font-size: 0.95em;
+			}
+			.radio-grid{
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 10px;
+				width: 100%;
+				max-width: 300px;
+			}
+			.radio-option{
+				display: flex;
+				align-items: center;
+				background: rgba(255, 255, 255, 0.2);
+				padding: 5px;
+				border-radius: 5px;
+			}
+			.radio-option output{
+				margin-left: 5px;
+				flex-grow: 1;
+				text-align: center;
+			}
 		</style>
 	</head>
 	<body>
 
-	<input type="radio" id="sine" name="oscillatorType" value="sine" onchange="setOscillatorType()" checked />
-	<output>sine</output>
-	<input type="radio" id="sawtooth" name="oscillatorType" value="sawtooth" onchange="setOscillatorType()"/>
-	<output>sawtooth</output>
-	<input type="radio" id="square" name="oscillatorType" value="square" onchange="setOscillatorType()"/>
-	<output>square</output>
-	<input type="radio" id="triangle" name="oscillatorType" value="triangle" onchange="setOscillatorType()"/>
-	<output>triangle</output><br><br>
+		<canvas id="scope"></canvas>
 
-	<b><output id="FREQUENCY_VALUE"></output></b><br><br>
-	<b><output id="FREQUENCY_MIN_VALUE"></output></b>
-	<input type="range" id="frequencyRange" name="frequency" oninput="setFrequency()"/>
-	<b><output id="FREQUENCY_MAX_VALUE"></output></b><br><br>
+		<div class="section-title">OSCILLATOR & ADDITIVE SYNTHESIS</div>
+			<div class="flex-column">
+				<b>Oscillator Type:</b>
+				<div class="radio-grid">
+				<div class="radio-option"><input type="radio" id="sine" name="oscillatorType" value="sine" checked><output>sine</output></div>
+				<div class="radio-option"><input type="radio" id="sawtooth" name="oscillatorType" value="sawtooth"><output>sawtooth</output></div>
+				<div class="radio-option"><input type="radio" id="square" name="oscillatorType" value="square"><output>square</output></div>
+				<div class="radio-option"><input type="radio" id="triangle" name="oscillatorType" value="triangle"><output>triangle</output></div>
+			</div>
+		</div>
 
-	<button id="halveMax" onclick="halveMax()">SmallerMax</button><br>
+		<div class="row">
+			<div class="slider-container"><span class="slider-label">2nd Harmonic:<output id="h2_val">0.00</output></span><input id="h2" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
+			<div class="slider-container"><span class="slider-label">3rd Harmonic:<output id="h3_val">0.00</output></span><input id="h3" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
+			<div class="slider-container"><span class="slider-label">4th Harmonic:<output id="h4_val">0.00</output></span><input id="h4" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
+		</div>
 
-	<input type="radio" id="50" name="maxFrequency" value="50" onchange="setMaxFrequency()" disabled />50<br>
-	<input type="radio" id="100" name="maxFrequency" value="100" onchange="setMaxFrequency()" disabled />100<br>
-	<input type="radio" id="200" name="maxFrequency" value="200" onchange="setMaxFrequency()" disabled />200<br>
-	<input type="radio" id="500" name="maxFrequency" value="500" onchange="setMaxFrequency()"/>500<br>
-	<input type="radio" id="1000" name="maxFrequency" value="1000" onchange="setMaxFrequency()" checked />1000<br>
-	<input type="radio" id="2000" name="maxFrequency" value="2000" onchange="setMaxFrequency()"/>2000<br>
-	<input type="radio" id="4000" name="maxFrequency" value="4000" onchange="setMaxFrequency()"/>4000<br>
-	<input type="radio" id="8000" name="maxFrequency" value="8000" onchange="setMaxFrequency()"/>8000<br>
-	<input type="radio" id="16000" name="maxFrequency" value="16000" onchange="setMaxFrequency()"/>16000<br>
-	<input type="radio" id="24000" name="maxFrequency" value="24000" onchange="setMaxFrequency()"/>24000<br>
+		<div class="section-title">LOW PASS FILTER(VCF)</div>
 
-	<button id="doubleMax" onclick="doubleMax()">BiggerMax</button><br><br>
+		<div class="row">
+			<div class="slider-container">
+				<span class="slider-label">Cutoff(Freq):<output id="cutoff_val">20000 Hz</output></span>
+				<input id="cutoff" type="range" class="full-width-slider" min="20" max="20000" step="1" value="20000" oninput="updateFilter()">			
+			</div>
 
-	<button id="play" onclick="play()">Play</button>
-	<button id="stop" onclick="stop()">Stop</button>
+			<div class="slider-container">
+				<span class="slider-label">Resonance(Q):<output id="resonance_val">1.0</output></span>
+				<input id="resonance" type="range" class="full-width-slider" min="0" max="20" step="0.1" value="1" oninput="updateFilter()">
+			</div>
+		</div>
 
-	<button id="halveFrequency" onclick="multiplyFREQUENCY_VALUE(0.5)">Halve frequency</button>
-	<button id="doubleFrequency" onclick="multiplyFREQUENCY_VALUE(2)">Double frequency</button><br><br>
+		<div class="flex-row">
+			<b style="white-space: nowrap;"><output id="FREQUENCY_MIN_VALUE">0 Hz</output></b>
+			<input type="range" id="frequencyRange" class="freq-slider" name="frequency" oninput="setFrequency()">
+			<b style="white-space: nowrap;"><output id="FREQUENCY_MAX_VALUE">1000 Hz</output></b>
+		</div>
 
-	<input type="radio" id="s0" name="sirenType" onchange="changeSirenType(800, 1200, 300);" checked /><output>I</output>
-	<input type="radio" id="s1" name="sirenType" onchange="changeSirenType(300, 600, 500);"/><output>II</output>
-	<input type="radio" id="s2" name="sirenType" onchange="changeSirenType(1900, 2300, 50);"/><output>III</output>
-	<input type="radio" id="s3" name="sirenType" onchange="changeSirenType(466, 622, 750);"/><output>IV</output>
-	<input type="radio" id="s4" name="sirenType" onchange="changeSirenType(466, 622, 550);"/><output>V</output>
-	<input type="radio" id="s5" name="sirenType" onchange="changeSirenType(1200, 1600, 500);"/><output>VI</output><br>
-	<button id="sirenOn" onclick="sirenOn()">Siren On</button>
-	<button id="sirenOff" onclick="sirenOff()">Siren Off</button><br><br>
+		<div class="row"><b>Current: <output id="FREQUENCY_VALUE">440 Hz</output></b></div>
 
-	<div id="keyboard">
-		<button class="white" id="C4">C4</button>
-		<button class="white" id="D4">D4</button>
-		<button class="white" id="E4">E4</button>
-		<button class="white" id="F4">F4</button>
-		<button class="white" id="G4">G4</button>
-		<button class="white" id="A4">A4</button>
-		<button class="white" id="B4">B4</button>
-		<button class="white" id="C5">C5</button>
+		<div class="flex-row">
+			<button onclick="play()">Play</button>
+			<button onclick="stop()">Stop</button>
+			<button onclick="multiplyFREQUENCY_VALUE(0.5)">Halve frequency</button>
+			<button onclick="multiplyFREQUENCY_VALUE(2)">Double frequency</button>
+		</div>
 
-		<button class="black" id="Csharp4">C#4</button>
-		<button class="black" id="Dsharp4">D#4</button>
-		<button class="black" id="Fsharp4">F#4</button>
-		<button class="black" id="Gsharp4">G#4</button>
-		<button class="black" id="Asharp4">A#4</button>
-	</div>
+		<div class="flex-row" style="align-items: flex-start;">
+			<div class="row" style="min-width: 100px;">
+				<b>Max Freq:</b><br>
+				<button onclick="halveMax()">SmallerMax</button><br>
+				<input type="radio" name="maxFrequency" value="50" onchange="setMaxFrequency()" disabled>50<br>
+				<input type="radio" name="maxFrequency" value="100" onchange="setMaxFrequency()" disabled>100<br>
+				<input type="radio" name="maxFrequency" value="200" onchange="setMaxFrequency()" disabled>200<br>
+				<input type="radio" name="maxFrequency" value="500" onchange="setMaxFrequency()">500<br>
+				<input type="radio" name="maxFrequency" value="1000" onchange="setMaxFrequency()" checked>1000<br>
+				<input type="radio" name="maxFrequency" value="2000" onchange="setMaxFrequency()">2000<br>
+				<input type="radio" name="maxFrequency" value="4000" onchange="setMaxFrequency()">4000<br>
+				<input type="radio" name="maxFrequency" value="8000" onchange="setMaxFrequency()">8000<br>
+				<input type="radio" name="maxFrequency" value="16000" onchange="setMaxFrequency()">16000<br>
+				<input type="radio" name="maxFrequency" value="24000" onchange="setMaxFrequency()">24000<br>
+				<button onclick="doubleMax()">BiggerMax</button>
+			</div>
 
-	<script>
-		//SULLE SIRENE HO ANCORA DA RAGIONARE
-		const FREQUENCY_VALUE = document.querySelector("#FREQUENCY_VALUE");
-		const FREQUENCY_INPUT = document.querySelector("#frequencyRange");
-		const FREQUENCY_MAX_VALUE = document.querySelector("#FREQUENCY_MAX_VALUE");
-		const FREQUENCY_MIN_VALUE = document.querySelector("#FREQUENCY_MIN_VALUE");
-		const MAX_FREQUENCY_VALUE = [50,100,200,500,1000,2000,4000,8000,16000,24000];
-		const MAX_FREQUENCY_ELEMENT = document.getElementsByName("maxFrequency");
-		const OSCILLATOR_TYPE_ELEMENT = document.getElementsByName("oscillatorType");
+			<div class="row" style="flex-grow: 1;">
+				<b>ADSR & Master Vol:</b>
+				<div class="slider-container"><span class="slider-label">Attack:<output id="attack_val">10</output></span><input id="attack" type="range" class="full-width-slider" min="0" max="2000" value="10" oninput="updateAdsLabel()"></div>
+				<div class="slider-container"><span class="slider-label">Decay:<output id="decay_val">100</output></span><input id="decay" type="range" class="full-width-slider" min="0" max="2000" value="100" oninput="updateAdsLabel()"></div>
+				<div class="slider-container"><span class="slider-label">Sustain:<output id="sustain_val">0.80</output></span><input id="sustain" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0.8" oninput="updateAdsLabel()"></div>
+				<div class="slider-container"><span class="slider-label">Release:<output id="release_val">150</output></span><input id="release" type="range" class="full-width-slider" min="0" max="3000" value="150" oninput="updateAdsLabel()"></div>
+				<div class="slider-container"><span class="slider-label">Master Vol:<output id="masterVol_val">0.60</output></span><input id="masterVol" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0.6" oninput="setMasterVol()"></div>
+			</div>
+		</div>
 
-		let audioContext;
-		let oscillator = null;
-		let oscillatorNotes = null;
-		let oscillatorSiren = null;
-		let gain;
-		let interval;
-		let oscillatorinputType = "sine";
-		let frequencyHz = 440;
-		let soundOn = false;
-		let sirenSoundOn = false;
-		let indexArray = 4;
-		let sirenMinFrequency = 800;
-		let sirenMaxFrequency = 1200;
-		let duration = 200;
+		<div class="section-title">SIRENS</div>
+		<div class="flex-column">
+			<b>Siren Type:</b>
+			<div>
+				<input type="radio" id="s0" name="sirenType" onchange="changeSirenType(800,1200,300)" checked><output>I</output>
+				<input type="radio" id="s1" name="sirenType" onchange="changeSirenType(300,600,500)"><output>II</output>
+				<input type="radio" id="s2" name="sirenType" onchange="changeSirenType(1900,2300,50)"><output>III</output>
+				<input type="radio" id="s3" name="sirenType" onchange="changeSirenType(466,622,750)"><output>IV</output>
+				<input type="radio" id="s4" name="sirenType" onchange="changeSirenType(466,622,550)"><output>V</output>
+				<input type="radio" id="s5" name="sirenType" onchange="changeSirenType(1200,1600,500)"><output>VI</output>
+			</div>
+		</div>
 
-		FREQUENCY_MIN_VALUE.textContent = "0 Hz";
-		FREQUENCY_MAX_VALUE.textContent = MAX_FREQUENCY_VALUE[indexArray] + " Hz";
-		FREQUENCY_INPUT.min = 0;
-		FREQUENCY_INPUT.max = MAX_FREQUENCY_VALUE[indexArray];
-		FREQUENCY_INPUT.step = 1;
-		FREQUENCY_INPUT.value = frequencyHz;
-		FREQUENCY_VALUE.textContent = frequencyHz + " Hz";
+		<div class="flex-column">
+			<b>Siren Wave:</b>
+			<div class="radio-grid">
+				<div class="radio-option"><input type="radio" name="sirenWave" value="sine" checked onchange="updateSirenWave()"><output>sine</output></div>
+				<div class="radio-option"><input type="radio" name="sirenWave" value="sawtooth" onchange="updateSirenWave()"><output>sawtooth</output></div>
+				<div class="radio-option"><input type="radio" name="sirenWave" value="square" onchange="updateSirenWave()"><output>square</output></div>
+				<div class="radio-option"><input type="radio" name="sirenWave" value="triangle" onchange="updateSirenWave()"><output>triangle</output></div>
+			</div>
+		</div>
 
-		function updateMaxFrequencyOptions(){
-			for(let i=0;i<MAX_FREQUENCY_ELEMENT.length;i++){
-				MAX_FREQUENCY_ELEMENT[i].disabled = frequencyHz > MAX_FREQUENCY_VALUE[i];
-			}
-		}
+		<div class="flex-row">
+			<button onclick="sirenOn()">Siren On</button>
+			<button onclick="sirenOff()">Siren Off</button>
+		</div>
 
-		function setFrequency(){
-			frequencyHz = parseInt(FREQUENCY_INPUT.value);
-			FREQUENCY_VALUE.textContent = frequencyHz+" Hz";
-			if(oscillator){
-				oscillator.frequency.setValueAtTime(frequencyHz,audioContext.currentTime);
-			}
-			updateMaxFrequencyOptions();
-		}
+		<div id="keyboard">
+			<button class="white" id="C4">C4</button>
+			<button class="white" id="D4">D4</button>
+			<button class="white" id="E4">E4</button>
+			<button class="white" id="F4">F4</button>
+			<button class="white" id="G4">G4</button>
+			<button class="white" id="A4">A4</button>
+			<button class="white" id="B4">B4</button>
+			<button class="white" id="C5">C5</button>
+			<button class="black" id="Csharp4">C#4</button>
+			<button class="black" id="Dsharp4">D#4</button>
+			<button class="black" id="Fsharp4">F#4</button>
+			<button class="black" id="Gsharp4">G#4</button>
+			<button class="black" id="Asharp4">A#4</button>
+		</div>
 
-		function playSound(type,freq){
-			if(!audioContext){
-				audioContext = new (window.AudioContext || window.webkitAudioContext)();
-			}
-			if(oscillator){
-				oscillator.stop();
-			}
-			oscillator = audioContext.createOscillator();
-			oscillator.type = type;
-			oscillator.frequency.setValueAtTime(freq,audioContext.currentTime);
-			oscillator.connect(audioContext.destination);
-			oscillator.start();
-			soundOn = true;
-		}
+		<script>
+			let audioContext = null, masterGain = null, analyzer = null, lowPassFilter = null;
+			let oscillatorinputType = "sine", frequencyHz = 440, indexArray = 4;
+			const activeVoices = new Map();
+			const MAX_FREQUENCY_VALUE = [50,100,200,500,1000,2000,4000,8000,16000,24000];
+			const keyMap ={"a":"C4","w":"Csharp4","s":"D4","e":"Dsharp4","d":"E4","f":"F4","t":"Fsharp4","g":"G4","y":"Gsharp4","h":"A4","u":"Asharp4","j":"B4","k":"C5"};
+			const freqMap ={"C4":261.62,"Csharp4":277.18,"D4":293.66,"Dsharp4":311.12,"E4":329.62,"F4":349.22,"Fsharp4":369.99,"G4":391.99,"Gsharp4":415.3,"A4":440,"Asharp4":466.16,"B4":493.88,"C5":523.25};
 
-		function play(){
-			playSound(oscillatorinputType,frequencyHz);
-		}
-
-		function stop(){
-			if(oscillator){
-				oscillator.stop();
-				oscillator = null;
-			}
-			soundOn = false;
-		}
-
-		function multiplyFREQUENCY_VALUE(mult){
-			let newFreq = Math.round(frequencyHz*mult);
-			if(newFreq >= 0 && newFreq <= 24000){
-				frequencyHz = newFreq;
-				FREQUENCY_INPUT.value = frequencyHz;
-				FREQUENCY_VALUE.textContent = frequencyHz + " Hz";
-				updateMaxFrequencyOptions();
-				if(soundOn){
-					playSound(oscillatorinputType,frequencyHz);
+			function initAudio(){
+				if(!audioContext){
+					audioContext = new(window.AudioContext || window.webkitAudioContext)();
+					lowPassFilter = audioContext.createBiquadFilter();
+					lowPassFilter.type = "lowpass";
+					lowPassFilter.frequency.value = document.getElementById("cutoff").value;
+					lowPassFilter.Q.value = document.getElementById("resonance").value;
+					masterGain = audioContext.createGain();
+					masterGain.gain.value = document.getElementById("masterVol").value;
+					analyzer = audioContext.createAnalyser();
+					analyzer.fftSize = 2048;
+					lowPassFilter.connect(masterGain);
+					masterGain.connect(analyzer);
+					analyzer.connect(audioContext.destination);
+					drawScope();
 				}
 			}
-		}
 
-		function setOscillatorType(){
-			for(let el of OSCILLATOR_TYPE_ELEMENT){
-				if(el.checked){
-					oscillatorinputType = el.value;
+			function updateFilter(){
+				if(!audioContext){
+					return;
+				}
+				const cutoff = document.getElementById("cutoff").value;
+				const resonance = document.getElementById("resonance").value;
+				lowPassFilter.frequency.setTargetAtTime(cutoff, audioContext.currentTime, 0.02);
+				lowPassFilter.Q.setTargetAtTime(resonance, audioContext.currentTime, 0.02);
+				document.getElementById("cutoff_val").textContent = cutoff + " Hz";
+				document.getElementById("resonance_val").textContent = parseFloat(resonance).toFixed(1);
+			}
+
+			function updateAdsLabel(){
+				document.getElementById("attack_val").textContent = document.getElementById("attack").value;
+				document.getElementById("decay_val").textContent = document.getElementById("decay").value;
+				document.getElementById("sustain_val").textContent = parseFloat(document.getElementById("sustain").value).toFixed(2);
+				document.getElementById("release_val").textContent = document.getElementById("release").value;
+			}
+
+			function updateHarmonics(){
+				const h2Val = parseFloat(document.getElementById("h2").value);
+				const h3Val = parseFloat(document.getElementById("h3").value);
+				const h4Val = parseFloat(document.getElementById("h4").value);
+				document.getElementById("h2_val").textContent = h2Val.toFixed(2);
+				document.getElementById("h3_val").textContent = h3Val.toFixed(2);
+				document.getElementById("h4_val").textContent = h4Val.toFixed(2);
+				if(!audioContext){
+					return;
+				}
+				activeVoices.forEach(voice => {
+					if(voice.harmonics){
+						const now = audioContext.currentTime;
+						voice.harmonics.h2.gain.gain.setValueAtTime(h2Val, now);
+						voice.harmonics.h3.gain.gain.setValueAtTime(h3Val, now);
+						voice.harmonics.h4.gain.gain.setValueAtTime(h4Val, now);
+					}
+				});
+			}
+
+			function setMasterVol(){
+				initAudio();
+				const v = document.getElementById("masterVol").value;
+				masterGain.gain.setTargetAtTime(v, audioContext.currentTime, 0.02);
+				document.getElementById("masterVol_val").textContent = parseFloat(v).toFixed(2);
+			}
+
+			function setFrequency(){
+				frequencyHz = parseInt(document.getElementById("frequencyRange").value);
+				document.getElementById("FREQUENCY_VALUE").textContent = frequencyHz + " Hz";
+				if(activeVoices.has("mono")){
+					const v = activeVoices.get("mono"), now = audioContext.currentTime;
+					v.osc.frequency.setTargetAtTime(frequencyHz, now, 0.02);
+					v.harmonics.h2.osc.frequency.setTargetAtTime(frequencyHz*2, now, 0.02);
+					v.harmonics.h3.osc.frequency.setTargetAtTime(frequencyHz*3, now, 0.02);
+					v.harmonics.h4.osc.frequency.setTargetAtTime(frequencyHz*4, now, 0.02);
+				}
+				const els = document.getElementsByName("maxFrequency");
+				for(let i=0; i<els.length; i++){
+					els[i].disabled = frequencyHz > MAX_FREQUENCY_VALUE[i];
 				}
 			}
-			if(soundOn){
-				playSound(oscillatorinputType,frequencyHz);
-			}
-		}
 
-		function playNote(freq){
-			if(!audioContext){
-				audioContext = new (window.AudioContext || window.webkitAudioContext)();
+			function createHarmonic(freq, gainVal, parentGain){
+				const osc = audioContext.createOscillator();
+				const g = audioContext.createGain();
+				osc.type = "sine";
+				osc.frequency.setValueAtTime(freq, audioContext.currentTime);
+				g.gain.setValueAtTime(gainVal, audioContext.currentTime);
+				osc.connect(g); g.connect(parentGain);
+				osc.start();
+				return{osc, gain: g};
 			}
-			stopNote();
-			oscillatorNotes = audioContext.createOscillator();
-			oscillatorNotes.type = "sine";
-			oscillatorNotes.frequency.setValueAtTime(parseFloat(freq),audioContext.currentTime);
-			oscillatorNotes.connect(audioContext.destination);
-			oscillatorNotes.start();
-		}
 
-		function stopNote(){
-			if(oscillatorNotes){
-				oscillatorNotes.stop();oscillatorNotes = null;
+			function playVoice(id, freq){
+				initAudio();
+				if(activeVoices.has(id)){
+					return;
+				}
+				const now = audioContext.currentTime;
+				const a = document.getElementById("attack").value/1000;
+				const d = document.getElementById("decay").value/1000;
+				const s = parseFloat(document.getElementById("sustain").value);
+				const vGain = audioContext.createGain();
+				vGain.gain.setValueAtTime(0, now);
+				vGain.gain.linearRampToValueAtTime(1, now + a);
+				vGain.gain.linearRampToValueAtTime(s, now + a + d);
+				vGain.connect(lowPassFilter);
+
+				const osc = audioContext.createOscillator();
+				osc.type =(id === "mono") ? oscillatorinputType : "sine"; 
+				osc.frequency.setValueAtTime(freq, now);
+				osc.connect(vGain);
+				osc.start();
+
+				const h2 = createHarmonic(freq*2, parseFloat(document.getElementById("h2").value), vGain);
+				const h3 = createHarmonic(freq*3, parseFloat(document.getElementById("h3").value), vGain);
+				const h4 = createHarmonic(freq*4, parseFloat(document.getElementById("h4").value), vGain);
+
+				activeVoices.set(id,{osc, gain: vGain, harmonics:{h2, h3, h4}});
 			}
-		}
 
-		function halveMax(){
-			if(indexArray > 0 && frequencyHz <= MAX_FREQUENCY_VALUE[indexArray - 1]){
-				indexArray--;
-				FREQUENCY_INPUT.max = MAX_FREQUENCY_VALUE[indexArray];
-				MAX_FREQUENCY_ELEMENT[indexArray].checked = true;
-				FREQUENCY_MAX_VALUE.textContent = MAX_FREQUENCY_VALUE[indexArray] + " Hz";
+			function stopVoice(id){
+				if(!activeVoices.has(id)){
+					return;
+				}
+				const v = activeVoices.get(id), now = audioContext.currentTime, r = document.getElementById("release").value/1000;
+				v.gain.gain.cancelScheduledValues(now);
+				v.gain.gain.setValueAtTime(v.gain.gain.value, now);
+				v.gain.gain.linearRampToValueAtTime(0, now + r);
+				setTimeout(() => { 
+					try{
+						v.osc.stop();
+						v.harmonics.h2.osc.stop();
+						v.harmonics.h3.osc.stop();
+						v.harmonics.h4.osc.stop();
+						v.gain.disconnect();
+					} catch(e){} 
+					activeVoices.delete(id); 
+				}, r*1000 + 50);
 			}
-		}
 
-		function doubleMax(){
-			if(indexArray < MAX_FREQUENCY_VALUE.length - 1){
-				indexArray++;
-				FREQUENCY_INPUT.max = MAX_FREQUENCY_VALUE[indexArray];
-				MAX_FREQUENCY_ELEMENT[indexArray].checked = true;
-				FREQUENCY_MAX_VALUE.textContent = MAX_FREQUENCY_VALUE[indexArray] + " Hz";
+			function drawScope(){
+				const canvas = document.getElementById("scope");
+				const ctx = canvas.getContext("2d");
+				const bufferLength = analyzer.frequencyBinCount;
+				const dataArray = new Uint8Array(bufferLength);
+				function render(){
+					requestAnimationFrame(render);
+					analyzer.getByteTimeDomainData(dataArray);
+					ctx.fillStyle = "#222";
+					ctx.fillRect(0, 0, canvas.width, canvas.height);
+					ctx.lineWidth = 2;
+					ctx.strokeStyle = "#FFFF7F";
+					ctx.beginPath();
+					const sliceWidth = canvas.width/bufferLength;
+					let x = 0;
+					for(let i = 0; i < bufferLength; i++){
+						const v = dataArray[i]/128.0; const y = v*canvas.height/2;
+						if(i === 0){
+							ctx.moveTo(x, y);
+						}else{
+							ctx.lineTo(x, y);
+						}
+						x += sliceWidth;
+					}
+					ctx.lineTo(canvas.width, canvas.height/2);
+					ctx.stroke();
+				}
+				canvas.width = canvas.offsetWidth;
+				canvas.height = canvas.offsetHeight;
+				render();
 			}
-		}
 
-		function setMaxFrequency(){
-			for(let i = 0; i < MAX_FREQUENCY_ELEMENT.length; i++){
-				if(MAX_FREQUENCY_ELEMENT[i].checked){
-					indexArray = i;
-					FREQUENCY_INPUT.max = MAX_FREQUENCY_VALUE[i];
-					FREQUENCY_MAX_VALUE.textContent = MAX_FREQUENCY_VALUE[i] + " Hz";
+			function play(){
+				playVoice("mono", frequencyHz);
+			}
+
+			function stop(){
+				stopVoice("mono");
+			}
+
+			function multiplyFREQUENCY_VALUE(m){
+				frequencyHz = Math.min(24000, Math.max(0, Math.round(frequencyHz*m)));
+				document.getElementById("frequencyRange").value = frequencyHz;
+				setFrequency();
+			}
+
+			function setMaxFrequency(){
+				const els = document.getElementsByName("maxFrequency");
+				for(let i=0; i<els.length; i++){
+					if(els[i].checked){
+						indexArray = i;
+						document.getElementById("frequencyRange").max = MAX_FREQUENCY_VALUE[i];
+						document.getElementById("FREQUENCY_MAX_VALUE").textContent = MAX_FREQUENCY_VALUE[i] + " Hz";
+						if(frequencyHz > MAX_FREQUENCY_VALUE[i]){
+							frequencyHz = MAX_FREQUENCY_VALUE[i];
+							document.getElementById("frequencyRange").value = frequencyHz; setFrequency();
+						}
+					}
 				}
 			}
-		}
 
-		function sirenOn(){
-			if(!audioContext){
-				audioContext = new (window.AudioContext || window.webkitAudioContext)();
-			}
-			if(oscillatorSiren){
-				oscillatorSiren.stop();
-			}
-			oscillatorSiren = audioContext.createOscillator();
-			gain = audioContext.createGain();
-			oscillatorSiren.type = "sine";
-			oscillatorSiren.frequency.setValueAtTime(sirenMinFrequency,audioContext.currentTime);
-			oscillatorSiren.connect(gain);
-			gain.connect(audioContext.destination);
-			gain.gain.setValueAtTime(0.5,audioContext.currentTime);
-			oscillatorSiren.start();
-			interval = setInterval(()=>{
-				let freq = oscillatorSiren.frequency.value === sirenMinFrequency ? sirenMaxFrequency : sirenMinFrequency;
-				oscillatorSiren.frequency.setValueAtTime(freq,audioContext.currentTime);
-			}, duration);
-			sirenSoundOn = true;
-		}
-
-		function sirenOff(){
-			if(oscillatorSiren){
-				oscillatorSiren.stop();
-				clearInterval(interval);
-				sirenSoundOn = false;
-			}
-		}
-
-		function changeSirenType(min,max,dur){
-			let flag = sirenSoundOn;
-			if(flag){
-				sirenOff();
-			}
-			sirenMinFrequency = min;
-			sirenMaxFrequency = max;
-			duration = dur;
-			if(flag){
-				sirenOn();
-			}
-		}
-
-		const keyMap = {
-			"a":"C4",
-			"w":"Csharp4",
-			"s":"D4",
-			"e":"Dsharp4",
-			"d":"E4",
-			"f":"F4",
-			"t":"Fsharp4",
-			"g":"G4",
-			"y":"Gsharp4",
-			"h":"A4",
-			"u":"Asharp4",
-			"j":"B4",
-			"k":"C5"
-		};
-
-		const freqMap = {
-			"C4":261.626,
-			"Csharp4":277.183,
-			"D4":293.665,
-			"Dsharp4":311.127,
-			"E4":329.628,
-			"F4":349.228,
-			"Fsharp4":369.994,
-			"G4":391.995,
-			"Gsharp4":415.305,
-			"A4":440,
-			"Asharp4":466.164,
-			"B4":493.883,
-			"C5":523.251
-		};
-
-		document.addEventListener("keydown", e=>{
-			let key = e.key.toLowerCase();
-			if(key in keyMap){
-				const btn = document.getElementById(keyMap[key]);
-				if(btn && !btn.classList.contains("pressed")){
-					btn.classList.add("pressed"); 
-					playNote(freqMap[btn.id]);
+			function halveMax(){
+				if(indexArray > 0){
+					indexArray--;
+					document.getElementsByName("maxFrequency")[indexArray].click();
 				}
-			} else if(key === "l"){
-				if(sirenSoundOn) sirenOff(); else sirenOn();
 			}
-		});
 
-		document.addEventListener("keyup", e=>{
-			let key = e.key.toLowerCase();
-			if(key in keyMap){
-				const btn = document.getElementById(keyMap[key]);
-				if(btn) btn.classList.remove("pressed");
-				stopNote();
+			function doubleMax(){
+				if(indexArray < 9){
+					indexArray++;
+					document.getElementsByName("maxFrequency")[indexArray].click();
+				}
 			}
-		});
 
-		document.querySelectorAll("#keyboard button").forEach(btn=>{
-			btn.addEventListener("mousedown", ()=>{ btn.classList.add("pressed"); playNote(freqMap[btn.id]); });
-			btn.addEventListener("mouseup", ()=>{ btn.classList.remove("pressed"); stopNote(); });
-			btn.addEventListener("mouseleave", ()=>{ btn.classList.remove("pressed"); stopNote(); });
-			btn.addEventListener("touchstart", e=>{ e.preventDefault(); btn.classList.add("pressed"); playNote(freqMap[btn.id]); }, {passive:false});
-			btn.addEventListener("touchend", ()=>{ btn.classList.remove("pressed"); stopNote(); });
-		});
-	</script>
+			document.getElementsByName("oscillatorType").forEach(el => {
+				el.addEventListener("change",() => { 
+					oscillatorinputType = el.value; 
+					if(activeVoices.has("mono")) activeVoices.get("mono").osc.type = el.value;
+				});
+			});
+
+			let sOsc = null, sInt = null, sOn = false, sMin = 800, sMax = 1200, sDur = 300, sWave = "sine";
+
+			function updateSirenWave(){
+				const waves = document.getElementsByName("sirenWave");
+				for(let w of waves){
+					if(w.checked){
+						sWave = w.value;
+					}
+				}
+				if(sOn && sOsc){
+					sOsc.type = sWave;
+				}
+			}
+
+			function sirenOn(){
+				initAudio(); sirenOff(); 
+				sOsc = audioContext.createOscillator();
+				let g = audioContext.createGain(); g.gain.value = 0.3;
+				sOsc.type = sWave;
+				sOsc.frequency.setValueAtTime(sMin, audioContext.currentTime);
+				sOsc.connect(g); g.connect(lowPassFilter);
+				sOsc.start();
+				let state = true; 
+				sInt = setInterval(() => {
+						if(sOsc){
+							sOsc.frequency.setValueAtTime(state ? sMax : sMin, audioContext.currentTime);
+						}
+						state = !state;
+					}, sDur);
+				sOn = true;
+			}
+
+			function sirenOff(){
+				clearInterval(sInt);
+				if(sOsc){
+					try{
+						sOsc.stop();
+					}catch(e){}
+						sOsc = null;
+					}
+					sOn = false;
+				}
+
+			function changeSirenType(min, max, dur){
+				sMin = min;
+				sMax = max;
+				sDur = dur;
+				if(sOn){
+					sirenOn();
+				}
+			}
+
+			document.addEventListener("keydown", e => {
+				let key = e.key.toLowerCase();
+				if(key in keyMap){
+					const btn = document.getElementById(keyMap[key]);
+					if(btn && !btn.classList.contains("pressed")){
+						btn.classList.add("pressed"); playVoice(btn.id, freqMap[btn.id]);
+					}
+				}else if(key === "l"){
+					if(sOn){
+						sirenOff();
+					}else{
+						sirenOn();
+					}
+				}
+			});
+
+			document.addEventListener("keyup", e => {
+				let key = e.key.toLowerCase();
+				if(key in keyMap){
+					const btn = document.getElementById(keyMap[key]);
+					if(btn){
+						btn.classList.remove("pressed");
+						stopVoice(btn.id);
+					}
+				}
+			});
+
+			document.querySelectorAll("#keyboard button").forEach(btn => {
+				const startNote =(e) => {
+					e.preventDefault();
+					if(!btn.classList.contains("pressed")){
+						btn.classList.add("pressed");
+						playVoice(btn.id, freqMap[btn.id]);
+					}
+				};
+
+				const stopNote =(e) => {
+					e.preventDefault();
+					btn.classList.remove("pressed");
+					stopVoice(btn.id);
+				};
+
+				btn.addEventListener("mousedown", startNote);
+				btn.addEventListener("mouseup", stopNote);
+				btn.addEventListener("mouseleave", stopNote);
+
+				btn.addEventListener("touchstart", startNote,{passive: false});
+				btn.addEventListener("touchend", stopNote,{passive: false});
+				btn.addEventListener("touchcancel", stopNote,{passive: false});
+			});
+
+			window.addEventListener('resize',() => {
+				const c = document.getElementById("scope");
+				c.width = c.offsetWidth;
+				c.height = c.offsetHeight;
+			});
+
+			document.getElementById("FREQUENCY_MIN_VALUE").textContent = "0 Hz";
+			document.getElementById("FREQUENCY_MAX_VALUE").textContent = "1000 Hz";
+			document.getElementById("frequencyRange").max = 1000;
+			document.getElementById("frequencyRange").value = 440;
+		</script>
 	</body>
 </html>

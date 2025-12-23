@@ -3,208 +3,229 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta http-equiv="X-UA-Compatible" content="ie=edge">
-		<meta charset="utf-8">
-		<title id = "title">Connect four</title>
+		<title id="title">Connect Four</title>
+		<style>
+			body{
+				text-align: center;
+				font-family: sans-serif;
+				transition: background 0.5s;
+				padding: 10px;
+			}
+			canvas{
+				cursor: pointer;
+				margin-top: 10px;
+				border-radius: 8px;
+				box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+				max-width: 100%;
+				height: auto;
+			}
+			button{
+				margin: 5px;
+				padding: 10px 15px;
+				cursor: pointer;
+				font-weight: bold;
+				border-radius: 5px;
+				border: 1px solid #999;
+				background: #eee;
+			}
+			button:hover{
+				background-color: #ddd;
+			}
+			#starter{
+				margin-top: 10px;
+				padding: 10px;
+				background: rgba(255,255,255,0.4);
+				display: inline-block;
+				border-radius: 10px;
+			}
+		</style>
 	</head>
 	<body>
-		<canvas id="board" onclick="select()" onkeypress="select()">
-			Upgrade Browser
-		</canvas>
+		<canvas id="board">Upgrade Browser</canvas>
+
+		<div class="controls">
+			<button type="button" id="restartButton" onclick="refresh()">Start again!</button>
+			<button type="button" id="changeLanguageButton" onclick="cycleLanguage()">Language</button>
+			<button type="button" id="undoButton" onclick="undoLastMove()">Undo</button>
+			
+			<div id="starter">
+				<label id="starterText">Starter: </label>
+				<input type="radio" id="Yellow" name="beginner" checked onclick="setStarter(true)">
+				<label id="YellowLabel" for="Yellow">Yellow</label>
+				<input type="radio" id="Red" name="beginner" onclick="setStarter(false)">
+				<label id="RedLabel" for="Red">Red</label>
+			</div>
+		</div>
+
 		<script>
-			window.onload = drawUniverse;
 			const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
 			const UNIT = DESKTOP ? 10 : 5;
-			const BUTTON_WIDTH = DESKTOP ? (21*UNIT) : (64*UNIT);
 			const RADIUS = 4*UNIT;
 			const DIAMETER = 2*RADIUS;
 			const GRID_THICKNESS = UNIT;
 			const ROW_NUMBER = 6;
 			const COLUMN_NUMBER = 7;
-			const FOUR = 4;
+			
 			const BLUE_COLOR = "#0033FF";
-			const YELLOW = "#FFFF00";
 			const YELLOW_COLOR = "#FFFF33";
-			const RED = "#FF0000";
 			const RED_COLOR = "#FF0033";
-			const ORANGE = "#FF9900";
 			const LIGHT_ORANGE_COLOR = "#FFCC33";
 			const WHITE = "#FFFFFF";
-			const BACK_GROUND_COLOR = LIGHT_ORANGE_COLOR;
-			const VOID_CELL_COLOR = WHITE;
-			const MILLISECONDS = 1500;
-			const LANGUAGES = ["EN", "IT", "FR", "ES", "DE", "PT", "RO", "UKR", "GR", "LA", "ZH", "JP"];
+
 			const TITLES = ["Connect four", "Forza 4", "Connecter Quatre", "Conecta 4", "Vier Gewinnt", "Conecta 4", "Conecta patru", "Чотири в ряд", "Συνδέστε τέσσερα", "Conecta quattuor", "四子连珠", "四目並べ"];
-			const RESTART_LABELS = ["Start again!", "Ricomincia", "Recommencer", "¡Empezar de nuevo!", "Erneut starten!", "Recomeçar", "Începe din nou", "Почати заново", "Ξεκινήστε ξανά", "Iterum incipere", "重新开始", "再スタート"];
-			const LANGUAGES_LABELS = ["English", "Italiano", "Francaise", "Español", "Deutsch", "Português", "Română", "Українська", "Ελληνικά", "Latine", "中文", "日本語"];
+			const RESTART_LABELS = ["Start again!", "Ricomincia", "Recommencer", "¡Empezar de nuovo!", "Erneut starten!", "Recomeçar", "Începe din nou", "Почати заново", "Ξεκινήστε ξανά", "Iterum incipere", "重新开始", "再スタート"];
+			const LANGUAGES_LABELS = ["English", "Italiano", "Française", "Español", "Deutsch", "Português", "Română", "Українська", "Ελληνικά", "Latine", "中文", "日本語"];
 			const UNDO_LABELS = ["Undo", "Annulla", "Annuler", "Anula", "Abbrechen", "Desfazer", "Anulează", "Скасувати", "Αναίρεση", "Annula", "撤销", "元に戻す"];
 			const BEGINNING_LABELS = ["Starter: ", "Inizia: ", "Commencer: ", "Comenzar: ", "Anfang: ", "Começar: ", "Începe :", "Почати: ", "Αρχή: ", "Incipit: ", "开始: ", "開始: "];
 			const YELLOW_LABEL = ["Yellow", "Giallo", "Jaune", "Amarillo", "Gelb", "Amarelo", "Galben", "Жовтий", "Κίτρινο", "Flavus", "黄色", "黄色"];
-			const RED_LABEL = ["Red", "Rosso", "Rouge", "Rojo", "Rot", "Vermelho", "Roșu", "Червоний", "Κόκκινο", "Ruber", "红色", "赤"];
-			const WINNING_MESSAGE = ["The winner is: ", "Vince: ", "Gagne: ", "El ganador es: ", "Der Gewinner ist: ", "O vencedor é: ", "Câștigătorul este: ", "Переможець: ", "Ο νικητής είναι: ", "Victor est: ", "获胜者是: ", "勝者は: "];
+			const RED_LABEL = ["Red", "Rosso", "Rouge", "Rojo", "Rot", "Vermelho", "Roșu", "Червоний", "Κόкκινο", "Ruber", "红色", "赤"];
+			const WINNING_MESSAGE = ["The winner is: ", "Vince: ", "Le gagnant est: ", "El ganador es: ", "Der Gewinner ist: ", "O vencedor è: ", "Câștigătorul este: ", "Переможець: ", "Ο νικητής è: ", "Victor est: ", "获胜者是: ", "勝者は: "];
+
 			let grid = [];
 			let moves = [];
-			let nIntervId;
 			let moveYellow = true;
-			let cursorX;
-			let cursorY;
-			let numberOfMoves;
-			let languageIndex = 0;
-			let goOn;
-			let button;
+			let numberOfMoves = 0;
+			let languageIndex = 0; 
+			let goOn = true;
+			let canvas, ctx, blinkInterval;
+			let winningCells = [];
+
+			window.onload = function(){
+				canvas = document.getElementById("board");
+				ctx = canvas.getContext("2d");
+				canvas.addEventListener("click", select);
+				updateLabels(); 
+				drawUniverse();
+			};
+
+			function playClackSound(){
+				try{
+					const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+					const oscillator = audioCtx.createOscillator();
+					const gainNode = audioCtx.createGain();
+					oscillator.type = 'triangle';
+					oscillator.frequency.setValueAtTime(150, audioCtx.currentTime);
+					oscillator.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.1);
+					gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+					gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+					oscillator.connect(gainNode);
+					gainNode.connect(audioCtx.destination);
+					oscillator.start();
+					oscillator.stop(audioCtx.currentTime + 0.1);
+				} catch(e){}
+			}
+
+			function setStarter(isYellow){
+				if(numberOfMoves === 0){
+					moveYellow = isYellow;
+				}
+			}
 
 			function drawCircle(row, column, color){
-				if(board && board.getContext("2d")){
-					let context = board.getContext("2d");
-					context.fillStyle = color;
-					context.beginPath();
-					context.arc((column + 1)*GRID_THICKNESS + column*DIAMETER + RADIUS, (row + 1)*GRID_THICKNESS + row*DIAMETER + RADIUS, RADIUS, 0, 2*Math.PI, false);
-					context.fill();
-				}
+				ctx.fillStyle = color;
+				ctx.beginPath();
+				ctx.arc(
+					(column + 1)*GRID_THICKNESS + column*DIAMETER + RADIUS,
+					(row + 1)*GRID_THICKNESS + row*DIAMETER + RADIUS,
+					RADIUS, 0, 2*Math.PI
+				);
+				ctx.fill();
 			}
 
 			function drawUniverse(){
-				document.body.style.background = BACK_GROUND_COLOR;
-				for(let i = 0; i < ROW_NUMBER; i++){
-					grid[i] = [];
-					for(let j = 0; j < COLUMN_NUMBER; j++){
-						grid[i][j] = -1;
-						moves[i*ROW_NUMBER+j] = -1;
-					}
-				}
-				document.onmousemove = function(e){
-					cursorX = e.pageX;
-					cursorY = e.pageY;
-				}
-				let board = document.getElementById("board");
-				board.width = getWidth();
-				board.height = getHeight();
-				if(board && board.getContext("2d")){
-					let context = board.getContext("2d");
-					context.fillStyle = BLUE_COLOR;
-					context.fillRect(0, 0, getWidth(), getHeight());
-				}
-				for(let row = 0; row < ROW_NUMBER; row++){
-					for(let column = 0; column < COLUMN_NUMBER; column++){
-						drawCircle(row, column, VOID_CELL_COLOR);
-					}
-				}
+				clearInterval(blinkInterval);
+				document.body.style.background = LIGHT_ORANGE_COLOR;
+				grid = Array.from({ length: ROW_NUMBER },() => Array(COLUMN_NUMBER).fill(-1));
+				moves = [];
+				winningCells = [];
 				numberOfMoves = 0;
-				document.getElementById("restartButton").style = "width: " + BUTTON_WIDTH + "px; height: " + 35 + "px;";
-				document.getElementById("changeLanguageButton").style = "width: " + BUTTON_WIDTH + "px; height: " + 35 + "px;";
-				document.getElementById("undoButton").style = "width: " + BUTTON_WIDTH + "px; height: " + 35 + "px;";
-				document.getElementById("starterText").textContent = BEGINNING_LABELS[languageIndex];
-				document.getElementById('starter').style.visibility = "visible";
-				moveYellow = document.getElementById("Yellow").checked;
 				goOn = true;
+				moveYellow = document.getElementById("Yellow").checked;
+				canvas.width = COLUMN_NUMBER*DIAMETER + GRID_THICKNESS*(COLUMN_NUMBER + 1);
+				canvas.height = ROW_NUMBER*DIAMETER + GRID_THICKNESS*(ROW_NUMBER + 1);
+				ctx.fillStyle = BLUE_COLOR;
+				ctx.fillRect(0, 0, canvas.width, canvas.height);
+				for(let r = 0; r < ROW_NUMBER; r++){
+					for(let c = 0; c < COLUMN_NUMBER; c++){
+						drawCircle(r, c, WHITE);
+					}
+				}
+				document.getElementById('starter').style.visibility = "visible";
 			}
 
-			function getColumn(){
-				let column = (cursorX - GRID_THICKNESS - (cursorX - GRID_THICKNESS)%(GRID_THICKNESS + DIAMETER))/(GRID_THICKNESS + DIAMETER);
-				column = column >= 0 ? column : 0;
-				column = column < COLUMN_NUMBER ? column : COLUMN_NUMBER - 1;
-				return column;
-			}
-
-			function select(){
-				if(goOn){
-					let column = getColumn();
-					index = ROW_NUMBER - 1;
-					while(index >= 0 && grid[index][column] > -1){
-						index--;
-					}
-					if(index >= 0){
-						grid[index][column] = moveYellow ? 0 : 1;
-						drawCircle(index, column, moveYellow ? YELLOW_COLOR : RED_COLOR);
-						moves[numberOfMoves] = column;
-						numberOfMoves++;
-						moveYellow = !moveYellow;
-					}
+			function select(e){
+				if(!goOn){
+					return;
+				}
+				const rect = canvas.getBoundingClientRect();
+				const scaleX = canvas.width/rect.width; 
+				const x =(e.clientX - rect.left)*scaleX;
+				const column = Math.floor(x/(DIAMETER + GRID_THICKNESS));
+				if(column < 0 || column >= COLUMN_NUMBER){
+					return;
+				}
+				let row = ROW_NUMBER - 1;
+				while(row >= 0 && grid[row][column] !== -1){
+					row--;
+				}
+				if(row >= 0){
+					grid[row][column] = moveYellow ? 0 : 1;
+					drawCircle(row, column, moveYellow ? YELLOW_COLOR : RED_COLOR);
+					playClackSound();
+					moves.push({ r: row, c: column });
+					numberOfMoves++;
 					document.getElementById('starter').style.visibility = "hidden";
-					if(check()){
-						document.body.style.background = moveYellow ? RED : YELLOW;
-						setTimeout(function(){ alert(WINNING_MESSAGE[languageIndex] + (moveYellow ? RED_LABEL[languageIndex] : YELLOW_LABEL[languageIndex]) + "! :-D"); }, 100);
+					
+					let win = check(row, column);
+					if(win){
 						goOn = false;
+						winningCells = win;
+						startBlinking(moveYellow ? YELLOW_COLOR : RED_COLOR);
+						const winner = moveYellow ? YELLOW_LABEL[languageIndex] : RED_LABEL[languageIndex];
+						document.body.style.background = moveYellow ? "#FFFFCC" : "#FFCCCC";
+						setTimeout(() => alert(WINNING_MESSAGE[languageIndex] + winner + "!"), 100);
 					}
+					moveYellow = !moveYellow;
 				}
 			}
 
-			function check(){
-				let counter;
-				//CHECK ROWS
-				for(let i = 0; i < ROW_NUMBER; i++){
-					counter = 1;
-					for(let j = 1; j < COLUMN_NUMBER; j++){
-						if((grid[i][j] == grid[i][j-1]) && (grid[i][j] != -1)){
-							counter++;
-							if(counter == FOUR){
-								return true;
-							}
-						}else{
-							counter = 1;
+			function check(row, col){
+				const current = grid[row][col];
+				const directions = [[[0,1],[0,-1]], [[1,0],[-1,0]], [[1,1],[-1,-1]], [[1,-1],[-1,1]]];
+				for(let d of directions){
+					let cells = [{r: row, c: col}];
+					for(let [dr, dc] of d){
+						let r = row + dr, c = col + dc;
+						while(r >= 0 && r < ROW_NUMBER && c >= 0 && c < COLUMN_NUMBER && grid[r][c] === current){
+							cells.push({r: r, c: c});
+							r += dr; c += dc;
 						}
 					}
-				}
-				//CHECK COLUMNS
-				for(let i = 0; i < COLUMN_NUMBER; i++){
-					counter = 1;
-					for(let j = 1; j < ROW_NUMBER; j++){
-						if((grid[j][i] == grid[j-1][i]) && (grid[j][i] != -1)){
-							counter++;
-							if(counter == FOUR){
-								return true;
-							}
-						}else{
-							counter = 1;
-						}
+					if(cells.length >= 4){
+						return cells;
 					}
 				}
-				//CHECK SW-NE
-				for(let i = ROW_NUMBER - FOUR + 1; i < ROW_NUMBER; i++){
-					for(let j = 0; j < COLUMN_NUMBER - FOUR + 1; j++){
-						counter = 1;
-						for(let k = 1; k < FOUR; k++){
-							if((grid[i-k][j+k] == grid[i][j]) && (grid[i][j] != -1)){
-								counter++;
-							}
-						}
-						if(counter == FOUR){
-							return true;
-						}
-					}
-				}
-				//CHECK NW-SE
-				for(let i = 0; i < ROW_NUMBER - FOUR + 1; i++){
-					for(let j = 0; j < COLUMN_NUMBER - FOUR + 1; j++){
-						counter = 1;
-						for(let k = 1; k < FOUR; k++){
-							if((grid[i+k][j+k] == grid[i][j]) && (grid[i][j] != -1)){
-								counter++;
-							}
-						}
-						if(counter == FOUR){
-							return true;
-						}
-					}
-				}
-				return false;
+				return null;
 			}
 
-			function getWidth(){
-				return COLUMN_NUMBER*DIAMETER + GRID_THICKNESS*(COLUMN_NUMBER + 1);
+			function startBlinking(color){
+				let isOn = true;
+				blinkInterval = setInterval(() => {
+					winningCells.forEach(cell => {
+						drawCircle(cell.r, cell.c, isOn ? WHITE : color);
+					});
+					isOn = !isOn;
+				}, 400);
 			}
 
-			function getHeight(){
-				return ROW_NUMBER*DIAMETER + GRID_THICKNESS*(ROW_NUMBER + 1);
+			function cycleLanguage(){
+				languageIndex =(languageIndex + 1)%TITLES.length;
+				updateLabels();
 			}
 
-			function refresh(){
-				drawUniverse();
-			}
-
-			function changeLanguage(){
-				languageIndex = (languageIndex + 1)%LANGUAGES.length;
+			function updateLabels(){
 				document.getElementById("title").textContent = TITLES[languageIndex];
+				document.title = TITLES[languageIndex];
 				document.getElementById("restartButton").textContent = RESTART_LABELS[languageIndex];
 				document.getElementById("changeLanguageButton").textContent = LANGUAGES_LABELS[languageIndex];
 				document.getElementById("undoButton").textContent = UNDO_LABELS[languageIndex];
@@ -214,32 +235,21 @@
 			}
 
 			function undoLastMove(){
-				if(goOn){
-					if(numberOfMoves > 0){
-						let row = 0;
-						while(grid[row][moves[numberOfMoves-1]] == -1){
-							row++;
-						}
-						grid[row][moves[numberOfMoves-1]] = -1;
-						numberOfMoves--;
-						drawCircle(row, moves[numberOfMoves], VOID_CELL_COLOR);
-						moves[numberOfMoves] = -1;
-						moveYellow = !moveYellow;
+				if(goOn && moves.length > 0){
+					let last = moves.pop();
+					grid[last.r][last.c] = -1;
+					drawCircle(last.r, last.c, WHITE);
+					numberOfMoves--;
+					moveYellow = !moveYellow;
+					if(numberOfMoves === 0){
+						document.getElementById('starter').style.visibility = "visible";
 					}
 				}
 			}
+
+			function refresh(){
+				drawUniverse();
+			}
 		</script>
-		<form action="#">
-			<br>
-			<button type = "button" id="restartButton" onclick = "refresh()">Start again!</button>
-			<button type = "button" id="changeLanguageButton" onclick = "changeLanguage()">English</button>
-			<button type = "button" id="undoButton" onclick = "undoLastMove()">Undo</button>
-			<div id = "starter">
-			<br>
-			<output id="starterText">Starter:</output>
-			<input type="radio" id="Yellow" name="beginner" value = "Yellow" checked="yes" onclick="moveYellow = true" onkeypress="moveYellow = true"/><output id = "YellowLabel">Yellow</output>
-			<input type="radio" id="Red" name="beginner" value = "Red"  onkeypress="moveYellow = false"/><output id = "RedLabel">Red</output>
-			</div>
-		</form>
 	</body>
 </html>

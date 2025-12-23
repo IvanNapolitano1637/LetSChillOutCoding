@@ -1,309 +1,292 @@
 <!DOCTYPE HTML>
 <html lang="en"><!--G03#008 - Luca - Tower of Hanoi-->
-
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta http-equiv="X-UA-Compatible" content="ie=edge">
 		<title>Tower of Hanoi</title>
-		<meta charset="utf-8">
+		<style>
+			body{ 
+				font-family: sans-serif; 
+				transition: background 0.5s; 
+				text-align: center; 
+				overflow-x: hidden; 
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				margin: 0;
+				padding: 10px;
+				min-height: 100vh;
+				box-sizing: border-box;
+			}
+			canvas{ 
+				background: transparent;
+				cursor: pointer; 
+				display: block;
+				margin: 20px auto;
+				max-width: 100%; 
+				height: auto; 
+				border-radius: 8px;
+				align-self: center;
+				image-rendering: auto;
+			}
+			.controls{ 
+				margin-top: 20px; 
+				display: flex; 
+				flex-wrap: wrap; 
+				justify-content: center; 
+				gap: 10px; 
+				width: 100%;
+			}
+			.versions-panel{ 
+				margin-top: 20px; 
+				padding: 10px; 
+				border: 1px dashed #666; 
+				display: inline-block; 
+			}
+			@media screen and(max-width: 600px){
+				.mobile-rotate{ transform: rotate(90deg); }
+			}
+		</style>
 	</head>
 
 	<body>
 
-		<canvas id="universe" onclick="select()" onkeypress="select()">
-			Upgrade Browser
-		</canvas>
-		
+		<canvas id="universe" onclick="select()"></canvas>
+
+		<div class="controls">
+			<select id="disksNumber" onchange="changeDiskCount()"></select>
+			<button type="button" onclick="resetGame()">Restart</button>
+			<button type="button" onclick="animatedSolving()">How To(Demo)</button>
+		</div>
+
+		<div class="versions-panel" id="versions">
+			<label><input type="radio" name="vPage" value="1" onclick="changeVersion(1)" checked> Version 1</label>
+			<label><input type="radio" name="vPage" value="2" onclick="changeVersion(2)"> Version 2</label>
+		</div>
+
 		<script>
 			//I'm not sure aboute step duration, "MILLISECONDS" const value.
-			//I'd like to rotate the select option elements
-			window.onload = drawUniverse;
-			let version = 1, maximumNumberOfDisks, disksHeight, pink, gray, colors;
+			let version = 1;
 			const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
-			const UNIT = DESKTOP ? 9 : 5;
-			const H_SPACE = 8*UNIT;
-			const V_SPACE = H_SPACE;
-			const BASE_HEIGHT = 2*UNIT;
-			const DISK_INCREASE = 2*UNIT;
-			const DISK_BASE_LENGTH = 6*UNIT;
-			const LATERAL_MARGIN = 2*UNIT;
-			const WIDTH = 32*UNIT;
-			const PAGE_WIDTH = 4*UNIT;
-			const UPPER_MARGIN = 4*UNIT;
-			const UPPER_PAGE_MARGIN = 2*UNIT;
-			const LOWER_MARGIN = 2*UNIT;
+			const UNIT = DESKTOP ? 9 : 6;
+			const H_SPACE = 8*UNIT, V_SPACE = H_SPACE;
+			const BASE_HEIGHT = 2*UNIT, DISK_INCREASE = 2*UNIT, DISK_BASE_LENGTH = 6*UNIT;
+			const WIDTH = 32*UNIT, PAGE_WIDTH = 4*UNIT, LATERAL_MARGIN = 2*UNIT;
+			const UPPER_MARGIN = 4*UNIT, UPPER_PAGE_MARGIN = 2*UNIT, LOWER_MARGIN = 2*UNIT;
 			const PAGE_LENGTH = WIDTH - 2*LATERAL_MARGIN;
 			const TOTAL_WIDTH = 2*(4*UNIT) + 2*H_SPACE + 3*WIDTH;
-			const BROWN = "#905000"
-			//const lightYellow = "#ffff88";
-			const ORANGE = "#ffcc00";
+			const BROWN = "#905000", ORANGE = "#ffcc00";//const lightYellow = "#ffff88";
 			const COLORS_1 = ["#00ffff","#ff0000","#ff8000","#ffff00","#00ff00","#0000ff","#ff00ff"];
 			const COLORS_2 = ["#ffffff","#00ffff","#ff0000","#ff8000","#ffff00","#00ff00","#0000ff","#ff00ff","#006400","#000000"];
-			const MILLISECONDS = 250;
-			const DEFAULT_LEVEL = 4;
-			let numberOfDisks = DEFAULT_LEVEL;
-			let pegHeight, totalHeight, cursorX, cursorY, context, universe, activeTower, nIntervId, steps, step, wan, demo;
-			let selectedTower = [];
-			let towers = [];
-			let goOn = false;
 
-			function drawUniverse(){
-				maximumNumberOfDisks = (version == 1) ? 7 : 10;
-				disksHeight = (version == 1) ? 6*UNIT : 4*UNIT;
-				pink = (version == 1) ? "#ffcccc" : "#ff8888";
-				gray = (version == 1) ? "#444444" : "#888888";//"#cccccc"
-				colors = (version == 1) ? COLORS_1 : COLORS_2;
-				pegHeight = numberOfDisks*disksHeight + UPPER_PAGE_MARGIN
-				totalHeight = V_SPACE + UPPER_MARGIN + pegHeight + BASE_HEIGHT + LOWER_MARGIN;
-				document.body.style.background = pink;
-				document.onmousemove = function(e){
-					cursorX = DESKTOP ? e.pageX : e.pageY;
-					cursorY = DESKTOP ? e.pageY : e.pageX;
-				}
+			let numberOfDisks = 4;
+			let universe, context, nIntervId = null;
+			let towers = [[], [], []], selectedTower = [false, false, false];
+			let activeTower = -1, wan = false, demo = false, steps = "", step = 0;
+			let cursorX = 0, cursorY = 0;
+			let maximumNumberOfDisks, disksHeight, pink, gray, colors, totalHeight, pegHeight;
+			window.onload = initGame;
+
+			function initGame(){
 				universe = document.getElementById("universe");
-				universe.width = getWidth();
-				universe.height = getHeight();
-				for(let i = 0; i < 3; i++){
-					selectedTower[i] = false;
-					towers[i] = [];
+				context = universe.getContext("2d");
+				document.onmousemove =(e) => {
+					const rect = universe.getBoundingClientRect();
+					cursorX = e.clientX - rect.left;
+					cursorY = e.clientY - rect.top;
+				};
+				resetGame();
+			}
+
+			function resetGame(){
+				if(nIntervId){
+					clearInterval(nIntervId);
+					nIntervId = null;
 				}
-				for(let i = 0; i < numberOfDisks; i++){
-					towers[DESKTOP?0:2][i] = numberOfDisks - i - 1;
-					towers[1][i] = -1;
-					towers[DESKTOP?2:0][i] = -1;
-				}
-				activeTower = -1;
-				if(universe && universe.getContext("2d")){
-					context = universe.getContext("2d");
-					colorAllTower();
-				}
-				if(!DESKTOP){
-					document.getElementById("refresh").style.transform = "rotate(270deg)";
-					document.getElementById("disksNumber").style.transform = "rotate(270deg)";
-					document.getElementById("refreshWholePage").style.transform = "rotate(270deg)";
-					document.getElementById("demoSolution").style.transform = "rotate(270deg)";
-					document.getElementById("versions").style = "transform: rotate(270deg); position: relative; display: inline-block; margin-top: 70px;";
-				}
-				document.getElementById("disksNumber").innerHTML = null;
-				for(let i = 0; i < maximumNumberOfDisks; i++){
-					document.getElementById("disksNumber").innerHTML += ("<option id=\"d" + (i + 1) + "\" value=\"" + (i + 1) + "\" " + ((i + 1) == numberOfDisks ? "selected" : "") + "> Level " + (i + 1) + " </option>");
-				}
-				steps = solution(numberOfDisks).replaceAll("(","").replaceAll(")","").replaceAll(",","");
-				steps = DESKTOP ? steps : steps.replaceAll("1","A").replaceAll("3","1").replaceAll("A","3");
-				step = 0;
-				clearInterval(nIntervId);
-				goOn = false;
+
+				maximumNumberOfDisks =(version === 1) ? 7 : 10;
+				disksHeight =(version === 1) ? 6*UNIT : 4*UNIT;
+				pink =(version === 1) ? "#ffcccc" : "#ff8888";
+				//gray =(version === 1) ? "#444444" : "#888888";
+				gray =(version === 1) ? "rgba(0,0,0,0.05)" : "rgba(0,0,0,0.1)";
+				colors =(version === 1) ? COLORS_1 : COLORS_2;
+				
+				pegHeight = numberOfDisks*disksHeight + UPPER_PAGE_MARGIN;
+				totalHeight = V_SPACE + UPPER_MARGIN + pegHeight + BASE_HEIGHT + LOWER_MARGIN;
+				
+				document.body.style.background = pink;
+				universe.width = TOTAL_WIDTH;
+				universe.height = totalHeight;
+
 				wan = false;
 				demo = false;
+				activeTower = -1;
+				towers = [[], [], []];
+				selectedTower = [false, false, false];
+				for(let i = 0; i < numberOfDisks; i++){
+					towers[0][i] = numberOfDisks - i - 1;
+					towers[1][i] = -1;
+					towers[2][i] = -1;
+				}
+
+				const select = document.getElementById("disksNumber");
+				select.innerHTML = "";
+				for(let i = 1; i <= maximumNumberOfDisks; i++){
+					let opt = document.createElement("option");
+					opt.value = i; opt.text = "Level " + i;
+					if(i === numberOfDisks){
+						opt.selected = true;
+					}
+					select.add(opt);
+				}
+
+				steps = calculateSteps(numberOfDisks);
+				step = 0;
+
+				drawAll();
 			}
 
-			function selectTower(){
-				tower = -1;
-				if(cursorY >= V_SPACE && cursorY <= totalHeight){
-					if(cursorX >= H_SPACE && cursorX <= WIDTH + H_SPACE){
-						tower = 0;
-					}else if(cursorX >= WIDTH + 2*H_SPACE && cursorX <= 2*WIDTH + 2*H_SPACE){
-						tower = 1;
-					}else if(cursorX >= 2*WIDTH + 3*H_SPACE && cursorX <= 3*WIDTH + 3*H_SPACE){
-						tower = 2;
+			function changeDiskCount(){
+				numberOfDisks = parseInt(document.getElementById("disksNumber").value);
+				resetGame();
+			}
+
+			function changeVersion(v){
+				version = v;
+				numberOfDisks =(v === 1 && numberOfDisks > 7) ? 7 : numberOfDisks;
+				resetGame();
+			}
+
+			function select(){
+				if(wan){
+					return;
+				}
+				
+				let towerIdx = -1;
+				const clickX = cursorX;
+				for(let i = 0; i < 3; i++){
+					let xStart = i*WIDTH +(i + 1)*H_SPACE;
+					if(clickX >= xStart && clickX <= xStart + WIDTH){
+						towerIdx = i;
+						break;
 					}
 				}
-				return tower;
-			}
 
-			function oldSelect(choice){
-				if(choice == null){
-					tower = selectTower();
-				}else{
-					tower = choice;
+				if(towerIdx === -1){
+					return;
 				}
-				if(tower >= 0){
-					if(activeTower == -1){
-						activeTower = tower;
-						selectedTower[tower] = true;
-					}else if(activeTower == tower){
-						selectedTower[tower] = false;
+
+				if(activeTower === -1){
+					if(getLastDiskIndex(towerIdx) !== -1){
+						activeTower = towerIdx;
+						selectedTower[towerIdx] = true;
+					}
+				}else{
+					if(activeTower === towerIdx){
+						selectedTower[towerIdx] = false;
 						activeTower = -1;
 					}else{
-						let t0 = getLast(activeTower);
-						if(t0 == -1){
-							selectedTower[activeTower] = false;
-							activeTower = -1;
-						}else{
-							let t1 = getLast(tower);
-							let v1 = towers[activeTower][t0];
-							if(t1 == -1 || towers[activeTower][t0] < towers[tower][t1]){
-								towers[activeTower][t0] = -1;
-								towers[tower][t1+1] = v1;
-								selectedTower[activeTower] = false;
-								activeTower = -1;
-							}else{
-								selectedTower[activeTower] = false;
-								activeTower = -1;
-							}
-						}
+						moveDisk(activeTower, towerIdx);
+						selectedTower[activeTower] = false;
+						activeTower = -1;
 					}
-					colorAllTower();
 				}
-				if(towers[1][numberOfDisks-1]!=-1 || towers[DESKTOP?2:0][numberOfDisks-1]!=-1){
-					document.body.style.background = "#00FF00";
+				drawAll();
+				checkWin();
+			}
+
+			function moveDisk(from, to){
+				let fromIdx = getLastDiskIndex(from);
+				let toIdx = getLastDiskIndex(to);
+				let diskToMove = towers[from][fromIdx];
+
+				if(toIdx === -1 || diskToMove < towers[to][toIdx]){
+					towers[from][fromIdx] = -1;
+					towers[to][toIdx + 1] = diskToMove;
+				}
+			}
+
+			function getLastDiskIndex(t){
+				let idx = numberOfDisks - 1;
+				while(idx >= 0 && towers[t][idx] === -1){
+					idx--;
+				}
+				return idx;
+			}
+
+			function checkWin(){
+				if(towers[2][numberOfDisks-1] !== -1){
 					wan = true;
+					document.body.style.background = "#00FF00";
 					if(!demo){
-						setTimeout(function(){ alert("You win! :-D"); }, 100);
+						setTimeout(() => alert("Complimenti! Hai vinto!"), 200);
 					}
 				}
 			}
 
-			function select(choice){
-				if(!wan){
-					oldSelect(choice);
-				}
-			}
-
-			function colorTower(tower){
-				let x0, y0, w, h;
-
-				x0 = tower*WIDTH + (tower + 1)*H_SPACE;
-				y0 = V_SPACE;
-				w = WIDTH;
-				h = totalHeight;				
-				context.fillStyle = (selectedTower[tower] ? ORANGE : gray);
-				context.fillRect(DESKTOP ? x0 : y0, DESKTOP ? y0 : x0, DESKTOP ? w : h, DESKTOP ? h : w);
-
-				context.fillStyle = BROWN;
-				x0 = tower*WIDTH + (tower + 1)*H_SPACE + ((WIDTH - PAGE_WIDTH)/2);
-				y0 = V_SPACE + UPPER_MARGIN;
-				context.fillRect(DESKTOP ? x0 : y0, DESKTOP ? y0 : x0, DESKTOP ? PAGE_WIDTH : pegHeight, DESKTOP ? pegHeight : PAGE_WIDTH);
-
-				//context.fillStyle = BROWN;//inherited
-				x0 = tower*WIDTH + (tower + 1)*H_SPACE + LATERAL_MARGIN;
-				y0 = V_SPACE + UPPER_MARGIN + pegHeight;
-				w = PAGE_LENGTH;
-				h = BASE_HEIGHT;
-				context.fillRect(DESKTOP ? x0 : y0, DESKTOP ? y0 : x0, DESKTOP ? w : h, DESKTOP ? h : w);
-
-				for(let i = 0; i < numberOfDisks; i++){
-					if(towers[tower][i] >= 0){
-						drawDisk(tower,numberOfDisks - i - 1,towers[tower][i]);
-					}
-				}
-			}
-
-			function colorAllTower(){
+			function drawAll(){
+				context.clearRect(0, 0, universe.width, universe.height);
 				for(let i = 0; i < 3; i++){
-					colorTower(i);
+					drawTower(i);
 				}
 			}
 
-			function drawDisk(tower, level, disk){
-				let x0, y0, w, h;
-				context.fillStyle = colors[disk];
+			function drawTower(idx){
+				let x0 = idx*WIDTH +(idx + 1)*H_SPACE;
+				context.fillStyle = selectedTower[idx] ? ORANGE : gray;
+				context.fillRect(x0, V_SPACE, WIDTH, totalHeight - V_SPACE);
+				context.fillStyle = BROWN;
+				context.fillRect(x0 +(WIDTH - PAGE_WIDTH)/2, V_SPACE + UPPER_MARGIN, PAGE_WIDTH, pegHeight);
+				context.fillRect(x0 + LATERAL_MARGIN, V_SPACE + UPPER_MARGIN + pegHeight, PAGE_LENGTH, BASE_HEIGHT);
+				for(let i = 0; i < numberOfDisks; i++){
+					let diskValue = towers[idx][i];
+					if(diskValue >= 0){
+						let level = numberOfDisks - i - 1;
+						drawDisk(idx, level, diskValue);
+					}
+				}
+			}
 
-				x0 = LATERAL_MARGIN + tower*WIDTH + (tower + 1)*H_SPACE + (PAGE_LENGTH - DISK_BASE_LENGTH - (disk*DISK_INCREASE))/2 ;
-				y0 = V_SPACE + level*disksHeight + UPPER_MARGIN + UPPER_PAGE_MARGIN;
-				w = DISK_BASE_LENGTH + disk*DISK_INCREASE;
-				h = disksHeight;
-				context.fillRect(DESKTOP ? x0 : y0, DESKTOP ? y0 : x0, DESKTOP ? w : h, DESKTOP ? h : w);
-
+			function drawDisk(tIdx, level, dSize){
+				context.fillStyle = colors[dSize];
+				let w = DISK_BASE_LENGTH + dSize*DISK_INCREASE;
+				let x = tIdx*WIDTH +(tIdx + 1)*H_SPACE +(WIDTH - w)/2;
+				let y = V_SPACE + level*disksHeight + UPPER_MARGIN + UPPER_PAGE_MARGIN;
+				context.fillRect(x, y, w, disksHeight - 1);
 				context.beginPath();
-				//"x0" EREDITATO;
-				y0 = V_SPACE + (level + 1/2)*(disksHeight) + UPPER_MARGIN + UPPER_PAGE_MARGIN;
-				context.ellipse(DESKTOP ? x0 : y0, DESKTOP ? y0 : x0, disksHeight/2, disksHeight/2, Math.PI*0, Math.PI*(DESKTOP ? 1.5 : 0), Math.PI*(DESKTOP ? 0.5 : 1), true);
-				context.fill();
-
-				context.beginPath();
-				x0 += DISK_BASE_LENGTH + disk*DISK_INCREASE;
-				//"y0" EREDITATO;
-				context.ellipse(DESKTOP ? x0 : y0, DESKTOP ? y0 : x0, disksHeight/2, disksHeight/2, Math.PI*0, Math.PI*(DESKTOP ? 1.5 : 2), Math.PI*(DESKTOP ? 0.5 : 1), false);
+				context.arc(x, y + disksHeight/2, disksHeight/2, 0, Math.PI*2);
+				context.arc(x + w, y + disksHeight/2, disksHeight/2, 0, Math.PI*2);
 				context.fill();
 			}
 
-			function getLast(tower){
-				let index = numberOfDisks - 1;
-				while(index > -1 && towers[tower][index] == -1){
-					index--;
+			function calculateSteps(n){
+				let moves = [];
+				function hanoi(num, from, to, aux){
+					if(num === 1){ moves.push({f: from, t: to}); return; }
+					hanoi(num - 1, from, aux, to);
+					moves.push({f: from, t: to});
+					hanoi(num - 1, aux, to, from);
 				}
-				return index;
-			}
-
-			function getCurrency(){
-				selectElement = document.querySelector('#disksNumber');
-				numberOfDisks = selectElement.value;
-				goOn = false;
-				drawUniverse();
-			}
-
-			function refreshPage(versionToSet){
-				version = versionToSet;
-				numberOfDisks = DEFAULT_LEVEL;
-				let element = document.getElementById("disksNumber");
-				element.value = DEFAULT_LEVEL;
-				goOn = false;
-				drawUniverse();
-			}
-
-			function getWidth(){
-				return DESKTOP?TOTAL_WIDTH:totalHeight;
-			}
-
-			function getHeight(){
-				return DESKTOP?totalHeight:TOTAL_WIDTH;
-			}
-
-			function solutionHanoi(s, level){
-				let stringBefore;
-				let stringAfter;
-				if(level < 1){
-					return "#";
-				}else if(level == 1 && s.length == 0){
-					return "(1,2)";
-				}else{
-					stringBefore = s.replaceAll("2", "A").replaceAll("3", "2").replaceAll("A", "3");
-					stringAfter = s.replaceAll("1", "A").replaceAll("3", "1").replaceAll("A", "3");
-					if(stringBefore.length > 0 && stringAfter.length > 0) {
-						s = stringBefore + ",(1,2)," + stringAfter;
-					}else{
-						s = "(1,2)";
-					}
-					if(level > 1) {
-						return solutionHanoi(s, level - 1);
-					}else{
-						return s;
-					}
-				}
-			}
-
-			function solution(level){
-				return solutionHanoi("", level);
-			}
-
-			function nextStep(){
-				if(goOn){
-					select(steps[step]-1);
-					step += 1;
-					if(step == steps.length){
-						clearInterval(nIntervId);
-						nIntervId = null;
-					}
-				}
+				hanoi(n, 0, 2, 1);
+				return moves;
 			}
 
 			function animatedSolving(){
-				drawUniverse();
-				goOn = true;
+				resetGame();
 				demo = true;
-				nIntervId = setInterval(nextStep, MILLISECONDS);
+				nIntervId = setInterval(() => {
+					if(step < steps.length){
+						let m = steps[step];
+						moveDisk(m.f, m.t);
+						drawAll();
+						checkWin();
+						step++;
+					}else{
+						clearInterval(nIntervId);
+					}
+				}, 500);
 			}
-		</script>
 
-		<br><br><br><br><select name = "howManyDisks" id = "disksNumber" onchange = "getCurrency()"></select>
-		<button type = "button" id = "refresh" onclick = "drawUniverse()">Restart</button>
-		<button type = "button" id = "refreshWholePage" onclick = "refreshPage()">Refresh Page</button>
-		<button type = "button" id = "demoSolution" onclick = "animatedSolving()">How To</button><br><br>
-		<div id = "versions">
-			<input type = "radio" id = "Version1" name = "VersionOfPage" value = "1" onclick = "refreshPage(1)" onkeypress = "refreshPage(1)" checked = "yes"/>Version 1<br>
-			<input type = "radio" id = "Version2" name = "VersionOfPage" value = "2" onclick = "refreshPage(2)" onkeypress = "refreshPage(2)"/>Version 2
-		</div>
+		</script>
 	</body>
 </html>

@@ -1,62 +1,78 @@
 <!DOCTYPE html>
 <html lang="en"><!--C04#017 - Paolo - Strange Clock-->
-
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clock</title>
-  </head>
-
-  <body style="margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: Arial, sans-serif;">
-
-    <svg id="panel"></svg>
-
-    <div id="timeCounter" class="centro"></div>
-
-    <script>
-
-		const COLORS = ["#FF0000","#00FF00","#0000FF","#FFFF00","#FF00FF","#00FFFF","#00AF00","#7F007F","#FFAFAF","#FFCF4F","#FF7F00","#7F3F00"];
-		const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
-		const UNIT = DESKTOP ? 10 : 5;
-		const SIDE = 5*UNIT;
-		const GRID_HEIGHT = SIDE;
-		const GRID_WIDTH = SIDE*COLORS.length;
-		const FONT_SIZE = UNIT;
-		const BACKGROUND_COLOR = "#000000";
-		const PADDING = 8*UNIT;
-		setInterval(setTimeCounter, 200);
-		
-		function setPantone(){
-			const svg = document.querySelector("svg");
-			const svgns = "http://www.w3.org/2000/svg";
-			let panel;
-			svg.setAttribute("width", GRID_WIDTH);
-			svg.setAttribute("height", GRID_HEIGHT);
-			for(let i = 0; i < COLORS.length; i++){
-				panel = document.createElementNS(svgns, "rect");
-				panel.setAttribute("width", SIDE);
-				panel.setAttribute("height", SIDE);
-				panel.setAttribute("x", i*SIDE);
-				panel.setAttribute("y", 0);
-				panel.style.fill = COLORS[i];
-				svg.appendChild(panel);
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Clock</title>
+	</head>
+	<body style="margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: Arial, sans-serif; background-color: #3f3f3f;">
+		<svg id="panel" style="display: block; margin-bottom: 20px;"></svg>
+		<div id="timeCounter"></div>
+		<script>
+			const COLORS = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#00AF00", "#7F007F", "#FFAFAF", "#FFCF4F", "#FF7F00", "#7F3F00"];
+			const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
+			const UNIT = DESKTOP ? 10 : 5;
+			const SIDE = 5*UNIT;
+			const GRID_HEIGHT = SIDE;
+			const GRID_WIDTH = SIDE*COLORS.length;
+			const FONT_SIZE = UNIT;
+			const BACKGROUND_COLOR = "#000000";
+			const PADDING = 8*UNIT;
+	
+			function setPantone(){
+				const svg = document.getElementById("panel");
+				const svgns = "http://www.w3.org/2000/svg";
+				svg.setAttribute("width", GRID_WIDTH);
+				svg.setAttribute("height", GRID_HEIGHT);
+				
+				for(let i = 0; i < COLORS.length; i++){
+					let rect = document.createElementNS(svgns, "rect");
+					rect.setAttribute("width", SIDE);
+					rect.setAttribute("height", SIDE);
+					rect.setAttribute("x", i*SIDE);
+					rect.setAttribute("y", 0);
+					rect.style.fill = COLORS[i];
+					svg.appendChild(rect);
+				}
 			}
-		}
-		setPantone();
-		
-		function setTimeCounter(){
-			const CURRENT_DATE = new Date();
-			let dayDiv = ("<div id='day' style='color:" + COLORS[(CURRENT_DATE.getMonth())%12] + "; display: inline-block;'>" + CURRENT_DATE.getDate() + "</div>");
-			let minutesDiv = ("<div id='minutes' style='color:" + COLORS[(CURRENT_DATE.getHours() + 11)%12] + "; display: inline-block;'>" + CURRENT_DATE.getMinutes() + "</div>");
-			let separatorDiv = ("<div style='color: white; display: inline-block;'>π</div>");
-			document.getElementById("timeCounter").innerHTML = dayDiv + separatorDiv + minutesDiv;
-		}
-		
-		function setTimeCounterStyle(){
-			document.getElementById("timeCounter").style = "text-align: center; font-size: " + FONT_SIZE + "rem; background-color: " + BACKGROUND_COLOR + "; padding: " + PADDING + "px;";
-		}
-		setTimeCounterStyle();
-
-    </script>
-  </body>
+	
+			function setTimeCounter(){
+				const CURRENT_DATE = new Date();
+				const counter = document.getElementById("timeCounter");
+				
+				const monthColor = COLORS[CURRENT_DATE.getMonth()%12];
+				const hourColor = COLORS[(CURRENT_DATE.getHours() + 11)%12];
+				const day = CURRENT_DATE.getDate();
+				const minutes = CURRENT_DATE.getMinutes().toString().padStart(2, '0');
+	
+				counter.innerHTML = `
+					<div style="color: ${monthColor}; display: inline-block;">${day}</div>
+					<div style="
+						display: inline-block; 
+						margin: 0 15px;
+						background: linear-gradient(90deg, ${monthColor}, ${hourColor});
+						-webkit-background-clip: text;
+						-webkit-text-fill-color: transparent;
+					">π</div>
+					<div style="color: ${hourColor}; display: inline-block;">${minutes}</div>
+				`;
+			}
+	
+			function setTimeCounterStyle(){
+				const tc = document.getElementById("timeCounter");
+				tc.style.textAlign = "center";
+				tc.style.fontSize = FONT_SIZE + "rem";
+				tc.style.backgroundColor = BACKGROUND_COLOR;
+				tc.style.padding = PADDING + "px";
+				tc.style.lineHeight = "1.2";
+				tc.style.borderRadius = "15px";
+				tc.style.boxShadow = "0 10px 30px rgba(0,0,0,0.5)";
+			}
+	
+			setPantone();
+			setTimeCounterStyle();
+			setTimeCounter();
+			setInterval(setTimeCounter, 200);
+		</script>
+	</body>
 </html>

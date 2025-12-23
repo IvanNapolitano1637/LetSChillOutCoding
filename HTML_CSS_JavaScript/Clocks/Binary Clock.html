@@ -1,15 +1,52 @@
 <!DOCTYPE html>
 <html lang="en"><!--C01#001 - Lucia - Binary Clock-->
-
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta http-equiv="X-UA-Compatible" content="ie=edge">
 		<title>Binary Clock and Calendar</title>
+		<style>
+			body{
+				background-color: powderblue;
+				margin: 0;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				min-height: 100vh;
+				font-family: sans-serif;
+			}
+			#clock-container{
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 15px;
+			}
+			svg{
+				display: block;
+				border-radius: 8px;
+				box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+			}
+			.controls{
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 5px;
+				max-width: 600px;
+			}
+			input{
+				padding: 5px;
+				border: 1px solid #999;
+				border-radius: 4px;
+				text-align: center;
+				background-color: #fff;
+				color: #333;
+			}
+		</style>
 	</head>
 
-	<body style="background-color:powderblue;">
-
+	<body>
+		<div id="clock-container"></div>
 		<script>
 			const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
 			const FLAG = true;
@@ -17,71 +54,72 @@
 			const HORIZONTAL_SPACE = 2*UNIT;
 			const VERTICAL_SPACE = 2*UNIT;
 			const YEAR_RADIUS = 3*UNIT;
-			const RADIUS = 2*YEAR_RADIUS + (HORIZONTAL_SPACE/2);
+			const RADIUS = 2*YEAR_RADIUS +(HORIZONTAL_SPACE/2);
 			const ZERO_COLOR = 'blue';
 			const ONE_COLOR = 'red';
 			const SEPARATOR_COLOR = 'yellow';
 			const PANEL_BACKGROUND_COLOR = 'black';
-			let panel, inner_panel, top_panel, bottom_panel, new_panel, new_bottom_panel, input;
+			let panel, inner_panel, top_panel, bottom_panel, new_bottom_panel;
 			const YEAR_C = [], MONTH_C = [], DAY_C = [], HOURS_C = [], MINUTES_C = [], SECONDS_C = [], TS_C = [], LAST_ARRAY_BD_C = [];
 			const YEAR_BD = [], MONTH_BD = [], DAY_BD = [], HOURS_BD = [], MINUTES_BD = [], SECONDS_BD = [], TS_BD = [];
-			const LAST_ARRAY_BD = [1,1,0,0,1,0,1,0,1,1,0,1,1,1,0,1,1,1,0,0,0,1,1,1,1,1,1,0,1,1,0,0];
+			const LAST_ARRAY_BD = [1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0];
+			const container = document.getElementById('clock-container');
+			container.innerHTML = `
+				<svg id="panel-svg"></svg>
+				<div class="controls">
+					<input type="text" size="10" id="dec_ts" disabled>
+					<input type="text" size="8" id="hex_ts" disabled>
+					<input type="text" size="30" id="end" value="Tuesday 19 January 2038 03:14:07" disabled>
+					<input type="text" size="10" id="lasting" disabled>
+					<input type="text" size="8" id="sign" value="caddc7ec" disabled>
+				</div>
+			`;
 
-			let clockSetting = (function() {
-
+			let clockSetting =(function(){
 				let executed = false;
 
-				return function() {
-
-					if(!executed) {
-
+				return function(){
+					if(!executed){
 						executed = true;
-
-						const svg = document.querySelector("svg");
+						const svg = document.getElementById("panel-svg");
 						const svgns = "http://www.w3.org/2000/svg";
-
 						svg.setAttribute("width", 12*RADIUS + 11*HORIZONTAL_SPACE);
-						svg.setAttribute("height", (10 + (FLAG ? 1 : 0))*RADIUS + 2*YEAR_RADIUS + 15*VERTICAL_SPACE);
-
+						svg.setAttribute("height",(10 +(FLAG ? 1 : 0))*RADIUS + 2*YEAR_RADIUS + 15*VERTICAL_SPACE);
 						panel = document.createElementNS(svgns, "rect");
 						inner_panel = document.createElementNS(svgns, "rect");
 						top_panel = document.createElementNS(svgns, "rect");
 						bottom_panel = document.createElementNS(svgns, "rect");
 						new_bottom_panel = document.createElementNS(svgns, "rect");
-
 						svg.appendChild(panel);
 						svg.appendChild(inner_panel);
 						svg.appendChild(top_panel);
 						svg.appendChild(bottom_panel);
-						if(FLAG)svg.appendChild(new_bottom_panel);
+
+						if(FLAG){
+							svg.appendChild(new_bottom_panel);
+						}
 
 						for(let i = 0; i < 12; i++){
-
 							YEAR_C[i] = document.createElementNS(svgns, "circle");
 							YEAR_C[i].setAttribute("r", YEAR_RADIUS);
-							YEAR_C[i].setAttribute("cx", (i*2 + 1)*YEAR_RADIUS + (i + 3)*HORIZONTAL_SPACE);
+							YEAR_C[i].setAttribute("cx",(i*2 + 1)*YEAR_RADIUS +(i + 3)*HORIZONTAL_SPACE);
 							YEAR_C[i].setAttribute("cy", YEAR_RADIUS + 3*VERTICAL_SPACE);
 							svg.appendChild(YEAR_C[i]);
 
-							if(i<6){
-
+							if(i < 6){
 								MONTH_C[i] = document.createElementNS(svgns, "circle");
 								DAY_C[i] = document.createElementNS(svgns, "circle");
 								HOURS_C[i] = document.createElementNS(svgns, "circle");
 								MINUTES_C[i] = document.createElementNS(svgns, "circle");
 								SECONDS_C[i] = document.createElementNS(svgns, "circle");
+								[MONTH_C[i], DAY_C[i], HOURS_C[i], MINUTES_C[i], SECONDS_C[i]].forEach(c => c.setAttribute("r", RADIUS));
+								const cx =(i*2 + 1)*RADIUS +(i + 3)*HORIZONTAL_SPACE;
 
-								MONTH_C[i].setAttribute("r", RADIUS);
-								DAY_C[i].setAttribute("r", RADIUS);
-								HOURS_C[i].setAttribute("r", RADIUS);
-								MINUTES_C[i].setAttribute("r", RADIUS);
-								SECONDS_C[i].setAttribute("r", RADIUS);
-
-								MONTH_C[i].setAttribute("cx", (i*2+1)*RADIUS + (i+3)*HORIZONTAL_SPACE);
-								DAY_C[i].setAttribute("cx", (i*2+1)*RADIUS + (i+3)*HORIZONTAL_SPACE);
-								HOURS_C[i].setAttribute("cx", (i*2+1)*RADIUS + (i+3)*HORIZONTAL_SPACE);
-								MINUTES_C[i].setAttribute("cx", (i*2+1)*RADIUS + (i+3)*HORIZONTAL_SPACE);
-								SECONDS_C[i].setAttribute("cx", (i*2+1)*RADIUS + (i+3)*HORIZONTAL_SPACE);
+								MONTH_C[i].setAttribute("cx", cx);
+								DAY_C[i].setAttribute("cx", cx);
+								HOURS_C[i].setAttribute("cx", cx);
+								MINUTES_C[i].setAttribute("cx", cx);
+								SECONDS_C[i].setAttribute("cx", cx);
 
 								MONTH_C[i].setAttribute("cy", 2*YEAR_RADIUS + 1*RADIUS + 4*VERTICAL_SPACE);
 								DAY_C[i].setAttribute("cy", 2*YEAR_RADIUS + 3*RADIUS + 5*VERTICAL_SPACE);
@@ -100,29 +138,27 @@
 						for(let i = 0; i < 32; i++){
 							TS_C[i] = document.createElementNS(svgns, "circle");
 							TS_C[i].setAttribute("r", RADIUS/5);
-							TS_C[i].setAttribute("cx", ((i*2 + 1)*(RADIUS/5)) + (1*HORIZONTAL_SPACE) + i + (DESKTOP ? i : UNIT));
+							TS_C[i].setAttribute("cx",((i*2 + 1)*(RADIUS/5)) +(1*HORIZONTAL_SPACE) + i +(DESKTOP ? i : UNIT));
 							TS_C[i].setAttribute("cy", 2*YEAR_RADIUS + 11*RADIUS + 10*VERTICAL_SPACE);
 							svg.appendChild(TS_C[i]);
-						}
 
-						if(FLAG){
-							for(let i = 0; i < 32; i++){
+							if(FLAG){
 								LAST_ARRAY_BD_C[i] = document.createElementNS(svgns, "circle");
 								LAST_ARRAY_BD_C[i].setAttribute("r", RADIUS/5);
-								LAST_ARRAY_BD_C[i].setAttribute("cx", ((i*2+1)*(RADIUS/5)) + (1*HORIZONTAL_SPACE) + i + (DESKTOP ? i : UNIT));
+								LAST_ARRAY_BD_C[i].setAttribute("cx",((i*2 + 1)*(RADIUS/5)) +(1*HORIZONTAL_SPACE) + i +(DESKTOP ? i : UNIT));
 								LAST_ARRAY_BD_C[i].setAttribute("cy", 2*YEAR_RADIUS + 12*RADIUS + 10*VERTICAL_SPACE);
-								LAST_ARRAY_BD_C[i].style.fill = (LAST_ARRAY_BD[i] == "0") ? ZERO_COLOR : ONE_COLOR;
+								LAST_ARRAY_BD_C[i].style.fill =(LAST_ARRAY_BD[i] === 0) ? ZERO_COLOR : ONE_COLOR;
 								svg.appendChild(LAST_ARRAY_BD_C[i]);
 							}
 						}
-						
+
 						panel.setAttribute("width", 12*RADIUS + 11*HORIZONTAL_SPACE);
 						inner_panel.setAttribute("width", 12*RADIUS + 9*HORIZONTAL_SPACE);
 						top_panel.setAttribute("width", 12*RADIUS + 7*HORIZONTAL_SPACE);
 						bottom_panel.setAttribute("width", 12*RADIUS + 7*HORIZONTAL_SPACE);
 						new_bottom_panel.setAttribute("width", 12*RADIUS + 11*HORIZONTAL_SPACE);
 
-						panel.setAttribute("height", (10 + (FLAG ? 1 : 0))*RADIUS + 2*YEAR_RADIUS + 16*VERTICAL_SPACE);
+						panel.setAttribute("height",(10 +(FLAG ? 1 : 0))*RADIUS + 2*YEAR_RADIUS + 16*VERTICAL_SPACE);
 						inner_panel.setAttribute("height", 10*RADIUS + 2*YEAR_RADIUS + 11*VERTICAL_SPACE);
 						top_panel.setAttribute("height", 4*RADIUS + 2*YEAR_RADIUS + 4*VERTICAL_SPACE);
 						bottom_panel.setAttribute("height", 6*RADIUS + 4*VERTICAL_SPACE);
@@ -139,46 +175,35 @@
 						top_panel.setAttribute("y", 2*VERTICAL_SPACE);
 						bottom_panel.setAttribute("y", 7*VERTICAL_SPACE + 4*RADIUS + 2*YEAR_RADIUS);
 						new_bottom_panel.setAttribute("y", 14*VERTICAL_SPACE + 10*RADIUS + 3*YEAR_RADIUS);
-						
+
 						document.getElementById("end").hidden = FLAG;
 					}
 				};
 			})();
 
-			setInterval(clock, 200);
-
 			function clock(){
-
 				const d = new Date();
-
-				const year = d.getYear() + 1900;
+				const year = d.getFullYear();
 				const month = d.getMonth() + 1;
 				const day = d.getDate();
 				const hours = d.getHours();
 				const minutes = d.getMinutes();
 				const seconds = d.getSeconds();
-				const timestamp = Math.floor(Date.now() / 1000);
+				const timestamp = Math.floor(Date.now()/1000);
+
 				document.getElementById("dec_ts").value = timestamp;
-				document.getElementById("hex_ts").value = Math.floor(Date.now() / 1000).toString(16);
-				document.getElementById("lasting").value = 2147483647-timestamp;
+				document.getElementById("hex_ts").value = timestamp.toString(16);
+				document.getElementById("lasting").value = 2147483647 - timestamp;
 
 				clockSetting();
 
-				let sYear = year.toString(2);
-				let sMonth = month.toString(2);
-				let sDay = day.toString(2);
-				let sHours = hours.toString(2);
-				let sMinutes = minutes.toString(2);
-				let sSeconds = seconds.toString(2);
-				let sTimestamp = timestamp.toString(2);
-
-				while(sYear.length < 12) sYear = "0" + sYear;
-				while(sMonth.length < 6) sMonth = "0" + sMonth;
-				while(sDay.length < 6) sDay = "0" + sDay;
-				while(sHours.length < 6) sHours = "0" + sHours;
-				while(sMinutes.length < 6) sMinutes = "0" + sMinutes;
-				while(sSeconds.length < 6) sSeconds = "0" + sSeconds;
-				while(sTimestamp.length < 32) sTimestamp = "0" + sTimestamp;
+				let sYear = year.toString(2).padStart(12, '0');
+				let sMonth = month.toString(2).padStart(6, '0');
+				let sDay = day.toString(2).padStart(6, '0');
+				let sHours = hours.toString(2).padStart(6, '0');
+				let sMinutes = minutes.toString(2).padStart(6, '0');
+				let sSeconds = seconds.toString(2).padStart(6, '0');
+				let sTimestamp = timestamp.toString(2).padStart(32, '0');
 
 				panel.style.fill = PANEL_BACKGROUND_COLOR;
 				inner_panel.style.fill = SEPARATOR_COLOR;
@@ -187,51 +212,25 @@
 				new_bottom_panel.style.fill = "#00FF00";
 
 				for(let i = 0; i < 12; i++){
-
-					YEAR_BD[i] = sYear.charAt(i) == "1" ? 1 : 0;
-					YEAR_C[i].style.fill = (YEAR_BD[i] == "0") ? ZERO_COLOR : ONE_COLOR;
+					YEAR_C[i].style.fill =(sYear.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
 					YEAR_C[i].style.transition = "2s";
 
 					if(i < 6){
-
-						MONTH_BD[i] = sMonth.charAt(i) == "1" ? 1 : 0;
-						MONTH_C[i].style.fill = (MONTH_BD[i] == "0") ? ZERO_COLOR : ONE_COLOR;
-						MONTH_C[i].style.transition = "1s";
-
-						DAY_BD[i] = sDay.charAt(i) == "1" ? 1 : 0;
-						DAY_C[i].style.fill = (DAY_BD[i] == "0") ? ZERO_COLOR : ONE_COLOR;
-						DAY_C[i].style.transition = "1s";
-
-						HOURS_BD[i] = sHours.charAt(i) == "1" ? 1 : 0;
-						HOURS_C[i].style.fill = (HOURS_BD[i] == "0") ? ZERO_COLOR : ONE_COLOR;
-						HOURS_C[i].style.transition = ".5s";
-
-						MINUTES_BD[i] = sMinutes.charAt(i) == "1" ? 1 : 0;
-						MINUTES_C[i].style.fill = (MINUTES_BD[i] == "0") ? ZERO_COLOR : ONE_COLOR;
-						MINUTES_C[i].style.transition = ".5s";
-
-						SECONDS_BD[i] = sSeconds.charAt(i) == "1" ? 1 : 0;
-						SECONDS_C[i].style.fill = (SECONDS_BD[i] == "0") ? ZERO_COLOR : ONE_COLOR;
-						SECONDS_C[i].style.transition = ".5s";
+						MONTH_C[i].style.fill =(sMonth.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
+						DAY_C[i].style.fill =(sDay.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
+						HOURS_C[i].style.fill =(sHours.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
+						MINUTES_C[i].style.fill =(sMinutes.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
+						SECONDS_C[i].style.fill =(sSeconds.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
 					}
-					
 				}
 
 				for(let i = 0; i < 32; i++){
-					TS_BD[i] = sTimestamp.charAt(i) == "1" ? 1 : 0;
-					TS_C[i].style.fill = (TS_BD[i] == "0") ? ZERO_COLOR : ONE_COLOR;
+					TS_C[i].style.fill =(sTimestamp.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
 					TS_C[i].style.transition = "1s";
 				}
 			}
 
-			document.body.innerHTML += ('<svg id = "panel"></svg>' + (FLAG ? '' : '<br>'))
-			document.body.innerHTML += '<br><input type="text" size="7" id="dec_ts" disabled spellcheck="false">';
-			document.body.innerHTML += ('<input type="text" size="5" id="hex_ts" disabled spellcheck="false">' + (FLAG ? '' : '<br><br>'));
-			document.body.innerHTML += '<input type="text" size="27" id="end" value="Tuesday 19 January 2038 03:14:07" disabled spellcheck="false">';
-			document.body.innerHTML += ('<input type="text" size="6" id="lasting" disabled spellcheck="false">' + (FLAG ? '' : '<br><br>'));
-			document.body.innerHTML += '<input type="text" size="5" id="sign" value="caddc7ec" disabled spellcheck="false">';
+			setInterval(clock, 200);
 		</script>
-		
 	</body>
-
 </html>

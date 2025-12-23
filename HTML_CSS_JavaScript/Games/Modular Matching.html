@@ -5,154 +5,339 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Modular Matching Game</title>
 		<style>
-			body {
-				font-family: Arial, sans-serif;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				height: 100vh;
-				flex-direction: column;
-				margin: 0;
+			:root{
+				--bg-cell: #f0f0f0;
+				--match-color: #8bc34a;
+				--reveal-color: #ff9800;
+				--error-color: #f44336;
+				--color-double: #81d4fa;
+				--color-opposite: #fff176;
+				--color-both: #4db6ac;
 			}
-			.cell {
-				background-color: #f0f0f0;
+			body{
+				font-family: 'Segoe UI', sans-serif;
+				margin: 0;
+				background-color: #fafafa;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+			.header{
+				position: sticky;
+				top: 0;
+				width: 100%;
+				background: white;
+				padding: 15px 0;
+				text-align: center;
+				box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+				z-index: 100;
+			}
+			.controls{
+				margin-top: 10px;
+				display: flex;
+				gap: 10px;
+				justify-content: center;
+				flex-wrap: wrap;
+			}
+			.p-input-group{
+				border-right: 2px solid #eee;
+				padding-right: 15px;
+				margin-right: 5px;
+				display: flex;
+				gap: 5px;
+				align-items: center;
+			}
+			input[type="number"]{
+				width: 60px;
+				padding: 5px;
+				border-radius: 4px;
+				border: 1px solid #ccc;
+				font-weight: bold;
+			}
+			button{
+				padding: 8px 15px;
+				cursor: pointer;
+				border-radius: 5px;
+				border: 1px solid #ccc;
+				background: white;
+				transition: all 0.3s;
+			}
+			button:hover{
+				background: #f5f5f5;
+			}
+			button.active{
+				background: #e0e0e0;
+				border-color: #999;
+				box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+			}
+			.btn-primary{
+				background-color: #2196f3;
+				color: white;
+				border: none;
+			}
+			.btn-primary:hover{
+				background-color: #1976d2;
+			}
+			.grid{
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+				gap: 8px;
+				width: 95%;
+				max-width: 800px;
+				padding: 20px 0;
+			}
+			.cell{
+				background-color: var(--bg-cell);
+				aspect-ratio: 1/1;
 				display: flex;
 				justify-content: center;
 				align-items: center;
-				font-size: 1.5em;
+				font-size: 1.1em;
+				font-weight: bold;
 				cursor: pointer;
 				user-select: none;
-				border-radius: 5px;
-				border: 1px solid #999;
-				transition: background-color 0.3s;
+				border-radius: 8px;
+				border: 1px solid #ccc;
+				transition: all 0.2s;
+				text-align: center;
+				line-height: 1.2;
 			}
-			.matched {
-				background-color: #8bc34a;
+			.cell.highlight-double{
+				background-color: var(--color-double);
+			}
+			.cell.highlight-opposite{
+				background-color: var(--color-opposite);
+			}
+			.cell.highlight-both{
+				background-color: var(--color-both);
+			}
+			.matched{
+				background-color: var(--match-color) !important;
+				color: white;
+				font-size: 0.8em;
+				border-color: #689f38;
 				cursor: default;
-				color: #fff;
 			}
-			.revealed {
-				background-color: #ff9800;
-				color: #fff;
+			.revealed{
+				background-color: var(--reveal-color);
+				color: white;
+				transform: scale(1.05);
+			}
+			.error-flash{
+				background-color: var(--error-color) !important;
+				animation: shake 0.3s;
+			}
+			@keyframes shake{
+				0%, 100%{
+					transform: translateX(0);
+				}
+				25%{
+					transform: translateX(-5px);
+				}
+				75%{
+					transform: translateX(5px);
+				}
 			}
 		</style>
 	</head>
 	<body>
-		<div class="info" style="margin-bottom: 20px; font-size: 1.2em; visibility: hidden;">
-			Errori: <span id="errors">0</span> / <span id="maxErrors">5</span>
+	
+		<div class="header">
+			<div>
+				<b>Errori: <span id="errors" style="color: var(--error-color);">0</span>/<span id="maxErrors">5</span></b>
+			</div>
+			
+			<div class="controls">
+				<div class="p-input-group">
+					<label for="pVal">P = </label>
+					<input type="number" id="pVal" value="37" min="3" max="101">
+					<button id="btnUpdateP" class="btn-primary">Aggiorna P</button>
+				</div>
+				<button id="btnDouble">Evidenzia Doppi(2x)</button>
+				<button id="btnOpposite">Evidenzia Opposti(-x)</button>
+			</div>
 		</div>
-		<div class="grid">
-		</div>
+	
+		<div class="grid" id="gameGrid"></div>
+	
 		<script>
-			document.addEventListener('DOMContentLoaded', () => {
-				const P = 97;
-				const NUMBER_OF_COLUMN = 7;
-				const CELL_WIDTH = "150px";
-				const CELL_HEIGHT = "40px";
-				const GRID = document.querySelector('.grid');
-				GRID.style = "display: grid; grid-template-columns: repeat(" + NUMBER_OF_COLUMN + ", " + CELL_WIDTH + "); grid-gap: 5px";
-				//const maxErrors = 5;
-				//const maxNumberOfErrors = 86400;
+			document.addEventListener('DOMContentLoaded',() => {
+				let P = 37;
+				const GRID = document.getElementById('gameGrid');
 				const maxNumberOfErrors = 5;
+				//const maxNumberOfErrors = 86400;
+	
 				let currentErrors = 0;
-				const errorsDisplay = document.getElementById('errors');
-				document.getElementById('maxErrors').textContent = maxNumberOfErrors;
-				document.querySelector('.info').style = "margin-bottom: 20px; font-size: 1.2em; visibility: " + ((maxNumberOfErrors > 1000)? "hidden" : "visible") + ";";
-				const numbers = [];
-				const pairs = [];
-
-				function modInverse(a, p) {
-					a = a % p;
-					for (let x = 1; x < p; x++) {
-						if ((a * x) % p === 1) {
-							return x;
-						}
-					}
-					return -1;
-				}
-
-				for (let i = 1; i < P; i++) {
-					let inverse = modInverse(i, P);
-					if (inverse !== -1 && !numbers.includes(i) && !numbers.includes(inverse)) {
-						numbers.push(i, inverse);
-						pairs.push([i, inverse]);
-					}
-				}
-				numbers.sort((a, b) => a - b);
 				let selectedCells = [];
-				let matchedPairs = 0;
-				numbers.forEach((number, index) => {
-					const cell = document.createElement('div');
-					cell.style.height = CELL_HEIGHT;
-					cell.style.width = CELL_WIDTH;
-					cell.classList.add('cell');
-					cell.dataset.number = number;
-					cell.innerText = number;
-					cell.addEventListener('click', () => {
-						if (selectedCells.length < 2 && !cell.classList.contains('matched') && !cell.classList.contains('revealed')) {
-							cell.classList.add('revealed');
-							selectedCells.push(cell);
-							if (selectedCells.length === 2) {
-								setTimeout(checkMatch, 500);
-							}
+				let matchedNumbersCount = 0;
+	
+				let showDoubles = false;
+				let showOpposites = false;
+	
+				function isPrime(num){
+					for(let i = 2, s = Math.sqrt(num); i <= s; i++)
+						if(num%i === 0) return false; 
+					return num > 1;
+				}
+	
+				function initGame(){
+					const pInput = parseInt(document.getElementById('pVal').value);
+					if(pInput < 2){
+						return;
+					}
+					
+					P = pInput;
+					if(!isPrime(P)){
+						console.warn(P + " non è un numero primo. Alcuni numeri potrebbero non avere un inverso.");
+					}
+	
+					GRID.innerHTML = '';
+					currentErrors = 0;
+					matchedNumbersCount = 0;
+					selectedCells = [];
+					document.getElementById('errors').textContent = '0';
+					document.getElementById('maxErrors').textContent = maxNumberOfErrors;
+	
+					const fontSize = P > 50 ? "0.9em" : "1.1em";
+	
+					for(let i = 1; i < P; i++){
+						const cell = document.createElement('div');
+						cell.classList.add('cell');
+						cell.style.fontSize = fontSize;
+						cell.dataset.number = i;
+						cell.innerText = i;
+						cell.onclick =() => handleCellClick(cell);
+						GRID.appendChild(cell);
+					}
+					updateHighlights();
+				}
+	
+				function handleCellClick(cell){
+					if(cell.classList.contains('matched')){
+						return;
+					}
+	
+					if(cell.classList.contains('revealed')){
+						const num = parseInt(cell.dataset.number);
+						if((num*num)%P === 1){
+							setAsMatched(cell, num, num);
+							selectedCells = [];
+							checkWin();
+							return;
+						}else{
+							cell.classList.remove('revealed');
+							selectedCells = [];
+							return;
 						}
-					});
-					GRID.appendChild(cell);
-				});
+					}
+	
+					cell.classList.add('revealed');
+					selectedCells.push(cell);
+	
+					if(selectedCells.length === 2){
+						setTimeout(checkMatch, 300);
+					}
+				}
+	
+				function checkMatch(){
+					if(selectedCells.length < 2){
+						return;
+					}
 
-				function checkMatch() {
 					const [cell1, cell2] = selectedCells;
 					const num1 = parseInt(cell1.dataset.number);
 					const num2 = parseInt(cell2.dataset.number);
-					if ((num1 === num2 && (num1 === 1 || num1 === P - 1)) || (num1 * num2) % P === 1) {
-						cell1.classList.add('matched');
-						cell2.classList.add('matched');
-						cell1.classList.remove('revealed');
-						cell2.classList.remove('revealed');
-						matchedPairs++;
-						cell1.innerText = num1 + " * " + num2 + " = 1";
-						cell2.innerText = num2 + " * " + num1 + " = 1";
-						if (matchedPairs === pairs.length) {
-							setTimeout(function(){ alert('Hai vinto!'); }, 250);
-						}
-					} else {
+	
+					if((num1*num2)%P === 1){
+						setAsMatched(cell1, num1, num2);
+						setAsMatched(cell2, num2, num1);
+						checkWin();
+					}else{
 						currentErrors++;
-						errorsDisplay.textContent = currentErrors;
-						if (currentErrors >= maxNumberOfErrors) {
-							alert('Hai perso! Hai raggiunto il numero massimo di errori.');
-							resetGame();
-							return;
+						document.getElementById('errors').textContent = currentErrors;
+						
+						cell1.classList.add('error-flash');
+						cell2.classList.add('error-flash');
+	
+						setTimeout(() => {
+							cell1.classList.remove('revealed', 'error-flash');
+							cell2.classList.remove('revealed', 'error-flash');
+						}, 400);
+	
+						if(currentErrors >= maxNumberOfErrors){
+							setTimeout(() => { 
+								alert('Numero massimo di errori raggiunto. Riprova!'); 
+								initGame(); 
+							}, 100);
 						}
-						cell1.classList.remove('revealed');
-						cell2.classList.remove('revealed');
 					}
 					selectedCells = [];
 				}
-
-				function resetGame() {
-					GRID.innerHTML = '';
-					currentErrors = 0;
-					errorsDisplay.textContent = currentErrors;
-					selectedCells = [];
-					matchedPairs = 0;
-					numbers.sort((a, b) => a - b);
-					numbers.forEach((number) => {
-						const cell = document.createElement('div');
-						cell.classList.add('cell');
-						cell.dataset.number = number;
-						cell.innerText = number;
-						cell.addEventListener('click', () => {
-							if (selectedCells.length < 2 && !cell.classList.contains('matched') && !cell.classList.contains('revealed')) {
-								cell.classList.add('revealed');
-								selectedCells.push(cell);
-								if (selectedCells.length === 2) {
-									setTimeout(checkMatch, 500);
-								}
-							}
-						});
-						GRID.appendChild(cell);
+	
+				function setAsMatched(cell, n1, n2){
+					cell.classList.add('matched');
+					cell.classList.remove('revealed');
+					cell.innerHTML = `${n1} &times; ${n2}<br>&equiv; 1`;
+					matchedNumbersCount++;
+					updateHighlights();
+				}
+	
+				function checkWin(){
+					const target = isPrime(P) ? P - 1 : matchedNumbersCount; 
+					if(matchedNumbersCount === P - 1){
+						setTimeout(() => alert('Complimenti! Hai completato la struttura per P=' + P), 200);
+					}
+				}
+	
+				function updateHighlights(){
+					const cells = Array.from(document.querySelectorAll('.cell'));
+					const matchedNumbers = cells
+						.filter(c => c.classList.contains('matched'))
+						.map(c => parseInt(c.dataset.number));
+	
+					cells.forEach(cell => {
+						cell.classList.remove('highlight-double', 'highlight-opposite', 'highlight-both');
+						if(cell.classList.contains('matched')){
+							return;
+						}
+	
+						const val = parseInt(cell.dataset.number);
+						const isDouble = showDoubles && matchedNumbers.some(m =>(m*2) === val);
+						const isOpposite = showOpposites && matchedNumbers.some(m =>(m + val) === P);
+	
+						if(isDouble && isOpposite){
+							cell.classList.add('highlight-both');
+						}else if(isDouble){
+							cell.classList.add('highlight-double');
+						}else if(isOpposite){
+							cell.classList.add('highlight-opposite');
+						}
 					});
 				}
+	
+				document.getElementById('btnUpdateP').addEventListener('click',() => {
+					const pVal = parseInt(document.getElementById('pVal').value);
+					if(!isPrime(pVal)){
+						if(!confirm(pVal + " non è primo. Vuoi continuare comunque?")){
+							return;
+						}
+					}
+					initGame();
+				});
+	
+				document.getElementById('btnDouble').addEventListener('click',(e) => {
+					showDoubles = !showDoubles;
+					e.target.classList.toggle('active');
+					updateHighlights();
+				});
+	
+				document.getElementById('btnOpposite').addEventListener('click',(e) => {
+					showOpposites = !showOpposites;
+					e.target.classList.toggle('active');
+					updateHighlights();
+				});
+	
+				initGame();
 			});
 		</script>
 	</body>
