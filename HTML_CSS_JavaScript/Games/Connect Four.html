@@ -45,10 +45,13 @@
 		<canvas id="board">Upgrade Browser</canvas>
 
 		<div class="controls">
-			<button type="button" id="restartButton" onclick="refresh()">Start again!</button>
-			<button type="button" id="changeLanguageButton" onclick="cycleLanguage()">Language</button>
-			<button type="button" id="undoButton" onclick="undoLastMove()">Undo</button>
-			
+			<div>
+				<button type="button" id="restartButton" onclick="refresh()">Start again!</button>
+				<button type="button" id="undoButton" onclick="undoLastMove()">Undo</button>
+			</div>
+			<div>
+				<button type="button" id="changeLanguageButton" onclick="cycleLanguage()">Language</button>
+			</div>
 			<div id="starter">
 				<label id="starterText">Starter: </label>
 				<input type="radio" id="Yellow" name="beginner" checked onclick="setStarter(true)">

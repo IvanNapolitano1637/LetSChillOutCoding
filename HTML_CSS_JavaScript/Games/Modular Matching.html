@@ -40,8 +40,6 @@
 				flex-wrap: wrap;
 			}
 			.p-input-group{
-				border-right: 2px solid #eee;
-				padding-right: 15px;
 				margin-right: 5px;
 				display: flex;
 				gap: 5px;
@@ -141,25 +139,23 @@
 		</style>
 	</head>
 	<body>
-	
 		<div class="header">
 			<div>
 				<b>Errori: <span id="errors" style="color: var(--error-color);">0</span>/<span id="maxErrors">5</span></b>
 			</div>
-			
 			<div class="controls">
 				<div class="p-input-group">
 					<label for="pVal">P = </label>
 					<input type="number" id="pVal" value="37" min="3" max="101">
 					<button id="btnUpdateP" class="btn-primary">Update P</button>
 				</div>
-				<button id="btnDouble">Highlight Doubles (2n)</button>
-				<button id="btnOpposite">Highlight Opposites (-n)</button>
+				<div style="width: 100%; display: flex; justify-content: center; gap: 10px; margin-top: 10px;">
+					<button id="btnDouble">Highlight Doubles (2n)</button>
+					<button id="btnOpposite">Highlight Opposites (-n)</button>
+				</div>
 			</div>
 		</div>
-	
 		<div class="grid" id="gameGrid"></div>
-	
 		<script>
 			document.addEventListener('DOMContentLoaded',() => {
 				let P = 37;

@@ -74,7 +74,8 @@
 			<button type="button" onclick="color(5,0,5)">Magenta</button>
 			<button type="button" onclick="color(5,5,0)">Yellow</button><br>
 			<button type="button" onclick="changeBrightness(-1)">Darker</button>
-			<button type="button" onclick="changeBrightness(1)">Brighter</button>
+			<button type="button" onclick="changeBrightness(1)">Brighter</button><br>
+			<button type="button" onclick="random()">Random</button>
 		</div>
 
 		<script>
@@ -118,6 +119,15 @@
 				document.getElementsByName("Red")[rIdx].checked = true;
 				document.getElementsByName("Green")[gIdx].checked = true;
 				document.getElementsByName("Blue")[bIdx].checked = true;
+				updateUI();
+			}
+
+			function random(){
+				BASIC_COLORS.forEach(name => {
+					const radios = document.getElementsByName(name);
+					const randomIndex = Math.floor(Math.random()*radios.length);
+					radios[randomIndex].checked = true;
+				});
 				updateUI();
 			}
 
