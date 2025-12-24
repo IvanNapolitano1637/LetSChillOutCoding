@@ -67,34 +67,34 @@
 				<button type="button" id="primalityTestButton" onclick="handleAction('checkNumber')">Check</button>
 				<output id="isPrime" class="output-text"></output>
 
-				<label>Square root:</label>
+				<label>Square root</label>
 				<input type="number" id="secondNumber"/>
 				<button type="button" id="squareRootButton" onclick="handleAction('squareRoot')">Compute</button>
 				<output id="sqrt" class="output-text"></output>
 
-				<label>Factorization:</label>
+				<label>Factorization</label>
 				<input type="number" id="thirdNumber"/>
 				<button type="button" id="factorization" onclick="handleAction('factorize')">Factorize</button>
 				<output id="scomposition" class="output-text"></output>
 
-				<label>Bézout's relation:</label>
+				<label>Bézout's relation</label>
 				<input type="number" id="fourthNumber" placeholder="First number"/><br>
 				<input type="number" id="fifthNumber" placeholder="Latter number"/>
 				<button type="button" id="Bezout" onclick="handleAction('computeBezoutRelation')">Compute</button>
 				<output id="BezoutsRelation" class="output-text"></output>
 
-				<label>Fermat's primality test:</label>
+				<label>Fermat's primality test</label>
 				<input type="number" id="sixthNumber"/>
 				<button type="button" id="primalityTestOfFermatButton" onclick="handleAction('applyFermatsPrimalityTest')">Test</button>
 				<output id="mayBePrime" class="output-text"></output>
 
-				<label>Regular Polygon Area:</label>
+				<label>Regular Polygon Area</label>
 				<input type="number" id="seventhNumber" placeholder="Number of sides"/><br>
 				<input type="number" id="eighthNumber" placeholder="Length of the side"/>
 				<button type="button" id="calculateAreaButton" onclick="handleAction('calculatePolygonArea')">Compute Area</button>
 				<output id="polygonArea" class="output-text"></output>
 
-				<label>Sum of two squares:</label>
+				<label>Sum of two squares</label>
 				<input type="number" id="ninthNumber"/>
 				<button type="button" id="sumOfSquares" onclick="handleAction('writeAsSumOfSquares')">Find</button>
 				<div id="squares" class="output-text"></div>
@@ -102,8 +102,7 @@
 
 			<form>
 				<h3>Polygon View</h3>
-				<label for="numberOfSides">Number of sides: </label>
-				<select id="numberOfSides"></select><br><br>
+				<label for="numberOfSides">Number of sides: <select id="numberOfSides"></select></label><br>
 				<label style="display:inline;">
 					<input id="diagonals" type="checkbox" onChange="toggleDiagonals()"> Show diagonals
 				</label><br>

@@ -5,46 +5,73 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Colors</title>
 		<style>
-			body{ 
+			body { 
 				transition: background-color 0.3s, color 0.3s; 
 				text-align: center; 
 				font-family: 'Segoe UI', Arial, sans-serif; 
-				padding: 20px; 
+				padding: 10px;
 				margin: 0;
 				min-height: 100vh;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
 			}
-			#headerContainer{
+			#headerContainer {
 				padding: 15px;
 				display: inline-block;
 				border-radius: 10px;
 				margin-bottom: 20px;
 				transition: background 0.3s;
 			}
-			button{ 
+			.control-panel {
+				background: rgba(255, 255, 255, 0.2);
+				backdrop-filter: blur(5px);
+				padding: 15px;
+				border-radius: 15px;
+				border: 1px solid rgba(255,255,255,0.3);
+				width: 100%;
+				max-width: 400px;
+				box-sizing: border-box;
+			}
+			.row {
+				display: flex;
+				justify-content: center;
+				gap: 6px;
+				margin-bottom: 10px;
+			}
+			.footer-row {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 8px;
+				margin-top: 15px;
+			}
+			button { 
 				cursor: pointer; 
-				margin: 4px; 
+				margin: 0;
 				border: 2px solid rgba(0,0,0,0.1); 
 				border-radius: 8px;
 				font-weight: bold;
 				transition: all 0.2s;
-				height: 40px;
+				height: 45px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
 			}
-			button:hover{
+			button:hover {
 				transform: translateY(-2px);
 				box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 			}
-			.num-label{
-				font-size: 0.9em;
-				padding: 2px 6px;
+			button:active {
+				transform: translateY(0);
+			}
+			.num-label {
+				font-size: 1.1em;
 				color: inherit;
 			}
-			.control-panel{
-				background: rgba(255, 255, 255, 0.2);
-				backdrop-filter: blur(5px);
-				padding: 20px;
-				border-radius: 15px;
-				display: inline-block;
-				border: 1px solid rgba(255,255,255,0.3);
+			output {
+				font-family: monospace;
 			}
 		</style>
 	</head>
@@ -72,10 +99,12 @@
 
 			for(let i = 0; i < 3; i++){
 				let row = document.createElement("div");
+				row.className = "row";
 				for(let j = 0; j < 5; j++){
 					let btn = document.createElement("button");
 					btn.id = i + "-" + j;
-					btn.style.width = BUTTON_WIDTH_1 + "px";
+					btn.style.width = "18%"; 
+					btn.style.maxWidth = "60px";
 					btn.innerHTML = `<span class="num-label">${j}</span>`;
 					btn.onclick =() => setBackgroundColor(i, j);
 					row.appendChild(btn);
@@ -83,25 +112,24 @@
 				panel.appendChild(row);
 			}
 
-
 			const footer = document.createElement("div");
-			footer.style.marginTop = "15px";
+			footer.className = "footer-row";
 
 			const btnConfigs = [
-				{ text: "BLACK", cmd: setBlack, w: BUTTON_WIDTH_2 },
-				{ text: "WHITE", cmd: setWhite, w: BUTTON_WIDTH_2 },
-				{ text: "DARKER", cmd: darker, w: BUTTON_WIDTH_2 },
-				{ text: "BRIGHTER", cmd: brighter, w: BUTTON_WIDTH_2 },
-				{ text: "RANDOM", cmd: setRandomBackgroundColor, w: BUTTON_WIDTH_3 }
+				{ text: "BLACK", cmd: setBlack, flex: "0 1 45%" },
+				{ text: "WHITE", cmd: setWhite, flex: "0 1 45%" },
+				{ text: "DARKER", cmd: darker, flex: "0 1 45%" },
+				{ text: "BRIGHTER", cmd: brighter, flex: "0 1 45%" },
+				{ text: "RANDOM", cmd: setRandomBackgroundColor, flex: "0 1 92%" }
 			];
 
-			btnConfigs.forEach((cfg, index) => {
+			btnConfigs.forEach((cfg) => {
 				let b = document.createElement("button");
-				b.style.width = cfg.w + "px";
+				b.style.flex = cfg.flex;
+				b.style.minWidth = "120px";
 				b.textContent = cfg.text;
 				b.onclick = cfg.cmd;
 				footer.appendChild(b);
-				if(index === 1 || index === 3) footer.appendChild(document.createElement("br"));
 			});
 
 			panel.appendChild(footer);

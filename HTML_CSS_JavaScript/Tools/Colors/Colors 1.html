@@ -14,25 +14,53 @@
 				transition: background-color 0.1s; 
 				font-family: sans-serif;
 			}
-			#optionZone{
+			#optionZone {
 				background-color: rgba(255, 255, 255, 0.85);
 				text-align: center;
 				padding: 25px;
 				border-radius: 20px;
 				box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 				backdrop-filter: blur(5px);
-				max-width: 90%;
+				width: 500px; 
+				max-width: 95%; 
 				max-height: 95vh;
 				overflow-y: auto;
 			}
-			.slider{
+			#sliders {
+				display: block; 
+				width: 100%;
+				margin-top: 20px;
+			}
+			.slider-row {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				margin-bottom: 15px;
+				width: 100%;
+			}
+			.slider-row label {
+				flex-basis: 50px;
+				flex-shrink: 0;
+				text-align: right;
+				font-weight: bold;
+				font-size: 0.9em;
+			}
+			.slider {
 				-webkit-appearance: none;
 				appearance: none;
-				width: 70%;
+				flex-grow: 1;
 				height: 8px;
 				border-radius: 5px;
 				background: #ddd;
 				outline: none;
+			}
+			#sliders label {
+				display: inline-block;
+				width: 45px;
+				text-align: right;
+				margin-right: 10px;
+				font-weight: bold;
+				font-size: 0.9em;
 			}
 			.slider::-webkit-slider-thumb{
 				-webkit-appearance: none;
@@ -43,15 +71,15 @@
 				border-radius: 50%;
 				border: 2px solid white;
 			}
-			output{
+			output {
 				background: #FFFF00;
-				width: 50px;
-				display: inline-block;
+				flex-basis: 45px;
+				flex-shrink: 0;
 				text-align: center;
 				font-family: monospace;
 				font-weight: bold;
 				border-radius: 4px;
-				padding: 2px;
+				padding: 2px 5px;
 			}
 			#valueHexCode{
 				cursor: pointer;
@@ -102,15 +130,15 @@
 			</div>
 
 			<div id="sliders">
-				R <input type="range" id="red" class="slider" oninput="setAndPatch(0)"/> <output id="valueR"></output> <br><br>
-				G <input type="range" id="green" class="slider" oninput="setAndPatch(1)"/> <output id="valueG"></output> <br><br>
-				B <input type="range" id="blue" class="slider" oninput="setAndPatch(2)"/> <output id="valueB"></output> <br><br>
-				Gray <input type="range" id="gray" class="slider" oninput="setAndPatch(3)"/> <output id="valueGray"></output> <br><br>
-				Light <input type="range" id="light" class="slider" oninput="setAndPatch(4)"/> <output id="valueLight"></output> <br><br>
-				C <input type="range" id="cyan" class="slider" oninput="setAndPatch(5)"/> <output id="valueC"></output> <br><br>
-				M <input type="range" id="magenta" class="slider" oninput="setAndPatch(6)"/> <output id="valueM"></output> <br><br>
-				Y <input type="range" id="yellow" class="slider" oninput="setAndPatch(7)"/> <output id="valueY"></output> <br><br>
-				K <input type="range" id="black" class="slider" oninput="setAndPatch(8)"/> <output id="valueK"></output>
+				<div class="slider-row"><label>R</label> <input type="range" id="red" class="slider" oninput="setAndPatch(0)"/> <output id="valueR"></output></div>
+				<div class="slider-row"><label>G</label> <input type="range" id="green" class="slider" oninput="setAndPatch(1)"/> <output id="valueG"></output></div>
+				<div class="slider-row"><label>B</label> <input type="range" id="blue" class="slider" oninput="setAndPatch(2)"/> <output id="valueB"></output></div>
+				<div class="slider-row"><label>Gray</label> <input type="range" id="gray" class="slider" oninput="setAndPatch(3)"/> <output id="valueGray"></output></div>
+				<div class="slider-row"><label>Light</label> <input type="range" id="light" class="slider" oninput="setAndPatch(4)"/> <output id="valueLight"></output></div>
+				<div class="slider-row"><label>C</label> <input type="range" id="cyan" class="slider" oninput="setAndPatch(5)"/> <output id="valueC"></output></div>
+				<div class="slider-row"><label>M</label> <input type="range" id="magenta" class="slider" oninput="setAndPatch(6)"/> <output id="valueM"></output></div>
+				<div class="slider-row"><label>Y</label> <input type="range" id="yellow" class="slider" oninput="setAndPatch(7)"/> <output id="valueY"></output></div>
+				<div class="slider-row"><label>K</label> <input type="range" id="black" class="slider" oninput="setAndPatch(8)"/> <output id="valueK"></output></div>
 			</div>
 
 			<div class="btn-group" style="margin-top:20px">

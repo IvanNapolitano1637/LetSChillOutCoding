@@ -5,12 +5,12 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Days</title>
 		<style>
-			body{
+			body {
 				font-family: sans-serif;
 				margin: 20px;
 				background-color: #ccccff;
 			}
-			.container{
+			.container {
 				max-width: 450px;
 				margin: auto;
 				background: white;
@@ -18,31 +18,38 @@
 				border-radius: 12px;
 				box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 			}
-			h3{
+			h3 {
 				color: #5c5cff;
 				margin-top: 0;
 			}
-			.section{
+			.section {
 				margin-bottom: 25px;
 				padding-bottom: 15px;
 				border-bottom: 1px solid #eee;
 			}
-			.section:last-child{
+			.section:last-child {
 				border-bottom: none;
 			}
-			label{
+			label {
 				display: block;
 				font-weight: bold;
-				margin-bottom: 5px;
+				margin-bottom: 8px;
 				font-size: 0.9em;
 			}
-			input[type="text"]{
+			.row-group {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				margin-bottom: 8px;
+			}
+			input[type="text"] {
+				flex-grow: 1;
 				padding: 8px;
 				border: 1px solid #ccc;
 				border-radius: 4px;
-				margin-right: 5px;
+				min-width: 50px;
 			}
-			button{
+			button {
 				cursor: pointer;
 				padding: 8px 15px;
 				background-color: #5c5cff;
@@ -50,53 +57,71 @@
 				border: none;
 				border-radius: 4px;
 				font-weight: bold;
+				white-space: nowrap;
 			}
-			button:hover{
+			button:hover {
 				background-color: #4040e6;
 			}
-			.btn-today{
+			.btn-today {
 				background-color: #27ae60;
-				margin-bottom: 5px;
+				min-width: 80px;
 			}
-			.btn-clear{
+			.btn-clear {
 				background-color: #e74c3c;
 				width: 100%;
 				margin-top: 10px;
 			}
-			.output-field{
+			.output-field {
 				background-color: #f0f0f0;
 				font-weight: bold;
 				color: #333;
 			}
+			.btn-action {
+				min-width: 45px;
+			}
 		</style>
 	</head>
 	<body>
-
 		<div class="container">
 			<h3>Dates Management</h3>
 
 			<div class="section">
 				<label>Find the day of the week:</label>
-				<button type="button" class="btn-today" onclick="setTodayAndClear(0)">Today</button><br>
-				<input type="text" size="10" id="firstDate" placeholder="gg/mm/aaaa"/>
-				<button type="button" onclick="handleAction('getDayOfTheWeek')"> → </button>
-				<input type="text" size="12" id="dayOfTheWeek" class="output-field" disabled>
+				<div class="row-group">
+					<button type="button" class="btn-today" onclick="setTodayAndClear(0)">Today</button>
+					<input type="text" id="firstDate" placeholder="gg/mm/aaaa"/>
+				</div>
+				<div class="row-group">
+					<button type="button" class="btn-action" onclick="handleAction('getDayOfTheWeek')"> → </button>
+					<input type="text" id="dayOfTheWeek" class="output-field" disabled placeholder="Result">
+				</div>
 			</div>
 
 			<div class="section">
 				<label>Today's date extended:</label>
-				<button type="button" onclick="handleAction('getFullTodayDate')">Show Full Date</button><br>
-				<input type="text" style="width: 100%; margin-top:10px;" id="todayDate" class="output-field" disabled>
+				<div class="row-group">
+					<button type="button" style="width: 100%;" onclick="handleAction('getFullTodayDate')">Show Full Date</button>
+				</div>
+				<div class="row-group">
+					<span style="font-size: 1.2em; padding-left: 10px;">📅</span>
+					<input type="text" id="todayDate" class="output-field" disabled placeholder="Extended date">
+				</div>
 			</div>
 
 			<div class="section">
 				<label>Difference between two dates:</label>
-				<button type="button" class="btn-today" onclick="setTodayAndClear(1)">Today</button>
-				<input type="text" size="10" id="secondDate" placeholder="First Date"/><br>
-				<button type="button" class="btn-today" onclick="setTodayAndClear(2)" style="margin-top:5px">Today</button>
-				<input type="text" size="10" id="thirdDate" placeholder="Latter Date"/><br>
-				<button type="button" style="margin-top:10px" onclick="handleAction('getDaysOfDifference')">Calculate Day Difference</button>
-				<input type="text" size="10" id="daysOfDifference" class="output-field" disabled/>
+				<div class="row-group">
+					<button type="button" class="btn-today" onclick="setTodayAndClear(1)">Today</button>
+					<input type="text" id="secondDate" placeholder="First Date"/>
+				</div>
+				<div class="row-group">
+					<button type="button" class="btn-today" onclick="setTodayAndClear(2)">Today</button>
+					<input type="text" id="thirdDate" placeholder="Latter Date"/>
+				</div>
+				<div class="row-group">
+					<button type="button" onclick="handleAction('getDaysOfDifference')">Calculate Difference</button>
+					<input type="text" id="daysOfDifference" class="output-field" disabled placeholder="0"/>
+				</div>
 			</div>
 
 			<button type="button" class="btn-clear" onclick="clearFields()">Clear Fields</button>
@@ -121,7 +146,6 @@
 				if(actionName === 'getDayOfTheWeek'){
 					document.getElementById("firstDate").value = v1;
 				}
-
 				if(actionName === 'getDaysOfDifference'){
 					document.getElementById("secondDate").value = v2;
 					document.getElementById("thirdDate").value = v3;
@@ -156,10 +180,7 @@
 			}
 
 			function isLeapYear(year){
-				if(year < 1582){
-					return false;
-				}
-				return(year%4 === 0 && year%100 !== 0) ||(year%400 === 0);
+				return((year >= 1582) && ((year%4 === 0 && year%100 !== 0) || (year%400 === 0)));
 			}
 
 			function parseDateParts(dateStr){
@@ -167,11 +188,7 @@
 				if(parts.length !== 3){
 					return null;
 				}
-				return{
-					d: parseInt(parts[0]),
-					m: parseInt(parts[1]),
-					y: parseInt(parts[2])
-				};
+				return { d: parseInt(parts[0]), m: parseInt(parts[1]), y: parseInt(parts[2]) };
 			}
 
 			function isCorrectDate(dateStr){
@@ -186,9 +203,7 @@
 					return false;
 				}
 				let maxDays = NUMBER_OF_DAY_OF_EACH_MONTH[p.m - 1];
-				if(p.m === 2 && isLeapYear(p.y)){
-					maxDays++;
-				}
+				maxDays += (p.m === 2 && isLeapYear(p.y)) ? 1 : 0;
 				if(p.d < 1 || p.d > maxDays){
 					return false;
 				}
@@ -204,24 +219,14 @@
 				}
 				const p = parseDateParts(dateStr);
 				let days = p.d;
-
 				if(p.y === 1582 && p.m === 10 && p.d > 14){
 					days -= 10;
 				}
-
 				for(let i = 1; i < p.y; i++){
-					days +=(i === 1582) ? 355 :(365 +(isLeapYear(i) ? 1 : 0));
+					days += (i === 1582) ? 355 :(365 +(isLeapYear(i) ? 1 : 0));
 				}
-
 				for(let i = 1; i < p.m; i++){
-					if(p.y === 1582 && i === 10){
-						days += 21;
-					}else{
-						days += NUMBER_OF_DAY_OF_EACH_MONTH[i - 1];
-						if(i === 2 && isLeapYear(p.y)){
-							days++;
-						}
-					}
+					days += ((p.y === 1582 && i === 10) ? 21 : (NUMBER_OF_DAY_OF_EACH_MONTH[i - 1] + ((i === 2 && isLeapYear(p.y)) ? 1 : 0)));
 				}
 				return days;
 			}
@@ -235,17 +240,13 @@
 			function getFullTodayDate(){
 				const date = getFormattedToday();
 				const total = getTotalDays(date);
-				document.getElementById("todayDate").value = DAYS_OF_THE_WEEK[(total + 1)%7] + " " + date;
+				document.getElementById("todayDate").value = (total < 0) ? "Error" : DAYS_OF_THE_WEEK[(total + 1)%7] + " " + date;
 			}
 
 			function getDaysOfDifference(){
 				const days1 = getTotalDays(document.getElementById("secondDate").value);
 				const days2 = getTotalDays(document.getElementById("thirdDate").value);
-				if(days1 >= 0 && days2 >= 0){
-					document.getElementById("daysOfDifference").value = Math.abs(days1 - days2);
-				}else{
-					document.getElementById("daysOfDifference").value = "Input Error!";
-				}
+				document.getElementById("daysOfDifference").value = (days1 >= 0 && days2 >= 0) ? Math.abs(days1 - days2) : "Input Error!";
 			}
 		</script>
 	</body>
