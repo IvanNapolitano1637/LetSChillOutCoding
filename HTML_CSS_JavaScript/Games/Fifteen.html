@@ -20,7 +20,7 @@
 			const BACKGROUND_COLOR = "#af67df";
 			const FRAME_COLOR = "#000000";
 			const BORDER_COLOR = "#ff9f00";
-			const WINNING_COLOR = "#00ff00"
+			const WINNING_COLOR = "#00ff00";
 			const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
 			const UNIT = DESKTOP ? 5 : 3;
 			const DIVISION_WIDTH = UNIT;
@@ -31,262 +31,158 @@
 			const ORIZONTAL_PATCH = DESKTOP ? 95*UNIT : 0;
 			const ORIZONTAL_CONST = ORIZONTAL_PATCH + DIVISION_WIDTH + BORDER_WIDTH + MARGIN_DIM;
 			const ORIZONTAL_DELTAS = [0, 0, 0, 0, 0, 0, 0, 0, 0, -5*UNIT, -4*UNIT, -5*UNIT, -5*UNIT, -5*UNIT, -5*UNIT, -5*UNIT];
-			const WIDTH =(ORIZONTAL_CONST + MARGIN_DIM +(4*SIDE) +(5*DIVISION_WIDTH) +(2*BORDER_WIDTH));
-			const HEIGHT =(2*MARGIN_DIM +(4*SIDE) +(5*DIVISION_WIDTH) +(2*BORDER_WIDTH));
-			const BUTTON_HEIGHT =(10*UNIT) + "px";
-			const BTN_COLOR = "ffffff";
-			const BTN_TEXT_COLOR = "#000000";
-			let cursorX;
-			let cursorY;
-			let shuffledIDS = [];
-			let shuffledString = "123456789abcdef0";
-			let r1 = 3;
-			let c1 = 3;
-			let counterMoves;
-			let gameFinished;
-			let begun = false;
-			let button;
-			let isSolving = false;
+			const WIDTH = (ORIZONTAL_CONST + MARGIN_DIM + (4*SIDE) + (5*DIVISION_WIDTH) + (2*BORDER_WIDTH));
+			const HEIGHT = (2*MARGIN_DIM + (4*SIDE) + (5*DIVISION_WIDTH) + (2*BORDER_WIDTH));
+			let cursorX, cursorY, shuffledIDS = [], r1 = 3, c1 = 3, counterMoves = 0, gameFinished, begun = false, isSolving = false;
+
+			drawBoard();
+			drawCells();
 
 			function drawBoard(){
 				document.body.style.background = BACKGROUND_COLOR;
 				shuffleArray();
-
 				const bodyEl = document.getElementById("body");
 				for(let i = 0; i < 16; i++){
 					const div = document.createElement("div");
 					div.id = IDS[i];
-					div.style.cssText = "position: absolute; width: 10%; height: 10%; font-size: " + UNIT + "rem; left:" +(ORIZONTAL_CONST + ORIZONTAL_DELTAS[i] + SIDE/2 + BORDER_WIDTH + DIVISION_WIDTH +((SIDE + DIVISION_WIDTH)*(i%4))) + "px; top:" +((DIVISION_WIDTH + BORDER_WIDTH + MARGIN_DIM + 10) +((SIDE + DIVISION_WIDTH)*(parseInt(i/4)))) + "px; z-index:1; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;";
-					div.textContent =(IDS[i] === "0") ? "" : parseInt("0x" + IDS[i]);
+					div.style.cssText = `position: absolute; width: 10%; height: 10%; font-size: ${UNIT}rem; left:${ORIZONTAL_CONST + ORIZONTAL_DELTAS[i] + SIDE/2 + BORDER_WIDTH + DIVISION_WIDTH + ((SIDE + DIVISION_WIDTH)*(i%4))}px; top:${((DIVISION_WIDTH + BORDER_WIDTH + MARGIN_DIM + 10) + ((SIDE + DIVISION_WIDTH)*(Math.floor(i/4))))}px; z-index:1; user-select: none; -webkit-user-select: none;`;
+					div.textContent = (IDS[i] === "0") ? "" : parseInt("0x" + IDS[i]);
 					div.onclick = select;
-					div.onkeypress = select;
 					bodyEl.appendChild(div);
 				}
-
 				let board = document.getElementById("board");
-				board.width = WIDTH;
-				board.height = HEIGHT;
-				board.setAttribute("onclick", "select()");
-				board.setAttribute("onkeypress", "select()");
-				if(board && board.getContext("2d")){
-					let context = board.getContext("2d");
-					context.fillStyle = BORDER_COLOR;
-					context.fillRect(ORIZONTAL_CONST + MARGIN_DIM, MARGIN_DIM,(SIDE*4) +(DIVISION_WIDTH*5) +(BORDER_WIDTH*2),(SIDE*4) +(DIVISION_WIDTH*5) +(BORDER_WIDTH*2));
-					context.fillStyle = FRAME_COLOR;
-					context.fillRect(ORIZONTAL_CONST + MARGIN_DIM + BORDER_WIDTH, MARGIN_DIM + BORDER_WIDTH,(SIDE*4) +(DIVISION_WIDTH*5) +(BORDER_WIDTH*0),(SIDE*4) +(DIVISION_WIDTH*5) +(BORDER_WIDTH*0));
+				board.width = WIDTH; board.height = HEIGHT;
+				if(board.getContext("2d")){
+					let ctx = board.getContext("2d");
+					ctx.fillStyle = BORDER_COLOR;
+					ctx.fillRect(ORIZONTAL_CONST + MARGIN_DIM, MARGIN_DIM, (SIDE*4) + (DIVISION_WIDTH*5) + (BORDER_WIDTH*2), (SIDE*4) + (DIVISION_WIDTH*5) + (BORDER_WIDTH*2));
+					ctx.fillStyle = FRAME_COLOR;
+					ctx.fillRect(ORIZONTAL_CONST + MARGIN_DIM + BORDER_WIDTH, MARGIN_DIM + BORDER_WIDTH, (SIDE*4) + (DIVISION_WIDTH*5), (SIDE*4) + (DIVISION_WIDTH*5));
 				}
-				document.onmousemove = function(e){cursorX = e.pageX;cursorY = e.pageY;}
-				counterMoves = 0;
-				gameFinished = false;
-				setTimeout(function(){shuffleTiles();}, 500);
+				document.onmousemove = (e) => {
+					cursorX = e.pageX;
+					cursorY = e.pageY;
+				};
+				createButtons();
+				setTimeout(shuffleTiles, 500);
+			}
 
-				button = document.createElement("button");
-				button.setAttribute("id", "shuffleBtn");
-				button.setAttribute("style", "position: absolute; top: " +(DESKTOP ? 99 : 100)*UNIT + "px; left:" +(DESKTOP ? 106 : 12)*UNIT + "px; width:" + 45*UNIT + "px; height: " + 10*UNIT + "px;" + "font-size: " + 5*UNIT + "px;" + "background-color: " + BTN_COLOR + ";" + "color: " + BTN_TEXT_COLOR + ";");
-				button.setAttribute("onclick", "shuffleTiles();");
-				button.innerHTML = "Shuffle";
-				document.querySelector("#body").appendChild(button);
-
-				button = document.createElement("button");
-				button.setAttribute("id", "restartBtn");
-				button.setAttribute("style", "position: absolute; top: " +(DESKTOP ? 99 : 100)*UNIT + "px; left:" +(DESKTOP ? 153 : 59)*UNIT + "px; width:" + 45*UNIT + "px; height: " + 10*UNIT + "px;" + "font-size: " + 5*UNIT + "px;" + "background-color: " + BTN_COLOR + ";" + "color: " + BTN_TEXT_COLOR + ";");
-				button.setAttribute("onclick", "restart();");
-				button.innerHTML = "Restart";
-				document.querySelector("#body").appendChild(button);
-
-				button = document.createElement("button");
-				button.setAttribute("id", "solveBtn");
-				button.setAttribute("style", "position: absolute; top: " +(DESKTOP ? 111 : 112)*UNIT + "px; left:" +(DESKTOP ? 130 : 36)*UNIT + "px; width:" + 45*UNIT + "px; height: " + 10*UNIT + "px;" + "font-size: " + 5*UNIT + "px;" + "background-color: " + BTN_COLOR + ";" + "color: " + BTN_TEXT_COLOR + ";");
-				button.setAttribute("onclick", "solve();");
-				button.innerHTML = "Solve";
-				document.querySelector("#body").appendChild(button);
+			function createButtons(){
+				const btnData = [
+					{id: "shuffleBtn", txt: "Shuffle", top: 99, left: DESKTOP ? 106 : 12, click: "shuffleTiles()"},
+					{id: "restartBtn", txt: "Restart", top: 99, left: DESKTOP ? 153 : 59, click: "restart()"},
+					{id: "solveBtn", txt: "Solve", top: 111, left: DESKTOP ? 130 : 36, click: "solve()"}
+				];
+				btnData.forEach(b => {
+					let btn = document.createElement("button");
+					btn.id = b.id;
+					btn.style.cssText = `position: absolute; top: ${b.top*UNIT}px; left: ${b.left*UNIT}px; width: ${45*UNIT}px; height: ${10*UNIT}px; font-size: ${5*UNIT}px; background: #fff; cursor: pointer;`;
+					btn.setAttribute("onclick", b.click);
+					btn.innerHTML = b.txt;
+					document.body.appendChild(btn);
+				});
 			}
 
 			function drawCell(row, column, color){
-				document.body.style.background = BACKGROUND_COLOR;
 				let board = document.getElementById("board");
-				if(board && board.getContext("2d")){
-					let context = board.getContext("2d");
-					context.fillStyle = color;
-					let x0 = ORIZONTAL_CONST + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM +(column*SIDE) +(column*DIVISION_WIDTH);
-					let y0 = BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM +(row*SIDE) +(row*DIVISION_WIDTH);
-					context.fillRect(x0, y0, SIDE, SIDE);
+				if(board.getContext("2d")){
+					let ctx = board.getContext("2d");
+					ctx.fillStyle = color;
+					ctx.fillRect(ORIZONTAL_CONST + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + (column*(SIDE + DIVISION_WIDTH)), BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + (row*(SIDE + DIVISION_WIDTH)), SIDE, SIDE);
 				}
 			}
 
 			function drawTile(row, column, tile){
-				let tileNumber = parseInt(Number("0x" + tile));
-				let targetTileId =((row*4 + column + 1)%16).toString(16);
-				drawCell(row, column,(tile === "0") ? BORDER_COLOR :(((tileNumber + parseInt((tileNumber - 1)/4))%2 === 1) ? COLOR_1 : COLOR_2));
-				const element = document.getElementById(targetTileId);
-				element.textContent =(tile === "0") ? "" : tileNumber;
-				element.style.cssText = "position: absolute; width: 10%; height: 10%; font-size: " + UNIT + "rem; left:" +(ORIZONTAL_CONST + ORIZONTAL_DELTAS[tileNumber - 1] + SIDE/2 + BORDER_WIDTH + DIVISION_WIDTH +((SIDE + DIVISION_WIDTH)*(column))) + "px; top:" +((DIVISION_WIDTH + BORDER_WIDTH + MARGIN_DIM + 10) +((SIDE + DIVISION_WIDTH)*row)) + "px; z-index:1; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;";
-				
-				const zeroEl = document.getElementById(tile);
-				if(zeroEl && zeroEl.textContent === "0"){
-					zeroEl.textContent = "";
-				}
+				let val = parseInt(tile, 16);
+				let targetId = ((row*4 + column + 1)%16).toString(16);
+				drawCell(row, column, (tile === "0") ? BORDER_COLOR : (((val + Math.floor((val - 1)/4))%2 === 1) ? COLOR_1 : COLOR_2));
+				const el = document.getElementById(targetId);
+				el.textContent = (tile === "0") ? "" : val;
+				el.style.left = (ORIZONTAL_CONST + (val > 0 ? ORIZONTAL_DELTAS[val - 1] : 0) + SIDE/2 + BORDER_WIDTH + DIVISION_WIDTH + ((SIDE + DIVISION_WIDTH)*column)) + "px";
+				el.style.top = ((DIVISION_WIDTH + BORDER_WIDTH + MARGIN_DIM + 10) + ((SIDE + DIVISION_WIDTH)*row)) + "px";
 			}
-
-			drawBoard();
 
 			function drawCells(){
 				for(let i = 0; i < 4; i++){
 					for(let j = 0; j < 4; j++){
-						drawCell(i, j,((4*i + j === 15) ? BORDER_COLOR :((i + j)%2 === 0) ? COLOR_1 : COLOR_2));
+						drawCell(i, j, ((4*i + j === 15) ? BORDER_COLOR : ((i + j)%2 === 0) ? COLOR_1 : COLOR_2));
 					}
 				}
 			}
 
-			drawCells();
-
-			function swapTiles(tile1, tile2){
-				let tileNumber1 =((parseInt(Number("0x" + tile1)) + 15)%16);
-				let tileNumber2 =((parseInt(Number("0x" + tile2)) + 15)%16);
-				const el1 = document.getElementById(tile1);
-				const el2 = document.getElementById(tile2);
-				let number1 = el1.textContent === "" ? 0 : parseInt(el1.textContent);
-				let number2 = el2.textContent === "" ? 0 : parseInt(el2.textContent);
-				drawTile(parseInt(tileNumber1/4), tileNumber1%4, parseInt(number2).toString(16));
-				drawTile(parseInt(tileNumber2/4), tileNumber2%4, parseInt(number1).toString(16));
+			function swapTiles(t1, t2){
+				const el1 = document.getElementById(t1), el2 = document.getElementById(t2);
+				let v1 = el1.textContent, v2 = el2.textContent;
+				let idx1 = (parseInt(t1, 16) + 15)%16, idx2 = (parseInt(t2, 16) + 15)%16;
+				drawTile(Math.floor(idx1/4), idx1%4, (v2 === "" ? "0" : parseInt(v2).toString(16)));
+				drawTile(Math.floor(idx2/4), idx2%4, (v1 === "" ? "0" : parseInt(v1).toString(16)));
 				begun = true;
-				if(el1.textContent === "0"){
-					el1.textContent = "";
-				}
-				if(el2.textContent === "0"){
-					el2.textContent = "";
-				}
 			}
 
 			function select(){
-				if(!gameFinished){
-					let row = getRow();
-					let column = getColumn();
-					let k =(row - r1)*(row - r1) +(column - c1)*(column - c1);
-					if(k === 1){
-						swapTiles(((4*row + column + 1)%16).toString(16),((4*r1 + c1 + 1)%16).toString(16));
-						r1 = row;
-						c1 = column;
-					}
-					for(let i = 0; i < 16; i++){
-						const el = document.getElementById(IDS[i]);
-						if(el && el.textContent === "0"){
-							el.style.left =(7/2)*SIDE + ORIZONTAL_PATCH + 5*DIVISION_WIDTH + 2*BORDER_WIDTH + 1*MARGIN_DIM - 25 + "px";
-						}
-					}
+				if(gameFinished || isSolving){
+					return;
+				}
+				let r = Math.floor((cursorY - (BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM))/(SIDE + DIVISION_WIDTH));
+				let c = Math.floor((cursorX - (ORIZONTAL_CONST + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM))/(SIDE + DIVISION_WIDTH));
+				if(r >= 0 && r < 4 && c >= 0 && c < 4 && (Math.abs(r - r1) + Math.abs(c - c1)) === 1){
+					swapTiles(((4*r + c + 1)%16).toString(16), ((4*r1 + c1 + 1)%16).toString(16));
+					r1 = r;
+					c1 = c;
 					counterMoves++;
-					if(begun && isGameFinished()){
+					if(begun && checkWin()){
 						gameFinished = true;
 						document.body.style.background = WINNING_COLOR;
-						setTimeout(function(){ alert("You win with " + counterMoves + " moves!"); }, 100);
+						setTimeout(() => alert("You win in " + counterMoves + " moves!"), 100);
 					}
 				}
 			}
 
-			function isGameFinished(){
-				if(shuffledIDS === null || shuffledIDS.length === 0){
-					return false;
-				}
-				for(let i = 0; i < 16; i++){
-					const el = document.getElementById(IDS[i]);
-					if(!el || el.textContent !== String((i + 1)%16)){
+			function checkWin(){
+				for(let i = 0; i < 15; i++){
+					if(document.getElementById(((i + 1)%16).toString(16)).textContent !== String(i + 1)){
 						return false;
 					}
 				}
 				return true;
 			}
 
-			function shuffleString(){
-				const ALPHABET = "123456789abcdef0";
-				let inputString = ALPHABET;
-				let outputString = "";
-				let temp;
-				let randomIndex;
-				for(let i = 0; i < ALPHABET.length; i++){
-					temp = "";
-					randomIndex = parseInt(Math.random()*(inputString.length));
-					for(let j = 0; j < inputString.length; j++){
-						if(j === randomIndex){
-							outputString += inputString.charAt(randomIndex);
-						}else{
-							temp += inputString.charAt(j);
-						}
-					}
-					inputString = temp;
-				}
-				shuffledString = outputString;
-			}
-
 			function shuffleArray(){
-				shuffleString();
-				shuffledIDS = [];
-				for(let i = 0; i < 16; i++){
-					shuffledIDS.push(shuffledString.charAt(i));
+				let s = "123456789abcdef0".split('');
+				for(let i = s.length - 1; i > 0; i--){
+					const j = Math.floor(Math.random()*(i + 1));
+					[s[i], s[j]] = [s[j], s[i]];
 				}
+				shuffledIDS = s;
 			}
 
-			function shuffledArrayIsOk(){
-				let counter = 0;
-				for(let i = 0; i < shuffledIDS.length; i++){
-					if(shuffledIDS[i] === "0"){
-						counter += parseInt(i/4) + 1;
+			function isSolvable(a){
+				let inv = 0, zR = 0;
+				for(let i = 0; i < 16; i++){
+					if(a[i] === "0"){
+						zR = Math.floor(i/4);
+						continue;
 					}
-				}
-				for(let i = 0; i < shuffledIDS.length; i++){
-					for(let j = i + 1; j < shuffledIDS.length; j++){
-						if(shuffledIDS[i] === "0" || shuffledIDS[j] === "0"){
-							continue;
-						}
-						if(shuffledIDS[i] > shuffledIDS[j]){
-							counter++;
+					for(let j = i + 1; j < 16; j++){
+						if(a[j] !== "0" && parseInt(a[i], 16) > parseInt(a[j], 16)){
+							inv++;
 						}
 					}
 				}
-				return(counter%2 === 0);
+				return (zR%2 === 0) ? (inv%2 !== 0) : (inv%2 === 0);
 			}
 
 			function shuffleTiles(){
-				if(!gameFinished){
+				gameFinished = false;
+				document.body.style.background = BACKGROUND_COLOR;
+				do{
 					shuffleArray();
-					let attempts = 0;
-					while(!shuffledArrayIsOk() && attempts < 100){
-						shuffleArray();
-						attempts++;
-					}
-
-					if(attempts >= 100){
-						console.error("Could not generate valid puzzle after 100 attempts");
-						return;
-					}
-
-					for(let i = 0; i < 4; i++){
-						for(let j = 0; j < 4; j++){
-							drawTile(i, j, shuffledIDS[(i*4 + j)%16]);
-						}
-					}
-					let index;
-					for(let i = 0; i < 16; i++){
-						if(shuffledIDS[i] === "0"){
-							index = i;
-						}
-					}
-					const el = document.getElementById(((parseInt(index) + 1)%16).toString(16));
-					if(el){
-						el.style.left =(7/2)*SIDE + ORIZONTAL_PATCH + 5*DIVISION_WIDTH + 2*BORDER_WIDTH + 1*MARGIN_DIM - 25 + "px";
-					}
-					r1 = parseInt(index/4);
-					c1 = parseInt(index)%4;
-					counterMoves = -1;
-					begun = false;
-				}
-			}
-
-			function getRow(){
-				return parseInt((cursorY -(BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM))/(SIDE + DIVISION_WIDTH));
-			}
-
-			function getColumn(){
-				return parseInt((cursorX -(ORIZONTAL_CONST + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM))/(SIDE + DIVISION_WIDTH));
+				}while(!isSolvable(shuffledIDS));
+				shuffledIDS.forEach((id, i) => drawTile(Math.floor(i/4), i%4, id));
+				let zIdx = shuffledIDS.indexOf("0");
+				r1 = Math.floor(zIdx/4);
+				c1 = zIdx%4;
+				counterMoves = 0; begun = false;
 			}
 
 			function restart(){
@@ -297,35 +193,116 @@
 				if(isSolving || gameFinished){
 					return;
 				}
-				let btn = document.getElementById("solveBtn");
-				if(btn){
-					btn.innerHTML = "Wait...";
-					btn.disabled = true;
-				}
+				const btn = document.getElementById("solveBtn");
+				btn.innerHTML = "Wait...";
+				btn.disabled = true;
 				isSolving = true;
-				let currentState = [];
-				for(let i = 0; i < 16; i++){
-					let posId =((i + 1)%16).toString(16);
-					const el = document.getElementById(posId);
-					let val = el ? el.textContent : "";
-					currentState.push(val === "" ? 0 : parseInt(val));
-				}
-				setTimeout(() => {
-					try{
-						let solutionPath = idaStar(currentState);
 
-						if(solutionPath && solutionPath.length > 0){
-							animateSolution(solutionPath);
-						}else{
-							alert("Already solved or unsolvable state detected.");
-							resetUI();
-						}
-					} catch(e){
-						console.error(e);
-						alert("Error finding solution.");
+				let state = [];
+				for(let i = 0; i < 16; i++){
+					let val = document.getElementById(((i + 1)%16).toString(16)).textContent;
+					state.push(val === "" ? 0 : parseInt(val));
+				}
+
+				setTimeout(() => {
+					let path = getFastPath(state);
+					if(path){
+						animate(path);
+					}else{
+						alert("Too complex");
 						resetUI();
 					}
-				}, 100);
+				}, 50);
+			}
+
+			function getHeuristic(s){
+				let d = 0;
+				for(let i = 0; i < 16; i++){
+					if(s[i] === 0){
+						continue;
+					}
+					d += Math.abs(Math.floor(i/4) - Math.floor((s[i] - 1)/4)) + Math.abs((i%4) - ((s[i] - 1)%4));
+				}
+				return d;
+			}
+
+			function getFastPath(state){
+				let bound = getHeuristic(state);
+				let path = [], startTime = Date.now();
+				while(Date.now() - startTime < 3000){
+					let t = search(state, 0, bound, path, state.indexOf(0), "");
+					if(t === "FOUND"){
+						return path;
+					}
+					bound = t + 2;
+				}
+				return null;
+			}
+
+			function search(s, g, bound, path, z, prev){
+				let h = getHeuristic(s);
+				if(g + h*1.5 > bound){
+					return g + h*1.5;
+				}
+				if(h === 0){
+					return "FOUND";
+				}
+				let min = Infinity, r = Math.floor(z/4), c = z%4;
+				let moves = [];
+				if(r > 0 && prev !== "D"){
+					moves.push({ d: "U", i: z - 4 });
+				}
+				if(r < 3 && prev !== "U"){
+					moves.push({ d: "D", i: z + 4 });
+				}
+				if(c > 0 && prev !== "R"){
+					moves.push({ d: "L", i: z - 1 });
+				}
+				if(c < 3 && prev !== "L"){
+					moves.push({ d: "R", i: z + 1 });
+				}
+
+				moves.forEach(m => {
+					[s[z], s[m.i]] = [s[m.i], s[z]];
+					m.h = getHeuristic(s);
+					[s[z], s[m.i]] = [s[m.i], s[z]];
+				});
+				moves.sort((a, b) => a.h - b.h);
+
+				for(let m of moves){
+					[s[z], s[m.i]] = [s[m.i], s[z]];
+					path.push(m.d);
+					let t = search(s, g + 1, bound, path, m.i, m.d);
+					if(t === "FOUND"){
+						return "FOUND";
+					}
+					if(t < min){
+						min = t;
+					}
+					path.pop();
+					[s[z], s[m.i]] = [s[m.i], s[z]];
+				}
+				return min;
+			}
+
+			function animate(moves){
+				let i = 0;
+				let timer = setInterval(() => {
+					if(i >= moves.length){
+						clearInterval(timer);
+						gameFinished = true;
+						document.body.style.background = WINNING_COLOR;
+						resetUI();
+						setTimeout(() => alert("Solved in " + counterMoves + " moves!"), 50);
+						return;
+					}
+					let zIdx = r1*4 + c1, tIdx = zIdx + (moves[i] === "U" ? -4 : moves[i] === "D" ? 4 : moves[i] === "L" ? -1 : 1);
+					swapTiles(((tIdx + 1)%16).toString(16), ((zIdx + 1)%16).toString(16));
+					r1 = Math.floor(tIdx/4);
+					c1 = tIdx%4;
+					counterMoves++;
+					i++;
+				}, 180);
 			}
 
 			function resetUI(){
@@ -335,157 +312,6 @@
 					btn.innerHTML = "Solve";
 					btn.disabled = false;
 				}
-			}
-
-			function animateSolution(moves){
-				let moveCount = 0;
-				let i = 0;
-				let interval = setInterval(function(){
-					if(i >= moves.length){
-						clearInterval(interval);
-						gameFinished = true;
-						document.body.style.background = WINNING_COLOR;
-						resetUI();
-						setTimeout(function(){ alert("Solved in " + moveCount + " moves!"); }, 100);
-						return;
-					}
-					let moveDir = moves[i];
-					let zeroIndex = r1*4 + c1;
-					let targetIndex;
-					if(moveDir === "U"){
-						targetIndex = zeroIndex - 4;
-					}
-					if(moveDir === "D"){
-						targetIndex = zeroIndex + 4;
-					}
-					if(moveDir === "L"){
-						targetIndex = zeroIndex - 1;
-					}
-					if(moveDir === "R"){
-						targetIndex = zeroIndex + 1;
-					}
-					let targetPosId =((targetIndex + 1)%16).toString(16);
-					let zeroPosId =((zeroIndex + 1)%16).toString(16);
-					swapTiles(targetPosId, zeroPosId);
-					r1 = Math.floor(targetIndex/4);
-					c1 = targetIndex%4;
-					moveCount++;
-					i++;
-				}, 180);
-			}
-
-			function idaStar(initialState){
-				let zeroPos = initialState.indexOf(0);
-				let bound = getHeuristic(initialState);
-				let path = [];
-				let iterations = 0;
-				const MAX_ITERATIONS = 50;
-
-				while(iterations < MAX_ITERATIONS){
-					let t = search(initialState, 0, bound, path, zeroPos);
-					if(t === "FOUND"){
-						return path;
-					}
-					if(t === Infinity){
-						return null;
-					}
-					if(t > 80){
-						return null;
-					}
-					bound = t;
-					iterations++;
-				}
-				return null;
-			}
-
-			function search(state, g, bound, path, zeroIdx){
-				let h = getHeuristic(state);
-				let f = g + h;
-				if(f > bound){
-					return f;
-				}
-				if(h === 0){
-					return "FOUND";
-				}
-				let min = Infinity;
-				let moves = [];
-				let r = Math.floor(zeroIdx/4);
-				let c = zeroIdx%4;
-				if(r > 0){
-					moves.push({ dir: "U", idx: zeroIdx - 4 });
-				}
-				if(c > 0){
-					moves.push({ dir: "L", idx: zeroIdx - 1 });
-				}
-				if(r < 3){
-					moves.push({ dir: "D", idx: zeroIdx + 4 });
-				}
-				if(c < 3){
-					moves.push({ dir: "R", idx: zeroIdx + 1 });
-				}
-				for(let move of moves){
-					let lastMove = path[path.length - 1];
-					if(lastMove === "D" && move.dir === "U"){
-						continue;
-					}
-					if(lastMove === "U" && move.dir === "D"){
-						continue;
-					}
-					if(lastMove === "R" && move.dir === "L"){
-						continue;
-					}
-					if(lastMove === "L" && move.dir === "R"){
-						continue;
-					}
-					let savedVal = state[move.idx];
-					state[zeroIdx] = savedVal;
-					state[move.idx] = 0;
-					path.push(move.dir);
-					let t = search(state, g + 1, bound, path, move.idx);
-					if(t === "FOUND"){
-						return "FOUND";
-					}
-					if(t < min){
-						min = t;
-					}
-					path.pop();
-					state[move.idx] = savedVal;
-					state[zeroIdx] = 0;
-				}
-				return min;
-			}
-
-			function getHeuristic(state){
-				let md = 0;
-				let lc = 0;
-				for(let i = 0; i < 16; i++){
-					let val = state[i];
-					if(val === 0){
-						continue;
-					}
-					let r = Math.floor(i/4);
-					let c = i%4;
-					let tr = Math.floor((val - 1)/4);
-					let tc =(val - 1)%4;
-					md += Math.abs(r - tr) + Math.abs(c - tc);
-					if(r === tr){
-						for(let k = i + 1; k < r*4 + 4; k++){
-							let valK = state[k];
-							if(valK !== 0 && Math.floor((valK - 1)/4) === r && val > valK){
-								lc += 2;
-							}
-						}
-					}
-					if(c === tc){
-						for(let k = i + 4; k < 16; k += 4){
-							let valK = state[k];
-							if(valK !== 0 &&(valK - 1)%4 === c && val > valK){
-								lc += 2;
-							}
-						}
-					}
-				}
-				return md + lc;
 			}
 		</script>
 	</body>
