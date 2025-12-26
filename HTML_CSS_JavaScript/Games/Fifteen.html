@@ -69,9 +69,9 @@
 
 			function createButtons(){
 				const btnData = [
-					{id: "shuffleBtn", txt: "Shuffle", top: 99, left: DESKTOP ? 106 : 12, click: "shuffleTiles()"},
-					{id: "restartBtn", txt: "Restart", top: 99, left: DESKTOP ? 153 : 59, click: "restart()"},
-					{id: "solveBtn", txt: "Solve", top: 111, left: DESKTOP ? 130 : 36, click: "solve()"}
+					{id: "shuffleBtn", txt: "Shuffle", top: DESKTOP ? 99 : 100, left: DESKTOP ? 106 : 12, click: "shuffleTiles()"},
+					{id: "restartBtn", txt: "Restart", top: DESKTOP ? 99 : 100, left: DESKTOP ? 153 : 59, click: "restart()"},
+					{id: "solveBtn", txt: "Solve", top: DESKTOP ? 111 : 112, left: DESKTOP ? 130 : 36, click: "solve()"}
 				];
 				btnData.forEach(b => {
 					let btn = document.createElement("button");
