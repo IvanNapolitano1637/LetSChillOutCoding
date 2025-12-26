@@ -9,37 +9,56 @@
 				margin: 0;
 				transition: background-color 0.2s;
 				min-height: 100vh;
+				font-family: sans-serif;
 			}
 			#optionZone{
-				padding: 20px;
+				padding: 10px;
 				border-bottom: 2px solid #333;
 			}
+			h1#valueHexCode{
+				background: #FFFF00; 
+				padding: 5px; 
+				margin: 0 0 10px 0 !important;
+				font-size: 1.2em;
+			}
 			.color-row{
-				padding: 10px;
-				margin: 5px 0;
+				padding: 5px;
+				margin: 3px 0;
 				border-radius: 8px;
 				display: flex;
 				align-items: center;
 				justify-content: center;
 				flex-wrap: wrap;
+				gap: 2px;
+			}
+			.radio-group{
+				display: inline-flex;
+				align-items: center;
+				white-space: nowrap;
+				margin: 2px;
 			}
 			output{
 				display: inline-block;
-				width: 25px;
+				width: 22px;
 				border-radius: 3px;
 				font-family: monospace;
-				margin: 0 8px 0 2px;
+				margin-left: 2px;
+				font-size: 0.9em;
+				text-align: center;
 			}
 			button{
 				cursor: pointer;
 				padding: 5px 10px;
 				font-weight: bold;
 			}
+			.nav-buttons{
+				padding: 10px !important;
+			}
 			.nav-buttons button{
-				width: 120px;
-				height: 40px;
-				font-size: 1.1em;
-				margin: 5px;
+				width: 100px;
+				height: 35px;
+				font-size: 0.9em;
+				margin: 3px;
 			}
 		</style>
 	</head>
@@ -51,9 +70,9 @@
 				<button type="button" onclick="changeColor(0,-1)">(-)</button>
 				<script>
 					const vals = ['00','11','22','33','44','55','66','77','88','99','aa','bb','cc','dd','ee','ff'];
-					vals.forEach(v => {
+					vals.forEach(v =>{
 						let chk = v === 'ff' ? 'checked' : '';
-						document.write(`<input type="radio" name="Red" value="${v}" ${chk} onchange="changeBackgroundColor()"><output style="background:#FDCE98"><b>${v.toUpperCase()}</b></output>`);
+						document.write(`<span class="radio-group"><input type="radio" name="Red" value="${v}" ${chk} onchange="changeBackgroundColor()"><output style="background:#FDCE98"><b>${v.toUpperCase()}</b></output></span>`);
 					});
 				</script>
 				<button type="button" onclick="changeColor(0,1)">(+)</button>
@@ -62,9 +81,9 @@
 			<div class="color-row" style="background-color: #00FF00;">
 				<button type="button" onclick="changeColor(1,-1)">(-)</button>
 				<script>
-					vals.forEach(v => {
+					vals.forEach(v =>{
 						let chk = v === 'ff' ? 'checked' : '';
-						document.write(`<input type="radio" name="Green" value="${v}" ${chk} onchange="changeBackgroundColor()"><output style="background:#FFF500"><b>${v.toUpperCase()}</b></output>`);
+						document.write(`<span class="radio-group"><input type="radio" name="Green" value="${v}" ${chk} onchange="changeBackgroundColor()"><output style="background:#FFF500"><b>${v.toUpperCase()}</b></output></span>`);
 					});
 				</script>
 				<button type="button" onclick="changeColor(1,1)">(+)</button>
@@ -73,9 +92,9 @@
 			<div class="color-row" style="background-color: #0000FF;">
 				<button type="button" onclick="changeColor(2,-1)">(-)</button>
 				<script>
-					vals.forEach(v => {
+					vals.forEach(v =>{
 						let chk = v === 'ff' ? 'checked' : '';
-						document.write(`<input type="radio" name="Blue" value="${v}" ${chk} onchange="changeBackgroundColor()"><output style="background:#56DDFF"><b>${v.toUpperCase()}</b></output>`);
+						document.write(`<span class="radio-group"><input type="radio" name="Blue" value="${v}" ${chk} onchange="changeBackgroundColor()"><output style="background:#56DDFF"><b>${v.toUpperCase()}</b></output></span>`);
 					});
 				</script>
 				<button type="button" onclick="changeColor(2,1)">(+)</button>
@@ -101,7 +120,7 @@
 
 		function getColor(){
 			let hex = "#";
-			basicColors.forEach(name => {
+			basicColors.forEach(name =>{
 				const active = document.querySelector(`input[name="${name}"]:checked`);
 				hex += active ? active.value : "00";
 			});
@@ -139,8 +158,13 @@
 			changeBackgroundColor();
 		}
 
-		function brighterAll(){ [0,1,2].forEach(i => brighterBasic(i)); }
-		function darkerAll(){ [0,1,2].forEach(i => darkerBasic(i)); }
+		function brighterAll(){
+			[0,1,2].forEach(i => brighterBasic(i));
+		}
+
+		function darkerAll(){
+			[0,1,2].forEach(i => darkerBasic(i));
+		}
 
 		function color(r, g, b){
 			document.getElementsByName("Red")[r].checked = true;
@@ -154,7 +178,7 @@
 		}
 
 		function random(){
-			basicColors.forEach(name => {
+			basicColors.forEach(name =>{
 				let ele = document.getElementsByName(name);
 				let r = Math.floor(Math.random()*ele.length);
 				ele[r].checked = true;

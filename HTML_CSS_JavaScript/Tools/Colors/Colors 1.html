@@ -14,7 +14,7 @@
 				transition: background-color 0.1s; 
 				font-family: sans-serif;
 			}
-			#optionZone {
+			#optionZone{
 				background-color: rgba(255, 255, 255, 0.85);
 				text-align: center;
 				padding: 25px;
@@ -26,26 +26,26 @@
 				max-height: 95vh;
 				overflow-y: auto;
 			}
-			#sliders {
+			#sliders{
 				display: block; 
 				width: 100%;
 				margin-top: 20px;
 			}
-			.slider-row {
+			.slider-row{
 				display: flex;
 				align-items: center;
 				gap: 10px;
 				margin-bottom: 15px;
 				width: 100%;
 			}
-			.slider-row label {
+			.slider-row label{
 				flex-basis: 50px;
 				flex-shrink: 0;
 				text-align: right;
 				font-weight: bold;
 				font-size: 0.9em;
 			}
-			.slider {
+			.slider{
 				-webkit-appearance: none;
 				appearance: none;
 				flex-grow: 1;
@@ -54,7 +54,7 @@
 				background: #ddd;
 				outline: none;
 			}
-			#sliders label {
+			#sliders label{
 				display: inline-block;
 				width: 45px;
 				text-align: right;
@@ -71,7 +71,7 @@
 				border-radius: 50%;
 				border: 2px solid white;
 			}
-			output {
+			output{
 				background: #FFFF00;
 				flex-basis: 45px;
 				flex-shrink: 0;
@@ -94,11 +94,13 @@
 			}
 			button{ 
 				cursor: pointer; 
-				padding: 6px 12px; 
+				padding: 6px 0;
 				margin: 2px; 
 				border: 1px solid #ccc; 
 				border-radius: 5px;
 				font-weight: bold;
+				width: 75px;
+				box-sizing: border-box;
 			}
 			.redButtons{
 				background: #ff4d4d;
@@ -145,7 +147,7 @@
 				<button class="redButtons" onclick="changeColor(0,-10)">-10 R</button>
 				<button class="redButtons" onclick="changeColor(0, 10)">+10 R</button>
 				<button class="greenButtons" onclick="changeColor(1,-10)">-10 G</button>
-				<button class="greenButtons" onclick="changeColor(1, 10)">+10 G</button>
+				<button class="greenButtons" onclick="changeColor(1, 10)">+10 G</button><br>
 				<button class="blueButtons" onclick="changeColor(2,-10)">-10 B</button>
 				<button class="blueButtons" onclick="changeColor(2, 10)">+10 B</button>
 				<button class="grayButtons" onclick="changeGray(-10)">-10 All</button>
@@ -181,7 +183,7 @@
 					navigator.clipboard.writeText(this.textContent);
 					const oldText = this.textContent;
 					this.textContent = "COPIATO!";
-					setTimeout(() => { this.textContent = oldText; }, 800);
+					setTimeout(() =>{ this.textContent = oldText; }, 800);
 				};
 			}
 
