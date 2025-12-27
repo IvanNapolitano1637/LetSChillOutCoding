@@ -5,13 +5,13 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Colors and their codes</title>
 		<style>
-			body{ 
-				margin: 0; 
-				min-height: 100vh; 
-				display: flex; 
-				justify-content: center; 
-				align-items: center; 
-				transition: background-color 0.1s; 
+			body{
+				margin: 0;
+				min-height: 100vh;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				transition: background-color 0.1s;
 				font-family: sans-serif;
 			}
 			#optionZone{
@@ -21,13 +21,13 @@
 				border-radius: 20px;
 				box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 				backdrop-filter: blur(5px);
-				width: 500px; 
-				max-width: 95%; 
+				width: 600px;
+				max-width: 95%;
 				max-height: 95vh;
 				overflow-y: auto;
 			}
 			#sliders{
-				display: block; 
+				display: block;
 				width: 100%;
 				margin-top: 20px;
 			}
@@ -53,14 +53,6 @@
 				border-radius: 5px;
 				background: #ddd;
 				outline: none;
-			}
-			#sliders label{
-				display: inline-block;
-				width: 45px;
-				text-align: right;
-				margin-right: 10px;
-				font-weight: bold;
-				font-size: 0.9em;
 			}
 			.slider::-webkit-slider-thumb{
 				-webkit-appearance: none;
@@ -92,14 +84,38 @@
 			.btn-group{
 				margin: 10px 0;
 			}
-			button{ 
-				cursor: pointer; 
-				padding: 6px 0;
-				margin: 2px; 
-				border: 1px solid #ccc; 
+			.btn-group button{
+				cursor: pointer;
+				padding: 8px 12px;
+				margin: 2px;
+				border: 1px solid #ccc;
 				border-radius: 5px;
 				font-weight: bold;
-				width: 75px;
+				min-width: 75px;
+				background: white;
+			}
+			.control-group{
+				display: flex;
+				flex-direction: column;
+				gap: 8px;
+				margin-top: 15px;
+			}
+			.button-row{
+				display: flex;
+				justify-content: center;
+				gap: 2px;
+			}
+			button.step{
+				flex: 1;
+				min-width: 32px;
+				max-width: 45px;
+				padding: 8px 0;
+				margin: 0;
+				font-size: 11px;
+				border: none;
+				border-radius: 4px;
+				cursor: pointer;
+				font-weight: bold;
 				box-sizing: border-box;
 			}
 			.redButtons{
@@ -117,6 +133,22 @@
 			.grayButtons{
 				background: #7f8c8d;
 				color: white;
+			}
+			@media (max-width: 480px){
+				button.step{
+					min-width: 28px;
+					padding: 10px 0;
+					font-size: 10px;
+				}
+				#optionZone{
+					padding: 15px;
+					width: 98%;
+				}
+				.btn-group button{
+					padding: 10px 5px;
+					min-width: 65px;
+					font-size: 0.8em;
+				}
 			}
 		</style>
 	</head>
@@ -143,15 +175,61 @@
 				<div class="slider-row"><label>K</label> <input type="range" id="black" class="slider" oninput="setAndPatch(8)"/> <output id="valueK"></output></div>
 			</div>
 
-			<div class="btn-group" style="margin-top:20px">
-				<button class="redButtons" onclick="changeColor(0,-10)">-10 R</button>
-				<button class="redButtons" onclick="changeColor(0, 10)">+10 R</button>
-				<button class="greenButtons" onclick="changeColor(1,-10)">-10 G</button>
-				<button class="greenButtons" onclick="changeColor(1, 10)">+10 G</button><br>
-				<button class="blueButtons" onclick="changeColor(2,-10)">-10 B</button>
-				<button class="blueButtons" onclick="changeColor(2, 10)">+10 B</button>
-				<button class="grayButtons" onclick="changeGray(-10)">-10 All</button>
-				<button class="grayButtons" onclick="changeGray(10)">+10 All</button>
+			<div class="control-group">
+				<div class="button-row">
+					<button class="redButtons step" onclick="changeColor(0,-20)">-20</button>
+					<button class="redButtons step" onclick="changeColor(0,-10)">-10</button>
+					<button class="redButtons step" onclick="changeColor(0,-5)">-5</button>
+					<button class="redButtons step" onclick="changeColor(0,-2)">-2</button>
+					<button class="redButtons step" onclick="changeColor(0,-1)">-1</button>
+					<div style="width: 4px;"></div> <button class="redButtons step" onclick="changeColor(0, 1)">+1</button>
+					<button class="redButtons step" onclick="changeColor(0, 2)">+2</button>
+					<button class="redButtons step" onclick="changeColor(0, 5)">+5</button>
+					<button class="redButtons step" onclick="changeColor(0, 10)">+10</button>
+					<button class="redButtons step" onclick="changeColor(0, 20)">+20</button>
+				</div>
+
+				<div class="button-row">
+					<button class="greenButtons step" onclick="changeColor(1,-20)">-20</button>
+					<button class="greenButtons step" onclick="changeColor(1,-10)">-10</button>
+					<button class="greenButtons step" onclick="changeColor(1,-5)">-5</button>
+					<button class="greenButtons step" onclick="changeColor(1,-2)">-2</button>
+					<button class="greenButtons step" onclick="changeColor(1,-1)">-1</button>
+					<div style="width: 4px;"></div>
+					<button class="greenButtons step" onclick="changeColor(1, 1)">+1</button>
+					<button class="greenButtons step" onclick="changeColor(1, 2)">+2</button>
+					<button class="greenButtons step" onclick="changeColor(1, 5)">+5</button>
+					<button class="greenButtons step" onclick="changeColor(1, 10)">+10</button>
+					<button class="greenButtons step" onclick="changeColor(1, 20)">+20</button>
+				</div>
+
+				<div class="button-row">
+					<button class="blueButtons step" onclick="changeColor(2,-20)">-20</button>
+					<button class="blueButtons step" onclick="changeColor(2,-10)">-10</button>
+					<button class="blueButtons step" onclick="changeColor(2,-5)">-5</button>
+					<button class="blueButtons step" onclick="changeColor(2,-2)">-2</button>
+					<button class="blueButtons step" onclick="changeColor(2,-1)">-1</button>
+					<div style="width: 4px;"></div>
+					<button class="blueButtons step" onclick="changeColor(2, 1)">+1</button>
+					<button class="blueButtons step" onclick="changeColor(2, 2)">+2</button>
+					<button class="blueButtons step" onclick="changeColor(2, 5)">+5</button>
+					<button class="blueButtons step" onclick="changeColor(2, 10)">+10</button>
+					<button class="blueButtons step" onclick="changeColor(2, 20)">+20</button>
+				</div>
+
+				<div class="button-row">
+					<button class="grayButtons step" onclick="changeGray(-20)">-20</button>
+					<button class="grayButtons step" onclick="changeGray(-10)">-10</button>
+					<button class="grayButtons step" onclick="changeGray(-5)">-5</button>
+					<button class="grayButtons step" onclick="changeGray(-2)">-2</button>
+					<button class="grayButtons step" onclick="changeGray(-1)">-1</button>
+					<div style="width: 4px;"></div>
+					<button class="grayButtons step" onclick="changeGray(1)">+1</button>
+					<button class="grayButtons step" onclick="changeGray(2)">+2</button>
+					<button class="grayButtons step" onclick="changeGray(5)">+5</button>
+					<button class="grayButtons step" onclick="changeGray(10)">+10</button>
+					<button class="grayButtons step" onclick="changeGray(20)">+20</button>
+				</div>
 			</div>
 		</div>
 
@@ -178,7 +256,7 @@
 				for(let i = 5; i < 9; i++){
 					INPUTS[i].min = 0; INPUTS[i].max = 1; INPUTS[i].step = 0.01;
 				}
-				setColor(200, 200, 200);
+				setColor(255, 255, 255);
 				VALUES[9].onclick = function(){
 					navigator.clipboard.writeText(this.textContent);
 					const oldText = this.textContent;
@@ -212,9 +290,12 @@
 			function setColor(r, g, b){
 				r = Math.round(r); g = Math.round(g); b = Math.round(b);
 				
-				INPUTS[0].value = r; VALUES[0].textContent = r;
-				INPUTS[1].value = g; VALUES[1].textContent = g;
-				INPUTS[2].value = b; VALUES[2].textContent = b;
+				INPUTS[0].value = r;
+				VALUES[0].textContent = r;
+				INPUTS[1].value = g;
+				VALUES[1].textContent = g;
+				INPUTS[2].value = b;
+				VALUES[2].textContent = b;
 
 				let avg = Math.round((r + g + b)/3);
 				INPUTS[3].value = avg; VALUES[3].textContent = avg;
@@ -228,10 +309,14 @@
 				let m = k === 1 ? 0 :(1 - dg - k)/(1 - k);
 				let y = k === 1 ? 0 :(1 - db - k)/(1 - k);
 
-				INPUTS[5].value = c.toFixed(2); VALUES[5].textContent = c.toFixed(2);
-				INPUTS[6].value = m.toFixed(2); VALUES[6].textContent = m.toFixed(2);
-				INPUTS[7].value = y.toFixed(2); VALUES[7].textContent = y.toFixed(2);
-				INPUTS[8].value = k.toFixed(2); VALUES[8].textContent = k.toFixed(2);
+				INPUTS[5].value = c.toFixed(2);
+				VALUES[5].textContent = c.toFixed(2);
+				INPUTS[6].value = m.toFixed(2);
+				VALUES[6].textContent = m.toFixed(2);
+				INPUTS[7].value = y.toFixed(2);
+				VALUES[7].textContent = y.toFixed(2);
+				INPUTS[8].value = k.toFixed(2);
+				VALUES[8].textContent = k.toFixed(2);
 
 				let hex = "#" + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase();
 				VALUES[9].textContent = hex;

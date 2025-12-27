@@ -68,19 +68,70 @@
 			}
 
 			function createButtons(){
+				const oldContainer = document.getElementById("controls");
+				if(oldContainer){
+					oldContainer.remove();
+				}
+				const container = document.createElement("div");
+				container.id = "controls";
+				const boardWidth = (SIDE*4) + (DIVISION_WIDTH*5) + (BORDER_WIDTH*2);
+				const boardStartX = ORIZONTAL_CONST + MARGIN_DIM;
+				const boardBottomY = MARGIN_DIM + boardWidth;
+				container.style.cssText = `
+					position: absolute;
+					display: flex;
+					justify-content: space-between;
+					gap: ${UNIT}px;
+					left: ${boardStartX}px; 
+					top: ${boardBottomY + (UNIT * 5)}px; 
+					width: ${boardWidth}px;
+					z-index: 10;
+					box-sizing: border-box;
+				`;
 				const btnData = [
-					{id: "shuffleBtn", txt: "Shuffle", top: DESKTOP ? 99 : 100, left: DESKTOP ? 106 : 12, click: "shuffleTiles()"},
-					{id: "restartBtn", txt: "Restart", top: DESKTOP ? 99 : 100, left: DESKTOP ? 153 : 59, click: "restart()"},
-					{id: "solveBtn", txt: "Solve", top: DESKTOP ? 111 : 112, left: DESKTOP ? 130 : 36, click: "solve()"}
+					{id: "shuffleBtn", txt: "Shuffle", click: "shuffleTiles()"},
+					{id: "restartBtn", txt: "Restart", click: "restart()"},
+					{id: "solveBtn", txt: "Solve", click: "solve()"}
 				];
 				btnData.forEach(b => {
 					let btn = document.createElement("button");
 					btn.id = b.id;
-					btn.style.cssText = `position: absolute; top: ${b.top*UNIT}px; left: ${b.left*UNIT}px; width: ${45*UNIT}px; height: ${10*UNIT}px; font-size: ${5*UNIT}px; background: #fff; cursor: pointer;`;
+					btn.style.cssText = `
+						flex: 1;
+						padding: ${UNIT * 1.5}px 0;
+						font-size: ${UNIT * 2.2}px;
+						font-family: 'Segoe UI', Arial, sans-serif;
+						font-weight: 800;
+						cursor: pointer;
+						background: rgba(179, 229, 252, 0.9);
+						color: #333;
+						border: ${UNIT/3}px solid ${BORDER_COLOR};
+						border-radius: 12px;
+						text-transform: uppercase;
+						box-shadow: 0px ${UNIT/2}px 0px rgba(0,0,0,0.1);
+						transition: all 0.2s;
+					`;
 					btn.setAttribute("onclick", b.click);
 					btn.innerHTML = b.txt;
-					document.body.appendChild(btn);
+					btn.onmouseover = () => {
+						btn.style.background = BORDER_COLOR;
+						btn.style.color = "#fff";
+					};
+					btn.onmouseout = () => {
+						btn.style.background = "rgba(179, 229, 252, 0.9)";
+						btn.style.color = "#333";
+					};
+					btn.onmousedown = () => {
+						btn.style.transform = "translateY(2px)";
+						btn.style.boxShadow = "0px 0px 0px rgba(0,0,0,0.1)";
+					};
+					btn.onmouseup = () => {
+						btn.style.transform = "translateY(0px)";
+						btn.style.boxShadow = `0px ${UNIT/2}px 0px rgba(0,0,0,0.1)`;
+					};
+					container.appendChild(btn);
 				});
+				document.getElementById("Fifteen").appendChild(container);
 			}
 
 			function drawCell(row, column, color){
