@@ -14,8 +14,8 @@
 				justify-content: center;
 				align-items: center;
 				min-height: 100vh;
-				overflow: hidden;
 				background: #2f363e;
+				overflow: hidden;
 			}
 			.clock{
 				position: relative;
@@ -28,15 +28,22 @@
 				box-shadow: inset 5px 5px 25px rgba(0,0,0,0.25);
 				border-radius: 50%;
 				cursor: pointer;
+				transition: transform 0.6s ease-in-out;
+				user-select: none; 
+				-webkit-user-select: none;
 				-webkit-tap-highlight-color: transparent;
+				outline: none;
+			}
+			.clock.reflected{
+				transform: scaleX(-1);
 			}
 			.clock::before{
 				content: '';
 				position: absolute;
-				width: 5px;
-				height: 5px;
+				width: 6px;
+				height: 6px;
 				background: #2f363e;
-				z-index: 10000;
+				z-index: 1000;
 				border: 1px solid #fff;
 				border-radius: 50%;
 			}
@@ -54,55 +61,50 @@
 				justify-content: center;
 				align-items: center;
 			}
-			.circle svg{ 
-				position: relative; 
-				transform: rotate(270deg); 
-			} 
-			.circle:nth-child(1) svg{
-				width: 250px;
-				height: 250px;
-			}
-			.circle:nth-child(2) svg{
-				width: 210px;
-				height: 210px;
-			}
-			.circle:nth-child(3) svg{
-				width: 170px;
-				height: 170px;
+			.circle svg{
+				transform: rotate(-90deg);
+				overflow: visible;
 			}
 			.circle svg circle{
 				fill: transparent;
 				stroke-width: 8;
 				stroke: var(--clr);
-				transform: translate(5px,5px);
 				opacity: 0.25;
-				transition: stroke-dashoffset 0.5s ease;
+				stroke-linecap: round;
+			}
+			.circle:nth-child(1), #sc{
+				width: 240px;
+				height: 240px;
 			}
 			#ss{
-				stroke-dasharray: 760;
-				stroke-dashoffset: 760;
+				stroke-dasharray: 754;
+			} 
+			.circle:nth-child(2), #mn{
+				width: 200px;
+				height: 200px;
 			}
 			#mm{
-				stroke-dasharray: 630;
-				stroke-dashoffset: 630;
+				stroke-dasharray: 628;
+			}
+			.circle:nth-child(3), #hr{
+				width: 160px;
+				height: 160px;
 			}
 			#hh{
-				stroke-dasharray: 510;
-				stroke-dashoffset: 510;
+				stroke-dasharray: 503;
 			}
 			.dots{
 				position: absolute;
 				width: 100%;
 				height: 100%;
 				display: flex;
-				align-items: flex-start;
 				justify-content: center;
 				z-index: 10;
 			}
 			.dots::before{
 				content: '';
 				position: absolute;
-				top: -3px;
+				top: -4px;
 				width: 10px;
 				height: 10px;
 				background: var(--clr);
@@ -111,29 +113,19 @@
 			}
 			.niddles{
 				position: absolute;
-				width: 200px;
-				height: 200px;
 				display: flex;
 				justify-content: center;
-				z-index: 10;
+				z-index: 5;
 			}
 			.niddles i{
 				position: absolute;
 				width: 2px;
 				background: var(--clr2);
 				height: 50%;
-				opacity: 0.75;
+				opacity: 0.5;
 				border-radius: 6px;
 				transform-origin: bottom;
 				transform: scaleY(0.5);
-			}
-			.niddles.niddle2{
-				width: 170px;
-				height: 170px;
-			}
-			.niddles.niddle3{
-				width: 140px;
-				height: 140px;
 			}
 			#time span{
 				position: absolute;
@@ -141,143 +133,97 @@
 				text-align: center;
 				color: #999;
 				font-family: consolas;
-				transform: rotate(calc(15deg*var(--i)));
 				pointer-events: none;
+				transform: rotate(calc(15deg*var(--i)));
 			}
 			#time span b{
 				font-size: 0.25em;
 				font-weight: 500;
 				display: inline-block;
 				transform: rotate(calc(-15deg*var(--i)));
-			}			
+			}
+			.clock.reflected #time span b{
+				transform: rotate(calc(-15deg*var(--i))) scaleX(-1);
+			}
 		</style>
 	</head>
 	<body>
-		<div class="clock" onclick="changeClockDirection()">
+		<div id="clock_el" class="clock" onclick="changeClockDirection()">
 			<div id="time">
 				<div class="circle" style="--clr:#ff0000">
 					<div class="dots" id="sec_dot"></div>
-					<svg id="svg_s"><circle cx="120" cy="120" r="121" id="ss"></circle></svg>
+					<svg width="240" height="240"><circle cx="120" cy="120" r="120" id="ss"></circle></svg>
 				</div>
 				<div class="circle" style="--clr:#0000ff">
 					<div class="dots" id="min_dot"></div>
-					<svg id="svg_m"><circle cx="100" cy="100" r="100" id="mm"></circle></svg>
+					<svg width="200" height="200"><circle cx="100" cy="100" r="100" id="mm"></circle></svg>
 				</div>
 				<div class="circle" style="--clr:#ffff00">
 					<div class="dots" id="hr_dot"></div>
-					<svg id="svg_h"><circle cx="80" cy="80" r="81" id="hh"></circle></svg>
+					<svg width="160" height="160"><circle cx="80" cy="80" r="80" id="hh"></circle></svg>
 				</div>
+				
 				<div class="niddles" style="--clr2:#ff0000;" id="sc"><i></i></div>
-				<div class="niddles niddle2" style="--clr2:#0000ff;" id="mn"><i></i></div>
-				<div class="niddles niddle3" style="--clr2:#ffff00;" id="hr"><i></i></div>
+				<div class="niddles" style="--clr2:#0000ff;" id="mn"><i></i></div>
+				<div class="niddles" style="--clr2:#ffff00;" id="hr"><i></i></div>
 			</div>
 		</div>
 
 		<script>
-			let reverse = true;
+			let isReflected = false;
 			let lastS = -1;
 			const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
 
-			function playTick(){
-				const osc = audioCtx.createOscillator();
-				const gain = audioCtx.createGain();
-				osc.type = 'sine';
-				osc.frequency.setValueAtTime(reverse ? 150 : 800, audioCtx.currentTime);
-				gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-				gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.1);
-				osc.connect(gain);
-				gain.connect(audioCtx.destination);
-				osc.start();
-				osc.stop(audioCtx.currentTime + 0.1);
-			}
-
-			function playBell(hour){
-				let rintocchi = hour%12 || 12;
-				for(let i = 0; i < rintocchi; i++){
-					setTimeout(() => {
-						const now = audioCtx.currentTime;
-						[110, 220, 440.5].forEach((freq, index) => {
-							const osc = audioCtx.createOscillator();
-							const gain = audioCtx.createGain();
-							osc.type = index === 0 ? 'sine' : 'triangle';
-							osc.frequency.setValueAtTime(freq, now);
-							gain.gain.setValueAtTime(0.2*(index + 1), now);
-							gain.gain.exponentialRampToValueAtTime(0.00001, now + 3);
-							osc.connect(gain);
-							gain.connect(audioCtx.destination);
-							osc.start(now);
-							osc.stop(now + 3);
-						});
-					}, i*2000);
-				}
-			}
-
 			function updateClock(){
 				let now = new Date();
-				let h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
-
+				let h = now.getHours(), m = now.getMinutes(), s = now.getSeconds(), ms = now.getMilliseconds();
 				if(audioCtx.state === 'running' && s !== lastS){
 					playTick();
 					lastS = s;
 				}
+				let sDeg = (s*6);
+				let mDeg = (m*6) + (s*0.1);
+				let hDeg = (h%24*15) + (m*0.25);
+				document.getElementById('sc').style.transform = `rotateZ(${sDeg}deg)`;
+				document.getElementById('mn').style.transform = `rotateZ(${mDeg}deg)`;
+				document.getElementById('hr').style.transform = `rotateZ(${hDeg}deg)`;
+				document.getElementById('sec_dot').style.transform = `rotateZ(${sDeg}deg)`;
+				document.getElementById('min_dot').style.transform = `rotateZ(${mDeg}deg)`;
+				document.getElementById('hr_dot').style.transform = `rotateZ(${hDeg}deg)`;
+				document.getElementById('ss').style.strokeDashoffset = 754 - (754*s)/60;
+				document.getElementById('mm').style.strokeDashoffset = 628 - (628*(m + s/60))/60;
+				document.getElementById('hh').style.strokeDashoffset = 503 - (503*(h + m/60))/24;
+			}
 
-				if(m === 0 && s === 0 && audioCtx.state === 'running' && now.getMilliseconds() < 250){
-					playBell(h);
-				}
-
-				let sDeg = s*6;
-				let mDeg = m*6;
-				let hDeg = h*15;
-
-				let finalSDeg = reverse ? -sDeg : sDeg;
-				let finalMDeg = reverse ? -mDeg : mDeg;
-				let finalHDeg = reverse ? -hDeg : hDeg;
-
-				document.getElementById('sc').style.transform = `rotateZ(${finalSDeg}deg)`;
-				document.getElementById('mn').style.transform = `rotateZ(${finalMDeg}deg)`;
-				document.getElementById('hr').style.transform = `rotateZ(${finalHDeg}deg)`;
-				document.getElementById('sec_dot').style.transform = `rotateZ(${finalSDeg}deg)`;
-				document.getElementById('min_dot').style.transform = `rotateZ(${finalMDeg}deg)`;
-				document.getElementById('hr_dot').style.transform = `rotateZ(${finalHDeg}deg)`;
-
-				if(reverse){
-					document.getElementById('svg_s').style.transform = `rotate(${270 - sDeg}deg)`;
-					document.getElementById('svg_m').style.transform = `rotate(${270 - mDeg}deg)`;
-					document.getElementById('svg_h').style.transform = `rotate(${270 - hDeg}deg)`;
-				}else{
-					document.getElementById('svg_s').style.transform = `rotate(270deg)`;
-					document.getElementById('svg_m').style.transform = `rotate(270deg)`;
-					document.getElementById('svg_h').style.transform = `rotate(270deg)`;
-				}
-
-				document.getElementById('ss').style.strokeDashoffset = 760 -(760*s)/60;
-				document.getElementById('mm').style.strokeDashoffset = 630 -(630*m)/60;
-				document.getElementById('hh').style.strokeDashoffset = 510 -(510*h)/24;
+			function playTick(){
+				const osc = audioCtx.createOscillator();
+				const gain = audioCtx.createGain();
+				osc.frequency.setValueAtTime(isReflected ? 150 : 800, audioCtx.currentTime);
+				gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+				gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.1);
+				osc.connect(gain); gain.connect(audioCtx.destination);
+				osc.start(); osc.stop(audioCtx.currentTime + 0.1);
 			}
 
 			function drawNumbers(){
 				document.querySelectorAll('#time span').forEach(span => span.remove());
 				const timeContainer = document.getElementById("time");
 				for(let val = 1; val <= 24; val++){
-					let i = reverse ?(24 - val) : val;
 					let span = document.createElement('span');
-					span.style.setProperty('--i', i);
+					span.style.setProperty('--i', val);
 					span.innerHTML = `<b>${val}</b>`;
 					timeContainer.appendChild(span);
 				}
 			}
 
 			function changeClockDirection(){
-				if(audioCtx.state === 'suspended'){
-					audioCtx.resume();
-				}
-				reverse = !reverse;
-				drawNumbers();
-				updateClock();
+				if(audioCtx.state === 'suspended') audioCtx.resume();
+				isReflected = !isReflected;
+				document.getElementById('clock_el').classList.toggle('reflected', isReflected);
 			}
 
 			drawNumbers();
-			setInterval(updateClock, 200);
+			setInterval(updateClock, 50);
 			updateClock();
 		</script>
 	</body>
