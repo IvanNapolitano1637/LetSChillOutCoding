@@ -288,27 +288,26 @@
 			}
 
 			function setColor(r, g, b){
-				r = Math.round(r); g = Math.round(g); b = Math.round(b);
-				
+				r = Math.round(r);
+				g = Math.round(g);
+				b = Math.round(b);
 				INPUTS[0].value = r;
 				VALUES[0].textContent = r;
 				INPUTS[1].value = g;
 				VALUES[1].textContent = g;
 				INPUTS[2].value = b;
 				VALUES[2].textContent = b;
-
 				let avg = Math.round((r + g + b)/3);
-				INPUTS[3].value = avg; VALUES[3].textContent = avg;
-
+				INPUTS[3].value = avg;
+				VALUES[3].textContent = avg;
 				let light = Math.round((Math.max(r,g,b) + Math.min(r,g,b))/2);
-				INPUTS[4].value = light; VALUES[4].textContent = light;
-
+				INPUTS[4].value = light;
+				VALUES[4].textContent = light;
 				let dr = r/255, dg = g/255, db = b/255;
 				let k = 1 - Math.max(dr, dg, db);
 				let c = k === 1 ? 0 :(1 - dr - k)/(1 - k);
 				let m = k === 1 ? 0 :(1 - dg - k)/(1 - k);
 				let y = k === 1 ? 0 :(1 - db - k)/(1 - k);
-
 				INPUTS[5].value = c.toFixed(2);
 				VALUES[5].textContent = c.toFixed(2);
 				INPUTS[6].value = m.toFixed(2);
@@ -317,7 +316,6 @@
 				VALUES[7].textContent = y.toFixed(2);
 				INPUTS[8].value = k.toFixed(2);
 				VALUES[8].textContent = k.toFixed(2);
-
 				let hex = "#" + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase();
 				VALUES[9].textContent = hex;
 				document.body.style.backgroundColor = hex;
