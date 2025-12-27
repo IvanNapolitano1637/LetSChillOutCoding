@@ -266,37 +266,82 @@
 			}
 
 			function setAndPatch(component){
+				const red = parseInt(INPUTS[0].value);
+				const green = parseInt(INPUTS[1].value);
+				const blue = parseInt(INPUTS[2].value);
+				const gray = parseInt(INPUTS[3].value);
+				const cyan = parseFloat(INPUTS[5].value);
+				const magenta = parseFloat(INPUTS[6].value);
+				const yellow = parseFloat(INPUTS[7].value);
+				const black = parseFloat(INPUTS[8].value);
 				if(component === 3){
-					setColor(INPUTS[3].value, INPUTS[3].value, INPUTS[3].value);
+					setColor(gray, gray, gray);
 				}else if(component === 4){
 					setBrightness();
 				}else if(component < 3){
-					setColor(INPUTS[0].value, INPUTS[1].value, INPUTS[2].value);
+					setColor(red, green, blue);
 				}else{
-					setColor_CMYK(INPUTS[5].value, INPUTS[6].value, INPUTS[7].value, INPUTS[8].value);
+					setColor_CMYK(cyan, magenta, yellow, black);
 				}
 			}
 
+			function getMin(){
+				let min = (parseInt(INPUTS[0].value) <= parseInt(INPUTS[1].value)) ? parseInt(INPUTS[0].value) : parseInt(INPUTS[1].value);
+				min = ((min <= parseInt(INPUTS[2].value)) ? min : parseInt(INPUTS[2].value));
+				return min
+			}
+
+			function getMax(){
+				let max = (parseInt(INPUTS[0].value) >= parseInt(INPUTS[1].value)) ? parseInt(INPUTS[0].value) : parseInt(INPUTS[1].value);
+				max = ((max >= parseInt(INPUTS[2].value)) ? max : parseInt(INPUTS[2].value));
+				return max
+			}
+
+			function getColor(){
+				sRed = (parseInt(VALUES[0].textContent).toString(16)).padStart(2, '0');
+				sGreen = (parseInt(VALUES[1].textContent).toString(16)).padStart(2, '0');
+				sBlue = (parseInt(VALUES[2].textContent).toString(16)).padStart(2, '0');
+				return ("#" + sRed + sGreen + sBlue);
+			}
+
+			function isPossibleToModifyLight(){
+				if((parseInt(INPUTS[4].value) > parseInt(VALUES[4].textContent))&&(getMax() == 255)){
+					return false;
+				}
+				if((parseInt(INPUTS[4].value) < parseInt(VALUES[4].textContent))&&(getMin() == 0)){
+					return false;
+				}
+				return true;
+			}
+
 			function setBrightness(){
-				let currentL = parseInt(VALUES[4].textContent);
-				let newL = parseInt(INPUTS[4].value);
-				let delta = newL - currentL;
-				let r = Math.min(255, Math.max(0, parseInt(INPUTS[0].value) + delta));
-				let g = Math.min(255, Math.max(0, parseInt(INPUTS[1].value) + delta));
-				let b = Math.min(255, Math.max(0, parseInt(INPUTS[2].value) + delta));
-				setColor(r, g, b);
+				if(isPossibleToModifyLight()){
+					if(parseInt(INPUTS[4].value) != parseInt(VALUES[4].textContent)){
+						for(let i = 0; i < 3; i++){
+							INPUTS[i].value = (parseInt(INPUTS[i].value) + parseInt(INPUTS[4].value) - parseInt(VALUES[4].textContent));
+							VALUES[i].textContent = INPUTS[i].value;
+						}
+					}
+					setColor(INPUTS[0].value, INPUTS[1].value, INPUTS[2].value);
+					VALUES[4].textContent = INPUTS[4].value;
+					INPUTS[3].value = parseInt((parseInt(VALUES[0].value) + parseInt(VALUES[1].value) + parseInt(VALUES[2].value))/3);
+					VALUES[3].textContent = parseInt((parseInt(VALUES[0].value) + parseInt(VALUES[1].value) + parseInt(VALUES[2].value))/3);
+					document.body.style.backgroundColor = getColor();
+					VALUES[9].textContent = getColor();
+					INPUTS[4].value = parseInt((getMax() + getMin())/2);
+					VALUES[4].textContent = INPUTS[4].value;
+				}
+				INPUTS[4].value = parseInt(VALUES[4].textContent);
 			}
 
 			function setColor(r, g, b){
 				r = Math.round(r);
 				g = Math.round(g);
 				b = Math.round(b);
-				INPUTS[0].value = r;
-				VALUES[0].textContent = r;
-				INPUTS[1].value = g;
-				VALUES[1].textContent = g;
-				INPUTS[2].value = b;
-				VALUES[2].textContent = b;
+				[r, g, b].forEach((v, i) => {
+					INPUTS[i].value = v;
+					VALUES[i].textContent = v;
+				});
 				let avg = Math.round((r + g + b)/3);
 				INPUTS[3].value = avg;
 				VALUES[3].textContent = avg;
@@ -308,14 +353,10 @@
 				let c = k === 1 ? 0 :(1 - dr - k)/(1 - k);
 				let m = k === 1 ? 0 :(1 - dg - k)/(1 - k);
 				let y = k === 1 ? 0 :(1 - db - k)/(1 - k);
-				INPUTS[5].value = c.toFixed(2);
-				VALUES[5].textContent = c.toFixed(2);
-				INPUTS[6].value = m.toFixed(2);
-				VALUES[6].textContent = m.toFixed(2);
-				INPUTS[7].value = y.toFixed(2);
-				VALUES[7].textContent = y.toFixed(2);
-				INPUTS[8].value = k.toFixed(2);
-				VALUES[8].textContent = k.toFixed(2);
+				[c, m, y, k].forEach((v, i) => {
+					INPUTS[i + 5].value = v.toFixed(2);
+					VALUES[i + 5].textContent = v.toFixed(2);
+				});
 				let hex = "#" + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase();
 				VALUES[9].textContent = hex;
 				document.body.style.backgroundColor = hex;
@@ -336,23 +377,28 @@
 				setColor(Math.random()*255, Math.random()*255, Math.random()*255);
 			}
 
-			function changeColor(idx, d){
+			function changeColor(index, delta){
 				let v = [parseInt(INPUTS[0].value), parseInt(INPUTS[1].value), parseInt(INPUTS[2].value)];
-				v[idx] = Math.min(255, Math.max(0, v[idx] + d));
-				setColor(v[0], v[1], v[2]);
+				if((v[index] + delta >= 0)&&(v[index] + delta <= 255)){
+					v[index] += delta;
+					setColor(v[0], v[1], v[2]);
+				}
 			}
 
 			function changeGray(delta){
-				if(((parseInt(INPUTS[0].value) + delta) >= 0) && ((parseInt(INPUTS[0].value) + delta) <= 255)){
-					if(((parseInt(INPUTS[1].value) + delta) >= 0) && ((parseInt(INPUTS[1].value) + delta) <= 255)){
-						if(((parseInt(INPUTS[2].value) + delta) >= 0) && ((parseInt(INPUTS[2].value) + delta) <= 255)){
-							setColor(parseInt(INPUTS[0].value) + delta, parseInt(INPUTS[1].value) + delta, parseInt(INPUTS[2].value) + delta);
+				let r = parseInt(INPUTS[0].value) + delta;
+				let g = parseInt(INPUTS[1].value) + delta;
+				let b = parseInt(INPUTS[2].value) + delta;
+				if((r >= 0) && (r <= 255)){
+					if((g >= 0) && (g <= 255)){
+						if((b >= 0) && (b <= 255)){
+							setColor(r, g, b);
 						}
 					}
 				}
 			}
 
-			init();
+			window.onload = init;
 		</script>
 	</body>
 </html>
