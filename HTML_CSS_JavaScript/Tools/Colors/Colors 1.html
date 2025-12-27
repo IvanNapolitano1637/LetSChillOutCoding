@@ -344,13 +344,15 @@
 				setColor(v[0], v[1], v[2]);
 			}
 
-			function changeGray(d){
-				let r = Math.min(255, Math.max(0, parseInt(INPUTS[0].value) + d));
-				let g = Math.min(255, Math.max(0, parseInt(INPUTS[1].value) + d));
-				let b = Math.min(255, Math.max(0, parseInt(INPUTS[2].value) + d));
-				setColor(r, g, b);
+			function changeGray(delta){
+				if(((parseInt(INPUTS[0].value) + delta) >= 0) && ((parseInt(INPUTS[0].value) + delta) <= 255)){
+					if(((parseInt(INPUTS[1].value) + delta) >= 0) && ((parseInt(INPUTS[1].value) + delta) <= 255)){
+						if(((parseInt(INPUTS[2].value) + delta) >= 0) && ((parseInt(INPUTS[2].value) + delta) <= 255)){
+							setColor(parseInt(INPUTS[0].value) + delta, parseInt(INPUTS[1].value) + delta, parseInt(INPUTS[2].value) + delta);
+						}
+					}
+				}
 			}
-
 			init();
 		</script>
 	</body>
