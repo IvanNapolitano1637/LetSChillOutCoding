@@ -1,19 +1,48 @@
 <!DOCTYPE HTML>
 <html lang="en"><!--G06#016 - Serena - Fifteen-->
-
 	<head>
-		<title>Fifteen</title>
+		<title>Fifteen Puzzle</title>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<style>
+			body {
+				margin: 0;
+				padding: 20px;
+				display: flex;
+				justify-content: center;
+				align-items: flex-start;
+				min-height: 100vh;
+				font-family: 'Segoe UI', Arial, sans-serif;
+				overflow-x: hidden;
+				-webkit-tap-highlight-color: transparent; 
+			}
+			#Fifteen {
+				position: relative;
+				user-select: none;
+				-webkit-user-select: none;
+			}
+			canvas {
+				display: block;
+			}
+			.tile-container {
+				position: absolute;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				pointer-events: none;
+				z-index: 1;
+			}
+		</style>
 	</head>
 
 	<body id="body">
-		<div id = "Fifteen">
+		<div id="Fifteen">
 			<canvas id="board">
 				Upgrade Browser
 			</canvas>
 		</div>
+
 		<script>
 			const COLOR_1 = "#a7ffa7";
 			const COLOR_2 = "#efefef";
@@ -28,30 +57,29 @@
 			const MARGIN_DIM = 2*UNIT;
 			const SIDE = 20*UNIT;
 			const IDS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "0"];
-			const ORIZONTAL_PATCH = DESKTOP ? 95*UNIT : 0;
-			const ORIZONTAL_CONST = ORIZONTAL_PATCH + DIVISION_WIDTH + BORDER_WIDTH + MARGIN_DIM;
-			const ORIZONTAL_DELTAS = [0, 0, 0, 0, 0, 0, 0, 0, 0, -5*UNIT, -4*UNIT, -5*UNIT, -5*UNIT, -5*UNIT, -5*UNIT, -5*UNIT];
+			const ORIZONTAL_CONST = DIVISION_WIDTH + BORDER_WIDTH + MARGIN_DIM;
 			const WIDTH = (ORIZONTAL_CONST + MARGIN_DIM + (4*SIDE) + (5*DIVISION_WIDTH) + (2*BORDER_WIDTH));
 			const HEIGHT = (2*MARGIN_DIM + (4*SIDE) + (5*DIVISION_WIDTH) + (2*BORDER_WIDTH));
-			let cursorX, cursorY, shuffledIDS = [], r1 = 3, c1 = 3, counterMoves = 0, gameFinished, begun = false, isSolving = false;
+			let cursorX, cursorY, r1 = 3, c1 = 3, counterMoves = 0, gameFinished, begun = false, isSolving = false;
 
 			drawBoard();
-			drawCells();
 
 			function drawBoard(){
 				document.body.style.background = BACKGROUND_COLOR;
-				shuffleArray();
-				const bodyEl = document.getElementById("body");
+				const container = document.getElementById("Fifteen");
 				for(let i = 0; i < 16; i++){
 					const div = document.createElement("div");
 					div.id = IDS[i];
-					div.style.cssText = `position: absolute; width: 10%; height: 10%; font-size: ${UNIT}rem; left:${ORIZONTAL_CONST + ORIZONTAL_DELTAS[i] + SIDE/2 + BORDER_WIDTH + DIVISION_WIDTH + ((SIDE + DIVISION_WIDTH)*(i%4))}px; top:${((DIVISION_WIDTH + BORDER_WIDTH + MARGIN_DIM + 10) + ((SIDE + DIVISION_WIDTH)*(Math.floor(i/4))))}px; z-index:1; user-select: none; -webkit-user-select: none;`;
-					div.textContent = (IDS[i] === "0") ? "" : parseInt("0x" + IDS[i]);
-					div.onclick = select;
-					bodyEl.appendChild(div);
+					div.className = "tile-container";
+					div.style.width = SIDE + "px";
+					div.style.height = SIDE + "px";
+					div.style.fontSize = `${UNIT*0.75}rem`;
+					div.style.fontWeight = "bold";
+					container.appendChild(div);
 				}
 				let board = document.getElementById("board");
-				board.width = WIDTH; board.height = HEIGHT;
+				board.width = WIDTH; 
+				board.height = HEIGHT;
 				if(board.getContext("2d")){
 					let ctx = board.getContext("2d");
 					ctx.fillStyle = BORDER_COLOR;
@@ -59,12 +87,20 @@
 					ctx.fillStyle = FRAME_COLOR;
 					ctx.fillRect(ORIZONTAL_CONST + MARGIN_DIM + BORDER_WIDTH, MARGIN_DIM + BORDER_WIDTH, (SIDE*4) + (DIVISION_WIDTH*5), (SIDE*4) + (DIVISION_WIDTH*5));
 				}
-				document.onmousemove = (e) => {
-					cursorX = e.pageX;
-					cursorY = e.pageY;
+				const handleInput = (e) => {
+					const rect = board.getBoundingClientRect();
+					const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+					const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+					cursorX = clientX - rect.left;
+					cursorY = clientY - rect.top;
+					select();
+				};
+				board.onclick = handleInput;
+				board.ontouchstart = (e) => {
+					handleInput(e); e.preventDefault();
 				};
 				createButtons();
-				setTimeout(shuffleTiles, 500);
+				shuffleTiles();
 			}
 
 			function createButtons(){
@@ -83,7 +119,7 @@
 					justify-content: space-between;
 					gap: ${UNIT}px;
 					left: ${boardStartX}px; 
-					top: ${boardBottomY + (UNIT * 5)}px; 
+					top: ${boardBottomY + (UNIT*5)}px; 
 					width: ${boardWidth}px;
 					z-index: 10;
 					box-sizing: border-box;
@@ -98,8 +134,8 @@
 					btn.id = b.id;
 					btn.style.cssText = `
 						flex: 1;
-						padding: ${UNIT * 1.5}px 0;
-						font-size: ${UNIT * 2.2}px;
+						padding: ${UNIT*1.5}px 0;
+						font-size: ${UNIT*3.2}px;
 						font-family: 'Segoe UI', Arial, sans-serif;
 						font-weight: 800;
 						cursor: pointer;
@@ -134,30 +170,21 @@
 				document.getElementById("Fifteen").appendChild(container);
 			}
 
-			function drawCell(row, column, color){
-				let board = document.getElementById("board");
-				if(board.getContext("2d")){
-					let ctx = board.getContext("2d");
-					ctx.fillStyle = color;
-					ctx.fillRect(ORIZONTAL_CONST + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + (column*(SIDE + DIVISION_WIDTH)), BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + (row*(SIDE + DIVISION_WIDTH)), SIDE, SIDE);
-				}
-			}
-
 			function drawTile(row, column, tile){
 				let val = parseInt(tile, 16);
+				let board = document.getElementById("board");
+				let ctx = board.getContext("2d");
+				let color = (tile === "0") ? BORDER_COLOR : (((val + Math.floor((val - 1)/4))%2 === 1) ? COLOR_1 : COLOR_2);
+				let posX = ORIZONTAL_CONST + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + (column*(SIDE + DIVISION_WIDTH));
+				let posY = BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + (row*(SIDE + DIVISION_WIDTH));
+				ctx.fillStyle = color;
+				ctx.fillRect(posX, posY, SIDE, SIDE);
 				let targetId = ((row*4 + column + 1)%16).toString(16);
-				drawCell(row, column, (tile === "0") ? BORDER_COLOR : (((val + Math.floor((val - 1)/4))%2 === 1) ? COLOR_1 : COLOR_2));
 				const el = document.getElementById(targetId);
-				el.textContent = (tile === "0") ? "" : val;
-				el.style.left = (ORIZONTAL_CONST + (val > 0 ? ORIZONTAL_DELTAS[val - 1] : 0) + SIDE/2 + BORDER_WIDTH + DIVISION_WIDTH + ((SIDE + DIVISION_WIDTH)*column)) + "px";
-				el.style.top = ((DIVISION_WIDTH + BORDER_WIDTH + MARGIN_DIM + 10) + ((SIDE + DIVISION_WIDTH)*row)) + "px";
-			}
-
-			function drawCells(){
-				for(let i = 0; i < 4; i++){
-					for(let j = 0; j < 4; j++){
-						drawCell(i, j, ((4*i + j === 15) ? BORDER_COLOR : ((i + j)%2 === 0) ? COLOR_1 : COLOR_2));
-					}
+				if(el){
+					el.textContent = (tile === "0") ? "" : val;
+					el.style.left = posX + "px";
+					el.style.top = posY + "px";
 				}
 			}
 
@@ -184,7 +211,7 @@
 					if(begun && checkWin()){
 						gameFinished = true;
 						document.body.style.background = WINNING_COLOR;
-						setTimeout(() => alert("You win in " + counterMoves + " moves!"), 100);
+						setTimeout(() => alert("Solved in " + counterMoves + " moves!"), 100);
 					}
 				}
 			}
@@ -198,13 +225,20 @@
 				return true;
 			}
 
-			function shuffleArray(){
+			function shuffleTiles(){
+				gameFinished = false;
+				document.body.style.background = BACKGROUND_COLOR;
 				let s = "123456789abcdef0".split('');
-				for(let i = s.length - 1; i > 0; i--){
-					const j = Math.floor(Math.random()*(i + 1));
-					[s[i], s[j]] = [s[j], s[i]];
-				}
-				shuffledIDS = s;
+				do{
+					for(let i = s.length - 1; i > 0; i--){
+						const j = Math.floor(Math.random()*(i + 1));
+						[s[i], s[j]] = [s[j], s[i]];
+					}
+				}while(!isSolvable(s));
+				s.forEach((id, i) => drawTile(Math.floor(i/4), i%4, id));
+				let zIdx = s.indexOf("0");
+				r1 = Math.floor(zIdx/4); c1 = zIdx%4;
+				counterMoves = 0; begun = false;
 			}
 
 			function isSolvable(a){
@@ -215,25 +249,10 @@
 						continue;
 					}
 					for(let j = i + 1; j < 16; j++){
-						if(a[j] !== "0" && parseInt(a[i], 16) > parseInt(a[j], 16)){
-							inv++;
-						}
+						inv += (a[j] !== "0" && parseInt(a[i], 16) > parseInt(a[j], 16)) ? 1 : 0;
 					}
 				}
 				return (zR%2 === 0) ? (inv%2 !== 0) : (inv%2 === 0);
-			}
-
-			function shuffleTiles(){
-				gameFinished = false;
-				document.body.style.background = BACKGROUND_COLOR;
-				do{
-					shuffleArray();
-				}while(!isSolvable(shuffledIDS));
-				shuffledIDS.forEach((id, i) => drawTile(Math.floor(i/4), i%4, id));
-				let zIdx = shuffledIDS.indexOf("0");
-				r1 = Math.floor(zIdx/4);
-				c1 = zIdx%4;
-				counterMoves = 0; begun = false;
 			}
 
 			function restart(){
@@ -248,19 +267,17 @@
 				btn.innerHTML = "Wait...";
 				btn.disabled = true;
 				isSolving = true;
-
 				let state = [];
 				for(let i = 0; i < 16; i++){
 					let val = document.getElementById(((i + 1)%16).toString(16)).textContent;
 					state.push(val === "" ? 0 : parseInt(val));
 				}
-
 				setTimeout(() => {
 					let path = getFastPath(state);
 					if(path){
 						animate(path);
 					}else{
-						alert("Too complex");
+						alert("Too complex...");
 						resetUI();
 					}
 				}, 50);
@@ -312,14 +329,6 @@
 				if(c < 3 && prev !== "L"){
 					moves.push({ d: "R", i: z + 1 });
 				}
-
-				moves.forEach(m => {
-					[s[z], s[m.i]] = [s[m.i], s[z]];
-					m.h = getHeuristic(s);
-					[s[z], s[m.i]] = [s[m.i], s[z]];
-				});
-				moves.sort((a, b) => a.h - b.h);
-
 				for(let m of moves){
 					[s[z], s[m.i]] = [s[m.i], s[z]];
 					path.push(m.d);
@@ -358,11 +367,8 @@
 
 			function resetUI(){
 				isSolving = false;
-				let btn = document.getElementById("solveBtn");
-				if(btn){
-					btn.innerHTML = "Solve";
-					btn.disabled = false;
-				}
+				document.getElementById("solveBtn").innerHTML = "Solve";
+				document.getElementById("solveBtn").disabled = false;
 			}
 		</script>
 	</body>
