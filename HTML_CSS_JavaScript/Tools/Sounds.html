@@ -408,10 +408,13 @@
 			function createHarmonic(freq, gainVal, parentGain){
 				const osc = audioContext.createOscillator();
 				const g = audioContext.createGain();
+				const now = audioContext.currentTime;
 				osc.type = "sine";
-				osc.frequency.setValueAtTime(freq, audioContext.currentTime);
-				g.gain.setValueAtTime(gainVal, audioContext.currentTime);
-				osc.connect(g); g.connect(parentGain);
+				osc.frequency.setValueAtTime(freq, now);
+				g.gain.setValueAtTime(0, now);
+				g.gain.linearRampToValueAtTime(gainVal, now + 0.01); 
+				osc.connect(g); 
+				g.connect(parentGain);
 				osc.start();
 				return{osc, gain: g};
 			}
@@ -432,7 +435,7 @@
 				vGain.connect(lowPassFilter);
 
 				const osc = audioContext.createOscillator();
-				osc.type =(id === "mono") ? oscillatorinputType : "sine"; 
+				osc.type = oscillatorinputType;
 				osc.frequency.setValueAtTime(freq, now);
 				osc.connect(vGain);
 				osc.start();
