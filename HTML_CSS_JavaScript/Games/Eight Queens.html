@@ -166,7 +166,7 @@
 				for(let i = 0; i < order; i++){
 					grid[i] = [];
 					for(let j = 0; j < order; j++){
-						grid[i][j] ={ occupied: false, underAttack: false };
+						grid[i][j] ={occupied: false, underAttack: false };
 					}
 				}
 				let chessboard = document.getElementById("chessboard");
@@ -203,7 +203,7 @@
 						if((numberOfQueens === order) && checkQueensPositions()){
 							document.body.style.background = BACKGROUND_WIN_COLOR;
 							hasWon = true;
-							setTimeout(function(){ alert("You win! :-D"); }, 100);
+							setTimeout(function(){alert("You win! :-D"); }, 100);
 						}
 						setQueensLimitButtonLabel();
 					}

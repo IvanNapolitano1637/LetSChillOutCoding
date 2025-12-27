@@ -318,16 +318,16 @@
 				let min = Infinity, r = Math.floor(z/4), c = z%4;
 				let moves = [];
 				if(r > 0 && prev !== "D"){
-					moves.push({ d: "U", i: z - 4 });
+					moves.push({d: "U", i: z - 4 });
 				}
 				if(r < 3 && prev !== "U"){
-					moves.push({ d: "D", i: z + 4 });
+					moves.push({d: "D", i: z + 4 });
 				}
 				if(c > 0 && prev !== "R"){
-					moves.push({ d: "L", i: z - 1 });
+					moves.push({d: "L", i: z - 1 });
 				}
 				if(c < 3 && prev !== "L"){
-					moves.push({ d: "R", i: z + 1 });
+					moves.push({d: "R", i: z + 1 });
 				}
 				for(let m of moves){
 					[s[z], s[m.i]] = [s[m.i], s[z]];

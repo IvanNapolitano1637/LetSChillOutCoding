@@ -416,7 +416,7 @@
 				osc.connect(g); 
 				g.connect(parentGain);
 				osc.start();
-				return{osc, gain: g};
+				return {osc, gain: g};
 			}
 
 			function playVoice(id, freq){
@@ -455,7 +455,7 @@
 				v.gain.gain.cancelScheduledValues(now);
 				v.gain.gain.setValueAtTime(v.gain.gain.value, now);
 				v.gain.gain.linearRampToValueAtTime(0, now + r);
-				setTimeout(() => { 
+				setTimeout(() => {
 					try{
 						v.osc.stop();
 						v.harmonics.h2.osc.stop();
@@ -554,7 +554,7 @@
 			}
 
 			document.getElementsByName("oscillatorType").forEach(el => {
-				el.addEventListener("change",() => { 
+				el.addEventListener("change",() => {
 					oscillatorinputType = el.value; 
 					if(activeVoices.has("mono")) activeVoices.get("mono").osc.type = el.value;
 				});

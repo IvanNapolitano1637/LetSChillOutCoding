@@ -5,7 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Tower of Hanoi</title>
 		<style>
-			body{ 
+			body{
 				font-family: sans-serif; 
 				transition: background 0.5s; 
 				text-align: center; 
@@ -18,7 +18,7 @@
 				min-height: 100vh;
 				box-sizing: border-box;
 			}
-			canvas{ 
+			canvas{
 				background: transparent;
 				cursor: pointer; 
 				display: block;
@@ -29,7 +29,7 @@
 				align-self: center;
 				image-rendering: auto;
 			}
-			.controls{ 
+			.controls{
 				margin-top: 20px; 
 				display: flex; 
 				flex-wrap: wrap; 
@@ -37,14 +37,14 @@
 				gap: 10px; 
 				width: 100%;
 			}
-			.versions-panel{ 
+			.versions-panel{
 				margin-top: 20px; 
 				padding: 10px; 
 				border: 1px dashed #666; 
 				display: inline-block; 
 			}
 			@media screen and(max-width: 600px){
-				.mobile-rotate{ transform: rotate(90deg); }
+				.mobile-rotate{transform: rotate(90deg); }
 			}
 		</style>
 	</head>
@@ -262,7 +262,7 @@
 			function calculateSteps(n){
 				let moves = [];
 				function hanoi(num, from, to, aux){
-					if(num === 1){ moves.push({f: from, t: to}); return; }
+					if(num === 1){moves.push({f: from, t: to}); return; }
 					hanoi(num - 1, from, aux, to);
 					moves.push({f: from, t: to});
 					hanoi(num - 1, aux, to, from);

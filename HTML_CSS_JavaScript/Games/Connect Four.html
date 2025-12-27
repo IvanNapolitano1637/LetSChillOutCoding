@@ -139,7 +139,7 @@
 			function drawUniverse(){
 				clearInterval(blinkInterval);
 				document.body.style.background = LIGHT_ORANGE_COLOR;
-				grid = Array.from({ length: ROW_NUMBER },() => Array(COLUMN_NUMBER).fill(-1));
+				grid = Array.from({length: ROW_NUMBER },() => Array(COLUMN_NUMBER).fill(-1));
 				moves = [];
 				winningCells = [];
 				numberOfMoves = 0;
@@ -176,7 +176,7 @@
 					grid[row][column] = moveYellow ? 0 : 1;
 					drawCircle(row, column, moveYellow ? YELLOW_COLOR : RED_COLOR);
 					playClackSound();
-					moves.push({ r: row, c: column });
+					moves.push({r: row, c: column });
 					numberOfMoves++;
 					document.getElementById('starter').style.visibility = "hidden";
 					
