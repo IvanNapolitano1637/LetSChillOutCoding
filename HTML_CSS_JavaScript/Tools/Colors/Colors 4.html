@@ -19,9 +19,8 @@
 			}
 			#headerContainer {
 				padding: 15px;
-				display: inline-block;
-				border-radius: 10px;
 				margin-bottom: 20px;
+				border-radius: 10px;
 				transition: background 0.3s;
 			}
 			.control-panel {
@@ -73,16 +72,28 @@
 			output {
 				font-family: monospace;
 			}
+			#mainLabel {
+				font-size: 2.5em; 
+				font-weight: 900;
+				font-family: monospace;
+				display: inline-block;
+				vertical-align: middle;
+			}
+			#valueHexCode {
+				font-size: 1em;
+				font-family: monospace;
+				letter-spacing: 0px;
+				margin-left: 5px;
+			}
 		</style>
 	</head>
 
 	<body>
 		<div id="headerContainer">
-			<b style="font-size: 1.5em;">HEX: <output id="valueHexCode">#FFFFFF</output></b>
+			<span id="mainLabel">HEX: <output id="valueHexCode">#FFFFFF</output></span>
 		</div>
 		<br>
-		<div id="mainPanel" class="control-panel">
-			</div>
+		<div id="mainPanel" class="control-panel"></div>
 	</body>
 
 	<script>
@@ -145,12 +156,7 @@
 			const r = parseInt(COMPONENTS[actualComponents[0]], 16);
 			const g = parseInt(COMPONENTS[actualComponents[1]], 16);
 			const b = parseInt(COMPONENTS[actualComponents[2]], 16);
-
-			const hex = "#" + 
-				COMPONENTS[actualComponents[0]] + 
-				COMPONENTS[actualComponents[1]] + 
-				COMPONENTS[actualComponents[2]];
-
+			const hex = "#" + COMPONENTS[actualComponents[0]] + COMPONENTS[actualComponents[1]] + COMPONENTS[actualComponents[2]];
 			document.body.style.backgroundColor = hex;
 			document.getElementById("valueHexCode").textContent = hex;
 
@@ -178,26 +184,66 @@
 		}
 
 		function setRandomBackgroundColor(){
-			actualComponents = actualComponents.map(() => Math.floor(Math.random()*5)); 
+			actualComponents = actualComponents.map(() => Math.floor(Math.random()*5));
 			updateInterface(); 
+		}
+
+		function playErrorSound(){
+			try {
+				const context = new (window.AudioContext || window.webkitAudioContext)();
+				const oscillator = context.createOscillator();
+				const gain = context.createGain();
+				oscillator.type = 'sine';
+				oscillator.frequency.setValueAtTime(150, context.currentTime);
+				gain.gain.setValueAtTime(0.1, context.currentTime);
+				gain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.2);
+				oscillator.connect(gain);
+				gain.connect(context.destination);
+				oscillator.start();
+				oscillator.stop(context.currentTime + 0.2);
+			} catch (e){
+				console.log("Audio not supported or blocked by browser");
+			}
+		}
+
+		function flashError(){
+			const label = document.getElementById("mainLabel");
+			label.style.transition = "0.1s";
+			label.style.color = "red";
+			setTimeout(() => {
+				label.style.color = "";
+			}, 200);
+			playErrorSound();
 		}
 
 		function brighter(){
-			actualComponents = actualComponents.map(v => Math.min(v + 1, 4)); 
-			updateInterface(); 
+			const canMove = actualComponents.every(v => v < 4);
+			if(canMove){
+				actualComponents = actualComponents.map(v => v + 1);
+				updateInterface();
+			} else {
+				flashError();
+			}
 		}
 
 		function darker(){
-			actualComponents = actualComponents.map(v => Math.max(v - 1, 0)); 
-			updateInterface(); 
+			const canMove = actualComponents.every(v => v > 0);
+			if(canMove){
+				actualComponents = actualComponents.map(v => v - 1);
+				updateInterface();
+			} else {
+				flashError();
+			}
 		}
 
 		function setBlack(){
-			actualComponents = [0,0,0]; updateInterface();
+			actualComponents = [0,0,0];
+			updateInterface();
 		}
 
 		function setWhite(){
-			actualComponents = [4,4,4]; updateInterface();
+			actualComponents = [4,4,4];
+			updateInterface();
 		}
 
 		fillBody();

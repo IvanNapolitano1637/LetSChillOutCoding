@@ -134,6 +134,27 @@
 			document.getElementById("optionZone").style.backgroundColor = color;
 		}
 
+		function canMoveAll(step){
+			return basicColors.every(name => {
+				let radios = document.getElementsByName(name);
+				let currentIndex = Array.from(radios).findIndex(r => r.checked);
+				let newIndex = currentIndex + step;
+				return newIndex >= 0 && newIndex < radios.length;
+			});
+		}
+
+		function brighterAll(){
+			if(canMoveAll(1)){
+				[0, 1, 2].forEach(i => brighterBasic(i));
+			}
+		}
+
+		function darkerAll(){
+			if(canMoveAll(-1)){
+				[0, 1, 2].forEach(i => darkerBasic(i));
+			}
+		}
+
 		function brighterBasic(idx){
 			let ele = document.getElementsByName(basicColors[idx]);
 			for(let j = ele.length - 2; j >= 0; j--){
@@ -158,12 +179,53 @@
 			changeBackgroundColor();
 		}
 
+		function canMoveAll(step){
+			return basicColors.every(name => {
+				let radios = document.getElementsByName(name);
+				let currentIndex = Array.from(radios).findIndex(r => r.checked);
+				let newIndex = currentIndex + step;
+				return newIndex >= 0 && newIndex < radios.length;
+			});
+		}
+
+		function playErrorSound(){
+			const context = new (window.AudioContext || window.webkitAudioContext)();
+			const oscillator = context.createOscillator();
+			const gain = context.createGain();
+			oscillator.type = 'sine';
+			oscillator.frequency.setValueAtTime(150, context.currentTime);
+			gain.gain.setValueAtTime(0.1, context.currentTime);
+			gain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.2);
+			oscillator.connect(gain);
+			gain.connect(context.destination);
+			oscillator.start();
+			oscillator.stop(context.currentTime + 0.2);
+		}
+
+		function flashError(){
+			const output = document.getElementById("valueHexCode");
+			output.style.transition = "0.1s";
+			output.style.color = "red";
+			setTimeout(() => {
+				output.style.color = "black";
+			}, 200);
+			playErrorSound();
+		}
+
 		function brighterAll(){
-			[0,1,2].forEach(i => brighterBasic(i));
+			if(canMoveAll(1)){
+				[0, 1, 2].forEach(i => brighterBasic(i));
+			}else{
+				flashError();
+			}
 		}
 
 		function darkerAll(){
-			[0,1,2].forEach(i => darkerBasic(i));
+			if(canMoveAll(-1)){
+				[0, 1, 2].forEach(i => darkerBasic(i));
+			}else{
+				flashError();
+			}
 		}
 
 		function color(r, g, b){
