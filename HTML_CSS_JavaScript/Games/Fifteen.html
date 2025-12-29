@@ -6,7 +6,12 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta http-equiv="X-UA-Compatible" content="ie=edge">
 		<style>
-			body {
+			:root{
+				--unit: 5px;
+				--side: 100px;
+				--border-color: #ff9f00;
+			}
+			body{
 				margin: 0;
 				padding: 20px;
 				display: flex;
@@ -15,23 +20,55 @@
 				min-height: 100vh;
 				font-family: 'Segoe UI', Arial, sans-serif;
 				overflow-x: hidden;
-				-webkit-tap-highlight-color: transparent; 
+				-webkit-tap-highlight-color: transparent;
 			}
-			#Fifteen {
+			#Fifteen{
 				position: relative;
 				user-select: none;
 				-webkit-user-select: none;
 			}
-			canvas {
+			canvas{
 				display: block;
 			}
-			.tile-container {
+			.tile-container{
 				position: absolute;
 				display: flex;
 				justify-content: center;
 				align-items: center;
 				pointer-events: none;
 				z-index: 1;
+				width: var(--side);
+				height: var(--side);
+				font-size: calc(var(--side) * 0.6);
+				font-weight: 600;
+				line-height: var(--side);
+			}
+			#controls{
+				position: absolute;
+				display: flex;
+				justify-content: space-between;
+				z-index: 10;
+				box-sizing: border-box;
+			}
+			.game-btn{
+				flex: 1;
+				font-family: 'Segoe UI', Arial, sans-serif;
+				font-weight: 800;
+				cursor: pointer;
+				background: rgba(198, 252, 255, 0.9);
+				color: #333;
+				border-radius: 12px;
+				text-transform: uppercase;
+				transition: all 0.2s;
+				border: calc(var(--unit) / 3) solid var(--border-color);
+			}
+			.game-btn:hover{
+				background: var(--border-color);
+				color: #fff;
+			}
+			.game-btn:active{
+				transform: translateY(2px);
+				box-shadow: none !important;
 			}
 		</style>
 	</head>
@@ -61,6 +98,9 @@
 			const WIDTH = (ORIZONTAL_CONST + MARGIN_DIM + (4*SIDE) + (5*DIVISION_WIDTH) + (2*BORDER_WIDTH));
 			const HEIGHT = (2*MARGIN_DIM + (4*SIDE) + (5*DIVISION_WIDTH) + (2*BORDER_WIDTH));
 			let cursorX, cursorY, r1 = 3, c1 = 3, counterMoves = 0, gameFinished, begun = false, isSolving = false;
+			document.documentElement.style.setProperty('--unit', UNIT + 'px');
+			document.documentElement.style.setProperty('--side', SIDE + 'px');
+			document.documentElement.style.setProperty('--border-color', BORDER_COLOR);
 
 			drawBoard();
 
@@ -71,10 +111,6 @@
 					const div = document.createElement("div");
 					div.id = IDS[i];
 					div.className = "tile-container";
-					div.style.width = SIDE + "px";
-					div.style.height = SIDE + "px";
-					div.style.fontSize = `${UNIT*0.75}rem`;
-					div.style.fontWeight = "bold";
 					container.appendChild(div);
 				}
 				let board = document.getElementById("board");
@@ -113,17 +149,10 @@
 				const boardWidth = (SIDE*4) + (DIVISION_WIDTH*5) + (BORDER_WIDTH*2);
 				const boardStartX = ORIZONTAL_CONST + MARGIN_DIM;
 				const boardBottomY = MARGIN_DIM + boardWidth;
-				container.style.cssText = `
-					position: absolute;
-					display: flex;
-					justify-content: space-between;
-					gap: ${UNIT}px;
-					left: ${boardStartX}px; 
-					top: ${boardBottomY + (UNIT*5)}px; 
-					width: ${boardWidth}px;
-					z-index: 10;
-					box-sizing: border-box;
-				`;
+				container.style.left = boardStartX + "px";
+				container.style.top = (boardBottomY + (UNIT*5)) + "px";
+				container.style.width = boardWidth + "px";
+				container.style.gap = UNIT + "px";
 				const btnData = [
 					{id: "shuffleBtn", txt: "Shuffle", click: "shuffleTiles()"},
 					{id: "restartBtn", txt: "Restart", click: "restart()"},
@@ -132,39 +161,12 @@
 				btnData.forEach(b => {
 					let btn = document.createElement("button");
 					btn.id = b.id;
-					btn.style.cssText = `
-						flex: 1;
-						padding: ${UNIT*1.5}px 0;
-						font-size: ${UNIT*3.2}px;
-						font-family: 'Segoe UI', Arial, sans-serif;
-						font-weight: 800;
-						cursor: pointer;
-						background: rgba(198, 252, 255, 0.9);
-						color: #333;
-						border: ${UNIT/3}px solid ${BORDER_COLOR};
-						border-radius: 12px;
-						text-transform: uppercase;
-						box-shadow: 0px ${UNIT/2}px 0px rgba(0,0,0,0.1);
-						transition: all 0.2s;
-					`;
-					btn.setAttribute("onclick", b.click);
+					btn.className = "game-btn";
 					btn.innerHTML = b.txt;
-					btn.onmouseover = () => {
-						btn.style.background = BORDER_COLOR;
-						btn.style.color = "#fff";
-					};
-					btn.onmouseout = () => {
-						btn.style.background = "rgba(198, 252, 255, 0.9)";
-						btn.style.color = "#333";
-					};
-					btn.onmousedown = () => {
-						btn.style.transform = "translateY(2px)";
-						btn.style.boxShadow = "0px 0px 0px rgba(0,0,0,0.1)";
-					};
-					btn.onmouseup = () => {
-						btn.style.transform = "translateY(0px)";
-						btn.style.boxShadow = `0px ${UNIT/2}px 0px rgba(0,0,0,0.1)`;
-					};
+					btn.setAttribute("onclick", b.click);
+					btn.style.padding = (UNIT*1.5) + "px 0";
+					btn.style.fontSize = (UNIT*3.2) + "px";
+					btn.style.boxShadow = `0px ${UNIT/2}px 0px rgba(0,0,0,0.1)`;
 					container.appendChild(btn);
 				});
 				document.getElementById("Fifteen").appendChild(container);
