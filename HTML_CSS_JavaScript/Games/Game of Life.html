@@ -51,20 +51,19 @@
 			<button type="button" id="life" onclick="live()">Start</button>
 
 			<select id="patterns" onchange="loadPattern(this.value)">
-				<option value="">-- Carica Schema --</option>
+				<option value="">-- Load schema --</option>
 				<option value="glider">Glider</option>
 				<option value="exploder">Small Exploder</option>
 				<option value="row">10 Cell Row</option>
 			</select>
 
 			<div class="speed-box">
-				Lento <input type="range" id="speedSlider" min="10" max="1000" value="200" step="10" oninput="updateSpeed(this.value)"> Veloce
+				Slow <input type="range" id="speedSlider" min="10" max="1000" value="200" step="10" oninput="updateSpeed(this.value)"> Fast
 				<span id="speedVal">200</span> ms
 			</div>
 		</div>
 
 		<script>
-			//I don't like it too much...
 			const SIDE = 15;
 			const GRID_THICKNESS = 1;
 			const ROW_NUMBER = 50;
