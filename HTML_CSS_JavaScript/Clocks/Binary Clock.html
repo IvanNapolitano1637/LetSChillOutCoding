@@ -29,18 +29,21 @@
 			}
 			.controls{
 				display: flex;
-				flex-wrap: wrap;
 				justify-content: center;
+				align-items: center;
 				gap: 5px;
-				max-width: 600px;
+				box-sizing: border-box;
 			}
 			input{
-				padding: 5px;
+				flex: 1; 
+				min-width: 0;
+				padding: 5px 0;
 				border: 1px solid #999;
 				border-radius: 4px;
 				text-align: center;
 				background-color: #fff;
 				color: #333;
+				font-size: 12px;
 			}
 		</style>
 	</head>
@@ -67,11 +70,11 @@
 			container.innerHTML = `
 				<svg id="panel-svg"></svg>
 				<div class="controls">
-					<input type="text" size="7" id="dec_ts" disabled>
-					<input type="text" size="5" id="hex_ts" disabled>
-					<input type="text" size="30" id="end" value="Tuesday 19 January 2038 03:14:07" disabled>
-					<input type="text" size="6" id="lasting" disabled>
-					<input type="text" size="5" id="sign" value="caddc7ec" disabled>
+					<input type="text" id="dec_ts" disabled>
+					<input type="text" id="hex_ts" disabled>
+					<input type="text" id="end" value="Tuesday 19 January 2038 03:14:07" disabled>
+					<input type="text" id="lasting" disabled>
+					<input type="text" id="sign" value="caddc7ec" disabled>
 				</div>
 			`;
 
@@ -83,7 +86,10 @@
 						executed = true;
 						const svg = document.getElementById("panel-svg");
 						const svgns = "http://www.w3.org/2000/svg";
-						svg.setAttribute("width", 12*RADIUS + 11*HORIZONTAL_SPACE);
+						//svg.setAttribute("width", 12*RADIUS + 11*HORIZONTAL_SPACE);
+						const svgWidth = 12*RADIUS + 11*HORIZONTAL_SPACE;
+						svg.setAttribute("width", svgWidth);
+						document.querySelector('.controls').style.width = svgWidth + "px";
 						svg.setAttribute("height",(10 +(FLAG ? 1 : 0))*RADIUS + 2*YEAR_RADIUS + 15*VERTICAL_SPACE);
 						panel = document.createElementNS(svgns, "rect");
 						inner_panel = document.createElementNS(svgns, "rect");
