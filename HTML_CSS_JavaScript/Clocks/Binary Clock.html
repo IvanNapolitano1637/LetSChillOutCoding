@@ -20,7 +20,7 @@
 				display: flex;
 				flex-direction: column;
 				align-items: center;
-				gap: 15px;
+				gap: 5px;
 			}
 			svg{
 				display: block;
@@ -37,13 +37,24 @@
 			input{
 				flex: 1; 
 				min-width: 0;
-				padding: 5px 0;
-				border: 1px solid #999;
+				padding: 4px 4px;
+				border: 1px solid #444;
 				border-radius: 4px;
 				text-align: center;
-				background-color: #fff;
-				color: #333;
+				background-color: #000;
+				color: #00FF00;
+				font-family: 'Courier New', Courier, monospace;
 				font-size: 12px;
+				font-weight: bold;
+				text-shadow: 0 0 8px rgba(0, 255, 0, 0.6);
+				box-shadow: inset 0 0 5px rgba(0, 255, 0, 0.2);
+				user-select: none; 
+				-webkit-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				cursor: default;
+				transition: all 0.3s ease;
+				pointer-events: none;
 			}
 		</style>
 	</head>
@@ -86,7 +97,6 @@
 						executed = true;
 						const svg = document.getElementById("panel-svg");
 						const svgns = "http://www.w3.org/2000/svg";
-						//svg.setAttribute("width", 12*RADIUS + 11*HORIZONTAL_SPACE);
 						const svgWidth = 12*RADIUS + 11*HORIZONTAL_SPACE;
 						svg.setAttribute("width", svgWidth);
 						document.querySelector('.controls').style.width = svgWidth + "px";
