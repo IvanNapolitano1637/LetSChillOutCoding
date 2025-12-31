@@ -80,6 +80,20 @@
 			.btn-action {
 				min-width: 45px;
 			}
+			@keyframes blink-effect {
+				0% {
+					background-color: #f0f0f0;
+				}
+				50% {
+					background-color: #ffeb3b;
+				}
+				100% {
+					background-color: #f0f0f0;
+				}
+			}
+			.blink {
+				animation: blink-effect 0.4s ease-in-out 2;
+			}
 		</style>
 	</head>
 	<body>
@@ -134,24 +148,26 @@
 
 			function clearFields(){
 				const ids = ["firstDate", "dayOfTheWeek", "todayDate", "secondDate", "thirdDate", "daysOfDifference"];
-				ids.forEach(id => document.getElementById(id).value = "");
+				ids.forEach(id => {
+					document.getElementById(id).value = "";
+					document.getElementById(id).classList.remove("blink");
+				});
 			}
 
 			function handleAction(actionName){
 				const v1 = document.getElementById("firstDate").value;
 				const v2 = document.getElementById("secondDate").value;
 				const v3 = document.getElementById("thirdDate").value;
-
+				const currentResult = document.getElementById("dayOfTheWeek").value;
 				clearFields();
-
 				if(actionName === 'getDayOfTheWeek'){
 					document.getElementById("firstDate").value = v1;
+					document.getElementById("dayOfTheWeek").value = currentResult;
 				}
 				if(actionName === 'getDaysOfDifference'){
 					document.getElementById("secondDate").value = v2;
 					document.getElementById("thirdDate").value = v3;
 				}
-
 				window[actionName]();
 			}
 
@@ -232,10 +248,26 @@
 				return days;
 			}
 
-			function getDayOfTheWeek(){
+			function getDayOfTheWeek_0(){
 				const val = document.getElementById("firstDate").value;
 				const total = getTotalDays(val);
 				document.getElementById("dayOfTheWeek").value =(total < 0) ? "Wrong date!" : DAYS_OF_THE_WEEK[(total + 5)%7];
+			}
+
+			function getDayOfTheWeek(){
+				const inputField = document.getElementById("dayOfTheWeek");
+				const val = document.getElementById("firstDate").value;
+				const total = getTotalDays(val);
+				const previousValue = inputField.value;
+				const newValue = (total < 0) ? "Wrong date!" : DAYS_OF_THE_WEEK[(total + 5)%7];
+				inputField.value = newValue;
+				if(newValue === previousValue && total >= 0 && newValue !== ""){
+					inputField.classList.remove("blink"); 
+					void inputField.offsetWidth;
+					inputField.classList.add("blink");
+				}else{
+					inputField.classList.remove("blink");
+				}
 			}
 
 			function getFullTodayDate(){
