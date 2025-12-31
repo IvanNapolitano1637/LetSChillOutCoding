@@ -267,7 +267,7 @@
 			function getFullTodayDate(){
 				const date = getFormattedToday();
 				const total = getTotalDays(date);
-				document.getElementById("todayDate").value = (total < 0) ? "Error" : DAYS_OF_THE_WEEK[(total + 1)%7] + " " + date;
+				document.getElementById("todayDate").value = (total < 0) ? "Error" : DAYS_OF_THE_WEEK[(total + 5)%7] + " " + date;
 			}
 
 			function getDaysOfDifference(){
