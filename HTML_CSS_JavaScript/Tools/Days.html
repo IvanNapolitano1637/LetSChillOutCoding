@@ -158,15 +158,17 @@
 				const v1 = document.getElementById("firstDate").value;
 				const v2 = document.getElementById("secondDate").value;
 				const v3 = document.getElementById("thirdDate").value;
-				const currentResult = document.getElementById("dayOfTheWeek").value;
+				const prevDay = document.getElementById("dayOfTheWeek").value;
+				const prevDiff = document.getElementById("daysOfDifference").value;
 				clearFields();
 				if(actionName === 'getDayOfTheWeek'){
 					document.getElementById("firstDate").value = v1;
-					document.getElementById("dayOfTheWeek").value = currentResult;
+					document.getElementById("dayOfTheWeek").value = prevDay;
 				}
 				if(actionName === 'getDaysOfDifference'){
 					document.getElementById("secondDate").value = v2;
 					document.getElementById("thirdDate").value = v3;
+					document.getElementById("daysOfDifference").value = prevDiff;
 				}
 				window[actionName]();
 			}
@@ -175,9 +177,7 @@
 				const today = getFormattedToday();
 				let v2 = document.getElementById("secondDate").value;
 				let v3 = document.getElementById("thirdDate").value;
-
 				clearFields();
-
 				if(field === 0){
 					document.getElementById("firstDate").value = today;
 				}
@@ -248,12 +248,6 @@
 				return days;
 			}
 
-			function getDayOfTheWeek_0(){
-				const val = document.getElementById("firstDate").value;
-				const total = getTotalDays(val);
-				document.getElementById("dayOfTheWeek").value =(total < 0) ? "Wrong date!" : DAYS_OF_THE_WEEK[(total + 5)%7];
-			}
-
 			function getDayOfTheWeek(){
 				const inputField = document.getElementById("dayOfTheWeek");
 				const val = document.getElementById("firstDate").value;
@@ -277,9 +271,19 @@
 			}
 
 			function getDaysOfDifference(){
+				const inputField = document.getElementById("daysOfDifference");
 				const days1 = getTotalDays(document.getElementById("secondDate").value);
 				const days2 = getTotalDays(document.getElementById("thirdDate").value);
-				document.getElementById("daysOfDifference").value = (days1 >= 0 && days2 >= 0) ? Math.abs(days1 - days2) : "Input Error!";
+				const previousValue = inputField.value;
+				const newValue = (days1 >= 0 && days2 >= 0) ? Math.abs(days1 - days2) : "Input Error!";
+				inputField.value = newValue;
+				if (newValue.toString() === previousValue.toString() && days1 >= 0 && days2 >= 0) {
+					inputField.classList.remove("blink");
+					void inputField.offsetWidth;
+					inputField.classList.add("blink");
+				} else {
+					inputField.classList.remove("blink");
+				}
 			}
 		</script>
 	</body>
