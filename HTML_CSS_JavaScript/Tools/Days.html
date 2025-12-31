@@ -277,11 +277,11 @@
 				const previousValue = inputField.value;
 				const newValue = (days1 >= 0 && days2 >= 0) ? Math.abs(days1 - days2) : "Input Error!";
 				inputField.value = newValue;
-				if (newValue.toString() === previousValue.toString() && days1 >= 0 && days2 >= 0) {
+				if(newValue.toString() === previousValue.toString() && days1 >= 0 && days2 >= 0){
 					inputField.classList.remove("blink");
 					void inputField.offsetWidth;
 					inputField.classList.add("blink");
-				} else {
+				}else{
 					inputField.classList.remove("blink");
 				}
 			}
