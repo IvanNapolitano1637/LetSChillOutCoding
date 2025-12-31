@@ -181,7 +181,7 @@
 			}
 
 			function isLeapYear(year){
-				return((year >= 1582) && ((year%4 === 0 && year%100 !== 0) || (year%400 === 0)));
+				return (year < 1582) ? (year%4 === 0) : ((year%4 === 0 && year%100 !== 0) || (year%400 === 0));
 			}
 
 			function parseDateParts(dateStr){
@@ -235,7 +235,7 @@
 			function getDayOfTheWeek(){
 				const val = document.getElementById("firstDate").value;
 				const total = getTotalDays(val);
-				document.getElementById("dayOfTheWeek").value =(total < 0) ? "Wrong date!" : DAYS_OF_THE_WEEK[(total + 1)%7];
+				document.getElementById("dayOfTheWeek").value =(total < 0) ? "Wrong date!" : DAYS_OF_THE_WEEK[(total + 5)%7];
 			}
 
 			function getFullTodayDate(){
