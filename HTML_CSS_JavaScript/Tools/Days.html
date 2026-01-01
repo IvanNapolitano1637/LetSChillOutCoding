@@ -94,6 +94,19 @@
 			.blink {
 				animation: blink-effect 0.4s ease-in-out 2;
 			}
+			.btn-step {
+				user-select: none;
+				background-color: #f8f9fa;
+				color: #5c5cff;
+				border: 1px solid #5c5cff;
+				min-width: 40px;
+				padding: 5px;
+				font-family: monospace;
+			}
+			.btn-step:hover {
+				background-color: #5c5cff;
+				color: white;
+			}
 		</style>
 	</head>
 	<body>
@@ -104,7 +117,9 @@
 				<label>Find the day of the week:</label>
 				<div class="row-group">
 					<button type="button" class="btn-today" onclick="setTodayAndClear(0)">Today</button>
+					<button type="button" class="btn-step" onclick="shiftDay('firstDate', -1)">-1</button>
 					<input type="text" id="firstDate" placeholder="gg/mm/aaaa"/>
+					<button type="button" class="btn-step" onclick="shiftDay('firstDate', 1)">+1</button>
 				</div>
 				<div class="row-group">
 					<button type="button" class="btn-action" onclick="handleAction('getDayOfTheWeek')"> → </button>
@@ -127,11 +142,15 @@
 				<label>Difference between two dates:</label>
 				<div class="row-group">
 					<button type="button" class="btn-today" onclick="setTodayAndClear(1)">Today</button>
+					<button type="button" class="btn-step" onclick="shiftDay('secondDate', -1)">-1</button>
 					<input type="text" id="secondDate" placeholder="First Date"/>
+					<button type="button" class="btn-step" onclick="shiftDay('secondDate', 1)">+1</button>
 				</div>
 				<div class="row-group">
 					<button type="button" class="btn-today" onclick="setTodayAndClear(2)">Today</button>
+					<button type="button" class="btn-step" onclick="shiftDay('thirdDate', -1)">-1</button>
 					<input type="text" id="thirdDate" placeholder="Latter Date"/>
+					<button type="button" class="btn-step" onclick="shiftDay('thirdDate', 1)">+1</button>
 				</div>
 				<div class="row-group">
 					<button type="button" onclick="handleAction('getDaysOfDifference')">Calculate the difference</button>
@@ -155,22 +174,13 @@
 			}
 
 			function handleAction(actionName){
-				const v1 = document.getElementById("firstDate").value;
-				const v2 = document.getElementById("secondDate").value;
-				const v3 = document.getElementById("thirdDate").value;
-				const prevDay = document.getElementById("dayOfTheWeek").value;
-				const prevDiff = document.getElementById("daysOfDifference").value;
-				clearFields();
-				if(actionName === 'getDayOfTheWeek'){
-					document.getElementById("firstDate").value = v1;
-					document.getElementById("dayOfTheWeek").value = prevDay;
+				if(actionName === 'getFullTodayDate'){
+					getFullTodayDate();
+				}else if(actionName === 'getDayOfTheWeek'){
+					getDayOfTheWeek();
+				}else if(actionName === 'getDaysOfDifference'){
+					getDaysOfDifference();
 				}
-				if(actionName === 'getDaysOfDifference'){
-					document.getElementById("secondDate").value = v2;
-					document.getElementById("thirdDate").value = v3;
-					document.getElementById("daysOfDifference").value = prevDiff;
-				}
-				window[actionName]();
 			}
 
 			function setTodayAndClear(field){
@@ -283,6 +293,34 @@
 					inputField.classList.add("blink");
 				}else{
 					inputField.classList.remove("blink");
+				}
+			}
+
+			function shiftDay(fieldId, offset){
+				const input = document.getElementById(fieldId);
+				let dateStr = input.value;
+				if(dateStr === ""){
+					dateStr = getFormattedToday();
+				}
+				if(!isCorrectDate(dateStr)){
+					return;
+				}
+				const p = parseDateParts(dateStr);
+				const dateObj = new Date();
+				dateObj.setFullYear(p.y, p.m - 1, p.d);
+				dateObj.setDate(dateObj.getDate() + offset);
+				let newY = dateObj.getFullYear();
+				let newM = dateObj.getMonth() + 1;
+				let newD = dateObj.getDate();
+				if(newY < 1 || newY > 3999){
+					return;
+				}
+				newD = (newY === 1582 && newM === 10 && newD > 4 && newD < 15) ? ((offset === 1) ? 15 : 4) : newD;
+				input.value = `${newD}/${newM}/${newY}`;
+				if(fieldId === 'firstDate'){
+					getDayOfTheWeek();
+				}else if(fieldId === 'secondDate' || fieldId === 'thirdDate'){
+					getDaysOfDifference();
 				}
 			}
 		</script>
