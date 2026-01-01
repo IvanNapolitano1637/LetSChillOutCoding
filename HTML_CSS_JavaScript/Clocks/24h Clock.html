@@ -17,6 +17,7 @@
 				min-height: 100vh;
 				overflow: hidden;
 				transition: background-color 2s ease-in-out;
+				background-color: #2f363e;
 			}
 			.clock{
 				width: 600px;
@@ -25,6 +26,14 @@
 				border-radius: 50%;
 				border: 2px solid black;
 				position: relative;
+				transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+				cursor: pointer;
+				user-select: none;
+				-webkit-tap-highlight-color: transparent;
+				touch-action: manipulation;
+			}
+			.clock.reflected{
+				transform: scaleX(-1);
 			}
 			.clock .number{
 				--rotation: 0;
@@ -34,6 +43,10 @@
 				text-align: center;
 				transform: rotate(var(--rotation));
 				font-size: 2.5rem;
+				transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+			}
+			.clock.reflected .number{
+				transform: rotate(var(--rotation)) scaleX(-1);
 			}
 			.clock .hand{
 				--rotation: 0;
@@ -74,6 +87,10 @@
 				height: 35%;
 				background-color: black;
 			}
+			#controlsForm{
+				margin-top: 20px;
+				text-align: center;
+			}
 		</style>
 	</head>
 	<body>
@@ -107,27 +124,32 @@
 			const DAY_COLOR = "#87ceeb";
 			const SUNSET_COLOR = "#e66465";
 
+			function syncClockDirection(){
+				const dial = document.getElementById("clockDial");
+				const btn = document.getElementById("btnClockDirection");
+				if(!clockwise){
+					dial.classList.add('reflected');
+					btn.textContent = "Turn to clockwise";
+				}else{
+					dial.classList.remove('reflected');
+					btn.textContent = "Turn to reversed clockwise";
+				}
+				document.getElementById("title").innerHTML = clockwise ? "24h clock" : "Reversed 24h clock";
+			}
+
 			function drawNumbers(){
 				const oldNumbers = document.querySelectorAll('.number');
 				oldNumbers.forEach(n => n.remove());
-
 				const dial = document.getElementById("clockDial");
 				for(let i = 0; i < 24; i++){
-					let val = fromZero ? i :(i === 0 ? 24 : i);
-					let degrees = clockwise ?(15*i) :(360 - 15*i);
-
+					let val = fromZero ? i : (i === 0 ? 24 : i);
+					let degrees = 15*i;
 					let numDiv = document.createElement('div');
 					numDiv.className = 'number';
 					numDiv.style.setProperty('--rotation', degrees + 'deg');
-
-					if(i%2 === 0){
-						numDiv.innerHTML = val + "<br>" +((i/2*5)%60);
-					}else{
-						numDiv.innerHTML = val;
-					}
+					numDiv.innerHTML = val + ((i%2 === 0) ? ("<br>" + ((i/2*5)%60)) : "");
 					dial.appendChild(numDiv);
 				}
-				document.getElementById("title").innerHTML = clockwise ? "24h clock" : "Reversed 24h clock";
 			}
 
 			function setClock(){
@@ -155,9 +177,9 @@
 					settledColor = true;
 					document.body.style.backgroundColor = "#" + [...Array(6)].map(() => Math.floor(Math.random()*16).toString(16)).join('');
 				}else if(choice === 9){
-                    const hour = currentDate.getHours();
-					document.body.style.backgroundColor =(hour >= 20 || hour < 5) ? NIGHT_COLOR :(hour >= 5 && hour < 8) ? SUNRISE_COLOR :(hour >= 8 && hour < 17) ? DAY_COLOR : SUNSET_COLOR;
-                }
+					const hour = currentDate.getHours();
+					document.body.style.backgroundColor =(hour >= 20 || hour < 5) ? NIGHT_COLOR : (hour >= 5 && hour < 8) ? SUNRISE_COLOR : (hour >= 8 && hour < 17) ? DAY_COLOR : SUNSET_COLOR;
+				}
 
 				if(FLAG){
 					document.getElementById("controlsForm").style.display = "none";
@@ -166,7 +188,7 @@
 			}
 
 			function setRotation(element, rotationRatio){
-				let deg = clockwise ?(rotationRatio*360) :(360 - rotationRatio*360);
+				let deg = rotationRatio*360;
 				element.style.setProperty('--rotation', deg);
 			}
 
@@ -179,8 +201,7 @@
 
 			function changeClockDirection(){
 				clockwise = !clockwise;
-				document.getElementById("btnClockDirection").textContent = clockwise ? "Turn to reversed clockwise" : "Turn to clockwise";
-				drawNumbers();
+				syncClockDirection();
 			}
 
 			function changeMidnightNumber(){
@@ -190,6 +211,7 @@
 
 			drawNumbers();
 			setClock();
+			syncClockDirection();
 		</script>
 	</body>
 </html>
