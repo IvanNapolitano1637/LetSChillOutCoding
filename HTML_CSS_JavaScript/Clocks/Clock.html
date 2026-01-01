@@ -217,7 +217,9 @@
 			}
 
 			function changeClockDirection(){
-				if(audioCtx.state === 'suspended') audioCtx.resume();
+				if(audioCtx.state === 'suspended'){
+					audioCtx.resume();
+				}
 				isReflected = !isReflected;
 				document.getElementById('clock_el').classList.toggle('reflected', isReflected);
 			}
