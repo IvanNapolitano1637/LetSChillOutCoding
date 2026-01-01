@@ -15,6 +15,10 @@
 				flex-wrap: wrap;
 				gap: 20px;
 				justify-content: center;
+				flex-direction: row;
+			}
+			.container > div{
+				flex-basis: 100%;
 			}
 			form{
 				border: 1px solid #ccc;
@@ -67,10 +71,25 @@
 				<button type="button" id="primalityTestButton" onclick="handleAction('checkNumber')">Check</button>
 				<output id="isPrime" class="output-text"></output>
 
+				<label>Square of a number</label>
+				<input type="number" id="tenthNumber"/>
+				<button type="button" onclick="handleAction('calculateSquare')">Calculate</button>
+				<output id="squareOutput" class="output-text"></output>
+
 				<label>Square root</label>
 				<input type="number" id="secondNumber"/>
 				<button type="button" id="squareRootButton" onclick="handleAction('squareRoot')">Calculate</button>
 				<output id="sqrt" class="output-text"></output>
+
+				<label>Triangular of a number</label>
+				<input type="number" id="eleventhNumber"/>
+				<button type="button" onclick="handleAction('calculateTriangular')">Calculate</button>
+				<output id="triangularOutput" class="output-text"></output>
+
+				<label>Triangularity test</label>
+				<input type="number" id="twelfthNumber"/>
+				<button type="button" onclick="handleAction('checkTriangularity')">Check</button>
+				<output id="checkTriangularOutput" class="output-text"></output>
 
 				<label>Factorization</label>
 				<input type="number" id="thirdNumber"/>
@@ -100,6 +119,10 @@
 				<div id="squares" class="output-text"></div>
 			</form>
 
+			<div style="width: 100%; text-align: center; margin: 10px 0;">
+				<button type="button" style="background-color: #e66465; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem;" onclick="clearAll()">Reset Page</button>
+			</div>
+
 			<form>
 				<h3>Polygon View</h3>
 				<label for="numberOfSides">Number of sides: <select id="numberOfSides"></select></label><br>
@@ -111,36 +134,28 @@
 		</div>
 
 		<script>
-			
-			function clearAll(){
-				const outputs = ["isPrime", "sqrt", "scomposition", "BezoutsRelation", "mayBePrime", "polygonArea"];
-				outputs.forEach(id => document.getElementById(id).value = "");
-				document.getElementById("squares").innerHTML = "";
 
-				const inputs = [
-					"firstNumber", "secondNumber", "thirdNumber", "fourthNumber", 
-					"fifthNumber", "sixthNumber", "seventhNumber", "eighthNumber", "ninthNumber"
-				];
-				inputs.forEach(id => document.getElementById(id).value = "");
+			function clearAll(){
+				location.reload();
+			}
+
+			function clearOutputs(){
+				const outputs = ["isPrime", "sqrt", "scomposition", "BezoutsRelation", "mayBePrime", "polygonArea", "squareOutput", "triangularOutput", "checkTriangularOutput"];
+				outputs.forEach(id => {
+					const el = document.getElementById(id);
+					if(el){
+						el.value = "";
+						el.innerHTML = "";
+					}
+				});
+				document.getElementById("squares").innerHTML = "";
 			}
 
 			function handleAction(actionName){
-				const currentInputs ={};
-				const inputIds = [
-					"firstNumber", "secondNumber", "thirdNumber", "fourthNumber", 
-					"fifthNumber", "sixthNumber", "seventhNumber", "eighthNumber", "ninthNumber"
-				];
-				inputIds.forEach(id => currentInputs[id] = document.getElementById(id).value);
-
-				clearAll();
-
-				inputIds.forEach(id => {
-					if(currentInputs[id] !== ""){
-						document.getElementById(id).value = currentInputs[id];
-					}
-				});
-
-				window[actionName]();
+				clearOutputs();
+				if(typeof window[actionName] === "function"){
+					window[actionName]();
+				}
 			}
 
 			let flagDiagonals = false;
@@ -223,6 +238,14 @@
 				document.getElementById("isPrime").value = "The number " + n + res;
 			}
 
+			function calculateSquare(){
+				const n = parseFloat(document.getElementById("tenthNumber").value);
+				if(isNaN(n)){
+					return;
+				}
+				document.getElementById("squareOutput").value = `${n}² = ${n * n}`;
+			}
+
 			function squareRoot(){
 				const n = parseInt(document.getElementById("secondNumber").value);
 				if(isNaN(n) || n < 0){
@@ -230,6 +253,24 @@
 				}
 				let m = Math.floor(Math.sqrt(n));
 				document.getElementById("sqrt").value =(m*m === n) ? `${n} = ${m}²` : `${n} = ${m}² + ${n -(m*m)}`;
+			}
+
+			function calculateTriangular(){
+				const n = parseInt(document.getElementById("eleventhNumber").value);
+				if (isNaN(n) || n < 0) return;
+				const triangular = (n * (n + 1))/2;
+				document.getElementById("triangularOutput").value = `T(${n}) = ${triangular}`;
+			}
+
+			function checkTriangularity(){
+				const x = parseInt(document.getElementById("twelfthNumber").value);
+				if(isNaN(x) || x < 0){
+					return;
+				}
+				const nFloat = (Math.sqrt(8*x + 1) - 1)/2;
+				const n = Math.floor(nFloat);
+				const lowerTriangular = (n*(n + 1))/2;
+				document.getElementById("checkTriangularOutput").value = (x + " = " + "T(" + n + ")" + (Number.isInteger(nFloat) ? "" : (" + " + (x - lowerTriangular))));
 			}
 
 			function getExp(iExp){
@@ -414,6 +455,7 @@
 					}
 				});
 			});
+
 			fillSelectOption();
 			drawPolygon();
 		</script>
