@@ -164,6 +164,7 @@
 		<script>
 			const DAYS_OF_THE_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 			const NUMBER_OF_DAY_OF_EACH_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+			const PATCH = 5;
 
 			function clearFields(){
 				const ids = ["firstDate", "dayOfTheWeek", "todayDate", "secondDate", "thirdDate", "daysOfDifference"];
@@ -263,7 +264,7 @@
 				const val = document.getElementById("firstDate").value;
 				const total = getTotalDays(val);
 				const previousValue = inputField.value;
-				const newValue = (total < 0) ? "Wrong date!" : DAYS_OF_THE_WEEK[(total + 5)%7];
+				const newValue = (total < 0) ? "Wrong date!" : DAYS_OF_THE_WEEK[(total + PATCH)%7];
 				inputField.value = newValue;
 				if(newValue === previousValue && total >= 0 && newValue !== ""){
 					inputField.classList.remove("blink"); 
@@ -277,7 +278,7 @@
 			function getFullTodayDate(){
 				const date = getFormattedToday();
 				const total = getTotalDays(date);
-				document.getElementById("todayDate").value = (total < 0) ? "Error" : DAYS_OF_THE_WEEK[(total + 5)%7] + " " + date;
+				document.getElementById("todayDate").value = (total < 0) ? "Error" : DAYS_OF_THE_WEEK[(total + PATCH)%7] + " " + date;
 			}
 
 			function getDaysOfDifference(){
