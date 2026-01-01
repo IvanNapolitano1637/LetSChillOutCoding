@@ -5,92 +5,126 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Tower of Hanoi</title>
 		<style>
-			body{
-				font-family: sans-serif; 
-				transition: background 0.5s; 
-				text-align: center; 
-				overflow-x: hidden; 
+			:root {
+				--accent-color: #4a90e2;
+				--button-hover: #357abd;
+				--panel-bg: rgba(255, 255, 255, 0.85);
+			}
+			body {
+				font-family: 'Segoe UI', Tahoma, sans-serif;
+				background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+				background-attachment: fixed;
+				text-align: center;
 				display: flex;
 				flex-direction: column;
 				align-items: center;
 				margin: 0;
-				padding: 10px;
+				padding: 20px;
 				min-height: 100vh;
-				box-sizing: border-box;
+				transition: background 0.5s ease;
 			}
-			canvas{
-				background: transparent;
-				cursor: pointer; 
+			.stats {
+				background: var(--panel-bg);
+				padding: 10px 25px;
+				border-radius: 50px;
+				margin-bottom: 15px;
+				font-weight: bold;
+				font-size: 1.2em;
+				box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+				color: #333;
+			}
+			canvas {
+				background: rgba(255, 255, 255, 0.2);
+				cursor: pointer;
 				display: block;
-				margin: 20px auto;
-				max-width: 100%; 
-				height: auto; 
+				margin: 10px auto;
+				max-width: 100%;
+				height: auto;
+				border-radius: 15px;
+				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+				border: 2px solid rgba(255, 255, 255, 0.4);
+			}
+			.controls {
+				background: var(--panel-bg);
+				padding: 15px 25px;
+				border-radius: 12px;
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 15px;
+				box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+			}
+			select, button {
+				padding: 10px 20px;
+				font-size: 14px;
 				border-radius: 8px;
-				align-self: center;
-				image-rendering: auto;
+				border: none;
+				cursor: pointer;
+				transition: all 0.2s ease;
+				outline: none;
 			}
-			.controls{
-				margin-top: 20px; 
-				display: flex; 
-				flex-wrap: wrap; 
-				justify-content: center; 
-				gap: 10px; 
-				width: 100%;
+			select {
+				background: white;
+				border: 1px solid #ddd;
 			}
-			.versions-panel{
-				margin-top: 20px; 
-				padding: 10px; 
-				border: 1px dashed #666; 
-				display: inline-block; 
+			button {
+				background-color: var(--accent-color);
+				color: white;
+				font-weight: bold;
+				text-transform: uppercase;
 			}
-			@media screen and(max-width: 600px){
-				.mobile-rotate{transform: rotate(90deg); }
+			button:hover {
+				background-color: var(--button-hover);
+				transform: translateY(-2px);
+			}
+			@media screen and (max-width: 600px){
+				.controls {
+					width: 90%;
+				}
 			}
 		</style>
 	</head>
 
 	<body>
 
-		<canvas id="universe" onclick="select()"></canvas>
+		<div class="stats">Moves: <span id="moveCounter">0</span></div>
+
+		<canvas id="universe" onclick="selectTowerClick()"></canvas>
 
 		<div class="controls">
 			<select id="disksNumber" onchange="changeDiskCount()"></select>
 			<button type="button" onclick="resetGame()">Restart</button>
-			<button type="button" onclick="animatedSolving()">How To(Demo)</button>
-		</div>
-
-		<div class="versions-panel" id="versions">
-			<label><input type="radio" name="vPage" value="1" onclick="changeVersion(1)" checked> Version 1</label>
-			<label><input type="radio" name="vPage" value="2" onclick="changeVersion(2)"> Version 2</label>
+			<button type="button" onclick="animatedSolving()">How To (Demo)</button>
 		</div>
 
 		<script>
 			//I'm not sure aboute step duration, "MILLISECONDS" const value.
-			let version = 1;
 			const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
-			const UNIT = DESKTOP ? 9 : 6;
-			const H_SPACE = 8*UNIT, V_SPACE = H_SPACE;
-			const BASE_HEIGHT = 2*UNIT, DISK_INCREASE = 2*UNIT, DISK_BASE_LENGTH = 6*UNIT;
-			const WIDTH = 32*UNIT, PAGE_WIDTH = 4*UNIT, LATERAL_MARGIN = 2*UNIT;
+			const UNIT = DESKTOP ? 9 : 7;
+			const H_SPACE = 8*UNIT, V_SPACE = 6*UNIT;
+			const WIDTH = 36*UNIT; 
+			const PAGE_WIDTH = 3.5*UNIT; 
+			const BASE_HEIGHT = 2.5*UNIT;
+			const DISK_INCREASE = 3*UNIT; 
+			const DISK_BASE_LENGTH = 12*UNIT; 
+			const DISK_HEIGHT = 5*UNIT; 
 			const UPPER_MARGIN = 4*UNIT, UPPER_PAGE_MARGIN = 2*UNIT, LOWER_MARGIN = 2*UNIT;
-			const PAGE_LENGTH = WIDTH - 2*LATERAL_MARGIN;
-			const TOTAL_WIDTH = 2*(4*UNIT) + 2*H_SPACE + 3*WIDTH;
-			const BROWN = "#905000", ORANGE = "#ffcc00";//const lightYellow = "#ffff88";
-			const COLORS_1 = ["#00ffff","#ff0000","#ff8000","#ffff00","#00ff00","#0000ff","#ff00ff"];
-			const COLORS_2 = ["#ffffff","#00ffff","#ff0000","#ff8000","#ffff00","#00ff00","#0000ff","#ff00ff","#006400","#000000"];
-
+			const TOTAL_WIDTH = (3*WIDTH) + (4*H_SPACE);
+			const BROWN = "#8D6E63", ORANGE = "#FFCA28";
+			const COLORS = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#FF8000", "#8000FF", "#008000", "#333333"];
 			let numberOfDisks = 4;
+			let moves = 0;
 			let universe, context, nIntervId = null;
 			let towers = [[], [], []], selectedTower = [false, false, false];
 			let activeTower = -1, wan = false, demo = false, steps = "", step = 0;
 			let cursorX = 0, cursorY = 0;
-			let maximumNumberOfDisks, disksHeight, pink, gray, colors, totalHeight, pegHeight;
+			let totalHeight, pegHeight;
 			window.onload = initGame;
 
 			function initGame(){
 				universe = document.getElementById("universe");
 				context = universe.getContext("2d");
-				document.onmousemove =(e) => {
+				document.onmousemove = (e) => {
 					const rect = universe.getBoundingClientRect();
 					cursorX = e.clientX - rect.left;
 					cursorY = e.clientY - rect.top;
@@ -99,28 +133,18 @@
 			}
 
 			function resetGame(){
+				document.body.style.background = "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)";
 				if(nIntervId){
 					clearInterval(nIntervId);
 					nIntervId = null;
 				}
-
-				maximumNumberOfDisks =(version === 1) ? 7 : 10;
-				disksHeight =(version === 1) ? 6*UNIT : 4*UNIT;
-				pink =(version === 1) ? "#ffcccc" : "#ff8888";
-				//gray =(version === 1) ? "#444444" : "#888888";
-				gray =(version === 1) ? "rgba(0,0,0,0.05)" : "rgba(0,0,0,0.1)";
-				colors =(version === 1) ? COLORS_1 : COLORS_2;
-				
-				pegHeight = numberOfDisks*disksHeight + UPPER_PAGE_MARGIN;
+				moves = 0;
+				updateMoveDisplay();
+				pegHeight = numberOfDisks * DISK_HEIGHT + UPPER_PAGE_MARGIN;
 				totalHeight = V_SPACE + UPPER_MARGIN + pegHeight + BASE_HEIGHT + LOWER_MARGIN;
-				
-				document.body.style.background = pink;
 				universe.width = TOTAL_WIDTH;
 				universe.height = totalHeight;
-
-				wan = false;
-				demo = false;
-				activeTower = -1;
+				wan = false; demo = false; activeTower = -1;
 				towers = [[], [], []];
 				selectedTower = [false, false, false];
 				for(let i = 0; i < numberOfDisks; i++){
@@ -128,54 +152,82 @@
 					towers[1][i] = -1;
 					towers[2][i] = -1;
 				}
-
 				const select = document.getElementById("disksNumber");
 				select.innerHTML = "";
-				for(let i = 1; i <= maximumNumberOfDisks; i++){
+				for(let i = 1; i <= 10; i++){
 					let opt = document.createElement("option");
-					opt.value = i; opt.text = "Level " + i;
+					opt.value = i; opt.text = "Livello " + i;
 					if(i === numberOfDisks){
 						opt.selected = true;
 					}
 					select.add(opt);
 				}
-
 				steps = calculateSteps(numberOfDisks);
 				step = 0;
-
 				drawAll();
 			}
 
-			function changeDiskCount(){
-				numberOfDisks = parseInt(document.getElementById("disksNumber").value);
-				resetGame();
+			function updateMoveDisplay(){
+				document.getElementById("moveCounter").innerText = moves;
 			}
 
-			function changeVersion(v){
-				version = v;
-				numberOfDisks =(v === 1 && numberOfDisks > 7) ? 7 : numberOfDisks;
-				resetGame();
+			function drawAll(){
+				context.clearRect(0, 0, universe.width, universe.height);
+				for(let i = 0; i < 3; i++){
+					drawTower(i);
+				}
 			}
 
-			function select(){
+			function drawTower(idx){
+				let x0 = H_SPACE + idx*(WIDTH + H_SPACE); 
+				context.fillStyle = selectedTower[idx] ? ORANGE : "rgba(0,0,0,0.06)";
+				context.fillRect(x0, V_SPACE, WIDTH, totalHeight - V_SPACE);
+				context.fillStyle = BROWN;
+				context.fillRect(x0 + (WIDTH - PAGE_WIDTH)/2, V_SPACE + UPPER_MARGIN, PAGE_WIDTH, pegHeight);
+				context.fillRect(x0 + 3*UNIT, V_SPACE + UPPER_MARGIN + pegHeight, WIDTH - 6*UNIT, BASE_HEIGHT);
+				for(let i = 0; i < numberOfDisks; i++){
+					let diskValue = towers[idx][i];
+					if(diskValue >= 0){
+						let level = numberOfDisks - i - 1;
+						drawDisk(idx, level, diskValue);
+					}
+				}
+			}
+
+			function drawDisk(tIdx, level, dSize){
+				let w = DISK_BASE_LENGTH + dSize*DISK_INCREASE;
+				let x0 = H_SPACE + tIdx*(WIDTH + H_SPACE); 
+				let x = x0 + (WIDTH - w)/2; 
+				let y = V_SPACE + level*DISK_HEIGHT + UPPER_MARGIN + UPPER_PAGE_MARGIN;
+				let h = DISK_HEIGHT - 2;
+				context.fillStyle = COLORS[dSize];
+				context.strokeStyle = "#000000";
+				context.lineWidth = 1.5;
+				context.beginPath();
+				if (context.roundRect){
+					context.roundRect(x, y, w, h, h/2);
+				}else{
+					context.rect(x, y, w, h);
+				}
+				context.fill();
+				context.stroke();
+			}
+
+			function selectTowerClick(){
 				if(wan){
 					return;
 				}
-				
 				let towerIdx = -1;
-				const clickX = cursorX;
 				for(let i = 0; i < 3; i++){
-					let xStart = i*WIDTH +(i + 1)*H_SPACE;
-					if(clickX >= xStart && clickX <= xStart + WIDTH){
+					let xStart = H_SPACE + i*(WIDTH + H_SPACE); 
+					if(cursorX >= xStart && cursorX <= xStart + WIDTH){
 						towerIdx = i;
 						break;
 					}
 				}
-
 				if(towerIdx === -1){
 					return;
 				}
-
 				if(activeTower === -1){
 					if(getLastDiskIndex(towerIdx) !== -1){
 						activeTower = towerIdx;
@@ -186,7 +238,10 @@
 						selectedTower[towerIdx] = false;
 						activeTower = -1;
 					}else{
-						moveDisk(activeTower, towerIdx);
+						if(moveDisk(activeTower, towerIdx)){
+							moves++;
+							updateMoveDisplay();
+						}
 						selectedTower[activeTower] = false;
 						activeTower = -1;
 					}
@@ -199,11 +254,12 @@
 				let fromIdx = getLastDiskIndex(from);
 				let toIdx = getLastDiskIndex(to);
 				let diskToMove = towers[from][fromIdx];
-
 				if(toIdx === -1 || diskToMove < towers[to][toIdx]){
 					towers[from][fromIdx] = -1;
 					towers[to][toIdx + 1] = diskToMove;
+					return true;
 				}
+				return false;
 			}
 
 			function getLastDiskIndex(t){
@@ -215,60 +271,33 @@
 			}
 
 			function checkWin(){
-				if(towers[2][numberOfDisks-1] !== -1){
+				if (towers[1][numberOfDisks - 1] !== -1 || towers[2][numberOfDisks - 1] !== -1){
 					wan = true;
-					document.body.style.background = "#00FF00";
-					if(!demo){
-						setTimeout(() => alert("Complimenti! Hai vinto!"), 200);
+					document.body.style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
+					if (!demo){
+						setTimeout(() => alert("Wonderful! :-D You win in " + moves + " move" + (moves > 1 ? "s" : "") + "! :-D"), 200);
 					}
 				}
 			}
 
-			function drawAll(){
-				context.clearRect(0, 0, universe.width, universe.height);
-				for(let i = 0; i < 3; i++){
-					drawTower(i);
-				}
-			}
-
-			function drawTower(idx){
-				let x0 = idx*WIDTH +(idx + 1)*H_SPACE;
-				context.fillStyle = selectedTower[idx] ? ORANGE : gray;
-				context.fillRect(x0, V_SPACE, WIDTH, totalHeight - V_SPACE);
-				context.fillStyle = BROWN;
-				context.fillRect(x0 +(WIDTH - PAGE_WIDTH)/2, V_SPACE + UPPER_MARGIN, PAGE_WIDTH, pegHeight);
-				context.fillRect(x0 + LATERAL_MARGIN, V_SPACE + UPPER_MARGIN + pegHeight, PAGE_LENGTH, BASE_HEIGHT);
-				for(let i = 0; i < numberOfDisks; i++){
-					let diskValue = towers[idx][i];
-					if(diskValue >= 0){
-						let level = numberOfDisks - i - 1;
-						drawDisk(idx, level, diskValue);
-					}
-				}
-			}
-
-			function drawDisk(tIdx, level, dSize){
-				context.fillStyle = colors[dSize];
-				let w = DISK_BASE_LENGTH + dSize*DISK_INCREASE;
-				let x = tIdx*WIDTH +(tIdx + 1)*H_SPACE +(WIDTH - w)/2;
-				let y = V_SPACE + level*disksHeight + UPPER_MARGIN + UPPER_PAGE_MARGIN;
-				context.fillRect(x, y, w, disksHeight - 1);
-				context.beginPath();
-				context.arc(x, y + disksHeight/2, disksHeight/2, 0, Math.PI*2);
-				context.arc(x + w, y + disksHeight/2, disksHeight/2, 0, Math.PI*2);
-				context.fill();
+			function changeDiskCount(){
+				numberOfDisks = parseInt(document.getElementById("disksNumber").value);
+				resetGame();
 			}
 
 			function calculateSteps(n){
-				let moves = [];
+				let movesList = [];
 				function hanoi(num, from, to, aux){
-					if(num === 1){moves.push({f: from, t: to}); return; }
+					if(num === 1){
+						movesList.push({f: from, t: to});
+						return;
+					}
 					hanoi(num - 1, from, aux, to);
-					moves.push({f: from, t: to});
+					movesList.push({f: from, t: to});
 					hanoi(num - 1, aux, to, from);
 				}
 				hanoi(n, 0, 2, 1);
-				return moves;
+				return movesList;
 			}
 
 			function animatedSolving(){
@@ -278,6 +307,8 @@
 					if(step < steps.length){
 						let m = steps[step];
 						moveDisk(m.f, m.t);
+						moves++;
+						updateMoveDisplay();
 						drawAll();
 						checkWin();
 						step++;
@@ -286,7 +317,6 @@
 					}
 				}, 500);
 			}
-
 		</script>
 	</body>
 </html>
