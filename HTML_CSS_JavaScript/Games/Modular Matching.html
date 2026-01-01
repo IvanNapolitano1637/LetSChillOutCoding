@@ -96,7 +96,7 @@
 				user-select: none;
 				border-radius: 8px;
 				border: 1px solid #ccc;
-				transition: all 0.2s;
+				transition: all 0.2s ease, background-color 0.4s ease;
 				text-align: center;
 				line-height: 1.2;
 			}
@@ -136,6 +136,19 @@
 					transform: translateX(5px);
 				}
 			}
+			.cell.matched{
+				background-color: var(--match-color) !important;
+				color: white;
+				font-size: 0.85em; 
+				line-height: 1;
+				border-color: #689f38;
+				cursor: default;
+				white-space: nowrap; 
+			}
+			.cell.matched sup{
+				font-size: 0.7em;
+				vertical-align: super;
+			}
 		</style>
 	</head>
 	<body>
@@ -162,40 +175,36 @@
 				const GRID = document.getElementById('gameGrid');
 				const maxNumberOfErrors = 5;
 				//const maxNumberOfErrors = 86400;
-	
 				let currentErrors = 0;
 				let selectedCells = [];
 				let matchedNumbersCount = 0;
-	
 				let showDoubles = false;
 				let showOpposites = false;
-	
+
 				function isPrime(num){
 					for(let i = 2, s = Math.sqrt(num); i <= s; i++)
 						if(num%i === 0) return false; 
 					return num > 1;
 				}
-	
+
 				function initGame(){
 					const pInput = parseInt(document.getElementById('pVal').value);
 					if(pInput < 2){
 						return;
 					}
-					
 					P = pInput;
 					if(!isPrime(P)){
 						console.warn(P + " is not prime. Some numbers could not have a reverse.");
 					}
-	
 					GRID.innerHTML = '';
 					currentErrors = 0;
 					matchedNumbersCount = 0;
 					selectedCells = [];
 					document.getElementById('errors').textContent = '0';
 					document.getElementById('maxErrors').textContent = maxNumberOfErrors;
-	
+
 					const fontSize = P > 50 ? "0.9em" : "1.1em";
-	
+
 					for(let i = 1; i < P; i++){
 						const cell = document.createElement('div');
 						cell.classList.add('cell');
@@ -207,12 +216,11 @@
 					}
 					updateHighlights();
 				}
-	
+
 				function handleCellClick(cell){
 					if(cell.classList.contains('matched')){
 						return;
 					}
-	
 					if(cell.classList.contains('revealed')){
 						const num = parseInt(cell.dataset.number);
 						if((num*num)%P === 1){
@@ -226,24 +234,20 @@
 							return;
 						}
 					}
-	
 					cell.classList.add('revealed');
 					selectedCells.push(cell);
-	
 					if(selectedCells.length === 2){
 						setTimeout(checkMatch, 300);
 					}
 				}
-	
+
 				function checkMatch(){
 					if(selectedCells.length < 2){
 						return;
 					}
-
 					const [cell1, cell2] = selectedCells;
 					const num1 = parseInt(cell1.dataset.number);
 					const num2 = parseInt(cell2.dataset.number);
-	
 					if((num1*num2)%P === 1){
 						setAsMatched(cell1, num1, num2);
 						setAsMatched(cell2, num2, num1);
@@ -251,15 +255,12 @@
 					}else{
 						currentErrors++;
 						document.getElementById('errors').textContent = currentErrors;
-						
 						cell1.classList.add('error-flash');
 						cell2.classList.add('error-flash');
-	
 						setTimeout(() => {
 							cell1.classList.remove('revealed', 'error-flash');
 							cell2.classList.remove('revealed', 'error-flash');
 						}, 400);
-	
 						if(currentErrors >= maxNumberOfErrors){
 							setTimeout(() => {
 								alert('Maximum number of errors reached. Try again!'); 
@@ -269,38 +270,33 @@
 					}
 					selectedCells = [];
 				}
-	
-				function setAsMatched(cell, n1, n2){
+
+				function setAsMatched(cell, n1, n2) {
 					cell.classList.add('matched');
 					cell.classList.remove('revealed');
-					cell.innerHTML = `${n1} &times; ${n2}<br>&equiv; 1`;
+					cell.innerHTML = (n1 === n2) ? `${n1} = ${n1}⁻¹` : `${n1} = ${n2}⁻¹`;
 					matchedNumbersCount++;
 					updateHighlights();
 				}
-	
+
 				function checkWin(){
 					const target = isPrime(P) ? P - 1 : matchedNumbersCount; 
 					if(matchedNumbersCount === P - 1){
-						setTimeout(() => alert('Congratulations! You win!'), 200);
+						setTimeout(() => alert('Congratulations! :-D You win! :-D'), 200);
 					}
 				}
-	
+
 				function updateHighlights(){
 					const cells = Array.from(document.querySelectorAll('.cell'));
-					const matchedNumbers = cells
-						.filter(c => c.classList.contains('matched'))
-						.map(c => parseInt(c.dataset.number));
-	
-					cells.forEach(cell => {
+					const matchedNumbers = cells.filter(c => c.classList.contains('matched')).map(c => parseInt(c.dataset.number));
+						cells.forEach(cell => {
 						cell.classList.remove('highlight-double', 'highlight-opposite', 'highlight-both');
 						if(cell.classList.contains('matched')){
 							return;
 						}
-	
 						const val = parseInt(cell.dataset.number);
 						const isDouble = showDoubles && matchedNumbers.some(m =>(m*2) === val);
 						const isOpposite = showOpposites && matchedNumbers.some(m =>(m + val) === P);
-	
 						if(isDouble && isOpposite){
 							cell.classList.add('highlight-both');
 						}else if(isDouble){
@@ -310,7 +306,7 @@
 						}
 					});
 				}
-	
+
 				document.getElementById('btnUpdateP').addEventListener('click',() => {
 					const pVal = parseInt(document.getElementById('pVal').value);
 					if(!isPrime(pVal)){
@@ -320,19 +316,19 @@
 					}
 					initGame();
 				});
-	
+
 				document.getElementById('btnDouble').addEventListener('click',(e) => {
 					showDoubles = !showDoubles;
 					e.target.classList.toggle('active');
 					updateHighlights();
 				});
-	
+
 				document.getElementById('btnOpposite').addEventListener('click',(e) => {
 					showOpposites = !showOpposites;
 					e.target.classList.toggle('active');
 					updateHighlights();
 				});
-	
+
 				initGame();
 			});
 		</script>
