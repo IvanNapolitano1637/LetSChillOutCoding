@@ -233,8 +233,8 @@ public class ModInverseGame extends JFrame {
         if ((value == inverse && btn != firstSelected) || (firstSelected == btn && firstValue == inverse)) {
             btn.setBackground(DONE_COLOR);
             firstSelected.setBackground(DONE_COLOR);
-            btn.setText(value + "*" + firstValue);
-            firstSelected.setText(firstValue + "*" + value);
+            btn.setText(value + "×" + firstValue);
+            firstSelected.setText(firstValue + "×" + value);
             score++;
             scoreLabel.setText(SCORE_LABEL_NAME + score + "/" + totalPairs);
             if (score == totalPairs) {
