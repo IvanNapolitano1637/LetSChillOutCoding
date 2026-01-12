@@ -390,7 +390,7 @@
 				const inCheck = isSquareAttacked(board, kPos.r, kPos.c, turn === 'W' ? 'B' : 'W');
 				if(moves.length === 0){
 					if(inCheck){
-						document.getElementById('status').textContent = `CHECKMATE! ${turn === 'W' ? 'PC' : 'White'} wins!`;
+						document.getElementById('status').textContent = `CHECKMATE! ${turn === 'W' ? 'Black' : 'White'} wins!`;
 					}else{
 						document.getElementById('status').textContent = "STALEMATE! It's a draw.";
 					}
@@ -402,7 +402,7 @@
 						turn = 'OVER';
 					}
 				}else{
-					document.getElementById('status').textContent = `${turn === 'W' ? 'White' : 'PC'} to move ${inCheck ? '(CHECK!)' : ''}`;
+					document.getElementById('status').textContent = `${turn === 'W' ? 'White' : 'Black'} to move. ${inCheck ? '(CHECK!)' : ''}`;
 				}
 			}
 
