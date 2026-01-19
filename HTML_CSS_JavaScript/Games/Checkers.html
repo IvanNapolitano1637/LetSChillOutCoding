@@ -182,7 +182,7 @@
 		</div>
 		<div id="game-container">
 			<div class="variant-badge" id="active-variant-name">Mode: International</div>
-			<div class="status-bar" id="status">Your Turn (White)</div>
+			<div class="status-bar" id="status">White to move.</div>
 			<div id="board"></div>
 			<button class="btn btn-reset" onclick="location.reload()">Exit to Menu</button>
 		</div>
@@ -358,7 +358,7 @@
 			function endTurn(){
 				deselect();
 				turn = (turn === 'white') ? 'black' : 'white';
-				document.getElementById('status').innerText = turn === 'white' ? "Your Turn (White)" : "CPU is thinking...";
+				document.getElementById('status').innerText = ((turn === 'white' ? "White" : "Black") + " to move.");
 				setTimeout(() => {
 					if(checkWin()){
 						return;
