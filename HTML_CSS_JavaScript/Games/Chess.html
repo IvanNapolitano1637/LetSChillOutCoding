@@ -2,6 +2,7 @@
 <html lang="en"><!--G07#019 - Filippo - Chess-->
 	<head>
 		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Chess</title>
 		<style>
 			:root{
@@ -11,6 +12,7 @@
 				--sel: #769656;
 				--last-move: rgba(255, 255, 0, 0.4);
 				--status-color: #f1c40f;
+				--sq-size: clamp(35px, 10vw, 60px);
 			}
 			body{
 				font-family: 'Segoe UI', sans-serif;
@@ -19,24 +21,36 @@
 				display: flex;
 				flex-direction: column;
 				align-items: center;
-				padding: 20px;
+				padding: 10px;
+				margin: 0;
+				min-height: 100vh;
+			}
+			.game-layout{
+				display: flex;
+				flex-wrap: wrap;
+				gap: 20px;
+				justify-content: center;
+				align-items: flex-start;
+				margin-top: 10px;
+				width: 100%;
+				max-width: 1000px;
 			}
 			.board{
 				display: grid;
-				grid-template-columns: repeat(8, 60px);
-				grid-template-rows: repeat(8, 60px);
-				border: 8px solid #34495e;
+				grid-template-columns: repeat(8, var(--sq-size));
+				grid-template-rows: repeat(8, var(--sq-size));
+				border: 4px solid #34495e;
 				box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+				user-select: none;
 			}
 			.square{
-				width: 60px;
-				height: 60px;
+				width: var(--sq-size);
+				height: var(--sq-size);
 				display: flex;
 				justify-content: center;
 				align-items: center;
-				font-size: 45px;
+				font-size: calc(var(--sq-size)*0.75);
 				cursor: pointer;
-				user-select: none;
 				position: relative;
 				transition: background 0.2s;
 			}
@@ -57,8 +71,8 @@
 			}
 			.legal-dot::after{
 				content: '';
-				width: 20px;
-				height: 20px;
+				width: 30%;
+				height: 30%;
 				background-color: #27ae60;
 				border-radius: 50%;
 				position: absolute;
@@ -66,18 +80,12 @@
 			}
 			.capture-mark{
 				background-color: rgba(39, 174, 96, 0.4) !important;
-				border: 4px solid #27ae60;
+				border: calc(var(--sq-size)*0.05) solid #27ae60;
 				box-sizing: border-box;
-			}
-			.game-layout{
-				display: flex;
-				gap: 20px;
-				align-items: flex-start;
-				margin-top: 10px;
 			}
 			.info-panel{
 				width: 250px;
-				height: 496px;
+				height: calc(8*var(--sq-size));
 				background: #34495e;
 				padding: 15px;
 				border-radius: 8px;
@@ -86,28 +94,36 @@
 				display: none;
 			}
 			.controls{
+				display: flex;
+				flex-direction: column;
+				gap: 10px;
+				margin: 20px 0;
+				width: 100%;
+				max-width: 500px;
+			}
+			.row-1{
 				display: grid;
-				grid-template-columns: repeat(2, 180px);
-				grid-template-rows: repeat(2, 50px);
-				gap: 15px;
-				margin-top: 25px;
-				justify-content: center;
+				grid-template-columns: 1fr 1fr;
+				gap: 10px;
+			}
+			.row-2{
+				display: grid;
+				grid-template-columns: 1fr 1fr 1fr;
+				gap: 10px;
 			}
 			.controls button{
-				width: 100%;
-				height: 100%;
+				padding: 12px 2px;
 				cursor: pointer;
 				color: white;
 				border: none;
 				border-radius: 6px;
 				font-weight: bold;
-				font-size: 0.95rem;
+				font-size: 0.8rem;
 				transition: all 0.3s ease;
 				box-shadow: 0 4px 6px rgba(0,0,0,0.2);
 			}
-			button:hover:not(.no-click){
-				opacity: 0.9;
-				transform: translateY(-2px);
+			button:active:not(.no-click){
+				transform: scale(0.98);
 			}
 			.no-click{
 				cursor: default !important;
@@ -118,6 +134,15 @@
 				padding: 6px 0;
 				color: #ecf0f1;
 			}
+			@media (max-width: 600px){
+				.info-panel{
+					width: 100%;
+					height: 200px;
+				}
+				.square{
+					font-size: calc(var(--sq-size)*0.85);
+				}
+			}
 		</style>
 	</head>
 	<body>
@@ -127,17 +152,23 @@
 				<div style="font-weight: bold; border-bottom: 2px solid var(--status-color); margin-bottom: 10px; color: var(--status-color);">LOG MOVES</div>
 				<div id="moveLog"></div>
 			</div>
-		</div>
+		</div>		
 		<div class="controls">
-			<button id="statusBtn" class="no-click" style="background: white; color: black;">White to move</button>
-			<button id="diffBtn" onclick="cycleDifficulty()" style="background: #c0392b;">Level: Hard</button>
-			<button id="toggleLogBtn" onclick="toggleLog()" style="background: #3498db;">Show Log</button>
-			<button onclick="location.reload()" style="background: #e67e22;">Reset Game</button>
+			<div class="row-1">
+				<button id="statusBtn" class="no-click" style="background: white; color: black;">White to move</button>
+				<button id="diffBtn" onclick="cycleDifficulty()" style="background: #c0392b;">Level: Hard</button>
+			</div>
+			<div class="row-2">
+				<button id="toggleLogBtn" onclick="toggleLog()" style="background: #3498db;">Show Log</button>
+				<button id="undoBtn" onclick="undoMove()" style="background: #95a5a6;">Undo</button>
+				<button onclick="location.reload()" style="background: #e67e22;">Reset</button>
+			</div>
 		</div>
 		<script>
 			let board = [['r','n','b','q','k','b','n','r'],['p','p','p','p','p','p','p','p'],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['P','P','P','P','P','P','P','P'],['R','N','B','Q','K','B','N','R']];
 			let moved = {'K': false, 'k': false, 'R_7_0': false, 'R_7_7': false, 'r_0_0': false, 'r_0_7': false};
 			let enPassantTarget = null;
+			let history = [];
 			const pieceValues = {'p': 100, 'n': 320, 'b': 330, 'r': 500, 'q': 900, 'k': 20000};
 			const piecesNames = {'P':'Pawn', 'R':'Rook', 'N':'Knight', 'B':'Bishop', 'Q':'Queen', 'K':'King', 'p':'Pawn', 'r':'Rook', 'n':'Knight', 'b':'Bishop', 'q':'Queen', 'k':'King'};
 			const pieces = {'p':'♟', 'r':'♜', 'n':'♞', 'b':'♝', 'q':'♛', 'k':'♚', 'P':'♙', 'R':'♖', 'N':'♘', 'B':'♗', 'Q':'♕', 'K':'♔'};
@@ -201,7 +232,7 @@
 			function toggleLog(){
 				const container = document.getElementById('logContainer');
 				const btn = document.getElementById('toggleLogBtn');
-				container.style.display = container.style.display === 'block' ? 'none' : 'block';
+				container.style.display = (container.style.display === 'block') ? 'none' : 'block';
 				btn.textContent = container.style.display === 'block' ? "Hide Log" : "Show Log";
 			}
 
@@ -397,17 +428,26 @@
 			}
 
 			function executeMove(fR, fC, tR, tC, special){
+				if(turn === 'W'){
+					history.push({
+						board: board.map(row => [...row]),
+						moved:{...moved},
+						enPassantTarget: enPassantTarget ? {...enPassantTarget} : null,
+						lastMove: lastMove ? {...lastMove} : null,
+						logCount: document.getElementById('moveLog').children.length
+					});
+				}
 				const p = board[fR][fC];
-				if (fR === 7 && fC === 0){
+				if(fR === 7 && fC === 0){
 					moved['R_7_0'] = true;
 				}
-				if (fR === 7 && fC === 7){
+				if(fR === 7 && fC === 7){
 					moved['R_7_7'] = true;
 				}
-				if (fR === 0 && fC === 0){
+				if(fR === 0 && fC === 0){
 					moved['r_0_0'] = true;
 				}
-				if (fR === 0 && fC === 7){
+				if(fR === 0 && fC === 7){
 					moved['r_0_7'] = true;
 				}
 				let captured = board[tR][tC];
@@ -433,9 +473,6 @@
 				if(p.toUpperCase() === 'K'){
 					moved[p] = true;
 				}
-				if(p.toUpperCase() === 'R'){
-					moved[`${p}_${fR}_${fC}`] = true;
-				}
 				logMove(turn === 'W' ? "White" : "Black", p, {r: tR, c: tC}, captured, special);
 				board[tR][tC] = p;
 				board[fR][fC] = '';
@@ -454,6 +491,26 @@
 				if(turn === 'B'){
 					setTimeout(pcMove, 600);
 				}
+			}
+
+			function undoMove(){
+				if(turn !== 'W' || history.length === 0){
+					return;
+				}
+				const lastState = history.pop();
+				board = lastState.board;
+				moved = lastState.moved;
+				enPassantTarget = lastState.enPassantTarget;
+				lastMove = lastState.lastMove;
+				const log = document.getElementById('moveLog');
+				while(log.children.length > lastState.logCount){
+					log.removeChild(log.firstChild);
+				}
+				turn = 'W';
+				selected = null;
+				legalMoves = [];
+				checkGameState();
+				drawBoard();
 			}
 
 			function evaluateBoard(b, forBlack = true){
@@ -485,14 +542,6 @@
 						score += isBlackPiece ? value : -value;
 					}
 				}
-				const whiteKing = findKing(b, 'W');
-				const blackKing = findKing(b, 'B');
-				if(isSquareAttacked(b, whiteKing.r, whiteKing.c, 'B')){
-					score += 50;
-				}
-				if(isSquareAttacked(b, blackKing.r, blackKing.c, 'W')){
-					score -= 50;
-				}
 				return forBlack ? score : -score;
 			}
 
@@ -505,16 +554,10 @@
 				for(let r = 0; r < 8; r++){
 					for(let c = 0; c < 8; c++){
 						const p = b[r][c];
-						if(!p){
+						if(!p || (maximizing ? (p !== p.toLowerCase()) : (p !== p.toUpperCase()))){
 							continue;
 						}
-						if(maximizing ? (p !== p.toLowerCase()) : (p !== p.toUpperCase())){
-							continue;
-						}
-						const moves = getSafeMoves(b, r, c);
-						moves.forEach(m => {
-							allMoves.push({fR: r, fC: c, tR: m.r, tC: m.c, special: m});
-						});
+						getSafeMoves(b, r, c).forEach(m => allMoves.push({fR: r, fC: c, tR: m.r, tC: m.c, special: m}));
 					}
 				}
 				if(allMoves.length === 0){
@@ -528,24 +571,8 @@
 					let maxEval = -Infinity;
 					for(const move of allMoves){
 						const tmp = b.map(row => [...row]);
-						if(move.special && move.special.enPassant){
-							tmp[move.fR][move.tC] = '';
-						}
-						if(move.special && move.special.castling === 'K'){
-							tmp[move.tR][5] = tmp[move.tR][7];
-							tmp[move.tR][7] = '';
-						}else if(move.special && move.special.castling === 'Q'){
-							tmp[move.tR][3] = tmp[move.tR][0];
-							tmp[move.tR][0] = '';
-						}
 						tmp[move.tR][move.tC] = tmp[move.fR][move.fC];
 						tmp[move.fR][move.fC] = '';
-						if(tmp[move.tR][move.tC] === 'P' && move.tR === 0){
-							tmp[move.tR][move.tC] = 'Q';
-						}
-						if(tmp[move.tR][move.tC] === 'p' && move.tR === 7){
-							tmp[move.tR][move.tC] = 'q';
-						}
 						const eval = minimax(tmp, depth - 1, alpha, beta, false);
 						maxEval = Math.max(maxEval, eval);
 						alpha = Math.max(alpha, eval);
@@ -558,24 +585,8 @@
 					let minEval = Infinity;
 					for(const move of allMoves){
 						const tmp = b.map(row => [...row]);
-						if(move.special && move.special.enPassant){
-							tmp[move.fR][move.tC] = '';
-						}
-						if(move.special && move.special.castling === 'K'){
-							tmp[move.tR][5] = tmp[move.tR][7];
-							tmp[move.tR][7] = '';
-						}else if(move.special && move.special.castling === 'Q'){
-							tmp[move.tR][3] = tmp[move.tR][0];
-							tmp[move.tR][0] = '';
-						}
 						tmp[move.tR][move.tC] = tmp[move.fR][move.fC];
 						tmp[move.fR][move.fC] = '';
-						if(tmp[move.tR][move.tC] === 'P' && move.tR === 0){
-							tmp[move.tR][move.tC] = 'Q';
-						}
-						if(tmp[move.tR][move.tC] === 'p' && move.tR === 7){
-							tmp[move.tR][move.tC] = 'q';
-						}
 						const eval = minimax(tmp, depth - 1, alpha, beta, true);
 						minEval = Math.min(minEval, eval);
 						beta = Math.min(beta, eval);
@@ -596,36 +607,19 @@
 				for(let r = 0; r < 8; r++){
 					for(let c = 0; c < 8; c++){
 						if(board[r][c] && board[r][c] === board[r][c].toLowerCase()){
-							getSafeMoves(board, r, c).forEach(m => allMoves.push({
-								fR: r, fC: c, tR: m.r, tC: m.c, special: m }));
+							getSafeMoves(board, r, c).forEach(m => allMoves.push({fR: r, fC: c, tR: m.r, tC: m.c, special: m }));
 						}
 					}
 				}
 				if(allMoves.length === 0){
 					return;
 				}
-				let bestMove = null;
-				let bestValue = -Infinity;
+				let bestMove = null, bestValue = -Infinity;
 				for(const m of allMoves){
 					const tmp = board.map(row => [...row]);
-					const oldEnPassant = enPassantTarget;
-					if(m.special && m.special.enPassant){
-						tmp[m.fR][m.tC] = '';
-					}
-					if(m.special && m.special.castling === 'K'){
-						tmp[m.tR][5] = tmp[m.tR][7];
-						tmp[m.tR][7] = '';
-					}else if(m.special && m.special.castling === 'Q'){
-						tmp[m.tR][3] = tmp[m.tR][0];
-						tmp[m.tR][0] = '';
-					}
 					tmp[m.tR][m.tC] = tmp[m.fR][m.fC];
 					tmp[m.fR][m.fC] = '';
-					if(tmp[m.tR][m.tC] === 'p' && m.tR === 7){
-						tmp[m.tR][m.tC] = 'q';
-					}
 					let v = minimax(tmp, depth - 1, -Infinity, Infinity, false);
-					enPassantTarget = oldEnPassant;
 					if(v > bestValue){
 						bestValue = v;
 						bestMove = m;
@@ -636,8 +630,8 @@
 				}
 			}
 
-			function handleClick(r, c) {
-				if (audioCtx.state === 'suspended') {
+			function handleClick(r, c){
+				if(audioCtx.state === 'suspended'){
 					audioCtx.resume();
 				}
 				if(turn !== 'W'){
