@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en"><!--G08#020 - Mara - Checkers-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Checkers World Master</title>
+		<style>
+			:root{
+				--bg: #1a1a1a;
+				--panel: #262626;
+				--accent: #27ae60;
+				--danger: #e74c3c;
+			}
+			body{
+				font-family: 'Segoe UI', sans-serif;
+				background: var(--bg);
+				color: #f0f0f0;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				margin: 0;
+				padding: 20px;
+			}
+			#setup-menu{
+				background: var(--panel);
+				padding: 30px;
+				border-radius: 15px;
+				box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+				text-align: center;
+				max-width: 650px;
+				border: 1px solid #444;
+			}
+			.variant-grid{
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				gap: 15px;
+				margin: 25px 0;
+			}
+			label{
+				background: #333;
+				padding: 15px 10px;
+				border-radius: 8px;
+				cursor: pointer;
+				font-size: 0.85em;
+				transition: 0.3s;
+				border: 1px solid transparent;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				line-height: 1.4;
+			}
+			label span{
+				color: #888;
+				font-size: 0.9em;
+				margin-top: 4px;
+				display: block;
+			}
+			label:hover{
+				background: #444;
+				border-color: var(--accent);
+			}
+			input[type="radio"]{
+				margin-bottom: 8px;
+				accent-color: var(--accent);
+			}
+			#game-container{
+				display: none;
+				flex-direction: column;
+				align-items: center;
+				width: 100%;
+			}
+			#board{
+				display: grid;
+				border: 10px solid #333;
+				background: #000;
+				box-shadow: 0 0 50px rgba(0,0,0,0.6);
+				max-width: 95vw;
+			}
+			.cell{
+				width: 50px;
+				height: 50px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				position: relative;
+			}
+			@media (max-width: 600px){
+				.cell{
+					width: 35px;
+					height: 35px;
+				}
+			}
+			.black-cell{
+				background-color: #5d4037;
+			}
+			.white-cell{
+				background-color: #d7ccc8;
+			}
+			.piece{
+				width: 82%;
+				height: 82%;
+				border-radius: 50%;
+				cursor: pointer;
+				border: 3px solid rgba(0,0,0,0.3);
+				z-index: 5;
+				transition: transform 0.2s;
+				position: relative;
+			}
+			.white-piece{
+				background: radial-gradient(circle at 30% 30%, #ffffff, #b0b0b0);
+			}
+			.black-piece{
+				background: radial-gradient(circle at 30% 30%, #424242, #000000);
+			}
+			.king::after{
+				content: "👑";
+				font-size: 1.2em;
+				color: #ffeb3b;
+				display: block;
+				text-align: center;
+				text-shadow: 0 0 3px #000;
+			}
+			.selected{
+				transform: scale(1.1);
+				outline: 4px solid #f1c40f;
+				box-shadow: 0 0 20px #f1c40f;
+				z-index: 10;
+			}
+			.status-bar{
+				margin: 5px;
+				font-size: 1.4em;
+				color: #f1c40f;
+				font-weight: bold;
+				text-transform: uppercase;
+			}
+			.variant-badge{
+				background: #444;
+				padding: 4px 12px;
+				border-radius: 20px;
+				font-size: 0.6em;
+				color: #aaa;
+				margin-bottom: 10px;
+				border: 1px solid #555;
+			}
+			.btn{
+				padding: 15px 30px;
+				border: none;
+				color: white;
+				border-radius: 8px;
+				cursor: pointer;
+				font-weight: bold;
+				font-size: 1em;
+				transition: 0.3s;
+			}
+			.btn-start{
+				background: var(--accent);
+				width: 100%;
+			}
+			.btn-reset{
+				background: var(--danger);
+				margin-top: 20px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="setup-menu">
+			<h1 style="margin-top:0">Checkers Elite</h1>
+			<p style="color: #aaa">Select a Rule Set</p>
+			<div class="variant-grid">
+				<label><input type="radio" name="v" value="int" checked>International <span>(10x10)</span></label>
+				<label><input type="radio" name="v" value="it">Italian <span>(8x8)</span></label>
+				<label><input type="radio" name="v" value="en">English/USA <span>(8x8)</span></label>
+				<label><input type="radio" name="v" value="br">Brazilian <span>(8x8)</span></label>
+				<label><input type="radio" name="v" value="ru">Russian <span>(8x8)</span></label>
+				<label><input type="radio" name="v" value="es">Spanish <span>(8x8)</span></label>
+				<label><input type="radio" name="v" value="pool">Pool <span>(8x8)</span></label>
+				<label><input type="radio" name="v" value="ca">Canadian <span>(12x12)</span></label>
+				<label><input type="radio" name="v" value="tu">Turkish <span>(8x8)</span></label>
+			</div>
+			<button class="btn btn-start" onclick="startGame()">Start Game</button>
+		</div>
+		<div id="game-container">
+			<div class="variant-badge" id="active-variant-name">Mode: International</div>
+			<div class="status-bar" id="status">Your Turn (White)</div>
+			<div id="board"></div>
+			<button class="btn btn-reset" onclick="location.reload()">Exit to Menu</button>
+		</div>
+		<script>
+			let cfg ={}, turn = 'white', selected = null, isAITurn = false;
+			const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+			const variants ={
+				int: {name: "International", s: 10, fly: true, back: true,  kingEat: true,  start: 4, ortho: false, reverse: false},
+				it:  {name: "Italian", s: 8,  fly: false, back: false, kingEat: false, start: 3, ortho: false, reverse: false},
+				en:  {name: "English/USA", s: 8,  fly: false, back: false, kingEat: true,  start: 3, ortho: false, reverse: false},
+				br:  {name: "Brazilian", s: 8,  fly: true,  back: true,  kingEat: true,  start: 3, ortho: false, reverse: false},
+				ru:  {name: "Russian", s: 8,  fly: true,  back: true,  kingEat: true,  start: 3, ortho: false, reverse: false},
+				es:  {name: "Spanish", s: 8,  fly: true,  back: false, kingEat: true,  start: 3, ortho: false, reverse: true},
+				pool:{name: "Pool Checkers", s: 8,  fly: true,  back: true,  kingEat: true,  start: 3, ortho: false, reverse: false},
+				ca:  {name: "Canadian", s: 12, fly: true,  back: true,  kingEat: true,  start: 5, ortho: false, reverse: false},
+				tu:  {name: "Turkish", s: 8,  fly: true,  back: false, kingEat: true,  start: 3, ortho: true,  reverse: false}
+			};
+
+			function playSound(isCapture){
+				if(audioCtx.state === 'suspended'){
+					audioCtx.resume();
+				}
+				const osc = audioCtx.createOscillator();
+				const gain = audioCtx.createGain();
+				osc.connect(gain);
+				gain.connect(audioCtx.destination);
+				osc.frequency.setValueAtTime(isCapture ? 150 : 300, audioCtx.currentTime);
+				gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+				gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+				osc.start();
+				osc.stop(audioCtx.currentTime + 0.1);
+			}
+
+			function startGame(){
+				const v = document.querySelector('input[name="v"]:checked').value;
+				cfg = variants[v];
+				document.getElementById('active-variant-name').innerText = `Mode: ${cfg.name} (${cfg.s}x${cfg.s})`;
+				document.getElementById('setup-menu').style.display = 'none';
+				document.getElementById('game-container').style.display = 'flex';
+				initBoard();
+			}
+
+			function initBoard(){
+				const b = document.getElementById('board');
+				b.innerHTML = '';
+				b.style.gridTemplateColumns = `repeat(${cfg.s}, minmax(30px, 50px))`;
+				for(let r = 0; r < cfg.s; r++){
+					for(let c = 0; c < cfg.s; c++){
+						const cell = document.createElement('div');
+						const isPlayable = cfg.ortho ? (r > 0 && r < cfg.s - 1) : (cfg.reverse ? (r + c)%2 === 0 : (r + c)%2 !== 0);
+						cell.className = `cell ${isPlayable ? 'black-cell' : 'white-cell'}`;
+						cell.dataset.r = r; cell.dataset.c = c;
+						if(isPlayable){
+							if(r < cfg.start){
+								createPiece(cell, 'black');
+							}else if(r >= cfg.s - cfg.start){
+								createPiece(cell, 'white');
+							}
+						}
+						cell.onclick = () => onCellClick(r, c);
+						b.appendChild(cell);
+					}
+				}
+			}
+
+			function createPiece(cell, col){
+				const p = document.createElement('div');
+				p.className = `piece ${col}-piece`;
+				cell.appendChild(p);
+			}
+
+			function onCellClick(r, c){
+				if(turn !== 'white' || isAITurn){
+					return;
+				}
+				const cell = getCell(r, c);
+				const piece = cell.querySelector('.piece');
+				if(piece && piece.classList.contains('white-piece')){
+					deselect();
+					piece.classList.add('selected');
+					selected ={r, c, el: piece, king: piece.classList.contains('king')};
+				}else if(selected && !piece){
+					const move = checkMove(selected.r, selected.c, r, c, 'white', selected.king);
+					if(move.valid){
+						applyMove(selected.r, selected.c, r, c, move.cap);
+						playSound(!!move.cap);
+						if(move.cap && canJumpAgain(r, c, 'white', selected.king)){
+							selected ={r, c, el: getCell(r,c).querySelector('.piece'), king: getCell(r,c).querySelector('.piece').classList.contains('king')};
+							selected.el.classList.add('selected');
+						}else{
+							endTurn();
+						}
+					}
+				}
+			}
+
+			function checkMove(sr, sc, tr, tc, col, isKing){
+				const dr = tr - sr, dc = tc - sc, absR = Math.abs(dr), absC = Math.abs(dc);
+				if(cfg.ortho){
+					if(absR + absC === 1){
+						if(!isKing && ((col === 'white' && dr > 0) || (col === 'black' && dr < 0))){
+							return {valid:false};
+						}
+						return{valid: true, cap: null};
+					}
+					if(absR + absC === 2 && (absR === 2 || absC === 2)){
+						const mr = sr + dr/2, mc = sc + dc/2, mid = getCell(mr, mc).querySelector('.piece');
+						if(mid && !mid.classList.contains(col+'-piece')){
+							return{valid: true, cap:{r: mr, c: mc}};
+						}
+					}
+					return{valid: false};
+				}
+				if(absR !== absC){
+					return{valid: false};
+				}
+				if(absR === 1){
+					if(!isKing && !cfg.back && ((col === 'white' && dr>0) || (col === 'black' && dr<0))){
+						return{valid: false};
+					}
+					return{valid: true, cap: null};
+				}
+				if(absR === 2){
+					const mr = sr + dr/2, mc = sc + dc/2, mid = getCell(mr, mc).querySelector('.piece');
+					if(mid && !mid.classList.contains(col+'-piece')){
+						if(!isKing && !cfg.kingEat && mid.classList.contains('king')){
+							return{valid: false};
+						}
+						return{valid: true, cap:{r: mr, c: mc}};
+					}
+				}
+				if(isKing && cfg.fly && absR > 1){
+					let enemies = [], stepR = dr/absR, stepC = dc/absC;
+					for(let i = 1; i < absR; i++){
+						const p = getCell(sr+i*stepR, sc+i*stepC).querySelector('.piece');
+						if(p){
+							if(p.classList.contains(col + '-piece')){
+								return{valid: false};
+							}
+							enemies.push({r: sr + i*stepR, c: sc + i*stepC});
+						}
+					}
+					if(enemies.length === 0){
+						return{valid: true, cap: null};
+					}
+					if(enemies.length === 1){
+						return{valid: true, cap: enemies[0]};
+					}
+				}
+				return{valid: false};
+			}
+
+			function applyMove(sr, sc, tr, tc, cap){
+				const p = getCell(sr, sc).querySelector('.piece');
+				getCell(tr, tc).appendChild(p);
+				if(cap){
+					getCell(cap.r, cap.c).querySelector('.piece').remove();
+				}
+				if((turn === 'white' && tr === 0) || (turn === 'black' && tr === cfg.s-1)){
+					p.classList.add('king');
+				}
+			}
+
+			function canJumpAgain(r, c, col, isKing){
+				const steps = cfg.ortho ? [[0,2],[0,-2],[2,0],[-2,0]] : [[2,2],[2,-2],[-2,2],[-2,-2]];
+				return steps.some(s => {
+					const tr = r + s[0], tc = c + s[1];
+					return tr >= 0 && tr < cfg.s && tc >= 0 && tc < cfg.s && !getCell(tr,tc).querySelector('.piece') && checkMove(r, c, tr, tc, col, isKing).cap;
+				});
+			}
+
+			function endTurn(){
+				deselect();
+				turn = (turn === 'white') ? 'black' : 'white';
+				document.getElementById('status').innerText = turn === 'white' ? "Your Turn (White)" : "CPU is thinking...";
+				setTimeout(() => {
+					if(checkWin()){
+						return;
+					}
+					if(turn === 'black'){
+						isAITurn = true;
+						setTimeout(cpuBrain, 700);
+					}
+				}, 600);
+			}
+
+			function cpuBrain(){
+				const pieces = document.querySelectorAll('.black-piece');
+				let moves = [];
+				pieces.forEach(p => {
+					const r = parseInt(p.parentElement.dataset.r), c = parseInt(p.parentElement.dataset.c), isKing = p.classList.contains('king');
+					const range = (isKing && cfg.fly) ? cfg.s - 1 : 2;
+					for(let dr = -range; dr <= range; dr++){
+						for(let dc = -range; dc <= range; dc++){
+							let tr = r + dr, tc = c + dc;
+							if(tr >= 0 && tr < cfg.s && tc >= 0 && tc < cfg.s && !getCell(tr,tc).querySelector('.piece')){
+								const m = checkMove(r, c, tr, tc, 'black', isKing);
+								if(m.valid){
+									moves.push({r, c, tr, tc, cap: m.cap});
+								}
+							}
+						}
+					}
+				});
+				if(moves.length > 0){
+					const best = moves.sort((a,b) => (b.cap ? 1:0) - (a.cap ? 1:0))[0];
+					applyMove(best.r, best.c, best.tr, best.tc, best.cap);
+					playSound(!!best.cap);
+					if(best.cap && canJumpAgain(best.tr, best.tc, 'black', getCell(best.tr, best.tc).querySelector('.piece').classList.contains('king'))){
+						setTimeout(cpuBrain, 600);
+					}else{
+						isAITurn = false;
+						endTurn();
+					}
+				}else{
+					alert("You Win! CPU is blocked.");
+					location.reload();
+				}
+			}
+
+			function checkWin(){
+				const w = document.querySelectorAll('.white-piece').length, b = document.querySelectorAll('.black-piece').length;
+				if(w === 0){
+					alert("GAME OVER! Black Wins."); location.reload();
+					return true;
+				}
+				if(b === 0){
+					alert("VICTORY! You defeated the CPU.");
+					location.reload();
+					return true;
+				}
+				return false;
+			}
+
+			function getCell(r, c){
+				return document.querySelector(`[data-r='${r}'][data-c='${c}']`);
+			}
+
+			function deselect(){
+				document.querySelectorAll('.piece').forEach(p => p.classList.remove('selected'));
+				selected = null;
+			}
+		</script>
+	</body>
+</html>
