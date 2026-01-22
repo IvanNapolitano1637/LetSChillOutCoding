@@ -13,6 +13,8 @@
 				--last-move: rgba(255, 255, 0, 0.4);
 				--status-color: #f1c40f;
 				--sq-size: clamp(35px, 10vw, 60px);
+				--save-empty: #4834d4; 
+				--save-full: #686de0;
 			}
 			body{
 				font-family: 'Segoe UI', sans-serif;
@@ -34,6 +36,7 @@
 				margin-top: 10px;
 				width: 100%;
 				max-width: 1000px;
+				position: relative;
 			}
 			.board{
 				display: grid;
@@ -42,6 +45,7 @@
 				border: 4px solid #34495e;
 				box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 				user-select: none;
+				position: relative;
 			}
 			.square{
 				width: var(--sq-size);
@@ -111,6 +115,53 @@
 				grid-template-columns: 1fr 1fr 1fr;
 				gap: 10px;
 			}
+			.save-section{
+				background: rgba(0,0,0,0.2);
+				padding: 10px;
+				border-radius: 8px;
+				margin-top: 5px;
+			}
+			.save-grid{
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				gap: 12px;
+				margin-top: 8px;
+			}
+			.slot-wrapper{
+				position: relative;
+				display: flex;
+			}
+			.save-slot-btn{
+				width: 100%;
+				display: flex;
+				flex-direction: column;
+				font-size: 0.65rem !important;
+				padding: 10px 2px !important;
+			}
+			.del-btn{
+				position: absolute;
+				top: -6px;
+				right: -6px;
+				background: #e74c3c;
+				color: white;
+				border: none;
+				border-radius: 50%;
+				width: 20px;
+				height: 20px;
+				font-size: 10px;
+				cursor: pointer;
+				display: none;
+				justify-content: center;
+				align-items: center;
+				box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+				z-index: 10;
+			}
+			.slot-date{
+				font-weight: normal;
+				font-size: 0.55rem;
+				opacity: 0.8;
+				margin-top: 2px;
+			}
 			.controls button{
 				padding: 12px 2px;
 				cursor: pointer;
@@ -134,6 +185,42 @@
 				padding: 6px 0;
 				color: #ecf0f1;
 			}
+			#promotion-overlay{
+				display: none;
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: rgba(0,0,0,0.7);
+				z-index: 100;
+				justify-content: center;
+				align-items: center;
+				border-radius: 4px;
+			}
+			.promotion-box{
+				background: #34495e;
+				padding: 15px;
+				border-radius: 10px;
+				display: flex;
+				gap: 10px;
+				box-shadow: 0 0 20px black;
+			}
+			.promo-choice{
+				font-size: 2.5rem;
+				background: var(--light);
+				border: none;
+				border-radius: 5px;
+				cursor: pointer;
+				width: 60px; height: 60px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				color: #333;
+			}
+			.promo-choice:hover{
+				background: white;
+			}
 			@media (max-width: 600px){
 				.info-panel{
 					width: 100%;
@@ -147,7 +234,16 @@
 	</head>
 	<body>
 		<div class="game-layout">
-			<div id="board" class="board"></div>
+			<div id="board" class="board">
+				<div id="promotion-overlay">
+					<div class="promotion-box">
+						<button class="promo-choice" onclick="selectPromotion('Q')">♕</button>
+						<button class="promo-choice" onclick="selectPromotion('R')">♖</button>
+						<button class="promo-choice" onclick="selectPromotion('B')">♗</button>
+						<button class="promo-choice" onclick="selectPromotion('N')">♘</button>
+					</div>
+				</div>
+			</div>
 			<div class="info-panel" id="logContainer">
 				<div style="font-weight: bold; border-bottom: 2px solid var(--status-color); margin-bottom: 10px; color: var(--status-color);">LOG MOVES</div>
 				<div id="moveLog"></div>
@@ -163,6 +259,25 @@
 				<button id="undoBtn" onclick="undoMove()" style="background: #95a5a6;">Undo</button>
 				<button onclick="location.reload()" style="background: #e67e22;">Reset</button>
 			</div>
+			<div class="save-section">
+				<div style="text-align: center; font-size: 0.7rem; font-weight: bold; margin-bottom: 5px; color: #bdc3c7;">
+					You have up to three slots to save your game.<br/>Once a slot is occupied, you can load, overwrite, or delete its data. Choose wisely.
+				</div>
+				<div class="save-grid">
+					<div class="slot-wrapper">
+						<button id="slot-0" class="save-slot-btn" onclick="handleSlot(0)" style="background: var(--save-empty);">Slot 1<br><span class="slot-date">Empty</span></button>
+						<button id="del-0" class="del-btn" onclick="deleteSlot(0)">✖</button>
+					</div>
+					<div class="slot-wrapper">
+						<button id="slot-1" class="save-slot-btn" onclick="handleSlot(1)" style="background: var(--save-empty);">Slot 2<br><span class="slot-date">Empty</span></button>
+						<button id="del-1" class="del-btn" onclick="deleteSlot(1)">✖</button>
+					</div>
+					<div class="slot-wrapper">
+						<button id="slot-2" class="save-slot-btn" onclick="handleSlot(2)" style="background: var(--save-empty);">Slot 3<br><span class="slot-date">Empty</span></button>
+						<button id="del-2" class="del-btn" onclick="deleteSlot(2)">✖</button>
+					</div>
+				</div>
+			</div>
 		</div>
 		<script>
 			let board = [['r','n','b','q','k','b','n','r'],['p','p','p','p','p','p','p','p'],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['P','P','P','P','P','P','P','P'],['R','N','B','Q','K','B','N','R']];
@@ -176,12 +291,91 @@
 			const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 			const levels = [{name: 'Easy', val: 1, color: '#27ae60'}, {name: 'Medium', val: 2, color: '#2980b9'}, {name: 'Hard', val: 3, color: '#c0392b'}, {name: 'Expert', val: 4, color: '#8e44ad'}];
 			let currentDiffIdx = 2;
+			let pendingPromotion = null;
 			const pawnTableWhite = [[0, 0, 0, 0, 0, 0, 0, 0],[50, 50, 50, 50, 50, 50, 50, 50],[10, 10, 20, 30, 30, 20, 10, 10],[5, 5, 10, 25, 25, 10, 5, 5],[0, 0, 0, 20, 20, 0, 0, 0],[5, -5, -10, 0, 0, -10, -5, 5],[5, 10, 10, -20, -20, 10, 10, 5],[0, 0, 0, 0, 0, 0, 0, 0]];
 			const knightTable = [[-50, -40, -30, -30, -30, -30, -40, -50],[-40, -20, 0, 0, 0, 0, -20, -40],[-30, 0, 10, 15, 15, 10, 0, -30],[-30, 5, 15, 20, 20, 15, 5, -30],[-30, 0, 15, 20, 20, 15, 0, -30],[-30, 5, 10, 15, 15, 10, 5, -30],[-40, -20, 0, 5, 5, 0, -20, -40],[-50, -40, -30, -30, -30, -30, -40, -50]];
 			const bishopTable = [[-20, -10, -10, -10, -10, -10, -10, -20],[-10, 0, 0, 0, 0, 0, 0, -10],[-10, 0, 5, 10, 10, 5, 0, -10],[-10, 5, 5, 10, 10, 5, 5, -10],[-10, 0, 10, 10, 10, 10, 0, -10],[-10, 10, 10, 10, 10, 10, 10, -10],[-10, 5, 0, 0, 0, 0, 5, -10],[-20, -10, -10, -10, -10, -10, -10, -20]];
 			const rookTable = [[0, 0, 0, 0, 0, 0, 0, 0],[5, 10, 10, 10, 10, 10, 10, 5],[-5, 0, 0, 0, 0, 0, 0, -5],[-5, 0, 0, 0, 0, 0, 0, -5],[-5, 0, 0, 0, 0, 0, 0, -5],[-5, 0, 0, 0, 0, 0, 0, -5],[-5, 0, 0, 0, 0, 0, 0, -5],[0, 0, 0, 5, 5, 0, 0, 0]];
 			const queenTable = [[-20, -10, -10, -5, -5, -10, -10, -20],[-10, 0, 0, 0, 0, 0, 0, -10],[-10, 0, 5, 5, 5, 5, 0, -10],[-5, 0, 5, 5, 5, 5, 0, -5],[0, 0, 5, 5, 5, 5, 0, -5],[-10, 5, 5, 5, 5, 5, 0, -10],[-10, 0, 5, 0, 0, 0, 0, -10],[-20, -10, -10, -5, -5, -10, -10, -20]];
 			const kingTableMiddle = [[-30, -40, -40, -50, -50, -40, -40, -30],[-30, -40, -40, -50, -50, -40, -40, -30],[-30, -40, -40, -50, -50, -40, -40, -30],[-30, -40, -40, -50, -50, -40, -40, -30],[-20, -30, -30, -40, -40, -30, -30, -20],[-10, -20, -20, -20, -20, -20, -20, -10],[20, 20, 0, 0, 0, 0, 20, 20],[20, 30, 10, 0, 0, 10, 30, 20]];
+
+			function updateSaveUI(){
+				for(let i = 0; i < 3; i++){
+					const saved = localStorage.getItem(`chess_slot_${i}`);
+					const btn = document.getElementById(`slot-${i}`);
+					const del = document.getElementById(`del-${i}`);
+					if(saved){
+						const data = JSON.parse(saved);
+						btn.style.background = 'var(--save-full)';
+						btn.querySelector('.slot-date').textContent = data.timestamp;
+						del.style.display = 'flex';
+					}else{
+						btn.style.background = 'var(--save-empty)';
+						btn.querySelector('.slot-date').textContent = 'Empty';
+						del.style.display = 'none';
+					}
+				}
+			}
+
+			function handleSlot(i){
+				const saved = localStorage.getItem(`chess_slot_${i}`);
+				if(!saved){
+					saveToSlot(i);
+				}else{
+					if(confirm(`Slot ${i+1}: Do you want to load the saved game?`)){
+						loadFromSlot(i);
+					}else{
+						if(confirm("Do you want to replace the previous save?")){
+							saveToSlot(i);
+						}
+					}
+				}
+			}
+
+			function deleteSlot(i){
+				if(confirm(`Are you sure you want to permanently delete the Slot ${i+1} save?`)){
+					localStorage.removeItem(`chess_slot_${i}`);
+					updateSaveUI();
+				}
+			}
+
+			function saveToSlot(i){
+				const now = new Date();
+				const timeStr = `${now.getDate()}/${now.getMonth()+1} ${now.getHours()}:${now.getMinutes().toString().padStart(2,'0')}`;
+				const gameState = {
+					board, moved, enPassantTarget, history, currentDiffIdx, turn, lastMove,
+					logHtml: document.getElementById('moveLog').innerHTML,
+					timestamp: timeStr
+				};
+				localStorage.setItem(`chess_slot_${i}`, JSON.stringify(gameState));
+				updateSaveUI();
+			}
+
+			function loadFromSlot(i){
+				const savedData = localStorage.getItem(`chess_slot_${i}`);
+				if(!savedData){
+					return;
+				}
+				const gs = JSON.parse(savedData);
+				board = gs.board;
+				moved = gs.moved;
+				enPassantTarget = gs.enPassantTarget;
+				history = gs.history;
+				currentDiffIdx = gs.currentDiffIdx;
+				turn = gs.turn;
+				lastMove = gs.lastMove;
+				document.getElementById('moveLog').innerHTML = gs.logHtml;
+				const btn = document.getElementById('diffBtn');
+				btn.textContent = `Level: ${levels[currentDiffIdx].name}`;
+				btn.style.background = levels[currentDiffIdx].color;
+				selected = null;
+				legalMoves = [];
+				checkGameState();
+				drawBoard();
+				if(turn === 'B'){
+					setTimeout(pcMove, 600);
+				}
+			}
 
 			function playSound(type){
 				const osc = audioCtx.createOscillator();
@@ -218,7 +412,16 @@
 					osc.frequency.setValueAtTime(300, now);
 					gain.gain.setValueAtTime(0.1, now);
 					gain.gain.linearRampToValueAtTime(0, now + 0.3);
-					osc.start();osc.stop(now + 0.3);
+					osc.start();
+					osc.stop(now + 0.3);
+				}else if(type === 'promo'){
+					osc.type = 'sine';
+					osc.frequency.setValueAtTime(523.25, now);
+					osc.frequency.setValueAtTime(783.99, now + 0.1);
+					gain.gain.setValueAtTime(0.1, now);
+					gain.gain.linearRampToValueAtTime(0, now + 0.3);
+					osc.start();
+					osc.stop(now + 0.3);
 				}
 			}
 
@@ -238,7 +441,8 @@
 
 			function drawBoard(){
 				const boardEl = document.getElementById('board');
-				boardEl.innerHTML = '';
+				const cells = boardEl.querySelectorAll('.square');
+				cells.forEach(c => c.remove());
 				const currentKing = findKing(board, turn);
 				const inCheck = (turn !== 'OVER') ? isSquareAttacked(board, currentKing.r, currentKing.c, turn === 'W' ? 'B' : 'W') : false;
 				for(let r = 0; r < 8; r++){
@@ -403,7 +607,8 @@
 						playSound('mate');
 						statusBtn.textContent = `CHECKMATE! ${turn === 'W' ? 'Black' : 'White'} wins!`;
 					}else{
-						playSound('draw');statusBtn.textContent = "STALEMATE! It's a draw.";
+						playSound('draw');
+						statusBtn.textContent = "STALEMATE! It's a draw.";
 					}
 					statusBtn.style.background = "#e74c3c";
 					statusBtn.style.color = "white";
@@ -427,7 +632,7 @@
 				}
 			}
 
-			function executeMove(fR, fC, tR, tC, special){
+			function executeMove(fR, fC, tR, tC, special, pcChoice = null){
 				if(turn === 'W'){
 					history.push({
 						board: board.map(row => [...row]),
@@ -473,14 +678,21 @@
 				if(p.toUpperCase() === 'K'){
 					moved[p] = true;
 				}
-				logMove(turn === 'W' ? "White" : "Black", p, {r: tR, c: tC}, captured, special);
 				board[tR][tC] = p;
 				board[fR][fC] = '';
 				if(p === 'P' && tR === 0){
-					board[tR][tC] = 'Q';
+					pendingPromotion = {tR, tC, piece: p, captured, special};
+					document.getElementById('promotion-overlay').style.display = 'flex';
+					lastMove = {fR, fC, tR, tC};
+					drawBoard();
+					return;
 				}
 				if(p === 'p' && tR === 7){
-					board[tR][tC] = 'q';
+					playSound('promo');
+					board[tR][tC] = pcChoice || 'q';
+					logMove("Black", board[tR][tC], {r: tR, c: tC}, captured, special);
+				}else{
+					logMove(turn === 'W' ? "White" : "Black", p, {r: tR, c: tC}, captured, special);
 				}
 				lastMove = {fR, fC, tR, tC};
 				selected = null;
@@ -491,6 +703,21 @@
 				if(turn === 'B'){
 					setTimeout(pcMove, 600);
 				}
+			}
+
+			function selectPromotion(choice){
+				playSound('promo');
+				const{tR, tC, captured, special} = pendingPromotion;
+				board[tR][tC] = choice;
+				document.getElementById('promotion-overlay').style.display = 'none';
+				logMove("White", choice, {r: tR, c: tC}, captured, special);
+				pendingPromotion = null;
+				selected = null;
+				legalMoves = [];
+				turn = 'B';
+				checkGameState();
+				drawBoard();
+				setTimeout(pcMove, 600);
 			}
 
 			function undoMove(){
@@ -570,12 +797,19 @@
 				if(maximizing){
 					let maxEval = -Infinity;
 					for(const move of allMoves){
-						const tmp = b.map(row => [...row]);
-						tmp[move.tR][move.tC] = tmp[move.fR][move.fC];
-						tmp[move.fR][move.fC] = '';
-						const eval = minimax(tmp, depth - 1, alpha, beta, false);
-						maxEval = Math.max(maxEval, eval);
-						alpha = Math.max(alpha, eval);
+						const isPromo = b[move.fR][move.fC] === 'p' && move.tR === 7;
+						const promoChoices = isPromo ? ['q', 'n', 'r', 'b'] : [null];
+						for(const choice of promoChoices){
+							const tmp = b.map(row => [...row]);
+							tmp[move.tR][move.tC] = isPromo ? choice : tmp[move.fR][move.fC];
+							tmp[move.fR][move.fC] = '';
+							const eval = minimax(tmp, depth - 1, alpha, beta, false);
+							maxEval = Math.max(maxEval, eval);
+							alpha = Math.max(alpha, eval);
+							if(beta <= alpha){
+								break;
+							}
+						}
 						if(beta <= alpha){
 							break;
 						}
@@ -584,12 +818,19 @@
 				}else{
 					let minEval = Infinity;
 					for(const move of allMoves){
-						const tmp = b.map(row => [...row]);
-						tmp[move.tR][move.tC] = tmp[move.fR][move.fC];
-						tmp[move.fR][move.fC] = '';
-						const eval = minimax(tmp, depth - 1, alpha, beta, true);
-						minEval = Math.min(minEval, eval);
-						beta = Math.min(beta, eval);
+						const isPromo = b[move.fR][move.fC] === 'P' && move.tR === 0;
+						const promoChoices = isPromo ? ['Q', 'N', 'R', 'B'] : [null];
+						for(const choice of promoChoices){
+							const tmp = b.map(row => [...row]);
+							tmp[move.tR][move.tC] = isPromo ? choice : tmp[move.fR][move.fC];
+							tmp[move.fR][move.fC] = '';
+							const eval = minimax(tmp, depth - 1, alpha, beta, true);
+							minEval = Math.min(minEval, eval);
+							beta = Math.min(beta, eval);
+							if(beta <= alpha){
+								break;
+							}
+						}
 						if(beta <= alpha){
 							break;
 						}
@@ -614,19 +855,26 @@
 				if(allMoves.length === 0){
 					return;
 				}
-				let bestMove = null, bestValue = -Infinity;
+				let bestMove = null, bestValue = -Infinity, bestPromo = 'q';
 				for(const m of allMoves){
-					const tmp = board.map(row => [...row]);
-					tmp[m.tR][m.tC] = tmp[m.fR][m.fC];
-					tmp[m.fR][m.fC] = '';
-					let v = minimax(tmp, depth - 1, -Infinity, Infinity, false);
-					if(v > bestValue){
-						bestValue = v;
-						bestMove = m;
+					const isPromo = board[m.fR][m.fC] === 'p' && m.tR === 7;
+					const promoChoices = isPromo ? ['q', 'n', 'r', 'b'] : [null];
+					for(const choice of promoChoices){
+						const tmp = board.map(row => [...row]);
+						tmp[m.tR][m.tC] = isPromo ? choice : tmp[m.fR][m.fC];
+						tmp[m.fR][m.fC] = '';
+						let v = minimax(tmp, depth - 1, -Infinity, Infinity, false);
+						if(v > bestValue){ 
+							bestValue = v;
+							bestMove = m; 
+							if(isPromo){
+								bestPromo = choice;
+							}
+						}
 					}
 				}
 				if(bestMove){
-					executeMove(bestMove.fR, bestMove.fC, bestMove.tR, bestMove.tC, bestMove.special);
+					executeMove(bestMove.fR, bestMove.fC, bestMove.tR, bestMove.tC, bestMove.special, bestPromo);
 				}
 			}
 
@@ -634,7 +882,7 @@
 				if(audioCtx.state === 'suspended'){
 					audioCtx.resume();
 				}
-				if(turn !== 'W'){
+				if(turn !== 'W' || pendingPromotion){
 					return;
 				}
 				const move = legalMoves.find(m => m.r === r && m.c === c);
@@ -669,6 +917,7 @@
 			}
 
 			drawBoard();
+			updateSaveUI();
 		</script>
 	</body>
 </html>
