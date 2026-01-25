@@ -45,12 +45,12 @@
 		<canvas id="board">Upgrade Browser</canvas>
 		<div class="controls">
 			<div>
-				<button type="button" id="restartButton" onclick="refresh()">Start again!</button>
-				<button type="button" id="undoButton" onclick="undoLastMove()">Undo</button>
 				<button type="button" id="hintButton" onclick="giveHint()">Hint</button>
+				<button type="button" id="undoButton" onclick="undoLastMove()">Undo</button>
+				<button type="button" id="restartButton" onclick="refresh()">Start again!</button>
 			</div>
 			<div>
-				<button type="button" id="difficultyButton" onclick="cycleDifficulty()">Medium</button> <button type="button" id="changeLanguageButton" onclick="cycleLanguage()">Language</button>
+				<button type="button" id="difficultyButton" onclick="cycleDifficulty()">Medium</button>
 				<button type="button" id="changeLanguageButton" onclick="cycleLanguage()">Language</button>
 			</div>
 			<div id="starter">
@@ -97,6 +97,7 @@
 			let goOn = true;
 			let canvas, ctx, blinkInterval;
 			let winningCells = [];
+			let humanIsYellow = true;
 
 			window.onload = function(){
 				canvas = document.getElementById("board");
@@ -126,6 +127,7 @@
 			function setStarter(isYellow){
 				if(numberOfMoves === 0){
 					moveYellow = isYellow;
+					humanIsYellow = isYellow;
 				}
 			}
 
@@ -145,12 +147,20 @@
 				numberOfMoves = 0;
 				goOn = true;
 				moveYellow = document.getElementById("Yellow").checked;
+				humanIsYellow = moveYellow; 
 				canvas.width = COLUMN_NUMBER*DIAMETER + GRID_THICKNESS*(COLUMN_NUMBER + 1);
 				canvas.height = ROW_NUMBER*DIAMETER + GRID_THICKNESS*(ROW_NUMBER + 1);
 				ctx.fillStyle = BLUE_COLOR;
 				ctx.fillRect(0, 0, canvas.width, canvas.height);
-				for(let r = 0; r < ROW_NUMBER; r++) for(let c = 0; c < COLUMN_NUMBER; c++) drawCircle(r, c, WHITE);
+				for(let r = 0; r < ROW_NUMBER; r++){
+					for(let c = 0; c < COLUMN_NUMBER; c++){
+						drawCircle(r, c, WHITE);
+					}
+				}
 				document.getElementById('starter').style.visibility = "visible";
+				if(numberOfMoves === 0 && moveYellow !== humanIsYellow){
+					setTimeout(computerMove, 600);
+				}
 			}
 
 			function computerMove() {
@@ -302,7 +312,7 @@
 					return;
 				}
 				const rect = canvas.getBoundingClientRect();
-				const scaleX = canvas.width/rect.width; 
+				const scaleX = canvas.width/rect.width; 
 				const x = (e.clientX - rect.left)*scaleX;
 				const column = Math.floor(x/(DIAMETER + GRID_THICKNESS));
 				if(column < 0 || column >= COLUMN_NUMBER){
@@ -325,10 +335,15 @@
 						document.body.style.background = moveYellow ? "#FFFFCC" : "#FFCCCC";
 						setTimeout(() => alert(WINNING_MESSAGE[languageIndex] + winner + "!"), 100);
 					}
-					moveYellow = !moveYellow;
-					if(goOn && !moveYellow){
-						canvas.style.pointerEvents = "none";
-						setTimeout(() => { computerMove(); canvas.style.pointerEvents = "auto"; }, 600);
+					if(goOn){
+						moveYellow = !moveYellow;
+						if(moveYellow !== humanIsYellow){
+							canvas.style.pointerEvents = "none";
+							setTimeout(() => {
+								computerMove();
+								canvas.style.pointerEvents = "auto";
+							}, 600);
+						}
 					}
 				}
 			}
