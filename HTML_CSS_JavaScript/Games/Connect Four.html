@@ -20,7 +20,7 @@
 				max-width: 100%;
 				height: auto;
 			}
-			button{
+			button, select{
 				margin: 5px;
 				padding: 10px 15px;
 				cursor: pointer;
@@ -29,7 +29,7 @@
 				border: 1px solid #999;
 				background: #eee;
 			}
-			button:hover{
+			button:hover, select:hover{
 				background-color: #ddd;
 			}
 			#starter{
@@ -43,13 +43,14 @@
 	</head>
 	<body>
 		<canvas id="board">Upgrade Browser</canvas>
-
 		<div class="controls">
 			<div>
 				<button type="button" id="restartButton" onclick="refresh()">Start again!</button>
 				<button type="button" id="undoButton" onclick="undoLastMove()">Undo</button>
+				<button type="button" id="hintButton" onclick="giveHint()">Hint</button>
 			</div>
 			<div>
+				<button type="button" id="difficultyButton" onclick="cycleDifficulty()">Medium</button> <button type="button" id="changeLanguageButton" onclick="cycleLanguage()">Language</button>
 				<button type="button" id="changeLanguageButton" onclick="cycleLanguage()">Language</button>
 			</div>
 			<div id="starter">
@@ -69,13 +70,12 @@
 			const GRID_THICKNESS = UNIT;
 			const ROW_NUMBER = 6;
 			const COLUMN_NUMBER = 7;
-			
+			const DEPTH = 5;
 			const BLUE_COLOR = "#0033FF";
 			const YELLOW_COLOR = "#FFFF33";
 			const RED_COLOR = "#FF0033";
 			const LIGHT_ORANGE_COLOR = "#FFCC33";
 			const WHITE = "#FFFFFF";
-
 			const TITLES = ["Connect four", "Forza 4", "Connecter Quatre", "Conecta 4", "Vier Gewinnt", "Conecta 4", "Conecta patru", "Чотири в ряд", "Συνδέστε τέσσερα", "Conecta quattuor", "四子连珠", "四目並べ"];
 			const RESTART_LABELS = ["Start again!", "Ricomincia", "Recommencer", "¡Empezar de nuovo!", "Erneut starten!", "Recomeçar", "Începe din nou", "Почати заново", "Ξεκινήστε ξανά", "Iterum incipere", "重新开始", "再スタート"];
 			const LANGUAGES_LABELS = ["English", "Italiano", "Française", "Español", "Deutsch", "Português", "Română", "Українська", "Ελληνικά", "Latine", "中文", "日本語"];
@@ -84,12 +84,16 @@
 			const YELLOW_LABEL = ["Yellow", "Giallo", "Jaune", "Amarillo", "Gelb", "Amarelo", "Galben", "Жовтий", "Κίτρινο", "Flavus", "黄色", "黄色"];
 			const RED_LABEL = ["Red", "Rosso", "Rouge", "Rojo", "Rot", "Vermelho", "Roșu", "Червоний", "Κόкκινο", "Ruber", "红色", "赤"];
 			const WINNING_MESSAGE = ["The winner is: ", "Vince: ", "Le gagnant est: ", "El ganador es: ", "Der Gewinner ist: ", "O vencedor è: ", "Câștigătorul este: ", "Переможець: ", "Ο νικητής è: ", "Victor est: ", "获胜者是: ", "勝者は: "];
-
+			const EASY_LABELS = ["Easy", "Facile", "Facile", "Fácil", "Einfach", "Fácil", "Ușor", "Легко", "Εύκολο", "Facilis", "简单", "簡単"];
+			const MEDIUM_LABELS = ["Medium", "Medio", "Moyen", "Medio", "Mittel", "Médio", "Mediu", "Середній", "Μέτριο", "Medium", "中等", "中級"];
+			const HARD_LABELS = ["Hard", "Difficile", "Difficile", "Difícil", "Schwer", "Difícil", "Greu", "Важко", "Δύσκολο", "Difficilis", "困难", "上級"];
+			const HINT_LABELS = ["Hint", "Suggerimento", "Conseil", "Sugerencia", "Hinweis", "Sugestão", "Sugestie", "Підказка", "Υπόδειξη", "Consilium", "提示", "ヒント"];
+			let difficultyIndex = 1;
 			let grid = [];
 			let moves = [];
 			let moveYellow = true;
 			let numberOfMoves = 0;
-			let languageIndex = 0; 
+			let languageIndex = 0; 
 			let goOn = true;
 			let canvas, ctx, blinkInterval;
 			let winningCells = [];
@@ -98,7 +102,7 @@
 				canvas = document.getElementById("board");
 				ctx = canvas.getContext("2d");
 				canvas.addEventListener("click", select);
-				updateLabels(); 
+				updateLabels(); 
 				drawUniverse();
 			};
 
@@ -116,7 +120,7 @@
 					gainNode.connect(audioCtx.destination);
 					oscillator.start();
 					oscillator.stop(audioCtx.currentTime + 0.1);
-				} catch(e){}
+				}catch(e){}
 			}
 
 			function setStarter(isYellow){
@@ -128,11 +132,7 @@
 			function drawCircle(row, column, color){
 				ctx.fillStyle = color;
 				ctx.beginPath();
-				ctx.arc(
-					(column + 1)*GRID_THICKNESS + column*DIAMETER + RADIUS,
-					(row + 1)*GRID_THICKNESS + row*DIAMETER + RADIUS,
-					RADIUS, 0, 2*Math.PI
-				);
+				ctx.arc((column + 1)*GRID_THICKNESS + column*DIAMETER + RADIUS, (row + 1)*GRID_THICKNESS + row*DIAMETER + RADIUS, RADIUS, 0, 2*Math.PI);
 				ctx.fill();
 			}
 
@@ -149,12 +149,152 @@
 				canvas.height = ROW_NUMBER*DIAMETER + GRID_THICKNESS*(ROW_NUMBER + 1);
 				ctx.fillStyle = BLUE_COLOR;
 				ctx.fillRect(0, 0, canvas.width, canvas.height);
-				for(let r = 0; r < ROW_NUMBER; r++){
+				for(let r = 0; r < ROW_NUMBER; r++) for(let c = 0; c < COLUMN_NUMBER; c++) drawCircle(r, c, WHITE);
+				document.getElementById('starter').style.visibility = "visible";
+			}
+
+			function computerMove() {
+				if(!goOn){
+					return;
+				}
+				const difficulty = difficultyIndex.toString();
+				let chosenColumn = -1;
+				if(difficulty === "0"){
+					let validCols = [];
 					for(let c = 0; c < COLUMN_NUMBER; c++){
-						drawCircle(r, c, WHITE);
+						if(grid[0][c] === -1){
+							validCols.push(c);
+						}
+					}
+					chosenColumn = validCols[Math.floor(Math.random()*validCols.length)];
+				}else if(difficulty === "1"){
+					let bestScore = -Infinity;
+					for(let c = 0; c < COLUMN_NUMBER; c++){
+						let r = getAvailableRow(c);
+						if(r !== -1){
+							grid[r][c] = 1;
+							let score = evaluateMoveMedium(r, c);
+							grid[r][c] = -1;
+							if(score > bestScore){
+								bestScore = score;
+								chosenColumn = c;
+							}
+						}
+					}
+				}else{
+					let bestScore = -Infinity;
+					for(let c = 0; c < COLUMN_NUMBER; c++) {
+						let r = getAvailableRow(c);
+						if(r !== -1){
+							grid[r][c] = 1;
+							let score = minimax(grid, DEPTH, false, -Infinity, Infinity);
+							grid[r][c] = -1;
+							if(score > bestScore){
+								bestScore = score;
+								chosenColumn = c;
+							}
+						}
 					}
 				}
-				document.getElementById('starter').style.visibility = "visible";
+				if(chosenColumn !== -1){
+					const rect = canvas.getBoundingClientRect();
+					const fakeEvent = { clientX: rect.left + (chosenColumn*(DIAMETER + GRID_THICKNESS)) + RADIUS + GRID_THICKNESS };
+					select(fakeEvent);
+				}
+			}
+
+			function evaluateMoveMedium(row, col){
+				let score = 0;
+				if(check(row, col)){
+					return 10000;
+				}
+				grid[row][col] = 0; 
+				if(check(row, col)){
+					grid[row][col] = 1;
+					return 5000;
+				}
+				grid[row][col] = 1;
+				score += (3 - Math.abs(col - 3))*10;
+				return score;
+			}
+
+			function minimax(board, depth, isMaximizing, alpha, beta) {
+				let result = checkBoardHard();
+				if(result === 1){
+					return 10000 + depth;
+				}
+				if(result === 0){
+					return -10000 - depth;
+				}
+				if(depth === 0 || moves.length === ROW_NUMBER*COLUMN_NUMBER){
+					return evaluateBoardHard();
+				}
+				if(isMaximizing) {
+					let maxEval = -Infinity;
+					for(let c = 0; c < COLUMN_NUMBER; c++){
+						let r = getAvailableRow(c);
+						if(r !== -1) {
+							board[r][c] = 1;
+							let ev = minimax(board, depth - 1, false, alpha, beta);
+							board[r][c] = -1;
+							maxEval = Math.max(maxEval, ev);
+							alpha = Math.max(alpha, ev);
+							if(beta <= alpha){
+								break;
+							}
+						}
+					}
+					return maxEval;
+				}else{
+					let minEval = Infinity;
+					for(let c = 0; c < COLUMN_NUMBER; c++){
+						let r = getAvailableRow(c);
+						if(r !== -1){
+							board[r][c] = 0;
+							let ev = minimax(board, depth - 1, true, alpha, beta);
+							board[r][c] = -1;
+							minEval = Math.min(minEval, ev);
+							beta = Math.min(beta, ev);
+							if(beta <= alpha){
+								break;
+							}
+						}
+					}
+					return minEval;
+				}
+			}
+
+			function evaluateBoardHard() {
+				let score = 0;
+				for(let r = 0; r < ROW_NUMBER; r++) {
+					if(grid[r][3] === 1){
+						score += 3;
+					}
+					if(grid[r][3] === 0){
+						score -= 3;
+					}
+				}
+				return score;
+			}
+
+			function checkBoardHard() {
+				for(let r = 0; r < ROW_NUMBER; r++) {
+					for(let c = 0; c < COLUMN_NUMBER; c++) {
+						if(grid[r][c] !== -1 && check(r, c)){
+							return grid[r][c];
+						}
+					}
+				}
+				return -1;
+			}
+
+			function getAvailableRow(col) {
+				for(let r = ROW_NUMBER - 1; r >= 0; r--){
+					if(grid[r][col] === -1){
+						return r;
+					}
+				}
+				return -1;
 			}
 
 			function select(e){
@@ -162,16 +302,13 @@
 					return;
 				}
 				const rect = canvas.getBoundingClientRect();
-				const scaleX = canvas.width/rect.width; 
-				const x =(e.clientX - rect.left)*scaleX;
+				const scaleX = canvas.width/rect.width; 
+				const x = (e.clientX - rect.left)*scaleX;
 				const column = Math.floor(x/(DIAMETER + GRID_THICKNESS));
 				if(column < 0 || column >= COLUMN_NUMBER){
 					return;
 				}
-				let row = ROW_NUMBER - 1;
-				while(row >= 0 && grid[row][column] !== -1){
-					row--;
-				}
+				let row = getAvailableRow(column);
 				if(row >= 0){
 					grid[row][column] = moveYellow ? 0 : 1;
 					drawCircle(row, column, moveYellow ? YELLOW_COLOR : RED_COLOR);
@@ -179,7 +316,6 @@
 					moves.push({r: row, c: column });
 					numberOfMoves++;
 					document.getElementById('starter').style.visibility = "hidden";
-					
 					let win = check(row, column);
 					if(win){
 						goOn = false;
@@ -190,6 +326,10 @@
 						setTimeout(() => alert(WINNING_MESSAGE[languageIndex] + winner + "!"), 100);
 					}
 					moveYellow = !moveYellow;
+					if(goOn && !moveYellow){
+						canvas.style.pointerEvents = "none";
+						setTimeout(() => { computerMove(); canvas.style.pointerEvents = "auto"; }, 600);
+					}
 				}
 			}
 
@@ -215,15 +355,18 @@
 			function startBlinking(color){
 				let isOn = true;
 				blinkInterval = setInterval(() => {
-					winningCells.forEach(cell => {
-						drawCircle(cell.r, cell.c, isOn ? WHITE : color);
-					});
+					winningCells.forEach(cell => drawCircle(cell.r, cell.c, isOn ? WHITE : color));
 					isOn = !isOn;
 				}, 400);
 			}
 
 			function cycleLanguage(){
-				languageIndex =(languageIndex + 1)%TITLES.length;
+				languageIndex = (languageIndex + 1)%TITLES.length;
+				updateLabels();
+			}
+
+			function cycleDifficulty() {
+				difficultyIndex = (difficultyIndex + 1)%3;
 				updateLabels();
 			}
 
@@ -236,18 +379,56 @@
 				document.getElementById("starterText").textContent = BEGINNING_LABELS[languageIndex];
 				document.getElementById("YellowLabel").textContent = YELLOW_LABEL[languageIndex];
 				document.getElementById("RedLabel").textContent = RED_LABEL[languageIndex];
+				document.getElementById("hintButton").textContent = HINT_LABELS[languageIndex];
+				const diffTexts = [EASY_LABELS, MEDIUM_LABELS, HARD_LABELS];
+				document.getElementById("difficultyButton").textContent = diffTexts[difficultyIndex][languageIndex];
 			}
 
 			function undoLastMove(){
-				if(goOn && moves.length > 0){
-					let last = moves.pop();
-					grid[last.r][last.c] = -1;
-					drawCircle(last.r, last.c, WHITE);
-					numberOfMoves--;
-					moveYellow = !moveYellow;
-					if(numberOfMoves === 0){
-						document.getElementById('starter').style.visibility = "visible";
+				for(let i = 0; i < 2; i++) {
+					if(moves.length > 0){
+						let last = moves.pop();
+						grid[last.r][last.c] = -1;
+						drawCircle(last.r, last.c, WHITE);
+						numberOfMoves--;
+						moveYellow = !moveYellow;
+						goOn = true;
 					}
+				}
+				if(numberOfMoves === 0){
+					document.getElementById('starter').style.visibility = "visible";
+				}
+			}
+
+			function giveHint() {
+				if(!goOn || !moveYellow){
+					return;
+				}
+				let bestScore = -Infinity;
+				let hintCol = -1;
+				for(let c = 0; c < COLUMN_NUMBER; c++) {
+					let r = getAvailableRow(c);
+					if(r !== -1){
+						grid[r][c] = 0;
+						let score = minimax(grid, DEPTH, true, -Infinity, Infinity);
+						grid[r][c] = -1;
+						if(score > bestScore){
+							bestScore = score;
+							hintCol = c;
+						}
+					}
+				}
+				if(hintCol !== -1){
+					let r = getAvailableRow(hintCol);
+					let originalColor = WHITE;
+					let count = 0;
+					let interval = setInterval(() => {
+						drawCircle(r, hintCol, count%2 === 0 ? "#AAFFAA" : WHITE);
+						if(++count > 5){
+							clearInterval(interval);
+							drawCircle(r, hintCol, WHITE);
+						}
+					}, 200);
 				}
 			}
 
