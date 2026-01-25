@@ -60,20 +60,20 @@
 				transform: scale(0.98);
 				background: #eee;
 			}
-			#btnShowFamilies{
+			#btnShowSolutions{
 				background-color: #fff;
 				border-color: #d4a017;
 				color: #856404;
 				width: 100%;
 			}
-			#familiesContainer{
+			#solutionsContainer{
 				width: 100%;
 				margin-top: 20px;
 				display: flex;
 				flex-direction: column;
 				gap: 15px;
 			}
-			.family-block{
+			.solutions-block{
 				background: white;
 				border: 1px solid #ccc;
 				border-radius: 8px;
@@ -113,9 +113,9 @@
 				<button type="button" onclick="smaller()">Size (-)</button>
 				<button type="button" id="queensNumber" onclick="changeTheMaxNumberOfTheQueens()">Queens: 0/64</button>
 			</div>
-			<button type="button" id="btnShowFamilies" onclick="toggleFamilies()" style="display:none;">Show solutions</button>
+			<button type="button" id="btnShowSolutions" onclick="toggleSolutions()" style="display:none;">Show solutions</button>
 		</form>
-		<div id="familiesContainer"></div>
+		<div id="solutionsContainer"></div>
 		<script>
 			let order = 8;
 			const getScreenSize = () => Math.min(window.innerWidth * 0.95, 600);
@@ -136,7 +136,7 @@
 			let maxNumberOfTheQueens = 64;
 			let grid = [];
 
-			const families = [
+			const solutions = [
 				["04752613","06471352","25317460","31625740","46152037","52460317","71306425","73025164"],
 				["05726314","06357142","24175360","36415027","41362750","53602417","71420635","72051463"],
 				["13572064","27360514","31750246","36271405","41506372","46027531","50417263","64205713"],
@@ -163,7 +163,7 @@
 
 			function drawChessboard(){
 				grid = Array.from({length: order}, () => Array.from({length: order}, () => ({occupied: false, underAttack: false})));
-				document.getElementById("btnShowFamilies").style.display = (order === 8) ? "block" : "none";
+				document.getElementById("btnShowSolutions").style.display = (order === 8) ? "block" : "none";
 				refresh();
 			}
 
@@ -255,17 +255,16 @@
 				}
 			}
 
-			function toggleFamilies(){
-				const container = document.getElementById("familiesContainer");
+			function toggleSolutions(){
+				const container = document.getElementById("solutionsContainer");
 				if(container.innerHTML !== ""){
 					container.innerHTML = "";
-					document.getElementById("btnShowFamilies").textContent = "Show solutions";
+					document.getElementById("btnShowSolutions").textContent = "Show solutions";
 					return;
 				}
-				families.forEach((fam, idx) => {
+				solutions.forEach((fam, idx) => {
 					let block = document.createElement("div");
-					block.className = "family-block";
-					//block.innerHTML = `<h3>Family ${idx+1} <small>(${fam.length} var.)</small></h3>`;
+					block.className = "solutions-block";
 					let gridDiv = document.createElement("div");
 					gridDiv.className = "solutions-grid";
 					fam.forEach(sol => {
@@ -279,7 +278,7 @@
 					container.appendChild(block);
 				});
 				container.scrollIntoView({behavior: "smooth"});
-				document.getElementById("btnShowFamilies").textContent = "Hide solutions";
+				document.getElementById("btnShowSolutions").textContent = "Hide solutions";
 			}
 
 			function drawMini(canvas, sol){
@@ -351,6 +350,7 @@
 			}
 
 			function bigger(){
+				document.getElementById("solutionsContainer").innerHTML = "";
 				order++;
 				if(limited){
 					maxNumberOfTheQueens = order;
@@ -363,6 +363,7 @@
 
 			function smaller(){
 				if(order > 1){
+					document.getElementById("solutionsContainer").innerHTML = "";
 					order--;
 					if(limited){
 						maxNumberOfTheQueens = order;
