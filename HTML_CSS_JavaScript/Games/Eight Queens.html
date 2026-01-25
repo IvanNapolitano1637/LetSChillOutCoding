@@ -3,305 +3,375 @@
 	<head>
 		<title>Eight Queens</title>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<style>
 			body{
 				margin: 0;
 				display: flex;
 				flex-direction: column;
 				align-items: center;
-				justify-content: center;
-				min-height: 100vh;
-				text-align: center;
+				padding: 10px;
 				font-family: sans-serif;
 				background-color: #ffffcc;
 				transition: background 0.4s ease;
+				overflow-x: hidden;
 			}
 			#chessboard{
 				display: block;
-				box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+				box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 				border-radius: 4px;
-				margin-bottom: 20px;
-				cursor: pointer;
-				-webkit-tap-highlight-color: transparent;
-				touch-action: manipulation;
+				margin-bottom: 15px;
+				background-color: #fff;
+				max-width: 95vw;
+				max-height: 95vw;
+				touch-action: none;
 			}
 			form{
-				background: rgba(255, 255, 255, 0.3);
-				padding: 20px;
+				background: rgba(255, 255, 255, 0.5);
+				padding: 15px;
 				border-radius: 10px;
 				display: flex;
 				flex-direction: column;
 				align-items: center;
-				gap: 15px;
+				gap: 10px;
+				width: 95%;
+				max-width: 500px;
+				box-sizing: border-box;
 			}
 			.button-group{
 				display: flex;
-				gap: 8px;
-				flex-wrap: wrap;
+				gap: 5px;
+				width: 100%;
 				justify-content: center;
 			}
 			button{
-				padding: 10px 18px;
-				font-size: 14px;
+				padding: 12px 5px;
+				font-size: 13px;
 				font-weight: bold;
 				cursor: pointer;
 				border: 1px solid #666;
-				border-radius: 5px;
+				border-radius: 8px;
 				background: #fff;
+				flex: 1;
+				min-width: 0;
 				transition: all 0.2s;
 			}
-			button:hover{
-				background: #eee;
-				transform: translateY(-2px);
-			}
 			button:active{
-				transform: translateY(0);
+				transform: scale(0.98);
+				background: #eee;
+			}
+			#btnShowFamilies{
+				background-color: #fff;
+				border-color: #d4a017;
+				color: #856404;
+				width: 100%;
+			}
+			#familiesContainer{
+				width: 100%;
+				margin-top: 20px;
+				display: flex;
+				flex-direction: column;
+				gap: 15px;
+			}
+			.family-block{
+				background: white;
+				border: 1px solid #ccc;
+				border-radius: 8px;
+				padding: 10px;
+				box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+			}
+			.solutions-grid{
+				display: flex;
+				flex-wrap: wrap;
+				gap: 8px;
+				justify-content: center;
+				margin-top: 10px;
+			}
+			.mini-board{
+				border: 1px solid #333;
+				width: 64px;
+				height: 64px;
+				cursor: pointer;
+			}
+			h3{
+				font-size: 1rem;
+				margin: 5px 0;
+				color: #444;
 			}
 		</style>
 	</head>
 	<body>
-		<canvas id="chessboard" onclick="select()" onkeypress="select()">
-			Upgrade Browser
-		</canvas>
-		<form action="#" onsubmit="return false;">
+		<canvas id="chessboard"></canvas>
+		<form onsubmit="return false;">
 			<div class="button-group">
-				<button type="button" id="semaphore" onclick="changeFlagValue()">Semaphore: On</button>
-				<button type="button" id="btnDifficulty" onclick="changeDifficulty()">Difficulty: Hard</button>
+				<button type="button" id="semaphore" onclick="changeFlagValue()">Semaphore on</button>
+				<button type="button" id="btnDifficulty" onclick="changeDifficulty()">Hard</button>
+				<button type="button" id="refreshBtn" onclick="refresh()">Reset</button>
+			</div>
+			<div class="button-group">
+				<button type="button" onclick="bigger()">Size (+)</button>
+				<button type="button" onclick="smaller()">Size (-)</button>
 				<button type="button" id="queensNumber" onclick="changeTheMaxNumberOfTheQueens()">Queens: 0/64</button>
 			</div>
-			<div class="button-group">
-				<button type="button" onclick="bigger()">Bigger(+)</button>
-				<button type="button" onclick="smaller()">Smaller(-)</button>
-			</div>
-			<button type="button" style="background-color: #f0f0f0;" onclick="refresh()">Start again!</button>
+			<button type="button" id="btnShowFamilies" onclick="toggleFamilies()" style="display:none;">Show solutions</button>
 		</form>
+		<div id="familiesContainer"></div>
 		<script>
-			//(04752613;05726314;06357142;06471352;13572064;14602753;14630752;15063724;15720364;16257403;16470352;17502463;20647135;24170635;24175360;24603175;24730615;25147063;25160374;25164073;25307461;25317460;25703641;25704613;25713064;26174035;26175304;27360514;30471625;30475261;31475026;31625704;31625740;31640752;31746025;31750246;35041726;35716024;35720641;36074152;36271405;36415027;36420571;37025164;37046152;37420615;40357162;40731625;40752613;41357206;41362750;41506372;41703625;42057136;42061753;42736051;46027531;46031752;46137025;46152037;46152073;46302751;47302516;47306152;50417263;51602473;51603742;52064713;52073164;52074136;52460317;52470316;52613704;52617403;52630714;53047162;53174602;53602417;53607142;57130642;60275314;61307425;61520374;62057413;62714053;63147025;63175024;64205713;71306425;71420635;72051463;73025164;).
-			//(04752613,06471352,25317460,31625740,46152037,52460317,71306425,73025164),(05726314,06357142,24175360,36415027,41362750,53602417,71420635,72051463),(13572064,27360514,31750246,36271405,41506372,46027531,50417263,64205713),(14602753,25160374,30471625,35720641,42057136,47306152,52617403,63175024),(14630752,25164073,25703641,37046152,40731625,52074136,52613704,63147025),(15063724,20647135,24603175,35041726,42736051,53174602,57130642,62714053),(15720364,26175304,31475026,37420615,40357162,46302751,51602473,62057413),(16257403,17502463,30475261,36420571,41357206,47302516,60275314,61520374),(16470352,25307461,31625704,37025164,40752613,46152073,52470316,61307425),(24170635,35716024,42061753,53607142),(24730615,25713064,26174035,31746025,46031752,51603742,52064713,53047162),(25147063,25704613,31640752,36074152,41703625,46137025,52073164,52630714).
-			window.onload = drawChessboard;
-			const BOARD_SIZE =(/Mobi|Android|webOS|iPhone|iPad|iPod|BLACKBerry|IEMobile|Opera Mini/i).test(navigator.userAgent) ? 320 : 640; 
+			let order = 8;
+			const getScreenSize = () => Math.min(window.innerWidth * 0.95, 600);
+			let side = getScreenSize()/order;
 			const COLOR_1 = "yellow";
 			const COLOR_2 = "brown";
 			const SELECTED = "red";
 			const QUEEN_CENTER_COLOR = "#000000";
-			let order = 8;
-			let side = BOARD_SIZE / order;
-			let semaphoreFlag = true;
-			const RED_SEMAPHORE_COLOR = "red";
 			const BACKGROUND_COLOR = "#ffffcc";
-			//const BACKGROUND_COLOR = "#ffcccc";
 			const BACKGROUND_WIN_COLOR = "#00ff00";
-			let cursorX = 0;
-			let cursorY = 0;
-			let numberOfQueens = 0;
-			let grid = [];
+			const RED_SEMAPHORE_COLOR = "red";
+			const BACKGROUND_STUDY_COLOR = "#add8e6";
+			let semaphoreFlag = true;
 			let easy = false;
 			let hasWon = false;
 			let limited = false;
-			let maxNumberOfTheQueens = limited ? order : order*order;
+			let numberOfQueens = 0;
+			let maxNumberOfTheQueens = 64;
+			let grid = [];
 
-			function setMaxNumberOfTheQueens(){
-				maxNumberOfTheQueens = limited ? order : order*order;
-			}
+			const families = [
+				["04752613","06471352","25317460","31625740","46152037","52460317","71306425","73025164"],
+				["05726314","06357142","24175360","36415027","41362750","53602417","71420635","72051463"],
+				["13572064","27360514","31750246","36271405","41506372","46027531","50417263","64205713"],
+				["14602753","25160374","30471625","35720641","42057136","47306152","52617403","63175024"],
+				["14630752","25164073","25703641","37046152","40731625","52074136","52613704","63147025"],
+				["15063724","20647135","24603175","35041726","42736051","53174602","57130642","62714053"],
+				["15720364","26175304","31475026","37420615","40357162","46302751","51602473","62057413"],
+				["16257403","17502463","30475261","36420571","41357206","47302516","60275314","61520374"],
+				["16470352","25307461","31625704","37025164","40752613","46152073","52470316","61307425"],
+				["24170635","35716024","42061753","53607142"],
+				["24730615","25713064","26174035","31746025","46031752","51603742","52064713","53047162"],
+				["25147063","25704613","31640752","36074152","41703625","46137025","52073164","52630714"]
+			];
 
-			function setQueensLimitButtonLabel(){
-				document.getElementById("queensNumber").textContent =(("Queen" +((order !== 1) ? "s" : "")) + ": " + numberOfQueens + "/" + maxNumberOfTheQueens);
-			}
+			window.onload = init;
+			window.onresize = () => { side = getScreenSize()/order; drawAll(); };
 
-			function drawSquare(row, column){
-				let chessboard = document.getElementById("chessboard");
-				if(chessboard && chessboard.getContext("2d")){
-					let context = chessboard.getContext("2d");
-					context.fillStyle =((row + column)%2 === 0 ? COLOR_1 : COLOR_2);
-					context.fillRect(side*row, side*column, side, side);
-					context.fillRect(Math.floor(side*row), Math.floor(side*column), Math.ceil(side), Math.ceil(side));
-				}
-			}
-
-			function drawCircle(row, column, radius, color){
-				let chessboard = document.getElementById("chessboard");
-				if(chessboard && chessboard.getContext("2d")){
-					let context = chessboard.getContext("2d");
-					context.fillStyle = color;
-					context.beginPath();
-					context.arc(row*side + side/2, column*side + side/2, radius, 0, 2*Math.PI, false);
-					context.fill();
-				}
-			}
-
-			function drawQueen(row, column){
-				drawCircle(row, column, side/3, SELECTED);
-				drawCircle(row, column, side/6, QUEEN_CENTER_COLOR);
-			}
-
-			function drawUnderAttackCell(row, column){
-				drawCircle(row, column, side/8, QUEEN_CENTER_COLOR);
-			}
-
-			function drawCell(row, column){
-				drawSquare(row, column);
-				if(grid[row][column].occupied){
-					drawQueen(row, column);
-				}else{
-					drawSquare(row, column);
-					drawCircle(row, column, side*5/12,((row + column)%2 === 0 ? COLOR_1 : COLOR_2));
-					if(easy && grid[row][column].underAttack){
-						drawUnderAttackCell(row, column);
-					}
-				}
-			}
-
-			function drawAllCells(){
-				for(let i = 0; i < order; i++){
-					for(let j = 0; j < order; j++){
-						drawCell(i, j);
-					}
-				}
+			function init() {
+				const canvas = document.getElementById("chessboard");
+				canvas.addEventListener('mousedown', handleInput);
+				canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleInput(e.touches[0]); });
+				drawChessboard();
 			}
 
 			function drawChessboard(){
-				document.body.style.background = BACKGROUND_COLOR;
-				for(let i = 0; i < order; i++){
-					grid[i] = [];
-					for(let j = 0; j < order; j++){
-						grid[i][j] ={occupied: false, underAttack: false };
-					}
-				}
-				let chessboard = document.getElementById("chessboard");
-				chessboard.width = getWidth();
-				chessboard.height = getHeight();
-				chessboard.onmousemove = function(e){
-					const rect = chessboard.getBoundingClientRect();
-					cursorX = e.clientX - rect.left;
-					cursorY = e.clientY - rect.top;
-				};
-				for(let row = 0; row < order; row++){
-					for(let column = 0; column < order; column++){
-						drawSquare(row, column);
-					}
-				}
-				setQueensLimitButtonLabel();
+				grid = Array.from({length: order}, () => Array.from({length: order}, () => ({occupied: false, underAttack: false})));
+				document.getElementById("btnShowFamilies").style.display = (order === 8) ? "block" : "none";
+				refresh();
 			}
 
-			function select(){
-				let row = Math.floor(cursorX/side);
-				let column = Math.floor(cursorY/side);
+			function handleInput(e) {
+				const rect = document.getElementById("chessboard").getBoundingClientRect();
+				const x = e.clientX - rect.left;
+				const y = e.clientY - rect.top;
+				select(x, y);
+			}
 
-				if(row < 0 || row >= order || column < 0 || column >= order){
+			function select(x, y){
+				let r = Math.floor(x/side), c = Math.floor(y/side);
+				if(r<0 || r>=order || c<0 || c>=order || hasWon){
 					return;
 				}
+				if(numberOfQueens < maxNumberOfTheQueens || grid[r][c].occupied){
+					numberOfQueens += grid[r][c].occupied ? -1 : 1;
+					grid[r][c].occupied = !grid[r][c].occupied;
+					updateAttack();
+					drawAll();
+					checkWin();
+					setQueensLimitButtonLabel();
+				}
+			}
 
-				if(!hasWon){
-					if((numberOfQueens < maxNumberOfTheQueens) ||((numberOfQueens === maxNumberOfTheQueens) &&(grid[row][column].occupied))){
-						numberOfQueens +=((grid[row][column].occupied) ?(-1) : 1);
-						grid[row][column].occupied = !grid[row][column].occupied;
-						setUnderAttackValues();
-						drawAllCells();
-						document.body.style.background =((!checkQueensPositions() && semaphoreFlag) ? RED_SEMAPHORE_COLOR : BACKGROUND_COLOR);
-						if((numberOfQueens === order) && checkQueensPositions()){
-							document.body.style.background = BACKGROUND_WIN_COLOR;
-							hasWon = true;
-							setTimeout(function(){alert("You win! :-D"); }, 100);
-						}
-						setQueensLimitButtonLabel();
+			function drawAll(){
+				const canvas = document.getElementById("chessboard");
+				canvas.width = canvas.height = side*order;
+				for(let i = 0; i < order; i++){
+					for(let j = 0; j < order; j++){
+						drawCell(i,j);
 					}
 				}
 			}
 
-			function refresh(){
+			function drawCell(row, col){
+				let ctx = document.getElementById("chessboard").getContext("2d");
+				ctx.fillStyle = (row + col)%2 === 0 ? COLOR_1 : COLOR_2;
+				ctx.fillRect(row*side, col*side, side, side);
+				if(grid[row][col].occupied){
+					drawCircle(ctx, row*side + side/2, col*side + side/2, side/3, SELECTED);
+					drawCircle(ctx, row*side + side/2, col*side + side/2, side/6, QUEEN_CENTER_COLOR);
+				}else if(easy && grid[row][col].underAttack){
+					drawCircle(ctx, row*side + side/2, col*side + side/2, side/8, QUEEN_CENTER_COLOR);
+				}
+			}
+
+			function drawCircle(ctx, x, y, r, color){
+				ctx.fillStyle = color;
+				ctx.beginPath();
+				ctx.arc(x, y, r, 0, Math.PI*2);
+				ctx.fill();
+			}
+
+			function updateAttack(){
+				for(let i = 0; i < order; i++){
+					for(let j = 0; j < order; j++){
+						grid[i][j].underAttack = false;
+					}
+				}
+				for(let r = 0; r < order; r++){
+					for(let c = 0; c < order; c++){
+						if(grid[r][c].occupied){
+							for(let i = 0; i < order; i++){
+								for(let j = 0; j < order; j++){
+									if((r !== i || c !== j) && (r === i || c === j || Math.abs(r-i) === Math.abs(c-j))){
+										grid[i][j].underAttack = true;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			function checkWin(){
+				let safe = true;
+				for(let i = 0; i < order; i++){
+					for(let j = 0; j < order; j++){
+						if(grid[i][j].occupied && grid[i][j].underAttack){
+							safe = false;
+						}
+					}
+				}
+				document.body.style.background = (!safe && semaphoreFlag) ? RED_SEMAPHORE_COLOR : BACKGROUND_COLOR;
+				if(safe && numberOfQueens === order){
+					document.body.style.background = BACKGROUND_WIN_COLOR;
+					hasWon = true; setTimeout(() => alert("You win!"), 100);
+				}
+			}
+
+			function toggleFamilies(){
+				const container = document.getElementById("familiesContainer");
+				if(container.innerHTML !== ""){
+					container.innerHTML = "";
+					document.getElementById("btnShowFamilies").textContent = "Show solutions";
+					return;
+				}
+				families.forEach((fam, idx) => {
+					let block = document.createElement("div");
+					block.className = "family-block";
+					//block.innerHTML = `<h3>Family ${idx+1} <small>(${fam.length} var.)</small></h3>`;
+					let gridDiv = document.createElement("div");
+					gridDiv.className = "solutions-grid";
+					fam.forEach(sol => {
+						let mini = document.createElement("canvas");
+						mini.className = "mini-board"; mini.width = mini.height = 64;
+						drawMini(mini, sol);
+						mini.onclick = () => { loadSolution(sol); window.scrollTo({top: 0, behavior: 'smooth'}); };
+						gridDiv.appendChild(mini);
+					});
+					block.appendChild(gridDiv);
+					container.appendChild(block);
+				});
+				container.scrollIntoView({behavior: "smooth"});
+				document.getElementById("btnShowFamilies").textContent = "Hide solutions";
+			}
+
+			function drawMini(canvas, sol){
+				let ctx = canvas.getContext("2d"), s = 8;
+				for(let i = 0; i < 8; i++){
+					for(let j = 0; j < 8; j++){
+						ctx.fillStyle = (i + j)%2 === 0 ? "#eee" : "#999";
+						ctx.fillRect(i*s, j*s, s, s);
+					}
+				}
+				ctx.fillStyle = "red";
+				for(let col = 0; col < 8; col++){
+					ctx.beginPath();
+					ctx.arc(col*s + 4, parseInt(sol[col])*s + 4, 2.5, 0, 7);
+					ctx.fill();
+				}
+			}
+
+			function loadSolution(sol) {
+				refresh();
+				for (let col = 0; col < 8; col++) {
+					grid[col][parseInt(sol[col])].occupied = true;
+				}
+				numberOfQueens = 8;
+				updateAttack();
+				drawAll();
+				setQueensLimitButtonLabel();
+				document.body.style.background = "#add8e6"; 
+				hasWon = false;
+			}
+
+			function refresh() {
 				hasWon = false;
 				numberOfQueens = 0;
-				drawChessboard();
+				document.body.style.background = BACKGROUND_COLOR;
+				maxNumberOfTheQueens = limited ? order : order*order;
 				for(let i = 0; i < order; i++){
 					for(let j = 0; j < order; j++){
 						grid[i][j].occupied = false;
 						grid[i][j].underAttack = false;
 					}
 				}
-				drawChessboard();
-				document.body.style.background = BACKGROUND_COLOR;
+				drawAll();
+				setQueensLimitButtonLabel();
 			}
 
-			function setUnderAttackValues(){
-				let firstRow, firstColumn, latterRow, latterColumn, deltaBishopRow, deltaBishopColumn;
-				for(let i = 0; i < order*order; i++){
-					grid[Math.floor(i/order)][i%order].underAttack = false;
-				}
-				for(let i = 0; i < order*order; i++){
-					firstRow = Math.floor(i/order);
-					firstColumn = i%order;
-					if(!(grid[firstRow][firstColumn].occupied)) continue;
-					for(let j = 0; j < order*order; j++){
-						if(i === j){
-						continue;
-						}
-						latterRow = Math.floor(j/order);
-						latterColumn = j%order;
-						deltaBishopRow = Math.abs(firstRow - latterRow);
-						deltaBishopColumn = Math.abs(firstColumn - latterColumn);
-						if(firstRow === latterRow || firstColumn === latterColumn || deltaBishopRow === deltaBishopColumn){
-							grid[latterRow][latterColumn].underAttack = true;
-						}
-					}
-				}
-			}
-
-			function checkQueensPositions(){
-				for(let i = 0; i < order; i++){
-					for(let j = 0; j < order; j++){
-						if(grid[i][j].occupied && grid[i][j].underAttack){
-							return false;
-						}
-					}
-				}
-				return true;
-			}
-
-			function getWidth(){
-				return side*order;
-			}
-
-			function getHeight(){
-				return getWidth();
+			function setQueensLimitButtonLabel(){
+				document.getElementById("queensNumber").textContent = `Queens: ${numberOfQueens}/${maxNumberOfTheQueens}`;
 			}
 
 			function changeDifficulty(){
 				easy = !easy;
-				document.getElementById("btnDifficulty").textContent = "Difficulty: " +(easy ? "Easy" : "Hard");
-				drawAllCells();
+				document.getElementById("btnDifficulty").textContent = (easy ? "Easy" : "Hard");
+				drawAll();
 			}
 
 			function changeFlagValue(){
 				semaphoreFlag = !semaphoreFlag;
-				document.getElementById("semaphore").textContent = "Semaphore: " +(semaphoreFlag ? "On" : "Off");
-				document.body.style.background =(!semaphoreFlag) ? BACKGROUND_COLOR :(checkQueensPositions() ? BACKGROUND_COLOR : RED_SEMAPHORE_COLOR);
-				drawAllCells();
+				document.getElementById("semaphore").textContent = (semaphoreFlag ? "Semaphore on" : "No semaphore");
+				checkWin();
 			}
 
 			function changeTheMaxNumberOfTheQueens(){
 				if(numberOfQueens <= order){
 					limited = !limited;
-					setMaxNumberOfTheQueens();
+					maxNumberOfTheQueens = limited ? order : order*order;
 					setQueensLimitButtonLabel();
 				}
 			}
 
 			function bigger(){
 				order++;
-				side = BOARD_SIZE/order;
-				setMaxNumberOfTheQueens();
-				refresh();
+				if(limited){
+					maxNumberOfTheQueens = order;
+				}else{
+					maxNumberOfTheQueens = order*order;
+				}
+				side = getScreenSize()/order;
+				drawChessboard();
 			}
 
 			function smaller(){
 				if(order > 1){
 					order--;
-					side = BOARD_SIZE/order;
-					setMaxNumberOfTheQueens();
+					if(limited){
+						maxNumberOfTheQueens = order;
+					}else{
+						maxNumberOfTheQueens = order*order;
+					}
+					side = getScreenSize()/order;
+					drawChessboard();
 				}
-				refresh();
 			}
 		</script>
 	</body>
