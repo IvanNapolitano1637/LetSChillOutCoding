@@ -45,7 +45,6 @@
 		<canvas id="board">Upgrade Browser</canvas>
 		<div class="controls">
 			<div>
-				<button type="button" id="hintButton" onclick="giveHint()">Hint</button>
 				<button type="button" id="undoButton" onclick="undoLastMove()">Undo</button>
 				<button type="button" id="difficultyButton" onclick="cycleDifficulty()">Medium</button>
 			</div>
@@ -87,7 +86,7 @@
 			const EASY_LABELS = ["Easy", "Facile", "Facile", "Fácil", "Einfach", "Fácil", "Ușor", "Легко", "Εύκολο", "Facilis", "简单", "簡単"];
 			const MEDIUM_LABELS = ["Medium", "Medio", "Moyen", "Medio", "Mittel", "Médio", "Mediu", "Середній", "Μέτριο", "Medium", "中等", "中級"];
 			const HARD_LABELS = ["Hard", "Difficile", "Difficile", "Difícil", "Schwer", "Difícil", "Greu", "Важко", "Δύσκολο", "Difficilis", "困难", "上級"];
-			const HINT_LABELS = ["Hint", "Suggerimento", "Conseil", "Sugerencia", "Hinweis", "Sugestão", "Sugestie", "Підказка", "Υπόδειξη", "Consilium", "提示", "ヒント"];
+			//const HINT_LABELS = ["Hint", "Suggerimento", "Conseil", "Sugerencia", "Hinweis", "Sugestão", "Sugestie", "Підказка", "Υπόδειξη", "Consilium", "提示", "ヒント"];
 			let difficultyIndex = 1;
 			let grid = [];
 			let moves = [];
@@ -394,7 +393,6 @@
 				document.getElementById("starterText").textContent = BEGINNING_LABELS[languageIndex];
 				document.getElementById("YellowLabel").textContent = YELLOW_LABEL[languageIndex];
 				document.getElementById("RedLabel").textContent = RED_LABEL[languageIndex];
-				document.getElementById("hintButton").textContent = HINT_LABELS[languageIndex];
 				const diffTexts = [EASY_LABELS, MEDIUM_LABELS, HARD_LABELS];
 				document.getElementById("difficultyButton").textContent = diffTexts[difficultyIndex][languageIndex];
 			}
@@ -412,38 +410,6 @@
 				}
 				if(numberOfMoves === 0){
 					document.getElementById('starter').style.visibility = "visible";
-				}
-			}
-
-			function giveHint() {
-				if(!goOn || !moveYellow){
-					return;
-				}
-				let bestScore = -Infinity;
-				let hintCol = -1;
-				for(let c = 0; c < COLUMN_NUMBER; c++) {
-					let r = getAvailableRow(c);
-					if(r !== -1){
-						grid[r][c] = 0;
-						let score = minimax(grid, DEPTH, true, -Infinity, Infinity);
-						grid[r][c] = -1;
-						if(score > bestScore){
-							bestScore = score;
-							hintCol = c;
-						}
-					}
-				}
-				if(hintCol !== -1){
-					let r = getAvailableRow(hintCol);
-					let originalColor = WHITE;
-					let count = 0;
-					let interval = setInterval(() => {
-						drawCircle(r, hintCol, count%2 === 0 ? "#AAFFAA" : WHITE);
-						if(++count > 5){
-							clearInterval(interval);
-							drawCircle(r, hintCol, WHITE);
-						}
-					}, 200);
 				}
 			}
 
