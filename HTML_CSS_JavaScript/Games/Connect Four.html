@@ -32,26 +32,38 @@
 			button:hover, select:hover{
 				background-color: #ddd;
 			}
+			.controls{
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				align-items: center;
+				max-width: 800px;
+				margin: 10px auto;
+			}
+			.controls button{
+				flex: 0 1 140px;
+				margin: 5px;
+				height: 45px;
+			}
 			#starter{
-				margin-top: 10px;
-				padding: 10px;
-				background: rgba(255,255,255,0.4);
+				flex-basis: 100%; 
+				margin-top: 15px;
 				display: inline-block;
-				border-radius: 10px;
+			}
+			@media (max-width: 600px){
+				.controls button {
+					flex: 0 1 45%;
+				}
 			}
 		</style>
 	</head>
 	<body>
 		<canvas id="board">Upgrade Browser</canvas>
 		<div class="controls">
-			<div>
-				<button type="button" id="undoButton" onclick="undoLastMove()">Undo</button>
-				<button type="button" id="difficultyButton" onclick="cycleDifficulty()">Medium</button>
-			</div>
-			<div>
-				<button type="button" id="restartButton" onclick="refresh()">Start again!</button>
-				<button type="button" id="changeLanguageButton" onclick="cycleLanguage()">Language</button>
-			</div>
+			<button type="button" id="undoButton" onclick="undoLastMove()">Undo</button>
+			<button type="button" id="difficultyButton" onclick="cycleDifficulty()">Medium</button>
+			<button type="button" id="restartButton" onclick="refresh()">Start again!</button>
+			<button type="button" id="changeLanguageButton" onclick="cycleLanguage()">Language</button>
 			<div id="starter">
 				<label id="starterText">Starter: </label>
 				<input type="radio" id="Yellow" name="beginner" checked onclick="setStarter(true)">
@@ -76,7 +88,7 @@
 			const LIGHT_ORANGE_COLOR = "#FFCC33";
 			const WHITE = "#FFFFFF";
 			const TITLES = ["Connect four", "Forza 4", "Connecter Quatre", "Conecta 4", "Vier Gewinnt", "Conecta 4", "Conecta patru", "Чотири в ряд", "Συνδέστε τέσσερα", "Conecta quattuor", "四子连珠", "四目並べ"];
-			const RESTART_LABELS = ["Start again!", "Ricomincia", "Recommencer", "¡Empezar de nuovo!", "Erneut starten!", "Recomeçar", "Începe din nou", "Почати заново", "Ξεκινήστε ξανά", "Iterum incipere", "重新开始", "再スタート"];
+			const RESTART_LABELS = ["Start again!", "Ricomincia", "Recommencer", "¡Reiniciar!", "Erneut starten!", "Recomeçar", "Începe din nou", "Почати заново", "Ξεκινήστε ξανά", "Iterum incipere", "重新开始", "再スタート"];
 			const LANGUAGES_LABELS = ["English", "Italiano", "Française", "Español", "Deutsch", "Português", "Română", "Українська", "Ελληνικά", "Latine", "中文", "日本語"];
 			const UNDO_LABELS = ["Undo", "Annulla", "Annuler", "Anula", "Abbrechen", "Desfazer", "Anulează", "Скасувати", "Αναίρεση", "Annula", "撤销", "元に戻す"];
 			const BEGINNING_LABELS = ["Starter: ", "Inizia: ", "Commencer: ", "Comenzar: ", "Anfang: ", "Começar: ", "Începe :", "Почати: ", "Αρχή: ", "Incipit: ", "开始: ", "開始: "];
