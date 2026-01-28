@@ -378,9 +378,11 @@
 				const select = document.getElementById("langSelect");
 				Object.keys(TRANSLATIONS).forEach(lang => {
 					let opt = document.createElement("option");
-					opt.value = lang; opt.textContent = lang;
+					opt.value = lang;
+					opt.textContent = lang;
 					select.appendChild(opt);
 				});
+				select.value = "English";
 				changeLanguage("English");
 			}
 
