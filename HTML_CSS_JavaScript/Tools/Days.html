@@ -396,15 +396,11 @@
 				document.querySelectorAll("[data-key-ph]").forEach(el => {
 					el.placeholder = t[el.getAttribute("data-key-ph")];
 				});
-				if(document.getElementById("firstDate").value){
-					getDayOfTheWeek(false);
-				}
+				getDayOfTheWeek(false);
 				if(document.getElementById("todayDate").value){
 					getFullTodayDate();
 				}
-				if(document.getElementById("secondDate").value && document.getElementById("thirdDate").value){
-					getDaysOfDifference(false);
-				}
+				getDaysOfDifference(false);
 			}
 
 			function clearFields(){
@@ -491,8 +487,13 @@
 
 			function getDayOfTheWeek(doBlink){
 				const inputField = document.getElementById("dayOfTheWeek");
-				const total = getTotalDays(document.getElementById("firstDate").value);
+				const dateValue = document.getElementById("firstDate").value;
 				const t = TRANSLATIONS[currentLang];
+				if (!dateValue) {
+					inputField.value = "";
+					return;
+				}
+				const total = getTotalDays(dateValue);
 				const newValue = (total < 0) ? t.wrong : t.days[(total + PATCH)%7];
 				const previousValue = inputField.value;
 				inputField.value = newValue;
@@ -512,13 +513,22 @@
 
 			function getDaysOfDifference(doBlink){
 				const inputField = document.getElementById("daysOfDifference");
-				const days1 = getTotalDays(document.getElementById("secondDate").value);
-				const days2 = getTotalDays(document.getElementById("thirdDate").value);
-				const newValue = (days1 >= 0 && days2 >= 0) ? Math.abs(days1 - days2) : TRANSLATIONS[currentLang].error;
+				const val1 = document.getElementById("secondDate").value;
+				const val2 = document.getElementById("thirdDate").value;
+				const t = TRANSLATIONS[currentLang];
+				if(!val1 || !val2){
+					inputField.value = "";
+					return;
+				}
+				const days1 = getTotalDays(val1);
+				const days2 = getTotalDays(val2);
+				const newValue = (days1 >= 0 && days2 >= 0) ? Math.abs(days1 - days2) : t.error;
 				const previousValue = inputField.value;
 				inputField.value = newValue;
 				if(doBlink && newValue.toString() === previousValue.toString() && days1 >= 0 && days2 >= 0){
-					inputField.classList.remove("blink"); void inputField.offsetWidth; inputField.classList.add("blink");
+					inputField.classList.remove("blink"); 
+					void inputField.offsetWidth; 
+					inputField.classList.add("blink");
 				}
 			}
 
