@@ -89,7 +89,7 @@
 				</div>
 			`;
 
-			let clockSetting =(function(){
+			let clockSetting = (function(){
 				let executed = false;
 
 				return function(){
@@ -129,7 +129,7 @@
 								MINUTES_C[i] = document.createElementNS(svgns, "circle");
 								SECONDS_C[i] = document.createElementNS(svgns, "circle");
 								[MONTH_C[i], DAY_C[i], HOURS_C[i], MINUTES_C[i], SECONDS_C[i]].forEach(c => c.setAttribute("r", RADIUS));
-								const cx =(i*2 + 1)*RADIUS +(i + 3)*HORIZONTAL_SPACE;
+								const cx = (i*2 + 1)*RADIUS +(i + 3)*HORIZONTAL_SPACE;
 
 								MONTH_C[i].setAttribute("cx", cx);
 								DAY_C[i].setAttribute("cx", cx);
@@ -163,7 +163,7 @@
 								LAST_ARRAY_BD_C[i].setAttribute("r", RADIUS/5);
 								LAST_ARRAY_BD_C[i].setAttribute("cx",((i*2 + 1)*(RADIUS/5)) +(1*HORIZONTAL_SPACE) + i +(DESKTOP ? i : UNIT));
 								LAST_ARRAY_BD_C[i].setAttribute("cy", 2*YEAR_RADIUS + 12*RADIUS + 10*VERTICAL_SPACE);
-								LAST_ARRAY_BD_C[i].style.fill =(LAST_ARRAY_BD[i] === 0) ? ZERO_COLOR : ONE_COLOR;
+								LAST_ARRAY_BD_C[i].style.fill = (LAST_ARRAY_BD[i] === 0) ? ZERO_COLOR : ONE_COLOR;
 								svg.appendChild(LAST_ARRAY_BD_C[i]);
 							}
 						}
@@ -228,20 +228,20 @@
 				new_bottom_panel.style.fill = "#00FF00";
 
 				for(let i = 0; i < 12; i++){
-					YEAR_C[i].style.fill =(sYear.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
+					YEAR_C[i].style.fill = (sYear.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
 					YEAR_C[i].style.transition = "2s";
 
 					if(i < 6){
-						MONTH_C[i].style.fill =(sMonth.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
-						DAY_C[i].style.fill =(sDay.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
-						HOURS_C[i].style.fill =(sHours.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
-						MINUTES_C[i].style.fill =(sMinutes.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
-						SECONDS_C[i].style.fill =(sSeconds.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
+						MONTH_C[i].style.fill = (sMonth.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
+						DAY_C[i].style.fill = (sDay.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
+						HOURS_C[i].style.fill = (sHours.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
+						MINUTES_C[i].style.fill = (sMinutes.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
+						SECONDS_C[i].style.fill = (sSeconds.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
 					}
 				}
 
 				for(let i = 0; i < 32; i++){
-					TS_C[i].style.fill =(sTimestamp.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
+					TS_C[i].style.fill = (sTimestamp.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
 					TS_C[i].style.transition = "1s";
 				}
 			}
