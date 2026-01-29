@@ -68,14 +68,31 @@
 			const HORIZONTAL_SPACE = 2*UNIT;
 			const VERTICAL_SPACE = 2*UNIT;
 			const YEAR_RADIUS = 3*UNIT;
-			const RADIUS = 2*YEAR_RADIUS +(HORIZONTAL_SPACE/2);
+			const RADIUS = 2*YEAR_RADIUS + (HORIZONTAL_SPACE/2);
 			const ZERO_COLOR = 'blue';
 			const ONE_COLOR = 'red';
 			const SEPARATOR_COLOR = 'yellow';
 			const PANEL_BACKGROUND_COLOR = 'black';
-			let panel, inner_panel, top_panel, bottom_panel, new_bottom_panel;
-			const YEAR_C = [], MONTH_C = [], DAY_C = [], HOURS_C = [], MINUTES_C = [], SECONDS_C = [], TS_C = [], LAST_ARRAY_BD_C = [];
-			const YEAR_BD = [], MONTH_BD = [], DAY_BD = [], HOURS_BD = [], MINUTES_BD = [], SECONDS_BD = [], TS_BD = [];
+			let panel;
+			let inner_panel;
+			let top_panel;
+			let bottom_panel;
+			let new_bottom_panel;
+			const YEAR_C = [];
+			const MONTH_C = [];
+			const DAY_C = [];
+			const HOURS_C = [];
+			const MINUTES_C = [];
+			const SECONDS_C = [];
+			const TS_C = [];
+			const LAST_ARRAY_BD_C = [];
+			const YEAR_BD = [];
+			const MONTH_BD = [];
+			const DAY_BD = [];
+			const HOURS_BD = [];
+			const MINUTES_BD = [];
+			const SECONDS_BD = [];
+			const TS_BD = [];
 			const LAST_ARRAY_BD = [1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0];
 			const container = document.getElementById('clock-container');
 			container.innerHTML = `
@@ -100,7 +117,7 @@
 						const svgWidth = 12*RADIUS + 11*HORIZONTAL_SPACE;
 						svg.setAttribute("width", svgWidth);
 						document.querySelector('.controls').style.width = svgWidth + "px";
-						svg.setAttribute("height",(10 +(FLAG ? 1 : 0))*RADIUS + 2*YEAR_RADIUS + 15*VERTICAL_SPACE);
+						svg.setAttribute("height",(10 + (FLAG ? 1 : 0))*RADIUS + 2*YEAR_RADIUS + 15*VERTICAL_SPACE);
 						panel = document.createElementNS(svgns, "rect");
 						inner_panel = document.createElementNS(svgns, "rect");
 						top_panel = document.createElementNS(svgns, "rect");
@@ -118,7 +135,7 @@
 						for(let i = 0; i < 12; i++){
 							YEAR_C[i] = document.createElementNS(svgns, "circle");
 							YEAR_C[i].setAttribute("r", YEAR_RADIUS);
-							YEAR_C[i].setAttribute("cx",(i*2 + 1)*YEAR_RADIUS +(i + 3)*HORIZONTAL_SPACE);
+							YEAR_C[i].setAttribute("cx",(i*2 + 1)*YEAR_RADIUS + (i + 3)*HORIZONTAL_SPACE);
 							YEAR_C[i].setAttribute("cy", YEAR_RADIUS + 3*VERTICAL_SPACE);
 							svg.appendChild(YEAR_C[i]);
 
@@ -129,7 +146,7 @@
 								MINUTES_C[i] = document.createElementNS(svgns, "circle");
 								SECONDS_C[i] = document.createElementNS(svgns, "circle");
 								[MONTH_C[i], DAY_C[i], HOURS_C[i], MINUTES_C[i], SECONDS_C[i]].forEach(c => c.setAttribute("r", RADIUS));
-								const cx = (i*2 + 1)*RADIUS +(i + 3)*HORIZONTAL_SPACE;
+								const cx = (i*2 + 1)*RADIUS + (i + 3)*HORIZONTAL_SPACE;
 
 								MONTH_C[i].setAttribute("cx", cx);
 								DAY_C[i].setAttribute("cx", cx);
@@ -154,14 +171,14 @@
 						for(let i = 0; i < 32; i++){
 							TS_C[i] = document.createElementNS(svgns, "circle");
 							TS_C[i].setAttribute("r", RADIUS/5);
-							TS_C[i].setAttribute("cx",((i*2 + 1)*(RADIUS/5)) +(1*HORIZONTAL_SPACE) + i +(DESKTOP ? i : UNIT));
+							TS_C[i].setAttribute("cx",((i*2 + 1)*(RADIUS/5)) + (1*HORIZONTAL_SPACE) + i + (DESKTOP ? i : UNIT));
 							TS_C[i].setAttribute("cy", 2*YEAR_RADIUS + 11*RADIUS + 10*VERTICAL_SPACE);
 							svg.appendChild(TS_C[i]);
 
 							if(FLAG){
 								LAST_ARRAY_BD_C[i] = document.createElementNS(svgns, "circle");
 								LAST_ARRAY_BD_C[i].setAttribute("r", RADIUS/5);
-								LAST_ARRAY_BD_C[i].setAttribute("cx",((i*2 + 1)*(RADIUS/5)) +(1*HORIZONTAL_SPACE) + i +(DESKTOP ? i : UNIT));
+								LAST_ARRAY_BD_C[i].setAttribute("cx",((i*2 + 1)*(RADIUS/5)) + (1*HORIZONTAL_SPACE) + i + (DESKTOP ? i : UNIT));
 								LAST_ARRAY_BD_C[i].setAttribute("cy", 2*YEAR_RADIUS + 12*RADIUS + 10*VERTICAL_SPACE);
 								LAST_ARRAY_BD_C[i].style.fill = (LAST_ARRAY_BD[i] === 0) ? ZERO_COLOR : ONE_COLOR;
 								svg.appendChild(LAST_ARRAY_BD_C[i]);
@@ -174,7 +191,7 @@
 						bottom_panel.setAttribute("width", 12*RADIUS + 7*HORIZONTAL_SPACE);
 						new_bottom_panel.setAttribute("width", 12*RADIUS + 11*HORIZONTAL_SPACE);
 
-						panel.setAttribute("height",(10 +(FLAG ? 1 : 0))*RADIUS + 2*YEAR_RADIUS + 16*VERTICAL_SPACE);
+						panel.setAttribute("height",(10 + (FLAG ? 1 : 0))*RADIUS + 2*YEAR_RADIUS + 16*VERTICAL_SPACE);
 						inner_panel.setAttribute("height", 10*RADIUS + 2*YEAR_RADIUS + 11*VERTICAL_SPACE);
 						top_panel.setAttribute("height", 4*RADIUS + 2*YEAR_RADIUS + 4*VERTICAL_SPACE);
 						bottom_panel.setAttribute("height", 6*RADIUS + 4*VERTICAL_SPACE);
