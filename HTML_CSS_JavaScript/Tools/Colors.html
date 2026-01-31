@@ -1,1183 +1,439 @@
 <!DOCTYPE html>
-<html lang="en"><!--T05#017 - Giada - Colors-->
+<html lang="en"><!--T01#005 - Irene - Colors-->
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Colors</title>
+		<title>Colors and their codes</title>
 		<style>
-			body, html{
+			body{
 				margin: 0;
-				padding: 0;
+				min-height: 100vh;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				transition: background-color 0.1s;
 				font-family: sans-serif;
 			}
-			#selector-screen{
+			#optionZone{
+				background-color: rgba(255, 255, 255, 0.85);
+				text-align: center;
+				padding: 25px;
+				border-radius: 20px;
+				box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+				backdrop-filter: blur(5px);
+				width: 600px;
+				max-width: 95%;
+				max-height: 95vh;
+				overflow-y: auto;
+			}
+			#sliders{
+				display: block;
+				width: 100%;
+				margin-top: 20px;
+			}
+			.slider-row{
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				margin-bottom: 15px;
+				width: 100%;
+			}
+			.slider-row label{
+				flex-basis: 50px;
+				flex-shrink: 0;
+				text-align: right;
+				font-weight: bold;
+				font-size: 0.9em;
+			}
+			.slider{
+				-webkit-appearance: none;
+				appearance: none;
+				flex-grow: 1;
+				height: 8px;
+				border-radius: 5px;
+				background: #ddd;
+				outline: none;
+			}
+			.slider::-webkit-slider-thumb{
+				-webkit-appearance: none;
+				width: 20px;
+				height: 20px;
+				background: #0075FF;
+				cursor: pointer;
+				border-radius: 50%;
+				border: 2px solid white;
+			}
+			output{
+				background: #FFFF00;
+				flex-basis: 45px;
+				flex-shrink: 0;
+				text-align: center;
+				font-family: monospace;
+				font-weight: bold;
+				border-radius: 4px;
+				padding: 2px 5px;
+			}
+			#valueHexCode{
+				cursor: pointer;
+				padding: 5px 15px;
+				transition: transform 0.1s;
+			}
+			#valueHexCode:active{
+				transform: scale(0.9);
+			}
+			.btn-group{
+				margin: 10px 0;
+			}
+			.btn-group button{
+				cursor: pointer;
+				padding: 8px 12px;
+				margin: 2px;
+				border: 1px solid #ccc;
+				border-radius: 5px;
+				font-weight: bold;
+				min-width: 75px;
+				background: white;
+			}
+			.control-group{
 				display: flex;
 				flex-direction: column;
-				align-items: center;
+				gap: 8px;
+				margin-top: 15px;
+			}
+			.button-row{
+				display: flex;
 				justify-content: center;
-				height: 100vh;
-				background: #f0f2f5;
+				gap: 2px;
 			}
-			.grid{
-				display: grid;
-				grid-template-columns: 1fr 1fr;
-				gap: 20px;
-			}
-			.card{
-				padding: 40px;
-				background: white;
-				border: 1px solid #ddd;
-				border-radius: 10px;
+			button.step{
+				flex: 1;
+				min-width: 32px;
+				max-width: 45px;
+				padding: 8px 0;
+				margin: 0;
+				font-size: 11px;
+				border: none;
+				border-radius: 4px;
 				cursor: pointer;
-				text-align: center;
-				transition: transform 0.2s;
+				font-weight: bold;
+				box-sizing: border-box;
 			}
-			.card:hover{
-				transform: scale(1.05);
-				border-color: #007bff;
+			.redButtons{
+				background: #ff4d4d;
+				color: white;
 			}
-			.version-container{
-				display: none;
-				width: 100%;
-				height: 100vh;
+			.greenButtons{
+				background: #2ecc71;
+				color: white;
 			}
-			.home-btn{
-				position: fixed;
-				bottom: 20px;
-				right: 20px;
-				padding: 10px;
-				z-index: 1000;
-				cursor: pointer;
+			.blueButtons{
+				background: #3498db;
+				color: white;
+			}
+			.grayButtons{
+				background: #7f8c8d;
+				color: white;
+			}
+			@media (max-width: 480px){
+				button.step{
+					min-width: 28px;
+					padding: 10px 0;
+					font-size: 10px;
+				}
+				#optionZone{
+					padding: 15px;
+					width: 98%;
+				}
+				.btn-group button{
+					padding: 10px 5px;
+					min-width: 65px;
+					font-size: 0.8em;
+				}
 			}
 		</style>
 	</head>
 	<body>
-		<div id="selector-screen">
-			<div class="grid">
-				<div class="card" onclick="showVersion('v1')">Version 1</div>
-				<div class="card" onclick="showVersion('v2')">Version 2</div>
-				<div class="card" onclick="showVersion('v3')">Version 3</div>
-				<div class="card" onclick="showVersion('v4')">Version 4</div>
+		<div id="optionZone">
+			<h3 style="margin-top:0">HEX: <output id="valueHexCode" style="width: auto;" title="Clicca per copiare"></output></h3>
+			
+			<div class="btn-group">
+				<button type="button" onclick="revert()">Revert</button>
+				<button type="button" onclick="random()">Random</button>
+				<button type="button" onclick="setColor(255, 255, 255)">White</button>
+				<button type="button" onclick="setColor(0, 0, 0)">Black</button>
+			</div>
+
+			<div id="sliders">
+				<div class="slider-row"><label>R</label> <input type="range" id="red" class="slider" oninput="setAndPatch(0)"/> <output id="valueR"></output></div>
+				<div class="slider-row"><label>G</label> <input type="range" id="green" class="slider" oninput="setAndPatch(1)"/> <output id="valueG"></output></div>
+				<div class="slider-row"><label>B</label> <input type="range" id="blue" class="slider" oninput="setAndPatch(2)"/> <output id="valueB"></output></div>
+				<div class="slider-row"><label>Gray</label> <input type="range" id="gray" class="slider" oninput="setAndPatch(3)"/> <output id="valueGray"></output></div>
+				<div class="slider-row"><label>Light</label> <input type="range" id="light" class="slider" oninput="setAndPatch(4)"/> <output id="valueLight"></output></div>
+				<div class="slider-row"><label>C</label> <input type="range" id="cyan" class="slider" oninput="setAndPatch(5)"/> <output id="valueC"></output></div>
+				<div class="slider-row"><label>M</label> <input type="range" id="magenta" class="slider" oninput="setAndPatch(6)"/> <output id="valueM"></output></div>
+				<div class="slider-row"><label>Y</label> <input type="range" id="yellow" class="slider" oninput="setAndPatch(7)"/> <output id="valueY"></output></div>
+				<div class="slider-row"><label>K</label> <input type="range" id="black" class="slider" oninput="setAndPatch(8)"/> <output id="valueK"></output></div>
+			</div>
+
+			<div class="control-group">
+				<div class="button-row">
+					<button class="redButtons step" onclick="changeColor(0,-20)">-20</button>
+					<button class="redButtons step" onclick="changeColor(0,-10)">-10</button>
+					<button class="redButtons step" onclick="changeColor(0,-5)">-5</button>
+					<button class="redButtons step" onclick="changeColor(0,-2)">-2</button>
+					<button class="redButtons step" onclick="changeColor(0,-1)">-1</button>
+					<div style="width: 4px;"></div> <button class="redButtons step" onclick="changeColor(0, 1)">+1</button>
+					<button class="redButtons step" onclick="changeColor(0, 2)">+2</button>
+					<button class="redButtons step" onclick="changeColor(0, 5)">+5</button>
+					<button class="redButtons step" onclick="changeColor(0, 10)">+10</button>
+					<button class="redButtons step" onclick="changeColor(0, 20)">+20</button>
+				</div>
+
+				<div class="button-row">
+					<button class="greenButtons step" onclick="changeColor(1,-20)">-20</button>
+					<button class="greenButtons step" onclick="changeColor(1,-10)">-10</button>
+					<button class="greenButtons step" onclick="changeColor(1,-5)">-5</button>
+					<button class="greenButtons step" onclick="changeColor(1,-2)">-2</button>
+					<button class="greenButtons step" onclick="changeColor(1,-1)">-1</button>
+					<div style="width: 4px;"></div>
+					<button class="greenButtons step" onclick="changeColor(1, 1)">+1</button>
+					<button class="greenButtons step" onclick="changeColor(1, 2)">+2</button>
+					<button class="greenButtons step" onclick="changeColor(1, 5)">+5</button>
+					<button class="greenButtons step" onclick="changeColor(1, 10)">+10</button>
+					<button class="greenButtons step" onclick="changeColor(1, 20)">+20</button>
+				</div>
+
+				<div class="button-row">
+					<button class="blueButtons step" onclick="changeColor(2,-20)">-20</button>
+					<button class="blueButtons step" onclick="changeColor(2,-10)">-10</button>
+					<button class="blueButtons step" onclick="changeColor(2,-5)">-5</button>
+					<button class="blueButtons step" onclick="changeColor(2,-2)">-2</button>
+					<button class="blueButtons step" onclick="changeColor(2,-1)">-1</button>
+					<div style="width: 4px;"></div>
+					<button class="blueButtons step" onclick="changeColor(2, 1)">+1</button>
+					<button class="blueButtons step" onclick="changeColor(2, 2)">+2</button>
+					<button class="blueButtons step" onclick="changeColor(2, 5)">+5</button>
+					<button class="blueButtons step" onclick="changeColor(2, 10)">+10</button>
+					<button class="blueButtons step" onclick="changeColor(2, 20)">+20</button>
+				</div>
+
+				<div class="button-row">
+					<button class="grayButtons step" onclick="changeGray(-20)">-20</button>
+					<button class="grayButtons step" onclick="changeGray(-10)">-10</button>
+					<button class="grayButtons step" onclick="changeGray(-5)">-5</button>
+					<button class="grayButtons step" onclick="changeGray(-2)">-2</button>
+					<button class="grayButtons step" onclick="changeGray(-1)">-1</button>
+					<div style="width: 4px;"></div>
+					<button class="grayButtons step" onclick="changeGray(1)">+1</button>
+					<button class="grayButtons step" onclick="changeGray(2)">+2</button>
+					<button class="grayButtons step" onclick="changeGray(5)">+5</button>
+					<button class="grayButtons step" onclick="changeGray(10)">+10</button>
+					<button class="grayButtons step" onclick="changeGray(20)">+20</button>
+				</div>
 			</div>
 		</div>
-		<div id="v1" class="version-container"> <!--EX IRENE-->
-			<style>
-				#v1 body, #v1 html{
-					margin: 0;
-					min-height: 100vh;
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					font-family: sans-serif;
-				}
-				#v1 .v1-body{
-					min-height: 100vh;
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					transition: background-color 0.1s;
-				}
-				#v1 #v1_optionZone{
-					background-color: rgba(255, 255, 255, 0.85);
-					text-align: center;
-					padding: 25px;
-					border-radius: 20px;
-					box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-					backdrop-filter: blur(5px);
-					width: 600px;
-					max-width: 95%;
-					max-height: 95vh;
-					overflow-y: auto;
-				}
-				#v1 #sliders{
-					display: block;
-					width: 100%;
-					margin-top: 20px;
-				}
-				#v1 .slider-row{
-					display: flex;
-					align-items: center;
-					gap: 10px;
-					margin-bottom: 15px;
-					width: 100%;
-				}
-				#v1 .slider-row label{
-					flex-basis: 50px;
-					flex-shrink: 0;
-					text-align: right;
-					font-weight: bold;
-					font-size: 0.9em;
-				}
-				#v1 .slider{
-					-webkit-appearance: none;
-					appearance: none;
-					flex-grow: 1;
-					height: 8px;
-					border-radius: 5px;
-					background: #ddd;
-					outline: none;
-				}
-				#v1 .slider::-webkit-slider-thumb{
-					-webkit-appearance: none;
-					width: 20px;
-					height: 20px;
-					background: #0075FF;
-					cursor: pointer;
-					border-radius: 50%;
-					border: 2px solid white;
-				}
-				#v1 output{
-					background: #FFFF00;
-					flex-basis: 45px;
-					flex-shrink: 0;
-					text-align: center;
-					font-family: monospace;
-					font-weight: bold;
-					border-radius: 4px;
-					padding: 2px 5px;
-				}
-				#v1 #v1_valueHexCode{
-					cursor: pointer;
-					padding: 5px 15px;
-					transition: transform 0.1s;
-				}
-				#v1 #v1_valueHexCode:active{
-					transform: scale(0.9);
-				}
-				#v1 .btn-group{
-					margin: 10px 0;
-					display: flex;
-					justify-content: center;
-				}
-				#v1 .btn-group button{
-					cursor: pointer;
-					padding: 8px 12px;
-					margin: 2px;
-					border: 1px solid #ccc;
-					border-radius: 5px;
-					font-weight: bold;
-					min-width: 75px;
-					background: white;
-				}
-				#v1 .control-group{
-					display: flex;
-					flex-direction: column;
-					gap: 8px;
-					margin-top: 15px;
-				}
-				#v1 .button-row{
-					display: flex;
-					justify-content: center;
-					gap: 2px;
-				}
-				#v1 button.step{
-					flex: 1;
-					min-width: 32px;
-					max-width: 45px;
-					padding: 8px 0;
-					margin: 0;
-					font-size: 11px;
-					border: none;
-					border-radius: 4px;
-					cursor: pointer;
-					font-weight: bold;
-					box-sizing: border-box;
-				}
-				#v1 .redButtons{
-					background: #ff4d4d;
-					color: white;
-				}
-				#v1 .greenButtons{
-					background: #2ecc71;
-					color: white;
-				}
-				#v1 .blueButtons{
-					background: #3498db;
-					color: white;
-				}
-				#v1 .grayButtons{
-					background: #7f8c8d;
-					color: white;
-				}
-				#v1 #refresh-btn{
-					min-width: unset;
-					width: 40px;
-				}
-				@media (max-width: 480px){
-					#v1 button.step{
-						min-width: 28px;
-						padding: 10px 0;
-						font-size: 10px;
-					}
-					#v1 #v1_optionZone{
-						padding: 15px;
-						width: 98%;
-					}
-					#v1 .btn-group button{
-						padding: 10px 5px;
-						min-width: 65px;
-						font-size: 0.8em;
-					}
-				}
-			</style>
-			<div class="v1-body" id="v1-body">
-				<div id="v1_optionZone">
-					<h3 style="margin-top:0">HEX: <output id="v1_valueHexCode" style="width: auto;" title="Clicca per copiare"></output></h3>
-					<div class="btn-group">
-						<button type="button" onclick="v1_revert()">Revert</button>
-						<button type="button" onclick="v1_random()">Random</button>
-						<button type="button" onclick="v1_setColor(255, 255, 255)">White</button>
-						<button type="button" onclick="v1_setColor(0, 0, 0)">Black</button>
-						<button id="refresh-btn" type="button" onclick="location.reload()">⟳</button>
-					</div>
-					<div id="sliders">
-						<div class="slider-row"><label>R</label> <input type="range" id="v1_red" class="slider" oninput="v1_setAndPatch(0)"/> <output id="v1_valueR"></output></div>
-						<div class="slider-row"><label>G</label> <input type="range" id="v1_green" class="slider" oninput="v1_setAndPatch(1)"/> <output id="v1_valueG"></output></div>
-						<div class="slider-row"><label>B</label> <input type="range" id="v1_blue" class="slider" oninput="v1_setAndPatch(2)"/> <output id="v1_valueB"></output></div>
-						<div class="slider-row"><label>Gray</label> <input type="range" id="v1_gray" class="slider" oninput="v1_setAndPatch(3)"/> <output id="v1_valueGray"></output></div>
-						<div class="slider-row"><label>Light</label> <input type="range" id="v1_light" class="slider" oninput="v1_setAndPatch(4)"/> <output id="v1_valueLight"></output></div>
-						<div class="slider-row"><label>C</label> <input type="range" id="v1_cyan" class="slider" oninput="v1_setAndPatch(5)"/> <output id="v1_valueC"></output></div>
-						<div class="slider-row"><label>M</label> <input type="range" id="v1_magenta" class="slider" oninput="v1_setAndPatch(6)"/> <output id="v1_valueM"></output></div>
-						<div class="slider-row"><label>Y</label> <input type="range" id="v1_yellow" class="slider" oninput="v1_setAndPatch(7)"/> <output id="v1_valueY"></output></div>
-						<div class="slider-row"><label>K</label> <input type="range" id="v1_black" class="slider" oninput="v1_setAndPatch(8)"/> <output id="v1_valueK"></output></div>
-					</div>
-					<div class="control-group">
-						<div class="button-row">
-							<button class="redButtons step" onclick="v1_changeColor(0,-20)">-20</button>
-							<button class="redButtons step" onclick="v1_changeColor(0,-10)">-10</button>
-							<button class="redButtons step" onclick="v1_changeColor(0,-5)">-5</button>
-							<button class="redButtons step" onclick="v1_changeColor(0,-2)">-2</button>
-							<button class="redButtons step" onclick="v1_changeColor(0,-1)">-1</button>
-							<div style="width: 4px;"></div> <button class="redButtons step" onclick="v1_changeColor(0, 1)">+1</button>
-							<button class="redButtons step" onclick="v1_changeColor(0, 2)">+2</button>
-							<button class="redButtons step" onclick="v1_changeColor(0, 5)">+5</button>
-							<button class="redButtons step" onclick="v1_changeColor(0, 10)">+10</button>
-							<button class="redButtons step" onclick="v1_changeColor(0, 20)">+20</button>
-						</div>
-						<div class="button-row">
-							<button class="greenButtons step" onclick="v1_changeColor(1,-20)">-20</button>
-							<button class="greenButtons step" onclick="v1_changeColor(1,-10)">-10</button>
-							<button class="greenButtons step" onclick="v1_changeColor(1,-5)">-5</button>
-							<button class="greenButtons step" onclick="v1_changeColor(1,-2)">-2</button>
-							<button class="greenButtons step" onclick="v1_changeColor(1,-1)">-1</button>
-							<div style="width: 4px;"></div>
-							<button class="greenButtons step" onclick="v1_changeColor(1, 1)">+1</button>
-							<button class="greenButtons step" onclick="v1_changeColor(1, 2)">+2</button>
-							<button class="greenButtons step" onclick="v1_changeColor(1, 5)">+5</button>
-							<button class="greenButtons step" onclick="v1_changeColor(1, 10)">+10</button>
-							<button class="greenButtons step" onclick="v1_changeColor(1, 20)">+20</button>
-						</div>
-						<div class="button-row">
-							<button class="blueButtons step" onclick="v1_changeColor(2,-20)">-20</button>
-							<button class="blueButtons step" onclick="v1_changeColor(2,-10)">-10</button>
-							<button class="blueButtons step" onclick="v1_changeColor(2,-5)">-5</button>
-							<button class="blueButtons step" onclick="v1_changeColor(2,-2)">-2</button>
-							<button class="blueButtons step" onclick="v1_changeColor(2,-1)">-1</button>
-							<div style="width: 4px;"></div>
-							<button class="blueButtons step" onclick="v1_changeColor(2, 1)">+1</button>
-							<button class="blueButtons step" onclick="v1_changeColor(2, 2)">+2</button>
-							<button class="blueButtons step" onclick="v1_changeColor(2, 5)">+5</button>
-							<button class="blueButtons step" onclick="v1_changeColor(2, 10)">+10</button>
-							<button class="blueButtons step" onclick="v1_changeColor(2, 20)">+20</button>
-						</div>
-						<div class="button-row">
-							<button class="grayButtons step" onclick="v1_changeGray(-20)">-20</button>
-							<button class="grayButtons step" onclick="v1_changeGray(-10)">-10</button>
-							<button class="grayButtons step" onclick="v1_changeGray(-5)">-5</button>
-							<button class="grayButtons step" onclick="v1_changeGray(-2)">-2</button>
-							<button class="grayButtons step" onclick="v1_changeGray(-1)">-1</button>
-							<div style="width: 4px;"></div>
-							<button class="grayButtons step" onclick="v1_changeGray(1)">+1</button>
-							<button class="grayButtons step" onclick="v1_changeGray(2)">+2</button>
-							<button class="grayButtons step" onclick="v1_changeGray(5)">+5</button>
-							<button class="grayButtons step" onclick="v1_changeGray(10)">+10</button>
-							<button class="grayButtons step" onclick="v1_changeGray(20)">+20</button>
-						</div>
-					</div>
-				</div>
-			</div>
-			<script>
-				const v1_VALUES = [
-					document.querySelector("#v1_valueR"),
-					document.querySelector("#v1_valueG"),
-					document.querySelector("#v1_valueB"),
-					document.querySelector("#v1_valueGray"),
-					document.querySelector("#v1_valueLight"),
-					document.querySelector("#v1_valueC"),
-					document.querySelector("#v1_valueM"),
-					document.querySelector("#v1_valueY"),
-					document.querySelector("#v1_valueK"),
-					document.querySelector("#v1_valueHexCode")
-				];
-				const v1_INPUTS = [
-					document.querySelector("#v1_red"),
-					document.querySelector("#v1_green"),
-					document.querySelector("#v1_blue"),
-					document.querySelector("#v1_gray"),
-					document.querySelector("#v1_light"),
-					document.querySelector("#v1_cyan"),
-					document.querySelector("#v1_magenta"),
-					document.querySelector("#v1_yellow"),
-					document.querySelector("#v1_black")
-				];
-				const highlightError = false;
 
-				function v1_init(){
-					for(let i = 0; i < 5; i++){
-						v1_INPUTS[i].min = 0;
-						v1_INPUTS[i].max = 255;
-						v1_INPUTS[i].step = 1;
-					}
-					for(let i = 5; i < 9; i++){
-						v1_INPUTS[i].min = 0;
-						v1_INPUTS[i].max = 1;
-						v1_INPUTS[i].step = 0.01;
-					}
-					v1_setColor(255, 255, 255);
-					v1_VALUES[9].onclick = function(){
-						navigator.clipboard.writeText(this.textContent);
-						const oldText = this.textContent;
-						this.textContent = "COPIED!";
-						setTimeout(() => {this.textContent = oldText;}, 800);
-					};
-				}
-
-				function v1_setAndPatch(component){
-					const red = parseInt(v1_INPUTS[0].value);
-					const green = parseInt(v1_INPUTS[1].value);
-					const blue = parseInt(v1_INPUTS[2].value);
-					const gray = parseInt(v1_INPUTS[3].value);
-					const cyan = parseFloat(v1_INPUTS[5].value);
-					const magenta = parseFloat(v1_INPUTS[6].value);
-					const yellow = parseFloat(v1_INPUTS[7].value);
-					const black = parseFloat(v1_INPUTS[8].value);
-					if(component === 3){
-						v1_setColor(gray, gray, gray);
-					}else if(component === 4){
-						v1_setBrightness();
-					}else if(component < 3){
-						v1_setColor(red, green, blue);
-					}else{
-						v1_setColor_CMYK(cyan, magenta, yellow, black);
-					}
-				}
-
-				function v1_getMin(){
-					let min = (parseInt(v1_INPUTS[0].value) <= parseInt(v1_INPUTS[1].value)) ? parseInt(v1_INPUTS[0].value) : parseInt(v1_INPUTS[1].value);
-					min = ((min <= parseInt(v1_INPUTS[2].value)) ? min : parseInt(v1_INPUTS[2].value));
-					return min
-				}
-
-				function v1_getMax(){
-					let max = (parseInt(v1_INPUTS[0].value) >= parseInt(v1_INPUTS[1].value)) ? parseInt(v1_INPUTS[0].value) : parseInt(v1_INPUTS[1].value);
-					max = ((max >= parseInt(v1_INPUTS[2].value)) ? max : parseInt(v1_INPUTS[2].value));
-					return max
-				}
-
-				function v1_getColor(){
-					let sRed = (parseInt(v1_VALUES[0].textContent).toString(16)).padStart(2, '0');
-					let sGreen = (parseInt(v1_VALUES[1].textContent).toString(16)).padStart(2, '0');
-					let sBlue = (parseInt(v1_VALUES[2].textContent).toString(16)).padStart(2, '0');
-					return ("#" + sRed + sGreen + sBlue);
-				}
-
-				function v1_isPossibleToModifyLight(){
-					if((parseInt(v1_INPUTS[4].value) > parseInt(v1_VALUES[4].textContent))&&(v1_getMax() == 255)){
-						return false;
-					}
-					if((parseInt(v1_INPUTS[4].value) < parseInt(v1_VALUES[4].textContent))&&(v1_getMin() == 0)){
-						return false;
-					}
-					return true;
-				}
-
-				function v1_playErrorSound(){
-					const context = new (window.AudioContext || window.webkitAudioContext)();
-					const oscillator = context.createOscillator();
-					const gain = context.createGain();
-					oscillator.type = 'sine';
-					oscillator.frequency.setValueAtTime(150, context.currentTime);
-					gain.gain.setValueAtTime(0.1, context.currentTime);
-					gain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.2);
-					oscillator.connect(gain);
-					gain.connect(context.destination);
-					oscillator.start();
-					oscillator.stop(context.currentTime + 0.2);
-				}
-
-				function v1_flashError(){
-					const output = document.getElementById("v1_valueHexCode");
-					output.style.transition = "0.1s";
-					output.style.color = "red";
-					setTimeout(() => {
-						output.style.color = "black";
-					}, 200);
-					v1_playErrorSound();
-				}
-
-				function v1_setBrightness(){
-					if(v1_isPossibleToModifyLight()){
-						if(parseInt(v1_INPUTS[4].value) != parseInt(v1_VALUES[4].textContent)){
-							for(let i = 0; i < 3; i++){
-								v1_INPUTS[i].value = (parseInt(v1_INPUTS[i].value) + parseInt(v1_INPUTS[4].value) - parseInt(v1_VALUES[4].textContent));
-								v1_VALUES[i].textContent = v1_INPUTS[i].value;
-							}
-						}
-						v1_setColor(v1_INPUTS[0].value, v1_INPUTS[1].value, v1_INPUTS[2].value);
-						v1_VALUES[4].textContent = v1_INPUTS[4].value;
-						v1_INPUTS[3].value = parseInt((parseInt(v1_VALUES[0].value) + parseInt(v1_VALUES[1].value) + parseInt(v1_VALUES[2].value))/3);
-						v1_VALUES[3].textContent = parseInt((parseInt(v1_VALUES[0].value) + parseInt(v1_VALUES[1].value) + parseInt(v1_VALUES[2].value))/3);
-						document.body.style.backgroundColor = v1_getColor();
-						v1_VALUES[9].textContent = v1_getColor();
-						v1_INPUTS[4].value = parseInt((v1_getMax() + v1_getMin())/2);
-						v1_VALUES[4].textContent = v1_INPUTS[4].value;
-					}else{
-						if(highlightError){
-							v1_flashError();
-						}
-					}
-					v1_INPUTS[4].value = parseInt(v1_VALUES[4].textContent);
-				}
-
-				function v1_setColor(r, g, b){
-					r = Math.round(r);
-					g = Math.round(g);
-					b = Math.round(b);
-					[r, g, b].forEach((v, i) => {
-						v1_INPUTS[i].value = v;
-						v1_VALUES[i].textContent = v;
-					});
-					let avg = Math.round((r + g + b)/3);
-					v1_INPUTS[3].value = avg;
-					v1_VALUES[3].textContent = avg;
-					let light = Math.round((Math.max(r,g,b) + Math.min(r,g,b))/2);
-					v1_INPUTS[4].value = light;
-					v1_VALUES[4].textContent = light;
-					let dr = r/255, dg = g/255, db = b/255;
-					let k = 1 - Math.max(dr, dg, db);
-					let c = k === 1 ? 0 :(1 - dr - k)/(1 - k);
-					let m = k === 1 ? 0 :(1 - dg - k)/(1 - k);
-					let y = k === 1 ? 0 :(1 - db - k)/(1 - k);
-					[c, m, y, k].forEach((v, i) => {
-						v1_INPUTS[i + 5].value = v.toFixed(2);
-						v1_VALUES[i + 5].textContent = v.toFixed(2);
-					});
-					let hex = "#" + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase();
-					v1_VALUES[9].textContent = hex;
-					document.body.style.backgroundColor = hex;
-				}
-
-				function v1_setColor_CMYK(c, m, y, k){
-					let r = 255*(1 - c)*(1 - k);
-					let g = 255*(1 - m)*(1 - k);
-					let b = 255*(1 - y)*(1 - k);
-					v1_setColor(r, g, b);
-				}
-
-				function v1_revert(){
-					v1_setColor(255 - v1_INPUTS[0].value, 255 - v1_INPUTS[1].value, 255 - v1_INPUTS[2].value);
-				}
-
-				function v1_random(){
-					v1_setColor(Math.random()*255, Math.random()*255, Math.random()*255);
-				}
-
-				function v1_changeColor(index, delta){
-					let v = [parseInt(v1_INPUTS[0].value), parseInt(v1_INPUTS[1].value), parseInt(v1_INPUTS[2].value)];
-					if((v[index] + delta >= 0)&&(v[index] + delta <= 255)){
-						v[index] += delta;
-						v1_setColor(v[0], v[1], v[2]);
-					}else{
-						if(highlightError){
-							v1_flashError();
-						}
-					}
-				}
-
-				function v1_changeGray(delta){
-					let r = parseInt(v1_INPUTS[0].value) + delta;
-					let g = parseInt(v1_INPUTS[1].value) + delta;
-					let b = parseInt(v1_INPUTS[2].value) + delta;
-					let flag = ((r >= 0)&&(r <= 255)&&(g >= 0)&&(g <= 255)&&(b >= 0)&&(b <= 255));
-					if(flag){
-						v1_setColor(r, g, b);
-					}else{
-						if(highlightError){
-							v1_flashError();
-						}
-					}
-				}
-
-				window.onload = v1_init;
-			</script>
-		</div>
-		<div id="v2" class="version-container"> <!--EX PALOMA-->
-			<style>
-				#v2 .v2-body{
-					transition: background-color 0.3s;
-					text-align: center;
-					font-family: sans-serif;
-					min-height: 100vh;
-					display: flex;
-					flex-direction: column;
-					align-items: center;
-					justify-content: center;
-					padding: 20px;
-				}
-				#v2 #v2_optionZone{
-					background-color: rgba(255,255,255,0.9);
-					padding: 20px;
-					border-radius: 10px;
-					display: inline-block;
-					margin-top: 20px;
-					box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-				}
-				#v2 .controls{
-					margin-top: 20px;
-				}
-				#v2 button{
-					padding: 8px 15px;
-					margin: 5px;
-					cursor: pointer;
-					border-radius: 5px;
-					border: 1px solid #ccc;
-					font-weight: bold;
-				}
-				#v2 #refresh-btn{
-					min-width: unset;
-					width: 40px;
-				}
-				#v2 .hex-container{
-					font-family: monospace;
-					font-size: 1.2em;
-					font-weight: bold;
-				}
-				#v2 #v2_valueHexCode{
-					font-family: inherit;
-					font-size: 1em;
-					color: #333;
-					background: #eee;
-					padding: 2px 6px;
-					border-radius: 3px;
-					display: inline-block;
-					vertical-align: middle;
-					transition: color 0.1s;
-				}
-			</style>
-			<div class="v2-body" id="v2-body">
-				<div id="v2_optionZone">
-					<span class="hex-container">Background HEX: <output id="v2_valueHexCode">#FFFFFF</output></span><br>
-					R:
-					<input type="radio" name="v2_Red" value="00"/>00
-					<input type="radio" name="v2_Red" value="33"/>33
-					<input type="radio" name="v2_Red" value="66"/>66
-					<input type="radio" name="v2_Red" value="99"/>99
-					<input type="radio" name="v2_Red" value="CC"/>CC
-					<input type="radio" name="v2_Red" value="FF" checked/>FF<br>
-					G:
-					<input type="radio" name="v2_Green" value="00"/>00
-					<input type="radio" name="v2_Green" value="33"/>33
-					<input type="radio" name="v2_Green" value="66"/>66
-					<input type="radio" name="v2_Green" value="99"/>99
-					<input type="radio" name="v2_Green" value="CC"/>CC
-					<input type="radio" name="v2_Green" value="FF" checked/>FF<br>
-					B:
-					<input type="radio" name="v2_Blue" value="00"/>00
-					<input type="radio" name="v2_Blue" value="33"/>33
-					<input type="radio" name="v2_Blue" value="66"/>66
-					<input type="radio" name="v2_Blue" value="99"/>99
-					<input type="radio" name="v2_Blue" value="CC"/>CC
-					<input type="radio" name="v2_Blue" value="FF" checked/>FF<br>
-				</div>
-				<div class="controls">
-					<button type="button" onclick="v2_color(0,0,0)">Black</button>
-					<button type="button" onclick="v2_color(5,5,5)">White</button><br/>
-					<button type="button" onclick="v2_color(5,0,0)" style="color:red">Red</button>
-					<button type="button" onclick="v2_color(0,5,0)" style="color:green">Green</button>
-					<button type="button" onclick="v2_color(0,0,5)" style="color:blue">Blue</button><br/>
-					<button type="button" onclick="v2_color(0,5,5)">Cyan</button>
-					<button type="button" onclick="v2_color(5,0,5)">Magenta</button>
-					<button type="button" onclick="v2_color(5,5,0)">Yellow</button><br/>
-					<button type="button" onclick="v2_changeBrightness(-1)">Darker</button>
-					<button type="button" onclick="v2_changeBrightness(1)">Brighter</button><br/>
-					<button type="button" onclick="v2_random()">Random</button>
-				</div>
-				<button onclick="location.reload()">⟳</button>
-			</div>
-			<script>
-				const v2_BASIC_COLORS = ['v2_Red', 'v2_Green', 'v2_Blue'];
-				const v2_hexOutput = document.getElementById('v2_valueHexCode');
-
-				function v2_getColor(){
-					let backgroundColor = "#";
-					v2_BASIC_COLORS.forEach(name => {
-						const checkedRadio = document.querySelector(`input[name="${name}"]:checked`);
-						backgroundColor += checkedRadio ? checkedRadio.value : "00";
-					});
-					return backgroundColor;
-				}
-
-				function v2_updateUI(){
-					const color = v2_getColor();
-					document.getElementById('v2-body').style.backgroundColor = color;
-					v2_hexOutput.textContent = color;
-				}
-
-				document.querySelectorAll('input[type="radio"]').forEach(radio => {
-					radio.addEventListener('change', v2_updateUI);
-				});
-
-				function v2_playErrorSound(){
-					const context = new (window.AudioContext || window.webkitAudioContext)();
-					const oscillator = context.createOscillator();
-					const gain = context.createGain();
-					oscillator.type = 'sine';
-					oscillator.frequency.setValueAtTime(150, context.currentTime);
-					gain.gain.setValueAtTime(0.1, context.currentTime);
-					gain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.2);
-					oscillator.connect(gain);
-					gain.connect(context.destination);
-					oscillator.start();
-					oscillator.stop(context.currentTime + 0.2);
-				}
-
-				function v2_flashError(){
-					const output = document.getElementById("v2_valueHexCode");
-					output.style.color = "red";
-					setTimeout(() => {
-						output.style.color = "#333";
-					}, 200);
-					v2_playErrorSound();
-				}
-
-				function v2_changeBrightness(step){
-					const canMove = v2_BASIC_COLORS.every(name => {
-						let radios = document.getElementsByName(name);
-						let currentIndex = Array.from(radios).findIndex(r => r.checked);
-						let newIndex = currentIndex + step;
-						return newIndex >= 0 && newIndex < radios.length;
-					});
-					if(canMove){
-						v2_BASIC_COLORS.forEach(name => {
-							let radios = document.getElementsByName(name);
-							let currentIndex = Array.from(radios).findIndex(r => r.checked);
-							let newIndex = currentIndex + step;
-							radios[newIndex].checked = true;
-						});
-						v2_updateUI();
-					}else{
-						v2_flashError();
-					}
-				}
-
-				function v2_color(rIdx, gIdx, bIdx){
-					document.getElementsByName("v2_Red")[rIdx].checked = true;
-					document.getElementsByName("v2_Green")[gIdx].checked = true;
-					document.getElementsByName("v2_Blue")[bIdx].checked = true;
-					v2_updateUI();
-				}
-
-				function v2_random(){
-					v2_BASIC_COLORS.forEach(name => {
-						const radios = document.getElementsByName(name);
-						const randomIndex = Math.floor(Math.random()*radios.length);
-						radios[randomIndex].checked = true;
-					});
-					v2_updateUI();
-				}
-
-				v2_updateUI();
-			</script>
-		</div>
-		<div id="v3" class="version-container"> <!--EX ANASTASIA-->
-			<style>
-				#v3 .v3-body{
-					margin: 0;
-					transition: background-color 0.2s;
-					min-height: 100vh;
-					font-family: sans-serif;
-				}
-				#v3 #v3_optionZone{
-					padding: 10px;
-					border-bottom: 2px solid #333;
-				}
-				#v3 h1#v3_valueHexCode{
-					background: #FFFF00; 
-					padding: 5px; 
-					margin: 0 0 10px 0 !important;
-					font-size: 1.2em;
-				}
-				#v3 .color-row{
-					padding: 5px;
-					margin: 3px 0;
-					border-radius: 8px;
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					flex-wrap: wrap;
-					gap: 2px;
-				}
-				#v3 .radio-group{
-					display: inline-flex;
-					align-items: center;
-					white-space: nowrap;
-					margin: 2px;
-				}
-				#v3 output{
-					display: inline-block;
-					width: 22px;
-					border-radius: 3px;
-					font-family: monospace;
-					margin-left: 2px;
-					font-size: 0.9em;
-					text-align: center;
-				}
-				#v3 button{
-					cursor: pointer;
-					padding: 5px 10px;
-					font-weight: bold;
-				}
-				#v3 .nav-buttons{
-					padding: 10px !important;
-				}
-				#v3 .nav-buttons button{
-					width: 100px;
-					height: 35px;
-					font-size: 0.9em;
-					margin: 3px;
-				}
-				#v3 #refresh-btn{
-					min-width: unset;
-					width: 40px;
-				}
-			</style>
-			<div class="v3-body" id="v3-body">
-				<div id="v3_optionZone" style="background-color:#FFFFFF; text-align:center;">
-					<h1 id="v3_valueHexCode" style="background: #FFFF00; padding: 10px; margin: 0 0 20px 0;">Background page color hex code: #FFFFFF</h1>
-					<div class="color-row" style="background-color: #FF0000;">
-						<button type="button" onclick="v3_changeColor(0,-1)">(-)</button>
-						<script>
-							const vals = ['00','11','22','33','44','55','66','77','88','99','aa','bb','cc','dd','ee','ff'];
-							vals.forEach(v => {
-								let chk = v === 'ff' ? 'checked' : '';
-								document.write(`<span class="radio-group"><input type="radio" name="v3_Red" value="${v}" ${chk} onchange="v3_changeBackgroundColor()"><output style="background:#FDCE98"><b>${v.toUpperCase()}</b></output></span>`);
-							});
-						</script>
-						<button type="button" onclick="v3_changeColor(0,1)">(+)</button>
-					</div>
-					<div class="color-row" style="background-color: #00FF00;">
-						<button type="button" onclick="v3_changeColor(1,-1)">(-)</button>
-						<script>
-							vals.forEach(v => {
-								let chk = v === 'ff' ? 'checked' : '';
-								document.write(`<span class="radio-group"><input type="radio" name="v3_Green" value="${v}" ${chk} onchange="v3_changeBackgroundColor()"><output style="background:#FFF500"><b>${v.toUpperCase()}</b></output></span>`);
-							});
-						</script>
-						<button type="button" onclick="v3_changeColor(1,1)">(+)</button>
-					</div>
-					<div class="color-row" style="background-color: #0000FF;">
-						<button type="button" onclick="v3_changeColor(2,-1)">(-)</button>
-						<script>
-							vals.forEach(v => {
-								let chk = v === 'ff' ? 'checked' : '';
-								document.write(`<span class="radio-group"><input type="radio" name="v3_Blue" value="${v}" ${chk} onchange="v3_changeBackgroundColor()"><output style="background:#56DDFF"><b>${v.toUpperCase()}</b></output></span>`);
-							});
-						</script>
-						<button type="button" onclick="v3_changeColor(2,1)">(+)</button>
-					</div>
-				</div>
-				<div class="nav-buttons" style="text-align: center; padding: 20px;">
-					<button type="button" onclick="v3_color(0,0,0)">Black</button>
-					<button type="button" onclick="v3_color(15,15,15)">White</button><br>
-					<button type="button" onclick="v3_color(15,0,0)">Red</button>
-					<button type="button" onclick="v3_color(0,15,0)">Green</button>
-					<button type="button" onclick="v3_color(0,0,15)">Blue</button><br>
-					<button type="button" onclick="v3_color(0,15,15)">Cyan</button>
-					<button type="button" onclick="v3_color(15,0,15)">Magenta</button>
-					<button type="button" onclick="v3_color(15,15,0)">Yellow</button><br>
-					<button type="button" onclick="v3_darkerAll()">Darker</button>
-					<button type="button" onclick="v3_brighterAll()">Brighter</button><br>
-					<button type="button" onclick="v3_random()">Random</button><br>
-					<button id="refresh-btn" onclick="location.reload()">⟳</button>
-				</div>
-			</div>
-			<script>
-				const v3_basicColors = ['v3_Red', 'v3_Green', 'v3_Blue'];
-
-				function v3_getColor(){
-					let hex = "#";
-					v3_basicColors.forEach(name => {
-						const active = document.querySelector(`input[name="${name}"]:checked`);
-						hex += active ? active.value : "00";
-					});
-					return hex.toUpperCase();
-				}
-
-				function v3_changeBackgroundColor(){
-					const color = v3_getColor();
-					document.getElementById('v3-body').style.backgroundColor = color;
-					document.getElementById("v3_valueHexCode").innerText = "Background page color hex code: " + color;
-					document.getElementById("v3_optionZone").style.backgroundColor = color;
-				}
-
-				function v3_canMoveAll(step){
-					return v3_basicColors.every(name => {
-						let radios = document.getElementsByName(name);
-						let currentIndex = Array.from(radios).findIndex(r => r.checked);
-						let newIndex = currentIndex + step;
-						return newIndex >= 0 && newIndex < radios.length;
-					});
-				}
-
-				function v3_brighterAll(){
-					if(v3_canMoveAll(1)){
-						[0, 1, 2].forEach(i => v3_brighterBasic(i));
-					}
-				}
-
-				function v3_darkerAll(){
-					if(v3_canMoveAll(-1)){
-						[0, 1, 2].forEach(i => v3_darkerBasic(i));
-					}
-				}
-
-				function v3_brighterBasic(idx){
-					let ele = document.getElementsByName(v3_basicColors[idx]);
-					for(let j = ele.length - 2; j >= 0; j--){
-						if(ele[j].checked){
-							ele[j].checked = false;
-							ele[j + 1].checked = true;
-							break;
-						}
-					}
-					v3_changeBackgroundColor();
-				}
-
-				function v3_darkerBasic(idx){
-					let ele = document.getElementsByName(v3_basicColors[idx]);
-					for(let j = 1; j < ele.length; j++){
-						if(ele[j].checked){
-							ele[j].checked = false;
-							ele[j - 1].checked = true;
-							break;
-						}
-					}
-					v3_changeBackgroundColor();
-				}
-
-				function v3_playErrorSound(){
-					const context = new (window.AudioContext || window.webkitAudioContext)();
-					const oscillator = context.createOscillator();
-					const gain = context.createGain();
-					oscillator.type = 'sine';
-					oscillator.frequency.setValueAtTime(150, context.currentTime);
-					gain.gain.setValueAtTime(0.1, context.currentTime);
-					gain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.2);
-					oscillator.connect(gain);
-					gain.connect(context.destination);
-					oscillator.start();
-					oscillator.stop(context.currentTime + 0.2);
-				}
-
-				function v3_flashError(){
-					const output = document.getElementById("v3_valueHexCode");
-					output.style.transition = "0.1s";
-					output.style.color = "red";
-					setTimeout(() => {
-						output.style.color = "black";
-					}, 200);
-					v3_playErrorSound();
-				}
-
-				function v3_brighterAll(){
-					if(v3_canMoveAll(1)){
-						[0, 1, 2].forEach(i => v3_brighterBasic(i));
-					}else{
-						v3_flashError();
-					}
-				}
-
-				function v3_darkerAll(){
-					if(v3_canMoveAll(-1)){
-						[0, 1, 2].forEach(i => v3_darkerBasic(i));
-					}else{
-						v3_flashError();
-					}
-				}
-
-				function v3_color(r, g, b){
-					document.getElementsByName("v3_Red")[r].checked = true;
-					document.getElementsByName("v3_Green")[g].checked = true;
-					document.getElementsByName("v3_Blue")[b].checked = true;
-					v3_changeBackgroundColor();
-				}
-
-				function v3_changeColor(idx, delta){
-					delta > 0 ? v3_brighterBasic(idx) : v3_darkerBasic(idx);
-				}
-
-				function v3_random(){
-					v3_basicColors.forEach(name => {
-						let ele = document.getElementsByName(name);
-						let r = Math.floor(Math.random()*ele.length);
-						ele[r].checked = true;
-					});
-					v3_changeBackgroundColor();
-				}
-
-				v3_changeBackgroundColor();
-			</script>
-		</div>
-		<div id="v4" class="version-container"> <!--EX MARIO-->
-			<style>
-				#v4 .v4-body{
-					transition: background-color 0.3s, color 0.3s; 
-					text-align: center; 
-					font-family: 'Segoe UI', Arial, sans-serif; 
-					padding: 10px;
-					margin: 0;
-					min-height: 100vh;
-					display: flex;
-					flex-direction: column;
-					align-items: center;
-					justify-content: center;
-				}
-				#v4 #headerContainer{
-					padding: 15px;
-					margin-bottom: 20px;
-					border-radius: 10px;
-					transition: background 0.3s;
-				}
-				#v4 .control-panel{
-					background: rgba(255, 255, 255, 0.2);
-					backdrop-filter: blur(5px);
-					padding: 15px;
-					border-radius: 15px;
-					border: 1px solid rgba(255,255,255,0.3);
-					width: 100%;
-					max-width: 400px;
-					box-sizing: border-box;
-				}
-				#v4 .row{
-					display: flex;
-					justify-content: center;
-					gap: 6px;
-					margin-bottom: 10px;
-				}
-				#v4 .footer-row{
-					display: flex;
-					flex-wrap: wrap;
-					justify-content: center;
-					gap: 8px;
-					margin-top: 15px;
-				}
-				#v4 button{
-					cursor: pointer; 
-					margin: 0;
-					border: 2px solid rgba(0,0,0,0.1); 
-					border-radius: 8px;
-					font-weight: bold;
-					transition: all 0.2s;
-					height: 45px;
-					display: flex;
-					align-items: center;
-					justify-content: center;
-				}
-				#v4 #refresh-btn{
-					min-width: unset;
-					width: 45px;
-					height: 45px;
-					margin-left: 5px;
-				}
-				#v4 button:hover{
-					transform: translateY(-2px);
-					box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-				}
-				#v4 button:active{
-					transform: translateY(0);
-				}
-				#v4 .num-label{
-					font-size: 1.1em;
-					color: inherit;
-				}
-				#v4 output{
-					font-family: monospace;
-				}
-				#v4 #mainLabel{
-					font-size: 2.5em; 
-					font-weight: 900;
-					font-family: monospace;
-					display: inline-block;
-					vertical-align: middle;
-				}
-				#v4 #v4_valueHexCode{
-					font-size: 1em;
-					font-family: monospace;
-					letter-spacing: 0px;
-					margin-left: 5px;
-				}
-			</style>
-			<div class="v4-body" id="v4-body">
-				<div id="headerContainer">
-					<span id="mainLabel">HEX: <output id="v4_valueHexCode">#FFFFFF</output></span>
-				</div>
-				<br>
-				<div id="mainPanel" class="control-panel"></div>
-			</div>
-			<script>
-				const v4_COMPONENTS = ['00', '3F', '7F', 'BF', 'FF'];
-				const v4_BUTTONS_COLORS = ['#FF4136', '#2ECC40', '#0074D9'];
-				const v4_BUTTON_WIDTH_1 = 65;
-				const v4_BUTTON_WIDTH_2 = 165;
-				const v4_BUTTON_WIDTH_3 = 340;
-				let v4_actualComponents = [4, 4, 4];
-
-				function v4_fillBody(){
-					const panel = document.getElementById("mainPanel");
-					for(let i = 0; i < 3; i++){
-						let row = document.createElement("div");
-						row.className = "row";
-						for(let j = 0; j < 5; j++){
-							let btn = document.createElement("button");
-							btn.id = i + "-" + j;
-							btn.style.width = "18%"; 
-							btn.style.maxWidth = "60px";
-							btn.innerHTML = `<span class="num-label">${j}</span>`;
-							btn.onclick =() => v4_setBackgroundColor(i, j);
-							row.appendChild(btn);
-						}
-						panel.appendChild(row);
-					}
-					const footer = document.createElement("div");
-					footer.className = "footer-row";
-					const btnConfigs = [
-						{text: "BLACK", cmd: v4_setBlack, flex: "0 1 45%" },
-						{text: "WHITE", cmd: v4_setWhite, flex: "0 1 45%" },
-						{text: "DARKER", cmd: v4_darker, flex: "0 1 45%" },
-						{text: "BRIGHTER", cmd: v4_brighter, flex: "0 1 45%" },
-						{text: "RANDOM", cmd: v4_setRandomBackgroundColor, flex: "0 1 92%" }
-					];
-					btnConfigs.forEach((cfg) => {
-						let b = document.createElement("button");
-						b.style.flex = cfg.flex;
-						b.style.minWidth = "120px";
-						b.textContent = cfg.text;
-						b.onclick = cfg.cmd;
-						footer.appendChild(b);
-					});
-					let refreshBtn = document.createElement("button");
-					refreshBtn.id = "refresh-btn";
-					refreshBtn.innerHTML = "⟳";
-					refreshBtn.onclick = () => location.reload();
-					footer.appendChild(refreshBtn);
-					panel.appendChild(footer);
-					v4_updateInterface();
-				}
-
-				function v4_setBackgroundColor(channel, index){
-					v4_actualComponents[channel] = index;
-					v4_updateInterface();
-				}
-
-				function v4_updateInterface(){
-					const r = parseInt(v4_COMPONENTS[v4_actualComponents[0]], 16);
-					const g = parseInt(v4_COMPONENTS[v4_actualComponents[1]], 16);
-					const b = parseInt(v4_COMPONENTS[v4_actualComponents[2]], 16);
-					const hex = "#" + v4_COMPONENTS[v4_actualComponents[0]] + v4_COMPONENTS[v4_actualComponents[1]] + v4_COMPONENTS[v4_actualComponents[2]];
-					document.body.style.backgroundColor = hex;
-					document.getElementById("v4_valueHexCode").textContent = hex;
-					const brightness =(r*299 + g*587 + b*114)/1000;
-					const textColor = brightness > 125 ? "black" : "white";
-					const labelBg = brightness > 125 ? "rgba(255,255,0,0.8)" : "rgba(255,255,0,1)";
-					document.body.style.color = textColor;
-					document.getElementById("headerContainer").style.background = brightness > 125 ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.3)";
-					for(let i = 0; i < 3; i++){
-						for(let j = 0; j < 5; j++){
-							let btn = document.getElementById(i + "-" + j);
-							if(v4_actualComponents[i] === j){
-								btn.style.backgroundColor = "#FFFF00";
-								btn.style.color = "black";
-								btn.style.borderColor = "black";
-							}else{
-								btn.style.backgroundColor = v4_BUTTONS_COLORS[i];
-								btn.style.color = "white";
-								btn.style.borderColor = "transparent";
-							}
-						}
-					}
-				}
-
-				function v4_setRandomBackgroundColor(){
-					v4_actualComponents = v4_actualComponents.map(() => Math.floor(Math.random()*5));
-					v4_updateInterface(); 
-				}
-
-				function v4_playErrorSound(){
-					try{
-						const context = new (window.AudioContext || window.webkitAudioContext)();
-						const oscillator = context.createOscillator();
-						const gain = context.createGain();
-						oscillator.type = 'sine';
-						oscillator.frequency.setValueAtTime(150, context.currentTime);
-						gain.gain.setValueAtTime(0.1, context.currentTime);
-						gain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.2);
-						oscillator.connect(gain);
-						gain.connect(context.destination);
-						oscillator.start();
-						oscillator.stop(context.currentTime + 0.2);
-					}catch(e){
-						console.log("Audio not supported or blocked by browser");
-					}
-				}
-
-				function v4_flashError(){
-					const label = document.getElementById("mainLabel");
-					label.style.transition = "0.1s";
-					label.style.color = "red";
-					setTimeout(() => {
-						label.style.color = "";
-					}, 200);
-					v4_playErrorSound();
-				}
-
-				function v4_brighter(){
-					const canMove = v4_actualComponents.every(v => v < 4);
-					if(canMove){
-						v4_actualComponents = v4_actualComponents.map(v => v + 1);
-						v4_updateInterface();
-					}else{
-						v4_flashError();
-					}
-				}
-
-				function v4_darker(){
-					const canMove = v4_actualComponents.every(v => v > 0);
-					if(canMove){
-						v4_actualComponents = v4_actualComponents.map(v => v - 1);
-						v4_updateInterface();
-					}else{
-						v4_flashError();
-					}
-				}
-
-				function v4_setBlack(){
-					v4_actualComponents = [0,0,0];
-					v4_updateInterface();
-				}
-
-				function v4_setWhite(){
-					v4_actualComponents = [4,4,4];
-					v4_updateInterface();
-				}
-
-				v4_fillBody();
-			</script>
-		</div>
 		<script>
-			function showVersion(id){
-				document.getElementById('selector-screen').style.display = 'none';
-				document.getElementById(id).style.display = 'block';
+			const VALUES = [
+				document.querySelector("#valueR"), document.querySelector("#valueG"), document.querySelector("#valueB"), 
+				document.querySelector("#valueGray"), document.querySelector("#valueLight"), 
+				document.querySelector("#valueC"), document.querySelector("#valueM"), 
+				document.querySelector("#valueY"), document.querySelector("#valueK"), 
+				document.querySelector("#valueHexCode")
+			];
+
+			const INPUTS = [
+				document.querySelector("#red"), document.querySelector("#green"), document.querySelector("#blue"), 
+				document.querySelector("#gray"), document.querySelector("#light"), 
+				document.querySelector("#cyan"), document.querySelector("#magenta"), 
+				document.querySelector("#yellow"), document.querySelector("#black")
+			];
+
+			const highlightError = false;
+
+			function init(){
+				for(let i = 0; i < 5; i++){
+					INPUTS[i].min = 0; INPUTS[i].max = 255; INPUTS[i].step = 1;
+				}
+				for(let i = 5; i < 9; i++){
+					INPUTS[i].min = 0; INPUTS[i].max = 1; INPUTS[i].step = 0.01;
+				}
+				setColor(255, 255, 255);
+				VALUES[9].onclick = function(){
+					navigator.clipboard.writeText(this.textContent);
+					const oldText = this.textContent;
+					this.textContent = "COPIATO!";
+					setTimeout(() =>{this.textContent = oldText; }, 800);
+				};
 			}
+
+			function setAndPatch(component){
+				const red = parseInt(INPUTS[0].value);
+				const green = parseInt(INPUTS[1].value);
+				const blue = parseInt(INPUTS[2].value);
+				const gray = parseInt(INPUTS[3].value);
+				const cyan = parseFloat(INPUTS[5].value);
+				const magenta = parseFloat(INPUTS[6].value);
+				const yellow = parseFloat(INPUTS[7].value);
+				const black = parseFloat(INPUTS[8].value);
+				if(component === 3){
+					setColor(gray, gray, gray);
+				}else if(component === 4){
+					setBrightness();
+				}else if(component < 3){
+					setColor(red, green, blue);
+				}else{
+					setColor_CMYK(cyan, magenta, yellow, black);
+				}
+			}
+
+			function getMin(){
+				let min = (parseInt(INPUTS[0].value) <= parseInt(INPUTS[1].value)) ? parseInt(INPUTS[0].value) : parseInt(INPUTS[1].value);
+				min = ((min <= parseInt(INPUTS[2].value)) ? min : parseInt(INPUTS[2].value));
+				return min
+			}
+
+			function getMax(){
+				let max = (parseInt(INPUTS[0].value) >= parseInt(INPUTS[1].value)) ? parseInt(INPUTS[0].value) : parseInt(INPUTS[1].value);
+				max = ((max >= parseInt(INPUTS[2].value)) ? max : parseInt(INPUTS[2].value));
+				return max
+			}
+
+			function getColor(){
+				sRed = (parseInt(VALUES[0].textContent).toString(16)).padStart(2, '0');
+				sGreen = (parseInt(VALUES[1].textContent).toString(16)).padStart(2, '0');
+				sBlue = (parseInt(VALUES[2].textContent).toString(16)).padStart(2, '0');
+				return ("#" + sRed + sGreen + sBlue);
+			}
+
+			function isPossibleToModifyLight(){
+				if((parseInt(INPUTS[4].value) > parseInt(VALUES[4].textContent))&&(getMax() == 255)){
+					return false;
+				}
+				if((parseInt(INPUTS[4].value) < parseInt(VALUES[4].textContent))&&(getMin() == 0)){
+					return false;
+				}
+				return true;
+			}
+
+			function playErrorSound(){
+				const context = new (window.AudioContext || window.webkitAudioContext)();
+				const oscillator = context.createOscillator();
+				const gain = context.createGain();
+				oscillator.type = 'sine';
+				oscillator.frequency.setValueAtTime(150, context.currentTime);
+				gain.gain.setValueAtTime(0.1, context.currentTime);
+				gain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.2);
+				oscillator.connect(gain);
+				gain.connect(context.destination);
+				oscillator.start();
+				oscillator.stop(context.currentTime + 0.2);
+			}
+
+			function flashError(){
+				const output = document.getElementById("valueHexCode");
+				output.style.transition = "0.1s";
+				output.style.color = "red";
+				setTimeout(() => {
+					output.style.color = "black";
+				}, 200);
+				playErrorSound();
+			}
+
+			function setBrightness(){
+				if(isPossibleToModifyLight()){
+					if(parseInt(INPUTS[4].value) != parseInt(VALUES[4].textContent)){
+						for(let i = 0; i < 3; i++){
+							INPUTS[i].value = (parseInt(INPUTS[i].value) + parseInt(INPUTS[4].value) - parseInt(VALUES[4].textContent));
+							VALUES[i].textContent = INPUTS[i].value;
+						}
+					}
+					setColor(INPUTS[0].value, INPUTS[1].value, INPUTS[2].value);
+					VALUES[4].textContent = INPUTS[4].value;
+					INPUTS[3].value = parseInt((parseInt(VALUES[0].value) + parseInt(VALUES[1].value) + parseInt(VALUES[2].value))/3);
+					VALUES[3].textContent = parseInt((parseInt(VALUES[0].value) + parseInt(VALUES[1].value) + parseInt(VALUES[2].value))/3);
+					document.body.style.backgroundColor = getColor();
+					VALUES[9].textContent = getColor();
+					INPUTS[4].value = parseInt((getMax() + getMin())/2);
+					VALUES[4].textContent = INPUTS[4].value;
+				}else{
+					if(highlightError){
+						flashError();
+					}
+				}
+				INPUTS[4].value = parseInt(VALUES[4].textContent);
+			}
+
+			function setColor(r, g, b){
+				r = Math.round(r);
+				g = Math.round(g);
+				b = Math.round(b);
+				[r, g, b].forEach((v, i) => {
+					INPUTS[i].value = v;
+					VALUES[i].textContent = v;
+				});
+				let avg = Math.round((r + g + b)/3);
+				INPUTS[3].value = avg;
+				VALUES[3].textContent = avg;
+				let light = Math.round((Math.max(r,g,b) + Math.min(r,g,b))/2);
+				INPUTS[4].value = light;
+				VALUES[4].textContent = light;
+				let dr = r/255, dg = g/255, db = b/255;
+				let k = 1 - Math.max(dr, dg, db);
+				let c = k === 1 ? 0 :(1 - dr - k)/(1 - k);
+				let m = k === 1 ? 0 :(1 - dg - k)/(1 - k);
+				let y = k === 1 ? 0 :(1 - db - k)/(1 - k);
+				[c, m, y, k].forEach((v, i) => {
+					INPUTS[i + 5].value = v.toFixed(2);
+					VALUES[i + 5].textContent = v.toFixed(2);
+				});
+				let hex = "#" + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase();
+				VALUES[9].textContent = hex;
+				document.body.style.backgroundColor = hex;
+			}
+
+			function setColor_CMYK(c, m, y, k){
+				let r = 255*(1 - c)*(1 - k);
+				let g = 255*(1 - m)*(1 - k);
+				let b = 255*(1 - y)*(1 - k);
+				setColor(r, g, b);
+			}
+
+			function revert(){
+				setColor(255 - INPUTS[0].value, 255 - INPUTS[1].value, 255 - INPUTS[2].value);
+			}
+
+			function random(){
+				setColor(Math.random()*255, Math.random()*255, Math.random()*255);
+			}
+
+			function changeColor(index, delta){
+				let v = [parseInt(INPUTS[0].value), parseInt(INPUTS[1].value), parseInt(INPUTS[2].value)];
+				if((v[index] + delta >= 0)&&(v[index] + delta <= 255)){
+					v[index] += delta;
+					setColor(v[0], v[1], v[2]);
+				}else{
+					if(highlightError){
+						flashError();
+					}
+				}
+			}
+
+			function changeGray(delta){
+				let r = parseInt(INPUTS[0].value) + delta;
+				let g = parseInt(INPUTS[1].value) + delta;
+				let b = parseInt(INPUTS[2].value) + delta;
+				let flag = ((r >= 0)&&(r <= 255)&&(g >= 0)&&(g <= 255)&&(b >= 0)&&(b <= 255));
+				if(flag){
+					setColor(r, g, b);
+				}else{
+					if(highlightError){
+						flashError();
+					}
+				}
+			}
+
+			window.onload = init;
 		</script>
 	</body>
 </html>
