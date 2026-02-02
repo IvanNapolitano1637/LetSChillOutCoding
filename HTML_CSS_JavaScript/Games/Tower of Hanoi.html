@@ -5,12 +5,12 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<title>Tower of Hanoi</title>
 		<style>
-			:root {
+			:root{
 				--accent-color: #4a90e2;
 				--button-hover: #357abd;
 				--panel-bg: rgba(255, 255, 255, 0.85);
 			}
-			body {
+			body{
 				font-family: 'Segoe UI', Tahoma, sans-serif;
 				background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
 				background-attachment: fixed;
@@ -25,13 +25,13 @@
 				-webkit-user-select: none;
 				touch-action: manipulation;
 			}
-			.top-bar {
+			.top-bar{
 				display: flex;
 				align-items: center;
 				gap: 10px;
 				margin-bottom: 15px;
 			}
-			.stats {
+			.stats{
 				background: var(--panel-bg);
 				padding: 10px 25px;
 				border-radius: 50px;
@@ -42,7 +42,10 @@
 				display: flex;
 				align-items: center;
 			}
-			canvas {
+			.stats span{
+				margin-left: 8px;
+			}
+			canvas{
 				background: rgba(255, 255, 255, 0.2);
 				cursor: pointer;
 				display: block;
@@ -55,7 +58,7 @@
 				touch-action: none;
 				-webkit-tap-highlight-color: transparent;
 			}
-			.controls {
+			.controls{
 				background: var(--panel-bg);
 				padding: 15px 25px;
 				border-radius: 12px;
@@ -65,7 +68,7 @@
 				gap: 15px;
 				box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 			}
-			select, button {
+			select, button{
 				padding: 10px 20px;
 				font-size: 14px;
 				border-radius: 8px;
@@ -74,25 +77,25 @@
 				transition: all 0.2s ease;
 				outline: none;
 			}
-			select {
+			select{
 				background: var(--panel-bg);
 				border: 1px solid rgba(255,255,255,0.5);
 				box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 				font-weight: bold;
 				height: 44px;
 			}
-			button {
+			button{
 				background-color: var(--accent-color);
 				color: white;
 				font-weight: bold;
 				text-transform: uppercase;
 			}
-			button:hover {
+			button:hover{
 				background-color: var(--button-hover);
 				transform: translateY(-2px);
 			}
 			@media screen and (max-width: 600px){
-				.controls {
+				.controls{
 					width: 90%;
 				}
 			}
