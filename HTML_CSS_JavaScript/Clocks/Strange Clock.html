@@ -64,8 +64,8 @@
 				const currentHourIdx = (currentDate.getHours() + 11)%12;
 				for(let i = 0; i < COLORS.length; i++){
 					let circle = document.createElementNS(svgns, "circle");
-					circle.setAttribute("cx", center + RADIUS * Math.cos((i*30 - 90) * (Math.PI/180)));
-					circle.setAttribute("cy", center + RADIUS * Math.sin((i*30 - 90) * (Math.PI/180)));
+					circle.setAttribute("cx", center + RADIUS*Math.cos((i*30 - 90)*(Math.PI/180)));
+					circle.setAttribute("cy", center + RADIUS*Math.sin((i*30 - 90)*(Math.PI/180)));
 					circle.setAttribute("r", DOT_RADIUS);
 					circle.style.fill = COLORS[(i - 1 + COLORS.length)%(COLORS.length)];
 					svg.appendChild(circle);

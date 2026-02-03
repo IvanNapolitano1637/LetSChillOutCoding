@@ -307,10 +307,10 @@
 			}
 
 			function isPossibleToModifyLight(){
-				if((parseInt(INPUTS[4].value) > parseInt(VALUES[4].textContent))&&(getMax() == 255)){
+				if((parseInt(INPUTS[4].value) > parseInt(VALUES[4].textContent))&&(getMax() === 255)){
 					return false;
 				}
-				if((parseInt(INPUTS[4].value) < parseInt(VALUES[4].textContent))&&(getMin() == 0)){
+				if((parseInt(INPUTS[4].value) < parseInt(VALUES[4].textContent))&&(getMin() === 0)){
 					return false;
 				}
 				return true;
