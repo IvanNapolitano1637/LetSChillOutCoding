@@ -1043,7 +1043,7 @@
 							btn.style.width = "18%"; 
 							btn.style.maxWidth = "60px";
 							btn.innerHTML = `<span class="num-label">${j}</span>`;
-							btn.onclick =() => v4_setBackgroundColor(i, j);
+							btn.onclick = () => v4_setBackgroundColor(i, j);
 							row.appendChild(btn);
 						}
 						panel.appendChild(row);
@@ -1086,7 +1086,7 @@
 					const hex = "#" + v4_COMPONENTS[v4_actualComponents[0]] + v4_COMPONENTS[v4_actualComponents[1]] + v4_COMPONENTS[v4_actualComponents[2]];
 					document.body.style.backgroundColor = hex;
 					document.getElementById("v4_valueHexCode").textContent = hex;
-					const brightness =(r*299 + g*587 + b*114)/1000;
+					const brightness = (r*299 + g*587 + b*114)/1000;
 					const textColor = brightness > 125 ? "black" : "white";
 					const labelBg = brightness > 125 ? "rgba(255,255,0,0.8)" : "rgba(255,255,0,1)";
 					document.body.style.color = textColor;

@@ -105,8 +105,8 @@
 			}
 
 			function drawUniverse(){
-				canvas.width =(SIDE*ROW_NUMBER) +((ROW_NUMBER + 1)*GRID_THICKNESS);
-				canvas.height =(SIDE*COLUMN_NUMBER) +((COLUMN_NUMBER + 1)*GRID_THICKNESS);
+				canvas.width = (SIDE*ROW_NUMBER) + ((ROW_NUMBER + 1)*GRID_THICKNESS);
+				canvas.height = (SIDE*COLUMN_NUMBER) + ((COLUMN_NUMBER + 1)*GRID_THICKNESS);
 				context.fillStyle = "#333";
 				context.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -162,9 +162,9 @@
 					for(let j = 0; j < COLUMN_NUMBER; j++){
 						let neighbors = countNeighbors(i, j);
 						if(grid[i][j]){
-							dummyGrid[i][j] =(neighbors === 2 || neighbors === 3);
+							dummyGrid[i][j] = (neighbors === 2 || neighbors === 3);
 						}else{
-							dummyGrid[i][j] =(neighbors === 3);
+							dummyGrid[i][j] = (neighbors === 3);
 						}
 					}
 				}

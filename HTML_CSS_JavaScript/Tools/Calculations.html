@@ -184,12 +184,12 @@
 				const centerX = canvas.width/2;
 				const centerY = canvas.height/2;
 				const radius = canvas.width*0.45;
-				const angleStep =(2*Math.PI)/numberOfSides;
+				const angleStep = (2*Math.PI)/numberOfSides;
 
 				ctx.clearRect(0, 0, canvas.width, canvas.height);
 				let vertices = [];
 				for(let i = 0; i < numberOfSides; i++){
-					const angle =(-0.5*Math.PI) +(i*angleStep);
+					const angle = (-0.5*Math.PI) + (i*angleStep);
 					vertices.push({x: centerX + radius*Math.cos(angle), y: centerY + radius*Math.sin(angle) });
 				}
 
@@ -243,7 +243,7 @@
 				if(isNaN(n)){
 					return;
 				}
-				document.getElementById("squareOutput").value = `${n}² = ${n * n}`;
+				document.getElementById("squareOutput").value = `${n}² = ${n*n}`;
 			}
 
 			function squareRoot(){
@@ -252,13 +252,13 @@
 					return;
 				}
 				let m = Math.floor(Math.sqrt(n));
-				document.getElementById("sqrt").value =(m*m === n) ? `${n} = ${m}²` : `${n} = ${m}² + ${n -(m*m)}`;
+				document.getElementById("sqrt").value = (m*m === n) ? `${n} = ${m}²` : `${n} = ${m}² + ${n -(m*m)}`;
 			}
 
 			function calculateTriangular(){
 				const n = parseInt(document.getElementById("eleventhNumber").value);
 				if (isNaN(n) || n < 0) return;
-				const triangular = (n * (n + 1))/2;
+				const triangular = (n*(n + 1))/2;
 				document.getElementById("triangularOutput").value = `T(${n}) = ${triangular}`;
 			}
 
@@ -335,14 +335,14 @@
 					document.getElementById("mayBePrime").value = "Seems prime.";
 					return;
 				}
-				const modExp =(b, e, m) => {
+				const modExp = (b, e, m) => {
 					let r = 1n; 
 					b %= m;
 					while(e > 0n){
 						if(e%2n === 1n){
-							r =(r*b)%m;
+							r = (r*b)%m;
 						}
-						b =(b*b)%m;
+						b = (b*b)%m;
 						e = e/2n;
 					}
 					return r;
@@ -376,14 +376,14 @@
 					document.getElementById("mayBePrime").value = "Composite(even).";
 					return;
 				}
-				const modExp =(base, exp, mod) => {
+				const modExp = (base, exp, mod) => {
 					let res = 1n;
 					base %= mod;
 					while(exp > 0n){
 						if(exp % 2n === 1n){
-							res =(res*base)%mod;
+							res = (res*base)%mod;
 						}
-						base =(base*base)%mod;
+						base = (base*base)%mod;
 						exp /= 2n;
 					}
 					return res;
@@ -406,7 +406,7 @@
 					}
 					let composite = true;
 					for(let r = 1n; r < s; r++){
-						x =(x*x)%n;
+						x = (x*x)%n;
 						if(x === n - 1n){
 							composite = false;
 							break;
@@ -426,7 +426,7 @@
 				if(n < 3 || s <= 0){
 					return;
 				}
-				let area =(n*s**2)/(4*Math.tan(Math.PI/n));
+				let area = (n*s**2)/(4*Math.tan(Math.PI/n));
 				document.getElementById("polygonArea").value = "Area: " + area.toFixed(4);
 			}
 

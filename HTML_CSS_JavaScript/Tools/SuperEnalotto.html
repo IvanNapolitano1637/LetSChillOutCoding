@@ -202,7 +202,7 @@
 				}
 				const giorniSett = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
 				let anno = d.getFullYear();
-				let mese =(d.getMonth() + 1).toString().padStart(2, '0');
+				let mese = (d.getMonth() + 1).toString().padStart(2, '0');
 				let giorno = d.getDate().toString().padStart(2, '0');
 				return `${giorniSett[d.getDay()]} ${giorno}/${mese}/${anno}`;
 			}
@@ -225,7 +225,7 @@
 
 					let hash = 0;
 					for(let i = 0; i < stringaCombinata.length; i++){
-						hash =((hash << 5) - hash) + stringaCombinata.charCodeAt(i);
+						hash = ((hash << 5) - hash) + stringaCombinata.charCodeAt(i);
 						hash = Math.abs(hash%TOT_COMBINAZIONI);
 					}
 					document.getElementById("sestinaDaTesto").value = getSestinaToString(getEnnesimaSestina(hash || 1));

@@ -509,7 +509,7 @@
 			}
 
 			function multiplyFREQUENCY_VALUE(m){
-				let newFreq = Math.round(frequencyHz * m);
+				let newFreq = Math.round(frequencyHz*m);
 				const currentMax = parseInt(document.getElementById("frequencyRange").max);
 				if(newFreq > currentMax){
 					return;
@@ -641,7 +641,7 @@
 			});
 
 			document.querySelectorAll("#keyboard button").forEach(btn => {
-				const startNote =(e) => {
+				const startNote = (e) => {
 					e.preventDefault();
 					if(!btn.classList.contains("pressed")){
 						btn.classList.add("pressed");
@@ -649,7 +649,7 @@
 					}
 				};
 
-				const stopNote =(e) => {
+				const stopNote = (e) => {
 					e.preventDefault();
 					btn.classList.remove("pressed");
 					stopVoice(btn.id);

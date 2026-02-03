@@ -155,8 +155,8 @@
 			function setClock(){
 				const currentDate = new Date();
 				const secondsRatio = currentDate.getSeconds()/60;
-				const minutesRatio =(secondsRatio*(ANALOG ? 1 : 0) + currentDate.getMinutes())/60;
-				const hoursRatio =(minutesRatio*(ANALOG ? 1 : 0) + currentDate.getHours())/24;
+				const minutesRatio = (secondsRatio*(ANALOG ? 1 : 0) + currentDate.getMinutes())/60;
+				const hoursRatio = (minutesRatio*(ANALOG ? 1 : 0) + currentDate.getHours())/24;
 
 				setRotation(SECOND_HAND, secondsRatio);
 				setRotation(MINUTE_HAND, minutesRatio);
@@ -178,7 +178,7 @@
 					document.body.style.backgroundColor = "#" + [...Array(6)].map(() => Math.floor(Math.random()*16).toString(16)).join('');
 				}else if(choice === 9){
 					const hour = currentDate.getHours();
-					document.body.style.backgroundColor =(hour >= 20 || hour < 5) ? NIGHT_COLOR : (hour >= 5 && hour < 8) ? SUNRISE_COLOR : (hour >= 8 && hour < 17) ? DAY_COLOR : SUNSET_COLOR;
+					document.body.style.backgroundColor = (hour >= 20 || hour < 5) ? NIGHT_COLOR : (hour >= 5 && hour < 8) ? SUNRISE_COLOR : (hour >= 8 && hour < 17) ? DAY_COLOR : SUNSET_COLOR;
 				}
 
 				if(FLAG){
