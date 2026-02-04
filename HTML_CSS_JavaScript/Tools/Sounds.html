@@ -195,9 +195,7 @@
 		</style>
 	</head>
 	<body>
-
 		<canvas id="scope"></canvas>
-
 		<div class="section-title">OSCILLATOR & ADDITIVE SYNTHESIS</div>
 			<div class="flex-column">
 				<b>Oscillator type:</b>
@@ -208,27 +206,22 @@
 				<div class="radio-option"><input type="radio" id="triangle" name="oscillatorType" value="triangle"><output>triangle</output></div>
 			</div>
 		</div>
-
 		<div class="row">
 			<div class="slider-container"><span class="slider-label">2nd Harmonic:<output id="h2_val">0.00</output></span><input id="h2" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
 			<div class="slider-container"><span class="slider-label">3rd Harmonic:<output id="h3_val">0.00</output></span><input id="h3" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
 			<div class="slider-container"><span class="slider-label">4th Harmonic:<output id="h4_val">0.00</output></span><input id="h4" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
 		</div>
-
 		<div class="section-title">LOW PASS FILTER(VCF)</div>
-
 		<div class="row">
 			<div class="slider-container">
 				<span class="slider-label">Cutoff(Freq):<output id="cutoff_val">20000 Hz</output></span>
 				<input id="cutoff" type="range" class="full-width-slider" min="20" max="20000" step="1" value="20000" oninput="updateFilter()">			
 			</div>
-
 			<div class="slider-container">
 				<span class="slider-label">Resonance(Q):<output id="resonance_val">1.0</output></span>
 				<input id="resonance" type="range" class="full-width-slider" min="0" max="20" step="0.1" value="1" oninput="updateFilter()">
 			</div>
 		</div>
-
 		<div class="slider-container">
 			<span class="slider-label">Frequency</span>
 			<input type="range" id="frequencyRange" class="full-width-slider" name="frequency" oninput="setFrequency()">
@@ -238,7 +231,6 @@
 				<span>Max: <output id="FREQUENCY_MAX_VALUE" style="background:transparent; padding:0;">1000 Hz</output></span>
 			</div>
 		</div>
-
 		<div class="flex-row">
 			<button onclick="play()">Play</button>
 			<button onclick="stop()">Stop</button>
@@ -246,7 +238,6 @@
 			<button onclick="multiplyFREQUENCY_VALUE(2)">f×2</button>
 			<button onclick="window.location.reload();">⟳ Page</button>
 		</div>
-
 		<div class="flex-row" style="align-items: flex-start;">
 			<div class="row" style="min-width: 100px;">
 				<b>Max freq:</b><br>
@@ -263,7 +254,6 @@
 				<input type="radio" name="maxFrequency" value="24000" onchange="setMaxFrequency()">24000<br>
 				<button onclick="doubleMax()">BiggerMax</button>
 			</div>
-
 			<div class="row" style="flex-grow: 1;">
 				<b>ADSR & Master Vol:</b>
 				<div class="slider-container"><span class="slider-label">Attack:<output id="attack_val">10</output></span><input id="attack" type="range" class="full-width-slider" min="0" max="2000" value="10" oninput="updateAdsLabel()"></div>
@@ -273,7 +263,6 @@
 				<div class="slider-container"><span class="slider-label">Master Vol:<output id="masterVol_val">0.60</output></span><input id="masterVol" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0.6" oninput="setMasterVol()"></div>
 			</div>
 		</div>
-
 		<div class="section-title">SIRENS</div>
 		<div class="flex-column">
 			<b>Siren type:</b>
@@ -286,7 +275,6 @@
 				<input type="radio" id="s5" name="sirenType" onchange="changeSirenType(1200,1600,500)"><output>VI</output>
 			</div>
 		</div>
-
 		<div class="flex-column">
 			<b>Siren Wave:</b>
 			<div class="radio-grid">
@@ -296,12 +284,10 @@
 				<div class="radio-option"><input type="radio" name="sirenWave" value="triangle" onchange="updateSirenWave()"><output>triangle</output></div>
 			</div>
 		</div>
-
 		<div class="flex-row">
 			<button onclick="sirenOn()">Siren On</button>
 			<button onclick="sirenOff()">Siren Off</button>
 		</div>
-
 		<div id="keyboard">
 			<button class="white" id="C4">C4</button>
 			<button class="white" id="D4">D4</button>
@@ -317,10 +303,14 @@
 			<button class="black" id="Gsharp4">G#4</button>
 			<button class="black" id="Asharp4">A#4</button>
 		</div>
-
 		<script>
-			let audioContext = null, masterGain = null, analyzer = null, lowPassFilter = null;
-			let oscillatorinputType = "sine", frequencyHz = 440, indexArray = 4;
+			let audioContext = null;
+			let masterGain = null;
+			let analyzer = null;
+			let lowPassFilter = null;
+			let oscillatorinputType = "sine";
+			let frequencyHz = 440;
+			let indexArray = 4;
 			const activeVoices = new Map();
 			const MAX_FREQUENCY_VALUE = [50,100,200,500,1000,2000,4000,8000,16000,24000];
 			const keyMap ={"a":"C4","w":"Csharp4","s":"D4","e":"Dsharp4","d":"E4","f":"F4","t":"Fsharp4","g":"G4","y":"Gsharp4","h":"A4","u":"Asharp4","j":"B4","k":"C5"};
@@ -434,17 +424,14 @@
 				vGain.gain.linearRampToValueAtTime(1, now + a);
 				vGain.gain.linearRampToValueAtTime(s, now + a + d);
 				vGain.connect(lowPassFilter);
-
 				const osc = audioContext.createOscillator();
 				osc.type = oscillatorinputType;
 				osc.frequency.setValueAtTime(freq, now);
 				osc.connect(vGain);
 				osc.start();
-
 				const h2 = createHarmonic(freq*2, parseFloat(document.getElementById("h2").value), vGain);
 				const h3 = createHarmonic(freq*3, parseFloat(document.getElementById("h3").value), vGain);
 				const h4 = createHarmonic(freq*4, parseFloat(document.getElementById("h4").value), vGain);
-
 				activeVoices.set(id,{osc, gain: vGain, harmonics:{h2, h3, h4}});
 			}
 
@@ -463,7 +450,7 @@
 						v.harmonics.h3.osc.stop();
 						v.harmonics.h4.osc.stop();
 						v.gain.disconnect();
-					} catch(e){} 
+					}catch(e){} 
 					activeVoices.delete(id); 
 				}, r*1000 + 50);
 			}
@@ -561,7 +548,13 @@
 				});
 			});
 
-			let sOsc = null, sInt = null, sOn = false, sMin = 800, sMax = 1200, sDur = 300, sWave = "sine";
+			let sOsc = null;
+			let sInt = null;
+			let sOn = false;
+			let sMin = 800;
+			let sMax = 1200;
+			let sDur = 300;
+			let sWave = "sine";
 
 			function updateSirenWave(){
 				const waves = document.getElementsByName("sirenWave");
@@ -648,17 +641,14 @@
 						playVoice(btn.id, freqMap[btn.id]);
 					}
 				};
-
 				const stopNote = (e) => {
 					e.preventDefault();
 					btn.classList.remove("pressed");
 					stopVoice(btn.id);
 				};
-
 				btn.addEventListener("mousedown", startNote);
 				btn.addEventListener("mouseup", stopNote);
 				btn.addEventListener("mouseleave", stopNote);
-
 				btn.addEventListener("touchstart", startNote,{passive: false});
 				btn.addEventListener("touchend", stopNote,{passive: false});
 				btn.addEventListener("touchcancel", stopNote,{passive: false});

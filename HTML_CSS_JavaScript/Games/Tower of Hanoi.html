@@ -101,25 +101,20 @@
 			}
 		</style>
 	</head>
-
 	<body>
-
 		<div class="top-bar">
 			<select id="disksNumber" onchange="changeDiskCount()"></select>
 			<div class="stats">Moves: <span id="moveCounter">0</span></div>
 		</div>
-
 		<canvas id="universe"></canvas>
-
 		<div class="controls">
 			<button type="button" onclick="resetGame()">Restart</button>
 			<button type="button" onclick="animatedSolving()">How To (Demo)</button>
 		</div>
-
 		<script>
 			const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-			function playTone(freq, type, duration) {
+			function playTone(freq, type, duration){
 				if(audioCtx.state === 'suspended'){
 					audioCtx.resume();
 				}

@@ -42,27 +42,22 @@
 		</style>
 	</head>
 	<body>
-
 		<canvas id="universe">Aggiorna il browser</canvas>
-
 		<div class="controls">
 			<button type="button" onclick="refreshPage()">Reset</button>
 			<button type="button" onclick="nextGeneration()">Next</button>
 			<button type="button" id="life" onclick="live()">Start</button>
-
 			<select id="patterns" onchange="loadPattern(this.value)">
 				<option value="">-- Load schema --</option>
 				<option value="glider">Glider</option>
 				<option value="exploder">Small Exploder</option>
 				<option value="row">10 Cell Row</option>
 			</select>
-
 			<div class="speed-box">
 				Slow <input type="range" id="speedSlider" min="10" max="1000" value="200" step="10" oninput="updateSpeed(this.value)"> Fast
 				<span id="speedVal">200</span> ms
 			</div>
 		</div>
-
 		<script>
 			const SIDE = 15;
 			const GRID_THICKNESS = 1;
@@ -70,7 +65,6 @@
 			const COLUMN_NUMBER = 40;
 			const ALIVE_COLOR = "#00ff00";
 			const DEAD_COLOR = "#000000";
-
 			let grid = [];
 			let dummyGrid = [];
 			let goOnAlone = false;
@@ -88,7 +82,6 @@
 			function updateSpeed(val){
 				currentInterval = 1010 - val; 
 				document.getElementById("speedVal").innerText = currentInterval;
-
 				if(goOnAlone){
 					clearInterval(nIntervId);
 					nIntervId = setInterval(nextGeneration, currentInterval);
@@ -109,7 +102,6 @@
 				canvas.height = (SIDE*COLUMN_NUMBER) + ((COLUMN_NUMBER + 1)*GRID_THICKNESS);
 				context.fillStyle = "#333";
 				context.fillRect(0, 0, canvas.width, canvas.height);
-
 				for(let i = 0; i < ROW_NUMBER; i++){
 					grid[i] = [];
 					dummyGrid[i] = [];
@@ -122,7 +114,9 @@
 			}
 
 			function loadPattern(type){
-				if(!type) return;
+				if(!type){
+					return;
+				}
 				refreshPage();
 				const midX = Math.floor(ROW_NUMBER/2);
 				const midY = Math.floor(COLUMN_NUMBER/2);
@@ -134,7 +128,6 @@
 				}else if(type === "row"){
 					coords = [[-4,0], [-3,0], [-2,0], [-1,0], [0,0], [1,0], [2,0], [3,0], [4,0], [5,0]];
 				}
-
 				coords.forEach(([dx, dy]) => {
 					let x = midX + dx; let y = midY + dy;
 					if(x >= 0 && x < ROW_NUMBER && y >= 0 && y < COLUMN_NUMBER){
@@ -208,7 +201,9 @@
 			}
 
 			function refreshPage(){
-				if(goOnAlone) live();
+				if(goOnAlone){
+					live();
+				}
 				drawUniverse();
 			}
 		</script>

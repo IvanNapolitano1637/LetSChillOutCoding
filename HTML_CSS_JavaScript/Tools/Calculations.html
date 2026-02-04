@@ -65,64 +65,52 @@
 		<div class="container">
 			<form id="mathForm">
 				<h3>Number Theory</h3>
-				
 				<label>Primality test</label>
 				<input type="number" id="firstNumber"/>
 				<button type="button" id="primalityTestButton" onclick="handleAction('checkNumber')">Check</button>
 				<output id="isPrime" class="output-text"></output>
-
 				<label>Square of a number</label>
 				<input type="number" id="tenthNumber"/>
 				<button type="button" onclick="handleAction('calculateSquare')">Calculate</button>
 				<output id="squareOutput" class="output-text"></output>
-
 				<label>Square root</label>
 				<input type="number" id="secondNumber"/>
 				<button type="button" id="squareRootButton" onclick="handleAction('squareRoot')">Calculate</button>
 				<output id="sqrt" class="output-text"></output>
-
 				<label>Triangular of a number</label>
 				<input type="number" id="eleventhNumber"/>
 				<button type="button" onclick="handleAction('calculateTriangular')">Calculate</button>
 				<output id="triangularOutput" class="output-text"></output>
-
 				<label>Triangular root</label>
 				<input type="number" id="twelfthNumber"/>
 				<button type="button" onclick="handleAction('checkTriangularity')">Calculate</button>
 				<output id="checkTriangularOutput" class="output-text"></output>
-
 				<label>Factorization</label>
 				<input type="number" id="thirdNumber"/>
 				<button type="button" id="factorization" onclick="handleAction('factorize')">Factorize</button>
 				<output id="scomposition" class="output-text"></output>
-
 				<label>Bézout's relation</label>
 				<input type="number" id="fourthNumber" placeholder="First number"/><br>
 				<input type="number" id="fifthNumber" placeholder="Latter number"/>
 				<button type="button" id="Bezout" onclick="handleAction('computeBezoutRelation')">Calculate</button>
 				<output id="BezoutsRelation" class="output-text"></output>
-
 				<label>Fermat's primality test</label>
 				<input type="number" id="sixthNumber"/>
 				<button type="button" id="primalityTestOfFermatButton" onclick="handleAction('applyFermatsPrimalityTest')">Test</button>
 				<output id="mayBePrime" class="output-text"></output>
-
 				<label>Regular polygon area</label>
 				<input type="number" id="seventhNumber" placeholder="Number of sides"/><br>
 				<input type="number" id="eighthNumber" placeholder="Length of the side"/>
 				<button type="button" id="calculateAreaButton" onclick="handleAction('calculatePolygonArea')">Calculate the area</button>
 				<output id="polygonArea" class="output-text"></output>
-
 				<label>Sum of two squares</label>
 				<input type="number" id="ninthNumber"/>
 				<button type="button" id="sumOfSquares" onclick="handleAction('writeAsSumOfSquares')">Find</button>
 				<div id="squares" class="output-text"></div>
 			</form>
-
 			<div style="width: 100%; text-align: center; margin: 10px 0;">
 				<button type="button" style="background-color: #e66465; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem;" onclick="clearAll()">Reset Page</button>
 			</div>
-
 			<form>
 				<h3>Polygon View</h3>
 				<label for="numberOfSides">Number of sides: <select id="numberOfSides"></select></label><br>
@@ -132,7 +120,6 @@
 				<canvas id="canvas" width="600" height="600"></canvas>
 			</form>
 		</div>
-
 		<script>
 
 			function clearAll(){
@@ -185,21 +172,20 @@
 				const centerY = canvas.height/2;
 				const radius = canvas.width*0.45;
 				const angleStep = (2*Math.PI)/numberOfSides;
-
 				ctx.clearRect(0, 0, canvas.width, canvas.height);
 				let vertices = [];
 				for(let i = 0; i < numberOfSides; i++){
 					const angle = (-0.5*Math.PI) + (i*angleStep);
 					vertices.push({x: centerX + radius*Math.cos(angle), y: centerY + radius*Math.sin(angle) });
 				}
-
 				ctx.beginPath();
 				ctx.strokeStyle = "#27ae60";
 				ctx.lineWidth = 2;
 				ctx.moveTo(vertices[0].x, vertices[0].y);
-				for(let i = 1; i < numberOfSides; i++) ctx.lineTo(vertices[i].x, vertices[i].y);
+				for(let i = 1; i < numberOfSides; i++){
+					ctx.lineTo(vertices[i].x, vertices[i].y);
+				}
 				ctx.closePath(); ctx.stroke();
-
 				if(flagDiagonals){
 					ctx.strokeStyle = "rgba(192, 57, 43, 0.2)";
 					ctx.lineWidth = 1;
@@ -226,8 +212,7 @@
 				let res = " is prime.";
 				if(n < 2){
 					res = " is neither prime nor composite.";
-				}
-				else{
+				}else{
 					for(let i = 2; i*i <= n; i++){
 						if(n%i === 0){
 							res = " is composite.";
@@ -349,7 +334,9 @@
 				};
 				let isP = true;
 				for(let a of [2n, 3n, 5n]){
-					if(a >= n) break;
+					if(a >= n){
+						break;
+					}
 					if(modExp(a, n - 1n, n) !== 1n){
 						isP = false;
 						break;

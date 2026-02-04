@@ -110,7 +110,7 @@
 		<script>
 			//Original page I copied from: https://www.youtube.com/watch?v=Ki0XXrlKlHY&t=7s&ab_channel=WebDevSimplified
 			setInterval(setClock, 200);
-			let choice = 9; 
+			let choice = 9;
 			let clockwise = false;
 			let fromZero = true;
 			let settledColor = false;
@@ -157,30 +157,33 @@
 				const secondsRatio = currentDate.getSeconds()/60;
 				const minutesRatio = (secondsRatio*(ANALOG ? 1 : 0) + currentDate.getMinutes())/60;
 				const hoursRatio = (minutesRatio*(ANALOG ? 1 : 0) + currentDate.getHours())/24;
-
 				setRotation(SECOND_HAND, secondsRatio);
 				setRotation(MINUTE_HAND, minutesRatio);
 				setRotation(HOUR_HAND, hoursRatio);
-
 				const colors_1 = ['#f00', '#ff0', '#0f0', '#0ff', '#00f', '#f0f'];
 				const colors_2 = ['#f00', '#f30', '#f60', '#f90', '#fc0', '#ff0', '#cf0', '#9f0', '#6f0', '#3f0', '#0f0', '#0f3', '#0f6', '#0f9', '#0fc', '#0ff', '#0cf', '#09f', '#06f', '#03f', '#00f', '#30f', '#60f', '#90f', '#c0f', '#f0f', '#f0c', '#f09', '#f06', '#f03'];
 				const colors_3 = ['#000', '#a60', '#f00', '#f90', '#ff0', '#0f0', '#00f', '#b0b' , '#777', '#fff'];
-
-				if(choice === 1) document.body.style.backgroundColor = colors_1[currentDate.getHours()%6];
-				else if(choice === 2) document.body.style.backgroundColor = colors_1[currentDate.getSeconds()%6];
-				else if(choice === 3) document.body.style.backgroundColor = colors_2[currentDate.getSeconds()%30];
-				else if(choice === 4) document.body.style.backgroundColor = colors_3[currentDate.getSeconds()%10];
-				else if(choice === 5) document.body.style.backgroundColor = colors_3[Math.floor(currentDate.getSeconds()/6)];
-				else if(choice === 6) document.body.style.backgroundColor = colors_3[Math.floor(currentDate.getMinutes()/6)];
-				else if(choice === 7) document.body.style.backgroundColor = colors_3[Math.floor(((currentDate.getHours()*3600) +(currentDate.getMinutes()*60) +(currentDate.getSeconds()))/8640)];
-				else if(choice === 8 && !settledColor){
+				if(choice === 1){
+					document.body.style.backgroundColor = colors_1[currentDate.getHours()%6];
+				}else if(choice === 2){
+					document.body.style.backgroundColor = colors_1[currentDate.getSeconds()%6];
+				}else if(choice === 3){
+					document.body.style.backgroundColor = colors_2[currentDate.getSeconds()%30];
+				}else if(choice === 4){
+					document.body.style.backgroundColor = colors_3[currentDate.getSeconds()%10];
+				}else if(choice === 5){
+					document.body.style.backgroundColor = colors_3[Math.floor(currentDate.getSeconds()/6)];
+				}else if(choice === 6){
+					document.body.style.backgroundColor = colors_3[Math.floor(currentDate.getMinutes()/6)];
+				}else if(choice === 7){
+					document.body.style.backgroundColor = colors_3[Math.floor(((currentDate.getHours()*3600) +(currentDate.getMinutes()*60) +(currentDate.getSeconds()))/8640)];
+				}else if(choice === 8 && !settledColor){
 					settledColor = true;
 					document.body.style.backgroundColor = "#" + [...Array(6)].map(() => Math.floor(Math.random()*16).toString(16)).join('');
 				}else if(choice === 9){
 					const hour = currentDate.getHours();
 					document.body.style.backgroundColor = (hour >= 20 || hour < 5) ? NIGHT_COLOR : (hour >= 5 && hour < 8) ? SUNRISE_COLOR : (hour >= 8 && hour < 17) ? DAY_COLOR : SUNSET_COLOR;
 				}
-
 				if(FLAG){
 					document.getElementById("controlsForm").style.display = "none";
 					document.getElementById("clockDial").onclick = changeClockDirection;

@@ -182,8 +182,11 @@
 				let showOpposites = false;
 
 				function isPrime(num){
-					for(let i = 2, s = Math.sqrt(num); i <= s; i++)
-						if(num%i === 0) return false; 
+					for(let i = 2, s = Math.sqrt(num); i <= s; i++){
+						if(num%i === 0){
+							return false;
+						}
+					}
 					return num > 1;
 				}
 
@@ -202,9 +205,7 @@
 					selectedCells = [];
 					document.getElementById('errors').textContent = '0';
 					document.getElementById('maxErrors').textContent = maxNumberOfErrors;
-
 					const fontSize = P > 50 ? "0.9em" : "1.1em";
-
 					for(let i = 1; i < P; i++){
 						const cell = document.createElement('div');
 						cell.classList.add('cell');
@@ -271,7 +272,7 @@
 					selectedCells = [];
 				}
 
-				function setAsMatched(cell, n1, n2) {
+				function setAsMatched(cell, n1, n2){
 					cell.classList.add('matched');
 					cell.classList.remove('revealed');
 					cell.innerHTML = (n1 === n2) ? `${n1} = ${n1}⁻¹` : `${n1} = ${n2}⁻¹`;

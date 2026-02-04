@@ -58,7 +58,6 @@
 			}
 		</style>
 	</head>
-
 	<body>
 		<div id="clock-container"></div>
 		<script>
@@ -108,7 +107,6 @@
 
 			let clockSetting = (function(){
 				let executed = false;
-
 				return function(){
 					if(!executed){
 						executed = true;
@@ -127,18 +125,15 @@
 						svg.appendChild(inner_panel);
 						svg.appendChild(top_panel);
 						svg.appendChild(bottom_panel);
-
 						if(FLAG){
 							svg.appendChild(new_bottom_panel);
 						}
-
 						for(let i = 0; i < 12; i++){
 							YEAR_C[i] = document.createElementNS(svgns, "circle");
 							YEAR_C[i].setAttribute("r", YEAR_RADIUS);
 							YEAR_C[i].setAttribute("cx",(i*2 + 1)*YEAR_RADIUS + (i + 3)*HORIZONTAL_SPACE);
 							YEAR_C[i].setAttribute("cy", YEAR_RADIUS + 3*VERTICAL_SPACE);
 							svg.appendChild(YEAR_C[i]);
-
 							if(i < 6){
 								MONTH_C[i] = document.createElementNS(svgns, "circle");
 								DAY_C[i] = document.createElementNS(svgns, "circle");
@@ -147,19 +142,16 @@
 								SECONDS_C[i] = document.createElementNS(svgns, "circle");
 								[MONTH_C[i], DAY_C[i], HOURS_C[i], MINUTES_C[i], SECONDS_C[i]].forEach(c => c.setAttribute("r", RADIUS));
 								const cx = (i*2 + 1)*RADIUS + (i + 3)*HORIZONTAL_SPACE;
-
 								MONTH_C[i].setAttribute("cx", cx);
 								DAY_C[i].setAttribute("cx", cx);
 								HOURS_C[i].setAttribute("cx", cx);
 								MINUTES_C[i].setAttribute("cx", cx);
 								SECONDS_C[i].setAttribute("cx", cx);
-
 								MONTH_C[i].setAttribute("cy", 2*YEAR_RADIUS + 1*RADIUS + 4*VERTICAL_SPACE);
 								DAY_C[i].setAttribute("cy", 2*YEAR_RADIUS + 3*RADIUS + 5*VERTICAL_SPACE);
 								HOURS_C[i].setAttribute("cy", 2*YEAR_RADIUS + 5*RADIUS + 8*VERTICAL_SPACE);
 								MINUTES_C[i].setAttribute("cy", 2*YEAR_RADIUS + 7*RADIUS + 9*VERTICAL_SPACE);
 								SECONDS_C[i].setAttribute("cy", 2*YEAR_RADIUS + 9*RADIUS + 10*VERTICAL_SPACE);
-
 								svg.appendChild(MONTH_C[i]);
 								svg.appendChild(DAY_C[i]);
 								svg.appendChild(HOURS_C[i]);
@@ -167,14 +159,12 @@
 								svg.appendChild(SECONDS_C[i]);
 							}
 						}
-
 						for(let i = 0; i < 32; i++){
 							TS_C[i] = document.createElementNS(svgns, "circle");
 							TS_C[i].setAttribute("r", RADIUS/5);
 							TS_C[i].setAttribute("cx",((i*2 + 1)*(RADIUS/5)) + (1*HORIZONTAL_SPACE) + i + (DESKTOP ? i : UNIT));
 							TS_C[i].setAttribute("cy", 2*YEAR_RADIUS + 11*RADIUS + 10*VERTICAL_SPACE);
 							svg.appendChild(TS_C[i]);
-
 							if(FLAG){
 								LAST_ARRAY_BD_C[i] = document.createElementNS(svgns, "circle");
 								LAST_ARRAY_BD_C[i].setAttribute("r", RADIUS/5);
@@ -184,31 +174,26 @@
 								svg.appendChild(LAST_ARRAY_BD_C[i]);
 							}
 						}
-
 						panel.setAttribute("width", 12*RADIUS + 11*HORIZONTAL_SPACE);
 						inner_panel.setAttribute("width", 12*RADIUS + 9*HORIZONTAL_SPACE);
 						top_panel.setAttribute("width", 12*RADIUS + 7*HORIZONTAL_SPACE);
 						bottom_panel.setAttribute("width", 12*RADIUS + 7*HORIZONTAL_SPACE);
 						new_bottom_panel.setAttribute("width", 12*RADIUS + 11*HORIZONTAL_SPACE);
-
 						panel.setAttribute("height",(10 + (FLAG ? 1 : 0))*RADIUS + 2*YEAR_RADIUS + 16*VERTICAL_SPACE);
 						inner_panel.setAttribute("height", 10*RADIUS + 2*YEAR_RADIUS + 11*VERTICAL_SPACE);
 						top_panel.setAttribute("height", 4*RADIUS + 2*YEAR_RADIUS + 4*VERTICAL_SPACE);
 						bottom_panel.setAttribute("height", 6*RADIUS + 4*VERTICAL_SPACE);
 						new_bottom_panel.setAttribute("height", 3*VERTICAL_SPACE);
-
 						panel.setAttribute("x", 0);
 						inner_panel.setAttribute("x", HORIZONTAL_SPACE);
 						top_panel.setAttribute("x", 2*HORIZONTAL_SPACE);
 						bottom_panel.setAttribute("x", 2*HORIZONTAL_SPACE);
 						new_bottom_panel.setAttribute("x", 0);
-
 						panel.setAttribute("y", 0);
 						inner_panel.setAttribute("y", VERTICAL_SPACE);
 						top_panel.setAttribute("y", 2*VERTICAL_SPACE);
 						bottom_panel.setAttribute("y", 7*VERTICAL_SPACE + 4*RADIUS + 2*YEAR_RADIUS);
 						new_bottom_panel.setAttribute("y", 14*VERTICAL_SPACE + 10*RADIUS + 3*YEAR_RADIUS);
-
 						document.getElementById("end").hidden = FLAG;
 					}
 				};
@@ -223,13 +208,10 @@
 				const minutes = d.getMinutes();
 				const seconds = d.getSeconds();
 				const timestamp = Math.floor(Date.now()/1000);
-
 				document.getElementById("dec_ts").value = timestamp;
 				document.getElementById("hex_ts").value = timestamp.toString(16);
 				document.getElementById("lasting").value = 2147483647 - timestamp;
-
 				clockSetting();
-
 				let sYear = year.toString(2).padStart(12, '0');
 				let sMonth = month.toString(2).padStart(6, '0');
 				let sDay = day.toString(2).padStart(6, '0');
@@ -237,17 +219,14 @@
 				let sMinutes = minutes.toString(2).padStart(6, '0');
 				let sSeconds = seconds.toString(2).padStart(6, '0');
 				let sTimestamp = timestamp.toString(2).padStart(32, '0');
-
 				panel.style.fill = PANEL_BACKGROUND_COLOR;
 				inner_panel.style.fill = SEPARATOR_COLOR;
 				top_panel.style.fill = PANEL_BACKGROUND_COLOR;
 				bottom_panel.style.fill = PANEL_BACKGROUND_COLOR;
 				new_bottom_panel.style.fill = "#00FF00";
-
 				for(let i = 0; i < 12; i++){
 					YEAR_C[i].style.fill = (sYear.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
 					YEAR_C[i].style.transition = "2s";
-
 					if(i < 6){
 						MONTH_C[i].style.fill = (sMonth.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
 						DAY_C[i].style.fill = (sDay.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
@@ -256,7 +235,6 @@
 						SECONDS_C[i].style.fill = (sSeconds.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
 					}
 				}
-
 				for(let i = 0; i < 32; i++){
 					TS_C[i].style.fill = (sTimestamp.charAt(i) === "0") ? ZERO_COLOR : ONE_COLOR;
 					TS_C[i].style.transition = "1s";

@@ -154,7 +154,7 @@
 			window.onload = init;
 			window.onresize = () => { side = getScreenSize()/order; drawAll(); };
 
-			function init() {
+			function init(){
 				const canvas = document.getElementById("chessboard");
 				canvas.addEventListener('mousedown', handleInput);
 				canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleInput(e.touches[0]); });
@@ -167,7 +167,7 @@
 				refresh();
 			}
 
-			function handleInput(e) {
+			function handleInput(e){
 				const rect = document.getElementById("chessboard").getBoundingClientRect();
 				const x = e.clientX - rect.left;
 				const y = e.clientY - rect.top;
@@ -271,7 +271,10 @@
 						let mini = document.createElement("canvas");
 						mini.className = "mini-board"; mini.width = mini.height = 64;
 						drawMini(mini, sol);
-						mini.onclick = () => { loadSolution(sol); window.scrollTo({top: 0, behavior: 'smooth'}); };
+						mini.onclick = () => {
+							loadSolution(sol);
+							window.scrollTo({top: 0, behavior: 'smooth'});
+						};
 						gridDiv.appendChild(mini);
 					});
 					block.appendChild(gridDiv);
@@ -297,9 +300,9 @@
 				}
 			}
 
-			function loadSolution(sol) {
+			function loadSolution(sol){
 				refresh();
-				for (let col = 0; col < 8; col++) {
+				for(let col = 0; col < 8; col++){
 					grid[col][parseInt(sol[col])].occupied = true;
 				}
 				numberOfQueens = 8;
@@ -310,7 +313,7 @@
 				hasWon = false;
 			}
 
-			function refresh() {
+			function refresh(){
 				hasWon = false;
 				numberOfQueens = 0;
 				document.body.style.background = BACKGROUND_COLOR;

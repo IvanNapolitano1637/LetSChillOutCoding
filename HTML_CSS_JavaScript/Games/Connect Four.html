@@ -72,7 +72,6 @@
 				<label id="RedLabel" for="Red">Red</label>
 			</div>
 		</div>
-
 		<script>
 			const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
 			const UNIT = DESKTOP ? 10 : 5;
@@ -174,7 +173,7 @@
 				}
 			}
 
-			function computerMove() {
+			function computerMove(){
 				if(!goOn){
 					return;
 				}
@@ -204,7 +203,7 @@
 					}
 				}else{
 					let bestScore = -Infinity;
-					for(let c = 0; c < COLUMN_NUMBER; c++) {
+					for(let c = 0; c < COLUMN_NUMBER; c++){
 						let r = getAvailableRow(c);
 						if(r !== -1){
 							grid[r][c] = 1;
@@ -239,7 +238,7 @@
 				return score;
 			}
 
-			function minimax(board, depth, isMaximizing, alpha, beta) {
+			function minimax(board, depth, isMaximizing, alpha, beta){
 				let result = checkBoardHard();
 				if(result === 1){
 					return 10000 + depth;
@@ -250,11 +249,11 @@
 				if(depth === 0 || moves.length === ROW_NUMBER*COLUMN_NUMBER){
 					return evaluateBoardHard();
 				}
-				if(isMaximizing) {
+				if(isMaximizing){
 					let maxEval = -Infinity;
 					for(let c = 0; c < COLUMN_NUMBER; c++){
 						let r = getAvailableRow(c);
-						if(r !== -1) {
+						if(r !== -1){
 							board[r][c] = 1;
 							let ev = minimax(board, depth - 1, false, alpha, beta);
 							board[r][c] = -1;
@@ -285,9 +284,9 @@
 				}
 			}
 
-			function evaluateBoardHard() {
+			function evaluateBoardHard(){
 				let score = 0;
-				for(let r = 0; r < ROW_NUMBER; r++) {
+				for(let r = 0; r < ROW_NUMBER; r++){
 					if(grid[r][3] === 1){
 						score += 3;
 					}
@@ -298,9 +297,9 @@
 				return score;
 			}
 
-			function checkBoardHard() {
-				for(let r = 0; r < ROW_NUMBER; r++) {
-					for(let c = 0; c < COLUMN_NUMBER; c++) {
+			function checkBoardHard(){
+				for(let r = 0; r < ROW_NUMBER; r++){
+					for(let c = 0; c < COLUMN_NUMBER; c++){
 						if(grid[r][c] !== -1 && check(r, c)){
 							return grid[r][c];
 						}
@@ -309,7 +308,7 @@
 				return -1;
 			}
 
-			function getAvailableRow(col) {
+			function getAvailableRow(col){
 				for(let r = ROW_NUMBER - 1; r >= 0; r--){
 					if(grid[r][col] === -1){
 						return r;
@@ -391,7 +390,7 @@
 				updateLabels();
 			}
 
-			function cycleDifficulty() {
+			function cycleDifficulty(){
 				difficultyIndex = (difficultyIndex + 1)%3;
 				updateLabels();
 			}
@@ -410,7 +409,7 @@
 			}
 
 			function undoLastMove(){
-				for(let i = 0; i < 2; i++) {
+				for(let i = 0; i < 2; i++){
 					if(moves.length > 0){
 						let last = moves.pop();
 						grid[last.r][last.c] = -1;

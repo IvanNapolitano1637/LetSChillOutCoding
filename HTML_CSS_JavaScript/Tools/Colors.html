@@ -155,14 +155,12 @@
 	<body>
 		<div id="optionZone">
 			<h3 style="margin-top:0">HEX: <output id="valueHexCode" style="width: auto;" title="Clicca per copiare"></output></h3>
-			
 			<div class="btn-group">
 				<button type="button" onclick="revert()">Revert</button>
 				<button type="button" onclick="random()">Random</button>
 				<button type="button" onclick="setColor(255, 255, 255)">White</button>
 				<button type="button" onclick="setColor(0, 0, 0)">Black</button>
 			</div>
-
 			<div id="sliders">
 				<div class="slider-row"><label>R</label> <input type="range" id="red" class="slider" oninput="setAndPatch(0)"/> <output id="valueR"></output></div>
 				<div class="slider-row"><label>G</label> <input type="range" id="green" class="slider" oninput="setAndPatch(1)"/> <output id="valueG"></output></div>
@@ -174,7 +172,6 @@
 				<div class="slider-row"><label>Y</label> <input type="range" id="yellow" class="slider" oninput="setAndPatch(7)"/> <output id="valueY"></output></div>
 				<div class="slider-row"><label>K</label> <input type="range" id="black" class="slider" oninput="setAndPatch(8)"/> <output id="valueK"></output></div>
 			</div>
-
 			<div class="control-group">
 				<div class="button-row">
 					<button class="redButtons step" onclick="changeColor(0,-20)">-20</button>
@@ -188,7 +185,6 @@
 					<button class="redButtons step" onclick="changeColor(0, 10)">+10</button>
 					<button class="redButtons step" onclick="changeColor(0, 20)">+20</button>
 				</div>
-
 				<div class="button-row">
 					<button class="greenButtons step" onclick="changeColor(1,-20)">-20</button>
 					<button class="greenButtons step" onclick="changeColor(1,-10)">-10</button>
@@ -202,7 +198,6 @@
 					<button class="greenButtons step" onclick="changeColor(1, 10)">+10</button>
 					<button class="greenButtons step" onclick="changeColor(1, 20)">+20</button>
 				</div>
-
 				<div class="button-row">
 					<button class="blueButtons step" onclick="changeColor(2,-20)">-20</button>
 					<button class="blueButtons step" onclick="changeColor(2,-10)">-10</button>
@@ -216,7 +211,6 @@
 					<button class="blueButtons step" onclick="changeColor(2, 10)">+10</button>
 					<button class="blueButtons step" onclick="changeColor(2, 20)">+20</button>
 				</div>
-
 				<div class="button-row">
 					<button class="grayButtons step" onclick="changeGray(-20)">-20</button>
 					<button class="grayButtons step" onclick="changeGray(-10)">-10</button>
@@ -232,7 +226,6 @@
 				</div>
 			</div>
 		</div>
-
 		<script>
 			const VALUES = [
 				document.querySelector("#valueR"), document.querySelector("#valueG"), document.querySelector("#valueB"), 

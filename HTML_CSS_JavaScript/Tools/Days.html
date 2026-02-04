@@ -123,9 +123,7 @@
 			<div class="language-selector">
 				<select id="langSelect" onchange="changeLanguage(this.value)"></select>
 			</div>
-			
 			<h3 data-key="title">Days</h3>
-
 			<div class="section">
 				<label data-key="findDay">Find the day of the week:</label>
 				<div class="row-group">
@@ -139,7 +137,6 @@
 					<input type="text" id="dayOfTheWeek" class="output-field" disabled data-key-ph="phResult" placeholder="Result">
 				</div>
 			</div>
-
 			<div class="section">
 				<label data-key="todayExtended">Today's date extended:</label>
 				<div class="row-group">
@@ -150,7 +147,6 @@
 					<input type="text" id="todayDate" class="output-field" disabled data-key-ph="phExtended" placeholder="Extended date">
 				</div>
 			</div>
-
 			<div class="section">
 				<label data-key="diffDates">Difference between two dates:</label>
 				<div class="row-group">
@@ -170,10 +166,8 @@
 					<input type="text" id="daysOfDifference" class="output-field" disabled placeholder="0"/>
 				</div>
 			</div>
-
 			<button type="button" class="btn-clear" onclick="clearFields()" data-key="clear">Clear Fields</button>
 		</div>
-
 		<script>
 			const TRANSLATIONS = {
 				English: {
@@ -489,7 +483,7 @@
 				const inputField = document.getElementById("dayOfTheWeek");
 				const dateValue = document.getElementById("firstDate").value;
 				const t = TRANSLATIONS[currentLang];
-				if (!dateValue) {
+				if(!dateValue){
 					inputField.value = "";
 					return;
 				}
