@@ -2,6 +2,7 @@
 <html lang="en"><!--C03#008 - Nicola - Clock-->
 	<head>
 		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Clock</title>
 		<style>
 			*{
@@ -15,7 +16,7 @@
 				align-items: center;
 				min-height: 100vh;
 				background: #2f363e;
-				overflow: hidden;
+				-webkit-tap-highlight-color: transparent;
 			}
 			.clock{
 				position: relative;
@@ -24,18 +25,23 @@
 				display: flex;
 				justify-content: center;
 				align-items: center;
-				scale: 2.8;
+				--base-scale: 2.8;
+				--reflect: 1;
+				transform: scale(var(--base-scale)) scaleX(var(--reflect));
 				box-shadow: inset 5px 5px 25px rgba(0,0,0,0.25);
 				border-radius: 50%;
 				cursor: pointer;
 				transition: transform 0.6s ease-in-out;
-				user-select: none; 
-				-webkit-user-select: none;
-				-webkit-tap-highlight-color: transparent;
+				user-select: none;
 				outline: none;
 			}
 			.clock.reflected{
-				transform: scaleX(-1);
+				--reflect: -1;
+			}
+			@media (max-width: 768px) {
+				.clock {
+					--base-scale: 1.2;
+				}
 			}
 			.clock::before{
 				content: '';
@@ -174,7 +180,7 @@
 
 			function updateClock(){
 				let now = new Date();
-				let h = now.getHours(), m = now.getMinutes(), s = now.getSeconds(), ms = now.getMilliseconds();
+				let h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
 				if(audioCtx.state === 'running' && s !== lastS){
 					playTick();
 					lastS = s;

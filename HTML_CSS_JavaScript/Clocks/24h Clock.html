@@ -2,8 +2,7 @@
 <html lang="en"><!--C02#004 - Giovanna - 24h Clock-->
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=1024">
-		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"> <meta http-equiv="X-UA-Compatible" content="ie=edge">
 		<title id="title">Clock</title>
 		<style>
 			*, *::after, *::before{
@@ -15,9 +14,9 @@
 				justify-content: center;
 				align-items: center;
 				min-height: 100vh;
-				overflow: hidden;
 				transition: background-color 2s ease-in-out;
 				background-color: #2f363e;
+				-webkit-tap-highlight-color: transparent;
 			}
 			.clock{
 				width: 600px;
@@ -29,7 +28,6 @@
 				transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 				cursor: pointer;
 				user-select: none;
-				-webkit-tap-highlight-color: transparent;
 				touch-action: manipulation;
 			}
 			.clock.reflected{
@@ -42,7 +40,7 @@
 				height: 100%;
 				text-align: center;
 				transform: rotate(var(--rotation));
-				font-size: 2.5rem;
+				font-size: 2rem;
 				transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 			}
 			.clock.reflected .number{
@@ -91,6 +89,15 @@
 				margin-top: 20px;
 				text-align: center;
 			}
+			@media (max-width: 768px) {
+				.clock {
+					width: 90vw;
+					height: 90vw;
+				}
+				.clock .number {
+					font-size: 1.2rem;
+				}
+			}
 		</style>
 	</head>
 	<body>
@@ -114,7 +121,7 @@
 			let clockwise = false;
 			let fromZero = true;
 			let settledColor = false;
-			const FLAG = true; 
+			const FLAG = true; 
 			const ANALOG = true;
 			const HOUR_HAND = document.querySelector('[data-hour-hand]');
 			const MINUTE_HAND = document.querySelector('[data-minute-hand]');
