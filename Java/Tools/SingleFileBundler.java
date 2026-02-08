@@ -5,59 +5,102 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+//Codice per creare un unico file HTML con all'interno tutte le pagine che stanno nelle tre cartelle "Clocks", "Games" e "Tools".
+//Codice creato da Gemini sabato sette febbraio duemilaventisei.
+//Unica cosa su cui ragionare è l'estetica della nuova pagina creata. Ne ho viste di migliori. 
+//Unica differenza tra le pagine originali e quelle contenute nel file creato qui è una sezione con un pulsante per tornare all'indice di tutte le pagine.
+//Da mettere nella cartella in cui ci sono: "Clocks", "Games" e "Tools".
+//Da compilare e lanciare lì da terminale.
+
 public class SingleFileBundler {
 
+    // --- CONFIGURAZIONE ---
+    // Inserisci qui il percorso della cartella che contiene "Clocks", "Games", "Tools"
+    //Invece di cablare il path ho deciso di inserire il path in cui si trova il file Java.
     private static final String SOURCE_DIR = System.getProperty("user.dir");
-    private static final String OUTPUT_FILE = "All_pages.html";
+    
+    // Nome del file finale che verrà creato
+    private static final String OUTPUT_FILE = "All_pages.html";//Modificato da me. Lei aveva scelto "All_In_One_App.html".
+    
     private static final String[] CATEGORIES = {"Clocks", "Games", "Tools"};
 
     public static void main(String[] args) {
         try {
+            System.out.println("Inizio scansione cartelle...");
+            
             Path sourcePath = Paths.get(SOURCE_DIR);
+            
+            // StringBuilder per costruire il JSON dei dati (Map<NomeApp, CodiceBase64>)
             StringBuilder jsDataBuilder = new StringBuilder();
             jsDataBuilder.append("const appLibrary = {\n");
+
             boolean first = true;
+
+            // Scansiona le categorie
             for (String category : CATEGORIES) {
                 Path catPath = sourcePath.resolve(category);
                 if (Files.exists(catPath) && Files.isDirectory(catPath)) {
+                    
                     List<Path> files;
                     try (Stream<Path> walk = Files.list(catPath)) {
                         files = walk.filter(p -> p.toString().toLowerCase().endsWith(".html"))
                                    .sorted(Comparator.comparing(p -> p.getFileName().toString()))
                                    .collect(Collectors.toList());
                     }
+
                     for (Path file : files) {
                         if (!first) jsDataBuilder.append(",\n");
+                        
                         String key = category + "|" + file.getFileName().toString();
                         String base64Content = encodeFileToBase64(file);
+                        
+                        // Aggiunge la voce al database JS: "Category|Nome": "Base64String"
                         jsDataBuilder.append("    \"").append(key).append("\": \"").append(base64Content).append("\"");
                         first = false;
+                        
+                        System.out.println("Inglobato: " + key);
                     }
                 }
             }
             jsDataBuilder.append("\n};");
+
+            // Genera il file HTML finale
             String finalHtml = buildHtmlStructure(jsDataBuilder.toString(), sourcePath);
+            
+            // Salva il file nella stessa cartella della root
             Path outputPath = sourcePath.resolve(OUTPUT_FILE);
             Files.write(outputPath, finalHtml.getBytes(StandardCharsets.UTF_8));
+
+            System.out.println("------------------------------------------------");
+            System.out.println("SUCCESSO! File creato: " + outputPath);
+            System.out.println("Questo file contiene tutto il codice ed è indipendente.");
+            System.out.println("------------------------------------------------");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    // Legge il file e lo converte in stringa Base64 per non rompere l'HTML contenitore
     private static String encodeFileToBase64(Path file) throws IOException {
         byte[] bytes = Files.readAllBytes(file);
         return Base64.getEncoder().encodeToString(bytes);
     }
 
+    // Costruisce l'HTML completo (CSS, Layout, Logica JS)
     private static String buildHtmlStructure(String jsLibrary, Path sourcePath) {
         StringBuilder html = new StringBuilder();
+        
         html.append("<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n");
         html.append("<meta charset=\"UTF-8\">\n");
         html.append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no\">\n");
         html.append("<title>All-in-One Collection</title>\n");
         html.append("<style>\n");
+        // CSS RESET E BASE
         html.append("  * { box-sizing: border-box; margin: 0; padding: 0; }\n");
         html.append("  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #f4f4f9; height: 100vh; overflow: hidden; }\n");
+        
+        // STILE MENU (Visibile all'avvio)
         html.append("  #menu-container { height: 100%; overflow-y: auto; padding: 20px; transition: transform 0.3s ease; }\n");
         html.append("  h1 { text-align: center; margin-bottom: 30px; color: #333; }\n");
         html.append("  .category-group { margin-bottom: 30px; background: white; border-radius: 10px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }\n");
@@ -65,43 +108,59 @@ public class SingleFileBundler {
         html.append("  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }\n");
         html.append("  .app-btn { background: #f8f9fa; border: 1px solid #ddd; padding: 15px; text-align: center; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.9rem; font-weight: 600; color: #444; }\n");
         html.append("  .app-btn:hover { background: #007bff; color: white; transform: translateY(-2px); shadow: 0 4px 8px rgba(0,0,0,0.1); }\n");
+
+        // STILE APP VIEWER (Nascosto all'avvio)
         html.append("  #app-viewer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; transform: translateX(100%); transition: transform 0.3s ease; z-index: 1000; display: flex; flex-direction: column; }\n");
         html.append("  #app-viewer.active { transform: translateX(0); }\n");
+        
+        // BARRA SUPERIORE CON LA X
         html.append("  #top-bar { height: 50px; background: #222; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; color: white; flex-shrink: 0; }\n");
         html.append("  #app-title-display { font-size: 1rem; font-weight: normal; opacity: 0.8; }\n");
         html.append("  #close-btn { font-size: 30px; line-height: 1; cursor: pointer; color: #fff; font-weight: bold; user-select: none; }\n");
         html.append("  #close-btn:hover { color: #ff6b6b; }\n");
+        
+        // IFRAME PER CONTENUTO ISOLATO
         html.append("  iframe { border: none; flex-grow: 1; width: 100%; height: 100%; background: #fff; }\n");
         html.append("</style>\n");
         html.append("</head>\n<body>\n");
+
+        // --- STRUTTURA MENU ---
         html.append("<div id=\"menu-container\">\n");
         html.append("  <h1>My Collection</h1>\n");
+        
         for (String cat : CATEGORIES) {
             Path catPath = sourcePath.resolve(cat);
             if (Files.exists(catPath) && Files.isDirectory(catPath)) {
                 html.append("  <div class=\"category-group\">\n");
                 html.append("    <div class=\"cat-title\">").append(cat).append("</div>\n");
                 html.append("    <div class=\"grid\">\n");
+                
                 try (Stream<Path> walk = Files.list(catPath)) {
                    List<String> fileNames = walk.filter(p -> p.toString().toLowerCase().endsWith(".html"))
                            .map(p -> p.getFileName().toString())
                            .sorted()
                            .collect(Collectors.toList());
+                   
                    if (fileNames.isEmpty()) {
                        html.append("<div>No files found</div>");
                    }
+
                    for (String fName : fileNames) {
                        String key = cat + "|" + fName;
                        String cleanName = fName.replace(".html", "").replace("_", " ");
+                       // Bottone che chiama la funzione JS openApp
                        html.append("      <div class=\"app-btn\" onclick=\"openApp('").append(key).append("', '").append(cleanName).append("')\">")
                            .append(cleanName).append("</div>\n");
                    }
                 } catch (IOException e) { e.printStackTrace(); }
-                html.append("    </div>\n");
-                html.append("  </div>\n");
+                
+                html.append("    </div>\n"); // End grid
+                html.append("  </div>\n"); // End category
             }
         }
         html.append("</div>\n");
+
+        // --- STRUTTURA VIEWER ---
         html.append("<div id=\"app-viewer\">\n");
         html.append("  <div id=\"top-bar\">\n");
         html.append("    <span id=\"app-title-display\"></span>\n");
@@ -109,8 +168,12 @@ public class SingleFileBundler {
         html.append("  </div>\n");
         html.append("  <iframe id=\"content-frame\"></iframe>\n");
         html.append("</div>\n");
+
+        // --- JAVASCRIPT LOGIC ---
         html.append("<script>\n");
+        // Qui inseriamo i dati Base64 generati da Java
         html.append(jsLibrary).append("\n"); 
+        
         html.append("\n");
         html.append("  const viewer = document.getElementById('app-viewer');\n");
         html.append("  const iframe = document.getElementById('content-frame');\n");
@@ -119,7 +182,7 @@ public class SingleFileBundler {
         html.append("  function openApp(key, name) {\n");
         html.append("    if (appLibrary[key]) {\n");
         html.append("      // Decodifica il contenuto Base64\n");
-        html.append("      const content = atob(appLibrary[key]);\n");
+        html.append("      const content = atob(appLibrary[key]);\n"); // atob decodifica Base64 in stringa
         html.append("      titleDisplay.textContent = name;\n");
         html.append("      viewer.classList.add('active');\n");
         html.append("      // Inietta il contenuto nell'iframe\n");
@@ -135,7 +198,9 @@ public class SingleFileBundler {
         html.append("    setTimeout(() => { iframe.src = 'about:blank'; }, 300);\n");
         html.append("  }\n");
         html.append("</script>\n");
+        
         html.append("</body>\n</html>");
+        
         return html.toString();
     }
 }
