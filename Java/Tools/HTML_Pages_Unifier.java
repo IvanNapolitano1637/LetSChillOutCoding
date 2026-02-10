@@ -255,7 +255,8 @@ public class HTML_Pages_Unifier {
                 .replace("{{JS_CONTENT}}", jsObjectContent);
 
         try {
-            Files.writeString(Paths.get("index.html"), finalHtml);
+            //Files.writeString(Paths.get("index.html"), finalHtml);
+            Files.writeString(Paths.get("All_my_HTML_pages.html"), finalHtml);
         } catch (IOException e) {
             e.printStackTrace();
         }
