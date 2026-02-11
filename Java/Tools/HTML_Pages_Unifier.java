@@ -5,260 +5,340 @@ import java.util.*;
 
 //Codice per creare un unico file HTML con all'interno tutte le pagine che stanno nelle tre cartelle "Clocks", "Games" e "Tools".
 //Codice creato da Gemini e Claude lunedì nove febbraio duemilaventisei dopo un altro tentativo fatto con Gemini due giorni prima.
-//Unica cosa su cui ragionare è l'estetica della nuova pagina creata. Ne ho viste di migliori. 
+//Unica cosa su cui ragionare è l'estetica della nuova pagina creata. Ne ho viste di migliori.
+//Ho fatto altre modifiche mercoledì undici febbraio.
 //Unica differenza tra le pagine originali e quelle contenute nel file creato qui è una sezione con un pulsante per tornare all'indice di tutte le pagine.
 //Da mettere nella cartella in cui ci sono: "Clocks", "Games" e "Tools".
 //Da compilare e lanciare lì da terminale.
 
-public class HTML_Pages_Unifier {
+public class HTML_Pages_Unifier{
 
-    private static final String[] FOLDERS = {"Clocks", "Games", "Tools"};
+	private static final String[] FOLDERS = {"Clocks", "Games", "Tools"};
+	private static final Map<String, String> LOGOS;
+	static {
+		Map<String, String> tempMap = new HashMap<>();
+		tempMap.put("Clocks","🕰️");
+		tempMap.put("Games","🎮");
+		tempMap.put("Tools","🛠️");
+		LOGOS = Collections.unmodifiableMap(tempMap);
+	}
 
-    public static void main(String[] args) {
-        StringBuilder jsDataBuilder = new StringBuilder();
-        StringBuilder htmlMenuBuilder = new StringBuilder();
+	public static void main(String[] args) {
+		StringBuilder jsDataBuilder = new StringBuilder();
+		StringBuilder htmlMenuBuilder = new StringBuilder();
+		for(String folderName : FOLDERS){
+			File folder = new File(folderName);
+			htmlMenuBuilder.append("<div class='section'><h2>").append(LOGOS.get(folderName) + " " + folderName).append("</h2><div class='grid'>");
+			if(folder.exists() && folder.isDirectory()){
+				File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".html"));
+				if(files != null){
+					Arrays.sort(files);
+					for(File file : files){
+						try{
+							String content = Files.readString(file.toPath(), StandardCharsets.UTF_8);
+							content = replaceReloadCalls(content);
+							content = content.replace("\\", "\\\\")
+											 .replace("`", "\\`")
+											 .replace("${", "\\${")
+											 .replace("</script>", "<\\/script>");
+							String key = folderName + "_" + file.getName();
+							String displayName = file.getName().replace(".html", "").replace("_", " ");
+							jsDataBuilder.append("\n	// --- ").append(displayName).append(" ---\n");
+							jsDataBuilder.append("	'").append(key).append("': { name: `").append(displayName).append("`, content: `").append(content).append("` },\n");
+							htmlMenuBuilder.append("<button class='card' onclick=\"openPage('").append(key).append("')\">")
+										   .append(displayName)
+										   .append("</button>");
+						}catch(IOException e){
+							System.err.println("Errore lettura: " + file.getName());
+						}
+					}
+				}
+			}
+			htmlMenuBuilder.append("</div></div>");
+		}
+		generateFinalHtml(htmlMenuBuilder.toString(), jsDataBuilder.toString());
+	}
 
-        for (String folderName : FOLDERS) {
-            File folder = new File(folderName);
-            
-            // Intestazione sezione HTML
-            htmlMenuBuilder.append("<div class='section'><h2>").append(folderName).append("</h2><div class='grid'>");
+	private static String replaceReloadCalls(String content){
+		String reloadHelper = "window.parent.postMessage('RELOAD_REQUEST','*')";
+		content = content.replaceAll(
+			"onclick\\s*=\\s*\"\\s*location\\.reload\\s*\\(\\s*[^)]*\\s*\\)\\s*\"",
+			"onclick=\"" + reloadHelper + "\""
+		);
+		content = content.replaceAll(
+			"onclick\\s*=\\s*'\\s*location\\.reload\\s*\\(\\s*[^)]*\\s*\\)\\s*'",
+			"onclick='" + reloadHelper + "'"
+		);
+		content = content.replaceAll(
+			"window\\.location\\.reload\\s*\\(\\s*[^)]*\\s*\\)",
+			reloadHelper
+		);
+		content = content.replaceAll(
+			"(?<!window\\.)(?<!\\.)\\blocation\\.reload\\s*\\(\\s*[^)]*\\s*\\)",
+			reloadHelper
+		);
+		return content;
+	}
 
-            if (folder.exists() && folder.isDirectory()) {
-                File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".html"));
-                
-                if (files != null) {
-                    Arrays.sort(files);
-                    for (File file : files) {
-                        try {
-                            String content = Files.readString(file.toPath(), StandardCharsets.UTF_8);
-                            
-                            // **MODIFICA CHIAVE: Sostituisci location.reload() con postMessage**
-                            content = replaceReloadCalls(content);
-                            
-                            // PULIZIA DEL CODICE (Escape per stringhe JS)
-                            content = content.replace("\\", "\\\\")       // Escape backslash
-                                             .replace("`", "\\`")         // Escape backtick
-                                             .replace("${", "\\${")       // Escape interpolazioni
-                                             .replace("</script>", "<\\/script>"); // Escape chiusura script
-
-                            String key = folderName + "_" + file.getName();
-                            String displayName = file.getName().replace(".html", "").replace("_", " ");
-
-                            // Aggiungiamo al JS (Salva anche il nome visuale per la barra del titolo)
-                            jsDataBuilder.append("\n    // --- ").append(displayName).append(" ---\n");
-                            jsDataBuilder.append("    '").append(key).append("': { name: `").append(displayName).append("`, content: `").append(content).append("` },\n");
-                            
-                            // Bottone HTML
-                            htmlMenuBuilder.append("<button class='card' onclick=\"openPage('").append(key).append("')\">")
-                                           .append(displayName)
-                                           .append("</button>");
-                                           
-                        } catch (IOException e) {
-                            System.err.println("Errore lettura: " + file.getName());
-                        }
-                    }
-                }
-            }
-            htmlMenuBuilder.append("</div></div>");
-        }
-
-        generateFinalHtml(htmlMenuBuilder.toString(), jsDataBuilder.toString());
-    }
-
-    /**
-     * Sostituisce tutte le chiamate a location.reload() con postMessage
-     */
-    private static String replaceReloadCalls(String content) {
-        // Funzione helper da usare ovunque
-        String reloadHelper = "window.parent.postMessage('RELOAD_REQUEST','*')";
-        
-        // 1. onclick="location.reload()"
-        content = content.replaceAll(
-            "onclick\\s*=\\s*\"\\s*location\\.reload\\s*\\(\\s*[^)]*\\s*\\)\\s*\"",
-            "onclick=\"" + reloadHelper + "\""
-        );
-        
-        // 2. onclick='location.reload()'
-        content = content.replaceAll(
-            "onclick\\s*=\\s*'\\s*location\\.reload\\s*\\(\\s*[^)]*\\s*\\)\\s*'",
-            "onclick='" + reloadHelper + "'"
-        );
-        
-        // 3. window.location.reload() negli script
-        content = content.replaceAll(
-            "window\\.location\\.reload\\s*\\(\\s*[^)]*\\s*\\)",
-            reloadHelper
-        );
-        
-        // 4. location.reload() negli script
-        content = content.replaceAll(
-            "(?<!window\\.)(?<!\\.)\\blocation\\.reload\\s*\\(\\s*[^)]*\\s*\\)",
-            reloadHelper
-        );
-        
-        return content;
-    }
-
-    private static void generateFinalHtml(String menuHtml, String jsObjectContent) {
-        String template = """
+	private static void generateFinalHtml(String menuHtml, String jsObjectContent){
+		String template = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>All pages</title>
+<title>Toolbox & Playground</title>
 <style>
-    :root { --bg: #f4f4f9; --header-bg: #222; --text-light: #fff; }
-    body { font-family: sans-serif; margin: 0; background: var(--bg); overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
-    
-    /* --- STILE DASHBOARD --- */
-    #dashboard { padding: 20px; max-width: 900px; margin: 0 auto; padding-bottom: 60px; }
-    h1 { text-align: center; color: #333; margin-bottom: 30px; font-weight: 300; }
-    h2 { border-bottom: 2px solid #ddd; padding-bottom: 5px; margin-top: 30px; color: #555; text-transform: uppercase; font-size: 1.1rem; }
-    
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; margin-top: 15px; }
-    
-    .card {
-        background: #fff; border: 1px solid #ddd; border-radius: 8px;
-        padding: 15px; font-size: 0.9rem; font-weight: bold; color: #444;
-        cursor: pointer; min-height: 60px;
-        display: flex; align-items: center; justify-content: center; text-align: center;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: 0.2s;
-    }
-    .card:active { background: #eef; transform: scale(0.98); }
+	:root{
+		--bg-gradient: linear-gradient(135deg, #1e2a38 0%, #11151c 100%);
+		--card-bg: rgba(255, 255, 255, 0.05);
+		--card-border: rgba(255, 255, 255, 0.1);
+		--text-main: #ffffff;
+		--text-sec: #a0a0b0;
+		--accent: #4a90e2;
+		--accent-hover: #357abd;
+		--viewer-bg: rgba(20, 20, 25, 0.95);
+	}
 
-    /* --- STILE VIEWER (FLEXBOX VERTICALE) --- */
-    #viewer { 
-        display: none; /* Nascosto di default */
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-        background: #fff; z-index: 1000;
-        flex-direction: column; /* Chiave del layout: impila Header e Iframe */
-    }
-    
-    /* BARRA SUPERIORE */
-    #app-header {
-        height: 44px; /* Altezza fissa */
-        background: var(--header-bg);
-        color: var(--text-light);
-        display: flex; align-items: center; justify-content: space-between;
-        padding: 0 15px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        flex-shrink: 0; /* Impedisce che si rimpicciolisca */
-        z-index: 1001;
-    }
-    
-    #app-title { font-weight: bold; font-size: 1rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-    
-    #close-btn {
-        background: #e74c3c; color: white; border: none;
-        border-radius: 4px; padding: 5px 15px;
-        font-weight: bold; cursor: pointer; font-size: 0.9rem;
-    }
-    #close-btn:active { background: #c0392b; }
+	*{
+		box-sizing: border-box;
+	}
 
-    /* IFRAME */
-    #iframe-container {
-        flex-grow: 1; /* Occupa tutto lo spazio rimanente sotto la barra */
-        width: 100%;
-        position: relative;
-        background: #000; /* Sfondo nero per evitare flash bianchi */
-    }
-    
-    iframe { width: 100%; height: 100%; border: none; display: block; }
+	body{
+		font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+		margin: 0;
+		background: var(--bg-gradient);
+		color: var(--text-main);
+		min-height: 100vh;
+		overflow-x: hidden;
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	::-webkit-scrollbar {
+		width: 8px;
+	}
+
+	::-webkit-scrollbar-track{
+		background: #111;
+	}
+
+	::-webkit-scrollbar-thumb{
+		background: #444;
+		border-radius: 4px;
+	}
+
+	::-webkit-scrollbar-thumb:hover{
+		background: var(--accent);
+	}
+
+	#dashboard{
+		padding: 40px 20px;
+		max-width: 1000px;
+		margin: 0 auto;
+		animation: fadeIn 0.8s ease-out;
+	}
+
+	h1{
+		text-align: center;
+		font-weight: 200;
+		font-size: 2.5rem;
+		letter-spacing: 2px;
+		margin-bottom: 50px;
+		background: linear-gradient(to right, #fff, #aaa);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
+
+	h2{
+		border-bottom: 1px solid var(--card-border);
+		padding-bottom: 10px;
+		margin-top: 50px;
+		margin-bottom: 20px;
+		color: var(--accent);
+		font-size: 0.9rem;
+		text-transform: uppercase;
+		letter-spacing: 1.5px;
+	}
+
+	.grid{
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+		gap: 20px;
+	}
+
+	.card{
+		background: var(--card-bg);
+		border: 1px solid var(--card-border);
+		border-radius: 12px;
+		padding: 20px;
+		font-size: 1rem;
+		color: var(--text-main);
+		cursor: pointer;
+		min-height: 100px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+		backdrop-filter: blur(5px);
+		box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+		user-select: none;
+	}
+
+	.card:hover{
+		transform: translateY(-5px) scale(1.02);
+		background: rgba(255, 255, 255, 0.1);
+		border-color: var(--accent);
+		box-shadow: 0 10px 20px rgba(0,0,0,0.3), 0 0 15px rgba(74, 144, 226, 0.2);
+	}
+
+	.card:active{
+		transform: scale(0.95);
+	}
+
+	#viewer{
+		display: none;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: var(--viewer-bg);
+		z-index: 2000;
+		flex-direction: column;
+		backdrop-filter: blur(15px);
+		animation: slideUp 0.3s ease-out;
+	}
+
+	@keyframes slideUp{from{transform: translateY(100%);opacity: 0;}to{transform: translateY(0);opacity: 1;}}
+	@keyframes fadeIn{from{opacity: 0;}to{opacity: 1;}}
+
+	#app-header{
+		height: 50px;
+		background: rgba(0,0,0,0.3);
+		border-bottom: 1px solid var(--card-border);
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 20px;
+		flex-shrink: 0;
+	}
+
+	#app-title{
+		font-weight: 500;
+		letter-spacing: 0.5px;
+		font-size: 0.95rem;
+		color: #fff;
+	}
+
+	#close-btn{
+		background: transparent;
+		color: #fff;
+		border: 1px solid rgba(255,255,255,0.3);
+		border-radius: 20px;
+		padding: 6px 16px;
+		font-size: 0.8rem;
+		cursor: pointer;
+		transition: 0.2s;
+		text-transform: uppercase;
+		font-weight: bold;
+	}
+
+	#close-btn:hover{
+		background: #e74c3c;
+		border-color: #e74c3c;
+	}
+
+	#iframe-container{
+		flex-grow: 1;
+		width: 100%;
+		position: relative;
+		background: #fff;
+	}
+
+	iframe{
+		width: 100%;
+		height: 100%;
+		border: none;
+		display: block;
+	}
 </style>
 </head>
 <body>
-
 <div id="dashboard">
-    <h1>All My Pages</h1>
-    {{MENU_CONTENT}}
+	<h1>Toolbox & Playground</h1>
+	{{MENU_CONTENT}}
 </div>
-
 <div id="viewer">
-    <div id="app-header">
-        <span id="app-title">Titolo App</span>
-        <button id="close-btn" onclick="closePage()">✕</button>
-    </div>
-    
-    <div id="iframe-container">
-        <iframe id="app-frame"></iframe>
-    </div>
+	<div id="app-header">
+		<span id="app-title">App Title</span>
+		<button id="close-btn" onclick="closePage()">Close</button>
+	</div>
+	<div id="iframe-container">
+		<iframe id="app-frame"></iframe>
+	</div>
 </div>
 
 <script>
-    // --- DATABASE DATI (Readable) ---
-    const pages = {
-        {{JS_CONTENT}}
-    };
+	const pages = {
+		{{JS_CONTENT}}
+	};
 
-    let currentUrl = null;
-    let currentKey = null;
+	let currentUrl = null;
+	let currentKey = null;
 
-    function openPage(key) {
-        const data = pages[key];
-        if(!data) return;
+	function openPage(key){
+		const data = pages[key];
+		if(!data){
+			return;
+		}
+		currentKey = key;
+		document.getElementById('app-title').innerText = data.name;
+		const blob = new Blob([data.content], { type: 'text/html' });
+		if(currentUrl){
+			URL.revokeObjectURL(currentUrl);
+		}
+		currentUrl = URL.createObjectURL(blob);
+		const viewer = document.getElementById('viewer');
+		viewer.style.display = 'flex'; 
+		document.body.style.overflow = 'hidden'; 
+		document.getElementById('app-frame').src = currentUrl;
+	}
 
-        currentKey = key;
+	window.addEventListener('message', function(event){
+		if(event.data === 'RELOAD_REQUEST'){
+			if(currentKey){
+				openPage(currentKey);
+			}
+		}
+	});
 
-        // Aggiorna titolo barra
-        document.getElementById('app-title').innerText = data.name;
+	function closePage(){
+		const viewer = document.getElementById('viewer');
+		viewer.style.display = 'none';
+		document.body.style.overflow = '';
+		document.getElementById('app-frame').src = 'about:blank';
+		currentKey = null;
+	}
 
-        // Crea Blob URL per l'iframe
-        const blob = new Blob([data.content], { type: 'text/html' });
-        if (currentUrl) URL.revokeObjectURL(currentUrl);
-        currentUrl = URL.createObjectURL(blob);
-        
-        // Attiva il layout Flexbox
-        const viewer = document.getElementById('viewer');
-        viewer.style.display = 'flex'; 
-        
-        // Blocca scroll pagina sottostante
-        document.body.style.overflow = 'hidden'; 
-        
-        document.getElementById('app-frame').src = currentUrl;
-    }
-
-    // Ascolta messaggi di reload dall'iframe
-    window.addEventListener('message', function(event) {
-        if (event.data === 'RELOAD_REQUEST') {
-            if (currentKey) {
-                console.log('Ricarico pagina:', currentKey);
-                openPage(currentKey);
-            }
-        }
-    });
-
-    function closePage() {
-        const viewer = document.getElementById('viewer');
-        viewer.style.display = 'none';
-        document.body.style.overflow = '';
-        document.getElementById('app-frame').src = 'about:blank';
-        currentKey = null;
-    }
-
-    // Gestione tasto Indietro su Mobile
-    window.history.pushState(null, null, window.location.href);
-    window.onpopstate = function() {
-        if(document.getElementById('viewer').style.display === 'flex') {
-            window.history.pushState(null, null, window.location.href);
-            closePage();
-        }
-    };
+	window.history.pushState(null, null, window.location.href);
+	window.onpopstate = function(){
+		if(document.getElementById('viewer').style.display === 'flex'){
+			window.history.pushState(null, null, window.location.href);
+			closePage();
+		}
+	};
 </script>
 </body>
 </html>
 """;
-
-        String finalHtml = template
-                .replace("{{MENU_CONTENT}}", menuHtml)
-                .replace("{{JS_CONTENT}}", jsObjectContent);
-
-        try {
-            //Files.writeString(Paths.get("index.html"), finalHtml);
-            Files.writeString(Paths.get("All_my_HTML_pages.html"), finalHtml);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+		String finalHtml = template
+				.replace("{{MENU_CONTENT}}", menuHtml)
+				.replace("{{JS_CONTENT}}", jsObjectContent);
+		try{
+			Files.writeString(Paths.get("index.html"), finalHtml);
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+	}
 }
