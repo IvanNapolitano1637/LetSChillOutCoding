@@ -5,8 +5,7 @@ import java.util.*;
 
 //Codice per creare un unico file HTML con all'interno tutte le pagine che stanno nelle tre cartelle "Clocks", "Games" e "Tools".
 //Codice creato da Gemini e Claude lunedì nove febbraio duemilaventisei dopo un altro tentativo fatto con Gemini due giorni prima.
-//Unica cosa su cui ragionare è l'estetica della nuova pagina creata. Ne ho viste di migliori.
-//Ho fatto altre modifiche mercoledì undici febbraio.
+//Ho fatto varie altre modifiche. L'ultima giovedì dodici febbraio.
 //Unica differenza tra le pagine originali e quelle contenute nel file creato qui è una sezione con un pulsante per tornare all'indice di tutte le pagine.
 //Da mettere nella cartella in cui ci sono: "Clocks", "Games" e "Tools".
 //Da compilare e lanciare lì da terminale.
@@ -14,13 +13,13 @@ import java.util.*;
 public class HTML_Pages_Unifier{
 
 	private static final String[] FOLDERS = {"Clocks", "Games", "Tools"};
-	private static final Map<String, String> LOGOS;
+	private static final Map<String, String> EMOJIS;
 	static {
 		Map<String, String> tempMap = new HashMap<>();
 		tempMap.put("Clocks","🕰️");
 		tempMap.put("Games","🎮");
 		tempMap.put("Tools","🛠️");
-		LOGOS = Collections.unmodifiableMap(tempMap);
+		EMOJIS = Collections.unmodifiableMap(tempMap);
 	}
 
 	public static void main(String[] args) {
@@ -28,7 +27,7 @@ public class HTML_Pages_Unifier{
 		StringBuilder htmlMenuBuilder = new StringBuilder();
 		for(String folderName : FOLDERS){
 			File folder = new File(folderName);
-			htmlMenuBuilder.append("<div class='section'><h2>").append(LOGOS.get(folderName) + " " + folderName).append("</h2><div class='grid'>");
+			htmlMenuBuilder.append("<div class='section'><h2>").append(EMOJIS.get(folderName) + " " + folderName).append("</h2><div class='grid'>");
 			if(folder.exists() && folder.isDirectory()){
 				File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".html"));
 				if(files != null){
@@ -147,6 +146,9 @@ public class HTML_Pages_Unifier{
 		background: linear-gradient(to right, #fff, #aaa);
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
 	}
 
 	h2{
@@ -158,6 +160,9 @@ public class HTML_Pages_Unifier{
 		font-size: 0.9rem;
 		text-transform: uppercase;
 		letter-spacing: 1.5px;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
 	}
 
 	.grid{
