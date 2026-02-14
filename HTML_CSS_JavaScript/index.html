@@ -5607,19 +5607,19 @@
 					transition: transform 0.2s;
 				}
 				@media (max-width: 480px){
-					button.step{
+					#v1 button.step{
 						min-width: 20px;
 						padding: 10px 0;
 						font-size: 10px;
 					}
-					.button-row {
+					#v1 .button-row {
 						gap: 1px;
 					}
-					#optionZone{
+					#v1 #v1_optionZone{
 						padding: 10px;
 						width: 98%;
 					}
-					.btn-group button{
+					#v1 .btn-group button{
 						padding: 10px 5px;
 						min-width: 65px;
 						font-size: 0.8em;
@@ -6246,18 +6246,6 @@
 						let newIndex = currentIndex + step;
 						return newIndex >= 0 && newIndex < radios.length;
 					});
-				}
-
-				function v3_brighterAll(){
-					if(v3_canMoveAll(1)){
-						[0, 1, 2].forEach(i => v3_brighterBasic(i));
-					}
-				}
-
-				function v3_darkerAll(){
-					if(v3_canMoveAll(-1)){
-						[0, 1, 2].forEach(i => v3_darkerBasic(i));
-					}
 				}
 
 				function v3_brighterBasic(idx){
