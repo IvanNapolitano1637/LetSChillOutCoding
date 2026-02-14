@@ -13,14 +13,16 @@
 			}
 			body{
 				margin: 0;
-				padding: 20px;
+				padding: 10px;
 				display: flex;
 				justify-content: center;
-				align-items: flex-start;
+				align-items: flex-start; 
+				padding-top: 40px; 
 				min-height: 100vh;
 				font-family: 'Segoe UI', Arial, sans-serif;
 				overflow-x: hidden;
 				-webkit-tap-highlight-color: transparent;
+				box-sizing: border-box;
 			}
 			#Fifteen{
 				position: relative;
@@ -29,6 +31,8 @@
 			}
 			canvas{
 				display: block;
+				max-width: 100%;
+				height: auto;
 			}
 			.tile-container{
 				position: absolute;
@@ -92,9 +96,8 @@
 			const MARGIN_DIM = 2*UNIT;
 			const SIDE = 20*UNIT;
 			const IDS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "0"];
-			const ORIZONTAL_CONST = DIVISION_WIDTH + BORDER_WIDTH + MARGIN_DIM;
-			const WIDTH = (ORIZONTAL_CONST + MARGIN_DIM + (4*SIDE) + (5*DIVISION_WIDTH) + (2*BORDER_WIDTH));
-			const HEIGHT = (2*MARGIN_DIM + (4*SIDE) + (5*DIVISION_WIDTH) + (2*BORDER_WIDTH));
+			const WIDTH = (4*SIDE) + (5*DIVISION_WIDTH) + (2*BORDER_WIDTH) + (MARGIN_DIM);
+			const HEIGHT = (4*SIDE) + (5*DIVISION_WIDTH) + (2*BORDER_WIDTH) + (MARGIN_DIM);
 			let cursorX, cursorY, r1 = 3, c1 = 3, counterMoves = 0, gameFinished, begun = false, isSolving = false;
 			document.documentElement.style.setProperty('--unit', UNIT + 'px');
 			document.documentElement.style.setProperty('--side', SIDE + 'px');
@@ -117,9 +120,9 @@
 				if(board.getContext("2d")){
 					let ctx = board.getContext("2d");
 					ctx.fillStyle = BORDER_COLOR;
-					ctx.fillRect(ORIZONTAL_CONST + MARGIN_DIM, MARGIN_DIM, (SIDE*4) + (DIVISION_WIDTH*5) + (BORDER_WIDTH*2), (SIDE*4) + (DIVISION_WIDTH*5) + (BORDER_WIDTH*2));
+					ctx.fillRect(MARGIN_DIM, MARGIN_DIM, (SIDE*4) + (DIVISION_WIDTH*5) + (BORDER_WIDTH*2), (SIDE*4) + (DIVISION_WIDTH*5) + (BORDER_WIDTH*2));
 					ctx.fillStyle = FRAME_COLOR;
-					ctx.fillRect(ORIZONTAL_CONST + MARGIN_DIM + BORDER_WIDTH, MARGIN_DIM + BORDER_WIDTH, (SIDE*4) + (DIVISION_WIDTH*5), (SIDE*4) + (DIVISION_WIDTH*5));
+					ctx.fillRect(MARGIN_DIM + BORDER_WIDTH, MARGIN_DIM + BORDER_WIDTH, (SIDE*4) + (DIVISION_WIDTH*5), (SIDE*4) + (DIVISION_WIDTH*5));
 				}
 				const handleInput = (e) => {
 					const rect = board.getBoundingClientRect();
@@ -145,7 +148,7 @@
 				const container = document.createElement("div");
 				container.id = "controls";
 				const boardWidth = (SIDE*4) + (DIVISION_WIDTH*5) + (BORDER_WIDTH*2);
-				const boardStartX = ORIZONTAL_CONST + MARGIN_DIM;
+				const boardStartX = MARGIN_DIM;
 				const boardBottomY = MARGIN_DIM + boardWidth;
 				container.style.left = boardStartX + "px";
 				container.style.top = (boardBottomY + (UNIT*5)) + "px";
@@ -175,7 +178,7 @@
 				let board = document.getElementById("board");
 				let ctx = board.getContext("2d");
 				let color = (tile === "0") ? BORDER_COLOR : (((val + Math.floor((val - 1)/4))%2 === 1) ? COLOR_1 : COLOR_2);
-				let posX = ORIZONTAL_CONST + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + (column*(SIDE + DIVISION_WIDTH));
+				let posX = BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + (column*(SIDE + DIVISION_WIDTH));
 				let posY = BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + (row*(SIDE + DIVISION_WIDTH));
 				ctx.fillStyle = color;
 				ctx.fillRect(posX, posY, SIDE, SIDE);
@@ -202,7 +205,7 @@
 					return;
 				}
 				let r = Math.floor((cursorY - (BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM))/(SIDE + DIVISION_WIDTH));
-				let c = Math.floor((cursorX - (ORIZONTAL_CONST + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM))/(SIDE + DIVISION_WIDTH));
+				let c = Math.floor((cursorX - (BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM))/(SIDE + DIVISION_WIDTH));
 				if(r >= 0 && r < 4 && c >= 0 && c < 4 && (Math.abs(r - r1) + Math.abs(c - c1)) === 1){
 					swapTiles(((4*r + c + 1)%16).toString(16), ((4*r1 + c1 + 1)%16).toString(16));
 					r1 = r;
