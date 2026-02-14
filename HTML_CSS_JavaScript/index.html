@@ -3,91 +3,209 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>All pages</title>
+<title>Toolbox & Playground</title>
 <style>
-    :root { --bg: #f4f4f9; --header-bg: #222; --text-light: #fff; }
-    body { font-family: sans-serif; margin: 0; background: var(--bg); overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+	:root{
+		--bg-gradient: linear-gradient(135deg, #1e2a38 0%, #11151c 100%);
+		--card-bg: rgba(255, 255, 255, 0.05);
+		--card-border: rgba(255, 255, 255, 0.1);
+		--text-main: #ffffff;
+		--text-sec: #a0a0b0;
+		--accent: #4a90e2;
+		--accent-hover: #357abd;
+		--viewer-bg: rgba(20, 20, 25, 0.95);
+	}
 
-    /* --- STILE DASHBOARD --- */
-    #dashboard { padding: 20px; max-width: 900px; margin: 0 auto; padding-bottom: 60px; }
-    h1 { text-align: center; color: #333; margin-bottom: 30px; font-weight: 300; }
-    h2 { border-bottom: 2px solid #ddd; padding-bottom: 5px; margin-top: 30px; color: #555; text-transform: uppercase; font-size: 1.1rem; }
+	*{
+		box-sizing: border-box;
+	}
 
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; margin-top: 15px; }
+	body{
+		font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+		margin: 0;
+		background: var(--bg-gradient);
+		color: var(--text-main);
+		min-height: 100vh;
+		overflow-x: hidden;
+		-webkit-tap-highlight-color: transparent;
+	}
 
-    .card {
-        background: #fff; border: 1px solid #ddd; border-radius: 8px;
-        padding: 15px; font-size: 0.9rem; font-weight: bold; color: #444;
-        cursor: pointer; min-height: 60px;
-        display: flex; align-items: center; justify-content: center; text-align: center;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: 0.2s;
-    }
-    .card:active { background: #eef; transform: scale(0.98); }
+	::-webkit-scrollbar {
+		width: 8px;
+	}
 
-    /* --- STILE VIEWER (FLEXBOX VERTICALE) --- */
-    #viewer {
-        display: none; /* Nascosto di default */
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: #fff; z-index: 1000;
-        flex-direction: column; /* Chiave del layout: impila Header e Iframe */
-    }
+	::-webkit-scrollbar-track{
+		background: #111;
+	}
 
-    /* BARRA SUPERIORE */
-    #app-header {
-        height: 44px; /* Altezza fissa */
-        background: var(--header-bg);
-        color: var(--text-light);
-        display: flex; align-items: center; justify-content: space-between;
-        padding: 0 15px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        flex-shrink: 0; /* Impedisce che si rimpicciolisca */
-        z-index: 1001;
-    }
+	::-webkit-scrollbar-thumb{
+		background: #444;
+		border-radius: 4px;
+	}
 
-    #app-title { font-weight: bold; font-size: 1rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+	::-webkit-scrollbar-thumb:hover{
+		background: var(--accent);
+	}
 
-    #close-btn {
-        background: #e74c3c; color: white; border: none;
-        border-radius: 4px; padding: 5px 15px;
-        font-weight: bold; cursor: pointer; font-size: 0.9rem;
-    }
-    #close-btn:active { background: #c0392b; }
+	#dashboard{
+		padding: 40px 20px;
+		max-width: 1000px;
+		margin: 0 auto;
+		animation: fadeIn 0.8s ease-out;
+	}
 
-    /* IFRAME */
-    #iframe-container {
-        flex-grow: 1; /* Occupa tutto lo spazio rimanente sotto la barra */
-        width: 100%;
-        position: relative;
-        background: #000; /* Sfondo nero per evitare flash bianchi */
-    }
+	h1{
+		text-align: center;
+		font-weight: 200;
+		font-size: 2.5rem;
+		letter-spacing: 2px;
+		margin-bottom: 50px;
+		background: linear-gradient(to right, #fff, #aaa);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+	}
 
-    iframe { width: 100%; height: 100%; border: none; display: block; }
+	h2{
+		border-bottom: 1px solid var(--card-border);
+		padding-bottom: 10px;
+		margin-top: 50px;
+		margin-bottom: 20px;
+		color: var(--accent);
+		font-size: 0.9rem;
+		text-transform: uppercase;
+		letter-spacing: 1.5px;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+	}
+
+	.grid{
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+		gap: 20px;
+	}
+
+	.card{
+		background: var(--card-bg);
+		border: 1px solid var(--card-border);
+		border-radius: 12px;
+		padding: 20px;
+		font-size: 1rem;
+		color: var(--text-main);
+		cursor: pointer;
+		min-height: 100px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+		backdrop-filter: blur(5px);
+		box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+		user-select: none;
+	}
+
+	.card:hover{
+		transform: translateY(-5px) scale(1.02);
+		background: rgba(255, 255, 255, 0.1);
+		border-color: var(--accent);
+		box-shadow: 0 10px 20px rgba(0,0,0,0.3), 0 0 15px rgba(74, 144, 226, 0.2);
+	}
+
+	.card:active{
+		transform: scale(0.95);
+	}
+
+	#viewer{
+		display: none;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: var(--viewer-bg);
+		z-index: 2000;
+		flex-direction: column;
+		backdrop-filter: blur(15px);
+		animation: slideUp 0.3s ease-out;
+	}
+
+	@keyframes slideUp{from{transform: translateY(100%);opacity: 0;}to{transform: translateY(0);opacity: 1;}}
+	@keyframes fadeIn{from{opacity: 0;}to{opacity: 1;}}
+
+	#app-header{
+		height: 50px;
+		background: rgba(0,0,0,0.3);
+		border-bottom: 1px solid var(--card-border);
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 20px;
+		flex-shrink: 0;
+	}
+
+	#app-title{
+		font-weight: 500;
+		letter-spacing: 0.5px;
+		font-size: 0.95rem;
+		color: #fff;
+	}
+
+	#close-btn{
+		background: transparent;
+		color: #fff;
+		border: 1px solid rgba(255,255,255,0.3);
+		border-radius: 20px;
+		padding: 6px 16px;
+		font-size: 0.8rem;
+		cursor: pointer;
+		transition: 0.2s;
+		text-transform: uppercase;
+		font-weight: bold;
+	}
+
+	#close-btn:hover{
+		background: #e74c3c;
+		border-color: #e74c3c;
+	}
+
+	#iframe-container{
+		flex-grow: 1;
+		width: 100%;
+		position: relative;
+		background: #fff;
+	}
+
+	iframe{
+		width: 100%;
+		height: 100%;
+		border: none;
+		display: block;
+	}
 </style>
 </head>
 <body>
-
 <div id="dashboard">
-    <h1>All My Pages</h1>
-    <div class='section'><h2>Clocks</h2><div class='grid'><button class='card' onclick="openPage('Clocks_24h Clock.html')">24h Clock</button><button class='card' onclick="openPage('Clocks_Binary Clock.html')">Binary Clock</button><button class='card' onclick="openPage('Clocks_Clock.html')">Clock</button><button class='card' onclick="openPage('Clocks_Strange Clock.html')">Strange Clock</button></div></div><div class='section'><h2>Games</h2><div class='grid'><button class='card' onclick="openPage('Games_Checkers.html')">Checkers</button><button class='card' onclick="openPage('Games_Chess.html')">Chess</button><button class='card' onclick="openPage('Games_Connect Four.html')">Connect Four</button><button class='card' onclick="openPage('Games_Eight Queens.html')">Eight Queens</button><button class='card' onclick="openPage('Games_Fifteen.html')">Fifteen</button><button class='card' onclick="openPage('Games_Game of Life.html')">Game of Life</button><button class='card' onclick="openPage('Games_Modular Matching.html')">Modular Matching</button><button class='card' onclick="openPage('Games_Tower of Hanoi.html')">Tower of Hanoi</button></div></div><div class='section'><h2>Tools</h2><div class='grid'><button class='card' onclick="openPage('Tools_Calculations.html')">Calculations</button><button class='card' onclick="openPage('Tools_Colors.html')">Colors</button><button class='card' onclick="openPage('Tools_Colors4.html')">Colors4</button><button class='card' onclick="openPage('Tools_Days.html')">Days</button><button class='card' onclick="openPage('Tools_Sounds.html')">Sounds</button><button class='card' onclick="openPage('Tools_SuperEnalotto.html')">SuperEnalotto</button></div></div>
+	<h1>Toolbox & Playground</h1>
+	<div class='section'><h2>🕰️ Clocks</h2><div class='grid'><button class='card' onclick="openPage('Clocks_24h Clock.html')">24h Clock</button><button class='card' onclick="openPage('Clocks_Binary Clock.html')">Binary Clock</button><button class='card' onclick="openPage('Clocks_Clock.html')">Clock</button><button class='card' onclick="openPage('Clocks_Strange Clock.html')">Strange Clock</button></div></div><div class='section'><h2>🎮 Games</h2><div class='grid'><button class='card' onclick="openPage('Games_Checkers.html')">Checkers</button><button class='card' onclick="openPage('Games_Chess.html')">Chess</button><button class='card' onclick="openPage('Games_Connect Four.html')">Connect Four</button><button class='card' onclick="openPage('Games_Eight Queens.html')">Eight Queens</button><button class='card' onclick="openPage('Games_Fifteen.html')">Fifteen</button><button class='card' onclick="openPage('Games_Game of Life.html')">Game of Life</button><button class='card' onclick="openPage('Games_Modular Matching.html')">Modular Matching</button><button class='card' onclick="openPage('Games_Tower of Hanoi.html')">Tower of Hanoi</button></div></div><div class='section'><h2>🛠️ Tools</h2><div class='grid'><button class='card' onclick="openPage('Tools_Calculations.html')">Calculations</button><button class='card' onclick="openPage('Tools_Colors.html')">Colors</button><button class='card' onclick="openPage('Tools_Colors4.html')">Colors4</button><button class='card' onclick="openPage('Tools_Days.html')">Days</button><button class='card' onclick="openPage('Tools_Sounds.html')">Sounds</button><button class='card' onclick="openPage('Tools_SuperEnalotto.html')">SuperEnalotto</button></div></div>
 </div>
-
 <div id="viewer">
-    <div id="app-header">
-        <span id="app-title">Titolo App</span>
-        <button id="close-btn" onclick="closePage()">✕</button>
-    </div>
-
-    <div id="iframe-container">
-        <iframe id="app-frame"></iframe>
-    </div>
+	<div id="app-header">
+		<span id="app-title">App Title</span>
+		<button id="close-btn" onclick="closePage()">Close</button>
+	</div>
+	<div id="iframe-container">
+		<iframe id="app-frame"></iframe>
+	</div>
 </div>
 
 <script>
-    // --- DATABASE DATI (Readable) ---
-    const pages = {
-        
-    // --- 24h Clock ---
-    'Clocks_24h Clock.html': { name: `24h Clock`, content: `<!DOCTYPE html>
+	const pages = {
+		
+	// --- 24h Clock ---
+	'Clocks_24h Clock.html': { name: `24h Clock`, content: `<!DOCTYPE html>
 <html lang="en"><!--C02#004 - Giovanna - 24h Clock-->
 	<head>
 		<meta charset="UTF-8">
@@ -315,8 +433,8 @@
 	</body>
 </html>` },
 
-    // --- Binary Clock ---
-    'Clocks_Binary Clock.html': { name: `Binary Clock`, content: `<!DOCTYPE html>
+	// --- Binary Clock ---
+	'Clocks_Binary Clock.html': { name: `Binary Clock`, content: `<!DOCTYPE html>
 <html lang="en"><!--C01#001 - Lucia - Binary Clock-->
 	<head>
 		<meta charset="UTF-8">
@@ -564,8 +682,8 @@
 	</body>
 </html>` },
 
-    // --- Clock ---
-    'Clocks_Clock.html': { name: `Clock`, content: `<!doctype html>
+	// --- Clock ---
+	'Clocks_Clock.html': { name: `Clock`, content: `<!doctype html>
 <html lang="en"><!--C03#008 - Nicola - Clock-->
 	<head>
 		<meta charset="utf-8">
@@ -802,8 +920,8 @@
 	</body>
 </html>` },
 
-    // --- Strange Clock ---
-    'Clocks_Strange Clock.html': { name: `Strange Clock`, content: `<!DOCTYPE html>
+	// --- Strange Clock ---
+	'Clocks_Strange Clock.html': { name: `Strange Clock`, content: `<!DOCTYPE html>
 <html lang="en"><!--C04#015 - Paolo - Strange Clock-->
 	<head>
 		<meta charset="UTF-8">
@@ -897,8 +1015,8 @@
 	</body>
 </html>` },
 
-    // --- Checkers ---
-    'Games_Checkers.html': { name: `Checkers`, content: `<!DOCTYPE html>
+	// --- Checkers ---
+	'Games_Checkers.html': { name: `Checkers`, content: `<!DOCTYPE html>
 <html lang="en"><!--G08#017 - Mara - Checkers-->
 	<head>
 		<meta charset="UTF-8">
@@ -1330,8 +1448,8 @@
 	</body>
 </html>` },
 
-    // --- Chess ---
-    'Games_Chess.html': { name: `Chess`, content: `<!DOCTYPE html>
+	// --- Chess ---
+	'Games_Chess.html': { name: `Chess`, content: `<!DOCTYPE html>
 <html lang="en"><!--G07#016 - Filippo - Chess-->
 	<head>
 		<meta charset="UTF-8">
@@ -2255,8 +2373,8 @@
 	</body>
 </html>` },
 
-    // --- Connect Four ---
-    'Games_Connect Four.html': { name: `Connect Four`, content: `<!DOCTYPE HTML>
+	// --- Connect Four ---
+	'Games_Connect Four.html': { name: `Connect Four`, content: `<!DOCTYPE HTML>
 <html lang="en"><!--G04#012 - Carmela - Connect Four-->
 	<head>
 		<meta charset="UTF-8">
@@ -2689,8 +2807,8 @@
 	</body>
 </html>` },
 
-    // --- Eight Queens ---
-    'Games_Eight Queens.html': { name: `Eight Queens`, content: `<!DOCTYPE HTML>
+	// --- Eight Queens ---
+	'Games_Eight Queens.html': { name: `Eight Queens`, content: `<!DOCTYPE HTML>
 <html lang="en"><!--G01#002 - Brigida - Eight Queens-->
 	<head>
 		<title>Eight Queens</title>
@@ -3073,8 +3191,8 @@
 	</body>
 </html>` },
 
-    // --- Fifteen ---
-    'Games_Fifteen.html': { name: `Fifteen`, content: `<!DOCTYPE HTML>
+	// --- Fifteen ---
+	'Games_Fifteen.html': { name: `Fifteen`, content: `<!DOCTYPE HTML>
 <html lang="en"><!--G06#014 - Serena - Fifteen-->
 	<head>
 		<title>Fifteen Puzzle</title>
@@ -3089,14 +3207,16 @@
 			}
 			body{
 				margin: 0;
-				padding: 20px;
+				padding: 10px;
 				display: flex;
 				justify-content: center;
-				align-items: flex-start;
+				align-items: flex-start; 
+				padding-top: 40px; 
 				min-height: 100vh;
 				font-family: 'Segoe UI', Arial, sans-serif;
 				overflow-x: hidden;
 				-webkit-tap-highlight-color: transparent;
+				box-sizing: border-box;
 			}
 			#Fifteen{
 				position: relative;
@@ -3105,6 +3225,8 @@
 			}
 			canvas{
 				display: block;
+				max-width: 100%;
+				height: auto;
 			}
 			.tile-container{
 				position: absolute;
@@ -3168,9 +3290,8 @@
 			const MARGIN_DIM = 2*UNIT;
 			const SIDE = 20*UNIT;
 			const IDS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "0"];
-			const ORIZONTAL_CONST = DIVISION_WIDTH + BORDER_WIDTH + MARGIN_DIM;
-			const WIDTH = (ORIZONTAL_CONST + MARGIN_DIM + (4*SIDE) + (5*DIVISION_WIDTH) + (2*BORDER_WIDTH));
-			const HEIGHT = (2*MARGIN_DIM + (4*SIDE) + (5*DIVISION_WIDTH) + (2*BORDER_WIDTH));
+			const WIDTH = (4*SIDE) + (5*DIVISION_WIDTH) + (2*BORDER_WIDTH) + (MARGIN_DIM);
+			const HEIGHT = (4*SIDE) + (5*DIVISION_WIDTH) + (2*BORDER_WIDTH) + (MARGIN_DIM);
 			let cursorX, cursorY, r1 = 3, c1 = 3, counterMoves = 0, gameFinished, begun = false, isSolving = false;
 			document.documentElement.style.setProperty('--unit', UNIT + 'px');
 			document.documentElement.style.setProperty('--side', SIDE + 'px');
@@ -3193,9 +3314,9 @@
 				if(board.getContext("2d")){
 					let ctx = board.getContext("2d");
 					ctx.fillStyle = BORDER_COLOR;
-					ctx.fillRect(ORIZONTAL_CONST + MARGIN_DIM, MARGIN_DIM, (SIDE*4) + (DIVISION_WIDTH*5) + (BORDER_WIDTH*2), (SIDE*4) + (DIVISION_WIDTH*5) + (BORDER_WIDTH*2));
+					ctx.fillRect(MARGIN_DIM, MARGIN_DIM, (SIDE*4) + (DIVISION_WIDTH*5) + (BORDER_WIDTH*2), (SIDE*4) + (DIVISION_WIDTH*5) + (BORDER_WIDTH*2));
 					ctx.fillStyle = FRAME_COLOR;
-					ctx.fillRect(ORIZONTAL_CONST + MARGIN_DIM + BORDER_WIDTH, MARGIN_DIM + BORDER_WIDTH, (SIDE*4) + (DIVISION_WIDTH*5), (SIDE*4) + (DIVISION_WIDTH*5));
+					ctx.fillRect(MARGIN_DIM + BORDER_WIDTH, MARGIN_DIM + BORDER_WIDTH, (SIDE*4) + (DIVISION_WIDTH*5), (SIDE*4) + (DIVISION_WIDTH*5));
 				}
 				const handleInput = (e) => {
 					const rect = board.getBoundingClientRect();
@@ -3221,7 +3342,7 @@
 				const container = document.createElement("div");
 				container.id = "controls";
 				const boardWidth = (SIDE*4) + (DIVISION_WIDTH*5) + (BORDER_WIDTH*2);
-				const boardStartX = ORIZONTAL_CONST + MARGIN_DIM;
+				const boardStartX = MARGIN_DIM;
 				const boardBottomY = MARGIN_DIM + boardWidth;
 				container.style.left = boardStartX + "px";
 				container.style.top = (boardBottomY + (UNIT*5)) + "px";
@@ -3251,7 +3372,7 @@
 				let board = document.getElementById("board");
 				let ctx = board.getContext("2d");
 				let color = (tile === "0") ? BORDER_COLOR : (((val + Math.floor((val - 1)/4))%2 === 1) ? COLOR_1 : COLOR_2);
-				let posX = ORIZONTAL_CONST + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + (column*(SIDE + DIVISION_WIDTH));
+				let posX = BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + (column*(SIDE + DIVISION_WIDTH));
 				let posY = BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + (row*(SIDE + DIVISION_WIDTH));
 				ctx.fillStyle = color;
 				ctx.fillRect(posX, posY, SIDE, SIDE);
@@ -3278,7 +3399,7 @@
 					return;
 				}
 				let r = Math.floor((cursorY - (BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM))/(SIDE + DIVISION_WIDTH));
-				let c = Math.floor((cursorX - (ORIZONTAL_CONST + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM))/(SIDE + DIVISION_WIDTH));
+				let c = Math.floor((cursorX - (BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM))/(SIDE + DIVISION_WIDTH));
 				if(r >= 0 && r < 4 && c >= 0 && c < 4 && (Math.abs(r - r1) + Math.abs(c - c1)) === 1){
 					swapTiles(((4*r + c + 1)%16).toString(16), ((4*r1 + c1 + 1)%16).toString(16));
 					r1 = r;
@@ -3450,8 +3571,8 @@
 	</body>
 </html>` },
 
-    // --- Game of Life ---
-    'Games_Game of Life.html': { name: `Game of Life`, content: `<!DOCTYPE HTML>
+	// --- Game of Life ---
+	'Games_Game of Life.html': { name: `Game of Life`, content: `<!DOCTYPE HTML>
 <html lang="en"><!--G02#003 - Marco - Game of Life-->
 	<head>
 		<meta charset="UTF-8">
@@ -3663,8 +3784,8 @@
 	</body>
 </html>` },
 
-    // --- Modular Matching ---
-    'Games_Modular Matching.html': { name: `Modular Matching`, content: `<!DOCTYPE html>
+	// --- Modular Matching ---
+	'Games_Modular Matching.html': { name: `Modular Matching`, content: `<!DOCTYPE html>
 <html lang="en"><!--G05#013 - Federico - Modular Matching-->
 	<head>
 		<meta charset="UTF-8">
@@ -4002,8 +4123,8 @@
 	</body>
 </html>` },
 
-    // --- Tower of Hanoi ---
-    'Games_Tower of Hanoi.html': { name: `Tower of Hanoi`, content: `<!DOCTYPE HTML>
+	// --- Tower of Hanoi ---
+	'Games_Tower of Hanoi.html': { name: `Tower of Hanoi`, content: `<!DOCTYPE HTML>
 <html lang="en"><!--G03#007 - Luca - Tower of Hanoi-->
 	<head>
 		<meta charset="UTF-8">
@@ -4373,8 +4494,8 @@
 	</body>
 </html>` },
 
-    // --- Calculations ---
-    'Tools_Calculations.html': { name: `Calculations`, content: `<!DOCTYPE html>
+	// --- Calculations ---
+	'Tools_Calculations.html': { name: `Calculations`, content: `<!DOCTYPE html>
 <html lang="en"><!--T02#006 - Claudia - Calculations-->
 	<head>
 		<meta charset="UTF-8">
@@ -4825,8 +4946,8 @@
 	</body>
 </html>` },
 
-    // --- Colors ---
-    'Tools_Colors.html': { name: `Colors`, content: `<!DOCTYPE html>
+	// --- Colors ---
+	'Tools_Colors.html': { name: `Colors`, content: `<!DOCTYPE html>
 <html lang="en"><!--T01#005 - Irene - Colors-->
 	<head>
 		<meta charset="UTF-8">
@@ -5259,8 +5380,8 @@
 	</body>
 </html>` },
 
-    // --- Colors4 ---
-    'Tools_Colors4.html': { name: `Colors4`, content: `<!DOCTYPE html>
+	// --- Colors4 ---
+	'Tools_Colors4.html': { name: `Colors4`, content: `<!DOCTYPE html>
 <html lang="en"><!--T06#018 - Giada - Colors4-->
 	<head>
 		<meta charset="UTF-8">
@@ -6444,8 +6565,8 @@
 	</body>
 </html>` },
 
-    // --- Days ---
-    'Tools_Days.html': { name: `Days`, content: `<!DOCTYPE html>
+	// --- Days ---
+	'Tools_Days.html': { name: `Days`, content: `<!DOCTYPE html>
 <html lang="en"><!--T04#010 - Roberto - Days-->
 	<head>
 		<meta charset="UTF-8">
@@ -7002,8 +7123,8 @@
 	</body>
 </html>` },
 
-    // --- Sounds ---
-    'Tools_Sounds.html': { name: `Sounds`, content: `<!DOCTYPE html>
+	// --- Sounds ---
+	'Tools_Sounds.html': { name: `Sounds`, content: `<!DOCTYPE html>
 <html lang="en"><!--T03#009 - Fabio - Sounds-->
 	<head>
 		<meta charset="UTF-8">
@@ -7673,8 +7794,8 @@
 	</body>
 </html>` },
 
-    // --- SuperEnalotto ---
-    'Tools_SuperEnalotto.html': { name: `SuperEnalotto`, content: `<!DOCTYPE html>
+	// --- SuperEnalotto ---
+	'Tools_SuperEnalotto.html': { name: `SuperEnalotto`, content: `<!DOCTYPE html>
 <html lang="en"><!--T05#011 - Gennaro - SuperEnalotto-->
 	<head>
 		<meta charset="UTF-8">
@@ -7917,61 +8038,52 @@
 	</body>
 </html>` },
 
-    };
+	};
 
-    let currentUrl = null;
-    let currentKey = null;
+	let currentUrl = null;
+	let currentKey = null;
 
-    function openPage(key) {
-        const data = pages[key];
-        if(!data) return;
+	function openPage(key){
+		const data = pages[key];
+		if(!data){
+			return;
+		}
+		currentKey = key;
+		document.getElementById('app-title').innerText = data.name;
+		const blob = new Blob([data.content], { type: 'text/html' });
+		if(currentUrl){
+			URL.revokeObjectURL(currentUrl);
+		}
+		currentUrl = URL.createObjectURL(blob);
+		const viewer = document.getElementById('viewer');
+		viewer.style.display = 'flex';
+		document.body.style.overflow = 'hidden';
+		document.getElementById('app-frame').src = currentUrl;
+	}
 
-        currentKey = key;
+	window.addEventListener('message', function(event){
+		if(event.data === 'RELOAD_REQUEST'){
+			if(currentKey){
+				openPage(currentKey);
+			}
+		}
+	});
 
-        // Aggiorna titolo barra
-        document.getElementById('app-title').innerText = data.name;
+	function closePage(){
+		const viewer = document.getElementById('viewer');
+		viewer.style.display = 'none';
+		document.body.style.overflow = '';
+		document.getElementById('app-frame').src = 'about:blank';
+		currentKey = null;
+	}
 
-        // Crea Blob URL per l'iframe
-        const blob = new Blob([data.content], { type: 'text/html' });
-        if (currentUrl) URL.revokeObjectURL(currentUrl);
-        currentUrl = URL.createObjectURL(blob);
-
-        // Attiva il layout Flexbox
-        const viewer = document.getElementById('viewer');
-        viewer.style.display = 'flex';
-
-        // Blocca scroll pagina sottostante
-        document.body.style.overflow = 'hidden';
-
-        document.getElementById('app-frame').src = currentUrl;
-    }
-
-    // Ascolta messaggi di reload dall'iframe
-    window.addEventListener('message', function(event) {
-        if (event.data === 'RELOAD_REQUEST') {
-            if (currentKey) {
-                console.log('Ricarico pagina:', currentKey);
-                openPage(currentKey);
-            }
-        }
-    });
-
-    function closePage() {
-        const viewer = document.getElementById('viewer');
-        viewer.style.display = 'none';
-        document.body.style.overflow = '';
-        document.getElementById('app-frame').src = 'about:blank';
-        currentKey = null;
-    }
-
-    // Gestione tasto Indietro su Mobile
-    window.history.pushState(null, null, window.location.href);
-    window.onpopstate = function() {
-        if(document.getElementById('viewer').style.display === 'flex') {
-            window.history.pushState(null, null, window.location.href);
-            closePage();
-        }
-    };
+	window.history.pushState(null, null, window.location.href);
+	window.onpopstate = function(){
+		if(document.getElementById('viewer').style.display === 'flex'){
+			window.history.pushState(null, null, window.location.href);
+			closePage();
+		}
+	};
 </script>
 </body>
 </html>
