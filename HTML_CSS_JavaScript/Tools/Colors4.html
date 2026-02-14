@@ -849,18 +849,6 @@
 					});
 				}
 
-				function v3_brighterAll(){
-					if(v3_canMoveAll(1)){
-						[0, 1, 2].forEach(i => v3_brighterBasic(i));
-					}
-				}
-
-				function v3_darkerAll(){
-					if(v3_canMoveAll(-1)){
-						[0, 1, 2].forEach(i => v3_darkerBasic(i));
-					}
-				}
-
 				function v3_brighterBasic(idx){
 					let ele = document.getElementsByName(v3_basicColors[idx]);
 					for(let j = ele.length - 2; j >= 0; j--){
