@@ -238,7 +238,7 @@
 						<button type="button" onclick="v1_random()">Random</button>
 						<button type="button" onclick="v1_setColor(255, 255, 255)">White</button>
 						<button type="button" onclick="v1_setColor(0, 0, 0)">Black</button>
-						<button id="settingPage" type="button" onclick="v1_changeSetting()">Mini</button>
+						<button id="settingPage" type="button" onclick="v1_changeSetting()">Maxi</button>
 					</div>
 					<div id="sliders">
 						<div class="slider-row"><label>R</label> <input type="range" id="v1_red" class="slider" oninput="v1_setAndPatch(0)"/> <output id="v1_valueR"></output></div>
@@ -521,7 +521,7 @@
 
 				function v1_changeSetting() {
 					v1_mini = !v1_mini;
-					document.getElementById("settingPage").innerText = v1_mini ? "Mini" : "Maxi";
+					document.getElementById("settingPage").innerText = v1_mini ? "Maxi" : "Mini";
 					const rows = document.querySelectorAll(".slider-row");
 					for(let i = 3; i < rows.length; i++){
 						rows[i].style.display = v1_mini ? "flex" : "none";

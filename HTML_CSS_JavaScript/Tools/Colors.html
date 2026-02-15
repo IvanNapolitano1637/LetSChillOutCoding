@@ -165,7 +165,7 @@
 				<button type="button" onclick="random()">Random</button>
 				<button type="button" onclick="setColor(255, 255, 255)">White</button>
 				<button type="button" onclick="setColor(0, 0, 0)">Black</button>
-				<button id="settingPage" type="button" onclick="changeSetting()">Mini</button>
+				<button id="settingPage" type="button" onclick="changeSetting()">Maxi</button>
 			</div>
 			<div id="sliders">
 				<div class="slider-row"><label>R</label> <input type="range" id="red" class="slider" oninput="setAndPatch(0)"/> <output id="valueR"></output></div>
@@ -435,7 +435,7 @@
 
 			function changeSetting() {
 				mini = !mini;
-				document.getElementById("settingPage").innerText = mini ? "Mini" : "Maxi";
+				document.getElementById("settingPage").innerText = mini ? "Maxi" : "Mini";
 				const rows = document.querySelectorAll(".slider-row");
 				for(let i = 3; i < rows.length; i++){
 					rows[i].style.display = mini ? "flex" : "none"
