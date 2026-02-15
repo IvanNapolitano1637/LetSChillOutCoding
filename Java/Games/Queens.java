@@ -66,14 +66,14 @@ public class Queens extends JFrame {
             int w = getWidth();
             int h = getHeight();
             int size = Math.min(w, h);
-            int cx = w / 2;
-            int cy = h / 2;
+            int cx = w/2;
+            int cy = h/2;
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setColor(outerColor);
-            g2.fillOval(cx - size / 3, cy - size / 3, 2 * size / 3, 2 * size / 3);
+            g2.fillOval(cx - size/3, cy - size/3, 2*size/3, 2*size/3);
             g2.setColor(innerColor);
-            g2.fillOval(cx - size / 6, cy - size / 6, size / 3, size / 3);
+            g2.fillOval(cx - size/6, cy - size/6, size/3, size/3);
         }
     }
 
@@ -107,7 +107,7 @@ public class Queens extends JFrame {
         boardWrapper.add(boardPanel, BorderLayout.CENTER);
         queensBoxPanel = new JPanel();
         queensBoxPanel.setBackground(queensBoxBackgroundColor);
-        queensBoxPanel.setPreferredSize(new Dimension(150, order * side));
+        queensBoxPanel.setPreferredSize(new Dimension(150, order*side));
         queensBoxPanel.setVisible(false);
         centerPanel = new JPanel(new BorderLayout());
         centerPanel.setOpaque(true);
@@ -139,8 +139,8 @@ public class Queens extends JFrame {
         setMaxNumberOfTheQueens();
         setQueensLimitButtonLabel();
         recomputeSide();
-        int queensBoxWidth = (int) (side * BOX_WIDTH_FACTOR);
-        queensBoxPanel.setPreferredSize(new Dimension(queensBoxWidth, order * side));
+        int queensBoxWidth = (int) (side*BOX_WIDTH_FACTOR);
+        queensBoxPanel.setPreferredSize(new Dimension(queensBoxWidth, order*side));
         queensBoxPanel.setVisible(limited && !HIDE_QUEENS_BOX);
         revalidate();
         repaint();
@@ -151,7 +151,7 @@ public class Queens extends JFrame {
     }
 
     private void initGrid() {
-        maxNumberOfTheQueens = limited ? order : order * order;
+        maxNumberOfTheQueens = limited ? order : order*order;
         grid = new Cell[order][order];
         for (int r = 0; r < order; r++) {
             for (int c = 0; c < order; c++) {
@@ -162,7 +162,7 @@ public class Queens extends JFrame {
     }
 
     private void setMaxNumberOfTheQueens() {
-        maxNumberOfTheQueens = limited ? order : order * order;
+        maxNumberOfTheQueens = limited ? order : order*order;
     }
 
     private void setQueensLimitButtonLabel() {
@@ -172,17 +172,19 @@ public class Queens extends JFrame {
     }
 
     private void recomputeSide() {
-        side = Math.max(MIN_SIDE, Math.min(MAX_SIDE, CHESSBOARD_DIMENSION / order));
-        boardPanel.setPreferredSize(new Dimension(order * side, order * side));
-        boardPanel.setMinimumSize(new Dimension(order * side, order * side));
-        boardPanel.setMaximumSize(new Dimension(order * side, order * side));
-        boardPanel.setSize(order * side, order * side);
+        side = Math.max(MIN_SIDE, Math.min(MAX_SIDE, CHESSBOARD_DIMENSION/order));
+        boardPanel.setPreferredSize(new Dimension(order*side, order*side));
+        boardPanel.setMinimumSize(new Dimension(order*side, order*side));
+        boardPanel.setMaximumSize(new Dimension(order*side, order*side));
+        boardPanel.setSize(order*side, order*side);
         boardPanel.revalidate();
     }
 
     private void setBackgroundColor(Color color) {
         boardWrapper.setBackground(color);
-        if (centerPanel != null) centerPanel.setBackground(color);
+        if (centerPanel != null) {
+            centerPanel.setBackground(color);
+        }
         boardPanel.setBackground(color);
         getContentPane().setBackground(color);
         repaint();
@@ -198,36 +200,38 @@ public class Queens extends JFrame {
 
     private void drawCell(Graphics g, int row, int col) {
         g.setColor(((row + col) % 2 == 0) ? COLOR_1 : COLOR_2);
-        g.fillRect(col * side, row * side, side, side);
+        g.fillRect(col*side, row*side, side, side);
         Cell cell = grid[row][col];
         if (cell.occupied) {
         	drawQueen(g, row, col);
-        }else if (easy && cell.underAttack) {
+        } else if (easy && cell.underAttack) {
         	drawUnderAttackCell(g, row, col);
         }
     }
 
     private void drawQueen(Graphics g, int row, int col) {
-        int cx = col * side + side / 2;
-        int cy = row * side + side / 2;
+        int cx = col*side + side/2;
+        int cy = row*side + side/2;
         g.setColor(SELECTED);
-        g.fillOval(cx - side / 3, cy - side / 3, 2 * side / 3, 2 * side / 3);
+        g.fillOval(cx - side/3, cy - side/3, 2*side/3, 2*side/3);
         g.setColor(BLACK);
-        g.fillOval(cx - side / 6, cy - side / 6, side / 3, side / 3);
+        g.fillOval(cx - side/6, cy - side/6, side/3, side/3);
     }
 
     private void drawUnderAttackCell(Graphics g, int row, int col) {
-        int cx = col * side + side / 2;
-        int cy = row * side + side / 2;
+        int cx = col*side + side/2;
+        int cy = row*side + side/2;
         g.setColor(BLACK);
-        g.fillOval(cx - side / 8, cy - side / 8, side / 4, side / 4);
+        g.fillOval(cx - side/8, cy - side/8, side/4, side/4);
     }
 
     private void selectCell(int x, int y) {
         if (wan) return;
-        int col = x / side;
-        int row = y / side;
-        if (row < 0 || col < 0 || row >= order || col >= order) return;
+        int col = x/side;
+        int row = y/side;
+        if (row < 0 || col < 0 || row >= order || col >= order) {
+            return;
+        }
         if ((numberOfQueens < maxNumberOfTheQueens) || (grid[row][col].occupied && numberOfQueens == maxNumberOfTheQueens)) {
             numberOfQueens += grid[row][col].occupied ? -1 : 1;
             grid[row][col].occupied = !grid[row][col].occupied;
@@ -257,13 +261,21 @@ public class Queens extends JFrame {
     }
 
     private void setUnderAttackValues() {
-        for (int r = 0; r < order; r++) for (int c = 0; c < order; c++) grid[r][c].underAttack = false;
+        for (int r = 0; r < order; r++) {
+            for (int c = 0; c < order; c++) {
+                grid[r][c].underAttack = false;
+            }
+        }
         for (int r1 = 0; r1 < order; r1++) {
             for (int c1 = 0; c1 < order; c1++) {
-                if (!grid[r1][c1].occupied) continue;
+                if (!grid[r1][c1].occupied) {
+                    continue;
+                }
                 for (int r2 = 0; r2 < order; r2++) {
                     for (int c2 = 0; c2 < order; c2++) {
-                        if (r1 == r2 && c1 == c2) continue;
+                        if (r1 == r2 && c1 == c2) {
+                            continue;
+                        }
                         if (r1 == r2 || c1 == c2 || Math.abs(r1 - r2) == Math.abs(c1 - c2)) {
                             grid[r2][c2].underAttack = true;
                         }
@@ -276,7 +288,9 @@ public class Queens extends JFrame {
     private boolean checkQueensPositions() {
         for (int r = 0; r < order; r++) {
             for (int c = 0; c < order; c++) {
-                if (grid[r][c].occupied && grid[r][c].underAttack) return false;
+                if (grid[r][c].occupied && grid[r][c].underAttack) {
+                    return false;
+                }
             }
         }
         return true;
@@ -301,7 +315,7 @@ public class Queens extends JFrame {
             setMaxNumberOfTheQueens();
             setQueensLimitButtonLabel();
             if(!HIDE_QUEENS_BOX) {
-                queensBoxPanel.setPreferredSize(new Dimension((int)(side * BOX_WIDTH_FACTOR), order * side));
+                queensBoxPanel.setPreferredSize(new Dimension((int)(side*BOX_WIDTH_FACTOR), order*side));
                 queensBoxPanel.setVisible(limited);
 	            updateQueensBox();
 	            resizeWindow();
@@ -316,8 +330,8 @@ public class Queens extends JFrame {
     private void bigger() {
         order++;
         recomputeSide();
-        int queensBoxWidth = (int) (side * BOX_WIDTH_FACTOR);
-        queensBoxPanel.setPreferredSize(new Dimension(queensBoxWidth, order * side));
+        int queensBoxWidth = (int) (side*BOX_WIDTH_FACTOR);
+        queensBoxPanel.setPreferredSize(new Dimension(queensBoxWidth, order*side));
         refresh();
         updateQueensBox();
         resizeWindow();
@@ -329,8 +343,8 @@ public class Queens extends JFrame {
         if (order > 1) {
             order--;
             recomputeSide();
-            int queensBoxWidth = (int) (side * BOX_WIDTH_FACTOR);
-            queensBoxPanel.setPreferredSize(new Dimension(queensBoxWidth, order * side));
+            int queensBoxWidth = (int) (side*BOX_WIDTH_FACTOR);
+            queensBoxPanel.setPreferredSize(new Dimension(queensBoxWidth, order*side));
             refresh();
             updateQueensBox();
             resizeWindow();
@@ -340,11 +354,11 @@ public class Queens extends JFrame {
     }
 
     private void resizeWindow() {
-        int boardSize = order * side;
-        int queensBoxWidth = (int) (side * BOX_WIDTH_FACTOR);
+        int boardSize = order*side;
+        int queensBoxWidth = (int) (side*BOX_WIDTH_FACTOR);
         int limitedExtraWidth = (limited && !HIDE_QUEENS_BOX) ? (queensBoxWidth + BOX_MARGIN) : 0;
-        int width = boardSize + FRAME_PADDING * 2 + limitedExtraWidth;
-        int height = boardSize + controlsPanel.getPreferredSize().height + FRAME_PADDING * 2;
+        int width = boardSize + FRAME_PADDING*2 + limitedExtraWidth;
+        int height = boardSize + controlsPanel.getPreferredSize().height + FRAME_PADDING*2;
         Insets insets = getInsets();
         width += insets.left + insets.right;
         height += insets.top + insets.bottom;
