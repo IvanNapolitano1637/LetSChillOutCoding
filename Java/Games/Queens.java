@@ -97,7 +97,7 @@ public class Queens extends JFrame {
         boardPanel.setBackground(BACKGROUND_COLOR);
         boardPanel.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
                 selectCell(e.getX(), e.getY());
             }
         });
