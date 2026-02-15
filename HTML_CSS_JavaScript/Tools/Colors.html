@@ -178,7 +178,7 @@
 				<div class="slider-row"><label>Y</label> <input type="range" id="yellow" class="slider" oninput="setAndPatch(7)"/> <output id="valueY"></output></div>
 				<div class="slider-row"><label>K</label> <input type="range" id="black" class="slider" oninput="setAndPatch(8)"/> <output id="valueK"></output></div>
 			</div>
-			<div class="control-group">
+			<div id="colorButtons" class="control-group">
 				<div class="button-row">
 					<button class="redButtons step" onclick="changeColor(0,-20)">-20</button>
 					<button class="redButtons step" onclick="changeColor(0,-10)">-10</button>
@@ -249,7 +249,9 @@
 			];
 
 			const highlightError = false;
-			let mini = true;
+			let viewModes = ["Maxi", "Medium", "Mini", "Essential"];
+			let currentModeIndex = 0;
+			let direction = 1;
 
 			function init(){
 				for(let i = 0; i < 5; i++){
@@ -434,11 +436,33 @@
 			}
 
 			function changeSetting() {
-				mini = !mini;
-				document.getElementById("settingPage").innerText = mini ? "Maxi" : "Mini";
+				currentModeIndex += direction;
+				direction = (currentModeIndex === 3) ? -1 : ((currentModeIndex === 0) ? 1 : direction);
+				const mode = viewModes[currentModeIndex];
+				const btn = document.getElementById("settingPage");
 				const rows = document.querySelectorAll(".slider-row");
-				for(let i = 3; i < rows.length; i++){
-					rows[i].style.display = mini ? "flex" : "none"
+				const colorBtnGroup = document.getElementById("colorButtons");
+				const sliderContainer = document.getElementById("sliders");
+				btn.innerText = mode;
+				if(mode === "Maxi"){
+					sliderContainer.style.display = "block";
+					rows.forEach(row => row.style.display = "flex");
+					colorBtnGroup.style.display = "flex";
+				}else if(mode === "Medium"){
+					sliderContainer.style.display = "block";
+					rows.forEach((row, i) => {
+						row.style.display = i < 3 ? "flex" : "none";
+					});
+					colorBtnGroup.style.display = "flex";
+				}else if(mode === "Mini"){
+					sliderContainer.style.display = "block";
+					rows.forEach((row, i) => {
+						row.style.display = i < 3 ? "flex" : "none";
+					});
+					colorBtnGroup.style.display = "none";
+				}else if(mode === "Essential"){
+					sliderContainer.style.display = "none";
+					colorBtnGroup.style.display = "none";
 				}
 			}
 
