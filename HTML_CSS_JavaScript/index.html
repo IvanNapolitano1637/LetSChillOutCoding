@@ -5127,7 +5127,7 @@
 				<div class="slider-row"><label>Y</label> <input type="range" id="yellow" class="slider" oninput="setAndPatch(7)"/> <output id="valueY"></output></div>
 				<div class="slider-row"><label>K</label> <input type="range" id="black" class="slider" oninput="setAndPatch(8)"/> <output id="valueK"></output></div>
 			</div>
-			<div class="control-group">
+			<div id="colorButtons" class="control-group">
 				<div class="button-row">
 					<button class="redButtons step" onclick="changeColor(0,-20)">-20</button>
 					<button class="redButtons step" onclick="changeColor(0,-10)">-10</button>
@@ -5198,7 +5198,9 @@
 			];
 
 			const highlightError = false;
-			let mini = true;
+			let viewModes = ["Maxi", "Medium", "Mini", "Essential"];
+			let currentModeIndex = 0;
+			let direction = 1;
 
 			function init(){
 				for(let i = 0; i < 5; i++){
@@ -5383,11 +5385,33 @@
 			}
 
 			function changeSetting() {
-				mini = !mini;
-				document.getElementById("settingPage").innerText = mini ? "Maxi" : "Mini";
+				currentModeIndex += direction;
+				direction = (currentModeIndex === 3) ? -1 : ((currentModeIndex === 0) ? 1 : direction);
+				const mode = viewModes[currentModeIndex];
+				const btn = document.getElementById("settingPage");
 				const rows = document.querySelectorAll(".slider-row");
-				for(let i = 3; i < rows.length; i++){
-					rows[i].style.display = mini ? "flex" : "none"
+				const colorBtnGroup = document.getElementById("colorButtons");
+				const sliderContainer = document.getElementById("sliders");
+				btn.innerText = mode;
+				if(mode === "Maxi"){
+					sliderContainer.style.display = "block";
+					rows.forEach(row => row.style.display = "flex");
+					colorBtnGroup.style.display = "flex";
+				}else if(mode === "Medium"){
+					sliderContainer.style.display = "block";
+					rows.forEach((row, i) => {
+						row.style.display = i < 3 ? "flex" : "none";
+					});
+					colorBtnGroup.style.display = "flex";
+				}else if(mode === "Mini"){
+					sliderContainer.style.display = "block";
+					rows.forEach((row, i) => {
+						row.style.display = i < 3 ? "flex" : "none";
+					});
+					colorBtnGroup.style.display = "none";
+				}else if(mode === "Essential"){
+					sliderContainer.style.display = "none";
+					colorBtnGroup.style.display = "none";
 				}
 			}
 
@@ -5650,7 +5674,7 @@
 						<div class="slider-row"><label>Y</label> <input type="range" id="v1_yellow" class="slider" oninput="v1_setAndPatch(7)"/> <output id="v1_valueY"></output></div>
 						<div class="slider-row"><label>K</label> <input type="range" id="v1_black" class="slider" oninput="v1_setAndPatch(8)"/> <output id="v1_valueK"></output></div>
 					</div>
-					<div class="control-group">
+					<div id="colorButtons" class="control-group">
 						<div class="button-row">
 							<button class="redButtons step" onclick="v1_changeColor(0,-20)">-20</button>
 							<button class="redButtons step" onclick="v1_changeColor(0,-10)">-10</button>
@@ -5730,7 +5754,9 @@
 					document.querySelector("#v1_black")
 				];
 				const highlightError = false;
-				let v1_mini = true;
+				let v1_viewModes = ["Maxi", "Medium", "Mini", "Essential"];
+				let v1_currentModeIndex = 0;
+				let v1_direction = 1;
 
 				function v1_init(){
 					for(let i = 0; i < 5; i++){
@@ -5919,11 +5945,33 @@
 				}
 
 				function v1_changeSetting() {
-					v1_mini = !v1_mini;
-					document.getElementById("settingPage").innerText = v1_mini ? "Maxi" : "Mini";
+					v1_currentModeIndex += v1_direction;
+					v1_direction = (v1_currentModeIndex === 3) ? -1 : ((v1_currentModeIndex === 0) ? 1 : v1_direction);
+					const mode = v1_viewModes[v1_currentModeIndex];
+					const btn = document.getElementById("settingPage");
 					const rows = document.querySelectorAll(".slider-row");
-					for(let i = 3; i < rows.length; i++){
-						rows[i].style.display = v1_mini ? "flex" : "none";
+					const colorBtnGroup = document.getElementById("colorButtons");
+					const sliderContainer = document.getElementById("sliders");
+					btn.innerText = mode;
+					if(mode === "Maxi"){
+						sliderContainer.style.display = "block";
+						rows.forEach(row => row.style.display = "flex");
+						colorBtnGroup.style.display = "flex";
+					}else if(mode === "Medium"){
+						sliderContainer.style.display = "block";
+						rows.forEach((row, i) => {
+							row.style.display = i < 3 ? "flex" : "none";
+						});
+						colorBtnGroup.style.display = "flex";
+					}else if(mode === "Mini"){
+						sliderContainer.style.display = "block";
+						rows.forEach((row, i) => {
+							row.style.display = i < 3 ? "flex" : "none";
+						});
+						colorBtnGroup.style.display = "none";
+					}else if(mode === "Essential"){
+						sliderContainer.style.display = "none";
+						colorBtnGroup.style.display = "none";
 					}
 				}
 
