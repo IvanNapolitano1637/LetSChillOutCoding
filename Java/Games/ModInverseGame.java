@@ -7,7 +7,7 @@ import java.io.ObjectOutputStream;
 import java.util.*;
 import java.util.List;
 
-public class ModInverseGame extends JFrame {
+public class ModInverseGame extends JFrame{
     private static final long serialVersionUID = 5273103038785747040L;
     private final int MOD;
     private final int MAX_NUMBER_OF_ERRORS;
@@ -66,7 +66,7 @@ public class ModInverseGame extends JFrame {
     private boolean skipConfigureOnInit = false;
     private static final boolean USE_FILE_CHOOSER = false;
 
-    public ModInverseGame(int mod, int maxErrors) {
+    public ModInverseGame(int mod, int maxErrors){
         this.MOD = mod;
         this.MAX_NUMBER_OF_ERRORS = maxErrors;
         this.buttons = new JButton[MOD - 1];
@@ -74,7 +74,7 @@ public class ModInverseGame extends JFrame {
         initUI();
     }
 
-    public ModInverseGame(int mod, int maxErrors, int[] loadedBases) {
+    public ModInverseGame(int mod, int maxErrors, int[] loadedBases){
         this.MOD = mod;
         this.MAX_NUMBER_OF_ERRORS = maxErrors;
         this.BASES = (loadedBases != null) ? loadedBases.clone() : this.BASES;
@@ -83,7 +83,7 @@ public class ModInverseGame extends JFrame {
         initUI();
     }
 
-    private void initUI() {
+    private void initUI(){
         setTitle(GAME_TITLE + MOD);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -110,9 +110,9 @@ public class ModInverseGame extends JFrame {
         loadButton.addActionListener(_ -> load());
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 5));
         add(topPanel, BorderLayout.NORTH);
-        int rows = (int) Math.ceil((double) (MOD - 1) / NUMBER_OF_COLUMNS);
+        int rows = (int) Math.ceil((double) (MOD - 1)/NUMBER_OF_COLUMNS);
         JPanel grid = new JPanel(new GridLayout(rows, NUMBER_OF_COLUMNS, 5, 5));
-        for (int i = 1; i < MOD; i++) {
+        for(int i = 1; i < MOD; i++){
             JButton btn = new JButton(String.valueOf(i));
             btn.setMinimumSize(new Dimension(50, 40));
             btn.setPreferredSize(new Dimension(60, 45));
@@ -130,9 +130,9 @@ public class ModInverseGame extends JFrame {
         JScrollPane scrollPane = new JScrollPane(grid);
         add(scrollPane, BorderLayout.CENTER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(VERTICAL_SCROLL_BAR_UNIT_INCREMENT);
-        if (!skipConfigureOnInit) {
+        if(!skipConfigureOnInit){
             configureBases();
-        } else {
+        }else{
             updateLegend();
         }
         setSize(WIDTH, HEIGHT);
@@ -151,17 +151,27 @@ public class ModInverseGame extends JFrame {
         topPanel.add(resetButton);
     }
 
-    private String getStateFromColor(Color c) {
-        if (c.equals(DONE_COLOR)) return "DONE";
-        if (c.equals(ACTIVE_COLOR)) return "ACTIVE";
-        if (c.equals(NEXT_BASE_COLOR)) return "NEXT_BASE";
-        if (c.equals(TO_DO_SOON_COLOR)) return "TO_DO_SOON";
-        if (c.equals(TO_DO_BY_OPPOSITE_COLOR)) return "TO_DO_BY_OPPOSITE";
+    private String getStateFromColor(Color c){
+        if(c.equals(DONE_COLOR)){
+            return "DONE";
+        }
+        if(c.equals(ACTIVE_COLOR)){
+            return "ACTIVE";
+        }
+        if(c.equals(NEXT_BASE_COLOR)){
+            return "NEXT_BASE";
+        }
+        if(c.equals(TO_DO_SOON_COLOR)){
+            return "TO_DO_SOON";
+        }
+        if(c.equals(TO_DO_BY_OPPOSITE_COLOR)){
+            return "TO_DO_BY_OPPOSITE";
+        }
         return "DEFAULT";
     }
 
-    private Color getColorFromState(String state) {
-        switch (state) {
+    private Color getColorFromState(String state){
+        switch (state){
             case "DONE": return DONE_COLOR;
             case "ACTIVE": return ACTIVE_COLOR;
             case "NEXT_BASE": return NEXT_BASE_COLOR;
@@ -171,35 +181,37 @@ public class ModInverseGame extends JFrame {
         }
     }
 
-    private void checkOppositeNumbers() {
-        if(checkOppositeNumbers == null) return;
-        if (checkOppositeNumbers.isSelected()) {
-            for(JButton firstButton : buttons) {
+    private void checkOppositeNumbers(){
+        if(checkOppositeNumbers == null){
+            return;
+        }
+        if(checkOppositeNumbers.isSelected()){
+            for(JButton firstButton : buttons){
                 int val_1 = (int) firstButton.getClientProperty("value");
-                for(JButton latterButton : buttons) {
+                for(JButton latterButton : buttons){
                     int val_2 = (int) latterButton.getClientProperty("value");
-                    if(val_1 + val_2 == MOD) {
-                        if(firstButton.getBackground().equals(DONE_COLOR)) {
-                            if(latterButton.getBackground().equals(defaultColor)) {
+                    if(val_1 + val_2 == MOD){
+                        if(firstButton.getBackground().equals(DONE_COLOR)){
+                            if(latterButton.getBackground().equals(defaultColor)){
                                 latterButton.setBackground(TO_DO_BY_OPPOSITE_COLOR);
                             }
                         }
                     }
                 }
             }
-        } else {
-            for(JButton btn : buttons) {
-                if(btn.getBackground().equals(TO_DO_BY_OPPOSITE_COLOR)) {
+        }else{
+            for(JButton btn : buttons){
+                if(btn.getBackground().equals(TO_DO_BY_OPPOSITE_COLOR)){
                     btn.setBackground(defaultColor);
                 }
             }
         }
     }
 
-    private void computeInverses() {
-        for (int a = 1; a < MOD; a++) {
-            for (int b = 1; b < MOD; b++) {
-                if ((a * b) % MOD == 1) {
+    private void computeInverses(){
+        for(int a = 1; a < MOD; a++){
+            for(int b = 1; b < MOD; b++){
+                if((a*b)%MOD == 1){
                     inverses.put(a, b);
                     break;
                 }
@@ -207,11 +219,11 @@ public class ModInverseGame extends JFrame {
         }
     }
 
-    private void computeTotalPairs() {
+    private void computeTotalPairs(){
         Set<Integer> visited = new HashSet<>();
         int pairs = 0;
-        for (int a = 1; a < MOD; a++) {
-            if (!visited.contains(a)) {
+        for(int a = 1; a < MOD; a++){
+            if(!visited.contains(a)){
                 int b = inverses.get(a);
                 pairs++;
                 visited.add(a);
@@ -221,30 +233,36 @@ public class ModInverseGame extends JFrame {
         totalPairs = pairs;
     }
 
-    private void handleClick(JButton btn, int value) {
-        if (firstSelected == null) {
-            if (btn.getBackground().equals(DONE_COLOR)) return;
+    private void handleClick(JButton btn, int value){
+        if(firstSelected == null){
+            if(btn.getBackground().equals(DONE_COLOR)){
+                return;
+            }
             firstSelected = btn;
             firstValue = value;
             btn.setBackground(ACTIVE_COLOR);
             return;
         }
         int inverse = inverses.get(firstValue);
-        if ((value == inverse && btn != firstSelected) || (firstSelected == btn && firstValue == inverse)) {
+        if((value == inverse && btn != firstSelected) || (firstSelected == btn && firstValue == inverse)){
             btn.setBackground(DONE_COLOR);
             firstSelected.setBackground(DONE_COLOR);
             btn.setText(value + "×" + firstValue);
             firstSelected.setText(firstValue + "×" + value);
             score++;
             scoreLabel.setText(SCORE_LABEL_NAME + score + "/" + totalPairs);
-            if (score == totalPairs) {
+            if(score == totalPairs){
                 JOptionPane.showMessageDialog(this, MESSAGE_TO_THE_WINNER, NAME_OF_THE_MESSAGE_DIALOG_FOR_YHE_WINNER, JOptionPane.INFORMATION_MESSAGE);
             }
-        } else {
-            if (!btn.getBackground().equals(DONE_COLOR)) btn.setBackground(defaultColor);
-            if (!firstSelected.getBackground().equals(DONE_COLOR)) firstSelected.setBackground(defaultColor);
+        }else{
+            if(!btn.getBackground().equals(DONE_COLOR)){
+                btn.setBackground(defaultColor);
+            }
+            if(!firstSelected.getBackground().equals(DONE_COLOR)){
+                firstSelected.setBackground(defaultColor);
+            }
             errorsLabel.setText(ERROR_LABEL_NAME + ++errors);
-            if(errors > MAX_NUMBER_OF_ERRORS) {
+            if(errors > MAX_NUMBER_OF_ERRORS){
                 JOptionPane.showMessageDialog(this, MESSAGE_TO_THE_LOSER, NAME_OF_THE_MESSAGE_DIALOG_FOR_YHE_LOSER, JOptionPane.INFORMATION_MESSAGE);
                 resetGame();
             }
@@ -255,76 +273,82 @@ public class ModInverseGame extends JFrame {
         firstValue = -1;
     }
 
-    private void toggleHighlight() {
+    private void toggleHighlight(){
         highlightActive = !highlightActive;
         highlightButton.setBackground(highlightActive ? ACTIVE_COLOR : defaultColor);
         updateHighlightColors();
         checkOppositeNumbers();
     }
 
-    private void updateHighlightColors() {
-        if (!highlightActive) {
-            for (JButton btn : buttons) {
+    private void updateHighlightColors(){
+        if(!highlightActive){
+            for(JButton btn : buttons){
                 Color c = btn.getBackground();
-                if (!c.equals(DONE_COLOR)) {
+                if(!c.equals(DONE_COLOR)){
                     btn.setBackground(defaultColor);
                 }
             }
             return;
         }
         Set<Integer> greenValues = new HashSet<>();
-        for (JButton btn : buttons) {
-            if (btn.getBackground().equals(DONE_COLOR)) {
+        for(JButton btn : buttons){
+            if(btn.getBackground().equals(DONE_COLOR)){
                 greenValues.add((int) btn.getClientProperty("value"));
             }
         }
-        for (JButton btn : buttons) {
+        for(JButton btn : buttons){
             int val = (int) btn.getClientProperty("value");
-            if (btn.getBackground().equals(DONE_COLOR)) continue;
+            if(btn.getBackground().equals(DONE_COLOR)){
+                continue;
+            }
             boolean marked = false;
             int temp = val;
-            while (temp > 1 && temp % 2 == 0) {
+            while(temp > 1 && temp%2 == 0){
                 temp /= 2;
-                if (greenValues.contains(temp)) {
+                if(greenValues.contains(temp)){
                     btn.setBackground(NEXT_BASE_COLOR);
                     marked = true;
                     break;
                 }
             }
-            if (marked) continue;
+            if(marked){
+                continue;
+            }
             List<int[]> exponents = generateExponentCombinations(BASES, val);
-            for (int[] powers : exponents) {
+            for(int[] powers : exponents){
                 int divisor = 1;
-                for (int i = 0; i < BASES.length; i++) {
+                for(int i = 0; i < BASES.length; i++){
                     divisor *= Math.pow(BASES[i], powers[i]);
                 }
-                if (divisor <= 1 || val % divisor != 0) continue;
-                int candidate = val / divisor;
-                if (greenValues.contains(candidate)) {
+                if(divisor <= 1 || val%divisor != 0){
+                    continue;
+                }
+                int candidate = val/divisor;
+                if(greenValues.contains(candidate)){
                     btn.setBackground(TO_DO_SOON_COLOR);
                     marked = true;
                     break;
                 }
             }
-            if (!marked) {
+            if(!marked){
                 btn.setBackground(defaultColor);
             }
         }
     }
 
-    private List<int[]> generateExponentCombinations(int[] bases, int maxVal) {
+    private List<int[]> generateExponentCombinations(int[] bases, int maxVal){
         List<int[]> result = new ArrayList<>();
         generateExponentCombinationsRecursive(bases, maxVal, 0, new int[bases.length], result);
         return result;
     }
 
-    private void generateExponentCombinationsRecursive(int[] bases, int maxVal, int index, int[] current, List<int[]> result) {
-        if (index == bases.length) {
+    private void generateExponentCombinationsRecursive(int[] bases, int maxVal, int index, int[] current, List<int[]> result){
+        if(index == bases.length){
             int product = 1;
-            for (int i = 0; i < bases.length; i++) {
+            for(int i = 0; i < bases.length; i++){
                 product *= Math.pow(bases[i], current[i]);
             }
-            if (product <= maxVal && product > 1) {
+            if(product <= maxVal && product > 1){
                 result.add(current.clone());
             }
             return;
@@ -332,18 +356,18 @@ public class ModInverseGame extends JFrame {
         int maxExp = 0;
         int base = bases[index];
         int productSoFar = 1;
-        for (int i = 0; i < index; i++) {
+        for(int i = 0; i < index; i++){
             productSoFar *= Math.pow(bases[i], current[i]);
         }
-        while (productSoFar * Math.pow(base, maxExp) <= maxVal) {
+        while(productSoFar*Math.pow(base, maxExp) <= maxVal){
             current[index] = maxExp;
             generateExponentCombinationsRecursive(bases, maxVal, index + 1, current, result);
             maxExp++;
         }
     }
 
-    private void resetGame() {
-        for (int i = 0; i < buttons.length; i++) {
+    private void resetGame(){
+        for(int i = 0; i < buttons.length; i++){
             buttons[i].setBackground(defaultColor);
             buttons[i].setText(String.valueOf(i + 1));
             buttons[i].putClientProperty("value", i + 1);
@@ -360,8 +384,8 @@ public class ModInverseGame extends JFrame {
         checkOppositeNumbers.setSelected(false);
     }
 
-    private void configureBases() {
-        String[] options = {"2", "2,3", "2,3,5", "2,3,5,7"};
+    private void configureBases(){
+        String[] options ={"2", "2,3", "2,3,5", "2,3,5,7"};
         String choice = (String) JOptionPane.showInputDialog(
                 this,
                 MESSAGE_FOR_THE_CHANGER_OF_BASES,
@@ -371,10 +395,12 @@ public class ModInverseGame extends JFrame {
                 options,
                 options[0]
         );
-        if (choice != null) {
+        if(choice != null){
             List<Integer> chosen = new ArrayList<>();
             String[] tokens = choice.split(",");
-            for (String t : tokens) chosen.add(Integer.parseInt(t.trim()));
+            for(String t : tokens){
+                chosen.add(Integer.parseInt(t.trim()));
+            }
             BASES = chosen.stream().mapToInt(Integer::intValue).toArray();
             configureButton.setText(CONFIGURE_BUTTON_NAME + choice);
         }
@@ -383,34 +409,36 @@ public class ModInverseGame extends JFrame {
         toggleHighlight();
     }
 
-    private void updateLegend() {
+    private void updateLegend(){
         StringBuilder sb = new StringBuilder();
-        for (int b : BASES) sb.append(b).append(" ");
+        for(int b : BASES){
+            sb.append(b).append(" ");
+        }
     }
 
-    private void save() {
-        if (USE_FILE_CHOOSER) {
+    private void save(){
+        if(USE_FILE_CHOOSER){
             JFileChooser fileChooser = new JFileChooser();
-            if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-                try (ObjectOutputStream out = new ObjectOutputStream(
-                        new FileOutputStream(fileChooser.getSelectedFile()))) {
+            if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION){
+                try(ObjectOutputStream out = new ObjectOutputStream(
+                        new FileOutputStream(fileChooser.getSelectedFile()))){
                     writeGameState(out);
                     JOptionPane.showMessageDialog(this, MESSAGE_FOR_SUCCESSFUL_SAVING_GAME);
-                } catch (Exception ex) {
+                }catch(Exception ex){
                     JOptionPane.showMessageDialog(this, MESSAGE_FOR_FAILED_SAVING_GAME + ex.getMessage());
                 }
             }
-        } else {
-            try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(SAVING_GAME_FILE_NAME))) {
+        }else{
+            try(ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(SAVING_GAME_FILE_NAME))){
                 writeGameState(out);
                 JOptionPane.showMessageDialog(this, MESSAGE_FOR_SUCCESSFUL_SAVING_GAME);
-            } catch (Exception ex) {
+            }catch(Exception ex){
                 JOptionPane.showMessageDialog(this, MESSAGE_FOR_FAILED_SAVING_GAME + ex.getMessage());
             }
         }
     }
 
-    private void writeGameState(ObjectOutputStream out) throws Exception {
+    private void writeGameState(ObjectOutputStream out) throws Exception{
         out.writeObject(MOD);
         out.writeObject(score);
         out.writeObject(errors);
@@ -419,7 +447,7 @@ public class ModInverseGame extends JFrame {
         out.writeObject(checkOppositeNumbers.isSelected());
         String[] texts = new String[buttons.length];
         String[] states = new String[buttons.length];
-        for (int i = 0; i < buttons.length; i++) {
+        for(int i = 0; i < buttons.length; i++){
             texts[i] = buttons[i].getText();
             states[i] = getStateFromColor(buttons[i].getBackground());
         }
@@ -427,29 +455,29 @@ public class ModInverseGame extends JFrame {
         out.writeObject(states);
     }
 
-    private void load() {
-        if (USE_FILE_CHOOSER) {
+    private void load(){
+        if(USE_FILE_CHOOSER){
             JFileChooser fileChooser = new JFileChooser();
-            if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-                try (ObjectInputStream in = new ObjectInputStream(
-                        new FileInputStream(fileChooser.getSelectedFile()))) {
+            if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
+                try(ObjectInputStream in = new ObjectInputStream(
+                        new FileInputStream(fileChooser.getSelectedFile()))){
                     readGameState(in);
                     JOptionPane.showMessageDialog(this, MESSAGE_FOR_SUCCESSFUL_LOADING_GAME);
-                } catch (Exception ex) {
+                }catch(Exception ex){
                     JOptionPane.showMessageDialog(this, MESSAGE_FOR_FAILED_LOADING_GAME + ex.getMessage());
                 }
             }
-        } else {
-            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(SAVING_GAME_FILE_NAME))) {
+        }else{
+            try(ObjectInputStream in = new ObjectInputStream(new FileInputStream(SAVING_GAME_FILE_NAME))){
                 readGameState(in);
                 JOptionPane.showMessageDialog(this, MESSAGE_FOR_SUCCESSFUL_LOADING_GAME);
-            } catch (Exception ex) {
+            }catch(Exception ex){
                 JOptionPane.showMessageDialog(this, MESSAGE_FOR_FAILED_LOADING_GAME + ex.getMessage());
             }
         }
     }
 
-    private void readGameState(ObjectInputStream in) throws Exception {
+    private void readGameState(ObjectInputStream in) throws Exception{
         int loadedMod = (Integer) in.readObject();
         int loadedScore = (Integer) in.readObject();
         int loadedErrors = (Integer) in.readObject();
@@ -458,36 +486,38 @@ public class ModInverseGame extends JFrame {
         boolean loadedCheckOpposite = (Boolean) in.readObject();
         String[] texts = (String[]) in.readObject();
         String[] states = (String[]) in.readObject();
-        if (loadedMod != MOD) {
-            SwingUtilities.invokeLater(() -> {
+        if(loadedMod != MOD){
+            SwingUtilities.invokeLater(() ->{
                 ModInverseGame newGame = new ModInverseGame(loadedMod, MAX_NUMBER_OF_ERRORS, loadedBases);
                 newGame.applyLoadedState(loadedScore, loadedErrors, loadedHighlight, loadedCheckOpposite, texts, states, loadedBases);
             });
             dispose();
-        } else {
+        }else{
             applyLoadedState(loadedScore, loadedErrors, loadedHighlight, loadedCheckOpposite, texts, states, loadedBases);
         }
     }
 
     private void applyLoadedState(int loadedScore, int loadedErrors, boolean loadedHighlight, boolean loadedCheckOpposite,
-            String[] texts, String[] states, int[] loadedBases) {
+            String[] texts, String[] states, int[] loadedBases){
     	score = loadedScore;
     	errors = loadedErrors;
     	highlightActive = loadedHighlight;
     	checkOppositeNumbers.setSelected(loadedCheckOpposite);
-    	if (loadedBases != null) {
+    	if(loadedBases != null){
     		BASES = loadedBases.clone();
     	}
-    	if (texts != null && states != null) {
+    	if(texts != null && states != null){
     		int n = Math.min(buttons.length, texts.length);
-    		for (int i = 0; i < n; i++) {
+    		for(int i = 0; i < n; i++){
     			buttons[i].setText(texts[i]);
     			buttons[i].setBackground(getColorFromState(states[i]));
     		}
     	}
     	StringBuilder sb = new StringBuilder();
-    	for (int i = 0; i < BASES.length; i++) {
-    		if (i > 0) sb.append(",");
+    	for(int i = 0; i < BASES.length; i++){
+    		if(i > 0){
+                sb.append(",");
+            }
     		sb.append(BASES[i]);
     	}
     	configureButton.setText(CONFIGURE_BUTTON_NAME + sb.toString());
@@ -498,7 +528,7 @@ public class ModInverseGame extends JFrame {
     	checkOppositeNumbers();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
         SwingUtilities.invokeLater(() -> new ModInverseGame(97, 10000));
     }
 }
