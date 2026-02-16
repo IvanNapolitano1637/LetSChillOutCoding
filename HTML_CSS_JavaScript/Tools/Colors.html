@@ -25,6 +25,7 @@
 				max-width: 95%;
 				max-height: 95vh;
 				overflow-y: auto;
+				user-select: none;
 			}
 			#sliders{
 				display: block;
@@ -93,12 +94,21 @@
 				font-weight: bold;
 				min-width: 75px;
 				background: white;
+				outline: none;
+				user-select: none;
+			}
+			#more, #less{
+				min-width: 0 !important;
+				width: auto;
+				padding-left: 10px;
+				padding-right: 10px;
 			}
 			.control-group{
 				display: flex;
 				flex-direction: column;
 				gap: 8px;
 				margin-top: 15px;
+				user-select: none;
 			}
 			.button-row{
 				display: flex;
@@ -119,6 +129,8 @@
 				cursor: pointer;
 				font-weight: bold;
 				box-sizing: border-box;
+				outline: none;
+				user-select: none;
 			}
 			.redButtons{
 				background: #ff4d4d;
@@ -154,6 +166,9 @@
 					min-width: 65px;
 					font-size: 0.8em;
 				}
+				#more, #less{
+					padding: 10px 8px;
+				}
 			}
 		</style>
 	</head>
@@ -165,7 +180,8 @@
 				<button type="button" onclick="random()">Random</button>
 				<button type="button" onclick="setColor(255, 255, 255)">White</button>
 				<button type="button" onclick="setColor(0, 0, 0)">Black</button>
-				<button id="settingPage" type="button" onclick="changeSetting()">Maxi</button>
+				<button id="more" type="button" onclick="showMore()">↓</button>
+				<button id="less" type="button" onclick="showLess()">↑</button>
 			</div>
 			<div id="sliders">
 				<div class="slider-row"><label>R</label> <input type="range" id="red" class="slider" oninput="setAndPatch(0)"/> <output id="valueR"></output></div>
@@ -249,9 +265,8 @@
 			];
 
 			const highlightError = false;
-			let viewModes = ["Maxi", "Medium", "Mini", "Essential"];
-			let currentModeIndex = 0;
-			let direction = 1;
+			let viewModes = ["Essential", "Mini", "Medium", "Maxi"];
+			let currentModeIndex = viewModes.length - 1;
 
 			function init(){
 				for(let i = 0; i < 5; i++){
@@ -265,7 +280,7 @@
 					navigator.clipboard.writeText(this.textContent);
 					const oldText = this.textContent;
 					this.textContent = "COPIATO!";
-					setTimeout(() =>{this.textContent = oldText; }, 800);
+					setTimeout(() => {this.textContent = oldText; }, 800);
 				};
 			}
 
@@ -435,15 +450,15 @@
 				}
 			}
 
-			function changeSetting() {
+			function changeSetting(direction){
+				if((currentModeIndex == 0 && direction == -1)||(currentModeIndex == viewModes.length - 1 && direction == 1)){
+					return;
+				}
 				currentModeIndex += direction;
-				direction = (currentModeIndex === 3) ? -1 : ((currentModeIndex === 0) ? 1 : direction);
 				const mode = viewModes[currentModeIndex];
-				const btn = document.getElementById("settingPage");
 				const rows = document.querySelectorAll(".slider-row");
 				const colorBtnGroup = document.getElementById("colorButtons");
 				const sliderContainer = document.getElementById("sliders");
-				btn.innerText = mode;
 				if(mode === "Maxi"){
 					sliderContainer.style.display = "block";
 					rows.forEach(row => row.style.display = "flex");
@@ -464,6 +479,14 @@
 					sliderContainer.style.display = "none";
 					colorBtnGroup.style.display = "none";
 				}
+			}
+
+			function showMore(){
+				changeSetting(1);
+			}
+
+			function showLess(){
+				changeSetting(-1);
 			}
 
 			window.onload = init;
