@@ -189,7 +189,7 @@
 <body>
 <div id="dashboard">
 	<h1>Toolbox & Playground</h1>
-	<div class='section'><h2>🕰️ Clocks</h2><div class='grid'><button class='card' onclick="openPage('Clocks_24h Clock.html')">24h Clock</button><button class='card' onclick="openPage('Clocks_Binary Clock.html')">Binary Clock</button><button class='card' onclick="openPage('Clocks_Clock.html')">Clock</button><button class='card' onclick="openPage('Clocks_Strange Clock.html')">Strange Clock</button></div></div><div class='section'><h2>🎮 Games</h2><div class='grid'><button class='card' onclick="openPage('Games_Backgammon.html')">Backgammon</button><button class='card' onclick="openPage('Games_Checkers.html')">Checkers</button><button class='card' onclick="openPage('Games_Chess.html')">Chess</button><button class='card' onclick="openPage('Games_Connect Four.html')">Connect Four</button><button class='card' onclick="openPage('Games_Eight Queens.html')">Eight Queens</button><button class='card' onclick="openPage('Games_Fifteen.html')">Fifteen</button><button class='card' onclick="openPage('Games_Game of Life.html')">Game of Life</button><button class='card' onclick="openPage('Games_Modular Matching.html')">Modular Matching</button><button class='card' onclick="openPage('Games_Solitario carte napoletane.html')">Solitario carte napoletane</button><button class='card' onclick="openPage('Games_Tower of Hanoi.html')">Tower of Hanoi</button></div></div><div class='section'><h2>🛠️ Tools</h2><div class='grid'><button class='card' onclick="openPage('Tools_Calculations.html')">Calculations</button><button class='card' onclick="openPage('Tools_Colors.html')">Colors</button><button class='card' onclick="openPage('Tools_Colors4.html')">Colors4</button><button class='card' onclick="openPage('Tools_Days.html')">Days</button><button class='card' onclick="openPage('Tools_Sounds.html')">Sounds</button><button class='card' onclick="openPage('Tools_SuperEnalotto.html')">SuperEnalotto</button></div></div>
+	<div class='section'><h2>🕰️ Clocks</h2><div class='grid'><button class='card' onclick="openPage('Clocks_24h Clock.html')">24h Clock</button><button class='card' onclick="openPage('Clocks_Binary Clock.html')">Binary Clock</button><button class='card' onclick="openPage('Clocks_Clock.html')">Clock</button><button class='card' onclick="openPage('Clocks_Strange Clock.html')">Strange Clock</button></div></div><div class='section'><h2>🎮 Games</h2><div class='grid'><button class='card' onclick="openPage('Games_Backgammon.html')">Backgammon</button><button class='card' onclick="openPage('Games_Checkers.html')">Checkers</button><button class='card' onclick="openPage('Games_Chess.html')">Chess</button><button class='card' onclick="openPage('Games_Connect Four.html')">Connect Four</button><button class='card' onclick="openPage('Games_Eight Queens.html')">Eight Queens</button><button class='card' onclick="openPage('Games_Fifteen.html')">Fifteen</button><button class='card' onclick="openPage('Games_Game of Life.html')">Game of Life</button><button class='card' onclick="openPage('Games_Modular Matching.html')">Modular Matching</button><button class='card' onclick="openPage('Games_Solitario carte napoletane.html')">Solitario carte napoletane</button><button class='card' onclick="openPage('Games_Tower of Hanoi.html')">Tower of Hanoi</button></div></div><div class='section'><h2>🛠️ Tools</h2><div class='grid'><button class='card' onclick="openPage('Tools_Colors.html')">Colors</button><button class='card' onclick="openPage('Tools_Colors4.html')">Colors4</button><button class='card' onclick="openPage('Tools_Days.html')">Days</button><button class='card' onclick="openPage('Tools_Some Maths.html')">Some Maths</button><button class='card' onclick="openPage('Tools_Sounds.html')">Sounds</button><button class='card' onclick="openPage('Tools_SuperEnalotto.html')">SuperEnalotto</button></div></div>
 </div>
 <div id="viewer">
 	<div id="app-header">
@@ -5353,458 +5353,6 @@
 	</body>
 </html>` },
 
-	// --- Calculations ---
-	'Tools_Calculations.html': { name: `Calculations`, content: `<!DOCTYPE html>
-<html lang="en"><!--T02#006 - Claudia - Calculations-->
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta http-equiv="X-UA-Compatible" content="ie=edge">
-		<title>Maths</title>
-		<style>
-			body{
-				font-family: sans-serif;
-				margin: 20px;
-			}
-			.container{
-				display: flex;
-				flex-wrap: wrap;
-				gap: 20px;
-				justify-content: center;
-				flex-direction: row;
-			}
-			.container > div{
-				flex-basis: 100%;
-			}
-			form{
-				border: 1px solid #ccc;
-				padding: 20px;
-				border-radius: 8px;
-				background-color: #f9f9f9;
-				min-width: 320px;
-			}
-			canvas{
-				border: 1px solid #000;
-				background-color: white;
-				max-width: 100%;
-				height: auto;
-				margin-top: 10px;
-			}
-			.output-text{
-				font-weight: bold;
-				color: #2c3e50;
-				margin-top: 5px;
-				display: block;
-				min-height: 1.2em;
-			}
-			label{
-				font-weight: bold;
-				display: block;
-				margin-top: 10px;
-			}
-			input[type="number"]{
-				width: 80%;
-				padding: 5px;
-				margin-bottom: 5px;
-			}
-			button{
-				cursor: pointer;
-				padding: 5px 10px;
-			}
-			h3{
-				margin-top: 0;
-				color: #27ae60;
-			}
-		</style>
-	</head>
-	<body style="background-color:#ccffcc;">
-		<div class="container">
-			<form id="mathForm">
-				<h3>Number Theory</h3>
-				<label>Primality test</label>
-				<input type="number" id="firstNumber"/>
-				<button type="button" id="primalityTestButton" onclick="handleAction('checkNumber')">Check</button>
-				<output id="isPrime" class="output-text"></output>
-				<label>Square of a number</label>
-				<input type="number" id="tenthNumber"/>
-				<button type="button" onclick="handleAction('calculateSquare')">Calculate</button>
-				<output id="squareOutput" class="output-text"></output>
-				<label>Square root</label>
-				<input type="number" id="secondNumber"/>
-				<button type="button" id="squareRootButton" onclick="handleAction('squareRoot')">Calculate</button>
-				<output id="sqrt" class="output-text"></output>
-				<label>Triangular of a number</label>
-				<input type="number" id="eleventhNumber"/>
-				<button type="button" onclick="handleAction('calculateTriangular')">Calculate</button>
-				<output id="triangularOutput" class="output-text"></output>
-				<label>Triangular root</label>
-				<input type="number" id="twelfthNumber"/>
-				<button type="button" onclick="handleAction('checkTriangularity')">Calculate</button>
-				<output id="checkTriangularOutput" class="output-text"></output>
-				<label>Factorization</label>
-				<input type="number" id="thirdNumber"/>
-				<button type="button" id="factorization" onclick="handleAction('factorize')">Factorize</button>
-				<output id="scomposition" class="output-text"></output>
-				<label>Bézout's relation</label>
-				<input type="number" id="fourthNumber" placeholder="First number"/><br>
-				<input type="number" id="fifthNumber" placeholder="Latter number"/>
-				<button type="button" id="Bezout" onclick="handleAction('computeBezoutRelation')">Calculate</button>
-				<output id="BezoutsRelation" class="output-text"></output>
-				<label>Fermat's primality test</label>
-				<input type="number" id="sixthNumber"/>
-				<button type="button" id="primalityTestOfFermatButton" onclick="handleAction('applyFermatsPrimalityTest')">Test</button>
-				<output id="mayBePrime" class="output-text"></output>
-				<label>Regular polygon area</label>
-				<input type="number" id="seventhNumber" placeholder="Number of sides"/><br>
-				<input type="number" id="eighthNumber" placeholder="Length of the side"/>
-				<button type="button" id="calculateAreaButton" onclick="handleAction('calculatePolygonArea')">Calculate the area</button>
-				<output id="polygonArea" class="output-text"></output>
-				<label>Sum of two squares</label>
-				<input type="number" id="ninthNumber"/>
-				<button type="button" id="sumOfSquares" onclick="handleAction('writeAsSumOfSquares')">Find</button>
-				<div id="squares" class="output-text"></div>
-			</form>
-			<div style="width: 100%; text-align: center; margin: 10px 0;">
-				<button type="button" style="background-color: #e66465; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem;" onclick="clearAll()">Reset Page</button>
-			</div>
-			<form>
-				<h3>Polygon View</h3>
-				<label for="numberOfSides">Number of sides: <select id="numberOfSides"></select></label><br>
-				<label style="display:inline;">
-					<input id="diagonals" type="checkbox" onChange="toggleDiagonals()"> Show diagonals
-				</label><br>
-				<canvas id="canvas" width="600" height="600"></canvas>
-			</form>
-		</div>
-		<script>
-
-			function clearAll(){
-				window.parent.postMessage('RELOAD_REQUEST','*');
-			}
-
-			function clearOutputs(){
-				const outputs = ["isPrime", "sqrt", "scomposition", "BezoutsRelation", "mayBePrime", "polygonArea", "squareOutput", "triangularOutput", "checkTriangularOutput"];
-				outputs.forEach(id => {
-					const el = document.getElementById(id);
-					if(el){
-						el.value = "";
-						el.innerHTML = "";
-					}
-				});
-				document.getElementById("squares").innerHTML = "";
-			}
-
-			function handleAction(actionName){
-				clearOutputs();
-				if(typeof window[actionName] === "function"){
-					window[actionName]();
-				}
-			}
-
-			let flagDiagonals = false;
-			const CANVAS = document.getElementById('canvas');
-			if(window.innerWidth < 600){
-				CANVAS.width = 300; CANVAS.height = 300;
-			}
-
-			function fillSelectOption(){
-				const select = document.getElementById("numberOfSides");
-				for(let i = 3; i <= 60; i++){
-					let opt = document.createElement('option');
-					opt.value = i; opt.innerHTML = i;
-					select.appendChild(opt);
-				}
-			}
-
-			function toggleDiagonals(){
-				flagDiagonals = !flagDiagonals;
-				drawPolygon();
-			}
-
-			function drawPolygon(){
-				const numberOfSides = parseInt(document.getElementById('numberOfSides').value);
-				const ctx = CANVAS.getContext('2d');
-				const centerX = CANVAS.width/2;
-				const centerY = CANVAS.height/2;
-				const radius = CANVAS.width*0.45;
-				const angleStep = (2*Math.PI)/numberOfSides;
-				ctx.clearRect(0, 0, CANVAS.width, CANVAS.height);
-				let vertices = [];
-				for(let i = 0; i < numberOfSides; i++){
-					const angle = (-0.5*Math.PI) + (i*angleStep);
-					vertices.push({x: centerX + radius*Math.cos(angle), y: centerY + radius*Math.sin(angle) });
-				}
-				ctx.beginPath();
-				ctx.strokeStyle = "#27ae60";
-				ctx.lineWidth = 2;
-				ctx.moveTo(vertices[0].x, vertices[0].y);
-				for(let i = 1; i < numberOfSides; i++){
-					ctx.lineTo(vertices[i].x, vertices[i].y);
-				}
-				ctx.closePath(); ctx.stroke();
-				if(flagDiagonals){
-					ctx.strokeStyle = "rgba(192, 57, 43, 0.2)";
-					ctx.lineWidth = 1;
-					for(let i = 0; i < vertices.length; i++){
-						for(let j = i + 2; j < vertices.length; j++){
-							if(i === 0 && j === vertices.length - 1){
-								continue;
-							}
-							ctx.beginPath();
-							ctx.moveTo(vertices[i].x, vertices[i].y);
-							ctx.lineTo(vertices[j].x, vertices[j].y);
-							ctx.stroke();
-						}
-					}
-				}
-			}
-
-			function checkNumber(){
-				const val = document.getElementById("firstNumber").value;
-				if(!val){
-					return;
-				}
-				const n = parseInt(val);
-				let res = " is prime.";
-				if(n < 2){
-					res = " is neither prime nor composite.";
-				}else{
-					for(let i = 2; i*i <= n; i++){
-						if(n%i === 0){
-							res = " is composite.";
-							break;
-						}
-					}
-				}
-				document.getElementById("isPrime").value = "The number " + n + res;
-			}
-
-			function calculateSquare(){
-				const n = parseFloat(document.getElementById("tenthNumber").value);
-				if(isNaN(n)){
-					return;
-				}
-				document.getElementById("squareOutput").value = \`\${n}² = \${n*n}\`;
-			}
-
-			function squareRoot(){
-				const n = parseInt(document.getElementById("secondNumber").value);
-				if(isNaN(n) || n < 0){
-					return;
-				}
-				let m = Math.floor(Math.sqrt(n));
-				document.getElementById("sqrt").value = (m*m === n) ? \`\${n} = \${m}²\` : \`\${n} = \${m}² + \${n -(m*m)}\`;
-			}
-
-			function calculateTriangular(){
-				const n = parseInt(document.getElementById("eleventhNumber").value);
-				if (isNaN(n) || n < 0) return;
-				const triangular = (n*(n + 1))/2;
-				document.getElementById("triangularOutput").value = \`T(\${n}) = \${triangular}\`;
-			}
-
-			function checkTriangularity(){
-				const x = parseInt(document.getElementById("twelfthNumber").value);
-				if(isNaN(x) || x < 0){
-					return;
-				}
-				const nFloat = (Math.sqrt(8*x + 1) - 1)/2;
-				const n = Math.floor(nFloat);
-				const lowerTriangular = (n*(n + 1))/2;
-				document.getElementById("checkTriangularOutput").value = (x + " = " + "T(" + n + ")" + (Number.isInteger(nFloat) ? "" : (" + " + (x - lowerTriangular))));
-			}
-
-			function getExp(iExp){
-				const expDigits = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
-				return iExp <= 1 ? "" : iExp.toString().split('').map(d => expDigits[d]).join('');
-			}
-
-			function factorize(){
-				let n = parseInt(document.getElementById("thirdNumber").value);
-				if(isNaN(n) || n <= 1){
-					return;
-				}
-				let temp = n, result = [], count = 0;
-				while(temp%2 === 0){
-					count++;
-					temp /= 2;
-				}
-				if(count > 0){
-					result.push("2" + getExp(count));
-				}
-				for(let i = 3; i*i <= temp; i += 2){
-					count = 0;
-					while(temp%i === 0){
-						count++; temp /= i;
-					}
-					if(count > 0){
-						result.push(i + getExp(count));
-					}
-				}
-				if(temp > 1){
-					result.push(temp.toString());
-				}
-				document.getElementById("scomposition").value = (result.length === 1 && parseInt(result[0]) === n) ? "Prime number! :-D" : n + " = " + result.join(" × ");
-			}
-
-			function computeBezoutRelation(){
-				const a = parseInt(document.getElementById("fourthNumber").value);
-				const b = parseInt(document.getElementById("fifthNumber").value);
-				if(isNaN(a) || isNaN(b)){
-					return;
-				}
-				let old_r = a, r = b, old_s = 1, s = 0, old_t = 0, t = 1;
-				while(r !== 0){
-					let q = Math.floor(old_r/r);
-					[old_r, r] = [r, old_r - q*r];
-					[old_s, s] = [s, old_s - q*s];
-					[old_t, t] = [t, old_t - q*t];
-				}
-				document.getElementById("BezoutsRelation").value = \`(\${old_s})*\${a} +(\${old_t})*\${b} = \${old_r}\`;
-			}
-
-			function applyFermatsPrimalityTest_0(){//SOLO FERMAT...
-				let val = document.getElementById("sixthNumber").value;
-				if(!val){
-					return;
-				}
-				let n = BigInt(val);
-				if(n <= 1n){
-					return;
-				}
-				if(n === 2n){
-					document.getElementById("mayBePrime").value = "Seems prime.";
-					return;
-				}
-				const modExp = (b, e, m) => {
-					let r = 1n; 
-					b %= m;
-					while(e > 0n){
-						if(e%2n === 1n){
-							r = (r*b)%m;
-						}
-						b = (b*b)%m;
-						e = e/2n;
-					}
-					return r;
-				};
-				let isP = true;
-				for(let a of [2n, 3n, 5n]){
-					if(a >= n){
-						break;
-					}
-					if(modExp(a, n - 1n, n) !== 1n){
-						isP = false;
-						break;
-					}
-				}
-				document.getElementById("mayBePrime").value = isP ? "Seems prime(Likely)." : "Definitely composed.";
-			}
-
-			function applyFermatsPrimalityTest(){//...SIA FERMAT CHE MILLER RABIN.
-				let val = document.getElementById("sixthNumber").value;
-				if(!val){
-					return;
-				}
-				let n = BigInt(val);
-				if(n < 2n){
-					document.getElementById("mayBePrime").value = "Neither prime nor composite...";
-					return;
-				}
-				if(n === 2n || n === 3n){
-					document.getElementById("mayBePrime").value = "Definitely prime.";
-					return;
-				}
-				if(n%2n === 0n){
-					document.getElementById("mayBePrime").value = "Composite(even).";
-					return;
-				}
-				const modExp = (base, exp, mod) => {
-					let res = 1n;
-					base %= mod;
-					while(exp > 0n){
-						if(exp % 2n === 1n){
-							res = (res*base)%mod;
-						}
-						base = (base*base)%mod;
-						exp /= 2n;
-					}
-					return res;
-				};
-				let d = n - 1n;
-				let s = 0n;
-				while(d%2n === 0n){
-					d /= 2n;
-					s++;
-				}
-				// Per n < 3,317,044,064,679,887,361 basta testare queste basi
-				const bases = [2n, 3n, 5n, 7n, 11n, 13n, 17n, 19n, 23n];
-				for(let a of bases){
-					if(n <= a){
-						break;
-					}
-					let x = modExp(a, d, n);
-					if(x === 1n || x === n - 1n){
-						continue;
-					}
-					let composite = true;
-					for(let r = 1n; r < s; r++){
-						x = (x*x)%n;
-						if(x === n - 1n){
-							composite = false;
-							break;
-						}
-					}
-					if(composite){
-						document.getElementById("mayBePrime").value = "Definitely composed.";
-						return;
-					}
-				}
-				document.getElementById("mayBePrime").value = "Likely prime.";
-			}
-
-			function calculatePolygonArea(){
-				let n = parseInt(document.getElementById("seventhNumber").value);
-				let s = parseFloat(document.getElementById("eighthNumber").value);
-				if(n < 3 || s <= 0){
-					return;
-				}
-				let area = (n*s**2)/(4*Math.tan(Math.PI/n));
-				document.getElementById("polygonArea").value = "Area: " + area.toFixed(4);
-			}
-
-			function writeAsSumOfSquares(){
-				const n = parseInt(document.getElementById("ninthNumber").value);
-				if(isNaN(n)){
-					return;
-				}
-				let out = "";
-				for(let i = 0; i*i <= n/2; i++){
-					let j = Math.sqrt(n - i*i);
-					if(Number.isInteger(j)){
-						out += \`<div>\${j}² + \${i}²</div>\`;
-					}
-				}
-				document.getElementById("squares").innerHTML = out || "No solution.";
-			}
-
-			document.getElementById('numberOfSides').addEventListener('change', drawPolygon);
-			document.querySelectorAll('input').forEach(input => {
-				input.addEventListener('keypress',(e) => {
-					if(e.key === 'Enter'){
-						e.preventDefault();
-						const btn = input.nextElementSibling?.tagName === 'BUTTON' ? input.nextElementSibling : input.parentElement.querySelector('button');
-						if(btn) btn.click();
-					}
-				});
-			});
-
-			fillSelectOption();
-			drawPolygon();
-		<\/script>
-	</body>
-</html>` },
-
 	// --- Colors ---
 	'Tools_Colors.html': { name: `Colors`, content: `<!DOCTYPE html>
 <html lang="en"><!--T01#005 - Irene - Colors-->
@@ -8101,6 +7649,458 @@
 			}
 
 			window.onload = init;
+		<\/script>
+	</body>
+</html>` },
+
+	// --- Some Maths ---
+	'Tools_Some Maths.html': { name: `Some Maths`, content: `<!DOCTYPE html>
+<html lang="en"><!--T02#006 - Claudia - Some Maths-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<title>Some Maths</title>
+		<style>
+			body{
+				font-family: sans-serif;
+				margin: 20px;
+			}
+			.container{
+				display: flex;
+				flex-wrap: wrap;
+				gap: 20px;
+				justify-content: center;
+				flex-direction: row;
+			}
+			.container > div{
+				flex-basis: 100%;
+			}
+			form{
+				border: 1px solid #ccc;
+				padding: 20px;
+				border-radius: 8px;
+				background-color: #f9f9f9;
+				min-width: 320px;
+			}
+			canvas{
+				border: 1px solid #000;
+				background-color: white;
+				max-width: 100%;
+				height: auto;
+				margin-top: 10px;
+			}
+			.output-text{
+				font-weight: bold;
+				color: #2c3e50;
+				margin-top: 5px;
+				display: block;
+				min-height: 1.2em;
+			}
+			label{
+				font-weight: bold;
+				display: block;
+				margin-top: 10px;
+			}
+			input[type="number"]{
+				width: 80%;
+				padding: 5px;
+				margin-bottom: 5px;
+			}
+			button{
+				cursor: pointer;
+				padding: 5px 10px;
+			}
+			h3{
+				margin-top: 0;
+				color: #27ae60;
+			}
+		</style>
+	</head>
+	<body style="background-color:#ccffcc;">
+		<div class="container">
+			<form id="mathForm">
+				<h3>Number Theory</h3>
+				<label>Primality test</label>
+				<input type="number" id="firstNumber"/>
+				<button type="button" id="primalityTestButton" onclick="handleAction('checkNumber')">Check</button>
+				<output id="isPrime" class="output-text"></output>
+				<label>Square of a number</label>
+				<input type="number" id="tenthNumber"/>
+				<button type="button" onclick="handleAction('calculateSquare')">Calculate</button>
+				<output id="squareOutput" class="output-text"></output>
+				<label>Square root</label>
+				<input type="number" id="secondNumber"/>
+				<button type="button" id="squareRootButton" onclick="handleAction('squareRoot')">Calculate</button>
+				<output id="sqrt" class="output-text"></output>
+				<label>Triangular of a number</label>
+				<input type="number" id="eleventhNumber"/>
+				<button type="button" onclick="handleAction('calculateTriangular')">Calculate</button>
+				<output id="triangularOutput" class="output-text"></output>
+				<label>Triangular root</label>
+				<input type="number" id="twelfthNumber"/>
+				<button type="button" onclick="handleAction('checkTriangularity')">Calculate</button>
+				<output id="checkTriangularOutput" class="output-text"></output>
+				<label>Factorization</label>
+				<input type="number" id="thirdNumber"/>
+				<button type="button" id="factorization" onclick="handleAction('factorize')">Factorize</button>
+				<output id="scomposition" class="output-text"></output>
+				<label>Bézout's relation</label>
+				<input type="number" id="fourthNumber" placeholder="First number"/><br>
+				<input type="number" id="fifthNumber" placeholder="Latter number"/>
+				<button type="button" id="Bezout" onclick="handleAction('computeBezoutRelation')">Calculate</button>
+				<output id="BezoutsRelation" class="output-text"></output>
+				<label>Fermat's primality test</label>
+				<input type="number" id="sixthNumber"/>
+				<button type="button" id="primalityTestOfFermatButton" onclick="handleAction('applyFermatsPrimalityTest')">Test</button>
+				<output id="mayBePrime" class="output-text"></output>
+				<label>Regular polygon area</label>
+				<input type="number" id="seventhNumber" placeholder="Number of sides"/><br>
+				<input type="number" id="eighthNumber" placeholder="Length of the side"/>
+				<button type="button" id="calculateAreaButton" onclick="handleAction('calculatePolygonArea')">Calculate the area</button>
+				<output id="polygonArea" class="output-text"></output>
+				<label>Sum of two squares</label>
+				<input type="number" id="ninthNumber"/>
+				<button type="button" id="sumOfSquares" onclick="handleAction('writeAsSumOfSquares')">Find</button>
+				<div id="squares" class="output-text"></div>
+			</form>
+			<div style="width: 100%; text-align: center; margin: 10px 0;">
+				<button type="button" style="background-color: #e66465; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem;" onclick="clearAll()">Reset Page</button>
+			</div>
+			<form>
+				<h3>Polygon View</h3>
+				<label for="numberOfSides">Number of sides: <select id="numberOfSides"></select></label><br>
+				<label style="display:inline;">
+					<input id="diagonals" type="checkbox" onChange="toggleDiagonals()"> Show diagonals
+				</label><br>
+				<canvas id="canvas" width="600" height="600"></canvas>
+			</form>
+		</div>
+		<script>
+
+			function clearAll(){
+				window.parent.postMessage('RELOAD_REQUEST','*');
+			}
+
+			function clearOutputs(){
+				const outputs = ["isPrime", "sqrt", "scomposition", "BezoutsRelation", "mayBePrime", "polygonArea", "squareOutput", "triangularOutput", "checkTriangularOutput"];
+				outputs.forEach(id => {
+					const el = document.getElementById(id);
+					if(el){
+						el.value = "";
+						el.innerHTML = "";
+					}
+				});
+				document.getElementById("squares").innerHTML = "";
+			}
+
+			function handleAction(actionName){
+				clearOutputs();
+				if(typeof window[actionName] === "function"){
+					window[actionName]();
+				}
+			}
+
+			let flagDiagonals = false;
+			const CANVAS = document.getElementById('canvas');
+			if(window.innerWidth < 600){
+				CANVAS.width = 300; CANVAS.height = 300;
+			}
+
+			function fillSelectOption(){
+				const select = document.getElementById("numberOfSides");
+				for(let i = 3; i <= 60; i++){
+					let opt = document.createElement('option');
+					opt.value = i; opt.innerHTML = i;
+					select.appendChild(opt);
+				}
+			}
+
+			function toggleDiagonals(){
+				flagDiagonals = !flagDiagonals;
+				drawPolygon();
+			}
+
+			function drawPolygon(){
+				const numberOfSides = parseInt(document.getElementById('numberOfSides').value);
+				const ctx = CANVAS.getContext('2d');
+				const centerX = CANVAS.width/2;
+				const centerY = CANVAS.height/2;
+				const radius = CANVAS.width*0.45;
+				const angleStep = (2*Math.PI)/numberOfSides;
+				ctx.clearRect(0, 0, CANVAS.width, CANVAS.height);
+				let vertices = [];
+				for(let i = 0; i < numberOfSides; i++){
+					const angle = (-0.5*Math.PI) + (i*angleStep);
+					vertices.push({x: centerX + radius*Math.cos(angle), y: centerY + radius*Math.sin(angle) });
+				}
+				ctx.beginPath();
+				ctx.strokeStyle = "#27ae60";
+				ctx.lineWidth = 2;
+				ctx.moveTo(vertices[0].x, vertices[0].y);
+				for(let i = 1; i < numberOfSides; i++){
+					ctx.lineTo(vertices[i].x, vertices[i].y);
+				}
+				ctx.closePath(); ctx.stroke();
+				if(flagDiagonals){
+					ctx.strokeStyle = "rgba(192, 57, 43, 0.2)";
+					ctx.lineWidth = 1;
+					for(let i = 0; i < vertices.length; i++){
+						for(let j = i + 2; j < vertices.length; j++){
+							if(i === 0 && j === vertices.length - 1){
+								continue;
+							}
+							ctx.beginPath();
+							ctx.moveTo(vertices[i].x, vertices[i].y);
+							ctx.lineTo(vertices[j].x, vertices[j].y);
+							ctx.stroke();
+						}
+					}
+				}
+			}
+
+			function checkNumber(){
+				const val = document.getElementById("firstNumber").value;
+				if(!val){
+					return;
+				}
+				const n = parseInt(val);
+				let res = " is prime.";
+				if(n < 2){
+					res = " is neither prime nor composite.";
+				}else{
+					for(let i = 2; i*i <= n; i++){
+						if(n%i === 0){
+							res = " is composite.";
+							break;
+						}
+					}
+				}
+				document.getElementById("isPrime").value = "The number " + n + res;
+			}
+
+			function calculateSquare(){
+				const n = parseFloat(document.getElementById("tenthNumber").value);
+				if(isNaN(n)){
+					return;
+				}
+				document.getElementById("squareOutput").value = \`\${n}² = \${n*n}\`;
+			}
+
+			function squareRoot(){
+				const n = parseInt(document.getElementById("secondNumber").value);
+				if(isNaN(n) || n < 0){
+					return;
+				}
+				let m = Math.floor(Math.sqrt(n));
+				document.getElementById("sqrt").value = (m*m === n) ? \`\${n} = \${m}²\` : \`\${n} = \${m}² + \${n -(m*m)}\`;
+			}
+
+			function calculateTriangular(){
+				const n = parseInt(document.getElementById("eleventhNumber").value);
+				if (isNaN(n) || n < 0) return;
+				const triangular = (n*(n + 1))/2;
+				document.getElementById("triangularOutput").value = \`T(\${n}) = \${triangular}\`;
+			}
+
+			function checkTriangularity(){
+				const x = parseInt(document.getElementById("twelfthNumber").value);
+				if(isNaN(x) || x < 0){
+					return;
+				}
+				const nFloat = (Math.sqrt(8*x + 1) - 1)/2;
+				const n = Math.floor(nFloat);
+				const lowerTriangular = (n*(n + 1))/2;
+				document.getElementById("checkTriangularOutput").value = (x + " = " + "T(" + n + ")" + (Number.isInteger(nFloat) ? "" : (" + " + (x - lowerTriangular))));
+			}
+
+			function getExp(iExp){
+				const expDigits = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
+				return iExp <= 1 ? "" : iExp.toString().split('').map(d => expDigits[d]).join('');
+			}
+
+			function factorize(){
+				let n = parseInt(document.getElementById("thirdNumber").value);
+				if(isNaN(n) || n <= 1){
+					return;
+				}
+				let temp = n, result = [], count = 0;
+				while(temp%2 === 0){
+					count++;
+					temp /= 2;
+				}
+				if(count > 0){
+					result.push("2" + getExp(count));
+				}
+				for(let i = 3; i*i <= temp; i += 2){
+					count = 0;
+					while(temp%i === 0){
+						count++; temp /= i;
+					}
+					if(count > 0){
+						result.push(i + getExp(count));
+					}
+				}
+				if(temp > 1){
+					result.push(temp.toString());
+				}
+				document.getElementById("scomposition").value = (result.length === 1 && parseInt(result[0]) === n) ? "Prime number! :-D" : n + " = " + result.join(" × ");
+			}
+
+			function computeBezoutRelation(){
+				const a = parseInt(document.getElementById("fourthNumber").value);
+				const b = parseInt(document.getElementById("fifthNumber").value);
+				if(isNaN(a) || isNaN(b)){
+					return;
+				}
+				let old_r = a, r = b, old_s = 1, s = 0, old_t = 0, t = 1;
+				while(r !== 0){
+					let q = Math.floor(old_r/r);
+					[old_r, r] = [r, old_r - q*r];
+					[old_s, s] = [s, old_s - q*s];
+					[old_t, t] = [t, old_t - q*t];
+				}
+				document.getElementById("BezoutsRelation").value = \`(\${old_s})*\${a} +(\${old_t})*\${b} = \${old_r}\`;
+			}
+
+			function applyFermatsPrimalityTest_0(){//SOLO FERMAT...
+				let val = document.getElementById("sixthNumber").value;
+				if(!val){
+					return;
+				}
+				let n = BigInt(val);
+				if(n <= 1n){
+					return;
+				}
+				if(n === 2n){
+					document.getElementById("mayBePrime").value = "Seems prime.";
+					return;
+				}
+				const modExp = (b, e, m) => {
+					let r = 1n; 
+					b %= m;
+					while(e > 0n){
+						if(e%2n === 1n){
+							r = (r*b)%m;
+						}
+						b = (b*b)%m;
+						e = e/2n;
+					}
+					return r;
+				};
+				let isP = true;
+				for(let a of [2n, 3n, 5n]){
+					if(a >= n){
+						break;
+					}
+					if(modExp(a, n - 1n, n) !== 1n){
+						isP = false;
+						break;
+					}
+				}
+				document.getElementById("mayBePrime").value = isP ? "Seems prime(Likely)." : "Definitely composed.";
+			}
+
+			function applyFermatsPrimalityTest(){//...SIA FERMAT CHE MILLER RABIN.
+				let val = document.getElementById("sixthNumber").value;
+				if(!val){
+					return;
+				}
+				let n = BigInt(val);
+				if(n < 2n){
+					document.getElementById("mayBePrime").value = "Neither prime nor composite...";
+					return;
+				}
+				if(n === 2n || n === 3n){
+					document.getElementById("mayBePrime").value = "Definitely prime.";
+					return;
+				}
+				if(n%2n === 0n){
+					document.getElementById("mayBePrime").value = "Composite(even).";
+					return;
+				}
+				const modExp = (base, exp, mod) => {
+					let res = 1n;
+					base %= mod;
+					while(exp > 0n){
+						if(exp % 2n === 1n){
+							res = (res*base)%mod;
+						}
+						base = (base*base)%mod;
+						exp /= 2n;
+					}
+					return res;
+				};
+				let d = n - 1n;
+				let s = 0n;
+				while(d%2n === 0n){
+					d /= 2n;
+					s++;
+				}
+				// Per n < 3,317,044,064,679,887,361 basta testare queste basi
+				const bases = [2n, 3n, 5n, 7n, 11n, 13n, 17n, 19n, 23n];
+				for(let a of bases){
+					if(n <= a){
+						break;
+					}
+					let x = modExp(a, d, n);
+					if(x === 1n || x === n - 1n){
+						continue;
+					}
+					let composite = true;
+					for(let r = 1n; r < s; r++){
+						x = (x*x)%n;
+						if(x === n - 1n){
+							composite = false;
+							break;
+						}
+					}
+					if(composite){
+						document.getElementById("mayBePrime").value = "Definitely composed.";
+						return;
+					}
+				}
+				document.getElementById("mayBePrime").value = "Likely prime.";
+			}
+
+			function calculatePolygonArea(){
+				let n = parseInt(document.getElementById("seventhNumber").value);
+				let s = parseFloat(document.getElementById("eighthNumber").value);
+				if(n < 3 || s <= 0){
+					return;
+				}
+				let area = (n*s**2)/(4*Math.tan(Math.PI/n));
+				document.getElementById("polygonArea").value = "Area: " + area.toFixed(4);
+			}
+
+			function writeAsSumOfSquares(){
+				const n = parseInt(document.getElementById("ninthNumber").value);
+				if(isNaN(n)){
+					return;
+				}
+				let out = "";
+				for(let i = 0; i*i <= n/2; i++){
+					let j = Math.sqrt(n - i*i);
+					if(Number.isInteger(j)){
+						out += \`<div>\${j}² + \${i}²</div>\`;
+					}
+				}
+				document.getElementById("squares").innerHTML = out || "No solution.";
+			}
+
+			document.getElementById('numberOfSides').addEventListener('change', drawPolygon);
+			document.querySelectorAll('input').forEach(input => {
+				input.addEventListener('keypress',(e) => {
+					if(e.key === 'Enter'){
+						e.preventDefault();
+						const btn = input.nextElementSibling?.tagName === 'BUTTON' ? input.nextElementSibling : input.parentElement.querySelector('button');
+						if(btn) btn.click();
+					}
+				});
+			});
+
+			fillSelectOption();
+			drawPolygon();
 		<\/script>
 	</body>
 </html>` },
