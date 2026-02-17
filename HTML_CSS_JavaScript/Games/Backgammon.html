@@ -1,74 +1,115 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"><!--G09#019 - Samuele - Backgammon-->
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<title>Backgammon</title>
-		<style>
-			:root{
-				--wood: #3e2723;
-				--felt: #1b5e20;
-				--accent: #f1c40f;
-			}
-			body{
-				background: #121212;
-				font-family: sans-serif;
+	<style>
+		:root{
+			--wood: #3e2723;
+			--felt: #1b5e20;
+			--accent: #f1c40f;
+		}
+		body{
+			background: #121212;
+			font-family: sans-serif;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			color: white;
+			margin: 0;
+			padding: 10px;
+			-webkit-tap-highlight-color: transparent;
+			user-select: none;
+			touch-action: manipulation;
+		}
+		canvas{
+			background: var(--felt);
+			border: 10px solid var(--wood);
+			border-radius: 12px;
+			max-width: 100%;
+			height: auto;
+			cursor: pointer;
+		}
+		.panel{
+			display: flex;
+			width: 100%;
+			max-width: 660px;
+			flex-wrap: wrap; 
+			justify-content: center;
+			align-items: center;
+			background: #252525;
+			padding: 15px;
+			border-radius: 12px;
+			margin-top: 10px;
+			box-sizing: border-box;
+			gap: 10px;
+		}
+		#dice-ui{
+			font-size: 2em;
+			min-width: 50px;
+			text-align: center;
+		}
+		.btn{
+			padding: 12px;
+			font-size: 0.9em;
+			cursor: pointer;
+			background: #c0392b;
+			border: none;
+			color: white;
+			border-radius: 6px;
+			font-weight: bold;
+			flex: 1;
+			min-width: 80px;
+		}
+		.btn-undo{
+			background: #2980b9;
+		}
+		.btn:disabled{
+			opacity: 0.3;
+		}
+		.score-container{
+			width: 100%;
+			display: flex;
+			justify-content: space-around;
+			margin-top: 5px;
+			font-size: 0.9em;
+			border-top: 1px solid #444;
+			padding-top: 10px;
+		}
+		@media (min-width: 850px){
+			#game-container{
 				display: flex;
-				flex-direction: column;
-				align-items: center;
-				color: white;
-				margin: 0;
-				padding: 10px;
-				-webkit-tap-highlight-color: transparent;
-				user-select: none;
-				touch-action: manipulation;
-			}
-			canvas{
-				background: var(--felt);
-				border: 10px solid var(--wood);
-				border-radius: 12px;
-				max-width: 100%;
-				height: auto;
-				cursor: pointer;
+				flex-direction: row;
+				align-items: flex-start;
+				gap: 20px;
 			}
 			.panel{
-				display: flex;
-				width: 100%;
-				justify-content: space-around;
-				align-items: center;
-				background: #252525;
-				padding: 15px;
-				border-radius: 12px;
-				margin-top: 10px;
+				flex-direction: column;
+				width: 180px;
+				flex-wrap: nowrap;
+				margin-top: 0;
+				height: 540px;
+				justify-content: flex-start;
 			}
 			.btn{
-				padding: 12px 20px;
-				cursor: pointer;
-				background: #c0392b;
-				border: none;
-				color: white;
-				border-radius: 6px;
-				font-weight: bold;
+				width: 100%;
+				flex: 0 0 auto;
+				margin-bottom: 5px;
 			}
-			.btn-undo{
-				background: #2980b9;
-				margin-left: 5px;
+			#dice-ui{
+				margin-bottom: 20px;
+				font-size: 3em;
 			}
-			.btn:disabled{
-				opacity: 0.3;
+			.score-container{
+				flex-direction: column;
+				align-items: center;
+				gap: 10px;
+				margin-top: auto;
+				border-top: none;
 			}
-			@media (min-width: 850px){
-				#game-container{
-					display: flex;
-					flex-direction: row;
-					gap: 20px;
-				}
-				.panel{
-					flex-direction: column;
-					width: 180px;
-				}
-			}
-		</style>
+		}
+	</style>
 	</head>
 	<body>
 		<div id="status" style="margin-bottom:10px">Roll the dice to play</div>
@@ -78,8 +119,10 @@
 				<div id="dice-ui" style="font-size:3em; margin-bottom:10px">🎲</div>
 				<button id="roll-btn" class="btn">ROLL THE DICE</button>
 				<button id="undo-btn" class="btn btn-undo" disabled>UNDO</button>
-				<div style="margin-top:20px; text-align:center">⚪ YOU: <span id="w-off">0</span>/15
-					⚫ AI: <span id="b-off">0</span>/15</div>
+				<div style="margin-top:20px; text-align:center">
+					⚪ YOU: <span id="w-off">0</span>/15<br/>
+					⚫ AI: <span id="b-off">0</span>/15
+				</div>
 			</div>
 		</div>
 		<script>

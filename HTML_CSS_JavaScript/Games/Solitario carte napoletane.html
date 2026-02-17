@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en"><!--G10#020 - Armando - Solitario carte napoletane-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Solitario carte napoletane</title>
+		<style>
+			:root{
+				--bg-color: #1b5e20;
+				--bg-D: #F5C842;
+				--bg-C: #4FC3F7;
+				--bg-S: #CE93D8;
+				--bg-B: #FFAB76;
+				--card-width: clamp(44px, 14.5vw, 90px);
+				--card-height: clamp(64px, 21vw, 130px);
+				--gap: clamp(4px, 1.8vw, 20px);
+				--overlap: clamp(48px, 10.5vw, 100px);
+				--font-val: clamp(10px, 3.2vw, 18px);
+			}
+			*, *::before, *::after{
+				box-sizing: border-box;
+			}
+			body{
+				font-family: 'Arial', sans-serif;
+				background-color: var(--bg-color);
+				color: white;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				margin: 0;
+				padding: clamp(8px, 2vw, 20px);
+				user-select: none;
+				touch-action: manipulation;
+				min-height: 100dvh;
+			}
+			h1{
+				font-size: clamp(20px, 5vw, 32px);
+				margin: 0 0 15px;
+				text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+				font-weight: 300;
+				letter-spacing: 1px;
+			}
+			button{
+				padding: 10px 25px;
+				background: #ffffff;
+				color: #1b5e20;
+				border: none;
+				border-radius: 50px;
+				cursor: pointer;
+				font-weight: bold;
+				font-size: 14px;
+				margin-bottom: 25px;
+				box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+				transition: transform 0.2s, background 0.2s;
+			}
+			button:active{
+				transform: scale(0.95);
+			}
+			.top-row{
+				display: flex;
+				justify-content: space-between;
+				align-items: flex-start;
+				width: 100%;
+				max-width: 900px;
+				margin-bottom: clamp(10px, 2.5vw, 30px);
+				gap: clamp(12px, 5vw, 40px);
+			}
+			.deck-area, .foundation-area{
+				display: flex;
+				gap: var(--gap);
+				flex-wrap: nowrap;
+				flex-shrink: 0;
+			}
+			.tableau{
+				display: flex;
+				justify-content: center;
+				gap: var(--gap);
+				width: 100%;
+				max-width: 900px;
+			}
+			.column{
+				width: var(--card-width);
+				min-height: var(--card-height);
+				border: 2px dashed rgba(255,255,255,0.15);
+				border-radius: 6px;
+				flex-shrink: 0;
+			}
+			.waste-slot{
+				width: var(--card-width);
+				height: var(--card-height);
+				position: relative;
+				border: 2px solid rgba(255,255,255,0.2);
+				border-radius: 6px;
+				flex-shrink: 0;
+			}
+			.foundation-slot, .deck-slot{
+				width: var(--card-width);
+				height: var(--card-height);
+				border: 2px solid rgba(255,255,255,0.3);
+				border-radius: 6px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-size: var(--font-val);
+				color: rgba(255,255,255,0.35);
+				position: relative;
+				cursor: pointer;
+				flex-shrink: 0;
+				touch-action: manipulation;
+			}
+			.foundation-slot.valid-target{
+				border-color: #ffeb3b;
+				box-shadow: 0 0 10px #ffeb3b88;
+			}
+			.card{
+				width: var(--card-width);
+				height: var(--card-height);
+				background-color: white;
+				border-radius: 6px;
+				border: 1px solid #999;
+				color: #111;
+				position: relative;
+				box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+				cursor: pointer;
+				flex-shrink: 0;
+				touch-action: manipulation;
+			}
+			.card.suit-D{
+				background-color: var(--bg-D);
+				border-color: #c8a000;
+			}
+			.card.suit-C{
+				background-color: var(--bg-C);
+				border-color: #0288d1;
+			}
+			.card.suit-S{
+				background-color: var(--bg-S);
+				border-color: #9c27b0;
+			}
+			.card.suit-B{
+				background-color: var(--bg-B);
+				border-color: #e65100;
+			}
+			.column .card{
+				margin-bottom: calc(-1 * var(--overlap));
+			}
+			.foundation-slot .card, .waste-slot .card{
+				position: absolute;
+				top: 0; left: 0;
+				margin-bottom: 0;
+			}
+			.foundation-slot .card{
+				pointer-events: none;
+			}
+			.foundation-slot .card:last-child{
+				pointer-events: auto;
+			}
+			.card.back{
+				background: #b71c1c linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%);
+				background-size: 10px 10px;
+			}
+			.card.selected{
+				box-shadow: 0 0 12px #ffeb3b;
+				transform: translateY(-8px);
+				z-index: 1000 !important;
+			}
+			.card-val{
+				position: absolute;
+				font-weight: bold;
+				font-size: var(--font-val);
+				color: #111;
+				pointer-events: none;
+				line-height: 1;
+			}
+			.v-tl{
+				top: 4px;
+				left: 5px;
+			}
+			.v-tr{
+				top: 4px;
+				right: 5px;
+			}
+			.v-bl{
+				bottom: 4px;
+				left: 5px;
+			}
+			.v-br{
+				bottom: 4px;
+				right: 5px;
+			}
+			.column .card:not(:last-child){
+				cursor: default;
+			}
+			*{
+				-webkit-tap-highlight-color: transparent;
+			}
+			button:focus, .card:focus {
+				outline: none;
+			}
+			@media (max-width: 380px){
+				.top-row{
+					flex-direction: column;
+					align-items: center;
+				}
+				.deck-area, .foundation-area{
+					justify-content: center;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Solitario carte napoletane</h1>
+		<button onclick="initGame()">Nuova Partita</button>
+		<div class="top-row">
+			<div class="deck-area">
+				<div id="deck" class="deck-slot" onclick="handleDeckClick()">Mazzo</div>
+				<div id="waste" class="waste-slot"></div>
+			</div>
+			<div class="foundation-area" id="foundation-area">
+				<div class="foundation-slot" data-fslot="0" onclick="handleFoundationSlotClick(0)">A</div>
+				<div class="foundation-slot" data-fslot="1" onclick="handleFoundationSlotClick(1)">A</div>
+				<div class="foundation-slot" data-fslot="2" onclick="handleFoundationSlotClick(2)">A</div>
+				<div class="foundation-slot" data-fslot="3" onclick="handleFoundationSlotClick(3)">A</div>
+			</div>
+		</div>
+		<div class="tableau" id="tableau">
+			<div class="column" id="col-0" onclick="handleEmptyColumnClick(0)"></div>
+			<div class="column" id="col-1" onclick="handleEmptyColumnClick(1)"></div>
+			<div class="column" id="col-2" onclick="handleEmptyColumnClick(2)"></div>
+			<div class="column" id="col-3" onclick="handleEmptyColumnClick(3)"></div>
+			<div class="column" id="col-4" onclick="handleEmptyColumnClick(4)"></div>
+		</div>
+		<script>
+			const SUITS = ['S', 'C', 'D', 'B'];
+			const IS_MULTIPLE_SELECTION_POSSIBLE = false;
+			let foundationSlots = [
+				{suit:null, value:0},
+				{suit:null, value:0},
+				{suit:null, value:0},
+				{suit:null, value:0}
+			];
+			let deckData = [];
+			let selection = null;
+
+			function initGame(){
+				deckData = [];
+				selection = null;
+				foundationSlots = [{suit:null,value:0},{suit:null,value:0},{suit:null,value:0},{suit:null,value:0}];
+				document.getElementById('waste').innerHTML = '';
+				document.querySelectorAll('.foundation-slot').forEach(s => {
+					s.querySelectorAll('.card').forEach(c => c.remove());
+				});
+				for(let s of SUITS){
+					for(let v = 1; v <= 10; v++){
+						deckData.push({ suit: s, value: v });
+					}
+				}
+				deckData.sort(() => Math.random() - 0.5);
+				for(let i = 0; i < 5; i++){
+					const col = document.getElementById(`col-${i}`);
+					col.innerHTML = '';
+					const count = 5 - i;
+					for(let j = 0; j < count; j++){
+						addCard(col, deckData.pop(), j === count - 1);
+					}
+				}
+				updateDeckUI();
+			}
+
+			function addCard(container, data, faceUp){
+				const card = document.createElement('div');
+				card.className = `card suit-${data.suit}`;
+				card.dataset.suit = data.suit;
+				card.dataset.value = data.value;
+				card.dataset.faceUp = faceUp ? "true" : "false";
+				if(faceUp){
+					renderCardContent(card);
+				}else{
+					card.classList.add('back');
+				}
+				card.addEventListener('click', e => {
+					e.stopPropagation();
+					handleCardClick(card);
+				});
+				container.appendChild(card);
+			}
+
+			function renderCardContent(card){
+				const v = card.dataset.value;
+				card.innerHTML = `
+					<div class="card-val v-tl">${v}</div><div class="card-val v-tr">${v}</div>
+					<div class="card-val v-bl">${v}</div><div class="card-val v-br">${v}</div>`;
+				card.classList.remove('back');
+				card.dataset.faceUp = "true";
+			}
+
+			function handleCardClick(card){
+				if(card.dataset.faceUp === "false"){
+					return;
+				}
+				const parent = card.parentElement;
+				const inFoundation = parent.classList.contains('foundation-slot');
+				const inWaste = parent.classList.contains('waste-slot');
+				const inColumn = parent.classList.contains('column');
+				if(!selection){
+					if(inFoundation){
+						const all = parent.querySelectorAll('.card');
+						if(card !== all[all.length - 1]){
+							return;
+						}
+						selection = {
+							cards: [card],
+							origin: parent,
+							originType: 'foundation',
+							fslot: parseInt(parent.dataset.fslot),
+							value: parseInt(card.dataset.value),
+							suit: card.dataset.suit
+						};
+					}else{
+						if(IS_MULTIPLE_SELECTION_POSSIBLE){
+							const siblings = Array.from(parent.children);
+							const idx = siblings.indexOf(card);
+							selection = {
+								cards: siblings.slice(idx),
+								origin: parent,
+								originType: inWaste ? 'waste' : 'column',
+								value: parseInt(card.dataset.value),
+								suit: card.dataset.suit
+							};
+						}else{
+							if(card !== parent.lastElementChild){
+								console.log("Puoi muovere solo l'ultima carta della colonna!");
+								return; 
+							}
+							selection = {
+								cards: [card],
+								origin: parent,
+								originType: inWaste ? 'waste' : 'column',
+								value: parseInt(card.dataset.value),
+								suit: card.dataset.suit
+							};
+						}
+					}
+					selection.cards.forEach(c => c.classList.add('selected'));
+					highlightValidFoundations();
+				}else{
+					if(inFoundation){
+						handleFoundationSlotClick(parseInt(parent.dataset.fslot));
+					}else if(inColumn &&
+						parseInt(card.dataset.value) === selection.value + 1 &&
+						card.dataset.suit !== selection.suit &&
+						card === parent.lastElementChild){
+						moveSelectionToColumn(parent);
+					}else{
+						clearSelection();
+					}
+				}
+			}
+
+			function handleEmptyColumnClick(idx){
+				const col = document.getElementById(`col-${idx}`);
+				if(selection && col.children.length === 0){
+					moveSelectionToColumn(col);
+				}else{
+					clearSelection();
+				}
+			}
+
+			function handleFoundationSlotClick(fslotIdx){
+				clearHighlights();
+				if(!selection){
+					return;
+				}
+				if(selection.cards.length > 1){
+					clearSelection();
+					return;
+				}
+				const card = selection.cards[0];
+				const cardSuit = card.dataset.suit;
+				const cardValue = parseInt(card.dataset.value);
+				const fs = foundationSlots[fslotIdx];
+				const valid = (fs.suit === null && cardValue === 1)||(fs.suit === cardSuit && cardValue === fs.value + 1);
+				if(valid){
+					placeCardOnFoundation(fslotIdx, card);
+				}else{
+					clearSelection();
+				}
+			}
+
+			function placeCardOnFoundation(fslotIdx, card){
+				const destSlot = document.querySelector(`.foundation-slot[data-fslot="${fslotIdx}"]`);
+				const origin = selection.origin;
+				const originType = selection.originType;
+				const originFslot = selection.fslot;
+				card.classList.remove('selected');
+				origin.removeChild(card);
+				destSlot.appendChild(card);
+				foundationSlots[fslotIdx].suit = card.dataset.suit;
+				foundationSlots[fslotIdx].value = parseInt(card.dataset.value);
+				if(originType === 'foundation'){
+					foundationSlots[originFslot].value -= 1;
+					if(foundationSlots[originFslot].value === 0){
+						foundationSlots[originFslot].suit = null;
+					}
+					refreshFoundationPointerEvents(origin);
+				}
+				selection = null;
+				refreshFoundationPointerEvents(destSlot);
+				revealTopCard(origin);
+				checkWin();
+			}
+	
+			function moveSelectionToColumn(destCol){
+				const origin = selection.origin;
+				const originType = selection.originType;
+				selection.cards.forEach(c => {
+					c.classList.remove('selected');
+					destCol.appendChild(c);
+				});
+				if(originType === 'foundation'){
+					const fslotIdx = selection.fslot;
+					foundationSlots[fslotIdx].value -= 1;
+					if(foundationSlots[fslotIdx].value === 0){
+						foundationSlots[fslotIdx].suit = null;
+					}
+					refreshFoundationPointerEvents(origin);
+				}
+				selection = null;
+				clearHighlights();
+				revealTopCard(origin);
+			}
+
+			function refreshFoundationPointerEvents(slot){
+				if(!slot.classList.contains('foundation-slot')){
+					return;
+				}
+				const cards = slot.querySelectorAll('.card');
+				cards.forEach((c, i) => {
+					c.style.pointerEvents = (i === cards.length - 1) ? 'auto' : 'none';
+				});
+			}
+
+			function revealTopCard(container){
+				if(!container){
+					return;
+				}
+				const last = container.lastElementChild;
+				if(last && last.classList.contains('card') && last.dataset.faceUp === "false"){
+					renderCardContent(last);
+				}
+			}
+
+			function handleDeckClick(){
+				const waste = document.getElementById('waste');
+				clearSelection();
+				if(deckData.length > 0){
+					const emptyCol = findEmptyColumn();
+					const cardData = deckData.pop();
+					addCard(emptyCol || waste, cardData, true);
+				}else{
+					const wasteCards = Array.from(waste.children);
+					if(wasteCards.length === 0){
+						alert("Nessuna carta rimasta nel mazzo o negli scarti!");
+						return;
+					}
+					wasteCards.reverse().forEach(c =>
+						deckData.push({ suit: c.dataset.suit, value: parseInt(c.dataset.value) })
+					);
+					waste.innerHTML = '';
+				}
+				updateDeckUI();
+			}
+
+			function findEmptyColumn(){
+				for(let i = 0; i < 5; i++){
+					const col = document.getElementById(`col-${i}`);
+					if(col.children.length === 0){
+						return col;
+					}
+				}
+				return null;
+			}
+
+			function clearSelection(){
+				if(selection){
+					selection.cards.forEach(c => c.classList.remove('selected'));
+					selection = null;
+				}
+				clearHighlights();
+			}
+
+			function highlightValidFoundations(){
+				if(!selection || selection.cards.length !== 1){
+					return;
+				}
+				const { suit, value } = selection;
+				if(value === 1){
+					const firstEmpty = foundationSlots.findIndex(fs => fs.suit === null);
+					if(firstEmpty !== -1){
+						document.querySelector(`.foundation-slot[data-fslot="${firstEmpty}"]`).classList.add('valid-target');
+					}
+				}else{
+					foundationSlots.forEach((fs, i) => {
+						if(fs.suit === suit && value === fs.value + 1){
+							document.querySelector(`.foundation-slot[data-fslot="${i}"]`).classList.add('valid-target');
+						}
+					});
+				}
+			}
+
+			function clearHighlights(){
+				document.querySelectorAll('.foundation-slot.valid-target').forEach(s => s.classList.remove('valid-target'));
+			}
+
+			function updateDeckUI(){
+				const d = document.getElementById('deck');
+				if(deckData.length > 0){
+					d.className = 'deck-slot card back';
+					d.innerHTML = '';
+				}else{
+					d.className = 'deck-slot';
+					d.innerHTML = '⟳';
+				}
+			}
+
+			function checkWin(){
+				if(foundationSlots.every(fs => fs.value === 10)){
+					setTimeout(() => alert('🎉 Hai vinto! Complimenti!'), 100);
+				}
+			}
+
+			initGame();
+		</script>
+	</body>
+</html>
