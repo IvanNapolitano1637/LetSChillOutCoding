@@ -112,22 +112,22 @@
 			<button type="button" onclick="animatedSolving()">How To (Demo)</button>
 		</div>
 		<script>
-			const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+			const AUDIO_CTX = new (window.AudioContext || window.webkitAudioContext)();
 
 			function playTone(freq, type, duration){
-				if(audioCtx.state === 'suspended'){
-					audioCtx.resume();
+				if(AUDIO_CTX.state === 'suspended'){
+					AUDIO_CTX.resume();
 				}
-				const osc = audioCtx.createOscillator();
-				const gain = audioCtx.createGain();
+				const osc = AUDIO_CTX.createOscillator();
+				const gain = AUDIO_CTX.createGain();
 				osc.type = type;
-				osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-				gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-				gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+				osc.frequency.setValueAtTime(freq, AUDIO_CTX.currentTime);
+				gain.gain.setValueAtTime(0.1, AUDIO_CTX.currentTime);
+				gain.gain.exponentialRampToValueAtTime(0.0001, AUDIO_CTX.currentTime + duration);
 				osc.connect(gain);
-				gain.connect(audioCtx.destination);
+				gain.connect(AUDIO_CTX.destination);
 				osc.start();
-				osc.stop(audioCtx.currentTime + duration);
+				osc.stop(AUDIO_CTX.currentTime + duration);
 			}
 
 			const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);

@@ -173,8 +173,8 @@
 			document.addEventListener('DOMContentLoaded',() => {
 				let P = 37;
 				const GRID = document.getElementById('gameGrid');
-				const maxNumberOfErrors = 5;
-				//const maxNumberOfErrors = 86400;
+				const MAX_NUMBER_OF_ERRORS = 5;
+				//const MAX_NUMBER_OF_ERRORS = 86400;
 				let currentErrors = 0;
 				let selectedCells = [];
 				let matchedNumbersCount = 0;
@@ -204,7 +204,7 @@
 					matchedNumbersCount = 0;
 					selectedCells = [];
 					document.getElementById('errors').textContent = '0';
-					document.getElementById('maxErrors').textContent = maxNumberOfErrors;
+					document.getElementById('maxErrors').textContent = MAX_NUMBER_OF_ERRORS;
 					const fontSize = P > 50 ? "0.9em" : "1.1em";
 					for(let i = 1; i < P; i++){
 						const cell = document.createElement('div');
@@ -262,7 +262,7 @@
 							cell1.classList.remove('revealed', 'error-flash');
 							cell2.classList.remove('revealed', 'error-flash');
 						}, 400);
-						if(currentErrors >= maxNumberOfErrors){
+						if(currentErrors >= MAX_NUMBER_OF_ERRORS){
 							setTimeout(() => {
 								alert('Maximum number of errors reached. Try again!'); 
 								initGame(); 

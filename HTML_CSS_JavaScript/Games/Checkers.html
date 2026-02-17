@@ -188,9 +188,9 @@
 		</div>
 		<script>
 			let cfg ={}, turn = 'white', selected = null, isAITurn = false;
-			const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+			const AUDIO_CTX = new (window.AudioContext || window.webkitAudioContext)();
 
-			const variants ={
+			const VARIANTS ={
 				int: {name: "International", s: 10, fly: true, back: true,  kingEat: true,  start: 4, ortho: false, reverse: false},
 				it:  {name: "Italian", s: 8,  fly: false, back: false, kingEat: false, start: 3, ortho: false, reverse: false},
 				en:  {name: "English/USA", s: 8,  fly: false, back: false, kingEat: true,  start: 3, ortho: false, reverse: false},
@@ -203,23 +203,23 @@
 			};
 
 			function playSound(isCapture){
-				if(audioCtx.state === 'suspended'){
-					audioCtx.resume();
+				if(AUDIO_CTX.state === 'suspended'){
+					AUDIO_CTX.resume();
 				}
-				const osc = audioCtx.createOscillator();
-				const gain = audioCtx.createGain();
+				const osc = AUDIO_CTX.createOscillator();
+				const gain = AUDIO_CTX.createGain();
 				osc.connect(gain);
-				gain.connect(audioCtx.destination);
-				osc.frequency.setValueAtTime(isCapture ? 150 : 300, audioCtx.currentTime);
-				gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-				gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+				gain.connect(AUDIO_CTX.destination);
+				osc.frequency.setValueAtTime(isCapture ? 150 : 300, AUDIO_CTX.currentTime);
+				gain.gain.setValueAtTime(0.1, AUDIO_CTX.currentTime);
+				gain.gain.exponentialRampToValueAtTime(0.01, AUDIO_CTX.currentTime + 0.1);
 				osc.start();
-				osc.stop(audioCtx.currentTime + 0.1);
+				osc.stop(AUDIO_CTX.currentTime + 0.1);
 			}
 
 			function startGame(){
 				const v = document.querySelector('input[name="v"]:checked').value;
-				cfg = variants[v];
+				cfg = VARIANTS[v];
 				document.getElementById('active-variant-name').innerText = `Mode: ${cfg.name} (${cfg.s}x${cfg.s})`;
 				document.getElementById('setup-menu').style.display = 'none';
 				document.getElementById('game-container').style.display = 'flex';

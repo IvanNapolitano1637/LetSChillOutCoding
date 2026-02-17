@@ -284,20 +284,20 @@
 			let moved = {'K': false, 'k': false, 'R_7_0': false, 'R_7_7': false, 'r_0_0': false, 'r_0_7': false};
 			let enPassantTarget = null;
 			let history = [];
-			const pieceValues = {'p': 100, 'n': 320, 'b': 330, 'r': 500, 'q': 900, 'k': 20000};
-			const piecesNames = {'P':'Pawn', 'R':'Rook', 'N':'Knight', 'B':'Bishop', 'Q':'Queen', 'K':'King', 'p':'Pawn', 'r':'Rook', 'n':'Knight', 'b':'Bishop', 'q':'Queen', 'k':'King'};
-			const pieces = {'p':'♟', 'r':'♜', 'n':'♞', 'b':'♝', 'q':'♛', 'k':'♚', 'P':'♙', 'R':'♖', 'N':'♘', 'B':'♗', 'Q':'♕', 'K':'♔'};
+			const PIECE_VALUES = {'p': 100, 'n': 320, 'b': 330, 'r': 500, 'q': 900, 'k': 20000};
+			const PIECES_NAMES = {'P':'Pawn', 'R':'Rook', 'N':'Knight', 'B':'Bishop', 'Q':'Queen', 'K':'King', 'p':'Pawn', 'r':'Rook', 'n':'Knight', 'b':'Bishop', 'q':'Queen', 'k':'King'};
+			const PIECES = {'p':'♟', 'r':'♜', 'n':'♞', 'b':'♝', 'q':'♛', 'k':'♚', 'P':'♙', 'R':'♖', 'N':'♘', 'B':'♗', 'Q':'♕', 'K':'♔'};
 			let selected = null, legalMoves = [], turn = 'W', lastMove = null;
-			const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-			const levels = [{name: 'Easy', val: 1, color: '#27ae60'}, {name: 'Medium', val: 2, color: '#2980b9'}, {name: 'Hard', val: 3, color: '#c0392b'}, {name: 'Expert', val: 4, color: '#8e44ad'}];
+			const AUDIO_CXT = new (window.AudioContext || window.webkitAudioContext)();
+			const LEVELS = [{name: 'Easy', val: 1, color: '#27ae60'}, {name: 'Medium', val: 2, color: '#2980b9'}, {name: 'Hard', val: 3, color: '#c0392b'}, {name: 'Expert', val: 4, color: '#8e44ad'}];
 			let currentDiffIdx = 2;
 			let pendingPromotion = null;
-			const pawnTableWhite = [[0, 0, 0, 0, 0, 0, 0, 0],[50, 50, 50, 50, 50, 50, 50, 50],[10, 10, 20, 30, 30, 20, 10, 10],[5, 5, 10, 25, 25, 10, 5, 5],[0, 0, 0, 20, 20, 0, 0, 0],[5, -5, -10, 0, 0, -10, -5, 5],[5, 10, 10, -20, -20, 10, 10, 5],[0, 0, 0, 0, 0, 0, 0, 0]];
-			const knightTable = [[-50, -40, -30, -30, -30, -30, -40, -50],[-40, -20, 0, 0, 0, 0, -20, -40],[-30, 0, 10, 15, 15, 10, 0, -30],[-30, 5, 15, 20, 20, 15, 5, -30],[-30, 0, 15, 20, 20, 15, 0, -30],[-30, 5, 10, 15, 15, 10, 5, -30],[-40, -20, 0, 5, 5, 0, -20, -40],[-50, -40, -30, -30, -30, -30, -40, -50]];
-			const bishopTable = [[-20, -10, -10, -10, -10, -10, -10, -20],[-10, 0, 0, 0, 0, 0, 0, -10],[-10, 0, 5, 10, 10, 5, 0, -10],[-10, 5, 5, 10, 10, 5, 5, -10],[-10, 0, 10, 10, 10, 10, 0, -10],[-10, 10, 10, 10, 10, 10, 10, -10],[-10, 5, 0, 0, 0, 0, 5, -10],[-20, -10, -10, -10, -10, -10, -10, -20]];
-			const rookTable = [[0, 0, 0, 0, 0, 0, 0, 0],[5, 10, 10, 10, 10, 10, 10, 5],[-5, 0, 0, 0, 0, 0, 0, -5],[-5, 0, 0, 0, 0, 0, 0, -5],[-5, 0, 0, 0, 0, 0, 0, -5],[-5, 0, 0, 0, 0, 0, 0, -5],[-5, 0, 0, 0, 0, 0, 0, -5],[0, 0, 0, 5, 5, 0, 0, 0]];
-			const queenTable = [[-20, -10, -10, -5, -5, -10, -10, -20],[-10, 0, 0, 0, 0, 0, 0, -10],[-10, 0, 5, 5, 5, 5, 0, -10],[-5, 0, 5, 5, 5, 5, 0, -5],[0, 0, 5, 5, 5, 5, 0, -5],[-10, 5, 5, 5, 5, 5, 0, -10],[-10, 0, 5, 0, 0, 0, 0, -10],[-20, -10, -10, -5, -5, -10, -10, -20]];
-			const kingTableMiddle = [[-30, -40, -40, -50, -50, -40, -40, -30],[-30, -40, -40, -50, -50, -40, -40, -30],[-30, -40, -40, -50, -50, -40, -40, -30],[-30, -40, -40, -50, -50, -40, -40, -30],[-20, -30, -30, -40, -40, -30, -30, -20],[-10, -20, -20, -20, -20, -20, -20, -10],[20, 20, 0, 0, 0, 0, 20, 20],[20, 30, 10, 0, 0, 10, 30, 20]];
+			const PAWN_TABLE_WHITE = [[0, 0, 0, 0, 0, 0, 0, 0],[50, 50, 50, 50, 50, 50, 50, 50],[10, 10, 20, 30, 30, 20, 10, 10],[5, 5, 10, 25, 25, 10, 5, 5],[0, 0, 0, 20, 20, 0, 0, 0],[5, -5, -10, 0, 0, -10, -5, 5],[5, 10, 10, -20, -20, 10, 10, 5],[0, 0, 0, 0, 0, 0, 0, 0]];
+			const KNIGHT_TABLE = [[-50, -40, -30, -30, -30, -30, -40, -50],[-40, -20, 0, 0, 0, 0, -20, -40],[-30, 0, 10, 15, 15, 10, 0, -30],[-30, 5, 15, 20, 20, 15, 5, -30],[-30, 0, 15, 20, 20, 15, 0, -30],[-30, 5, 10, 15, 15, 10, 5, -30],[-40, -20, 0, 5, 5, 0, -20, -40],[-50, -40, -30, -30, -30, -30, -40, -50]];
+			const BISHOP_TABLE = [[-20, -10, -10, -10, -10, -10, -10, -20],[-10, 0, 0, 0, 0, 0, 0, -10],[-10, 0, 5, 10, 10, 5, 0, -10],[-10, 5, 5, 10, 10, 5, 5, -10],[-10, 0, 10, 10, 10, 10, 0, -10],[-10, 10, 10, 10, 10, 10, 10, -10],[-10, 5, 0, 0, 0, 0, 5, -10],[-20, -10, -10, -10, -10, -10, -10, -20]];
+			const ROOK_TABLE = [[0, 0, 0, 0, 0, 0, 0, 0],[5, 10, 10, 10, 10, 10, 10, 5],[-5, 0, 0, 0, 0, 0, 0, -5],[-5, 0, 0, 0, 0, 0, 0, -5],[-5, 0, 0, 0, 0, 0, 0, -5],[-5, 0, 0, 0, 0, 0, 0, -5],[-5, 0, 0, 0, 0, 0, 0, -5],[0, 0, 0, 5, 5, 0, 0, 0]];
+			const QUEEN_TABLE = [[-20, -10, -10, -5, -5, -10, -10, -20],[-10, 0, 0, 0, 0, 0, 0, -10],[-10, 0, 5, 5, 5, 5, 0, -10],[-5, 0, 5, 5, 5, 5, 0, -5],[0, 0, 5, 5, 5, 5, 0, -5],[-10, 5, 5, 5, 5, 5, 0, -10],[-10, 0, 5, 0, 0, 0, 0, -10],[-20, -10, -10, -5, -5, -10, -10, -20]];
+			const KING_TABLE_MIDDLE = [[-30, -40, -40, -50, -50, -40, -40, -30],[-30, -40, -40, -50, -50, -40, -40, -30],[-30, -40, -40, -50, -50, -40, -40, -30],[-30, -40, -40, -50, -50, -40, -40, -30],[-20, -30, -30, -40, -40, -30, -30, -20],[-10, -20, -20, -20, -20, -20, -20, -10],[20, 20, 0, 0, 0, 0, 20, 20],[20, 30, 10, 0, 0, 10, 30, 20]];
 
 			function updateSaveUI(){
 				for(let i = 0; i < 3; i++){
@@ -366,8 +366,8 @@
 				lastMove = gs.lastMove;
 				document.getElementById('moveLog').innerHTML = gs.logHtml;
 				const btn = document.getElementById('diffBtn');
-				btn.textContent = `Level: ${levels[currentDiffIdx].name}`;
-				btn.style.background = levels[currentDiffIdx].color;
+				btn.textContent = `Level: ${LEVELS[currentDiffIdx].name}`;
+				btn.style.background = LEVELS[currentDiffIdx].color;
 				selected = null;
 				legalMoves = [];
 				checkGameState();
@@ -378,11 +378,11 @@
 			}
 
 			function playSound(type){
-				const osc = audioCtx.createOscillator();
-				const gain = audioCtx.createGain();
+				const osc = AUDIO_CXT.createOscillator();
+				const gain = AUDIO_CXT.createGain();
 				osc.connect(gain);
-				gain.connect(audioCtx.destination);
-				const now = audioCtx.currentTime;
+				gain.connect(AUDIO_CXT.destination);
+				const now = AUDIO_CXT.currentTime;
 				if(type === 'capture'){
 					osc.type = 'square';
 					osc.frequency.setValueAtTime(150, now);
@@ -426,10 +426,10 @@
 			}
 
 			function cycleDifficulty(){
-				currentDiffIdx = (currentDiffIdx + 1)%levels.length;
+				currentDiffIdx = (currentDiffIdx + 1)%LEVELS.length;
 				const btn = document.getElementById('diffBtn');
-				btn.textContent = `Level: ${levels[currentDiffIdx].name}`;
-				btn.style.background = levels[currentDiffIdx].color;
+				btn.textContent = `Level: ${LEVELS[currentDiffIdx].name}`;
+				btn.style.background = LEVELS[currentDiffIdx].color;
 			}
 
 			function toggleLog(){
@@ -451,7 +451,7 @@
 						sq.className = `square ${(r + c)%2 === 0 ? 'light' : 'dark'}`;
 						const p = board[r][c];
 						if(p){
-							sq.textContent = pieces[p];
+							sq.textContent = PIECES[p];
 							sq.style.color = p === p.toUpperCase() ? "white" : "black";
 							if(p === p.toUpperCase()){
 								sq.style.textShadow = "0 0 3px black";
@@ -750,20 +750,20 @@
 						}
 						const isBlackPiece = p === p.toLowerCase();
 						const type = p.toLowerCase();
-						let value = pieceValues[type];
+						let value = PIECE_VALUES[type];
 						let posBonus = 0;
 						if(type === 'p'){
-							posBonus = isBlackPiece ? pawnTableWhite[r][c] : pawnTableWhite[7 - r][c];
+							posBonus = isBlackPiece ? PAWN_TABLE_WHITE[r][c] : PAWN_TABLE_WHITE[7 - r][c];
 						}else if(type === 'n'){
-							posBonus = isBlackPiece ? knightTable[r][c] : knightTable[7 - r][c];
+							posBonus = isBlackPiece ? KNIGHT_TABLE[r][c] : KNIGHT_TABLE[7 - r][c];
 						}else if(type === 'b'){
-							posBonus = isBlackPiece ? bishopTable[r][c] : bishopTable[7 - r][c];
+							posBonus = isBlackPiece ? BISHOP_TABLE[r][c] : BISHOP_TABLE[7 - r][c];
 						}else if(type === 'r'){
-							posBonus = isBlackPiece ? rookTable[r][c] : rookTable[7 - r][c];
+							posBonus = isBlackPiece ? ROOK_TABLE[r][c] : ROOK_TABLE[7 - r][c];
 						}else if(type === 'q'){
-							posBonus = isBlackPiece ? queenTable[r][c] : queenTable[7 - r][c];
+							posBonus = isBlackPiece ? QUEEN_TABLE[r][c] : QUEEN_TABLE[7 - r][c];
 						}else if(type === 'k'){
-							posBonus = isBlackPiece ? kingTableMiddle[r][c] : kingTableMiddle[7 - r][c];
+							posBonus = isBlackPiece ? KING_TABLE_MIDDLE[r][c] : KING_TABLE_MIDDLE[7 - r][c];
 						}
 						value += posBonus;
 						score += isBlackPiece ? value : -value;
@@ -843,7 +843,7 @@
 				if(turn !== 'B'){
 					return;
 				}
-				const depth = levels[currentDiffIdx].val;
+				const depth = LEVELS[currentDiffIdx].val;
 				let allMoves = [];
 				for(let r = 0; r < 8; r++){
 					for(let c = 0; c < 8; c++){
@@ -879,8 +879,8 @@
 			}
 
 			function handleClick(r, c){
-				if(audioCtx.state === 'suspended'){
-					audioCtx.resume();
+				if(AUDIO_CXT.state === 'suspended'){
+					AUDIO_CXT.resume();
 				}
 				if(turn !== 'W' || pendingPromotion){
 					return;
@@ -906,7 +906,7 @@
 			function logMove(who, piece, to, captured, special){
 				const log = document.getElementById('moveLog');
 				const coords = String.fromCharCode(97 + to.c) + (8 - to.r);
-				let text = (special && special.castling) ? (special.castling === 'K' ? 'O-O' : 'O-O-O') : `${who}: ${piecesNames[piece]} ${coords}`;
+				let text = (special && special.castling) ? (special.castling === 'K' ? 'O-O' : 'O-O-O') : `${who}: ${PIECES_NAMES[piece]} ${coords}`;
 				if(captured){
 					text += ' (x)';
 				}

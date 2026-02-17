@@ -311,10 +311,10 @@
 			let oscillatorinputType = "sine";
 			let frequencyHz = 440;
 			let indexArray = 4;
-			const activeVoices = new Map();
+			const ACTIVE_VOICES = new Map();
 			const MAX_FREQUENCY_VALUE = [50,100,200,500,1000,2000,4000,8000,16000,24000];
-			const keyMap ={"a":"C4","w":"Csharp4","s":"D4","e":"Dsharp4","d":"E4","f":"F4","t":"Fsharp4","g":"G4","y":"Gsharp4","h":"A4","u":"Asharp4","j":"B4","k":"C5"};
-			const freqMap ={"C4":261.62,"Csharp4":277.18,"D4":293.66,"Dsharp4":311.12,"E4":329.62,"F4":349.22,"Fsharp4":369.99,"G4":391.99,"Gsharp4":415.3,"A4":440,"Asharp4":466.16,"B4":493.88,"C5":523.25};
+			const KEY_MAP = {"a":"C4","w":"Csharp4","s":"D4","e":"Dsharp4","d":"E4","f":"F4","t":"Fsharp4","g":"G4","y":"Gsharp4","h":"A4","u":"Asharp4","j":"B4","k":"C5"};
+			const FREQ_MAP = {"C4":261.62,"Csharp4":277.18,"D4":293.66,"Dsharp4":311.12,"E4":329.62,"F4":349.22,"Fsharp4":369.99,"G4":391.99,"Gsharp4":415.3,"A4":440,"Asharp4":466.16,"B4":493.88,"C5":523.25};
 
 			function initAudio(){
 				if(!audioContext){
@@ -363,7 +363,7 @@
 				if(!audioContext){
 					return;
 				}
-				activeVoices.forEach(voice => {
+				ACTIVE_VOICES.forEach(voice => {
 					if(voice.harmonics){
 						const now = audioContext.currentTime;
 						voice.harmonics.h2.gain.gain.setValueAtTime(h2Val, now);
@@ -383,8 +383,8 @@
 			function setFrequency(){
 				frequencyHz = parseInt(document.getElementById("frequencyRange").value);
 				document.getElementById("FREQUENCY_VALUE").textContent = frequencyHz + " Hz";
-				if(activeVoices.has("mono")){
-					const v = activeVoices.get("mono"), now = audioContext.currentTime;
+				if(ACTIVE_VOICES.has("mono")){
+					const v = ACTIVE_VOICES.get("mono"), now = audioContext.currentTime;
 					v.osc.frequency.setTargetAtTime(frequencyHz, now, 0.02);
 					v.harmonics.h2.osc.frequency.setTargetAtTime(frequencyHz*2, now, 0.02);
 					v.harmonics.h3.osc.frequency.setTargetAtTime(frequencyHz*3, now, 0.02);
@@ -412,7 +412,7 @@
 
 			function playVoice(id, freq){
 				initAudio();
-				if(activeVoices.has(id)){
+				if(ACTIVE_VOICES.has(id)){
 					return;
 				}
 				const now = audioContext.currentTime;
@@ -432,14 +432,14 @@
 				const h2 = createHarmonic(freq*2, parseFloat(document.getElementById("h2").value), vGain);
 				const h3 = createHarmonic(freq*3, parseFloat(document.getElementById("h3").value), vGain);
 				const h4 = createHarmonic(freq*4, parseFloat(document.getElementById("h4").value), vGain);
-				activeVoices.set(id,{osc, gain: vGain, harmonics:{h2, h3, h4}});
+				ACTIVE_VOICES.set(id,{osc, gain: vGain, harmonics:{h2, h3, h4}});
 			}
 
 			function stopVoice(id){
-				if(!activeVoices.has(id)){
+				if(!ACTIVE_VOICES.has(id)){
 					return;
 				}
-				const v = activeVoices.get(id), now = audioContext.currentTime, r = document.getElementById("release").value/1000;
+				const v = ACTIVE_VOICES.get(id), now = audioContext.currentTime, r = document.getElementById("release").value/1000;
 				v.gain.gain.cancelScheduledValues(now);
 				v.gain.gain.setValueAtTime(v.gain.gain.value, now);
 				v.gain.gain.linearRampToValueAtTime(0, now + r);
@@ -451,7 +451,7 @@
 						v.harmonics.h4.osc.stop();
 						v.gain.disconnect();
 					}catch(e){} 
-					activeVoices.delete(id); 
+					ACTIVE_VOICES.delete(id); 
 				}, r*1000 + 50);
 			}
 
@@ -544,7 +544,7 @@
 			document.getElementsByName("oscillatorType").forEach(el => {
 				el.addEventListener("change",() => {
 					oscillatorinputType = el.value; 
-					if(activeVoices.has("mono")) activeVoices.get("mono").osc.type = el.value;
+					if(ACTIVE_VOICES.has("mono")) ACTIVE_VOICES.get("mono").osc.type = el.value;
 				});
 			});
 
@@ -608,10 +608,10 @@
 
 			document.addEventListener("keydown", e => {
 				let key = e.key.toLowerCase();
-				if(key in keyMap){
-					const btn = document.getElementById(keyMap[key]);
+				if(key in KEY_MAP){
+					const btn = document.getElementById(KEY_MAP[key]);
 					if(btn && !btn.classList.contains("pressed")){
-						btn.classList.add("pressed"); playVoice(btn.id, freqMap[btn.id]);
+						btn.classList.add("pressed"); playVoice(btn.id, FREQ_MAP[btn.id]);
 					}
 				}else if(key === "l"){
 					if(sOn){
@@ -624,8 +624,8 @@
 
 			document.addEventListener("keyup", e => {
 				let key = e.key.toLowerCase();
-				if(key in keyMap){
-					const btn = document.getElementById(keyMap[key]);
+				if(key in KEY_MAP){
+					const btn = document.getElementById(KEY_MAP[key]);
 					if(btn){
 						btn.classList.remove("pressed");
 						stopVoice(btn.id);
@@ -638,7 +638,7 @@
 					e.preventDefault();
 					if(!btn.classList.contains("pressed")){
 						btn.classList.add("pressed");
-						playVoice(btn.id, freqMap[btn.id]);
+						playVoice(btn.id, FREQ_MAP[btn.id]);
 					}
 				};
 				const stopNote = (e) => {

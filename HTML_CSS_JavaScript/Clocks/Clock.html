@@ -176,12 +176,12 @@
 		<script>
 			let isReflected = false;
 			let lastS = -1;
-			const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+			const AUDIO_CTX = new(window.AudioContext || window.webkitAudioContext)();
 
 			function updateClock(){
 				let now = new Date();
 				let h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
-				if(audioCtx.state === 'running' && s !== lastS){
+				if(AUDIO_CTX.state === 'running' && s !== lastS){
 					playTick();
 					lastS = s;
 				}
@@ -200,13 +200,13 @@
 			}
 
 			function playTick(){
-				const osc = audioCtx.createOscillator();
-				const gain = audioCtx.createGain();
-				osc.frequency.setValueAtTime(isReflected ? 150 : 800, audioCtx.currentTime);
-				gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-				gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.1);
-				osc.connect(gain); gain.connect(audioCtx.destination);
-				osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+				const osc = AUDIO_CTX.createOscillator();
+				const gain = AUDIO_CTX.createGain();
+				osc.frequency.setValueAtTime(isReflected ? 150 : 800, AUDIO_CTX.currentTime);
+				gain.gain.setValueAtTime(0.05, AUDIO_CTX.currentTime);
+				gain.gain.exponentialRampToValueAtTime(0.00001, AUDIO_CTX.currentTime + 0.1);
+				osc.connect(gain); gain.connect(AUDIO_CTX.destination);
+				osc.start(); osc.stop(AUDIO_CTX.currentTime + 0.1);
 			}
 
 			function drawNumbers(){
@@ -221,8 +221,8 @@
 			}
 
 			function changeClockDirection(){
-				if(audioCtx.state === 'suspended'){
-					audioCtx.resume();
+				if(AUDIO_CTX.state === 'suspended'){
+					AUDIO_CTX.resume();
 				}
 				isReflected = !isReflected;
 				document.getElementById('clock_el').classList.toggle('reflected', isReflected);

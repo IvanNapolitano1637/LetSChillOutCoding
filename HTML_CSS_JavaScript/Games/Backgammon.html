@@ -126,10 +126,10 @@
 			</div>
 		</div>
 		<script>
-			const canvas = document.getElementById('board');
-			const ctx = canvas.getContext('2d');
-			const rollBtn = document.getElementById('roll-btn');
-			const undoBtn = document.getElementById('undo-btn');
+			const CANVAS = document.getElementById('board');
+			const CTX = CANVAS.getContext('2d');
+			const ROLL_BTN = document.getElementById('roll-btn');
+			const UNDO_BTN = document.getElementById('undo-btn');
 			const BW = 660, BH = 540, TW = 46, TH = 200, PR = 18;
 			let history = [];
 			let game ={board: [2, 0, 0, 0, 0, -5, 0, -3, 0, 0, 0, 5, -5, 0, 0, 0, 3, 0, 5, 0, 0, 0, 0, -2], bar:{ 1: 0, "-1": 0 }, off:{ 1: 0, "-1": 0 }, turn: 1, dice: [], moves: [], selected: null };
@@ -144,31 +144,31 @@
 			}
 
 			function draw(){
-				ctx.fillStyle = "#3e2723";
-				ctx.fillRect(0, 0, BW, BH);
-				ctx.fillStyle = "#1b5e20";
-				ctx.fillRect(10, 10, BW - 20, BH - 20);
+				CTX.fillStyle = "#3e2723";
+				CTX.fillRect(0, 0, BW, BH);
+				CTX.fillStyle = "#1b5e20";
+				CTX.fillRect(10, 10, BW - 20, BH - 20);
 				for(let i = 0; i < 24; i++){
-					ctx.fillStyle = (i % 2 === 0) ? "#d7ccc8" : "#8d6e63";
+					CTX.fillStyle = (i % 2 === 0) ? "#d7ccc8" : "#8d6e63";
 					let x = getX(i), y = i >= 12 ? 10 : BH - 10;
-					ctx.beginPath();
-					ctx.moveTo(x, y);
-					ctx.lineTo(x + TW, y);
-					ctx.lineTo(x + TW/2, i >= 12 ? TH + 10 : BH - TH - 10);
-					ctx.fill();
+					CTX.beginPath();
+					CTX.moveTo(x, y);
+					CTX.lineTo(x + TW, y);
+					CTX.lineTo(x + TW/2, i >= 12 ? TH + 10 : BH - TH - 10);
+					CTX.fill();
 					let n = game.board[i], count = Math.abs(n), col = n > 0 ? "#fff" : "#222";
 					for(let j = 0; j < count; j++){
-						ctx.fillStyle = col;
-						ctx.beginPath();
-						ctx.arc(x + TW/2, i >= 12 ? (j*32 + 35) : (BH - j*32 - 35), PR, 0, 7);
-						ctx.fill();
-						ctx.stroke();
+						CTX.fillStyle = col;
+						CTX.beginPath();
+						CTX.arc(x + TW/2, i >= 12 ? (j*32 + 35) : (BH - j*32 - 35), PR, 0, 7);
+						CTX.fill();
+						CTX.stroke();
 						if(game.selected === i && j === count - 1){
-							ctx.strokeStyle = "#f1c40f";
-							ctx.lineWidth = 3;
-							ctx.stroke();
-							ctx.strokeStyle = "#000";
-							ctx.lineWidth = 1;
+							CTX.strokeStyle = "#f1c40f";
+							CTX.lineWidth = 3;
+							CTX.stroke();
+							CTX.strokeStyle = "#000";
+							CTX.lineWidth = 1;
 						}
 					}
 				}
@@ -176,17 +176,17 @@
 				document.getElementById('b-off').innerText = game.off[-1];
 			}
 
-			rollBtn.onclick = () => {
+			ROLL_BTN.onclick = () => {
 				if(game.turn === 1 && game.moves.length === 0){
 					history = [];
 					rollDice();
 				}
 			};
 
-			undoBtn.onclick = () => {
+			UNDO_BTN.onclick = () => {
 				if(history.length > 0){
 					game = JSON.parse(history.pop());
-					undoBtn.disabled = history.length === 0;
+					UNDO_BTN.disabled = history.length === 0;
 					draw();
 				}
 			};
@@ -204,11 +204,11 @@
 				draw();
 			}
 
-			canvas.onclick = (e) => {
+			CANVAS.onclick = (e) => {
 				if(game.turn !== 1 || game.moves.length === 0){
 					return;
 				}
-				const rect = canvas.getBoundingClientRect();
+				const rect = CANVAS.getBoundingClientRect();
 				const x = (e.clientX - rect.left)*(BW/rect.width);
 				const y = (e.clientY - rect.top)*(BH/rect.height);
 				let clicked = -1;
@@ -229,10 +229,10 @@
 					}
 				}else{
 					history.push(JSON.stringify(game));
-					undoBtn.disabled = false;
+					UNDO_BTN.disabled = false;
 					if(!executeMove(game.selected, clicked)){
 						history.pop();
-						undoBtn.disabled = history.length === 0;
+						UNDO_BTN.disabled = history.length === 0;
 					}
 					game.selected = null;
 				}

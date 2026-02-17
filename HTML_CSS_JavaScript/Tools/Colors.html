@@ -264,7 +264,7 @@
 				document.querySelector("#yellow"), document.querySelector("#black")
 			];
 
-			const highlightError = false;
+			const HIGHLIGHT_ERROR = false;
 			let viewModes = ["Essential", "Mini", "Medium", "Maxi"];
 			let currentModeIndex = viewModes.length - 1;
 
@@ -374,7 +374,7 @@
 					INPUTS[4].value = parseInt((getMax() + getMin())/2);
 					VALUES[4].textContent = INPUTS[4].value;
 				}else{
-					if(highlightError){
+					if(HIGHLIGHT_ERROR){
 						flashError();
 					}
 				}
@@ -430,7 +430,7 @@
 					v[index] += delta;
 					setColor(v[0], v[1], v[2]);
 				}else{
-					if(highlightError){
+					if(HIGHLIGHT_ERROR){
 						flashError();
 					}
 				}
@@ -444,7 +444,7 @@
 				if(flag){
 					setColor(r, g, b);
 				}else{
-					if(highlightError){
+					if(HIGHLIGHT_ERROR){
 						flashError();
 					}
 				}

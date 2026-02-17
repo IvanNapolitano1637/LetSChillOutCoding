@@ -189,7 +189,7 @@
 <body>
 <div id="dashboard">
 	<h1>Toolbox & Playground</h1>
-	<div class='section'><h2>🕰️ Clocks</h2><div class='grid'><button class='card' onclick="openPage('Clocks_24h Clock.html')">24h Clock</button><button class='card' onclick="openPage('Clocks_Binary Clock.html')">Binary Clock</button><button class='card' onclick="openPage('Clocks_Clock.html')">Clock</button><button class='card' onclick="openPage('Clocks_Strange Clock.html')">Strange Clock</button></div></div><div class='section'><h2>🎮 Games</h2><div class='grid'><button class='card' onclick="openPage('Games_Backgammon.html')">Backgammon</button><button class='card' onclick="openPage('Games_Checkers.html')">Checkers</button><button class='card' onclick="openPage('Games_Chess.html')">Chess</button><button class='card' onclick="openPage('Games_Connect Four.html')">Connect Four</button><button class='card' onclick="openPage('Games_Eight Queens.html')">Eight Queens</button><button class='card' onclick="openPage('Games_Fifteen.html')">Fifteen</button><button class='card' onclick="openPage('Games_Game of Life.html')">Game of Life</button><button class='card' onclick="openPage('Games_Modular Matching.html')">Modular Matching</button><button class='card' onclick="openPage('Games_Tower of Hanoi.html')">Tower of Hanoi</button></div></div><div class='section'><h2>🛠️ Tools</h2><div class='grid'><button class='card' onclick="openPage('Tools_Calculations.html')">Calculations</button><button class='card' onclick="openPage('Tools_Colors.html')">Colors</button><button class='card' onclick="openPage('Tools_Colors4.html')">Colors4</button><button class='card' onclick="openPage('Tools_Days.html')">Days</button><button class='card' onclick="openPage('Tools_Sounds.html')">Sounds</button><button class='card' onclick="openPage('Tools_SuperEnalotto.html')">SuperEnalotto</button></div></div>
+	<div class='section'><h2>🕰️ Clocks</h2><div class='grid'><button class='card' onclick="openPage('Clocks_24h Clock.html')">24h Clock</button><button class='card' onclick="openPage('Clocks_Binary Clock.html')">Binary Clock</button><button class='card' onclick="openPage('Clocks_Clock.html')">Clock</button><button class='card' onclick="openPage('Clocks_Strange Clock.html')">Strange Clock</button></div></div><div class='section'><h2>🎮 Games</h2><div class='grid'><button class='card' onclick="openPage('Games_Backgammon.html')">Backgammon</button><button class='card' onclick="openPage('Games_Checkers.html')">Checkers</button><button class='card' onclick="openPage('Games_Chess.html')">Chess</button><button class='card' onclick="openPage('Games_Connect Four.html')">Connect Four</button><button class='card' onclick="openPage('Games_Eight Queens.html')">Eight Queens</button><button class='card' onclick="openPage('Games_Fifteen.html')">Fifteen</button><button class='card' onclick="openPage('Games_Game of Life.html')">Game of Life</button><button class='card' onclick="openPage('Games_Modular Matching.html')">Modular Matching</button><button class='card' onclick="openPage('Games_Solitario carte napoletane.html')">Solitario carte napoletane</button><button class='card' onclick="openPage('Games_Tower of Hanoi.html')">Tower of Hanoi</button></div></div><div class='section'><h2>🛠️ Tools</h2><div class='grid'><button class='card' onclick="openPage('Tools_Calculations.html')">Calculations</button><button class='card' onclick="openPage('Tools_Colors.html')">Colors</button><button class='card' onclick="openPage('Tools_Colors4.html')">Colors4</button><button class='card' onclick="openPage('Tools_Days.html')">Days</button><button class='card' onclick="openPage('Tools_Sounds.html')">Sounds</button><button class='card' onclick="openPage('Tools_SuperEnalotto.html')">SuperEnalotto</button></div></div>
 </div>
 <div id="viewer">
 	<div id="app-header">
@@ -529,8 +529,8 @@
 			const SECONDS_BD = [];
 			const TS_BD = [];
 			const LAST_ARRAY_BD = [1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0];
-			const container = document.getElementById('clock-container');
-			container.innerHTML = \`
+			const CONTAINER = document.getElementById('clock-container');
+			CONTAINER.innerHTML = \`
 				<svg id="panel-svg"></svg>
 				<div class="controls">
 					<input type="text" id="dec_ts" disabled>
@@ -861,12 +861,12 @@
 		<script>
 			let isReflected = false;
 			let lastS = -1;
-			const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+			const AUDIO_CTX = new(window.AudioContext || window.webkitAudioContext)();
 
 			function updateClock(){
 				let now = new Date();
 				let h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
-				if(audioCtx.state === 'running' && s !== lastS){
+				if(AUDIO_CTX.state === 'running' && s !== lastS){
 					playTick();
 					lastS = s;
 				}
@@ -885,13 +885,13 @@
 			}
 
 			function playTick(){
-				const osc = audioCtx.createOscillator();
-				const gain = audioCtx.createGain();
-				osc.frequency.setValueAtTime(isReflected ? 150 : 800, audioCtx.currentTime);
-				gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-				gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.1);
-				osc.connect(gain); gain.connect(audioCtx.destination);
-				osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+				const osc = AUDIO_CTX.createOscillator();
+				const gain = AUDIO_CTX.createGain();
+				osc.frequency.setValueAtTime(isReflected ? 150 : 800, AUDIO_CTX.currentTime);
+				gain.gain.setValueAtTime(0.05, AUDIO_CTX.currentTime);
+				gain.gain.exponentialRampToValueAtTime(0.00001, AUDIO_CTX.currentTime + 0.1);
+				osc.connect(gain); gain.connect(AUDIO_CTX.destination);
+				osc.start(); osc.stop(AUDIO_CTX.currentTime + 0.1);
 			}
 
 			function drawNumbers(){
@@ -906,8 +906,8 @@
 			}
 
 			function changeClockDirection(){
-				if(audioCtx.state === 'suspended'){
-					audioCtx.resume();
+				if(AUDIO_CTX.state === 'suspended'){
+					AUDIO_CTX.resume();
 				}
 				isReflected = !isReflected;
 				document.getElementById('clock_el').classList.toggle('reflected', isReflected);
@@ -1017,76 +1017,117 @@
 
 	// --- Backgammon ---
 	'Games_Backgammon.html': { name: `Backgammon`, content: `<!DOCTYPE html>
-<html lang="en">
+<html lang="en"><!--G09#019 - Samuele - Backgammon-->
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<title>Backgammon</title>
-		<style>
-			:root{
-				--wood: #3e2723;
-				--felt: #1b5e20;
-				--accent: #f1c40f;
-			}
-			body{
-				background: #121212;
-				font-family: sans-serif;
+	<style>
+		:root{
+			--wood: #3e2723;
+			--felt: #1b5e20;
+			--accent: #f1c40f;
+		}
+		body{
+			background: #121212;
+			font-family: sans-serif;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			color: white;
+			margin: 0;
+			padding: 10px;
+			-webkit-tap-highlight-color: transparent;
+			user-select: none;
+			touch-action: manipulation;
+		}
+		canvas{
+			background: var(--felt);
+			border: 10px solid var(--wood);
+			border-radius: 12px;
+			max-width: 100%;
+			height: auto;
+			cursor: pointer;
+		}
+		.panel{
+			display: flex;
+			width: 100%;
+			max-width: 660px;
+			flex-wrap: wrap; 
+			justify-content: center;
+			align-items: center;
+			background: #252525;
+			padding: 15px;
+			border-radius: 12px;
+			margin-top: 10px;
+			box-sizing: border-box;
+			gap: 10px;
+		}
+		#dice-ui{
+			font-size: 2em;
+			min-width: 50px;
+			text-align: center;
+		}
+		.btn{
+			padding: 12px;
+			font-size: 0.9em;
+			cursor: pointer;
+			background: #c0392b;
+			border: none;
+			color: white;
+			border-radius: 6px;
+			font-weight: bold;
+			flex: 1;
+			min-width: 80px;
+		}
+		.btn-undo{
+			background: #2980b9;
+		}
+		.btn:disabled{
+			opacity: 0.3;
+		}
+		.score-container{
+			width: 100%;
+			display: flex;
+			justify-content: space-around;
+			margin-top: 5px;
+			font-size: 0.9em;
+			border-top: 1px solid #444;
+			padding-top: 10px;
+		}
+		@media (min-width: 850px){
+			#game-container{
 				display: flex;
-				flex-direction: column;
-				align-items: center;
-				color: white;
-				margin: 0;
-				padding: 10px;
-				-webkit-tap-highlight-color: transparent;
-				user-select: none;
-				touch-action: manipulation;
-			}
-			canvas{
-				background: var(--felt);
-				border: 10px solid var(--wood);
-				border-radius: 12px;
-				max-width: 100%;
-				height: auto;
-				cursor: pointer;
+				flex-direction: row;
+				align-items: flex-start;
+				gap: 20px;
 			}
 			.panel{
-				display: flex;
-				width: 100%;
-				justify-content: space-around;
-				align-items: center;
-				background: #252525;
-				padding: 15px;
-				border-radius: 12px;
-				margin-top: 10px;
+				flex-direction: column;
+				width: 180px;
+				flex-wrap: nowrap;
+				margin-top: 0;
+				height: 540px;
+				justify-content: flex-start;
 			}
 			.btn{
-				padding: 12px 20px;
-				cursor: pointer;
-				background: #c0392b;
-				border: none;
-				color: white;
-				border-radius: 6px;
-				font-weight: bold;
+				width: 100%;
+				flex: 0 0 auto;
+				margin-bottom: 5px;
 			}
-			.btn-undo{
-				background: #2980b9;
-				margin-left: 5px;
+			#dice-ui{
+				margin-bottom: 20px;
+				font-size: 3em;
 			}
-			.btn:disabled{
-				opacity: 0.3;
+			.score-container{
+				flex-direction: column;
+				align-items: center;
+				gap: 10px;
+				margin-top: auto;
+				border-top: none;
 			}
-			@media (min-width: 850px){
-				#game-container{
-					display: flex;
-					flex-direction: row;
-					gap: 20px;
-				}
-				.panel{
-					flex-direction: column;
-					width: 180px;
-				}
-			}
-		</style>
+		}
+	</style>
 	</head>
 	<body>
 		<div id="status" style="margin-bottom:10px">Roll the dice to play</div>
@@ -1096,15 +1137,17 @@
 				<div id="dice-ui" style="font-size:3em; margin-bottom:10px">🎲</div>
 				<button id="roll-btn" class="btn">ROLL THE DICE</button>
 				<button id="undo-btn" class="btn btn-undo" disabled>UNDO</button>
-				<div style="margin-top:20px; text-align:center">⚪ YOU: <span id="w-off">0</span>/15
-					⚫ AI: <span id="b-off">0</span>/15</div>
+				<div style="margin-top:20px; text-align:center">
+					⚪ YOU: <span id="w-off">0</span>/15<br/>
+					⚫ AI: <span id="b-off">0</span>/15
+				</div>
 			</div>
 		</div>
 		<script>
-			const canvas = document.getElementById('board');
-			const ctx = canvas.getContext('2d');
-			const rollBtn = document.getElementById('roll-btn');
-			const undoBtn = document.getElementById('undo-btn');
+			const CANVAS = document.getElementById('board');
+			const CTX = CANVAS.getContext('2d');
+			const ROLL_BTN = document.getElementById('roll-btn');
+			const UNDO_BTN = document.getElementById('undo-btn');
 			const BW = 660, BH = 540, TW = 46, TH = 200, PR = 18;
 			let history = [];
 			let game ={board: [2, 0, 0, 0, 0, -5, 0, -3, 0, 0, 0, 5, -5, 0, 0, 0, 3, 0, 5, 0, 0, 0, 0, -2], bar:{ 1: 0, "-1": 0 }, off:{ 1: 0, "-1": 0 }, turn: 1, dice: [], moves: [], selected: null };
@@ -1119,31 +1162,31 @@
 			}
 
 			function draw(){
-				ctx.fillStyle = "#3e2723";
-				ctx.fillRect(0, 0, BW, BH);
-				ctx.fillStyle = "#1b5e20";
-				ctx.fillRect(10, 10, BW - 20, BH - 20);
+				CTX.fillStyle = "#3e2723";
+				CTX.fillRect(0, 0, BW, BH);
+				CTX.fillStyle = "#1b5e20";
+				CTX.fillRect(10, 10, BW - 20, BH - 20);
 				for(let i = 0; i < 24; i++){
-					ctx.fillStyle = (i % 2 === 0) ? "#d7ccc8" : "#8d6e63";
+					CTX.fillStyle = (i % 2 === 0) ? "#d7ccc8" : "#8d6e63";
 					let x = getX(i), y = i >= 12 ? 10 : BH - 10;
-					ctx.beginPath();
-					ctx.moveTo(x, y);
-					ctx.lineTo(x + TW, y);
-					ctx.lineTo(x + TW/2, i >= 12 ? TH + 10 : BH - TH - 10);
-					ctx.fill();
+					CTX.beginPath();
+					CTX.moveTo(x, y);
+					CTX.lineTo(x + TW, y);
+					CTX.lineTo(x + TW/2, i >= 12 ? TH + 10 : BH - TH - 10);
+					CTX.fill();
 					let n = game.board[i], count = Math.abs(n), col = n > 0 ? "#fff" : "#222";
 					for(let j = 0; j < count; j++){
-						ctx.fillStyle = col;
-						ctx.beginPath();
-						ctx.arc(x + TW/2, i >= 12 ? (j*32 + 35) : (BH - j*32 - 35), PR, 0, 7);
-						ctx.fill();
-						ctx.stroke();
+						CTX.fillStyle = col;
+						CTX.beginPath();
+						CTX.arc(x + TW/2, i >= 12 ? (j*32 + 35) : (BH - j*32 - 35), PR, 0, 7);
+						CTX.fill();
+						CTX.stroke();
 						if(game.selected === i && j === count - 1){
-							ctx.strokeStyle = "#f1c40f";
-							ctx.lineWidth = 3;
-							ctx.stroke();
-							ctx.strokeStyle = "#000";
-							ctx.lineWidth = 1;
+							CTX.strokeStyle = "#f1c40f";
+							CTX.lineWidth = 3;
+							CTX.stroke();
+							CTX.strokeStyle = "#000";
+							CTX.lineWidth = 1;
 						}
 					}
 				}
@@ -1151,17 +1194,17 @@
 				document.getElementById('b-off').innerText = game.off[-1];
 			}
 
-			rollBtn.onclick = () => {
+			ROLL_BTN.onclick = () => {
 				if(game.turn === 1 && game.moves.length === 0){
 					history = [];
 					rollDice();
 				}
 			};
 
-			undoBtn.onclick = () => {
+			UNDO_BTN.onclick = () => {
 				if(history.length > 0){
 					game = JSON.parse(history.pop());
-					undoBtn.disabled = history.length === 0;
+					UNDO_BTN.disabled = history.length === 0;
 					draw();
 				}
 			};
@@ -1179,11 +1222,11 @@
 				draw();
 			}
 
-			canvas.onclick = (e) => {
+			CANVAS.onclick = (e) => {
 				if(game.turn !== 1 || game.moves.length === 0){
 					return;
 				}
-				const rect = canvas.getBoundingClientRect();
+				const rect = CANVAS.getBoundingClientRect();
 				const x = (e.clientX - rect.left)*(BW/rect.width);
 				const y = (e.clientY - rect.top)*(BH/rect.height);
 				let clicked = -1;
@@ -1204,10 +1247,10 @@
 					}
 				}else{
 					history.push(JSON.stringify(game));
-					undoBtn.disabled = false;
+					UNDO_BTN.disabled = false;
 					if(!executeMove(game.selected, clicked)){
 						history.pop();
-						undoBtn.disabled = history.length === 0;
+						UNDO_BTN.disabled = history.length === 0;
 					}
 					game.selected = null;
 				}
@@ -1485,9 +1528,9 @@
 		</div>
 		<script>
 			let cfg ={}, turn = 'white', selected = null, isAITurn = false;
-			const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+			const AUDIO_CTX = new (window.AudioContext || window.webkitAudioContext)();
 
-			const variants ={
+			const VARIANTS ={
 				int: {name: "International", s: 10, fly: true, back: true,  kingEat: true,  start: 4, ortho: false, reverse: false},
 				it:  {name: "Italian", s: 8,  fly: false, back: false, kingEat: false, start: 3, ortho: false, reverse: false},
 				en:  {name: "English/USA", s: 8,  fly: false, back: false, kingEat: true,  start: 3, ortho: false, reverse: false},
@@ -1500,23 +1543,23 @@
 			};
 
 			function playSound(isCapture){
-				if(audioCtx.state === 'suspended'){
-					audioCtx.resume();
+				if(AUDIO_CTX.state === 'suspended'){
+					AUDIO_CTX.resume();
 				}
-				const osc = audioCtx.createOscillator();
-				const gain = audioCtx.createGain();
+				const osc = AUDIO_CTX.createOscillator();
+				const gain = AUDIO_CTX.createGain();
 				osc.connect(gain);
-				gain.connect(audioCtx.destination);
-				osc.frequency.setValueAtTime(isCapture ? 150 : 300, audioCtx.currentTime);
-				gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-				gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+				gain.connect(AUDIO_CTX.destination);
+				osc.frequency.setValueAtTime(isCapture ? 150 : 300, AUDIO_CTX.currentTime);
+				gain.gain.setValueAtTime(0.1, AUDIO_CTX.currentTime);
+				gain.gain.exponentialRampToValueAtTime(0.01, AUDIO_CTX.currentTime + 0.1);
 				osc.start();
-				osc.stop(audioCtx.currentTime + 0.1);
+				osc.stop(AUDIO_CTX.currentTime + 0.1);
 			}
 
 			function startGame(){
 				const v = document.querySelector('input[name="v"]:checked').value;
-				cfg = variants[v];
+				cfg = VARIANTS[v];
 				document.getElementById('active-variant-name').innerText = \`Mode: \${cfg.name} (\${cfg.s}x\${cfg.s})\`;
 				document.getElementById('setup-menu').style.display = 'none';
 				document.getElementById('game-container').style.display = 'flex';
@@ -2014,20 +2057,20 @@
 			let moved = {'K': false, 'k': false, 'R_7_0': false, 'R_7_7': false, 'r_0_0': false, 'r_0_7': false};
 			let enPassantTarget = null;
 			let history = [];
-			const pieceValues = {'p': 100, 'n': 320, 'b': 330, 'r': 500, 'q': 900, 'k': 20000};
-			const piecesNames = {'P':'Pawn', 'R':'Rook', 'N':'Knight', 'B':'Bishop', 'Q':'Queen', 'K':'King', 'p':'Pawn', 'r':'Rook', 'n':'Knight', 'b':'Bishop', 'q':'Queen', 'k':'King'};
-			const pieces = {'p':'♟', 'r':'♜', 'n':'♞', 'b':'♝', 'q':'♛', 'k':'♚', 'P':'♙', 'R':'♖', 'N':'♘', 'B':'♗', 'Q':'♕', 'K':'♔'};
+			const PIECE_VALUES = {'p': 100, 'n': 320, 'b': 330, 'r': 500, 'q': 900, 'k': 20000};
+			const PIECES_NAMES = {'P':'Pawn', 'R':'Rook', 'N':'Knight', 'B':'Bishop', 'Q':'Queen', 'K':'King', 'p':'Pawn', 'r':'Rook', 'n':'Knight', 'b':'Bishop', 'q':'Queen', 'k':'King'};
+			const PIECES = {'p':'♟', 'r':'♜', 'n':'♞', 'b':'♝', 'q':'♛', 'k':'♚', 'P':'♙', 'R':'♖', 'N':'♘', 'B':'♗', 'Q':'♕', 'K':'♔'};
 			let selected = null, legalMoves = [], turn = 'W', lastMove = null;
-			const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-			const levels = [{name: 'Easy', val: 1, color: '#27ae60'}, {name: 'Medium', val: 2, color: '#2980b9'}, {name: 'Hard', val: 3, color: '#c0392b'}, {name: 'Expert', val: 4, color: '#8e44ad'}];
+			const AUDIO_CXT = new (window.AudioContext || window.webkitAudioContext)();
+			const LEVELS = [{name: 'Easy', val: 1, color: '#27ae60'}, {name: 'Medium', val: 2, color: '#2980b9'}, {name: 'Hard', val: 3, color: '#c0392b'}, {name: 'Expert', val: 4, color: '#8e44ad'}];
 			let currentDiffIdx = 2;
 			let pendingPromotion = null;
-			const pawnTableWhite = [[0, 0, 0, 0, 0, 0, 0, 0],[50, 50, 50, 50, 50, 50, 50, 50],[10, 10, 20, 30, 30, 20, 10, 10],[5, 5, 10, 25, 25, 10, 5, 5],[0, 0, 0, 20, 20, 0, 0, 0],[5, -5, -10, 0, 0, -10, -5, 5],[5, 10, 10, -20, -20, 10, 10, 5],[0, 0, 0, 0, 0, 0, 0, 0]];
-			const knightTable = [[-50, -40, -30, -30, -30, -30, -40, -50],[-40, -20, 0, 0, 0, 0, -20, -40],[-30, 0, 10, 15, 15, 10, 0, -30],[-30, 5, 15, 20, 20, 15, 5, -30],[-30, 0, 15, 20, 20, 15, 0, -30],[-30, 5, 10, 15, 15, 10, 5, -30],[-40, -20, 0, 5, 5, 0, -20, -40],[-50, -40, -30, -30, -30, -30, -40, -50]];
-			const bishopTable = [[-20, -10, -10, -10, -10, -10, -10, -20],[-10, 0, 0, 0, 0, 0, 0, -10],[-10, 0, 5, 10, 10, 5, 0, -10],[-10, 5, 5, 10, 10, 5, 5, -10],[-10, 0, 10, 10, 10, 10, 0, -10],[-10, 10, 10, 10, 10, 10, 10, -10],[-10, 5, 0, 0, 0, 0, 5, -10],[-20, -10, -10, -10, -10, -10, -10, -20]];
-			const rookTable = [[0, 0, 0, 0, 0, 0, 0, 0],[5, 10, 10, 10, 10, 10, 10, 5],[-5, 0, 0, 0, 0, 0, 0, -5],[-5, 0, 0, 0, 0, 0, 0, -5],[-5, 0, 0, 0, 0, 0, 0, -5],[-5, 0, 0, 0, 0, 0, 0, -5],[-5, 0, 0, 0, 0, 0, 0, -5],[0, 0, 0, 5, 5, 0, 0, 0]];
-			const queenTable = [[-20, -10, -10, -5, -5, -10, -10, -20],[-10, 0, 0, 0, 0, 0, 0, -10],[-10, 0, 5, 5, 5, 5, 0, -10],[-5, 0, 5, 5, 5, 5, 0, -5],[0, 0, 5, 5, 5, 5, 0, -5],[-10, 5, 5, 5, 5, 5, 0, -10],[-10, 0, 5, 0, 0, 0, 0, -10],[-20, -10, -10, -5, -5, -10, -10, -20]];
-			const kingTableMiddle = [[-30, -40, -40, -50, -50, -40, -40, -30],[-30, -40, -40, -50, -50, -40, -40, -30],[-30, -40, -40, -50, -50, -40, -40, -30],[-30, -40, -40, -50, -50, -40, -40, -30],[-20, -30, -30, -40, -40, -30, -30, -20],[-10, -20, -20, -20, -20, -20, -20, -10],[20, 20, 0, 0, 0, 0, 20, 20],[20, 30, 10, 0, 0, 10, 30, 20]];
+			const PAWN_TABLE_WHITE = [[0, 0, 0, 0, 0, 0, 0, 0],[50, 50, 50, 50, 50, 50, 50, 50],[10, 10, 20, 30, 30, 20, 10, 10],[5, 5, 10, 25, 25, 10, 5, 5],[0, 0, 0, 20, 20, 0, 0, 0],[5, -5, -10, 0, 0, -10, -5, 5],[5, 10, 10, -20, -20, 10, 10, 5],[0, 0, 0, 0, 0, 0, 0, 0]];
+			const KNIGHT_TABLE = [[-50, -40, -30, -30, -30, -30, -40, -50],[-40, -20, 0, 0, 0, 0, -20, -40],[-30, 0, 10, 15, 15, 10, 0, -30],[-30, 5, 15, 20, 20, 15, 5, -30],[-30, 0, 15, 20, 20, 15, 0, -30],[-30, 5, 10, 15, 15, 10, 5, -30],[-40, -20, 0, 5, 5, 0, -20, -40],[-50, -40, -30, -30, -30, -30, -40, -50]];
+			const BISHOP_TABLE = [[-20, -10, -10, -10, -10, -10, -10, -20],[-10, 0, 0, 0, 0, 0, 0, -10],[-10, 0, 5, 10, 10, 5, 0, -10],[-10, 5, 5, 10, 10, 5, 5, -10],[-10, 0, 10, 10, 10, 10, 0, -10],[-10, 10, 10, 10, 10, 10, 10, -10],[-10, 5, 0, 0, 0, 0, 5, -10],[-20, -10, -10, -10, -10, -10, -10, -20]];
+			const ROOK_TABLE = [[0, 0, 0, 0, 0, 0, 0, 0],[5, 10, 10, 10, 10, 10, 10, 5],[-5, 0, 0, 0, 0, 0, 0, -5],[-5, 0, 0, 0, 0, 0, 0, -5],[-5, 0, 0, 0, 0, 0, 0, -5],[-5, 0, 0, 0, 0, 0, 0, -5],[-5, 0, 0, 0, 0, 0, 0, -5],[0, 0, 0, 5, 5, 0, 0, 0]];
+			const QUEEN_TABLE = [[-20, -10, -10, -5, -5, -10, -10, -20],[-10, 0, 0, 0, 0, 0, 0, -10],[-10, 0, 5, 5, 5, 5, 0, -10],[-5, 0, 5, 5, 5, 5, 0, -5],[0, 0, 5, 5, 5, 5, 0, -5],[-10, 5, 5, 5, 5, 5, 0, -10],[-10, 0, 5, 0, 0, 0, 0, -10],[-20, -10, -10, -5, -5, -10, -10, -20]];
+			const KING_TABLE_MIDDLE = [[-30, -40, -40, -50, -50, -40, -40, -30],[-30, -40, -40, -50, -50, -40, -40, -30],[-30, -40, -40, -50, -50, -40, -40, -30],[-30, -40, -40, -50, -50, -40, -40, -30],[-20, -30, -30, -40, -40, -30, -30, -20],[-10, -20, -20, -20, -20, -20, -20, -10],[20, 20, 0, 0, 0, 0, 20, 20],[20, 30, 10, 0, 0, 10, 30, 20]];
 
 			function updateSaveUI(){
 				for(let i = 0; i < 3; i++){
@@ -2096,8 +2139,8 @@
 				lastMove = gs.lastMove;
 				document.getElementById('moveLog').innerHTML = gs.logHtml;
 				const btn = document.getElementById('diffBtn');
-				btn.textContent = \`Level: \${levels[currentDiffIdx].name}\`;
-				btn.style.background = levels[currentDiffIdx].color;
+				btn.textContent = \`Level: \${LEVELS[currentDiffIdx].name}\`;
+				btn.style.background = LEVELS[currentDiffIdx].color;
 				selected = null;
 				legalMoves = [];
 				checkGameState();
@@ -2108,11 +2151,11 @@
 			}
 
 			function playSound(type){
-				const osc = audioCtx.createOscillator();
-				const gain = audioCtx.createGain();
+				const osc = AUDIO_CXT.createOscillator();
+				const gain = AUDIO_CXT.createGain();
 				osc.connect(gain);
-				gain.connect(audioCtx.destination);
-				const now = audioCtx.currentTime;
+				gain.connect(AUDIO_CXT.destination);
+				const now = AUDIO_CXT.currentTime;
 				if(type === 'capture'){
 					osc.type = 'square';
 					osc.frequency.setValueAtTime(150, now);
@@ -2156,10 +2199,10 @@
 			}
 
 			function cycleDifficulty(){
-				currentDiffIdx = (currentDiffIdx + 1)%levels.length;
+				currentDiffIdx = (currentDiffIdx + 1)%LEVELS.length;
 				const btn = document.getElementById('diffBtn');
-				btn.textContent = \`Level: \${levels[currentDiffIdx].name}\`;
-				btn.style.background = levels[currentDiffIdx].color;
+				btn.textContent = \`Level: \${LEVELS[currentDiffIdx].name}\`;
+				btn.style.background = LEVELS[currentDiffIdx].color;
 			}
 
 			function toggleLog(){
@@ -2181,7 +2224,7 @@
 						sq.className = \`square \${(r + c)%2 === 0 ? 'light' : 'dark'}\`;
 						const p = board[r][c];
 						if(p){
-							sq.textContent = pieces[p];
+							sq.textContent = PIECES[p];
 							sq.style.color = p === p.toUpperCase() ? "white" : "black";
 							if(p === p.toUpperCase()){
 								sq.style.textShadow = "0 0 3px black";
@@ -2480,20 +2523,20 @@
 						}
 						const isBlackPiece = p === p.toLowerCase();
 						const type = p.toLowerCase();
-						let value = pieceValues[type];
+						let value = PIECE_VALUES[type];
 						let posBonus = 0;
 						if(type === 'p'){
-							posBonus = isBlackPiece ? pawnTableWhite[r][c] : pawnTableWhite[7 - r][c];
+							posBonus = isBlackPiece ? PAWN_TABLE_WHITE[r][c] : PAWN_TABLE_WHITE[7 - r][c];
 						}else if(type === 'n'){
-							posBonus = isBlackPiece ? knightTable[r][c] : knightTable[7 - r][c];
+							posBonus = isBlackPiece ? KNIGHT_TABLE[r][c] : KNIGHT_TABLE[7 - r][c];
 						}else if(type === 'b'){
-							posBonus = isBlackPiece ? bishopTable[r][c] : bishopTable[7 - r][c];
+							posBonus = isBlackPiece ? BISHOP_TABLE[r][c] : BISHOP_TABLE[7 - r][c];
 						}else if(type === 'r'){
-							posBonus = isBlackPiece ? rookTable[r][c] : rookTable[7 - r][c];
+							posBonus = isBlackPiece ? ROOK_TABLE[r][c] : ROOK_TABLE[7 - r][c];
 						}else if(type === 'q'){
-							posBonus = isBlackPiece ? queenTable[r][c] : queenTable[7 - r][c];
+							posBonus = isBlackPiece ? QUEEN_TABLE[r][c] : QUEEN_TABLE[7 - r][c];
 						}else if(type === 'k'){
-							posBonus = isBlackPiece ? kingTableMiddle[r][c] : kingTableMiddle[7 - r][c];
+							posBonus = isBlackPiece ? KING_TABLE_MIDDLE[r][c] : KING_TABLE_MIDDLE[7 - r][c];
 						}
 						value += posBonus;
 						score += isBlackPiece ? value : -value;
@@ -2573,7 +2616,7 @@
 				if(turn !== 'B'){
 					return;
 				}
-				const depth = levels[currentDiffIdx].val;
+				const depth = LEVELS[currentDiffIdx].val;
 				let allMoves = [];
 				for(let r = 0; r < 8; r++){
 					for(let c = 0; c < 8; c++){
@@ -2609,8 +2652,8 @@
 			}
 
 			function handleClick(r, c){
-				if(audioCtx.state === 'suspended'){
-					audioCtx.resume();
+				if(AUDIO_CXT.state === 'suspended'){
+					AUDIO_CXT.resume();
 				}
 				if(turn !== 'W' || pendingPromotion){
 					return;
@@ -2636,7 +2679,7 @@
 			function logMove(who, piece, to, captured, special){
 				const log = document.getElementById('moveLog');
 				const coords = String.fromCharCode(97 + to.c) + (8 - to.r);
-				let text = (special && special.castling) ? (special.castling === 'K' ? 'O-O' : 'O-O-O') : \`\${who}: \${piecesNames[piece]} \${coords}\`;
+				let text = (special && special.castling) ? (special.castling === 'K' ? 'O-O' : 'O-O-O') : \`\${who}: \${PIECES_NAMES[piece]} \${coords}\`;
 				if(captured){
 					text += ' (x)';
 				}
@@ -4239,8 +4282,8 @@
 			document.addEventListener('DOMContentLoaded',() => {
 				let P = 37;
 				const GRID = document.getElementById('gameGrid');
-				const maxNumberOfErrors = 5;
-				//const maxNumberOfErrors = 86400;
+				const MAX_NUMBER_OF_ERRORS = 5;
+				//const MAX_NUMBER_OF_ERRORS = 86400;
 				let currentErrors = 0;
 				let selectedCells = [];
 				let matchedNumbersCount = 0;
@@ -4270,7 +4313,7 @@
 					matchedNumbersCount = 0;
 					selectedCells = [];
 					document.getElementById('errors').textContent = '0';
-					document.getElementById('maxErrors').textContent = maxNumberOfErrors;
+					document.getElementById('maxErrors').textContent = MAX_NUMBER_OF_ERRORS;
 					const fontSize = P > 50 ? "0.9em" : "1.1em";
 					for(let i = 1; i < P; i++){
 						const cell = document.createElement('div');
@@ -4328,7 +4371,7 @@
 							cell1.classList.remove('revealed', 'error-flash');
 							cell2.classList.remove('revealed', 'error-flash');
 						}, 400);
-						if(currentErrors >= maxNumberOfErrors){
+						if(currentErrors >= MAX_NUMBER_OF_ERRORS){
 							setTimeout(() => {
 								alert('Maximum number of errors reached. Try again!'); 
 								initGame(); 
@@ -4398,6 +4441,543 @@
 
 				initGame();
 			});
+		<\/script>
+	</body>
+</html>` },
+
+	// --- Solitario carte napoletane ---
+	'Games_Solitario carte napoletane.html': { name: `Solitario carte napoletane`, content: `<!DOCTYPE html>
+<html lang="en"><!--G10#020 - Armando - Solitario carte napoletane-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Solitario carte napoletane</title>
+		<style>
+			:root{
+				--bg-color: #1b5e20;
+				--bg-D: #F5C842;
+				--bg-C: #4FC3F7;
+				--bg-S: #CE93D8;
+				--bg-B: #FFAB76;
+				--card-width: clamp(44px, 14.5vw, 90px);
+				--card-height: clamp(64px, 21vw, 130px);
+				--gap: clamp(4px, 1.8vw, 20px);
+				--overlap: clamp(48px, 10.5vw, 100px);
+				--font-val: clamp(10px, 3.2vw, 18px);
+			}
+			*, *::before, *::after{
+				box-sizing: border-box;
+			}
+			body{
+				font-family: 'Arial', sans-serif;
+				background-color: var(--bg-color);
+				color: white;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				margin: 0;
+				padding: clamp(8px, 2vw, 20px);
+				user-select: none;
+				touch-action: manipulation;
+				min-height: 100dvh;
+			}
+			h1{
+				font-size: clamp(20px, 5vw, 32px);
+				margin: 0 0 15px;
+				text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+				font-weight: 300;
+				letter-spacing: 1px;
+			}
+			button{
+				padding: 10px 25px;
+				background: #ffffff;
+				color: #1b5e20;
+				border: none;
+				border-radius: 50px;
+				cursor: pointer;
+				font-weight: bold;
+				font-size: 14px;
+				margin-bottom: 25px;
+				box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+				transition: transform 0.2s, background 0.2s;
+			}
+			button:active{
+				transform: scale(0.95);
+			}
+			.top-row{
+				display: flex;
+				justify-content: space-between;
+				align-items: flex-start;
+				width: 100%;
+				max-width: 900px;
+				margin-bottom: clamp(10px, 2.5vw, 30px);
+				gap: clamp(12px, 5vw, 40px);
+			}
+			.deck-area, .foundation-area{
+				display: flex;
+				gap: var(--gap);
+				flex-wrap: nowrap;
+				flex-shrink: 0;
+			}
+			.tableau{
+				display: flex;
+				justify-content: center;
+				gap: var(--gap);
+				width: 100%;
+				max-width: 900px;
+			}
+			.column{
+				width: var(--card-width);
+				min-height: var(--card-height);
+				border: 2px dashed rgba(255,255,255,0.15);
+				border-radius: 6px;
+				flex-shrink: 0;
+			}
+			.waste-slot{
+				width: var(--card-width);
+				height: var(--card-height);
+				position: relative;
+				border: 2px solid rgba(255,255,255,0.2);
+				border-radius: 6px;
+				flex-shrink: 0;
+			}
+			.foundation-slot, .deck-slot{
+				width: var(--card-width);
+				height: var(--card-height);
+				border: 2px solid rgba(255,255,255,0.3);
+				border-radius: 6px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-size: var(--font-val);
+				color: rgba(255,255,255,0.35);
+				position: relative;
+				cursor: pointer;
+				flex-shrink: 0;
+				touch-action: manipulation;
+			}
+			.foundation-slot.valid-target{
+				border-color: #ffeb3b;
+				box-shadow: 0 0 10px #ffeb3b88;
+			}
+			.card{
+				width: var(--card-width);
+				height: var(--card-height);
+				background-color: white;
+				border-radius: 6px;
+				border: 1px solid #999;
+				color: #111;
+				position: relative;
+				box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+				cursor: pointer;
+				flex-shrink: 0;
+				touch-action: manipulation;
+			}
+			.card.suit-D{
+				background-color: var(--bg-D);
+				border-color: #c8a000;
+			}
+			.card.suit-C{
+				background-color: var(--bg-C);
+				border-color: #0288d1;
+			}
+			.card.suit-S{
+				background-color: var(--bg-S);
+				border-color: #9c27b0;
+			}
+			.card.suit-B{
+				background-color: var(--bg-B);
+				border-color: #e65100;
+			}
+			.column .card{
+				margin-bottom: calc(-1 * var(--overlap));
+			}
+			.foundation-slot .card, .waste-slot .card{
+				position: absolute;
+				top: 0; left: 0;
+				margin-bottom: 0;
+			}
+			.foundation-slot .card{
+				pointer-events: none;
+			}
+			.foundation-slot .card:last-child{
+				pointer-events: auto;
+			}
+			.card.back{
+				background: #b71c1c linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%);
+				background-size: 10px 10px;
+			}
+			.card.selected{
+				box-shadow: 0 0 12px #ffeb3b;
+				transform: translateY(-8px);
+				z-index: 1000 !important;
+			}
+			.card-val{
+				position: absolute;
+				font-weight: bold;
+				font-size: var(--font-val);
+				color: #111;
+				pointer-events: none;
+				line-height: 1;
+			}
+			.v-tl{
+				top: 4px;
+				left: 5px;
+			}
+			.v-tr{
+				top: 4px;
+				right: 5px;
+			}
+			.v-bl{
+				bottom: 4px;
+				left: 5px;
+			}
+			.v-br{
+				bottom: 4px;
+				right: 5px;
+			}
+			.column .card:not(:last-child){
+				cursor: default;
+			}
+			*{
+				-webkit-tap-highlight-color: transparent;
+			}
+			button:focus, .card:focus {
+				outline: none;
+			}
+			@media (max-width: 380px){
+				.top-row{
+					flex-direction: column;
+					align-items: center;
+				}
+				.deck-area, .foundation-area{
+					justify-content: center;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Solitario carte napoletane</h1>
+		<button onclick="initGame()">Nuova Partita</button>
+		<div class="top-row">
+			<div class="deck-area">
+				<div id="deck" class="deck-slot" onclick="handleDeckClick()">Mazzo</div>
+				<div id="waste" class="waste-slot"></div>
+			</div>
+			<div class="foundation-area" id="foundation-area">
+				<div class="foundation-slot" data-fslot="0" onclick="handleFoundationSlotClick(0)">A</div>
+				<div class="foundation-slot" data-fslot="1" onclick="handleFoundationSlotClick(1)">A</div>
+				<div class="foundation-slot" data-fslot="2" onclick="handleFoundationSlotClick(2)">A</div>
+				<div class="foundation-slot" data-fslot="3" onclick="handleFoundationSlotClick(3)">A</div>
+			</div>
+		</div>
+		<div class="tableau" id="tableau">
+			<div class="column" id="col-0" onclick="handleEmptyColumnClick(0)"></div>
+			<div class="column" id="col-1" onclick="handleEmptyColumnClick(1)"></div>
+			<div class="column" id="col-2" onclick="handleEmptyColumnClick(2)"></div>
+			<div class="column" id="col-3" onclick="handleEmptyColumnClick(3)"></div>
+			<div class="column" id="col-4" onclick="handleEmptyColumnClick(4)"></div>
+		</div>
+		<script>
+			const SUITS = ['S', 'C', 'D', 'B'];
+			const IS_MULTIPLE_SELECTION_POSSIBLE = false;
+			let foundationSlots = [
+				{suit:null, value:0},
+				{suit:null, value:0},
+				{suit:null, value:0},
+				{suit:null, value:0}
+			];
+			let deckData = [];
+			let selection = null;
+
+			function initGame(){
+				deckData = [];
+				selection = null;
+				foundationSlots = [{suit:null,value:0},{suit:null,value:0},{suit:null,value:0},{suit:null,value:0}];
+				document.getElementById('waste').innerHTML = '';
+				document.querySelectorAll('.foundation-slot').forEach(s => {
+					s.querySelectorAll('.card').forEach(c => c.remove());
+				});
+				for(let s of SUITS){
+					for(let v = 1; v <= 10; v++){
+						deckData.push({ suit: s, value: v });
+					}
+				}
+				deckData.sort(() => Math.random() - 0.5);
+				for(let i = 0; i < 5; i++){
+					const col = document.getElementById(\`col-\${i}\`);
+					col.innerHTML = '';
+					const count = 5 - i;
+					for(let j = 0; j < count; j++){
+						addCard(col, deckData.pop(), j === count - 1);
+					}
+				}
+				updateDeckUI();
+			}
+
+			function addCard(container, data, faceUp){
+				const card = document.createElement('div');
+				card.className = \`card suit-\${data.suit}\`;
+				card.dataset.suit = data.suit;
+				card.dataset.value = data.value;
+				card.dataset.faceUp = faceUp ? "true" : "false";
+				if(faceUp){
+					renderCardContent(card);
+				}else{
+					card.classList.add('back');
+				}
+				card.addEventListener('click', e => {
+					e.stopPropagation();
+					handleCardClick(card);
+				});
+				container.appendChild(card);
+			}
+
+			function renderCardContent(card){
+				const v = card.dataset.value;
+				card.innerHTML = \`
+					<div class="card-val v-tl">\${v}</div><div class="card-val v-tr">\${v}</div>
+					<div class="card-val v-bl">\${v}</div><div class="card-val v-br">\${v}</div>\`;
+				card.classList.remove('back');
+				card.dataset.faceUp = "true";
+			}
+
+			function handleCardClick(card){
+				if(card.dataset.faceUp === "false"){
+					return;
+				}
+				const parent = card.parentElement;
+				const inFoundation = parent.classList.contains('foundation-slot');
+				const inWaste = parent.classList.contains('waste-slot');
+				const inColumn = parent.classList.contains('column');
+				if(!selection){
+					if(inFoundation){
+						const all = parent.querySelectorAll('.card');
+						if(card !== all[all.length - 1]){
+							return;
+						}
+						selection = {
+							cards: [card],
+							origin: parent,
+							originType: 'foundation',
+							fslot: parseInt(parent.dataset.fslot),
+							value: parseInt(card.dataset.value),
+							suit: card.dataset.suit
+						};
+					}else{
+						if(IS_MULTIPLE_SELECTION_POSSIBLE){
+							const siblings = Array.from(parent.children);
+							const idx = siblings.indexOf(card);
+							selection = {
+								cards: siblings.slice(idx),
+								origin: parent,
+								originType: inWaste ? 'waste' : 'column',
+								value: parseInt(card.dataset.value),
+								suit: card.dataset.suit
+							};
+						}else{
+							if(card !== parent.lastElementChild){
+								console.log("Puoi muovere solo l'ultima carta della colonna!");
+								return; 
+							}
+							selection = {
+								cards: [card],
+								origin: parent,
+								originType: inWaste ? 'waste' : 'column',
+								value: parseInt(card.dataset.value),
+								suit: card.dataset.suit
+							};
+						}
+					}
+					selection.cards.forEach(c => c.classList.add('selected'));
+					highlightValidFoundations();
+				}else{
+					if(inFoundation){
+						handleFoundationSlotClick(parseInt(parent.dataset.fslot));
+					}else if(inColumn &&
+						parseInt(card.dataset.value) === selection.value + 1 &&
+						card.dataset.suit !== selection.suit &&
+						card === parent.lastElementChild){
+						moveSelectionToColumn(parent);
+					}else{
+						clearSelection();
+					}
+				}
+			}
+
+			function handleEmptyColumnClick(idx){
+				const col = document.getElementById(\`col-\${idx}\`);
+				if(selection && col.children.length === 0){
+					moveSelectionToColumn(col);
+				}else{
+					clearSelection();
+				}
+			}
+
+			function handleFoundationSlotClick(fslotIdx){
+				clearHighlights();
+				if(!selection){
+					return;
+				}
+				if(selection.cards.length > 1){
+					clearSelection();
+					return;
+				}
+				const card = selection.cards[0];
+				const cardSuit = card.dataset.suit;
+				const cardValue = parseInt(card.dataset.value);
+				const fs = foundationSlots[fslotIdx];
+				const valid = (fs.suit === null && cardValue === 1)||(fs.suit === cardSuit && cardValue === fs.value + 1);
+				if(valid){
+					placeCardOnFoundation(fslotIdx, card);
+				}else{
+					clearSelection();
+				}
+			}
+
+			function placeCardOnFoundation(fslotIdx, card){
+				const destSlot = document.querySelector(\`.foundation-slot[data-fslot="\${fslotIdx}"]\`);
+				const origin = selection.origin;
+				const originType = selection.originType;
+				const originFslot = selection.fslot;
+				card.classList.remove('selected');
+				origin.removeChild(card);
+				destSlot.appendChild(card);
+				foundationSlots[fslotIdx].suit = card.dataset.suit;
+				foundationSlots[fslotIdx].value = parseInt(card.dataset.value);
+				if(originType === 'foundation'){
+					foundationSlots[originFslot].value -= 1;
+					if(foundationSlots[originFslot].value === 0){
+						foundationSlots[originFslot].suit = null;
+					}
+					refreshFoundationPointerEvents(origin);
+				}
+				selection = null;
+				refreshFoundationPointerEvents(destSlot);
+				revealTopCard(origin);
+				checkWin();
+			}
+	
+			function moveSelectionToColumn(destCol){
+				const origin = selection.origin;
+				const originType = selection.originType;
+				selection.cards.forEach(c => {
+					c.classList.remove('selected');
+					destCol.appendChild(c);
+				});
+				if(originType === 'foundation'){
+					const fslotIdx = selection.fslot;
+					foundationSlots[fslotIdx].value -= 1;
+					if(foundationSlots[fslotIdx].value === 0){
+						foundationSlots[fslotIdx].suit = null;
+					}
+					refreshFoundationPointerEvents(origin);
+				}
+				selection = null;
+				clearHighlights();
+				revealTopCard(origin);
+			}
+
+			function refreshFoundationPointerEvents(slot){
+				if(!slot.classList.contains('foundation-slot')){
+					return;
+				}
+				const cards = slot.querySelectorAll('.card');
+				cards.forEach((c, i) => {
+					c.style.pointerEvents = (i === cards.length - 1) ? 'auto' : 'none';
+				});
+			}
+
+			function revealTopCard(container){
+				if(!container){
+					return;
+				}
+				const last = container.lastElementChild;
+				if(last && last.classList.contains('card') && last.dataset.faceUp === "false"){
+					renderCardContent(last);
+				}
+			}
+
+			function handleDeckClick(){
+				const waste = document.getElementById('waste');
+				clearSelection();
+				if(deckData.length > 0){
+					const emptyCol = findEmptyColumn();
+					const cardData = deckData.pop();
+					addCard(emptyCol || waste, cardData, true);
+				}else{
+					const wasteCards = Array.from(waste.children);
+					if(wasteCards.length === 0){
+						alert("Nessuna carta rimasta nel mazzo o negli scarti!");
+						return;
+					}
+					wasteCards.reverse().forEach(c =>
+						deckData.push({ suit: c.dataset.suit, value: parseInt(c.dataset.value) })
+					);
+					waste.innerHTML = '';
+				}
+				updateDeckUI();
+			}
+
+			function findEmptyColumn(){
+				for(let i = 0; i < 5; i++){
+					const col = document.getElementById(\`col-\${i}\`);
+					if(col.children.length === 0){
+						return col;
+					}
+				}
+				return null;
+			}
+
+			function clearSelection(){
+				if(selection){
+					selection.cards.forEach(c => c.classList.remove('selected'));
+					selection = null;
+				}
+				clearHighlights();
+			}
+
+			function highlightValidFoundations(){
+				if(!selection || selection.cards.length !== 1){
+					return;
+				}
+				const { suit, value } = selection;
+				if(value === 1){
+					const firstEmpty = foundationSlots.findIndex(fs => fs.suit === null);
+					if(firstEmpty !== -1){
+						document.querySelector(\`.foundation-slot[data-fslot="\${firstEmpty}"]\`).classList.add('valid-target');
+					}
+				}else{
+					foundationSlots.forEach((fs, i) => {
+						if(fs.suit === suit && value === fs.value + 1){
+							document.querySelector(\`.foundation-slot[data-fslot="\${i}"]\`).classList.add('valid-target');
+						}
+					});
+				}
+			}
+
+			function clearHighlights(){
+				document.querySelectorAll('.foundation-slot.valid-target').forEach(s => s.classList.remove('valid-target'));
+			}
+
+			function updateDeckUI(){
+				const d = document.getElementById('deck');
+				if(deckData.length > 0){
+					d.className = 'deck-slot card back';
+					d.innerHTML = '';
+				}else{
+					d.className = 'deck-slot';
+					d.innerHTML = '⟳';
+				}
+			}
+
+			function checkWin(){
+				if(foundationSlots.every(fs => fs.value === 10)){
+					setTimeout(() => alert('🎉 Hai vinto! Complimenti!'), 100);
+				}
+			}
+
+			initGame();
 		<\/script>
 	</body>
 </html>` },
@@ -4517,22 +5097,22 @@
 			<button type="button" onclick="animatedSolving()">How To (Demo)</button>
 		</div>
 		<script>
-			const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+			const AUDIO_CTX = new (window.AudioContext || window.webkitAudioContext)();
 
 			function playTone(freq, type, duration){
-				if(audioCtx.state === 'suspended'){
-					audioCtx.resume();
+				if(AUDIO_CTX.state === 'suspended'){
+					AUDIO_CTX.resume();
 				}
-				const osc = audioCtx.createOscillator();
-				const gain = audioCtx.createGain();
+				const osc = AUDIO_CTX.createOscillator();
+				const gain = AUDIO_CTX.createGain();
 				osc.type = type;
-				osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-				gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-				gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+				osc.frequency.setValueAtTime(freq, AUDIO_CTX.currentTime);
+				gain.gain.setValueAtTime(0.1, AUDIO_CTX.currentTime);
+				gain.gain.exponentialRampToValueAtTime(0.0001, AUDIO_CTX.currentTime + duration);
 				osc.connect(gain);
-				gain.connect(audioCtx.destination);
+				gain.connect(AUDIO_CTX.destination);
 				osc.start();
-				osc.stop(audioCtx.currentTime + duration);
+				osc.stop(AUDIO_CTX.currentTime + duration);
 			}
 
 			const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
@@ -4922,9 +5502,9 @@
 			}
 
 			let flagDiagonals = false;
-			const canvas = document.getElementById('canvas');
+			const CANVAS = document.getElementById('canvas');
 			if(window.innerWidth < 600){
-				canvas.width = 300; canvas.height = 300;
+				CANVAS.width = 300; CANVAS.height = 300;
 			}
 
 			function fillSelectOption(){
@@ -4943,12 +5523,12 @@
 
 			function drawPolygon(){
 				const numberOfSides = parseInt(document.getElementById('numberOfSides').value);
-				const ctx = canvas.getContext('2d');
-				const centerX = canvas.width/2;
-				const centerY = canvas.height/2;
-				const radius = canvas.width*0.45;
+				const ctx = CANVAS.getContext('2d');
+				const centerX = CANVAS.width/2;
+				const centerY = CANVAS.height/2;
+				const radius = CANVAS.width*0.45;
 				const angleStep = (2*Math.PI)/numberOfSides;
-				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				ctx.clearRect(0, 0, CANVAS.width, CANVAS.height);
 				let vertices = [];
 				for(let i = 0; i < numberOfSides; i++){
 					const angle = (-0.5*Math.PI) + (i*angleStep);
@@ -5492,7 +6072,7 @@
 				document.querySelector("#yellow"), document.querySelector("#black")
 			];
 
-			const highlightError = false;
+			const HIGHLIGHT_ERROR = false;
 			let viewModes = ["Essential", "Mini", "Medium", "Maxi"];
 			let currentModeIndex = viewModes.length - 1;
 
@@ -5602,7 +6182,7 @@
 					INPUTS[4].value = parseInt((getMax() + getMin())/2);
 					VALUES[4].textContent = INPUTS[4].value;
 				}else{
-					if(highlightError){
+					if(HIGHLIGHT_ERROR){
 						flashError();
 					}
 				}
@@ -5658,7 +6238,7 @@
 					v[index] += delta;
 					setColor(v[0], v[1], v[2]);
 				}else{
-					if(highlightError){
+					if(HIGHLIGHT_ERROR){
 						flashError();
 					}
 				}
@@ -5672,7 +6252,7 @@
 				if(flag){
 					setColor(r, g, b);
 				}else{
-					if(highlightError){
+					if(HIGHLIGHT_ERROR){
 						flashError();
 					}
 				}
@@ -6072,7 +6652,7 @@
 					document.querySelector("#v1_yellow"),
 					document.querySelector("#v1_black")
 				];
-				const highlightError = false;
+				const HIGHLIGHT_ERROR = false;
 				let v1_viewModes = ["Essential", "Mini", "Medium", "Maxi"];
 				let v1_currentModeIndex = v1_viewModes.length - 1;
 
@@ -6186,7 +6766,7 @@
 						v1_INPUTS[4].value = parseInt((v1_getMax() + v1_getMin())/2);
 						v1_VALUES[4].textContent = v1_INPUTS[4].value;
 					}else{
-						if(highlightError){
+						if(HIGHLIGHT_ERROR){
 							v1_flashError();
 						}
 					}
@@ -6242,7 +6822,7 @@
 						v[index] += delta;
 						v1_setColor(v[0], v[1], v[2]);
 					}else{
-						if(highlightError){
+						if(HIGHLIGHT_ERROR){
 							v1_flashError();
 						}
 					}
@@ -6256,7 +6836,7 @@
 					if(flag){
 						v1_setColor(r, g, b);
 					}else{
-						if(highlightError){
+						if(HIGHLIGHT_ERROR){
 							v1_flashError();
 						}
 					}
@@ -6399,7 +6979,7 @@
 			</div>
 			<script>
 				const v2_BASIC_COLORS = ['v2_Red', 'v2_Green', 'v2_Blue'];
-				const v2_hexOutput = document.getElementById('v2_valueHexCode');
+				const v2_HEX_OUTPUT = document.getElementById('v2_valueHexCode');
 
 				function v2_getColor(){
 					let backgroundColor = "#";
@@ -6413,7 +6993,7 @@
 				function v2_updateUI(){
 					const color = v2_getColor();
 					document.getElementById('v2-body').style.backgroundColor = color;
-					v2_hexOutput.textContent = color;
+					v2_HEX_OUTPUT.textContent = color;
 				}
 
 				document.querySelectorAll('input[type="radio"]').forEach(radio => {
@@ -6595,11 +7175,11 @@
 				</div>
 			</div>
 			<script>
-				const v3_basicColors = ['v3_Red', 'v3_Green', 'v3_Blue'];
+				const v3_BASIC_COLORS = ['v3_Red', 'v3_Green', 'v3_Blue'];
 
 				function v3_getColor(){
 					let hex = "#";
-					v3_basicColors.forEach(name => {
+					v3_BASIC_COLORS.forEach(name => {
 						const active = document.querySelector(\`input[name="\${name}"]:checked\`);
 						hex += active ? active.value : "00";
 					});
@@ -6614,7 +7194,7 @@
 				}
 
 				function v3_canMoveAll(step){
-					return v3_basicColors.every(name => {
+					return v3_BASIC_COLORS.every(name => {
 						let radios = document.getElementsByName(name);
 						let currentIndex = Array.from(radios).findIndex(r => r.checked);
 						let newIndex = currentIndex + step;
@@ -6623,7 +7203,7 @@
 				}
 
 				function v3_brighterBasic(idx){
-					let ele = document.getElementsByName(v3_basicColors[idx]);
+					let ele = document.getElementsByName(v3_BASIC_COLORS[idx]);
 					for(let j = ele.length - 2; j >= 0; j--){
 						if(ele[j].checked){
 							ele[j].checked = false;
@@ -6635,7 +7215,7 @@
 				}
 
 				function v3_darkerBasic(idx){
-					let ele = document.getElementsByName(v3_basicColors[idx]);
+					let ele = document.getElementsByName(v3_BASIC_COLORS[idx]);
 					for(let j = 1; j < ele.length; j++){
 						if(ele[j].checked){
 							ele[j].checked = false;
@@ -6698,7 +7278,7 @@
 				}
 
 				function v3_random(){
-					v3_basicColors.forEach(name => {
+					v3_BASIC_COLORS.forEach(name => {
 						let ele = document.getElementsByName(name);
 						let r = Math.floor(Math.random()*ele.length);
 						ele[r].checked = true;
@@ -7839,10 +8419,10 @@
 			let oscillatorinputType = "sine";
 			let frequencyHz = 440;
 			let indexArray = 4;
-			const activeVoices = new Map();
+			const ACTIVE_VOICES = new Map();
 			const MAX_FREQUENCY_VALUE = [50,100,200,500,1000,2000,4000,8000,16000,24000];
-			const keyMap ={"a":"C4","w":"Csharp4","s":"D4","e":"Dsharp4","d":"E4","f":"F4","t":"Fsharp4","g":"G4","y":"Gsharp4","h":"A4","u":"Asharp4","j":"B4","k":"C5"};
-			const freqMap ={"C4":261.62,"Csharp4":277.18,"D4":293.66,"Dsharp4":311.12,"E4":329.62,"F4":349.22,"Fsharp4":369.99,"G4":391.99,"Gsharp4":415.3,"A4":440,"Asharp4":466.16,"B4":493.88,"C5":523.25};
+			const KEY_MAP = {"a":"C4","w":"Csharp4","s":"D4","e":"Dsharp4","d":"E4","f":"F4","t":"Fsharp4","g":"G4","y":"Gsharp4","h":"A4","u":"Asharp4","j":"B4","k":"C5"};
+			const FREQ_MAP = {"C4":261.62,"Csharp4":277.18,"D4":293.66,"Dsharp4":311.12,"E4":329.62,"F4":349.22,"Fsharp4":369.99,"G4":391.99,"Gsharp4":415.3,"A4":440,"Asharp4":466.16,"B4":493.88,"C5":523.25};
 
 			function initAudio(){
 				if(!audioContext){
@@ -7891,7 +8471,7 @@
 				if(!audioContext){
 					return;
 				}
-				activeVoices.forEach(voice => {
+				ACTIVE_VOICES.forEach(voice => {
 					if(voice.harmonics){
 						const now = audioContext.currentTime;
 						voice.harmonics.h2.gain.gain.setValueAtTime(h2Val, now);
@@ -7911,8 +8491,8 @@
 			function setFrequency(){
 				frequencyHz = parseInt(document.getElementById("frequencyRange").value);
 				document.getElementById("FREQUENCY_VALUE").textContent = frequencyHz + " Hz";
-				if(activeVoices.has("mono")){
-					const v = activeVoices.get("mono"), now = audioContext.currentTime;
+				if(ACTIVE_VOICES.has("mono")){
+					const v = ACTIVE_VOICES.get("mono"), now = audioContext.currentTime;
 					v.osc.frequency.setTargetAtTime(frequencyHz, now, 0.02);
 					v.harmonics.h2.osc.frequency.setTargetAtTime(frequencyHz*2, now, 0.02);
 					v.harmonics.h3.osc.frequency.setTargetAtTime(frequencyHz*3, now, 0.02);
@@ -7940,7 +8520,7 @@
 
 			function playVoice(id, freq){
 				initAudio();
-				if(activeVoices.has(id)){
+				if(ACTIVE_VOICES.has(id)){
 					return;
 				}
 				const now = audioContext.currentTime;
@@ -7960,14 +8540,14 @@
 				const h2 = createHarmonic(freq*2, parseFloat(document.getElementById("h2").value), vGain);
 				const h3 = createHarmonic(freq*3, parseFloat(document.getElementById("h3").value), vGain);
 				const h4 = createHarmonic(freq*4, parseFloat(document.getElementById("h4").value), vGain);
-				activeVoices.set(id,{osc, gain: vGain, harmonics:{h2, h3, h4}});
+				ACTIVE_VOICES.set(id,{osc, gain: vGain, harmonics:{h2, h3, h4}});
 			}
 
 			function stopVoice(id){
-				if(!activeVoices.has(id)){
+				if(!ACTIVE_VOICES.has(id)){
 					return;
 				}
-				const v = activeVoices.get(id), now = audioContext.currentTime, r = document.getElementById("release").value/1000;
+				const v = ACTIVE_VOICES.get(id), now = audioContext.currentTime, r = document.getElementById("release").value/1000;
 				v.gain.gain.cancelScheduledValues(now);
 				v.gain.gain.setValueAtTime(v.gain.gain.value, now);
 				v.gain.gain.linearRampToValueAtTime(0, now + r);
@@ -7979,7 +8559,7 @@
 						v.harmonics.h4.osc.stop();
 						v.gain.disconnect();
 					}catch(e){} 
-					activeVoices.delete(id); 
+					ACTIVE_VOICES.delete(id); 
 				}, r*1000 + 50);
 			}
 
@@ -8072,7 +8652,7 @@
 			document.getElementsByName("oscillatorType").forEach(el => {
 				el.addEventListener("change",() => {
 					oscillatorinputType = el.value; 
-					if(activeVoices.has("mono")) activeVoices.get("mono").osc.type = el.value;
+					if(ACTIVE_VOICES.has("mono")) ACTIVE_VOICES.get("mono").osc.type = el.value;
 				});
 			});
 
@@ -8136,10 +8716,10 @@
 
 			document.addEventListener("keydown", e => {
 				let key = e.key.toLowerCase();
-				if(key in keyMap){
-					const btn = document.getElementById(keyMap[key]);
+				if(key in KEY_MAP){
+					const btn = document.getElementById(KEY_MAP[key]);
 					if(btn && !btn.classList.contains("pressed")){
-						btn.classList.add("pressed"); playVoice(btn.id, freqMap[btn.id]);
+						btn.classList.add("pressed"); playVoice(btn.id, FREQ_MAP[btn.id]);
 					}
 				}else if(key === "l"){
 					if(sOn){
@@ -8152,8 +8732,8 @@
 
 			document.addEventListener("keyup", e => {
 				let key = e.key.toLowerCase();
-				if(key in keyMap){
-					const btn = document.getElementById(keyMap[key]);
+				if(key in KEY_MAP){
+					const btn = document.getElementById(KEY_MAP[key]);
 					if(btn){
 						btn.classList.remove("pressed");
 						stopVoice(btn.id);
@@ -8166,7 +8746,7 @@
 					e.preventDefault();
 					if(!btn.classList.contains("pressed")){
 						btn.classList.add("pressed");
-						playVoice(btn.id, freqMap[btn.id]);
+						playVoice(btn.id, FREQ_MAP[btn.id]);
 					}
 				};
 				const stopNote = (e) => {

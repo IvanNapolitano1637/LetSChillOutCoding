@@ -347,7 +347,7 @@
 					document.querySelector("#v1_yellow"),
 					document.querySelector("#v1_black")
 				];
-				const highlightError = false;
+				const HIGHLIGHT_ERROR = false;
 				let v1_viewModes = ["Essential", "Mini", "Medium", "Maxi"];
 				let v1_currentModeIndex = v1_viewModes.length - 1;
 
@@ -461,7 +461,7 @@
 						v1_INPUTS[4].value = parseInt((v1_getMax() + v1_getMin())/2);
 						v1_VALUES[4].textContent = v1_INPUTS[4].value;
 					}else{
-						if(highlightError){
+						if(HIGHLIGHT_ERROR){
 							v1_flashError();
 						}
 					}
@@ -517,7 +517,7 @@
 						v[index] += delta;
 						v1_setColor(v[0], v[1], v[2]);
 					}else{
-						if(highlightError){
+						if(HIGHLIGHT_ERROR){
 							v1_flashError();
 						}
 					}
@@ -531,7 +531,7 @@
 					if(flag){
 						v1_setColor(r, g, b);
 					}else{
-						if(highlightError){
+						if(HIGHLIGHT_ERROR){
 							v1_flashError();
 						}
 					}
@@ -674,7 +674,7 @@
 			</div>
 			<script>
 				const v2_BASIC_COLORS = ['v2_Red', 'v2_Green', 'v2_Blue'];
-				const v2_hexOutput = document.getElementById('v2_valueHexCode');
+				const v2_HEX_OUTPUT = document.getElementById('v2_valueHexCode');
 
 				function v2_getColor(){
 					let backgroundColor = "#";
@@ -688,7 +688,7 @@
 				function v2_updateUI(){
 					const color = v2_getColor();
 					document.getElementById('v2-body').style.backgroundColor = color;
-					v2_hexOutput.textContent = color;
+					v2_HEX_OUTPUT.textContent = color;
 				}
 
 				document.querySelectorAll('input[type="radio"]').forEach(radio => {
@@ -870,11 +870,11 @@
 				</div>
 			</div>
 			<script>
-				const v3_basicColors = ['v3_Red', 'v3_Green', 'v3_Blue'];
+				const v3_BASIC_COLORS = ['v3_Red', 'v3_Green', 'v3_Blue'];
 
 				function v3_getColor(){
 					let hex = "#";
-					v3_basicColors.forEach(name => {
+					v3_BASIC_COLORS.forEach(name => {
 						const active = document.querySelector(`input[name="${name}"]:checked`);
 						hex += active ? active.value : "00";
 					});
@@ -889,7 +889,7 @@
 				}
 
 				function v3_canMoveAll(step){
-					return v3_basicColors.every(name => {
+					return v3_BASIC_COLORS.every(name => {
 						let radios = document.getElementsByName(name);
 						let currentIndex = Array.from(radios).findIndex(r => r.checked);
 						let newIndex = currentIndex + step;
@@ -898,7 +898,7 @@
 				}
 
 				function v3_brighterBasic(idx){
-					let ele = document.getElementsByName(v3_basicColors[idx]);
+					let ele = document.getElementsByName(v3_BASIC_COLORS[idx]);
 					for(let j = ele.length - 2; j >= 0; j--){
 						if(ele[j].checked){
 							ele[j].checked = false;
@@ -910,7 +910,7 @@
 				}
 
 				function v3_darkerBasic(idx){
-					let ele = document.getElementsByName(v3_basicColors[idx]);
+					let ele = document.getElementsByName(v3_BASIC_COLORS[idx]);
 					for(let j = 1; j < ele.length; j++){
 						if(ele[j].checked){
 							ele[j].checked = false;
@@ -973,7 +973,7 @@
 				}
 
 				function v3_random(){
-					v3_basicColors.forEach(name => {
+					v3_BASIC_COLORS.forEach(name => {
 						let ele = document.getElementsByName(name);
 						let r = Math.floor(Math.random()*ele.length);
 						ele[r].checked = true;
