@@ -189,7 +189,7 @@
 <body>
 <div id="dashboard">
 	<h1>Toolbox & Playground</h1>
-	<div class='section'><h2>🕰️ Clocks</h2><div class='grid'><button class='card' onclick="openPage('Clocks_24h Clock.html')">24h Clock</button><button class='card' onclick="openPage('Clocks_Binary Clock.html')">Binary Clock</button><button class='card' onclick="openPage('Clocks_Clock.html')">Clock</button><button class='card' onclick="openPage('Clocks_Strange Clock.html')">Strange Clock</button></div></div><div class='section'><h2>🎮 Games</h2><div class='grid'><button class='card' onclick="openPage('Games_Backgammon.html')">Backgammon</button><button class='card' onclick="openPage('Games_Checkers.html')">Checkers</button><button class='card' onclick="openPage('Games_Chess.html')">Chess</button><button class='card' onclick="openPage('Games_Connect Four.html')">Connect Four</button><button class='card' onclick="openPage('Games_Eight Queens.html')">Eight Queens</button><button class='card' onclick="openPage('Games_Fifteen.html')">Fifteen</button><button class='card' onclick="openPage('Games_Game of Life.html')">Game of Life</button><button class='card' onclick="openPage('Games_Modular Matching.html')">Modular Matching</button><button class='card' onclick="openPage('Games_Solitario carte napoletane.html')">Solitario carte napoletane</button><button class='card' onclick="openPage('Games_Tower of Hanoi.html')">Tower of Hanoi</button></div></div><div class='section'><h2>🛠️ Tools</h2><div class='grid'><button class='card' onclick="openPage('Tools_Colors.html')">Colors</button><button class='card' onclick="openPage('Tools_Colors4.html')">Colors4</button><button class='card' onclick="openPage('Tools_Days.html')">Days</button><button class='card' onclick="openPage('Tools_Some Maths.html')">Some Maths</button><button class='card' onclick="openPage('Tools_Sounds.html')">Sounds</button><button class='card' onclick="openPage('Tools_SuperEnalotto.html')">SuperEnalotto</button></div></div>
+	<div class='section'><h2>🕰️ Clocks</h2><div class='grid'><button class='card' onclick="openPage('Clocks_24h Clock.html')">24h Clock</button><button class='card' onclick="openPage('Clocks_Analog Clock.html')">Analog Clock</button><button class='card' onclick="openPage('Clocks_Binary Clock.html')">Binary Clock</button><button class='card' onclick="openPage('Clocks_Clock.html')">Clock</button><button class='card' onclick="openPage('Clocks_Digital Clock.html')">Digital Clock</button><button class='card' onclick="openPage('Clocks_Seven-Segment Digital Clock.html')">Seven-Segment Digital Clock</button><button class='card' onclick="openPage('Clocks_Strange Clock.html')">Strange Clock</button><button class='card' onclick="openPage('Clocks_World Time Zones.html')">World Time Zones</button></div></div><div class='section'><h2>🎮 Games</h2><div class='grid'><button class='card' onclick="openPage('Games_Backgammon.html')">Backgammon</button><button class='card' onclick="openPage('Games_Checkers.html')">Checkers</button><button class='card' onclick="openPage('Games_Chess.html')">Chess</button><button class='card' onclick="openPage('Games_Connect Four.html')">Connect Four</button><button class='card' onclick="openPage('Games_Eight Queens.html')">Eight Queens</button><button class='card' onclick="openPage('Games_Fifteen.html')">Fifteen</button><button class='card' onclick="openPage('Games_Game of Life.html')">Game of Life</button><button class='card' onclick="openPage('Games_Modular Matching.html')">Modular Matching</button><button class='card' onclick="openPage('Games_Solitario carte napoletane.html')">Solitario carte napoletane</button><button class='card' onclick="openPage('Games_Tower of Hanoi.html')">Tower of Hanoi</button></div></div><div class='section'><h2>🛠️ Tools</h2><div class='grid'><button class='card' onclick="openPage('Tools_Colors.html')">Colors</button><button class='card' onclick="openPage('Tools_Colors4.html')">Colors4</button><button class='card' onclick="openPage('Tools_Days.html')">Days</button><button class='card' onclick="openPage('Tools_Some Maths.html')">Some Maths</button><button class='card' onclick="openPage('Tools_Sounds.html')">Sounds</button><button class='card' onclick="openPage('Tools_SuperEnalotto.html')">SuperEnalotto</button></div></div>
 </div>
 <div id="viewer">
 	<div id="app-header">
@@ -429,6 +429,124 @@
 			drawNumbers();
 			setClock();
 			syncClockDirection();
+		<\/script>
+	</body>
+</html>` },
+
+	// --- Analog Clock ---
+	'Clocks_Analog Clock.html': { name: `Analog Clock`, content: `<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>Analog Clock</title>
+		<style>
+			body{
+				display: flex;
+				height: 100vh;
+				margin: 0;
+				background: #111;
+				justify-content: center;
+				align-items: center;
+				overflow: hidden;
+				font-family: Arial, sans-serif;
+			}
+			canvas{
+				background-color: #000;
+				border-radius: 50%;
+				box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+				max-width: 90vw;
+				max-height: 90vh;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="analogClock"></canvas>
+		<script>
+			const CANVAS = document.getElementById('analogClock');
+			const CTX = CANVAS.getContext('2d');
+			let radius;
+
+			function resizeCanvas(){
+				const size = Math.min(window.innerWidth, window.innerHeight)*0.85;
+				CANVAS.width = size;
+				CANVAS.height = size;
+				radius = CANVAS.height/2;
+				CTX.setTransform(1, 0, 0, 1, 0, 0); 
+				CTX.translate(radius, radius);
+				drawClock();
+			}
+
+			function drawClock(){
+				drawFace(CTX, radius);
+				drawNumbers(CTX, radius);
+				drawTime(CTX, radius);
+			}
+
+			function drawFace(CTX, radius){
+				CTX.beginPath();
+				CTX.arc(0, 0, radius*0.95, 0, 2*Math.PI);
+				CTX.fillStyle = '#000';
+				CTX.fill();
+				const grad = CTX.createRadialGradient(0, 0, radius*0.85, 0, 0, radius*1.05);
+				grad.addColorStop(0, '#0ff');
+				grad.addColorStop(0.5, '#222');
+				grad.addColorStop(1, '#0ff');
+				CTX.strokeStyle = grad;
+				CTX.lineWidth = radius*0.07;
+				CTX.stroke();
+				CTX.beginPath();
+				CTX.arc(0, 0, radius*0.05, 0, 2*Math.PI);
+				CTX.fillStyle = '#0ff';
+				CTX.fill();
+			}
+
+			function drawNumbers(CTX, radius){
+				CTX.font = radius*0.15 + "px Arial";
+				CTX.fillStyle = '#0ff';
+				CTX.textBaseline = "middle";
+				CTX.textAlign = "center";
+				for(let num = 1; num <= 12; num++){
+					const ang = num*Math.PI/6;
+					CTX.rotate(ang);
+					CTX.translate(0, -radius*0.78);
+					CTX.rotate(-ang);
+					CTX.fillText(num.toString(), 0, 0);
+					CTX.rotate(ang);
+					CTX.translate(0, radius*0.78);
+					CTX.rotate(-ang);
+				}
+			}
+
+			function drawTime(CTX, radius){
+				const now = new Date();
+				let hour = now.getHours();
+				let minute = now.getMinutes();
+				let second = now.getSeconds();
+				hour = hour%12;
+				const hourAngle = (hour*Math.PI/6) + (minute*Math.PI/(6*60)) + (second*Math.PI/(360*60));
+				const minuteAngle = (minute*Math.PI/30) + (second*Math.PI/(30*60));
+				const secondAngle = second*Math.PI/30;
+				drawHand(CTX, hourAngle, radius*0.5, radius*0.06, '#0ff');
+				drawHand(CTX, minuteAngle, radius*0.75, radius*0.04, '#0ff');
+				drawHand(CTX, secondAngle, radius*0.85, radius*0.02, '#f00');
+			}
+
+			function drawHand(CTX, pos, length, width, color){
+				CTX.beginPath();
+				CTX.lineWidth = width;
+				CTX.lineCap = "round";
+				CTX.strokeStyle = color;
+				CTX.moveTo(0, 0);
+				CTX.rotate(pos);
+				CTX.lineTo(0, -length);
+				CTX.stroke();
+				CTX.rotate(-pos);
+			}
+
+			window.addEventListener('resize', resizeCanvas);
+			setInterval(drawClock, 200);
+			resizeCanvas();
 		<\/script>
 	</body>
 </html>` },
@@ -920,6 +1038,293 @@
 	</body>
 </html>` },
 
+	// --- Digital Clock ---
+	'Clocks_Digital Clock.html': { name: `Digital Clock`, content: `<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Digital Clock</title>
+		<style>
+			body{
+				display: flex;
+				height: 100vh;
+				margin: 0;
+				background: #111;
+				color: #0ff;
+				font-family: 'Courier New', Courier, monospace;
+				justify-content: center;
+				align-items: center;
+				user-select: none;
+				overflow: hidden;
+			}
+			#clock{
+				background: #000;
+				padding: 2vw 5vw;
+				border-radius: 20px;
+				box-shadow: 0 0 40px rgba(0, 255, 255, 0.5);
+				font-size: 15vw; 
+				font-weight: bold;
+				text-align: center;
+				white-space: nowrap;
+			}
+			@media (min-width: 1024px){
+				#clock{
+					font-size: 10rem;
+					padding: 30px 60px;
+				}
+			}
+			@media (max-width: 600px){
+				#clock{
+					font-size: 18vw;
+					padding: 15px 25px;
+					letter-spacing: -0.02em;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div id="clock">00:00:00</div>
+		<script>
+			function updateClock() {
+				const now = new Date();
+				const h = String(now.getHours()).padStart(2, '0');
+				const m = String(now.getMinutes()).padStart(2, '0');
+				const s = String(now.getSeconds()).padStart(2, '0');
+				const clockElement = document.getElementById('clock');
+				clockElement.textContent = \`\${h}:\${m}:\${s}\`;
+			}
+			updateClock();
+			setInterval(updateClock, 200);
+		<\/script>
+	</body>
+</html>` },
+
+	// --- Seven-Segment Digital Clock ---
+	'Clocks_Seven-Segment Digital Clock.html': { name: `Seven-Segment Digital Clock`, content: `<!DOCTYPE html>
+	<html lang="en">
+	<head>
+	  <meta charset="UTF-8" />
+	  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	  <title>Seven-Segment Digital Clock</title>
+	  <style>
+		:root{
+		  --digit-width: 60px;
+		  --digit-height: 120px;
+		  --seg-thickness: 8px;
+		  --gap: 15px;
+		  --bg-color: #000;
+		  --on-color: #0f0;
+		  --off-color: #111;
+		}
+		@media (max-width: 700px){
+		  :root{
+			--digit-width: 25px;
+			--digit-height: 50px;
+			--seg-thickness: 4px;
+			--gap: 8px;
+		  }
+		}
+		body{
+		  background-color: var(--bg-color);
+		  display: flex;
+		  flex-direction: column;
+		  justify-content: center;
+		  align-items: center;
+		  height: 100vh;
+		  margin: 0;
+		  gap: 40px;
+		  overflow: hidden;
+		}
+		.container{
+		  display: flex;
+		  flex-direction: column;
+		  align-items: center;
+		  gap: 30px;
+		}
+		.row{
+		  display: flex;
+		  gap: var(--gap);
+		  align-items: center;
+		}
+		.digit{
+		  position: relative;
+		  width: var(--digit-width);
+		  height: var(--digit-height);
+		}
+		.segment{
+		  position: absolute;
+		  background-color: var(--off-color);
+		  transition: background-color 0.2s, box-shadow 0.2s;
+		  border-radius: calc(var(--seg-thickness)/2);
+		}
+		.on{
+		  background-color: var(--on-color);
+		  box-shadow: 0 0 10px var(--on-color);
+		}
+		.segment.a{
+			top: 0;
+			left: var(--seg-thickness);
+			right: var(--seg-thickness);
+			height: var(--seg-thickness);
+		}
+		.segment.b{
+			top: var(--seg-thickness);
+			right: 0;
+			width: var(--seg-thickness);
+			height: calc(50% - var(--seg-thickness));
+		}
+		.segment.c{
+			bottom: var(--seg-thickness);
+			right: 0;
+			width: var(--seg-thickness);
+			height: calc(50% - var(--seg-thickness));
+		}
+		.segment.d{
+			bottom: 0;
+			left: var(--seg-thickness);
+			right: var(--seg-thickness);
+			height: var(--seg-thickness);
+		}
+		.segment.e{
+			bottom: var(--seg-thickness);
+			left: 0;
+			width: var(--seg-thickness);
+			height: calc(50% - var(--seg-thickness));
+		}
+		.segment.f{
+			top: var(--seg-thickness);
+			left: 0;
+			width: var(--seg-thickness);
+			height: calc(50% - var(--seg-thickness));
+		}
+		.segment.g{
+			top: calc(50% - var(--seg-thickness)/2);
+			left: var(--seg-thickness);
+			right: var(--seg-thickness);
+			height: var(--seg-thickness);
+		}
+		.colon{
+		  display: flex;
+		  flex-direction: column;
+		  justify-content: center;
+		  gap: calc(var(--digit-height)/4);
+		}
+		.dot{
+		  width: var(--seg-thickness);
+		  height: var(--seg-thickness);
+		  background-color: var(--on-color);
+		  border-radius: 50%;
+		  box-shadow: 0 0 10px var(--on-color);
+		}
+		.slash{
+		  width: var(--seg-thickness);
+		  height: var(--digit-height);
+		  background-color: var(--on-color);
+		  transform: rotate(20deg);
+		  box-shadow: 0 0 10px var(--on-color);
+		  border-radius: var(--seg-thickness);
+		  margin: 0 5px;
+		}
+	  </style>
+	</head>
+	<body>
+	  <div class="container">
+		<div class="row" id="clock-row"></div>
+		<div class="row" id="date-row"></div>
+	  </div>
+	  <script>
+		const SEGMENT_MAP = {
+		  "0": ["a", "b", "c", "d", "e", "f"],
+		  "1": ["b", "c"],
+		  "2": ["a", "b", "g", "e", "d"],
+		  "3": ["a", "b", "g", "c", "d"],
+		  "4": ["f", "g", "b", "c"],
+		  "5": ["a", "f", "g", "c", "d"],
+		  "6": ["a", "f", "g", "c", "d", "e"],
+		  "7": ["a", "b", "c"],
+		  "8": ["a", "b", "c", "d", "e", "f", "g"],
+		  "9": ["a", "b", "c", "d", "f", "g"]
+		};
+
+		function createDigit(){
+			const digit = document.createElement('div');
+			digit.classList.add('digit');
+			['a','b','c','d','e','f','g'].forEach(seg => {
+				const segDiv = document.createElement('div');
+				segDiv.classList.add('segment', seg);
+				digit.appendChild(segDiv);
+			});
+			return digit;
+		}
+
+		function createSeparator(type){
+			const sep = document.createElement('div');
+			if(type === 'colon'){
+				sep.classList.add('colon');
+				sep.innerHTML = \`<div class="dot"></div><div class="dot"></div>\`;
+			}else{
+				sep.classList.add('slash');
+			}
+			return sep;
+		}
+
+		const CLOCK_ROW = document.getElementById('clock-row');
+		const DATE_ROW = document.getElementById('date-row');
+		const CLOCK_DIGITS = [];
+		const DATE_DIGITS = [];
+
+		for(let i = 0; i < 6; i++){
+			const d = createDigit();
+			CLOCK_DIGITS.push(d);
+			CLOCK_ROW.appendChild(d);
+			if(i === 1 || i === 3){
+				CLOCK_ROW.appendChild(createSeparator('colon'));
+			}
+		}
+
+		for(let i = 0; i < 6; i++){
+			const d = createDigit();
+			DATE_DIGITS.push(d);
+			DATE_ROW.appendChild(d);
+			if(i === 1 || i === 3){
+				DATE_ROW.appendChild(createSeparator('slash'));
+			}
+		}
+
+		function updateDisplay(){
+			const now = new Date();
+			const h = String(now.getHours()).padStart(2, '0');
+			const m = String(now.getMinutes()).padStart(2, '0');
+			const s = String(now.getSeconds()).padStart(2, '0');
+			renderDigits(h + m + s, CLOCK_DIGITS);
+			const dd = String(now.getDate()).padStart(2, '0');
+			const mm = String(now.getMonth() + 1).padStart(2, '0');
+			const yy = String(now.getFullYear()).slice(-2);
+			renderDigits(dd + mm + yy, DATE_DIGITS);
+		}
+
+		function renderDigits(str, digitElements){
+			for(let i = 0; i < str.length; i++){
+				const val = str[i];
+				const segments = digitElements[i].querySelectorAll('.segment');
+				segments.forEach(seg => {
+					const segLetter = seg.classList[1];
+					if(SEGMENT_MAP[val].includes(segLetter)){
+						seg.classList.add('on');
+					}else{
+						seg.classList.remove('on');
+					}
+				});
+			}
+		}
+
+		setInterval(updateDisplay, 200);
+		updateDisplay();
+	  <\/script>
+	</body>
+</html>` },
+
 	// --- Strange Clock ---
 	'Clocks_Strange Clock.html': { name: `Strange Clock`, content: `<!DOCTYPE html>
 <html lang="en"><!--C04#015 - Paolo - Strange Clock-->
@@ -1014,6 +1419,592 @@
 		<\/script>
 	</body>
 </html>` },
+
+	// --- World Time Zones ---
+	'Clocks_World Time Zones.html': { name: `World Time Zones`, content: `<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>World Time Zones</title>
+		<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+		<style>
+			:root{
+				--bg: #0d0d12;
+				--surface: #16161f;
+				--surface2: #1e1e2a;
+				--border: #2a2a3a;
+				--accent: #00e5a0;
+				--accent2: #7c6aff;
+				--text: #e8e8f0;
+				--muted: #6b6b85;
+			}
+			body.light-mode{
+				--bg: #f0f2f5;
+				--surface: #ffffff;
+				--surface2: #e4e6eb;
+				--border: #d8dadf;
+				--accent: #00a372;
+				--accent2: #5a4ad1;
+				--text: #1c1e21;
+				--muted: #65676b;
+			}
+			*{
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+			}
+			body{
+				font-family: 'Syne', sans-serif;
+				background: var(--bg);
+				color: var(--text);
+				min-height: 100vh;
+				padding: 24px 16px 48px;
+				transition: background-color 0.3s, color 0.3s;
+			}
+			header{
+				text-align: center;
+				margin-bottom: 32px;
+			}
+			header h1{
+				font-size: clamp(1.6rem, 5vw, 3rem);
+				font-weight: 800;
+				letter-spacing: -0.03em;
+				background: linear-gradient(135deg, var(--accent), var(--accent2));
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				background-clip: text;
+				line-height: 1.1;
+				margin-bottom: 8px;
+			}
+			header p{
+				color: var(--muted);
+				font-size: 0.9rem;
+			}
+			.search-container{
+				max-width: 600px;
+				margin: 0 auto 24px;
+				position: relative;
+			}
+			.search-input{
+				width: 100%;
+				padding: 14px 20px;
+				background: var(--surface);
+				border: 2px solid var(--border);
+				border-radius: 12px;
+				color: var(--text);
+				font-family: 'Syne', sans-serif;
+				font-size: 1rem;
+				outline: none;
+				transition: border-color 0.2s, background-color 0.3s, color 0.3s;
+			}
+			.search-input:focus{
+				border-color: var(--accent2);
+			}
+			.controls{
+				position: fixed;
+				bottom: 24px;
+				right: 24px;
+				display: flex;
+				flex-direction: column;
+				gap: 12px;
+				z-index: 1000;
+			}
+			.fab{
+				width: 50px;
+				height: 50px;
+				border-radius: 50%;
+				border: none;
+				color: white;
+				cursor: pointer;
+				box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 1.2rem;
+				font-weight: bold;
+				transition: transform 0.15s, box-shadow 0.15s;
+			}
+			.fab:hover{
+				transform: scale(1.08);
+				box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+			}
+			#themeToggle{
+				background: var(--accent2);
+			}
+			#langToggle{
+				background: var(--accent);
+				color: #000;
+				font-size: 0.9rem;
+				font-family: 'Space Mono', monospace;
+			}
+			.filter-section{
+				max-width: 1200px;
+				margin: 0 auto 28px;
+				display: flex;
+				flex-direction: column;
+				gap: 16px;
+				align-items: center;
+			}
+			.filter-label{
+				font-size: 0.7rem;
+				color: var(--muted);
+				text-transform: uppercase;
+				letter-spacing: 0.1em;
+				margin-bottom: -8px;
+			}
+			.filter-bar{
+				display: flex;
+				flex-wrap: wrap;
+				gap: 6px;
+				justify-content: center;
+			}
+			.filter-btn{
+				background: var(--surface2);
+				border: 1px solid var(--border);
+				color: var(--muted);
+				font-family: 'Syne', sans-serif;
+				font-size: 0.72rem;
+				font-weight: 700;
+				letter-spacing: 0.05em;
+				text-transform: uppercase;
+				padding: 6px 12px;
+				border-radius: 999px;
+				cursor: pointer;
+				transition: border-color 0.2s, color 0.2s, background-color 0.2s;
+			}
+			.filter-btn:hover{
+				border-color: var(--accent);
+				color: var(--accent);
+			}
+			.filter-btn.active{
+				background: var(--accent);
+				border-color: var(--accent);
+				color: #000;
+			}
+			.hour-btn{
+				font-family: 'Space Mono', monospace;
+				min-width: 40px;
+			}
+			.result-count{
+				text-align: center;
+				color: var(--muted);
+				font-size: 0.82rem;
+				margin-bottom: 20px;
+				min-height: 1.2em;
+			}
+			.container{
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+				gap: 12px;
+				max-width: 1400px;
+				margin: 0 auto;
+			}
+			.timezone-card{
+				background: var(--surface);
+				border: 1px solid var(--border);
+				border-radius: 12px;
+				padding: 14px 16px;
+				position: relative;
+				transition: border-color 0.2s, transform 0.15s, background-color 0.3s;
+			}
+			.timezone-card:hover{
+				border-color: var(--accent2);
+				transform: translateY(-2px);
+			}
+			.card-continent{
+				font-size: 0.65rem;
+				font-weight: 700;
+				letter-spacing: 0.12em;
+				text-transform: uppercase;
+				color: var(--accent);
+				margin-bottom: 4px;
+			}
+			.card-country{
+				font-size: 0.92rem;
+				font-weight: 700;
+				color: var(--text);
+				margin-bottom: 2px;
+			}
+			.card-city{
+				font-size: 0.75rem;
+				color: var(--muted);
+				margin-bottom: 6px;
+			}
+			.card-time{
+				font-family: 'Space Mono', monospace;
+				font-size: 1.5rem;
+				font-weight: 700;
+				color: var(--accent);
+			}
+			.card-date{
+				font-size: 0.7rem;
+				color: var(--muted);
+			}
+			.hidden{
+				display: none !important;
+			}
+			@media (max-width: 480px){
+				.container{
+					grid-template-columns: 1fr 1fr;
+					gap: 8px;
+				}
+				.card-time{
+					font-size: 1.1rem;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="controls">
+			<button class="fab" id="langToggle" title="Switch Language">IT</button>
+			<button class="fab" id="themeToggle" title="Toggle Light/Dark Mode">☀️</button>
+		</div>
+		<header>
+			<h1 id="mainTitle">🌍 World Time Zones</h1>
+			<p id="subTitle">Real-time clocks by location and hour</p>
+		</header>
+		<div class="search-container">
+			<input type="text" id="searchInput" class="search-input" placeholder="Search city or country...">
+		</div>
+		<div class="filter-section">
+			<span class="filter-label" id="labelContinent">Filter by Continent</span>
+			<div class="filter-bar" id="continentBar"></div>
+			<span class="filter-label" id="labelHour">Filter by Current Hour</span>
+			<div class="filter-bar" id="hourBar"></div>
+		</div>
+		<div class="result-count" id="resultCount"></div>
+		<div class="container" id="container"></div>
+		<script>
+			const CONTINENT_LABELS = {
+				'Africa':     { en: 'Africa',              it: 'Africa' },
+				'America':    { en: 'Americas',            it: 'Americhe' },
+				'Antarctica': { en: 'Antarctica',          it: 'Antartide' },
+				'Arctic':     { en: 'Arctic',              it: 'Artide' },
+				'Asia':       { en: 'Asia',                it: 'Asia' },
+				'Atlantic':   { en: 'Atlantic',            it: 'Atlantico' },
+				'Australia':  { en: 'Australia / Oceania', it: 'Australia / Oceania' },
+				'Europe':     { en: 'Europe',              it: 'Europa' },
+				'Indian':     { en: 'Indian Ocean',        it: 'Oceano Indiano' },
+				'Pacific':    { en: 'Pacific',             it: 'Pacifico' }
+			};
+			const CITY_TO_CODE = {
+				'Abidjan':'CI','Accra':'GH','Addis_Ababa':'ET','Algiers':'DZ','Asmara':'ER','Bamako':'ML',
+				'Bangui':'CF','Banjul':'GM','Bissau':'GW','Blantyre':'MW','Brazzaville':'CG','Bujumbura':'BI',
+				'Cairo':'EG','Casablanca':'MA','Ceuta':'ES','Conakry':'GN','Dakar':'SN','Dar_es_Salaam':'TZ',
+				'Djibouti':'DJ','Douala':'CM','El_Aaiun':'EH','Freetown':'SL','Gaborone':'BW','Harare':'ZW',
+				'Johannesburg':'ZA','Juba':'SS','Kampala':'UG','Khartoum':'SD','Kigali':'RW','Kinshasa':'CD',
+				'Lagos':'NG','Libreville':'GA','Lome':'TG','Luanda':'AO','Lubumbashi':'CD','Lusaka':'ZM',
+				'Malabo':'GQ','Maputo':'MZ','Maseru':'LS','Mbabane':'SZ','Mogadishu':'SO','Monrovia':'LR',
+				'Nairobi':'KE','Ndjamena':'TD','Niamey':'NE','Nouakchott':'MR','Ouagadougou':'BF',
+				'Porto-Novo':'BJ','Sao_Tome':'ST','Tripoli':'LY','Tunis':'TN','Windhoek':'NA',
+				// Americas
+				'Adak':'US','Anchorage':'US','Araguaina':'BR','Argentina':'AR','Asuncion':'PY',
+				'Atikokan':'CA','Bahia':'BR','Bahia_Banderas':'MX','Barbados':'BB','Belem':'BR',
+				'Belize':'BZ','Blanc-Sablon':'CA','Boa_Vista':'BR','Bogota':'CO','Boise':'US',
+				'Cambridge_Bay':'CA','Campo_Grande':'BR','Cancun':'MX','Caracas':'VE','Cayenne':'GF',
+				'Cayman':'KY','Chicago':'US','Chihuahua':'MX','Costa_Rica':'CR','Creston':'CA',
+				'Cuiaba':'BR','Curacao':'CW','Danmarkshavn':'GL','Dawson':'CA','Dawson_Creek':'CA',
+				'Denver':'US','Detroit':'US','Dominica':'DM','Edmonton':'CA','Eirunepe':'BR',
+				'El_Salvador':'SV','Fortaleza':'BR','Glace_Bay':'CA','Godthab':'GL','Goose_Bay':'CA',
+				'Grand_Turk':'TC','Grenada':'GD','Guadeloupe':'GP','Guatemala':'GT','Guayaquil':'EC',
+				'Guyana':'GY','Halifax':'CA','Havana':'CU','Hermosillo':'MX','Indiana':'US',
+				'Inuvik':'CA','Iqaluit':'CA','Jamaica':'JM','Juneau':'US','Kentucky':'US',
+				'Kralendijk':'BQ','La_Paz':'BO','Lima':'PE','Los_Angeles':'US','Lower_Princes':'SX',
+				'Maceio':'BR','Managua':'NI','Manaus':'BR','Marigot':'MF','Martinique':'MQ',
+				'Matamoros':'MX','Mazatlan':'MX','Menominee':'US','Merida':'MX','Metlakatla':'US',
+				'Mexico_City':'MX','Miquelon':'PM','Moncton':'CA','Monterrey':'MX','Montevideo':'UY',
+				'Montserrat':'MS','Nassau':'BS','New_York':'US','Nipigon':'CA','Nome':'US',
+				'Noronha':'BR','North_Dakota':'US','Ojinaga':'MX','Panama':'PA','Pangnirtung':'CA',
+				'Paramaribo':'SR','Phoenix':'US','Port-au-Prince':'HT','Port_of_Spain':'TT',
+				'Porto_Velho':'BR','Puerto_Rico':'PR','Punta_Arenas':'CL','Rainy_River':'CA',
+				'Rankin_Inlet':'CA','Recife':'BR','Regina':'CA','Resolute':'CA','Rio_Branco':'BR',
+				'Santa_Isabel':'MX','Santarem':'BR','Santiago':'CL','Santo_Domingo':'DO','Sao_Paulo':'BR',
+				'Scoresbysund':'GL','Sitka':'US','St_Barthelemy':'BL','St_Johns':'CA','St_Kitts':'KN',
+				'St_Lucia':'LC','St_Thomas':'VI','St_Vincent':'VC','Swift_Current':'CA','Tegucigalpa':'HN',
+				'Thule':'GL','Thunder_Bay':'CA','Tijuana':'MX','Toronto':'CA','Tortola':'VG',
+				'Vancouver':'CA','Whitehorse':'CA','Winnipeg':'CA','Yakutat':'US','Yellowknife':'CA',
+				// Asia
+				'Aden':'YE','Almaty':'KZ','Amman':'JO','Anadyr':'RU','Aqtau':'KZ','Aqtobe':'KZ',
+				'Ashgabat':'TM','Atyrau':'KZ','Baghdad':'IQ','Bahrain':'BH','Baku':'AZ','Bangkok':'TH',
+				'Barnaul':'RU','Beirut':'LB','Bishkek':'KG','Brunei':'BN','Chita':'RU','Choibalsan':'MN',
+				'Colombo':'LK','Damascus':'SY','Dhaka':'BD','Dili':'TL','Dubai':'AE','Dushanbe':'TJ',
+				'Famagusta':'CY','Gaza':'PS','Hebron':'PS','Ho_Chi_Minh':'VN','Hong_Kong':'HK',
+				'Hovd':'MN','Irkutsk':'RU','Jakarta':'ID','Jayapura':'ID','Jerusalem':'IL','Kabul':'AF',
+				'Kamchatka':'RU','Karachi':'PK','Kathmandu':'NP','Khandyga':'RU','Kolkata':'IN',
+				'Krasnoyarsk':'RU','Kuala_Lumpur':'MY','Kuching':'MY','Kuwait':'KW','Macau':'MO',
+				'Magadan':'RU','Makassar':'ID','Manila':'PH','Muscat':'OM','Nicosia':'CY',
+				'Novokuznetsk':'RU','Novosibirsk':'RU','Omsk':'RU','Oral':'KZ','Phnom_Penh':'KH',
+				'Pontianak':'ID','Pyongyang':'KP','Qatar':'QA','Qostanay':'KZ','Qyzylorda':'KZ',
+				'Riyadh':'SA','Sakhalin':'RU','Samarkand':'UZ','Seoul':'KR','Shanghai':'CN',
+				'Singapore':'SG','Srednekolymsk':'RU','Taipei':'TW','Tashkent':'UZ','Tbilisi':'GE',
+				'Tehran':'IR','Thimphu':'BT','Tokyo':'JP','Tomsk':'RU','Ulaanbaatar':'MN','Urumqi':'CN',
+				'Ust-Nera':'RU','Vientiane':'LA','Vladivostok':'RU','Yakutsk':'RU','Yangon':'MM',
+				'Yekaterinburg':'RU','Yerevan':'AM',
+				// Atlantic
+				'Azores':'PT','Bermuda':'BM','Canary':'ES','Cape_Verde':'CV','Faroe':'FO',
+				'Madeira':'PT','Reykjavik':'IS','South_Georgia':'GS','St_Helena':'SH','Stanley':'FK',
+				// Australia
+				'Adelaide':'AU','Brisbane':'AU','Broken_Hill':'AU','Darwin':'AU','Eucla':'AU',
+				'Hobart':'AU','Lindeman':'AU','Lord_Howe':'AU','Melbourne':'AU','Perth':'AU','Sydney':'AU',
+				// Europe
+				'Amsterdam':'NL','Andorra':'AD','Astrakhan':'RU','Athens':'GR','Belfast':'GB',
+				'Belgrade':'RS','Berlin':'DE','Bratislava':'SK','Brussels':'BE','Bucharest':'RO',
+				'Budapest':'HU','Busingen':'DE','Chisinau':'MD','Copenhagen':'DK','Dublin':'IE',
+				'Gibraltar':'GI','Guernsey':'GG','Helsinki':'FI','Isle_of_Man':'IM','Istanbul':'TR',
+				'Jersey':'JE','Kaliningrad':'RU','Kiev':'UA','Kirov':'RU','Kyiv':'UA','Lisbon':'PT',
+				'Ljubljana':'SI','London':'GB','Luxembourg':'LU','Madrid':'ES','Malta':'MT',
+				'Mariehamn':'AX','Minsk':'BY','Monaco':'MC','Moscow':'RU','Nicosia':'CY',
+				'Oslo':'NO','Paris':'FR','Podgorica':'ME','Prague':'CZ','Riga':'LV','Rome':'IT',
+				'Samara':'RU','San_Marino':'SM','Sarajevo':'BA','Saratov':'RU','Simferopol':'UA',
+				'Skopje':'MK','Sofia':'BG','Stockholm':'SE','Tallinn':'EE','Tirane':'AL',
+				'Ulyanovsk':'RU','Uzhgorod':'UA','Vaduz':'LI','Vatican':'VA','Vienna':'AT',
+				'Vilnius':'LT','Volgograd':'RU','Warsaw':'PL','Zagreb':'HR','Zaporozhye':'UA','Zurich':'CH',
+				// Indian
+				'Antananarivo':'MG','Chagos':'IO','Christmas':'CX','Cocos':'CC','Comoro':'KM',
+				'Kerguelen':'TF','Mahe':'SC','Maldives':'MV','Mauritius':'MU','Mayotte':'YT','Reunion':'RE',
+				// Pacific
+				'Apia':'WS','Auckland':'NZ','Bougainville':'PG','Chatham':'NZ','Chuuk':'FM',
+				'Easter':'CL','Efate':'VU','Enderbury':'KI','Fakaofo':'TK','Fiji':'FJ','Funafuti':'TV',
+				'Galapagos':'EC','Gambier':'PF','Guadalcanal':'SB','Guam':'GU','Honolulu':'US',
+				'Johnston':'UM','Kiritimati':'KI','Kosrae':'FM','Kwajalein':'MH','Majuro':'MH',
+				'Marquesas':'PF','Midway':'UM','Nauru':'NR','Niue':'NU','Norfolk':'NF','Noumea':'NC',
+				'Pago_Pago':'AS','Palau':'PW','Pitcairn':'PN','Pohnpei':'FM','Port_Moresby':'PG',
+				'Rarotonga':'CK','Saipan':'MP','Tahiti':'PF','Tarawa':'KI','Tongatapu':'TO',
+				'Wake':'UM','Wallis':'WF'
+			};
+			const TRANSLATIONS = {
+				en: {
+					title: "🌍 World Time Zones",
+					subtitle: "Real-time clocks by location and hour",
+					placeholder: "Search city or country...",
+					filterContinent: "Filter by Continent",
+					filterHour: "Filter by Current Hour",
+					all: "All",
+					anyTime: "Any",
+					found: "time zones found",
+					foundSingle: "time zone found"
+				},
+				it: {
+					title: "🌍 Fusi Orari Mondiali",
+					subtitle: "Orologi in tempo reale per località e ora",
+					placeholder: "Cerca città o nazione...",
+					filterContinent: "Filtra per Continente",
+					filterHour: "Filtra per Ora Attuale",
+					all: "Tutti",
+					anyTime: "Tutti",
+					found: "fusi orari trovati",
+					foundSingle: "fuso orario trovato"
+				}
+			};
+			let currentLang = 'en';
+			const TIME_ZONES = Intl.supportedValuesOf('timeZone');
+			const CONTAINER = document.getElementById('container');
+			const CONTINENT_BAR = document.getElementById('continentBar');
+			const HOUR_BAR = document.getElementById('hourBar');
+			const RESULT_COUNT = document.getElementById('resultCount');
+			const SEARCH_INPUT = document.getElementById('searchInput');
+			const THEME_TOGGLE = document.getElementById('themeToggle');
+			const LANG_TOGGLE = document.getElementById('langToggle');
+			let activeContinent = 'ALL';
+			let activeHour = 'ALL';
+			let searchQuery = '';
+			const DISPLAY_NAMES = {};
+
+			function getDisplayNames(lang){
+				const locale = lang === 'it' ? 'it-IT' : 'en-US';
+				if(!DISPLAY_NAMES[lang]){
+					DISPLAY_NAMES[lang] = new Intl.DisplayNames([locale], {type: 'region'});
+				}
+				return DISPLAY_NAMES[lang];
+			}
+
+			function getCountryName(zone, lang){
+				const city = zone.split('/').pop();
+				const code = CITY_TO_CODE[city];
+				if(code){
+					try{
+						return getDisplayNames(lang).of(code);
+					}catch(e){
+					}
+				}
+				return city.replace(/_/g, ' ');
+			}
+
+			function parseZone(zone){
+				const parts = zone.split('/');
+				return{
+					continent: parts[0],
+					city: parts[parts.length - 1].replace(/_/g, ' ')
+				};
+			}
+
+			THEME_TOGGLE.addEventListener('click', () => {
+				document.body.classList.toggle('light-mode');
+				THEME_TOGGLE.textContent = document.body.classList.contains('light-mode') ? '🌙' : '☀️';
+			});
+
+			LANG_TOGGLE.addEventListener('click', () => {
+				currentLang = currentLang === 'en' ? 'it' : 'en';
+				LANG_TOGGLE.textContent = currentLang === 'en' ? 'IT' : 'EN';
+				updateLanguage();
+			});
+
+			SEARCH_INPUT.addEventListener('input', (e) => {
+				searchQuery = e.target.value.toLowerCase();
+				updateVisibility();
+			});
+
+			function updateLanguage(){
+				const t = TRANSLATIONS[currentLang];
+				document.getElementById('mainTitle').textContent = t.title;
+				document.getElementById('subTitle').textContent = t.subtitle;
+				SEARCH_INPUT.placeholder = t.placeholder;
+				document.getElementById('labelContinent').textContent = t.filterContinent;
+				document.getElementById('labelHour').textContent = t.filterHour;
+				CONTINENT_BAR.innerHTML = '';
+				HOUR_BAR.innerHTML = '';
+				initFilters();
+				document.querySelectorAll('.timezone-card').forEach(card => {
+					const zone = card.dataset.zone;
+					const cont = card.dataset.continent;
+					const country = getCountryName(zone, currentLang);
+					card.querySelector('.card-continent').textContent = CONTINENT_LABELS[cont] ? CONTINENT_LABELS[cont][currentLang] : cont;
+					card.querySelector('.card-country').textContent = country;
+					card.dataset.country = country.toLowerCase();
+				});
+				updateTimes();
+				updateVisibility();
+			}
+
+			function initFilters(){
+				const continents = [...new Set(TIME_ZONES.map(z => parseZone(z).continent))].sort();
+				const t = TRANSLATIONS[currentLang];
+				createFilterBtn(CONTINENT_BAR, 'ALL', \`🌍 \${t.all}\`,
+				(val) => {
+					activeContinent = val;
+					updateVisibility();
+				}, activeContinent === 'ALL');
+				continents.forEach(c => {
+					const label = CONTINENT_LABELS[c] ? CONTINENT_LABELS[c][currentLang] : c;
+					createFilterBtn(CONTINENT_BAR, c, label,
+						(val) => {
+							activeContinent = val;
+							updateVisibility();
+						}, activeContinent === c);
+				});
+				createFilterBtn(HOUR_BAR, 'ALL', t.anyTime,
+				(val) => {
+					activeHour = val;
+					updateVisibility();
+				}, activeHour === 'ALL');
+				for(let i = 0; i < 24; i++){
+					const h = i.toString().padStart(2, '0');
+					createFilterBtn(HOUR_BAR, h, \`\${h}:00\`,
+						(val) => {
+							activeHour = val;
+							updateVisibility();
+						}, activeHour === h, 'hour-btn');
+				}
+			}
+
+			function createFilterBtn(parent, value, label, callback, isActive = false, extraClass = ''){
+				const btn = document.createElement('button');
+				btn.className = \`filter-btn\${extraClass ? ' ' + extraClass : ''}\${isActive ? ' active' : ''}\`;
+				btn.textContent = label;
+				btn.onclick = () => {
+					parent.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+					btn.classList.add('active');
+					callback(value);
+				};
+				parent.appendChild(btn);
+			}
+
+			function updateVisibility(){
+				const cards = CONTAINER.querySelectorAll('.timezone-card');
+				let visible = 0;
+				cards.forEach(card => {
+					const country = card.dataset.country;
+					const city = card.dataset.city;
+					const matchContinent = activeContinent === 'ALL' || card.dataset.continent === activeContinent;
+					const matchHour = activeHour === 'ALL' || card.dataset.currentHour === activeHour;
+					const matchSearch = searchQuery === '' || country.includes(searchQuery) || city.includes(searchQuery);
+					const show = matchContinent && matchHour && matchSearch;
+					card.classList.toggle('hidden', !show);
+					if(show){
+						visible++;
+					}
+				});
+				const t = TRANSLATIONS[currentLang];
+				RESULT_COUNT.textContent = \`\${visible} \${visible === 1 ? t.foundSingle : t.found}\`;
+			}
+
+			function createCards(){
+				const frag = document.createDocumentFragment();
+				TIME_ZONES.forEach(zone => {
+					const { continent, city } = parseZone(zone);
+					const country = getCountryName(zone, currentLang);
+					const id = zone.replaceAll('/', '_');
+					const continentLabel = CONTINENT_LABELS[continent] ? CONTINENT_LABELS[continent][currentLang] : continent;
+					const div = document.createElement('div');
+					div.className = 'timezone-card';
+					div.dataset.continent = continent;
+					div.dataset.country = country.toLowerCase();
+					div.dataset.city = city.toLowerCase();
+					div.dataset.zone = zone;
+					div.innerHTML = \`
+						<div class="card-continent">\${continentLabel}</div>
+						<div class="card-country">\${country}</div>
+						<div class="card-city">\${city}</div>
+						<div class="card-time" id="time_\${id}">--:--:--</div>
+						<div class="card-date" id="date_\${id}"></div>
+					\`;
+					frag.appendChild(div);
+				});
+				CONTAINER.appendChild(frag);
+			}
+
+			function updateTimes(){
+				const now = new Date();
+				const locale = currentLang === 'en' ? 'en-GB' : 'it-IT';
+				let hourFilterChanged = false;
+				TIME_ZONES.forEach(zone => {
+					const id = zone.replaceAll('/', '_');
+					const timeEl = document.getElementById(\`time_\${id}\`);
+					if(!timeEl){
+						return;
+					}
+					const card = timeEl.closest('.timezone-card');
+					const formatter = new Intl.DateTimeFormat('en-GB', {
+						timeZone: zone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+					});
+					const parts = formatter.formatToParts(now);
+					const h = parts.find(p => p.type === 'hour').value;
+					const m = parts.find(p => p.type === 'minute').value;
+					const s = parts.find(p => p.type === 'second').value;
+					timeEl.textContent = \`\${h}:\${m}:\${s}\`;
+					if(card.dataset.currentHour !== h){
+						card.dataset.currentHour = h;
+						hourFilterChanged = true;
+					}
+					document.getElementById(\`date_\${id}\`).textContent = new Intl.DateTimeFormat(locale, {
+						timeZone: zone, weekday: 'short', day: 'numeric', month: 'short'
+					}).format(now);
+				});
+				if(activeHour !== 'ALL' && hourFilterChanged){
+					updateVisibility();
+				}
+			}
+
+			initFilters();
+			createCards();
+			updateTimes();
+			updateVisibility();
+			setInterval(updateTimes, 200);
+		<\/script>
+	</body>
+</html>
+` },
 
 	// --- Backgammon ---
 	'Games_Backgammon.html': { name: `Backgammon`, content: `<!DOCTYPE html>
