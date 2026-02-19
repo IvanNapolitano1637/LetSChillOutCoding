@@ -1,147 +1,147 @@
 <!DOCTYPE html>
-	<html lang="en">
+	<html lang="en"><!--C08#024 - Eduardo - Seven-Segment Digital Clock-->
 	<head>
-	  <meta charset="UTF-8" />
-	  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-	  <title>Seven-Segment Digital Clock</title>
-	  <style>
-		:root{
-		  --digit-width: 60px;
-		  --digit-height: 120px;
-		  --seg-thickness: 8px;
-		  --gap: 15px;
-		  --bg-color: #000;
-		  --on-color: #0f0;
-		  --off-color: #111;
-		}
-		@media (max-width: 700px){
-		  :root{
-			--digit-width: 25px;
-			--digit-height: 50px;
-			--seg-thickness: 4px;
-			--gap: 8px;
-		  }
-		}
-		body{
-		  background-color: var(--bg-color);
-		  display: flex;
-		  flex-direction: column;
-		  justify-content: center;
-		  align-items: center;
-		  height: 100vh;
-		  margin: 0;
-		  gap: 40px;
-		  overflow: hidden;
-		}
-		.container{
-		  display: flex;
-		  flex-direction: column;
-		  align-items: center;
-		  gap: 30px;
-		}
-		.row{
-		  display: flex;
-		  gap: var(--gap);
-		  align-items: center;
-		}
-		.digit{
-		  position: relative;
-		  width: var(--digit-width);
-		  height: var(--digit-height);
-		}
-		.segment{
-		  position: absolute;
-		  background-color: var(--off-color);
-		  transition: background-color 0.2s, box-shadow 0.2s;
-		  border-radius: calc(var(--seg-thickness)/2);
-		}
-		.on{
-		  background-color: var(--on-color);
-		  box-shadow: 0 0 10px var(--on-color);
-		}
-		.segment.a{
-			top: 0;
-			left: var(--seg-thickness);
-			right: var(--seg-thickness);
-			height: var(--seg-thickness);
-		}
-		.segment.b{
-			top: var(--seg-thickness);
-			right: 0;
-			width: var(--seg-thickness);
-			height: calc(50% - var(--seg-thickness));
-		}
-		.segment.c{
-			bottom: var(--seg-thickness);
-			right: 0;
-			width: var(--seg-thickness);
-			height: calc(50% - var(--seg-thickness));
-		}
-		.segment.d{
-			bottom: 0;
-			left: var(--seg-thickness);
-			right: var(--seg-thickness);
-			height: var(--seg-thickness);
-		}
-		.segment.e{
-			bottom: var(--seg-thickness);
-			left: 0;
-			width: var(--seg-thickness);
-			height: calc(50% - var(--seg-thickness));
-		}
-		.segment.f{
-			top: var(--seg-thickness);
-			left: 0;
-			width: var(--seg-thickness);
-			height: calc(50% - var(--seg-thickness));
-		}
-		.segment.g{
-			top: calc(50% - var(--seg-thickness)/2);
-			left: var(--seg-thickness);
-			right: var(--seg-thickness);
-			height: var(--seg-thickness);
-		}
-		.colon{
-		  display: flex;
-		  flex-direction: column;
-		  justify-content: center;
-		  gap: calc(var(--digit-height)/4);
-		}
-		.dot{
-		  width: var(--seg-thickness);
-		  height: var(--seg-thickness);
-		  background-color: var(--on-color);
-		  border-radius: 50%;
-		  box-shadow: 0 0 10px var(--on-color);
-		}
-		.slash{
-		  width: var(--seg-thickness);
-		  height: var(--digit-height);
-		  background-color: var(--on-color);
-		  transform: rotate(20deg);
-		  box-shadow: 0 0 10px var(--on-color);
-		  border-radius: var(--seg-thickness);
-		  margin: 0 5px;
-		}
-	  </style>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>Seven-Segment Digital Clock</title>
+		<style>
+			:root{
+				--digit-width: 60px;
+				--digit-height: 120px;
+				--seg-thickness: 8px;
+				--gap: 15px;
+				--bg-color: #000;
+				--on-color: #0f0;
+				--off-color: #111;
+			}
+			@media (max-width: 700px){
+				:root{
+					--digit-width: 25px;
+					--digit-height: 50px;
+					--seg-thickness: 4px;
+					--gap: 8px;
+				}
+			}
+			body{
+				background-color: var(--bg-color);
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+				margin: 0;
+				gap: 40px;
+				overflow: hidden;
+			}
+			.container{
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 30px;
+			}
+			.row{
+				display: flex;
+				gap: var(--gap);
+				align-items: center;
+			}
+			.digit{
+				position: relative;
+				width: var(--digit-width);
+				height: var(--digit-height);
+			}
+			.segment{
+				position: absolute;
+				background-color: var(--off-color);
+				transition: background-color 0.2s, box-shadow 0.2s;
+				border-radius: calc(var(--seg-thickness)/2);
+			}
+			.on{
+				background-color: var(--on-color);
+				box-shadow: 0 0 10px var(--on-color);
+			}
+			.segment.a{
+				top: 0;
+				left: var(--seg-thickness);
+				right: var(--seg-thickness);
+				height: var(--seg-thickness);
+			}
+			.segment.b{
+				top: var(--seg-thickness);
+				right: 0;
+				width: var(--seg-thickness);
+				height: calc(50% - var(--seg-thickness));
+			}
+			.segment.c{
+				bottom: var(--seg-thickness);
+				right: 0;
+				width: var(--seg-thickness);
+				height: calc(50% - var(--seg-thickness));
+			}
+			.segment.d{
+				bottom: 0;
+				left: var(--seg-thickness);
+				right: var(--seg-thickness);
+				height: var(--seg-thickness);
+			}
+			.segment.e{
+				bottom: var(--seg-thickness);
+				left: 0;
+				width: var(--seg-thickness);
+				height: calc(50% - var(--seg-thickness));
+			}
+			.segment.f{
+				top: var(--seg-thickness);
+				left: 0;
+				width: var(--seg-thickness);
+				height: calc(50% - var(--seg-thickness));
+			}
+			.segment.g{
+				top: calc(50% - var(--seg-thickness)/2);
+				left: var(--seg-thickness);
+				right: var(--seg-thickness);
+				height: var(--seg-thickness);
+			}
+			.colon{
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				gap: calc(var(--digit-height)/4);
+			}
+			.dot{
+				width: var(--seg-thickness);
+				height: var(--seg-thickness);
+				background-color: var(--on-color);
+				border-radius: 50%;
+				box-shadow: 0 0 10px var(--on-color);
+			}
+			.slash{
+				width: var(--seg-thickness);
+				height: var(--digit-height);
+				background-color: var(--on-color);
+				transform: rotate(20deg);
+				box-shadow: 0 0 10px var(--on-color);
+				border-radius: var(--seg-thickness);
+				margin: 0 5px;
+			}
+		</style>
 	</head>
 	<body>
-	  <div class="container">
+	<div class="container">
 		<div class="row" id="clock-row"></div>
 		<div class="row" id="date-row"></div>
-	  </div>
-	  <script>
+	</div>
+	<script>
 		const SEGMENT_MAP = {
-		  "0": ["a", "b", "c", "d", "e", "f"],
-		  "1": ["b", "c"],
-		  "2": ["a", "b", "g", "e", "d"],
-		  "3": ["a", "b", "g", "c", "d"],
-		  "4": ["f", "g", "b", "c"],
-		  "5": ["a", "f", "g", "c", "d"],
-		  "6": ["a", "f", "g", "c", "d", "e"],
-		  "7": ["a", "b", "c"],
-		  "8": ["a", "b", "c", "d", "e", "f", "g"],
-		  "9": ["a", "b", "c", "d", "f", "g"]
+		"0": ["a", "b", "c", "d", "e", "f"],
+		"1": ["b", "c"],
+		"2": ["a", "b", "g", "e", "d"],
+		"3": ["a", "b", "g", "c", "d"],
+		"4": ["f", "g", "b", "c"],
+		"5": ["a", "f", "g", "c", "d"],
+		"6": ["a", "f", "g", "c", "d", "e"],
+		"7": ["a", "b", "c"],
+		"8": ["a", "b", "c", "d", "e", "f", "g"],
+		"9": ["a", "b", "c", "d", "f", "g"]
 		};
 
 		function createDigit(){
@@ -218,6 +218,6 @@
 
 		setInterval(updateDisplay, 200);
 		updateDisplay();
-	  </script>
+	</script>
 	</body>
 </html>
