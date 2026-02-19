@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>World Time Zones</title>
+		<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+		<style>
+			:root{
+				--bg: #0d0d12;
+				--surface: #16161f;
+				--surface2: #1e1e2a;
+				--border: #2a2a3a;
+				--accent: #00e5a0;
+				--accent2: #7c6aff;
+				--text: #e8e8f0;
+				--muted: #6b6b85;
+			}
+			body.light-mode{
+				--bg: #f0f2f5;
+				--surface: #ffffff;
+				--surface2: #e4e6eb;
+				--border: #d8dadf;
+				--accent: #00a372;
+				--accent2: #5a4ad1;
+				--text: #1c1e21;
+				--muted: #65676b;
+			}
+			*{
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+			}
+			body{
+				font-family: 'Syne', sans-serif;
+				background: var(--bg);
+				color: var(--text);
+				min-height: 100vh;
+				padding: 24px 16px 48px;
+				transition: background-color 0.3s, color 0.3s;
+			}
+			header{
+				text-align: center;
+				margin-bottom: 32px;
+			}
+			header h1{
+				font-size: clamp(1.6rem, 5vw, 3rem);
+				font-weight: 800;
+				letter-spacing: -0.03em;
+				background: linear-gradient(135deg, var(--accent), var(--accent2));
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				background-clip: text;
+				line-height: 1.1;
+				margin-bottom: 8px;
+			}
+			header p{
+				color: var(--muted);
+				font-size: 0.9rem;
+			}
+			.search-container{
+				max-width: 600px;
+				margin: 0 auto 24px;
+				position: relative;
+			}
+			.search-input{
+				width: 100%;
+				padding: 14px 20px;
+				background: var(--surface);
+				border: 2px solid var(--border);
+				border-radius: 12px;
+				color: var(--text);
+				font-family: 'Syne', sans-serif;
+				font-size: 1rem;
+				outline: none;
+				transition: border-color 0.2s, background-color 0.3s, color 0.3s;
+			}
+			.search-input:focus{
+				border-color: var(--accent2);
+			}
+			.controls{
+				position: fixed;
+				bottom: 24px;
+				right: 24px;
+				display: flex;
+				flex-direction: column;
+				gap: 12px;
+				z-index: 1000;
+			}
+			.fab{
+				width: 50px;
+				height: 50px;
+				border-radius: 50%;
+				border: none;
+				color: white;
+				cursor: pointer;
+				box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 1.2rem;
+				font-weight: bold;
+				transition: transform 0.15s, box-shadow 0.15s;
+			}
+			.fab:hover{
+				transform: scale(1.08);
+				box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+			}
+			#themeToggle{
+				background: var(--accent2);
+			}
+			#langToggle{
+				background: var(--accent);
+				color: #000;
+				font-size: 0.9rem;
+				font-family: 'Space Mono', monospace;
+			}
+			.filter-section{
+				max-width: 1200px;
+				margin: 0 auto 28px;
+				display: flex;
+				flex-direction: column;
+				gap: 16px;
+				align-items: center;
+			}
+			.filter-label{
+				font-size: 0.7rem;
+				color: var(--muted);
+				text-transform: uppercase;
+				letter-spacing: 0.1em;
+				margin-bottom: -8px;
+			}
+			.filter-bar{
+				display: flex;
+				flex-wrap: wrap;
+				gap: 6px;
+				justify-content: center;
+			}
+			.filter-btn{
+				background: var(--surface2);
+				border: 1px solid var(--border);
+				color: var(--muted);
+				font-family: 'Syne', sans-serif;
+				font-size: 0.72rem;
+				font-weight: 700;
+				letter-spacing: 0.05em;
+				text-transform: uppercase;
+				padding: 6px 12px;
+				border-radius: 999px;
+				cursor: pointer;
+				transition: border-color 0.2s, color 0.2s, background-color 0.2s;
+			}
+			.filter-btn:hover{
+				border-color: var(--accent);
+				color: var(--accent);
+			}
+			.filter-btn.active{
+				background: var(--accent);
+				border-color: var(--accent);
+				color: #000;
+			}
+			.hour-btn{
+				font-family: 'Space Mono', monospace;
+				min-width: 40px;
+			}
+			.result-count{
+				text-align: center;
+				color: var(--muted);
+				font-size: 0.82rem;
+				margin-bottom: 20px;
+				min-height: 1.2em;
+			}
+			.container{
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+				gap: 12px;
+				max-width: 1400px;
+				margin: 0 auto;
+			}
+			.timezone-card{
+				background: var(--surface);
+				border: 1px solid var(--border);
+				border-radius: 12px;
+				padding: 14px 16px;
+				position: relative;
+				transition: border-color 0.2s, transform 0.15s, background-color 0.3s;
+			}
+			.timezone-card:hover{
+				border-color: var(--accent2);
+				transform: translateY(-2px);
+			}
+			.card-continent{
+				font-size: 0.65rem;
+				font-weight: 700;
+				letter-spacing: 0.12em;
+				text-transform: uppercase;
+				color: var(--accent);
+				margin-bottom: 4px;
+			}
+			.card-country{
+				font-size: 0.92rem;
+				font-weight: 700;
+				color: var(--text);
+				margin-bottom: 2px;
+			}
+			.card-city{
+				font-size: 0.75rem;
+				color: var(--muted);
+				margin-bottom: 6px;
+			}
+			.card-time{
+				font-family: 'Space Mono', monospace;
+				font-size: 1.5rem;
+				font-weight: 700;
+				color: var(--accent);
+			}
+			.card-date{
+				font-size: 0.7rem;
+				color: var(--muted);
+			}
+			.hidden{
+				display: none !important;
+			}
+			@media (max-width: 480px){
+				.container{
+					grid-template-columns: 1fr 1fr;
+					gap: 8px;
+				}
+				.card-time{
+					font-size: 1.1rem;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="controls">
+			<button class="fab" id="langToggle" title="Switch Language">IT</button>
+			<button class="fab" id="themeToggle" title="Toggle Light/Dark Mode">☀️</button>
+		</div>
+		<header>
+			<h1 id="mainTitle">🌍 World Time Zones</h1>
+			<p id="subTitle">Real-time clocks by location and hour</p>
+		</header>
+		<div class="search-container">
+			<input type="text" id="searchInput" class="search-input" placeholder="Search city or country...">
+		</div>
+		<div class="filter-section">
+			<span class="filter-label" id="labelContinent">Filter by Continent</span>
+			<div class="filter-bar" id="continentBar"></div>
+			<span class="filter-label" id="labelHour">Filter by Current Hour</span>
+			<div class="filter-bar" id="hourBar"></div>
+		</div>
+		<div class="result-count" id="resultCount"></div>
+		<div class="container" id="container"></div>
+		<script>
+			const CONTINENT_LABELS = {
+				'Africa':     { en: 'Africa',              it: 'Africa' },
+				'America':    { en: 'Americas',            it: 'Americhe' },
+				'Antarctica': { en: 'Antarctica',          it: 'Antartide' },
+				'Arctic':     { en: 'Arctic',              it: 'Artide' },
+				'Asia':       { en: 'Asia',                it: 'Asia' },
+				'Atlantic':   { en: 'Atlantic',            it: 'Atlantico' },
+				'Australia':  { en: 'Australia / Oceania', it: 'Australia / Oceania' },
+				'Europe':     { en: 'Europe',              it: 'Europa' },
+				'Indian':     { en: 'Indian Ocean',        it: 'Oceano Indiano' },
+				'Pacific':    { en: 'Pacific',             it: 'Pacifico' }
+			};
+			const CITY_TO_CODE = {
+				'Abidjan':'CI','Accra':'GH','Addis_Ababa':'ET','Algiers':'DZ','Asmara':'ER','Bamako':'ML',
+				'Bangui':'CF','Banjul':'GM','Bissau':'GW','Blantyre':'MW','Brazzaville':'CG','Bujumbura':'BI',
+				'Cairo':'EG','Casablanca':'MA','Ceuta':'ES','Conakry':'GN','Dakar':'SN','Dar_es_Salaam':'TZ',
+				'Djibouti':'DJ','Douala':'CM','El_Aaiun':'EH','Freetown':'SL','Gaborone':'BW','Harare':'ZW',
+				'Johannesburg':'ZA','Juba':'SS','Kampala':'UG','Khartoum':'SD','Kigali':'RW','Kinshasa':'CD',
+				'Lagos':'NG','Libreville':'GA','Lome':'TG','Luanda':'AO','Lubumbashi':'CD','Lusaka':'ZM',
+				'Malabo':'GQ','Maputo':'MZ','Maseru':'LS','Mbabane':'SZ','Mogadishu':'SO','Monrovia':'LR',
+				'Nairobi':'KE','Ndjamena':'TD','Niamey':'NE','Nouakchott':'MR','Ouagadougou':'BF',
+				'Porto-Novo':'BJ','Sao_Tome':'ST','Tripoli':'LY','Tunis':'TN','Windhoek':'NA',
+				// Americas
+				'Adak':'US','Anchorage':'US','Araguaina':'BR','Argentina':'AR','Asuncion':'PY',
+				'Atikokan':'CA','Bahia':'BR','Bahia_Banderas':'MX','Barbados':'BB','Belem':'BR',
+				'Belize':'BZ','Blanc-Sablon':'CA','Boa_Vista':'BR','Bogota':'CO','Boise':'US',
+				'Cambridge_Bay':'CA','Campo_Grande':'BR','Cancun':'MX','Caracas':'VE','Cayenne':'GF',
+				'Cayman':'KY','Chicago':'US','Chihuahua':'MX','Costa_Rica':'CR','Creston':'CA',
+				'Cuiaba':'BR','Curacao':'CW','Danmarkshavn':'GL','Dawson':'CA','Dawson_Creek':'CA',
+				'Denver':'US','Detroit':'US','Dominica':'DM','Edmonton':'CA','Eirunepe':'BR',
+				'El_Salvador':'SV','Fortaleza':'BR','Glace_Bay':'CA','Godthab':'GL','Goose_Bay':'CA',
+				'Grand_Turk':'TC','Grenada':'GD','Guadeloupe':'GP','Guatemala':'GT','Guayaquil':'EC',
+				'Guyana':'GY','Halifax':'CA','Havana':'CU','Hermosillo':'MX','Indiana':'US',
+				'Inuvik':'CA','Iqaluit':'CA','Jamaica':'JM','Juneau':'US','Kentucky':'US',
+				'Kralendijk':'BQ','La_Paz':'BO','Lima':'PE','Los_Angeles':'US','Lower_Princes':'SX',
+				'Maceio':'BR','Managua':'NI','Manaus':'BR','Marigot':'MF','Martinique':'MQ',
+				'Matamoros':'MX','Mazatlan':'MX','Menominee':'US','Merida':'MX','Metlakatla':'US',
+				'Mexico_City':'MX','Miquelon':'PM','Moncton':'CA','Monterrey':'MX','Montevideo':'UY',
+				'Montserrat':'MS','Nassau':'BS','New_York':'US','Nipigon':'CA','Nome':'US',
+				'Noronha':'BR','North_Dakota':'US','Ojinaga':'MX','Panama':'PA','Pangnirtung':'CA',
+				'Paramaribo':'SR','Phoenix':'US','Port-au-Prince':'HT','Port_of_Spain':'TT',
+				'Porto_Velho':'BR','Puerto_Rico':'PR','Punta_Arenas':'CL','Rainy_River':'CA',
+				'Rankin_Inlet':'CA','Recife':'BR','Regina':'CA','Resolute':'CA','Rio_Branco':'BR',
+				'Santa_Isabel':'MX','Santarem':'BR','Santiago':'CL','Santo_Domingo':'DO','Sao_Paulo':'BR',
+				'Scoresbysund':'GL','Sitka':'US','St_Barthelemy':'BL','St_Johns':'CA','St_Kitts':'KN',
+				'St_Lucia':'LC','St_Thomas':'VI','St_Vincent':'VC','Swift_Current':'CA','Tegucigalpa':'HN',
+				'Thule':'GL','Thunder_Bay':'CA','Tijuana':'MX','Toronto':'CA','Tortola':'VG',
+				'Vancouver':'CA','Whitehorse':'CA','Winnipeg':'CA','Yakutat':'US','Yellowknife':'CA',
+				// Asia
+				'Aden':'YE','Almaty':'KZ','Amman':'JO','Anadyr':'RU','Aqtau':'KZ','Aqtobe':'KZ',
+				'Ashgabat':'TM','Atyrau':'KZ','Baghdad':'IQ','Bahrain':'BH','Baku':'AZ','Bangkok':'TH',
+				'Barnaul':'RU','Beirut':'LB','Bishkek':'KG','Brunei':'BN','Chita':'RU','Choibalsan':'MN',
+				'Colombo':'LK','Damascus':'SY','Dhaka':'BD','Dili':'TL','Dubai':'AE','Dushanbe':'TJ',
+				'Famagusta':'CY','Gaza':'PS','Hebron':'PS','Ho_Chi_Minh':'VN','Hong_Kong':'HK',
+				'Hovd':'MN','Irkutsk':'RU','Jakarta':'ID','Jayapura':'ID','Jerusalem':'IL','Kabul':'AF',
+				'Kamchatka':'RU','Karachi':'PK','Kathmandu':'NP','Khandyga':'RU','Kolkata':'IN',
+				'Krasnoyarsk':'RU','Kuala_Lumpur':'MY','Kuching':'MY','Kuwait':'KW','Macau':'MO',
+				'Magadan':'RU','Makassar':'ID','Manila':'PH','Muscat':'OM','Nicosia':'CY',
+				'Novokuznetsk':'RU','Novosibirsk':'RU','Omsk':'RU','Oral':'KZ','Phnom_Penh':'KH',
+				'Pontianak':'ID','Pyongyang':'KP','Qatar':'QA','Qostanay':'KZ','Qyzylorda':'KZ',
+				'Riyadh':'SA','Sakhalin':'RU','Samarkand':'UZ','Seoul':'KR','Shanghai':'CN',
+				'Singapore':'SG','Srednekolymsk':'RU','Taipei':'TW','Tashkent':'UZ','Tbilisi':'GE',
+				'Tehran':'IR','Thimphu':'BT','Tokyo':'JP','Tomsk':'RU','Ulaanbaatar':'MN','Urumqi':'CN',
+				'Ust-Nera':'RU','Vientiane':'LA','Vladivostok':'RU','Yakutsk':'RU','Yangon':'MM',
+				'Yekaterinburg':'RU','Yerevan':'AM',
+				// Atlantic
+				'Azores':'PT','Bermuda':'BM','Canary':'ES','Cape_Verde':'CV','Faroe':'FO',
+				'Madeira':'PT','Reykjavik':'IS','South_Georgia':'GS','St_Helena':'SH','Stanley':'FK',
+				// Australia
+				'Adelaide':'AU','Brisbane':'AU','Broken_Hill':'AU','Darwin':'AU','Eucla':'AU',
+				'Hobart':'AU','Lindeman':'AU','Lord_Howe':'AU','Melbourne':'AU','Perth':'AU','Sydney':'AU',
+				// Europe
+				'Amsterdam':'NL','Andorra':'AD','Astrakhan':'RU','Athens':'GR','Belfast':'GB',
+				'Belgrade':'RS','Berlin':'DE','Bratislava':'SK','Brussels':'BE','Bucharest':'RO',
+				'Budapest':'HU','Busingen':'DE','Chisinau':'MD','Copenhagen':'DK','Dublin':'IE',
+				'Gibraltar':'GI','Guernsey':'GG','Helsinki':'FI','Isle_of_Man':'IM','Istanbul':'TR',
+				'Jersey':'JE','Kaliningrad':'RU','Kiev':'UA','Kirov':'RU','Kyiv':'UA','Lisbon':'PT',
+				'Ljubljana':'SI','London':'GB','Luxembourg':'LU','Madrid':'ES','Malta':'MT',
+				'Mariehamn':'AX','Minsk':'BY','Monaco':'MC','Moscow':'RU','Nicosia':'CY',
+				'Oslo':'NO','Paris':'FR','Podgorica':'ME','Prague':'CZ','Riga':'LV','Rome':'IT',
+				'Samara':'RU','San_Marino':'SM','Sarajevo':'BA','Saratov':'RU','Simferopol':'UA',
+				'Skopje':'MK','Sofia':'BG','Stockholm':'SE','Tallinn':'EE','Tirane':'AL',
+				'Ulyanovsk':'RU','Uzhgorod':'UA','Vaduz':'LI','Vatican':'VA','Vienna':'AT',
+				'Vilnius':'LT','Volgograd':'RU','Warsaw':'PL','Zagreb':'HR','Zaporozhye':'UA','Zurich':'CH',
+				// Indian
+				'Antananarivo':'MG','Chagos':'IO','Christmas':'CX','Cocos':'CC','Comoro':'KM',
+				'Kerguelen':'TF','Mahe':'SC','Maldives':'MV','Mauritius':'MU','Mayotte':'YT','Reunion':'RE',
+				// Pacific
+				'Apia':'WS','Auckland':'NZ','Bougainville':'PG','Chatham':'NZ','Chuuk':'FM',
+				'Easter':'CL','Efate':'VU','Enderbury':'KI','Fakaofo':'TK','Fiji':'FJ','Funafuti':'TV',
+				'Galapagos':'EC','Gambier':'PF','Guadalcanal':'SB','Guam':'GU','Honolulu':'US',
+				'Johnston':'UM','Kiritimati':'KI','Kosrae':'FM','Kwajalein':'MH','Majuro':'MH',
+				'Marquesas':'PF','Midway':'UM','Nauru':'NR','Niue':'NU','Norfolk':'NF','Noumea':'NC',
+				'Pago_Pago':'AS','Palau':'PW','Pitcairn':'PN','Pohnpei':'FM','Port_Moresby':'PG',
+				'Rarotonga':'CK','Saipan':'MP','Tahiti':'PF','Tarawa':'KI','Tongatapu':'TO',
+				'Wake':'UM','Wallis':'WF'
+			};
+			const TRANSLATIONS = {
+				en: {
+					title: "🌍 World Time Zones",
+					subtitle: "Real-time clocks by location and hour",
+					placeholder: "Search city or country...",
+					filterContinent: "Filter by Continent",
+					filterHour: "Filter by Current Hour",
+					all: "All",
+					anyTime: "Any",
+					found: "time zones found",
+					foundSingle: "time zone found"
+				},
+				it: {
+					title: "🌍 Fusi Orari Mondiali",
+					subtitle: "Orologi in tempo reale per località e ora",
+					placeholder: "Cerca città o nazione...",
+					filterContinent: "Filtra per Continente",
+					filterHour: "Filtra per Ora Attuale",
+					all: "Tutti",
+					anyTime: "Tutti",
+					found: "fusi orari trovati",
+					foundSingle: "fuso orario trovato"
+				}
+			};
+			let currentLang = 'en';
+			const TIME_ZONES = Intl.supportedValuesOf('timeZone');
+			const CONTAINER = document.getElementById('container');
+			const CONTINENT_BAR = document.getElementById('continentBar');
+			const HOUR_BAR = document.getElementById('hourBar');
+			const RESULT_COUNT = document.getElementById('resultCount');
+			const SEARCH_INPUT = document.getElementById('searchInput');
+			const THEME_TOGGLE = document.getElementById('themeToggle');
+			const LANG_TOGGLE = document.getElementById('langToggle');
+			let activeContinent = 'ALL';
+			let activeHour = 'ALL';
+			let searchQuery = '';
+			const DISPLAY_NAMES = {};
+
+			function getDisplayNames(lang){
+				const locale = lang === 'it' ? 'it-IT' : 'en-US';
+				if(!DISPLAY_NAMES[lang]){
+					DISPLAY_NAMES[lang] = new Intl.DisplayNames([locale], {type: 'region'});
+				}
+				return DISPLAY_NAMES[lang];
+			}
+
+			function getCountryName(zone, lang){
+				const city = zone.split('/').pop();
+				const code = CITY_TO_CODE[city];
+				if(code){
+					try{
+						return getDisplayNames(lang).of(code);
+					}catch(e){
+					}
+				}
+				return city.replace(/_/g, ' ');
+			}
+
+			function parseZone(zone){
+				const parts = zone.split('/');
+				return{
+					continent: parts[0],
+					city: parts[parts.length - 1].replace(/_/g, ' ')
+				};
+			}
+
+			THEME_TOGGLE.addEventListener('click', () => {
+				document.body.classList.toggle('light-mode');
+				THEME_TOGGLE.textContent = document.body.classList.contains('light-mode') ? '🌙' : '☀️';
+			});
+
+			LANG_TOGGLE.addEventListener('click', () => {
+				currentLang = currentLang === 'en' ? 'it' : 'en';
+				LANG_TOGGLE.textContent = currentLang === 'en' ? 'IT' : 'EN';
+				updateLanguage();
+			});
+
+			SEARCH_INPUT.addEventListener('input', (e) => {
+				searchQuery = e.target.value.toLowerCase();
+				updateVisibility();
+			});
+
+			function updateLanguage(){
+				const t = TRANSLATIONS[currentLang];
+				document.getElementById('mainTitle').textContent = t.title;
+				document.getElementById('subTitle').textContent = t.subtitle;
+				SEARCH_INPUT.placeholder = t.placeholder;
+				document.getElementById('labelContinent').textContent = t.filterContinent;
+				document.getElementById('labelHour').textContent = t.filterHour;
+				CONTINENT_BAR.innerHTML = '';
+				HOUR_BAR.innerHTML = '';
+				initFilters();
+				document.querySelectorAll('.timezone-card').forEach(card => {
+					const zone = card.dataset.zone;
+					const cont = card.dataset.continent;
+					const country = getCountryName(zone, currentLang);
+					card.querySelector('.card-continent').textContent = CONTINENT_LABELS[cont] ? CONTINENT_LABELS[cont][currentLang] : cont;
+					card.querySelector('.card-country').textContent = country;
+					card.dataset.country = country.toLowerCase();
+				});
+				updateTimes();
+				updateVisibility();
+			}
+
+			function initFilters(){
+				const continents = [...new Set(TIME_ZONES.map(z => parseZone(z).continent))].sort();
+				const t = TRANSLATIONS[currentLang];
+				createFilterBtn(CONTINENT_BAR, 'ALL', `🌍 ${t.all}`,
+				(val) => {
+					activeContinent = val;
+					updateVisibility();
+				}, activeContinent === 'ALL');
+				continents.forEach(c => {
+					const label = CONTINENT_LABELS[c] ? CONTINENT_LABELS[c][currentLang] : c;
+					createFilterBtn(CONTINENT_BAR, c, label,
+						(val) => {
+							activeContinent = val;
+							updateVisibility();
+						}, activeContinent === c);
+				});
+				createFilterBtn(HOUR_BAR, 'ALL', t.anyTime,
+				(val) => {
+					activeHour = val;
+					updateVisibility();
+				}, activeHour === 'ALL');
+				for(let i = 0; i < 24; i++){
+					const h = i.toString().padStart(2, '0');
+					createFilterBtn(HOUR_BAR, h, `${h}:00`,
+						(val) => {
+							activeHour = val;
+							updateVisibility();
+						}, activeHour === h, 'hour-btn');
+				}
+			}
+
+			function createFilterBtn(parent, value, label, callback, isActive = false, extraClass = ''){
+				const btn = document.createElement('button');
+				btn.className = `filter-btn${extraClass ? ' ' + extraClass : ''}${isActive ? ' active' : ''}`;
+				btn.textContent = label;
+				btn.onclick = () => {
+					parent.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+					btn.classList.add('active');
+					callback(value);
+				};
+				parent.appendChild(btn);
+			}
+
+			function updateVisibility(){
+				const cards = CONTAINER.querySelectorAll('.timezone-card');
+				let visible = 0;
+				cards.forEach(card => {
+					const country = card.dataset.country;
+					const city = card.dataset.city;
+					const matchContinent = activeContinent === 'ALL' || card.dataset.continent === activeContinent;
+					const matchHour = activeHour === 'ALL' || card.dataset.currentHour === activeHour;
+					const matchSearch = searchQuery === '' || country.includes(searchQuery) || city.includes(searchQuery);
+					const show = matchContinent && matchHour && matchSearch;
+					card.classList.toggle('hidden', !show);
+					if(show){
+						visible++;
+					}
+				});
+				const t = TRANSLATIONS[currentLang];
+				RESULT_COUNT.textContent = `${visible} ${visible === 1 ? t.foundSingle : t.found}`;
+			}
+
+			function createCards(){
+				const frag = document.createDocumentFragment();
+				TIME_ZONES.forEach(zone => {
+					const { continent, city } = parseZone(zone);
+					const country = getCountryName(zone, currentLang);
+					const id = zone.replaceAll('/', '_');
+					const continentLabel = CONTINENT_LABELS[continent] ? CONTINENT_LABELS[continent][currentLang] : continent;
+					const div = document.createElement('div');
+					div.className = 'timezone-card';
+					div.dataset.continent = continent;
+					div.dataset.country = country.toLowerCase();
+					div.dataset.city = city.toLowerCase();
+					div.dataset.zone = zone;
+					div.innerHTML = `
+						<div class="card-continent">${continentLabel}</div>
+						<div class="card-country">${country}</div>
+						<div class="card-city">${city}</div>
+						<div class="card-time" id="time_${id}">--:--:--</div>
+						<div class="card-date" id="date_${id}"></div>
+					`;
+					frag.appendChild(div);
+				});
+				CONTAINER.appendChild(frag);
+			}
+
+			function updateTimes(){
+				const now = new Date();
+				const locale = currentLang === 'en' ? 'en-GB' : 'it-IT';
+				let hourFilterChanged = false;
+				TIME_ZONES.forEach(zone => {
+					const id = zone.replaceAll('/', '_');
+					const timeEl = document.getElementById(`time_${id}`);
+					if(!timeEl){
+						return;
+					}
+					const card = timeEl.closest('.timezone-card');
+					const formatter = new Intl.DateTimeFormat('en-GB', {
+						timeZone: zone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+					});
+					const parts = formatter.formatToParts(now);
+					const h = parts.find(p => p.type === 'hour').value;
+					const m = parts.find(p => p.type === 'minute').value;
+					const s = parts.find(p => p.type === 'second').value;
+					timeEl.textContent = `${h}:${m}:${s}`;
+					if(card.dataset.currentHour !== h){
+						card.dataset.currentHour = h;
+						hourFilterChanged = true;
+					}
+					document.getElementById(`date_${id}`).textContent = new Intl.DateTimeFormat(locale, {
+						timeZone: zone, weekday: 'short', day: 'numeric', month: 'short'
+					}).format(now);
+				});
+				if(activeHour !== 'ALL' && hourFilterChanged){
+					updateVisibility();
+				}
+			}
+
+			initFilters();
+			createCards();
+			updateTimes();
+			updateVisibility();
+			setInterval(updateTimes, 200);
+		</script>
+	</body>
+</html>
