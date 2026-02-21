@@ -5,7 +5,9 @@ import java.util.*;
 
 //Codice per creare un unico file HTML con all'interno tutte le pagine che stanno nelle tre cartelle "Clocks", "Games" e "Tools".
 //Codice creato da Gemini e Claude lunedì nove febbraio duemilaventisei dopo un altro tentativo fatto con Gemini due giorni prima.
-//Ho fatto varie altre modifiche. L'ultima giovedì dodici febbraio.
+//Ho fatto varie altre modifiche. L'ultima sabato ventuno febbraio.
+//Questa per far comparire le pagine in ordine cronologico di mia creazione.
+//L'ordine è basato sul codice anteposto al nome del file quindi è customizzabile.
 //Unica differenza tra le pagine originali e quelle contenute nel file creato qui è una sezione con un pulsante per tornare all'indice di tutte le pagine.
 //Da mettere nella cartella in cui ci sono: "Clocks", "Games" e "Tools".
 //Da compilare e lanciare lì da terminale.
@@ -40,8 +42,8 @@ public class HTML_Pages_Unifier{
 											 .replace("`", "\\`")
 											 .replace("${", "\\${")
 											 .replace("</script>", "<\\/script>");
-							String key = folderName + "_" + file.getName();
-							String displayName = file.getName().replace(".html", "").replace("_", " ");
+							String key = folderName + "_" + file.getName().split(" - ")[1];
+							String displayName = (file.getName().split(" - ")[1]).replace(".html", "").replace("_", " ");
 							jsDataBuilder.append("\n	// --- ").append(displayName).append(" ---\n");
 							jsDataBuilder.append("	'").append(key).append("': { name: `").append(displayName).append("`, content: `").append(content).append("` },\n");
 							htmlMenuBuilder.append("<button class='card' onclick=\"openPage('").append(key).append("')\">")
