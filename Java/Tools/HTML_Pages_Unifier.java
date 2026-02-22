@@ -147,6 +147,7 @@ public class HTML_Pages_Unifier{
 		margin-bottom: 50px;
 		background: linear-gradient(to right, #fff, #aaa);
 		-webkit-background-clip: text;
+		background-clip: text;
 		-webkit-text-fill-color: transparent;
 		-webkit-user-select: none;
 		-ms-user-select: none;
@@ -187,16 +188,22 @@ public class HTML_Pages_Unifier{
 		justify-content: center;
 		text-align: center;
 		transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+		-webkit-backdrop-filter: blur(5px);
 		backdrop-filter: blur(5px);
 		box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+		-webkit-user-select: none;
+		-ms-user-select: none;
 		user-select: none;
 	}
 
 	.card:hover{
 		transform: translateY(-5px) scale(1.02);
-		background: rgba(255, 255, 255, 0.1);
-		border-color: var(--accent);
-		box-shadow: 0 10px 20px rgba(0,0,0,0.3), 0 0 15px rgba(74, 144, 226, 0.2);
+		-webkit-backdrop-filter: blur(5px);
+		backdrop-filter: blur(5px);
+		box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+		-webkit-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
 	}
 
 	.card:active{
@@ -213,12 +220,28 @@ public class HTML_Pages_Unifier{
 		background: var(--viewer-bg);
 		z-index: 2000;
 		flex-direction: column;
+		-webkit-backdrop-filter: blur(15px);
 		backdrop-filter: blur(15px);
 		animation: slideUp 0.3s ease-out;
 	}
 
-	@keyframes slideUp{from{transform: translateY(100%);opacity: 0;}to{transform: translateY(0);opacity: 1;}}
-	@keyframes fadeIn{from{opacity: 0;}to{opacity: 1;}}
+	@keyframes slideUp{
+		from{
+			transform: translateY(100%);
+			opacity: 0;
+		}to{
+			transform: translateY(0);
+			opacity: 1;
+		}
+	}
+
+	@keyframes fadeIn{
+		from{
+			opacity: 0;
+		}to{
+			opacity: 1;
+		}
+	}
 
 	#app-header{
 		height: 50px;
