@@ -53,11 +53,19 @@
 				position: absolute;
 				background-color: var(--off-color);
 				transition: background-color 0.2s, box-shadow 0.2s;
-				border-radius: calc(var(--seg-thickness)/2);
+				border-radius: 0;
 			}
 			.on{
 				background-color: var(--on-color);
 				box-shadow: 0 0 10px var(--on-color);
+			}
+			.segment.a, .segment.g, .segment.d{
+				border-radius: 0;
+				clip-path: polygon(4px 0%, calc(100% - 4px) 0%, 100% 50%, calc(100% - 4px) 100%, 4px 100%, 0% 50%);
+			}
+			.segment.b, .segment.c, .segment.e, .segment.f{
+				border-radius: 0;
+				clip-path: polygon(0% 4px, 50% 0%, 100% 4px, 100% calc(100% - 4px), 50% 100%, 0% calc(100% - 4px));
 			}
 			.segment.a{
 				top: 0;
