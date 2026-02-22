@@ -486,6 +486,9 @@
 				user-select: none;
 				touch-action: manipulation;
 			}
+			.clock.clickable {
+				pointer-events: auto;
+			}
 			.clock.reflected{
 				transform: scaleX(-1);
 			}
@@ -498,6 +501,7 @@
 				transform: rotate(var(--rotation));
 				font-size: 2rem;
 				transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+				pointer-events: none;
 			}
 			.clock.reflected .number{
 				transform: rotate(var(--rotation)) scaleX(-1);
@@ -513,6 +517,7 @@
 				transform-origin: bottom;
 				z-index: 10;
 				transform: translateX(-50%) rotate(calc(var(--rotation)*1deg));
+				pointer-events: none;
 			}
 			.clock::after{
 				content: '';
@@ -544,6 +549,26 @@
 			#controlsForm{
 				margin-top: 20px;
 				text-align: center;
+			}
+			#controlsForm button{
+				color: white;
+				border-radius: 50px;
+				padding: 10px 28px;
+				font-size: 1rem;
+				cursor: pointer;
+				transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+				letter-spacing: 0.05em;
+				background-color: rgba(0, 0, 0, 0.25);
+				border: 2px solid rgba(0, 0, 0, 0.3);
+				text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+			}
+			#controlsForm button:hover{
+				background-color: rgba(255, 255, 255, 0.35);
+				transform: scale(1.07);
+				box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
+			}
+			#controlsForm button:active{
+				transform: scale(0.97);
 			}
 			@media (max-width: 768px) {
 				.clock {
@@ -577,7 +602,7 @@
 			let clockwise = false;
 			let fromZero = true;
 			let settledColor = false;
-			const FLAG = true; 
+			const FLAG = !true;
 			const ANALOG = true;
 			const HOUR_HAND = document.querySelector('[data-hour-hand]');
 			const MINUTE_HAND = document.querySelector('[data-minute-hand]');
@@ -586,6 +611,10 @@
 			const SUNRISE_COLOR = "#ff9e5e";
 			const DAY_COLOR = "#87ceeb";
 			const SUNSET_COLOR = "#e66465";
+			const COLORS_1 = ['#f00', '#ff0', '#0f0', '#0ff', '#00f', '#f0f'];
+			const COLORS_2 = ['#f00', '#f30', '#f60', '#f90', '#fc0', '#ff0', '#cf0', '#9f0', '#6f0', '#3f0', '#0f0', '#0f3', '#0f6', '#0f9', '#0fc', '#0ff', '#0cf', '#09f', '#06f', '#03f', '#00f', '#30f', '#60f', '#90f', '#c0f', '#f0f', '#f0c', '#f09', '#f06', '#f03'];
+			const COLORS_3 = ['#000', '#a60', '#f00', '#f90', '#ff0', '#0f0', '#00f', '#b0b' , '#777', '#fff'];
+			const LABELS = ["", "first (4h)", "second (10s)", "third (2s)", "fourth (6s)", "fifth (10s)", "sixth (10m)", "seventh (2h 24m)", "eighth (random color)", "ninth (5,8,17,20)"];
 
 			function syncClockDirection(){
 				const dial = document.getElementById("clockDial");
@@ -623,23 +652,20 @@
 				setRotation(SECOND_HAND, secondsRatio);
 				setRotation(MINUTE_HAND, minutesRatio);
 				setRotation(HOUR_HAND, hoursRatio);
-				const colors_1 = ['#f00', '#ff0', '#0f0', '#0ff', '#00f', '#f0f'];
-				const colors_2 = ['#f00', '#f30', '#f60', '#f90', '#fc0', '#ff0', '#cf0', '#9f0', '#6f0', '#3f0', '#0f0', '#0f3', '#0f6', '#0f9', '#0fc', '#0ff', '#0cf', '#09f', '#06f', '#03f', '#00f', '#30f', '#60f', '#90f', '#c0f', '#f0f', '#f0c', '#f09', '#f06', '#f03'];
-				const colors_3 = ['#000', '#a60', '#f00', '#f90', '#ff0', '#0f0', '#00f', '#b0b' , '#777', '#fff'];
 				if(choice === 1){
-					document.body.style.backgroundColor = colors_1[currentDate.getHours()%6];
+					document.body.style.backgroundColor = COLORS_1[currentDate.getHours()%6];
 				}else if(choice === 2){
-					document.body.style.backgroundColor = colors_1[currentDate.getSeconds()%6];
+					document.body.style.backgroundColor = COLORS_1[currentDate.getSeconds()%6];
 				}else if(choice === 3){
-					document.body.style.backgroundColor = colors_2[currentDate.getSeconds()%30];
+					document.body.style.backgroundColor = COLORS_2[currentDate.getSeconds()%30];
 				}else if(choice === 4){
-					document.body.style.backgroundColor = colors_3[currentDate.getSeconds()%10];
+					document.body.style.backgroundColor = COLORS_3[currentDate.getSeconds()%10];
 				}else if(choice === 5){
-					document.body.style.backgroundColor = colors_3[Math.floor(currentDate.getSeconds()/6)];
+					document.body.style.backgroundColor = COLORS_3[Math.floor(currentDate.getSeconds()/6)];
 				}else if(choice === 6){
-					document.body.style.backgroundColor = colors_3[Math.floor(currentDate.getMinutes()/6)];
+					document.body.style.backgroundColor = COLORS_3[Math.floor(currentDate.getMinutes()/6)];
 				}else if(choice === 7){
-					document.body.style.backgroundColor = colors_3[Math.floor(((currentDate.getHours()*3600) +(currentDate.getMinutes()*60) +(currentDate.getSeconds()))/8640)];
+					document.body.style.backgroundColor = COLORS_3[Math.floor(((currentDate.getHours()*3600) +(currentDate.getMinutes()*60) + (currentDate.getSeconds()))/8640)];
 				}else if(choice === 8 && !settledColor){
 					settledColor = true;
 					document.body.style.backgroundColor = "#" + [...Array(6)].map(() => Math.floor(Math.random()*16).toString(16)).join('');
@@ -647,10 +673,7 @@
 					const hour = currentDate.getHours();
 					document.body.style.backgroundColor = (hour >= 20 || hour < 5) ? NIGHT_COLOR : (hour >= 5 && hour < 8) ? SUNRISE_COLOR : (hour >= 8 && hour < 17) ? DAY_COLOR : SUNSET_COLOR;
 				}
-				if(FLAG){
-					document.getElementById("controlsForm").style.display = "none";
-					document.getElementById("clockDial").onclick = changeClockDirection;
-				}
+				document.getElementById("btnColors").textContent = "Colors' rule: " + LABELS[choice];
 			}
 
 			function setRotation(element, rotationRatio){
@@ -661,8 +684,7 @@
 			function changeColorsRules(){
 				choice = choice >= 9 ? 1 : choice + 1;
 				settledColor = false;
-				const labels = ["", "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth"];
-				document.getElementById("btnColors").textContent = "Colors' rule: " + labels[choice];
+				document.getElementById("btnColors").textContent = "Colors' rule: " + LABELS[choice];
 			}
 
 			function changeClockDirection(){
@@ -678,6 +700,11 @@
 			drawNumbers();
 			setClock();
 			syncClockDirection();
+			if(FLAG){
+				document.getElementById("controlsForm").style.display = "none";
+				document.getElementById("clockDial").style.pointerEvents = "auto";
+				document.getElementById("clockDial").onclick = changeClockDirection;
+			}
 		<\/script>
 	</body>
 </html>` },
@@ -1056,6 +1083,9 @@
 				min-height: 100vh;
 				padding: 24px 16px 48px;
 				transition: background-color 0.3s, color 0.3s;
+				-webkit-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
 			}
 			header{
 				text-align: center;
@@ -1598,8 +1628,7 @@
 			setInterval(updateTimes, 200);
 		<\/script>
 	</body>
-</html>
-` },
+</html>` },
 
 	// --- Digital Clock ---
 	'Clocks_Digital Clock.html': { name: `Digital Clock`, content: `<!DOCTYPE html>
@@ -1837,11 +1866,19 @@
 				position: absolute;
 				background-color: var(--off-color);
 				transition: background-color 0.2s, box-shadow 0.2s;
-				border-radius: calc(var(--seg-thickness)/2);
+				border-radius: 0;
 			}
 			.on{
 				background-color: var(--on-color);
 				box-shadow: 0 0 10px var(--on-color);
+			}
+			.segment.a, .segment.g, .segment.d{
+				border-radius: 0;
+				clip-path: polygon(4px 0%, calc(100% - 4px) 0%, 100% 50%, calc(100% - 4px) 100%, 4px 100%, 0% 50%);
+			}
+			.segment.b, .segment.c, .segment.e, .segment.f{
+				border-radius: 0;
+				clip-path: polygon(0% 4px, 50% 0%, 100% 4px, 100% calc(100% - 4px), 50% 100%, 0% calc(100% - 4px));
 			}
 			.segment.a{
 				top: 0;
@@ -8538,6 +8575,9 @@
 				font-family: sans-serif;
 				padding: 20px;
 				line-height: 1.6;
+				-webkit-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
 			}
 			.container{
 				max-width: 500px;
