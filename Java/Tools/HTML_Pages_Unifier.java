@@ -5,7 +5,7 @@ import java.util.*;
 
 //Codice per creare un unico file HTML con all'interno tutte le pagine che stanno nelle tre cartelle "Clocks", "Games" e "Tools".
 //Codice creato da Gemini e Claude lunedì nove febbraio duemilaventisei dopo un altro tentativo fatto con Gemini due giorni prima.
-//Ho fatto varie altre modifiche. L'ultima sabato ventuno febbraio.
+//Ho fatto varie altre modifiche. L'ultima domenica ventidue febbraio.
 //Questa per far comparire le pagine in ordine cronologico di mia creazione.
 //L'ordine è basato sul codice anteposto al nome del file quindi è customizzabile.
 //Unica differenza tra le pagine originali e quelle contenute nel file creato qui è una sezione con un pulsante per tornare all'indice di tutte le pagine.
