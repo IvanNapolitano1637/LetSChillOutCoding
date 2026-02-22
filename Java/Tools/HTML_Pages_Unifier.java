@@ -81,13 +81,18 @@ public class HTML_Pages_Unifier{
 		return content;
 	}
 
+
+	//NEL PROSSIMO METODO HO DOVUTO SOSTITUIRE LA PROSSIMA RIGA CON LA SUCCESSIVA
+	//<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	//<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 	private static void generateFinalHtml(String menuHtml, String jsObjectContent){
 		String template = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Toolbox & Playground</title>
 <style>
 	:root{
