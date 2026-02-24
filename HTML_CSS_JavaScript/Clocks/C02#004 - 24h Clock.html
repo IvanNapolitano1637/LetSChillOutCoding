@@ -17,6 +17,8 @@
 				transition: background-color 2s ease-in-out;
 				background-color: #2f363e;
 				-webkit-tap-highlight-color: transparent;
+				overflow-x: hidden;
+				touch-action: none;
 			}
 			.clock{
 				width: 600px;
@@ -30,7 +32,7 @@
 				user-select: none;
 				touch-action: manipulation;
 			}
-			.clock.clickable {
+			.clock.clickable{
 				pointer-events: auto;
 			}
 			.clock.reflected{
@@ -46,6 +48,8 @@
 				font-size: 2rem;
 				transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 				pointer-events: none;
+				overflow-x: hidden;
+				user-select: none;
 			}
 			.clock.reflected .number{
 				transform: rotate(var(--rotation)) scaleX(-1);
@@ -100,26 +104,48 @@
 				padding: 10px 28px;
 				font-size: 1rem;
 				cursor: pointer;
-				transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-				letter-spacing: 0.05em;
+				transition: all 0.3s ease; 
 				background-color: rgba(0, 0, 0, 0.25);
 				border: 2px solid rgba(0, 0, 0, 0.3);
-				text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+				outline: none;
+				-webkit-tap-highlight-color: transparent;
 			}
-			#controlsForm button:hover{
-				background-color: rgba(255, 255, 255, 0.35);
-				transform: scale(1.07);
-				box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
+			@media (hover: hover) and (pointer: fine){
+				#controlsForm button:hover {
+					background-color: rgba(255, 255, 255, 0.35);
+					transform: scale(1.07);
+					box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
+				}
 			}
 			#controlsForm button:active{
-				transform: scale(0.97);
+				transform: scale(0.95);
+				background-color: rgba(255, 255, 255, 0.5) !important;
+				transition: none;
 			}
-			@media (max-width: 768px) {
-				.clock {
+			#firstDiv{
+				max-width: 100vw;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				width: 100%;
+			}
+			button{
+				-webkit-tap-highlight-color: transparent;
+				outline: none;
+			}
+			#btnChangeBackgroundColor {
+				display: none;
+				padding: 10px 18px !important; 
+				margin-left: 5px;
+				font-weight: bold;
+				vertical-align: middle;
+			}
+			@media (max-width: 768px){
+				.clock{
 					width: 90vw;
 					height: 90vw;
 				}
-				.clock .number {
+				.clock .number{
 					font-size: 1.2rem;
 				}
 			}
@@ -132,11 +158,15 @@
 				<div class="hand minute" data-minute-hand></div>
 				<div class="hand second" data-second-hand></div>
 			</div>
-			<form action="#" id="controlsForm">
-				<br>
-				<button type="button" id="btnClockDirection" onclick="changeClockDirection()">Turn to clockwise</button><br><br>
-				<button type="button" id="btnColors" onclick="changeColorsRules()">Colors' rule: random</button><br><br>
-				<button type="button" id="btnMidnightNumber" onclick="changeMidnightNumber()">Change midnight number</button>
+			<form id="controlsForm">
+				<button type="button" id="btnSettings" onclick="toggleSettings()">Show Settings</button>
+				<br><br>
+				<div id="extraButtons" style="display:none">
+					<button type="button" id="btnClockDirection" onclick="changeClockDirection()">Turn to clockwise</button><br><br>
+					<button type="button" id="btnColors" onclick="changeColorsRules()">Colors' rule: random</button>
+					<button type="button" id="btnChangeBackgroundColor" onclick="changeBackgroundColor()" style="display:none">⟳</button><br><br>
+					<button type="button" id="btnMidnightNumber" onclick="changeMidnightNumber()">Change midnight number</button>
+				</div>
 			</form>
 		</div>
 		<script>
@@ -146,7 +176,6 @@
 			let clockwise = false;
 			let fromZero = true;
 			let settledColor = false;
-			const FLAG = !true;
 			const ANALOG = true;
 			const HOUR_HAND = document.querySelector('[data-hour-hand]');
 			const MINUTE_HAND = document.querySelector('[data-minute-hand]');
@@ -158,7 +187,7 @@
 			const COLORS_1 = ['#f00', '#ff0', '#0f0', '#0ff', '#00f', '#f0f'];
 			const COLORS_2 = ['#f00', '#f30', '#f60', '#f90', '#fc0', '#ff0', '#cf0', '#9f0', '#6f0', '#3f0', '#0f0', '#0f3', '#0f6', '#0f9', '#0fc', '#0ff', '#0cf', '#09f', '#06f', '#03f', '#00f', '#30f', '#60f', '#90f', '#c0f', '#f0f', '#f0c', '#f09', '#f06', '#f03'];
 			const COLORS_3 = ['#000', '#a60', '#f00', '#f90', '#ff0', '#0f0', '#00f', '#b0b' , '#777', '#fff'];
-			const LABELS = ["", "first (1h; 6)", "second (1s; 6)", "third (1s; 30)", "fourth (1s; 10)", "fifth (6s; 10)", "sixth (6m; 10)", "seventh (2h 24m; 10)", "eighth (single random color)", "ninth (5,8,17,20; 4)"];
+			const LABELS = ["", "first (1h; 6)", "second (1s; 6)", "third (1s; 30)", "fourth (1s; 10)", "fifth (6s; 10)", "sixth (6m; 10)", "seventh (2h 24m; 10)", "eighth (one color)", "ninth (5,8,17,20; 4)"];
 
 			function syncClockDirection(){
 				const dial = document.getElementById("clockDial");
@@ -211,8 +240,7 @@
 				}else if(choice === 7){
 					document.body.style.backgroundColor = COLORS_3[Math.floor(((currentDate.getHours()*3600) +(currentDate.getMinutes()*60) + (currentDate.getSeconds()))/8640)];
 				}else if(choice === 8 && !settledColor){
-					settledColor = true;
-					document.body.style.backgroundColor = "#" + [...Array(6)].map(() => Math.floor(Math.random()*16).toString(16)).join('');
+					changeBackgroundColor();
 				}else if(choice === 9){
 					const hour = currentDate.getHours();
 					document.body.style.backgroundColor = (hour >= 20 || hour < 5) ? NIGHT_COLOR : (hour >= 5 && hour < 8) ? SUNRISE_COLOR : (hour >= 8 && hour < 17) ? DAY_COLOR : SUNSET_COLOR;
@@ -229,26 +257,45 @@
 				choice = choice >= 9 ? 1 : choice + 1;
 				settledColor = false;
 				document.getElementById("btnColors").textContent = "Colors' rule: " + LABELS[choice];
+				const btnReset = document.getElementById("btnChangeBackgroundColor");
+				btnReset.style.display = (choice === 8 ? "inline-block" : "none");
+				document.activeElement.blur();
+			}
+
+			function changeBackgroundColor(){
+				settledColor = true;
+				document.body.style.backgroundColor = "#" + [...Array(6)].map(() => Math.floor(Math.random()*16).toString(16)).join('');
+				document.activeElement.blur();
 			}
 
 			function changeClockDirection(){
 				clockwise = !clockwise;
 				syncClockDirection();
+				document.activeElement.blur();
 			}
 
 			function changeMidnightNumber(){
 				fromZero = !fromZero;
 				drawNumbers();
+				document.activeElement.blur();
 			}
 
+			function toggleSettings(){
+				const extra = document.getElementById("extraButtons");
+				if(extra.style.display === "none"){
+					extra.style.display = "block";
+					document.getElementById("btnSettings").textContent = "Hide Settings";
+				}else{
+					extra.style.display = "none";
+					document.getElementById("btnSettings").textContent = "Show Settings";
+				}
+				document.activeElement.blur();
+			}
+
+			document.getElementById("btnChangeBackgroundColor").style.display = (choice === 8 ? "inline-block" : "none");
 			drawNumbers();
 			setClock();
 			syncClockDirection();
-			if(FLAG){
-				document.getElementById("controlsForm").style.display = "none";
-				document.getElementById("clockDial").style.pointerEvents = "auto";
-				document.getElementById("clockDial").onclick = changeClockDirection;
-			}
 		</script>
 	</body>
 </html>
