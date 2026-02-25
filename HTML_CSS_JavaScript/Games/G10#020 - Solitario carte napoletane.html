@@ -183,10 +183,20 @@
 			.v-bl{
 				bottom: 4px;
 				left: 5px;
+				transform: rotate(180deg);
 			}
 			.v-br{
 				bottom: 4px;
 				right: 5px;
+				transform: rotate(180deg);
+			}
+			.suit-icon{
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				font-size: calc(var(--font-val) * 2.5);
+				opacity: 0.8;
 			}
 			.column .card:not(:last-child){
 				cursor: default;
@@ -287,9 +297,14 @@
 
 			function renderCardContent(card){
 				const v = card.dataset.value;
+				const s = card.dataset.suit;
+				const suitSymbols = {'D': '🟡', 'C': '🍷', 'S': '⚔️', 'B': '🪵'};
+				const symbol = suitSymbols[s] || '';
 				card.innerHTML = `
-					<div class="card-val v-tl">${v}</div><div class="card-val v-tr">${v}</div>
-					<div class="card-val v-bl">${v}</div><div class="card-val v-br">${v}</div>`;
+					<div class="card-val v-tl">${v}</div>
+					<div class="suit-icon">${symbol}</div>
+					<div class="card-val v-br">${v}</div>
+				`;
 				card.classList.remove('back');
 				card.dataset.faceUp = "true";
 			}
