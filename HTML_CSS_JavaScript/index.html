@@ -5931,7 +5931,7 @@
 				--card-width: clamp(40px, 13vw, 85px); 
 				--card-height: clamp(58px, 19vw, 125px);
 				--gap: clamp(2px, 1.2vw, 15px);
-				--overlap: clamp(40px, 10vw, 90px);
+				--overlap: clamp(50px, 12.5vw, 100px);
 				--font-val: clamp(9px, 3vw, 16px);
 			}
 			*, *::before, *::after{
@@ -6084,10 +6084,11 @@
 			.card-val{
 				position: absolute;
 				font-weight: bold;
-				font-size: var(--font-val);
+				font-size: calc(var(--font-val) * 0.9);
 				color: #111;
 				pointer-events: none;
 				line-height: 1;
+				white-space: nowrap;
 			}
 			.v-tl{
 				top: 4px;
@@ -6218,9 +6219,9 @@
 				const suitSymbols = {'D': '🟡', 'C': '🍷', 'S': '⚔️', 'B': '🪵'};
 				const symbol = suitSymbols[s] || '';
 				card.innerHTML = \`
-					<div class="card-val v-tl">\${v}</div>
+					<div class="card-val v-tl">\${v}\${symbol}</div>
 					<div class="suit-icon">\${symbol}</div>
-					<div class="card-val v-br">\${v}</div>
+					<div class="card-val v-br">\${v}\${symbol}</div>
 				\`;
 				card.classList.remove('back');
 				card.dataset.faceUp = "true";
