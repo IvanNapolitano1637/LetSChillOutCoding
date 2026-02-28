@@ -206,18 +206,18 @@
 				<div class="radio-option"><input type="radio" id="triangle" name="oscillatorType" value="triangle"><output>triangle</output></div>
 			</div>
 		</div>
-		<div class="row">
-			<div class="slider-container"><span class="slider-label">2nd Harmonic:<output id="h2_val">0.00</output></span><input id="h2" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
-			<div class="slider-container"><span class="slider-label">3rd Harmonic:<output id="h3_val">0.00</output></span><input id="h3" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
-			<div class="slider-container"><span class="slider-label">4th Harmonic:<output id="h4_val">0.00</output></span><input id="h4" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
+		<div id="HarmonicList" class="row">
+			<div id="2nd_HarmonicList" class="slider-container" style="display:none;"><span class="slider-label">2nd Harmonic:<output id="h2_val">0.00</output></span><input id="h2" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
+			<div id="3rd_HarmonicList" class="slider-container" style="display:none;"><span class="slider-label">3rd Harmonic:<output id="h3_val">0.00</output></span><input id="h3" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
+			<div id="4th_HarmonicList" class="slider-container" style="display:none;"><span class="slider-label">4th Harmonic:<output id="h4_val">0.00</output></span><input id="h4" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
 		</div>
-		<div class="section-title">LOW PASS FILTER(VCF)</div>
+		<div id="LowPassFilter" class="section-title" style="display:none;">LOW PASS FILTER(VCF)</div>
 		<div class="row">
-			<div class="slider-container">
+			<div id="Cutoff" class="slider-container" style="display:none;">
 				<span class="slider-label">Cutoff(Freq):<output id="cutoff_val">20000 Hz</output></span>
 				<input id="cutoff" type="range" class="full-width-slider" min="20" max="20000" step="1" value="20000" oninput="updateFilter()">			
 			</div>
-			<div class="slider-container">
+			<div id="Resonance" class="slider-container" style="display:none;">
 				<span class="slider-label">Resonance(Q):<output id="resonance_val">1.0</output></span>
 				<input id="resonance" type="range" class="full-width-slider" min="0" max="20" step="0.1" value="1" oninput="updateFilter()">
 			</div>
@@ -232,16 +232,16 @@
 			</div>
 		</div>
 		<div class="flex-row">
-			<button onclick="play()">Play</button>
-			<button onclick="stop()">Stop</button>
+			<button id="play_and_stop_button" onclick="play_and_stop()">▶</button>
 			<button onclick="multiplyFREQUENCY_VALUE(0.5)">f/2</button>
 			<button onclick="multiplyFREQUENCY_VALUE(2)">f×2</button>
+			<button id="showingButton" onclick="toggleShowing()">Pro</button>
 			<button onclick="window.location.reload();">⟳ Page</button>
 		</div>
 		<div class="flex-row" style="align-items: flex-start;">
 			<div class="row" style="min-width: 100px;">
 				<b>Max freq:</b><br>
-				<button onclick="halveMax()">SmallerMax</button><br>
+				<button onclick="halveMax()">Smaller Max</button><br>
 				<input type="radio" name="maxFrequency" value="50" onchange="setMaxFrequency()" disabled>50<br>
 				<input type="radio" name="maxFrequency" value="100" onchange="setMaxFrequency()" disabled>100<br>
 				<input type="radio" name="maxFrequency" value="200" onchange="setMaxFrequency()" disabled>200<br>
@@ -252,9 +252,9 @@
 				<input type="radio" name="maxFrequency" value="8000" onchange="setMaxFrequency()">8000<br>
 				<input type="radio" name="maxFrequency" value="16000" onchange="setMaxFrequency()">16000<br>
 				<input type="radio" name="maxFrequency" value="24000" onchange="setMaxFrequency()">24000<br>
-				<button onclick="doubleMax()">BiggerMax</button>
+				<button onclick="doubleMax()">Bigger Max</button>
 			</div>
-			<div class="row" style="flex-grow: 1;">
+			<div id="ADSR" class="row" style="flex-grow: 1; display:none;">
 				<b>ADSR & Master Vol:</b>
 				<div class="slider-container"><span class="slider-label">Attack:<output id="attack_val">10</output></span><input id="attack" type="range" class="full-width-slider" min="0" max="2000" value="10" oninput="updateAdsLabel()"></div>
 				<div class="slider-container"><span class="slider-label">Decay:<output id="decay_val">100</output></span><input id="decay" type="range" class="full-width-slider" min="0" max="2000" value="100" oninput="updateAdsLabel()"></div>
@@ -285,8 +285,7 @@
 			</div>
 		</div>
 		<div class="flex-row">
-			<button onclick="sirenOn()">Siren On</button>
-			<button onclick="sirenOff()">Siren Off</button>
+			<button id="sirenButton" onclick="sirenOnOff()">Siren On</button>
 		</div>
 		<div id="keyboard">
 			<button class="white" id="C4">C4</button>
@@ -311,6 +310,9 @@
 			let oscillatorinputType = "sine";
 			let frequencyHz = 440;
 			let indexArray = 4;
+			let play = false;
+			let sirenIsOn = false;
+			let basic = true;
 			const ACTIVE_VOICES = new Map();
 			const MAX_FREQUENCY_VALUE = [50,100,200,500,1000,2000,4000,8000,16000,24000];
 			const KEY_MAP = {"a":"C4","w":"Csharp4","s":"D4","e":"Dsharp4","d":"E4","f":"F4","t":"Fsharp4","g":"G4","y":"Gsharp4","h":"A4","u":"Asharp4","j":"B4","k":"C5"};
@@ -487,12 +489,14 @@
 				render();
 			}
 
-			function play(){
-				playVoice("mono", frequencyHz);
-			}
-
-			function stop(){
-				stopVoice("mono");
+			function play_and_stop(){
+				play = !play;
+				if(play){
+					playVoice("mono", frequencyHz);
+				}else{
+					stopVoice("mono");
+				}
+				document.getElementById("play_and_stop_button").textContent = play ? "⏹" : "▶";
 			}
 
 			function multiplyFREQUENCY_VALUE(m){
@@ -550,7 +554,6 @@
 
 			let sOsc = null;
 			let sInt = null;
-			let sOn = false;
 			let sMin = 800;
 			let sMax = 1200;
 			let sDur = 300;
@@ -563,15 +566,17 @@
 						sWave = w.value;
 					}
 				}
-				if(sOn && sOsc){
+				if(sirenIsOn && sOsc){
 					sOsc.type = sWave;
 				}
 			}
 
 			function sirenOn(){
-				initAudio(); sirenOff(); 
+				initAudio();
+				sirenOff();
 				sOsc = audioContext.createOscillator();
-				let g = audioContext.createGain(); g.gain.value = 0.3;
+				let g = audioContext.createGain();
+				g.gain.value = 0.3;
 				sOsc.type = sWave;
 				sOsc.frequency.setValueAtTime(sMin, audioContext.currentTime);
 				sOsc.connect(g); g.connect(lowPassFilter);
@@ -583,7 +588,7 @@
 						}
 						state = !state;
 					}, sDur);
-				sOn = true;
+				sirenIsOn = true;
 			}
 
 			function sirenOff(){
@@ -592,18 +597,41 @@
 					try{
 						sOsc.stop();
 					}catch(e){}
-						sOsc = null;
-					}
-					sOn = false;
+					sOsc = null;
 				}
+				sirenIsOn = false;
+			}
+
+			function sirenOnOff(){
+				sirenIsOn = !sirenIsOn;
+				document.getElementById("sirenButton").textContent = sirenIsOn ? "Siren Off" : "Siren On";
+				if(sirenIsOn){
+					sirenOn();
+				}else{
+					sirenOff();
+				}
+			}
 
 			function changeSirenType(min, max, dur){
 				sMin = min;
 				sMax = max;
 				sDur = dur;
-				if(sOn){
+				if(sirenIsOn){
 					sirenOn();
 				}
+			}
+
+			function toggleShowing(){
+				document.getElementById("showingButton").textContent = basic ? "Basic" : "Pro";
+				document.getElementById("HarmonicList").style.display = basic ? "block" : "none";
+				document.getElementById("2nd_HarmonicList").style.display = basic ? "block" : "none";
+				document.getElementById("3rd_HarmonicList").style.display = basic ? "block" : "none";
+				document.getElementById("4th_HarmonicList").style.display = basic ? "block" : "none";
+				document.getElementById("LowPassFilter").style.display = basic ? "block" : "none";
+				document.getElementById("Cutoff").style.display = basic ? "block" : "none";
+				document.getElementById("Resonance").style.display = basic ? "block" : "none";
+				document.getElementById("ADSR").style.display = basic ? "block" : "none";
+				basic = !basic;
 			}
 
 			document.addEventListener("keydown", e => {
@@ -614,7 +642,7 @@
 						btn.classList.add("pressed"); playVoice(btn.id, FREQ_MAP[btn.id]);
 					}
 				}else if(key === "l"){
-					if(sOn){
+					if(sirenIsOn){
 						sirenOff();
 					}else{
 						sirenOn();
