@@ -7612,6 +7612,9 @@
 				flex-grow: 1;
 				text-align: center;
 			}
+			.hidden{
+				display: none !important;
+			}
 		</style>
 	</head>
 	<body>
@@ -7626,18 +7629,18 @@
 				<div class="radio-option"><input type="radio" id="triangle" name="oscillatorType" value="triangle"><output>triangle</output></div>
 			</div>
 		</div>
-		<div id="HarmonicList" class="row">
-			<div id="2nd_HarmonicList" class="slider-container" style="display:none;"><span class="slider-label">2nd Harmonic:<output id="h2_val">0.00</output></span><input id="h2" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
-			<div id="3rd_HarmonicList" class="slider-container" style="display:none;"><span class="slider-label">3rd Harmonic:<output id="h3_val">0.00</output></span><input id="h3" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
-			<div id="4th_HarmonicList" class="slider-container" style="display:none;"><span class="slider-label">4th Harmonic:<output id="h4_val">0.00</output></span><input id="h4" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
+		<div id="HarmonicList" class="row hidden">
+			<div id="Harmonic_2" class="slider-container"><span class="slider-label">2nd Harmonic:<output id="h2_val">0.00</output></span><input id="h2" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
+			<div id="Harmonic_3" class="slider-container"><span class="slider-label">3rd Harmonic:<output id="h3_val">0.00</output></span><input id="h3" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
+			<div id="Harmonic_4" class="slider-container"><span class="slider-label">4th Harmonic:<output id="h4_val">0.00</output></span><input id="h4" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
 		</div>
-		<div id="LowPassFilter" class="section-title" style="display:none;">LOW PASS FILTER(VCF)</div>
+		<div id="LowPassFilter" class="section-title hidden">LOW PASS FILTER(VCF)</div>
 		<div class="row">
-			<div id="Cutoff" class="slider-container" style="display:none;">
+			<div id="Cutoff" class="slider-container hidden">
 				<span class="slider-label">Cutoff(Freq):<output id="cutoff_val">20000 Hz</output></span>
 				<input id="cutoff" type="range" class="full-width-slider" min="20" max="20000" step="1" value="20000" oninput="updateFilter()">			
 			</div>
-			<div id="Resonance" class="slider-container" style="display:none;">
+			<div id="Resonance" class="slider-container hidden">
 				<span class="slider-label">Resonance(Q):<output id="resonance_val">1.0</output></span>
 				<input id="resonance" type="range" class="full-width-slider" min="0" max="20" step="0.1" value="1" oninput="updateFilter()">
 			</div>
@@ -7674,7 +7677,7 @@
 				<input type="radio" name="maxFrequency" value="24000" onchange="setMaxFrequency()">24000<br>
 				<button onclick="doubleMax()">Bigger Max</button>
 			</div>
-			<div id="ADSR" class="row" style="flex-grow: 1; display:none;">
+			<div id="ADSR" class="row hidden" style="flex-grow: 1;">
 				<b>ADSR & Master Vol:</b>
 				<div class="slider-container"><span class="slider-label">Attack:<output id="attack_val">10</output></span><input id="attack" type="range" class="full-width-slider" min="0" max="2000" value="10" oninput="updateAdsLabel()"></div>
 				<div class="slider-container"><span class="slider-label">Decay:<output id="decay_val">100</output></span><input id="decay" type="range" class="full-width-slider" min="0" max="2000" value="100" oninput="updateAdsLabel()"></div>
@@ -8001,13 +8004,11 @@
 				sOsc.frequency.setValueAtTime(sMin, audioContext.currentTime);
 				sOsc.connect(g); g.connect(lowPassFilter);
 				sOsc.start();
-				let state = true; 
+				let state = true;
 				sInt = setInterval(() => {
-						if(sOsc){
-							sOsc.frequency.setValueAtTime(state ? sMax : sMin, audioContext.currentTime);
-						}
-						state = !state;
-					}, sDur);
+					sOsc.frequency.exponentialRampToValueAtTime(state ? sMax : sMin, audioContext.currentTime + 0.1);
+					state = !state;
+				}, sDur);
 				sirenIsOn = true;
 			}
 
@@ -8041,17 +8042,16 @@
 				}
 			}
 
-			function toggleShowing(){
-				document.getElementById("showingButton").textContent = basic ? "Basic" : "Pro";
-				document.getElementById("HarmonicList").style.display = basic ? "block" : "none";
-				document.getElementById("2nd_HarmonicList").style.display = basic ? "block" : "none";
-				document.getElementById("3rd_HarmonicList").style.display = basic ? "block" : "none";
-				document.getElementById("4th_HarmonicList").style.display = basic ? "block" : "none";
-				document.getElementById("LowPassFilter").style.display = basic ? "block" : "none";
-				document.getElementById("Cutoff").style.display = basic ? "block" : "none";
-				document.getElementById("Resonance").style.display = basic ? "block" : "none";
-				document.getElementById("ADSR").style.display = basic ? "block" : "none";
+			function toggleShowing() {
 				basic = !basic;
+				document.getElementById("showingButton").textContent = basic ? "Pro" : "Basic";
+				const elementsToToggle = ["HarmonicList", "Harmonic_2", "Harmonic_3", "Harmonic_4", "LowPassFilter", "Cutoff", "Resonance", "ADSR"];
+				elementsToToggle.forEach(id => {
+					const el = document.getElementById(id);
+					if(el){
+						el.classList.toggle("hidden");
+					}
+				});
 			}
 
 			document.addEventListener("keydown", e => {
