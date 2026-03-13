@@ -213,7 +213,7 @@
 <body>
 <div id="dashboard">
 	<h1>Toolbox & Playground</h1>
-	<div class='section'><h2>🕰️ Clocks</h2><div class='grid'><button class='card' onclick="openPage('Clocks_Binary Clock.html')">Binary Clock</button><button class='card' onclick="openPage('Clocks_24h Clock.html')">24h Clock</button><button class='card' onclick="openPage('Clocks_Orbit Clock.html')">Orbit Clock</button><button class='card' onclick="openPage('Clocks_Strange Clock.html')">Strange Clock</button><button class='card' onclick="openPage('Clocks_World Time Zones.html')">World Time Zones</button><button class='card' onclick="openPage('Clocks_Digital Clock.html')">Digital Clock</button><button class='card' onclick="openPage('Clocks_Analog Clock.html')">Analog Clock</button><button class='card' onclick="openPage('Clocks_Seven-Segment Digital Clock.html')">Seven-Segment Digital Clock</button></div></div><div class='section'><h2>🎮 Games</h2><div class='grid'><button class='card' onclick="openPage('Games_Eight Queens.html')">Eight Queens</button><button class='card' onclick="openPage('Games_Game of Life.html')">Game of Life</button><button class='card' onclick="openPage('Games_Tower of Hanoi.html')">Tower of Hanoi</button><button class='card' onclick="openPage('Games_Connect Four.html')">Connect Four</button><button class='card' onclick="openPage('Games_Modular Matching.html')">Modular Matching</button><button class='card' onclick="openPage('Games_Fifteen.html')">Fifteen</button><button class='card' onclick="openPage('Games_Chess.html')">Chess</button><button class='card' onclick="openPage('Games_Checkers.html')">Checkers</button><button class='card' onclick="openPage('Games_Backgammon.html')">Backgammon</button><button class='card' onclick="openPage('Games_Solitario carte napoletane.html')">Solitario carte napoletane</button></div></div><div class='section'><h2>🛠️ Tools</h2><div class='grid'><button class='card' onclick="openPage('Tools_Colors Pro.html')">Colors Pro</button><button class='card' onclick="openPage('Tools_Some Maths.html')">Some Maths</button><button class='card' onclick="openPage('Tools_Sounds.html')">Sounds</button><button class='card' onclick="openPage('Tools_Days.html')">Days</button><button class='card' onclick="openPage('Tools_SuperEnalotto.html')">SuperEnalotto</button><button class='card' onclick="openPage('Tools_Colors Hub.html')">Colors Hub</button></div></div>
+	<div class='section'><h2>🕰️ Clocks</h2><div class='grid'><button class='card' onclick="openPage('Clocks_Binary Clock.html')">Binary Clock</button><button class='card' onclick="openPage('Clocks_24h Clock.html')">24h Clock</button><button class='card' onclick="openPage('Clocks_Orbit Clock.html')">Orbit Clock</button><button class='card' onclick="openPage('Clocks_Strange Clock.html')">Strange Clock</button><button class='card' onclick="openPage('Clocks_World Time Zones.html')">World Time Zones</button><button class='card' onclick="openPage('Clocks_Digital Clock.html')">Digital Clock</button><button class='card' onclick="openPage('Clocks_Analog Clock.html')">Analog Clock</button><button class='card' onclick="openPage('Clocks_Seven-Segment Digital Clock.html')">Seven-Segment Digital Clock</button></div></div><div class='section'><h2>🎮 Games</h2><div class='grid'><button class='card' onclick="openPage('Games_Eight Queens.html')">Eight Queens</button><button class='card' onclick="openPage('Games_Game of Life.html')">Game of Life</button><button class='card' onclick="openPage('Games_Tower of Hanoi.html')">Tower of Hanoi</button><button class='card' onclick="openPage('Games_Connect Four.html')">Connect Four</button><button class='card' onclick="openPage('Games_Modular Matching.html')">Modular Matching</button><button class='card' onclick="openPage('Games_Fifteen.html')">Fifteen</button><button class='card' onclick="openPage('Games_Chess.html')">Chess</button><button class='card' onclick="openPage('Games_Checkers.html')">Checkers</button><button class='card' onclick="openPage('Games_Backgammon.html')">Backgammon</button><button class='card' onclick="openPage('Games_Solitario carte napoletane.html')">Solitario carte napoletane</button></div></div><div class='section'><h2>🛠️ Tools</h2><div class='grid'><button class='card' onclick="openPage('Tools_Colors Pro.html')">Colors Pro</button><button class='card' onclick="openPage('Tools_Some Maths.html')">Some Maths</button><button class='card' onclick="openPage('Tools_Sounds.html')">Sounds</button><button class='card' onclick="openPage('Tools_Days.html')">Days</button><button class='card' onclick="openPage('Tools_SuperEnalotto.html')">SuperEnalotto</button><button class='card' onclick="openPage('Tools_Colors Hub.html')">Colors Hub</button><button class='card' onclick="openPage('Tools_Alpha-Numeric Converter.html')">Alpha-Numeric Converter</button></div></div>
 </div>
 <div id="viewer">
 	<div id="app-header">
@@ -10162,6 +10162,378 @@
 				document.getElementById('selector-screen').style.display = 'none';
 				document.getElementById(id).style.display = 'block';
 			}
+		<\/script>
+	</body>
+</html>` },
+
+	// --- Alpha-Numeric Converter ---
+	'Tools_Alpha-Numeric Converter.html': { name: `Alpha-Numeric Converter`, content: `<!DOCTYPE html>
+<html lang="en"><!--T07#025 - Sophia - Alpha-Numeric Converter-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Alpha-Numeric Converter</title>
+		<style>
+			body{
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				min-height: 100vh;
+				background-color: #f0f2f5;
+				margin: 0;
+			}
+			.container{
+				background: white;
+				padding: 2rem;
+				border-radius: 12px;
+				box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+				width: 100%;
+				max-width: 420px;
+			}
+			h2{
+				color: #1a1a1a;
+				text-align: center;
+				margin-bottom: 1.5rem;
+			}
+			.radio-group{
+				display: flex;
+				gap: 15px;
+				margin-bottom: 1.5rem;
+				justify-content: center;
+			}
+			.radio-option{
+				display: flex;
+				align-items: center;
+				cursor: pointer;
+				font-size: 0.9rem;
+				color: #444;
+				background: #f8f9fa;
+				padding: 8px 12px;
+				border-radius: 6px;
+				border: 1px solid #e0e0e0;
+				transition: all 0.2s;
+			}
+			.radio-option:hover{
+				background: #eef2f7;
+			}
+			.radio-option input{
+				margin-right: 8px;
+				cursor: pointer;
+			}
+			.radio-label-text{
+				display: flex;
+				align-items: center;
+				font-size: 0.85rem;
+				color: #666;
+				font-weight: 700;
+				text-transform: uppercase;
+				letter-spacing: 0.5px;
+				padding: 8px 0;
+				margin-right: 8px;
+			}
+			.radio-label-text::after{
+				content: '\\2192';
+				margin-left: 6px;
+				color: #007bff;
+				font-weight: bold;
+			}
+			.group{
+				margin-bottom: 1.2rem;
+			}
+			label.input-label{
+				display: block;
+				margin-bottom: 0.4rem;
+				font-weight: 600;
+				color: #444;
+				font-size: 0.9rem;
+			}
+			input[type="text"], input[type="number"]{
+				width: 100%;
+				padding: 12px;
+				border: 2px solid #e0e0e0;
+				border-radius: 8px;
+				box-sizing: border-box;
+				font-size: 1rem;
+				transition: all 0.2s;
+			}
+			input:focus{
+				border-color: #007bff;
+				outline: none;
+				background-color: #f8fbff;
+			}
+			.info{
+				font-size: 0.8rem;
+				color: #666;
+				margin-top: 1rem;
+				line-height: 1.4;
+				border-top: 1px solid #eee;
+				padding-top: 10px;
+				text-align: center;
+			}
+			.highlight{
+				color: #007bff;
+				font-weight: bold;
+				word-spacing: 1px;
+			}
+			.group{
+				position: relative;
+				margin-bottom: 1.5rem;
+			}
+			.group small{
+				display: block;
+				text-align: right;
+				margin-top: 4px;
+				font-weight: 500;
+			}
+			input, select, button, .copy-btn{
+				-webkit-tap-highlight-color: transparent;
+			}
+			.copy-btn{
+				background: #eef2f7;
+				border: none;
+				border-radius: 4px;
+				color: #007bff;
+				font-size: 0.75rem;
+				font-weight: 600;
+				padding: 4px 8px;
+				cursor: pointer;
+				float: right;
+				margin-top: 4px;
+				transition: background 0.2s;
+				user-select: none;
+				-webkit-user-select: none;
+				touch-action: manipulation;
+			}
+			.copy-btn:active {
+				background: #d0d7de;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h2>Alpha-Numeric Converter</h2>
+			<div class="radio-group">
+				<label class="radio-label-text">Keep</label> 
+				<label class="radio-option">
+					<input type="radio" name="keepPreference" value="alpha" onchange="resetAndRecalculate()"> String
+				</label>
+				<label class="radio-option">
+					<input type="radio" name="keepPreference" value="num" checked onchange="resetAndRecalculate()"> Number
+				</label>
+			</div>
+			<div class="radio-group">
+				<label class="radio-label-text">Letters</label>
+				<label class="radio-option">
+					<input type="radio" name="alphabet" value="26" onclick="resetAndRecalculate()"> 26
+				</label>
+				<label class="radio-option">
+					<input type="radio" name="alphabet" value="23" onclick="resetAndRecalculate()"> 23
+				</label>
+				<label class="radio-option">
+					<input type="radio" name="alphabet" value="21" checked onclick="resetAndRecalculate()"> 21
+				</label>
+			</div>
+			<div class="group">
+				<label class="input-label" for="alphaInput">Alphabetic String</label>
+				<input type="text" id="alphaInput" oninput="convertToNumber()">
+				<button type="button" class="copy-btn" onclick="copyValue('alphaInput')">Copy</button>
+			</div>
+			<div class="group">
+				<label class="input-label" for="numInput">Decimal</label>
+				<input type="text" id="numInput" min="1" oninput="convertToAlpha()">
+				<button type="button" class="copy-btn" onclick="copyValue('numInput')">Copy</button>
+				<button type="button" class="copy-btn" style="margin-right: 8px;" onclick="factorize()">Factorize</button>
+			</div>
+			<div class="group">
+				<label class="input-label" for="binInput">Binary</label>
+				<input type="text" id="binInput" oninput="convertFromBase(2, 'binInput')">
+				<button type="button" class="copy-btn" onclick="copyValue('binInput')">Copy</button>
+			</div>
+			<div class="group">
+				<label class="input-label" for="hexInput">Hexadecimal</label>
+				<input type="text" id="hexInput" oninput="convertFromBase(16, 'hexInput')">
+				<button type="button" class="copy-btn" onclick="copyValue('hexInput')">Copy</button>
+			</div>
+			<div id="factorResult" style="font-size: 0.85rem; color: #007bff; text-align: center; margin-bottom: 1rem; font-weight: bold; min-height: 1.2em;"></div>
+			<div class="info" id="alphabetDisplay">
+				<span class="highlight">A B C D E F G H I J K L M N O P Q R S T U V W X Y Z</span>
+			</div>
+		</div>
+		<script>
+			const alphabets = {
+				"26": "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
+				"23": "ABCDEFGHIKLMNOPQRSTVXYZ".split(""),
+				"21": "ABCDEFGHILMNOPQRSTUVZ".split("")
+			};
+
+			function getActiveAlphabet(){
+				const selected = document.querySelector('input[name="alphabet"]:checked').value;
+				return alphabets[selected];
+			}
+
+			function resetAndRecalculate(){
+				const chars = getActiveAlphabet();
+				document.getElementById('alphabetDisplay').innerHTML = \`<span class="highlight">\${chars.join(" ")}</span>\`;
+				const preference = document.querySelector('input[name="keepPreference"]:checked').value;
+				if(preference === 'alpha'){
+					convertToNumber();
+				}else{
+					convertToAlpha();
+				}
+			}
+
+			function updateAllFields(decimalValue) {
+				document.getElementById('factorResult').innerText = '';
+				const numField = document.getElementById('numInput');
+				const binField = document.getElementById('binInput');
+				const hexField = document.getElementById('hexInput');
+				if(!decimalValue || decimalValue <= 0n){
+					[numField, binField, hexField].forEach(f => f.value = '');
+					return;
+				}
+				numField.value = decimalValue.toString();
+				binField.value = decimalValue.toString(2);
+				hexField.value = decimalValue.toString(16).toUpperCase();
+			}
+
+			function convertFromBase(base, elementId){
+				const inputEl = document.getElementById(elementId);
+				if(base === 2){
+					inputEl.value = inputEl.value.replace(/[^01]/g, '').replace(/^0+(?!$)/, '');
+				}else if(base === 16){
+					inputEl.value = inputEl.value.toUpperCase().replace(/[^0-9A-F]/g, '').replace(/^0+(?!$)/, '');
+				}
+				const val = inputEl.value;
+				const numField = document.getElementById('numInput');
+				try{
+					if(val === ''){
+						numField.value = '';
+						document.getElementById('alphaInput').value = '';
+						updateAllFields(0n);
+						return;
+					}
+					const decimalValue = BigInt(base === 16 ? '0x' + val : '0b' + val);
+					numField.value = decimalValue.toString();
+					const tempVal = numField.value; 
+					convertToAlpha();
+				}catch (e){}
+			}
+
+			function convertToNumber(){
+				const inputEl = document.getElementById('alphaInput');
+				const chars = getActiveAlphabet();
+				const regex = new RegExp(\`[^\${chars.join("")}]\`, 'gi');
+				inputEl.value = inputEl.value.toUpperCase().replace(regex, '');
+				const str = inputEl.value;
+				const base = BigInt(chars.length);
+				let result = 0n;
+				for(let i = 0; i < str.length; i++){
+					const charIndex = chars.indexOf(str[i]);
+					result = result * base + BigInt(charIndex + 1);
+				}
+				updateAllFields(result);
+			}
+
+			function convertToAlpha(){
+				const numEl = document.getElementById('numInput');
+				numEl.value = numEl.value.replace(/\\D/g, '').replace(/^0+/, '');
+				const numInput = numEl.value;
+				const alphaField = document.getElementById('alphaInput');
+				if(!numInput){
+					alphaField.value = '';
+					updateAllFields(0n);
+					return;
+				}
+				let num = BigInt(numInput);
+				updateAllFields(num);
+				const chars = getActiveAlphabet();
+				const base = BigInt(chars.length);
+				let result = "";
+				while(num > 0n){
+					let modulo = Number((num - 1n)%base);
+					result = chars[modulo] + result;
+					num = (num - 1n)/base;
+				}
+				alphaField.value = result;
+			}
+
+			function copyValue(id){
+				const inputField = document.getElementById(id);
+				const btn = event.currentTarget;
+				if(!inputField.value){
+					return;
+				}
+				const showSuccess = () => {
+					const originalText = btn.innerText;
+					btn.innerText = "Saved!";
+					btn.style.color = "#28a745";
+					setTimeout(() => {
+						btn.innerText = originalText;
+						btn.style.color = "#007bff";
+					}, 1000);
+				};
+				if(navigator.clipboard && window.isSecureContext){
+					navigator.clipboard.writeText(inputField.value)
+						.then(showSuccess)
+						.catch(() => {
+							copyFallback(inputField, showSuccess);
+						});
+				}else{
+					copyFallback(inputField, showSuccess);
+				}
+			}
+
+			function copyFallback(inputField, successCallback) {
+				inputField.select();
+				inputField.setSelectionRange(0, 99999);
+				try{
+					const successful = document.execCommand('copy');
+					if(successful){
+						successCallback();
+					}
+				}catch(err){
+					console.error("Incapace di copiare", err);
+				}
+				window.getSelection().removeAllRanges();
+				inputField.blur(); 
+			}
+
+			function getExp(iExp){
+				const expDigits = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
+				return iExp <= 1 ? "" : iExp.toString().split('').map(d => expDigits[d]).join('');
+			}
+
+			function factorize() {
+				let n = parseInt(document.getElementById("numInput").value);
+				const resDiv = document.getElementById('factorResult');
+				if(isNaN(n) || n <= 1){
+					return;
+				}
+				let temp = n, result = [], count = 0;
+				while(temp%2 === 0){
+					count++;
+					temp /= 2;
+				}
+				if(count > 0){
+					result.push("2" + getExp(count));
+				}
+				for(let i = 3; i*i <= temp; i += 2){
+					count = 0;
+					while(temp%i === 0){
+						count++; temp /= i;
+					}
+					if(count > 0){
+						result.push(i + getExp(count));
+					}
+				}
+				if(temp > 1){
+					result.push(temp.toString());
+				}
+				resDiv.innerText = (result.length === 1 && parseInt(result[0]) === n) ? "Prime number! :-D" : n + " = " + result.join(" × ");
+			}
+
+			resetAndRecalculate();
 		<\/script>
 	</body>
 </html>` },
