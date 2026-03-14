@@ -168,7 +168,13 @@
 			<div class="group">
 				<label class="input-label" for="alphaInput">Alphabetic String</label>
 				<input type="text" id="alphaInput" oninput="convertToNumber()">
-				<button type="button" class="copy-btn" onclick="copyValue('alphaInput')">Copy</button>
+				<div style="display: flex; justify-content: flex-end; align-items: center; gap: 5px; margin-top: 8px;">
+					<label style="font-size: 0.75rem; font-weight: 600; color: #666;">Shift:</label>
+					<input type="number" id="shiftValue" value="3" style="width: 45px; padding: 2px 5px; font-size: 0.75rem; border: 1px solid #ccc; border-radius: 4px; height: 24px;">
+					<button type="button" class="copy-btn" onclick="caesarShift(true)">Enc +</button>
+					<button type="button" class="copy-btn" onclick="caesarShift(false)">Dec -</button>
+					<button type="button" class="copy-btn" onclick="copyValue('alphaInput')">Copy</button>
+				</div>
 			</div>
 			<div class="group">
 				<label class="input-label" for="numInput">Decimal</label>
@@ -287,6 +293,37 @@
 					num = (num - 1n)/base;
 				}
 				alphaField.value = result;
+			}
+
+			function caesarShift(isForward) {
+				const inputEl = document.getElementById('alphaInput');
+				const shiftInput = document.getElementById('shiftValue');
+				let shift = parseInt(shiftInput.value) || 0;
+				if(!isForward){
+					shift = -shift;
+				}
+				let str = inputEl.value.toUpperCase();
+				if(!str){
+					return;
+				}
+				const chars = getActiveAlphabet();
+				const size = chars.length;
+				let result = "";
+				for(let i = 0; i < str.length; i++){
+					const char = str[i];
+					const index = chars.indexOf(char);
+					if(index !== -1){
+						let newIndex = (index + shift)%size;
+						if(newIndex < 0){
+							newIndex += size;
+						}
+						result += chars[newIndex];
+					}else{
+						result += char;
+					}
+				}
+				inputEl.value = result;
+				convertToNumber();
 			}
 
 			function copyValue(id){
