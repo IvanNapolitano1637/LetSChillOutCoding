@@ -38,7 +38,7 @@ public class HTML_Pages_Unifier{
 				.append("<span>").append(EMOJIS.get(folderName) + " " + folderName).append("</span>")
 				.append("<span class='arrow'>&#9654;</span>")
 				.append("</h2>")
-				.append("<div class='grid' id='").append(sectionId).append("' style='display:none;'>");
+				.append("<div class='grid' id='").append(sectionId).append("'>");
 			if(folder.exists() && folder.isDirectory()){
 				File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".html"));
 				if(files != null){
@@ -221,7 +221,7 @@ public class HTML_Pages_Unifier{
 	}
 
 	.grid{
-		display: grid;
+		display: none;
 		grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
 		gap: 20px;
 		overflow: hidden;
@@ -373,7 +373,7 @@ public class HTML_Pages_Unifier{
 	function toggleSection(gridId){
 		const grid = document.getElementById(gridId);
 		const header = grid.previousElementSibling;
-		const isOpen = grid.style.display !== 'none';
+		const isOpen = grid.style.display === 'grid';
 		grid.style.display = isOpen ? 'none' : 'grid';
 		header.classList.toggle('open', !isOpen);
 	}
