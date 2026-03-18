@@ -9,6 +9,9 @@ import java.util.*;
 //Questa per far comparire le pagine in ordine cronologico di mia creazione.
 //L'ordine è basato sul codice anteposto al nome del file quindi è customizzabile.
 //Unica differenza tra le pagine originali e quelle contenute nel file creato qui è una sezione con un pulsante per tornare all'indice di tutte le pagine.
+//Nuova modifica fatta mercoledì diciotto marzo duemilaventisei.
+//Ora le pagine stanno in sezioni che di default sono chiuse.
+//Il numero di pagine cresce sempre più e stanno per arrivarne diverse altre.
 //Da mettere nella cartella in cui ci sono: "Clocks", "Games" e "Tools".
 //Da compilare e lanciare lì da terminale.
 
@@ -29,7 +32,13 @@ public class HTML_Pages_Unifier{
 		StringBuilder htmlMenuBuilder = new StringBuilder();
 		for(String folderName : FOLDERS){
 			File folder = new File(folderName);
-			htmlMenuBuilder.append("<div class='section'><h2>").append(EMOJIS.get(folderName) + " " + folderName).append("</h2><div class='grid'>");
+			String sectionId = "grid-" + folderName.toLowerCase();
+			htmlMenuBuilder.append("<div class='section'>")
+				.append("<h2 class='section-header' onclick=\"toggleSection('").append(sectionId).append("')\">")
+				.append("<span>").append(EMOJIS.get(folderName) + " " + folderName).append("</span>")
+				.append("<span class='arrow'>&#9654;</span>")
+				.append("</h2>")
+				.append("<div class='grid' id='").append(sectionId).append("' style='display:none;'>");
 			if(folder.exists() && folder.isDirectory()){
 				File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".html"));
 				if(files != null){
@@ -174,10 +183,48 @@ public class HTML_Pages_Unifier{
 		user-select: none;
 	}
 
+	.section-header{
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		transition: color 0.2s;
+	}
+
+	.section-header:hover{
+		color: var(--accent-hover);
+	}
+
+	.section-header .arrow{
+		font-size: 0.7rem;
+		transition: transform 0.3s ease;
+		display: inline-block;
+	}
+
+	.section-header.open .arrow{
+		transform: rotate(90deg);
+	}
+
+	.grid{
+		overflow: hidden;
+		animation: expandGrid 0.3s ease-out;
+	}
+
+	@keyframes expandGrid{
+		from{
+			opacity: 0;
+			transform: translateY(-8px);
+		}to{
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
 	.grid{
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
 		gap: 20px;
+		overflow: hidden;
 	}
 
 	.card{
@@ -322,6 +369,14 @@ public class HTML_Pages_Unifier{
 
 	let currentUrl = null;
 	let currentKey = null;
+
+	function toggleSection(gridId){
+		const grid = document.getElementById(gridId);
+		const header = grid.previousElementSibling;
+		const isOpen = grid.style.display !== 'none';
+		grid.style.display = isOpen ? 'none' : 'grid';
+		header.classList.toggle('open', !isOpen);
+	}
 
 	function openPage(key){
 		const data = pages[key];
