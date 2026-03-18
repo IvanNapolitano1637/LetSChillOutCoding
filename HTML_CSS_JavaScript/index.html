@@ -3874,8 +3874,8 @@
 				padding: 10px;
 				display: flex;
 				justify-content: center;
-				align-items: flex-start; 
-				padding-top: 40px; 
+				align-items: flex-start;
+				padding-top: 40px;
 				min-height: 100vh;
 				font-family: 'Segoe UI', Arial, sans-serif;
 				overflow-x: hidden;
@@ -3992,7 +3992,8 @@
 				};
 				board.onclick = handleInput;
 				board.ontouchstart = (e) => {
-					handleInput(e); e.preventDefault();
+					handleInput(e);
+					e.preventDefault();
 				};
 				createButtons();
 				shuffleTiles();
@@ -4014,7 +4015,6 @@
 				container.style.gap = UNIT + "px";
 				const btnData = [
 					{id: "shuffleBtn", txt: "Shuffle", click: "shuffleTiles()"},
-					{id: "restartBtn", txt: "Restart", click: "restart()"},
 					{id: "solveBtn", txt: "Solve", click: "solve()"}
 				];
 				btnData.forEach(b => {
@@ -4098,8 +4098,10 @@
 				}while(!isSolvable(s));
 				s.forEach((id, i) => drawTile(Math.floor(i/4), i%4, id));
 				let zIdx = s.indexOf("0");
-				r1 = Math.floor(zIdx/4); c1 = zIdx%4;
-				counterMoves = 0; begun = false;
+				r1 = Math.floor(zIdx/4);
+				c1 = zIdx%4;
+				counterMoves = 0;
+				begun = false;
 			}
 
 			function isSolvable(a){
@@ -4114,10 +4116,6 @@
 					}
 				}
 				return (zR%2 === 0) ? (inv%2 !== 0) : (inv%2 === 0);
-			}
-
-			function restart(){
-				window.parent.postMessage('RELOAD_REQUEST','*');
 			}
 
 			function solve(){
@@ -11184,6 +11182,66 @@
 				animation: fadeUp 0.8s 0.6s ease both;
 				line-height: 1.8;
 			}
+			.voice-presets-panel{
+				display: flex;
+				flex-direction: column;
+				gap: 16px;
+				margin-bottom: 28px;
+			}
+			.voice-preset-group{
+				display: flex;
+				flex-direction: column;
+				gap: 8px;
+			}
+			.voice-preset-group-label{
+				font-size: 10px;
+				letter-spacing: 0.25em;
+				text-transform: uppercase;
+				color: var(--muted);
+				margin-bottom: 2px;
+			}
+			.voice-radio-row{
+				display: flex;
+				flex-wrap: wrap;
+				gap: 8px;
+			}
+			.voice-radio-row label{
+				display: flex;
+				align-items: center;
+				gap: 7px;
+				padding: 6px 14px;
+				border: 1px solid var(--border);
+				border-radius: 20px;
+				cursor: pointer;
+				font-size: 12px;
+				color: var(--muted);
+				letter-spacing: 0.05em;
+				transition: all 0.15s;
+				user-select: none;
+			}
+			.voice-radio-row label:hover{
+				border-color: var(--accent2);
+				color: var(--accent);
+			}
+			.voice-radio-row input[type=radio]{
+				accent-color: var(--accent2);
+				width: 13px;
+				height: 13px;
+				cursor: pointer;
+			}
+			.voice-radio-row input[type=radio]:checked + span{
+				color: var(--accent);
+				font-weight: 600;
+			}
+			.voice-radio-row label:has(input:checked){
+				background: var(--accent2);
+				border-color: var(--accent2);
+				color: var(--bg);
+				font-weight: 600;
+			}
+			.voice-radio-row label:has(input:checked) input[type=radio]{
+				accent-color: var(--bg);
+			}
 		</style>
 	</head>
 	<body>
@@ -11193,21 +11251,17 @@
 				<h1>Le <em>Sette</em> Vocali<br>Italiane</h1>
 				<p>Clicca su una vocale per sentirla. Usa i parametri per simulare voci diverse — bambini, adulti, voci gravi o acute.</p>
 			</header>
-			<!-- Vowel buttons -->
 			<div class="vowels-grid" id="vowelsGrid"></div>
-			<!-- Transport bar -->
 			<div class="transport-bar">
 				<span class="transport-label">Riproduzione</span>
 				<div class="transport-vowel-hint" id="transportHint">← seleziona una vocale</div>
 				<button class="btn-play" id="btnPlay" title="Riproduci in loop (Spazio)" disabled>▶</button>
 				<button class="btn-stop" id="btnStop" title="Ferma (Esc)" disabled>■</button>
 			</div>
-			<!-- Waveform -->
 			<div class="waveform-section">
 				<div class="section-label">Forma d'onda</div>
 				<canvas id="waveformCanvas" width="900" height="80"></canvas>
 			</div>
-			<!-- Articulatory controls -->
 			<div class="articulatory-panel">
 				<div class="controls-title"><span>👄</span> Controlli articolatori</div>
 				<div class="articulatory-sliders">
@@ -11235,7 +11289,6 @@
 					<span id="proxName" style="margin-left:4px"></span>
 				</div>
 			</div>
-			<!-- Controls -->
 			<div class="controls-panel">
 				<div class="controls-title"><span>⚙</span> Parametri della voce</div>
 		
@@ -11243,18 +11296,13 @@
 		
 				<div class="sliders-grid" id="slidersGrid"></div>
 			</div>
-			<!-- Diagram + formants -->
 			<div class="diagram-section">
 				<div class="diagram-left">
 					<div class="section-label">Posizione lingua</div>
 					<svg id="tractSvg" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
-						<!-- Mouth cavity outline -->
 						<path d="M10 80 Q30 40 60 30 Q90 20 110 60 Q115 90 100 110 Q80 130 50 128 Q20 126 10 100 Z" fill="none" stroke="#2a2a35" stroke-width="2"/>
-						<!-- Palate -->
 						<path d="M20 78 Q50 30 100 65" fill="none" stroke="#3a3a45" stroke-width="1.5" stroke-dasharray="3,2"/>
-						<!-- Tongue -->
 						<path id="tonguePath" d="M15 110 Q40 100 65 95 Q85 92 100 95 Q105 110 95 115 Q60 118 20 115 Z" fill="#c4956a" fill-opacity="0.4" stroke="#c4956a" stroke-width="1.5" style="transition: d 0.4s ease;"/>
-						<!-- Lips -->
 						<ellipse id="lipsEllipse" cx="60" cy="25" rx="14" ry="7" fill="none" stroke="#e8856a" stroke-width="2" style="transition: rx 0.4s ease, ry 0.4s ease;"/>
 						<text x="60" y="138" text-anchor="middle" fill="#7a7870" font-size="8" font-family="Inconsolata">cavità orale</text>
 					</svg>
@@ -11291,11 +11339,6 @@
 			</footer>
 		</div>
 		<script>
-			// ═══════════════════════════════════════════════════════
-			// DATA
-			// ═══════════════════════════════════════════════════════
-
-			// Italian 7 vowels with IPA and base formants (adult male reference)
 			const VOWELS = [
 				{ char: 'A', ipa: '/a/', name: 'aperta', f1: 800, f2: 1200, f3: 2500, lip: 0.8, tongueY: 110 },
 				{ char: 'É', ipa: '/e/', name: 'medio-alta', f1: 430, f2: 2100, f3: 2800, lip: 0.5, tongueY: 90 },
@@ -11306,14 +11349,21 @@
 				{ char: 'U', ipa: '/u/', name: 'alta', f1: 310, f2: 870, f3: 2300, lip: 1.1, tongueY: 78 },
 			];
 
-			// Presets: multipliers on F1, F2, F3, pitch, vibrato, breathiness
-			const PRESETS = [
-				{ name: 'Uomo adulto', pitch: 120, f1m: 1.0, f2m: 1.0, f3m: 1.0, vibrato: 0.4, breath: 0.15, duration: 1.8 },
-				{ name: 'Donna adulta', pitch: 220, f1m: 1.15, f2m: 1.1, f3m: 1.05, vibrato: 0.5, breath: 0.12, duration: 1.8 },
-				{ name: 'Bambino/a', pitch: 320, f1m: 1.35, f2m: 1.25, f3m: 1.15, vibrato: 0.2, breath: 0.2, duration: 1.4 },
-				{ name: 'Voce anziana', pitch: 140, f1m: 1.05, f2m: 0.98, f3m: 0.96, vibrato: 1.2, breath: 0.35, duration: 2.0 },
-				{ name: 'Voce profonda', pitch: 85, f1m: 0.9, f2m: 0.92, f3m: 0.9, vibrato: 0.3, breath: 0.1, duration: 2.2 },
-				{ name: 'Acuto', pitch: 280, f1m: 1.2, f2m: 1.15, f3m: 1.1, vibrato: 0.6, breath: 0.08, duration: 1.6 },
+			const PRESETS_SEX = [
+				{ name: 'Uomo',   pitch: 120, f1m: 1.0,  f2m: 1.0,  f3m: 1.0  },
+				{ name: 'Donna',  pitch: 220, f1m: 1.15, f2m: 1.1,  f3m: 1.05 },
+			];
+
+			const PRESETS_AGE = [
+				{ name: 'Bambino/a',	pitch: 320, f1m: 1.35, f2m: 1.25, f3m: 1.15, vibrato: 0.2,  breath: 0.2  },
+				{ name: 'Adulto/a',	 pitch: null, f1m: 1.0,  f2m: 1.0,  f3m: 1.0,  vibrato: 0.4,  breath: 0.15 },
+				{ name: 'Anziano/a',	pitch: null, f1m: 1.05, f2m: 0.98, f3m: 0.96, vibrato: 1.2,  breath: 0.35 },
+			];
+
+			const PRESETS_TONE = [
+				{ name: 'Acuta',	  pitch: 280, f1m: 1.2,  f2m: 1.15, f3m: 1.1  },
+				{ name: 'Intermedia', pitch: null, f1m: 1.0,  f2m: 1.0,  f3m: 1.0  },
+				{ name: 'Profonda',   pitch: 85,  f1m: 0.9,  f2m: 0.92, f3m: 0.9  },
 			];
 
 			const SLIDERS = [
@@ -11327,9 +11377,6 @@
 				{ id: 'gain', label: 'Volume', min: 0.1, max: 1.0, step: 0.01, unit: '', def: 0.7 },
 			];
 
-			// ═══════════════════════════════════════════════════════
-			// STATE
-			// ═══════════════════════════════════════════════════════
 			let params = {};
 			SLIDERS.forEach(s => params[s.id] = s.def);
 			let activePreset = 0;
@@ -11339,14 +11386,9 @@
 			let animId = null;
 			let analyser = null;
 			let dataArray = null;
-
-			// Loop mode
 			let isLooping = false;
-			let loopNodes = {}; // persistent node refs for live-update
+			let loopNodes = {};
 
-			// ═══════════════════════════════════════════════════════
-			// BUILD UI
-			// ═══════════════════════════════════════════════════════
 			function buildVowelButtons(){
 				const grid = document.getElementById('vowelsGrid');
 				VOWELS.forEach((v, i) => {
@@ -11363,19 +11405,79 @@
 				});
 			}
 
+			let activeVoice = { sex: 0, age: 1, tone: 1 };
+
 			function buildPresets(){
 				const row = document.getElementById('presetsRow');
-				PRESETS.forEach((p, i) => {
-					const btn = document.createElement('button');
-					btn.className = 'preset-btn' + (i === 0 ? ' active' : '');
-					btn.textContent = p.name;
-					btn.addEventListener('click', () => {
-						applyPreset(i);
-						if(isLooping){
-							liveUpdateLoop();
+				row.innerHTML = '';
+				row.classList.add('voice-presets-panel');
+				const groups = [
+					{ key: 'sex', label: 'Sesso', presets: PRESETS_SEX },
+					{ key: 'age', label: 'Età', presets: PRESETS_AGE   },
+					{ key: 'tone', label: 'Tono', presets: PRESETS_TONE  },
+				];
+				groups.forEach(g => {
+					const groupEl = document.createElement('div');
+					groupEl.className = 'voice-preset-group';
+					const labelEl = document.createElement('div');
+					labelEl.className = 'voice-preset-group-label';
+					labelEl.textContent = g.label;
+					groupEl.appendChild(labelEl);
+					const radioRow = document.createElement('div');
+					radioRow.className = 'voice-radio-row';
+					g.presets.forEach((p, i) => {
+						const lbl = document.createElement('label');
+						const input = document.createElement('input');
+						input.type = 'radio';
+						input.name = 'voice-' + g.key;
+						input.value = i;
+						if(i === activeVoice[g.key]){
+							input.checked = true;
 						}
+						input.addEventListener('change', () => {
+							activeVoice[g.key] = i;
+							applyMergedPreset();
+							if(isLooping){
+								liveUpdateLoop();
+							}
+						});
+						const span = document.createElement('span');
+						span.textContent = p.name;
+						lbl.appendChild(input);
+						lbl.appendChild(span);
+						radioRow.appendChild(lbl);
 					});
-					row.appendChild(btn);
+					groupEl.appendChild(radioRow);
+					row.appendChild(groupEl);
+				});
+			}
+
+			function applyMergedPreset(){
+				const sex = PRESETS_SEX[activeVoice.sex];
+				const age = PRESETS_AGE[activeVoice.age];
+				const tone = PRESETS_TONE[activeVoice.tone];
+				let pitch = sex.pitch;
+				if(age.pitch !== null){
+					pitch = age.pitch;
+				}
+				if(tone.pitch !== null){
+					pitch = tone.pitch;
+				}
+				params.pitch = pitch;
+				params.f1m = sex.f1m*age.f1m*tone.f1m;
+				params.f2m = sex.f2m*age.f2m*tone.f2m;
+				params.f3m = sex.f3m*age.f3m*tone.f3m;
+				params.vibrato = age.vibrato ?? sex.vibrato ?? 0.4;
+				params.breath = age.breath ?? sex.breath ?? 0.15;
+				['pitch','f1m','f2m','f3m','vibrato','breath'].forEach(k => {
+					const sl = document.getElementById(\`sl-\${k}\`);
+					if(sl){
+						sl.value = params[k];
+					}
+					const vl = document.getElementById(\`val-\${k}\`);
+					if(vl){
+						vl.textContent = fmt(k, params[k]);
+					}
 				});
 			}
 
@@ -11396,7 +11498,6 @@
 						if(isLooping){
 							liveUpdateLoop();
 						}
-						// Sync articulatory sliders if F1/F2 changed
 						if(s.id === 'f1m' || s.id === 'f2m'){
 							syncArtSlidersFromFormants();
 						}
@@ -11404,27 +11505,15 @@
 				});
 			}
 
-			// ═══════════════════════════════════════════════════════
-			// ARTICULATORY SLIDER LOGIC
-			// F1 ↔ apertura bocca	(low F1 = closed, high F1 = open)
-			// F2 ↔ posizione lingua (low F2 = back, high F2 = front)
-			// ═══════════════════════════════════════════════════════
-
-			// F1 range across all vowels: ~280–800 Hz
-			// F2 range across all vowels: ~780–2600 Hz
-			const F1_MIN = 250, F1_MAX = 900;	 // raw Hz range for 0–100 slider
+			const F1_MIN = 250, F1_MAX = 900;
 			const F2_MIN = 700, F2_MAX = 2700;
-
-			// articulatory params: raw Hz overrides (null = not active)
 			let artParams = { f1hz: null, f2hz: null };
 
 			function apertura2f1(v){
-				// 0 = very closed (F1 low), 100 = very open (F1 high)
 				return F1_MIN + (v/100)*(F1_MAX - F1_MIN);
 			}
 
 			function lingua2f2(v){
-				// 0 = back tongue (F2 low), 100 = front tongue (F2 high)
 				return F2_MIN + (v/100)*(F2_MAX - F2_MIN);
 			}
 
@@ -11509,20 +11598,14 @@
 			function buildArticulatorySliders(){
 				const slAp = document.getElementById('sl-apertura');
 				const slLi = document.getElementById('sl-lingua');
-
 				slAp.addEventListener('input', () => {
 					const apVal = parseInt(slAp.value);
 					document.getElementById('val-apertura').textContent = aperturaLabel(apVal);
-
-					// Compute new F1 in Hz, derive multiplier relative to current vowel baseline
 					const f1hz = apertura2f1(apVal);
 					const f2hz = lingua2f2(parseInt(slLi.value));
-
-					// If a vowel is selected, compute multipliers; otherwise just store hz
 					if(currentVowelIdx >= 0){
 						const v = VOWELS[currentVowelIdx];
 						params.f1m = f1hz/v.f1;
-						// update F1m slider + label
 						const sl1 = document.getElementById('sl-f1m');
 						if(sl1){
 							sl1.value = params.f1m;
@@ -11531,30 +11614,23 @@
 					}else{
 						artParams.f1hz = f1hz;
 					}
-
 					document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
 					updateProximityIndicator(f1hz, f2hz);
-
-					// Update diagram tongue height based on f1hz
 					if(currentVowelIdx >= 0){
 						const v = VOWELS[currentVowelIdx];
 						const blendV = findClosestVowel(f1hz, f2hz);
 						updateDiagramFromHz(f1hz, f2hz, blendV);
 						updateFormantBars(f1hz, v.f2*params.f2m, v.f3*params.f3m);
 					}
-
 					if(isLooping){
 						liveUpdateLoop();
 					}
 				});
-
 				slLi.addEventListener('input', () => {
 					const liVal = parseInt(slLi.value);
 					document.getElementById('val-lingua').textContent = linguaLabel(liVal);
-
 					const f1hz = apertura2f1(parseInt(slAp.value));
 					const f2hz = lingua2f2(liVal);
-
 					if(currentVowelIdx >= 0){
 						const v = VOWELS[currentVowelIdx];
 						params.f2m = f2hz/v.f2;
@@ -11566,16 +11642,13 @@
 					}else{
 						artParams.f2hz = f2hz;
 					}
-
 					document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
 					updateProximityIndicator(f1hz, f2hz);
-
 					if(currentVowelIdx >= 0){
 						const v = VOWELS[currentVowelIdx];
 						updateDiagramFromHz(f1hz, f2hz, findClosestVowel(f1hz, f2hz));
 						updateFormantBars(v.f1*params.f1m, f2hz, v.f3*params.f3m);
 					}
-
 					if(isLooping){
 						liveUpdateLoop();
 					}
@@ -11583,20 +11656,15 @@
 			}
 
 			function updateDiagramFromHz(f1hz, f2hz, refVowel){
-				// Interpolate tongueY: high F1 = open = tongue down; low F1 = closed = tongue up
 				const tY = 75 + ((f1hz - F1_MIN)/(F1_MAX - F1_MIN))*40;
-				// lip: approximate from refVowel if available
 				const lip = refVowel ? refVowel.lip : 0.6;
-
 				const tp = document.getElementById('tonguePath');
 				const yOff = tY;
 				tp.setAttribute('d', \`M15 \${yOff+8} Q40 \${yOff-2} 65 \${yOff-7} Q85 \${yOff-10} 100 \${yOff-5} Q105 \${yOff+8} 95 \${yOff+13} Q60 \${yOff+16} 20 \${yOff+13} Z\`);
-
 				const lipsEl = document.getElementById('lipsEllipse');
 				lipsEl.setAttribute('rx', (10 + lip*6).toFixed(1));
 				lipsEl.setAttribute('ry', (4 + lip*5).toFixed(1));
 			}
-
 
 			function fmt(id, v){
 				const s = SLIDERS.find(x => x.id === id);
@@ -11631,9 +11699,6 @@
 				});
 			}
 
-			// ═══════════════════════════════════════════════════════
-			// AUDIO ENGINE — Formant synthesis
-			// ═══════════════════════════════════════════════════════
 			function ensureCtx(){
 				if(!audioCtx){
 					audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -11652,31 +11717,22 @@
 				activeNodes = [];
 			}
 
-			// ─── Select a vowel (highlight + enable transport) ───
 			function selectVowel(idx){
 				currentVowelIdx = idx;
 				document.querySelectorAll('.vowel-btn').forEach(b => b.classList.remove('playing'));
 				document.getElementById(\`vbtn-\${idx}\`).classList.add('playing');
-
 				const v = VOWELS[idx];
 				updateDiagram(v);
 				updateFormantBars(v.f1*params.f1m, v.f2*params.f2m, v.f3*params.f3m);
-
-				// Sync articulatory sliders to this vowel's formants
 				syncArtSlidersFromFormants();
-
-				// Update transport hint
 				document.getElementById('transportHint').innerHTML =
 					\`<strong>\${v.char}</strong> <span style="color:var(--muted)">\${v.ipa} — \${v.name}</span>\`;
 				document.getElementById('btnPlay').disabled = false;
-
-				// If already looping, restart with new vowel
 				if(isLooping){
 					startLoop(idx);
 				}
 			}
 
-			// ─── One-shot play (legacy, used by keyboard) ────────
 			function playVowel(idx){
 				selectVowel(idx);
 				if(!isLooping){
@@ -11691,14 +11747,12 @@
 				const now = audioCtx.currentTime;
 				const dur = params.duration;
 				const f0 = params.pitch;
-
 				const masterGain = audioCtx.createGain();
 				masterGain.gain.setValueAtTime(0, now);
 				masterGain.gain.linearRampToValueAtTime(params.gain*0.8, now + 0.05);
 				masterGain.gain.setValueAtTime(params.gain*0.8, now + dur - 0.12);
 				masterGain.gain.linearRampToValueAtTime(0, now + dur);
 				masterGain.connect(analyser);
-
 				const vibDepth = params.vibrato;
 				let lfoGain;
 				if(vibDepth > 0.01){
@@ -11711,12 +11765,12 @@
 					lfo.stop(now + dur + 0.1);
 					activeNodes.push(lfo, lfoGain);
 				}
-
 				const osc = audioCtx.createOscillator();
 				osc.type = 'sawtooth';
 				osc.frequency.value = f0;
-				if(lfoGain) lfoGain.connect(osc.frequency);
-
+				if(lfoGain){
+					lfoGain.connect(osc.frequency);
+				}
 				const noiseBuffer = audioCtx.createBuffer(1, audioCtx.sampleRate*(dur + 0.1), audioCtx.sampleRate);
 				const nd = noiseBuffer.getChannelData(0);
 				for(let i = 0; i < nd.length; i++){
@@ -11727,7 +11781,6 @@
 				const noiseGain = audioCtx.createGain();
 				noiseGain.gain.value = params.breath*0.25;
 				noise.connect(noiseGain);
-
 				const f1 = v.f1*params.f1m;
 				const f2 = v.f2*params.f2m;
 				const f3 = v.f3*params.f3m;
@@ -11740,7 +11793,6 @@
 				fg2.gain.value = 0.7;
 				const fg3 = audioCtx.createGain();
 				fg3.gain.value = 0.4;
-
 				[osc, noiseGain].forEach(src => { src.connect(filt1); src.connect(filt2); src.connect(filt3); });
 				filt1.connect(fg1);
 				fg1.connect(masterGain);
@@ -11748,7 +11800,6 @@
 				fg2.connect(masterGain);
 				filt3.connect(fg3);
 				fg3.connect(masterGain);
-
 				osc.start(now);
 				osc.stop(now + dur + 0.1);
 				noise.start(now);
@@ -11764,45 +11815,33 @@
 				return bpf;
 			}
 
-			// ─── LOOP ENGINE ─────────────────────────────────────
 			function startLoop(idx){
 				ensureCtx();
 				stopAll();
-
-				// Tear down old loop nodes immediately and synchronously
 				Object.values(loopNodes).forEach(n => {
 					try { n.stop && n.stop(0); } catch(e) {}
 					try { n.disconnect && n.disconnect(); } catch(e) {}
 				});
 				loopNodes = {};
 				isLooping = false;
-
 				isLooping = true;
 				const v = VOWELS[idx];
 				const now = audioCtx.currentTime;
 				const f0 = params.pitch;
-
-				// Master
 				const masterGain = audioCtx.createGain();
 				masterGain.gain.setValueAtTime(0, now);
 				masterGain.gain.linearRampToValueAtTime(params.gain*0.8, now + 0.06);
 				masterGain.connect(analyser);
-
-				// LFO
 				const lfo = audioCtx.createOscillator();
 				lfo.frequency.value = 5.5;
 				const lfoGain = audioCtx.createGain();
 				lfoGain.gain.value = params.vibrato*f0*0.025;
 				lfo.connect(lfoGain);
 				lfo.start(now);
-
-				// Oscillator (sawtooth, no stop = loops forever)
 				const osc = audioCtx.createOscillator();
 				osc.type = 'sawtooth';
 				osc.frequency.value = f0;
 				lfoGain.connect(osc.frequency);
-
-				// Noise source — long buffer (~30s), loops via loop flag
 				const noiseLen = audioCtx.sampleRate*30;
 				const noiseBuffer = audioCtx.createBuffer(1, noiseLen, audioCtx.sampleRate);
 				const nd = noiseBuffer.getChannelData(0);
@@ -11815,8 +11854,6 @@
 				const noiseGain = audioCtx.createGain();
 				noiseGain.gain.value = params.breath*0.25;
 				noise.connect(noiseGain);
-
-				// Formant filters
 				const f1 = v.f1*params.f1m;
 				const f2 = v.f2*params.f2m;
 				const f3 = v.f3*params.f3m;
@@ -11829,7 +11866,6 @@
 				fg2.gain.value = 0.7;
 				const fg3 = audioCtx.createGain();
 				fg3.gain.value = 0.4;
-
 				[osc, noiseGain].forEach(src => { src.connect(filt1); src.connect(filt2); src.connect(filt3); });
 				filt1.connect(fg1);
 				fg1.connect(masterGain);
@@ -11837,16 +11873,10 @@
 				fg2.connect(masterGain);
 				filt3.connect(fg3);
 				fg3.connect(masterGain);
-
 				osc.start(now);
 				noise.start(now);
-
-				// Save refs for live update
 				loopNodes = { osc, lfo, lfoGain, noise, noiseGain, filt1, filt2, filt3, fg1, fg2, fg3, masterGain };
-
 				updateFormantBars(f1, f2, f3);
-
-				// Update UI
 				const btn = document.getElementById('btnPlay');
 				btn.textContent = '▶';
 				btn.classList.add('looping');
@@ -11868,7 +11898,6 @@
 				}
 				loopNodes = {};
 				isLooping = false;
-
 				if(updateUI){
 					const btn = document.getElementById('btnPlay');
 					btn.textContent = '▶';
@@ -11877,7 +11906,6 @@
 				}
 			}
 
-			// Live-update all audible params without restarting nodes
 			function liveUpdateLoop(){
 				if(!isLooping || !loopNodes.osc){
 					return;
@@ -11885,12 +11913,8 @@
 				const n = loopNodes;
 				const now = audioCtx.currentTime;
 				const v = VOWELS[currentVowelIdx];
-
-				// Pitch
 				n.osc.frequency.setTargetAtTime(params.pitch, now, 0.02);
 				n.lfoGain.gain.setTargetAtTime(params.vibrato*params.pitch*0.025, now, 0.05);
-
-				// Formants
 				const f1 = v.f1*params.f1m;
 				const f2 = v.f2*params.f2m;
 				const f3 = v.f3*params.f3m;
@@ -11900,25 +11924,16 @@
 				n.filt2.Q.value = f2/100;
 				n.filt3.frequency.setTargetAtTime(f3, now, 0.04);
 				n.filt3.Q.value = f3/120;
-
-				// Noise (breath)
 				n.noiseGain.gain.setTargetAtTime(params.breath*0.25, now, 0.05);
-
-				// Master volume
 				n.masterGain.gain.setTargetAtTime(params.gain*0.8, now, 0.04);
-
 				updateFormantBars(f1, f2, f3);
 			}
 
-			// ═══════════════════════════════════════════════════════
-			// DIAGRAM UPDATE
-			// ═══════════════════════════════════════════════════════
 			function updateDiagram(v){
 				const tp = document.getElementById('tonguePath');
 				const yOff = v.tongueY;
 				const newD = \`M15 \${yOff+8} Q40 \${yOff-2} 65 \${yOff-7} Q85 \${yOff-10} 100 \${yOff-5} Q105 \${yOff+8} 95 \${yOff+13} Q60 \${yOff+16} 20 \${yOff+13} Z\`;
 				tp.setAttribute('d', newD);
-
 				const lip = document.getElementById('lipsEllipse');
 				lip.setAttribute('rx', (10 + v.lip*6).toFixed(1));
 				lip.setAttribute('ry', (4 + v.lip*5).toFixed(1));
@@ -11934,9 +11949,6 @@
 				document.getElementById('f3Hz').textContent = Math.round(f3) + ' Hz';
 			}
 
-			// ═══════════════════════════════════════════════════════
-			// WAVEFORM VISUALIZER
-			// ═══════════════════════════════════════════════════════
 			const canvas = document.getElementById('waveformCanvas');
 			const ctx2d = canvas.getContext('2d');
 
@@ -11946,7 +11958,6 @@
 				ctx2d.clearRect(0, 0, W, H);
 				ctx2d.fillStyle = '#16161a';
 				ctx2d.fillRect(0, 0, W, H);
-
 				ctx2d.strokeStyle = 'rgba(42,42,53,0.8)';
 				ctx2d.lineWidth = 1;
 				for(let x = 0; x <= W; x += W/8){
@@ -11959,7 +11970,6 @@
 				ctx2d.moveTo(0, H/2);
 				ctx2d.lineTo(W, H/2);
 				ctx2d.stroke();
-
 				if(!analyser){
 					ctx2d.strokeStyle = 'rgba(122,120,112,0.3)';
 					ctx2d.lineWidth = 1.5;
@@ -11969,7 +11979,6 @@
 					ctx2d.stroke();
 					return;
 				}
-
 				analyser.getFloatTimeDomainData(dataArray);
 				ctx2d.shadowBlur = 8;
 				ctx2d.shadowColor = 'rgba(126,184,201,0.6)';
@@ -11994,15 +12003,11 @@
 				ctx2d.stroke();
 			}
 
-			// ═══════════════════════════════════════════════════════
-			// TRANSPORT BUTTONS
-			// ═══════════════════════════════════════════════════════
 			document.getElementById('btnPlay').addEventListener('click', () => {
 				if(currentVowelIdx < 0){
 					return;
 				}
 				if(isLooping){
-					// Already looping — restart fresh (e.g. vowel changed)
 					startLoop(currentVowelIdx);
 				}else{
 					startLoop(currentVowelIdx);
@@ -12014,17 +12019,13 @@
 				stopAll();
 			});
 
-			// ═══════════════════════════════════════════════════════
-			// INIT
-			// ═══════════════════════════════════════════════════════
 			buildVowelButtons();
 			buildPresets();
 			buildSliders();
 			buildArticulatorySliders();
-			applyPreset(0);
+			applyMergedPreset();
 			drawWaveform();
 
-			// Keyboard: 1-7 or vowel letters → select; Space → play/stop; Esc → stop
 			document.addEventListener('keydown', e => {
 				if(e.target.tagName === 'INPUT'){
 					return;
