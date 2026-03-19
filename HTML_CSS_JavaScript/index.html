@@ -304,7 +304,7 @@
 				box-sizing: border-box;
 			}
 			input{
-				flex: 1; 
+				flex: 1;
 				min-width: 0;
 				padding: 4px 4px;
 				border: 1px solid #444;
@@ -317,7 +317,7 @@
 				font-weight: bold;
 				text-shadow: 0 0 8px rgba(0, 255, 0, 0.6);
 				box-shadow: inset 0 0 5px rgba(0, 255, 0, 0.2);
-				user-select: none; 
+				user-select: none;
 				-webkit-user-select: none;
 				-moz-user-select: none;
 				-ms-user-select: none;
@@ -622,7 +622,7 @@
 				padding: 10px 28px;
 				font-size: 1rem;
 				cursor: pointer;
-				transition: all 0.3s ease; 
+				transition: all 0.3s ease;
 				background-color: rgba(0, 0, 0, 0.25);
 				border: 2px solid rgba(0, 0, 0, 0.3);
 				outline: none;
@@ -653,7 +653,7 @@
 			}
 			#btnChangeBackgroundColor {
 				display: none;
-				padding: 10px 18px !important; 
+				padding: 10px 18px !important;
 				margin-left: 5px;
 				font-weight: bold;
 				vertical-align: middle;
@@ -1026,8 +1026,10 @@
 				osc.frequency.setValueAtTime(isReflected ? 150 : 800, AUDIO_CTX.currentTime);
 				gain.gain.setValueAtTime(0.05, AUDIO_CTX.currentTime);
 				gain.gain.exponentialRampToValueAtTime(0.00001, AUDIO_CTX.currentTime + 0.1);
-				osc.connect(gain); gain.connect(AUDIO_CTX.destination);
-				osc.start(); osc.stop(AUDIO_CTX.currentTime + 0.1);
+				osc.connect(gain);
+				gain.connect(AUDIO_CTX.destination);
+				osc.start();
+				osc.stop(AUDIO_CTX.currentTime + 0.1);
 			}
 
 			function drawNumbers(){
@@ -1764,7 +1766,7 @@
 				padding: 2vw 5vw;
 				border-radius: 20px;
 				box-shadow: 0 0 40px rgba(0, 255, 255, 0.5);
-				font-size: 15vw; 
+				font-size: 15vw;
 				font-weight: bold;
 				text-align: center;
 				white-space: nowrap;
@@ -1840,7 +1842,7 @@
 				CANVAS.width = size;
 				CANVAS.height = size;
 				radius = CANVAS.height/2;
-				CTX.setTransform(1, 0, 0, 1, 0, 0); 
+				CTX.setTransform(1, 0, 0, 1, 0, 0);
 				CTX.translate(radius, radius);
 				drawClock();
 			}
@@ -2406,7 +2408,8 @@
 				document.body.style.background = (!safe && semaphoreFlag) ? RED_SEMAPHORE_COLOR : BACKGROUND_COLOR;
 				if(safe && numberOfQueens === order){
 					document.body.style.background = BACKGROUND_WIN_COLOR;
-					hasWon = true; setTimeout(() => alert("You win!"), 100);
+					hasWon = true;
+					setTimeout(() => alert("You win!"), 100);
 				}
 			}
 
@@ -2464,7 +2467,7 @@
 				updateAttack();
 				drawAll();
 				setQueensLimitButtonLabel();
-				document.body.style.background = "#add8e6"; 
+				document.body.style.background = "#add8e6";
 				hasWon = false;
 			}
 
@@ -2619,7 +2622,7 @@
 			};
 
 			function updateSpeed(val){
-				currentInterval = 1010 - val; 
+				currentInterval = 1010 - val;
 				document.getElementById("speedVal").innerText = currentInterval;
 				if(goOnAlone){
 					clearInterval(nIntervId);
@@ -2668,13 +2671,14 @@
 					coords = [[-4,0], [-3,0], [-2,0], [-1,0], [0,0], [1,0], [2,0], [3,0], [4,0], [5,0]];
 				}
 				coords.forEach(([dx, dy]) => {
-					let x = midX + dx; let y = midY + dy;
+					let x = midX + dx;
+					let y = midY + dy;
 					if(x >= 0 && x < ROW_NUMBER && y >= 0 && y < COLUMN_NUMBER){
 						grid[x][y] = true;
 						drawSquare(x, y, ALIVE_COLOR);
 					}
 				});
-				document.getElementById("patterns").value = ""; 
+				document.getElementById("patterns").value = "";
 			}
 
 			function select(e){
@@ -2885,12 +2889,12 @@
 			const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
 			const UNIT = DESKTOP ? 9 : 7;
 			const H_SPACE = 8*UNIT, V_SPACE = 6*UNIT;
-			const WIDTH = 36*UNIT; 
-			const PAGE_WIDTH = 3.5*UNIT; 
+			const WIDTH = 36*UNIT;
+			const PAGE_WIDTH = 3.5*UNIT;
 			const BASE_HEIGHT = 2.5*UNIT;
-			const DISK_INCREASE = 3*UNIT; 
-			const DISK_BASE_LENGTH = 12*UNIT; 
-			const DISK_HEIGHT = (DESKTOP ? 5 : 8)*UNIT; 
+			const DISK_INCREASE = 3*UNIT;
+			const DISK_BASE_LENGTH = 12*UNIT;
+			const DISK_HEIGHT = (DESKTOP ? 5 : 8)*UNIT;
 			const UPPER_MARGIN = 4*UNIT, UPPER_PAGE_MARGIN = 2*UNIT, LOWER_MARGIN = 2*UNIT;
 			const TOTAL_WIDTH = (3*WIDTH) + (4*H_SPACE);
 			const BROWN = "#8D6E63", ORANGE = "#FFCA28";
@@ -2949,7 +2953,8 @@
 				if(select.innerHTML === ""){
 					for(let i = 1; i <= 10; i++){
 						let opt = document.createElement("option");
-						opt.value = i; opt.text = "Level " + i;
+						opt.value = i;
+						opt.text = "Level " + i;
 						if(i === numberOfDisks){
 							opt.selected = true;
 						}
@@ -2973,7 +2978,7 @@
 			}
 
 			function drawTower(idx){
-				let x0 = H_SPACE + idx*(WIDTH + H_SPACE); 
+				let x0 = H_SPACE + idx*(WIDTH + H_SPACE);
 				context.fillStyle = selectedTower[idx] ? ORANGE : "rgba(0,0,0,0.06)";
 				context.fillRect(x0, V_SPACE, WIDTH, totalHeight - V_SPACE);
 				context.fillStyle = BROWN;
@@ -2989,8 +2994,8 @@
 
 			function drawDisk(tIdx, level, dSize){
 				let w = DISK_BASE_LENGTH + dSize*DISK_INCREASE;
-				let x0 = H_SPACE + tIdx*(WIDTH + H_SPACE); 
-				let x = x0 + (WIDTH - w)/2; 
+				let x0 = H_SPACE + tIdx*(WIDTH + H_SPACE);
+				let x = x0 + (WIDTH - w)/2;
 				let y = V_SPACE + level*DISK_HEIGHT + UPPER_MARGIN + UPPER_PAGE_MARGIN;
 				let h = DISK_HEIGHT - 2;
 				context.fillStyle = COLORS[dSize];
@@ -3012,7 +3017,7 @@
 				}
 				let towerIdx = -1;
 				for(let i = 0; i < 3; i++){
-					let xStart = H_SPACE + i*(WIDTH + H_SPACE); 
+					let xStart = H_SPACE + i*(WIDTH + H_SPACE);
 					if(cursorX >= xStart && cursorX <= xStart + WIDTH){
 						towerIdx = i;
 						break;
@@ -3169,7 +3174,7 @@
 				height: 45px;
 			}
 			#starter{
-				flex-basis: 100%; 
+				flex-basis: 100%;
 				margin-top: 15px;
 				display: inline-block;
 			}
@@ -3280,7 +3285,7 @@
 				numberOfMoves = 0;
 				goOn = true;
 				moveYellow = document.getElementById("Yellow").checked;
-				humanIsYellow = moveYellow; 
+				humanIsYellow = moveYellow;
 				canvas.width = COLUMN_NUMBER*DIAMETER + GRID_THICKNESS*(COLUMN_NUMBER + 1);
 				canvas.height = ROW_NUMBER*DIAMETER + GRID_THICKNESS*(ROW_NUMBER + 1);
 				ctx.fillStyle = BLUE_COLOR;
@@ -3351,7 +3356,7 @@
 				if(check(row, col)){
 					return 10000;
 				}
-				grid[row][col] = 0; 
+				grid[row][col] = 0;
 				if(check(row, col)){
 					grid[row][col] = 1;
 					return 5000;
@@ -3490,7 +3495,8 @@
 						let r = row + dr, c = col + dc;
 						while(r >= 0 && r < ROW_NUMBER && c >= 0 && c < COLUMN_NUMBER && grid[r][c] === current){
 							cells.push({r: r, c: c});
-							r += dr; c += dc;
+							r += dr;
+							c += dc;
 						}
 					}
 					if(cells.length >= 4){
@@ -3696,11 +3702,11 @@
 			.cell.matched{
 				background-color: var(--match-color) !important;
 				color: white;
-				font-size: 0.85em; 
+				font-size: 0.85em;
 				line-height: 1;
 				border-color: #689f38;
 				cursor: default;
-				white-space: nowrap; 
+				white-space: nowrap;
 			}
 			.cell.matched sup{
 				font-size: 0.7em;
@@ -3821,8 +3827,8 @@
 						}, 400);
 						if(currentErrors >= MAX_NUMBER_OF_ERRORS){
 							setTimeout(() => {
-								alert('Maximum number of errors reached. Try again!'); 
-								initGame(); 
+								alert('Maximum number of errors reached. Try again!');
+								initGame();
 							}, 100);
 						}
 					}
@@ -3838,7 +3844,7 @@
 				}
 
 				function checkWin(){
-					const target = isPrime(P) ? P - 1 : matchedNumbersCount; 
+					const target = isPrime(P) ? P - 1 : matchedNumbersCount;
 					if(matchedNumbersCount === P - 1){
 						setTimeout(() => alert('Congratulations! :-D You win! :-D'), 200);
 					}
@@ -4011,7 +4017,7 @@
 					container.appendChild(div);
 				}
 				let board = document.getElementById("board");
-				board.width = WIDTH; 
+				board.width = WIDTH;
 				board.height = HEIGHT;
 				if(board.getContext("2d")){
 					let ctx = board.getContext("2d");
@@ -4287,7 +4293,7 @@
 				--last-move: rgba(255, 255, 0, 0.4);
 				--status-color: #f1c40f;
 				--sq-size: clamp(35px, 10vw, 60px);
-				--save-empty: #4834d4; 
+				--save-empty: #4834d4;
 				--save-full: #686de0;
 			}
 			body{
@@ -4486,7 +4492,8 @@
 				border: none;
 				border-radius: 5px;
 				cursor: pointer;
-				width: 60px; height: 60px;
+				width: 60px;
+				height: 60px;
 				display: flex;
 				justify-content: center;
 				align-items: center;
@@ -5140,7 +5147,7 @@
 						let v = minimax(tmp, depth - 1, -Infinity, Infinity, false);
 						if(v > bestValue){ 
 							bestValue = v;
-							bestMove = m; 
+							bestMove = m;
 							if(isPromo){
 								bestPromo = choice;
 							}
@@ -5434,7 +5441,8 @@
 						const cell = document.createElement('div');
 						const isPlayable = cfg.ortho ? (r > 0 && r < cfg.s - 1) : (cfg.reverse ? (r + c)%2 === 0 : (r + c)%2 !== 0);
 						cell.className = \`cell \${isPlayable ? 'black-cell' : 'white-cell'}\`;
-						cell.dataset.r = r; cell.dataset.c = c;
+						cell.dataset.r = r;
+						cell.dataset.c = c;
 						if(isPlayable){
 							if(r < cfg.start){
 								createPiece(cell, 'black');
@@ -5606,7 +5614,8 @@
 			function checkWin(){
 				const w = document.querySelectorAll('.white-piece').length, b = document.querySelectorAll('.black-piece').length;
 				if(w === 0){
-					alert("GAME OVER! Black Wins."); window.parent.postMessage('RELOAD_REQUEST','*');
+					alert("GAME OVER! Black Wins.");
+					window.parent.postMessage('RELOAD_REQUEST','*');
 					return true;
 				}
 				if(b === 0){
@@ -5667,7 +5676,7 @@
 			display: flex;
 			width: 100%;
 			max-width: 660px;
-			flex-wrap: wrap; 
+			flex-wrap: wrap;
 			justify-content: center;
 			align-items: center;
 			background: #252525;
@@ -5883,7 +5892,8 @@
 					return false;
 				}
 				if(t === 99){
-					game.board[f]--; game.off[1]++;
+					game.board[f]--;
+					game.off[1]++;
 				}else{
 					if(game.board[t] < -1){
 						return false;
@@ -5922,7 +5932,8 @@
 									game.board[i]++;
 									game.board[target]--;
 									game.moves.splice(game.moves.indexOf(m), 1);
-									moved = true; break;
+									moved = true;
+									break;
 								}
 							}
 						}
@@ -5965,7 +5976,7 @@
 				--bg-C: #4FC3F7;
 				--bg-S: #CE93D8;
 				--bg-B: #FFAB76;
-				--card-width: clamp(40px, 13vw, 85px); 
+				--card-width: clamp(40px, 13vw, 85px);
 				--card-height: clamp(58px, 19vw, 125px);
 				--gap: clamp(2px, 1.2vw, 15px);
 				--overlap: clamp(50px, 12.5vw, 100px);
@@ -6100,7 +6111,8 @@
 			}
 			.foundation-slot .card, .waste-slot .card{
 				position: absolute;
-				top: 0; left: 0;
+				top: 0;
+				left: 0;
 				margin-bottom: 0;
 			}
 			.foundation-slot .card{
@@ -6300,7 +6312,7 @@
 						}else{
 							if(card !== parent.lastElementChild){
 								console.log("Puoi muovere solo l'ultima carta della colonna!");
-								return; 
+								return;
 							}
 							selection = {
 								cards: [card],
@@ -6777,10 +6789,14 @@
 
 			function init(){
 				for(let i = 0; i < 5; i++){
-					INPUTS[i].min = 0; INPUTS[i].max = 255; INPUTS[i].step = 1;
+					INPUTS[i].min = 0;
+					INPUTS[i].max = 255;
+					INPUTS[i].step = 1;
 				}
 				for(let i = 5; i < 9; i++){
-					INPUTS[i].min = 0; INPUTS[i].max = 1; INPUTS[i].step = 0.01;
+					INPUTS[i].min = 0;
+					INPUTS[i].max = 1;
+					INPUTS[i].step = 0.01;
 				}
 				setColor(255, 255, 255);
 				VALUES[9].onclick = function(){
@@ -7152,14 +7168,16 @@
 			let flagDiagonals = false;
 			const CANVAS = document.getElementById('canvas');
 			if(window.innerWidth < 600){
-				CANVAS.width = 300; CANVAS.height = 300;
+				CANVAS.width = 300;
+				CANVAS.height = 300;
 			}
 
 			function fillSelectOption(){
 				const select = document.getElementById("numberOfSides");
 				for(let i = 3; i <= 60; i++){
 					let opt = document.createElement('option');
-					opt.value = i; opt.innerHTML = i;
+					opt.value = i;
+					opt.innerHTML = i;
 					select.appendChild(opt);
 				}
 			}
@@ -7189,7 +7207,8 @@
 				for(let i = 1; i < numberOfSides; i++){
 					ctx.lineTo(vertices[i].x, vertices[i].y);
 				}
-				ctx.closePath(); ctx.stroke();
+				ctx.closePath();
+				ctx.stroke();
 				if(flagDiagonals){
 					ctx.strokeStyle = "rgba(192, 57, 43, 0.2)";
 					ctx.lineWidth = 1;
@@ -7283,7 +7302,8 @@
 				for(let i = 3; i*i <= temp; i += 2){
 					count = 0;
 					while(temp%i === 0){
-						count++; temp /= i;
+						count++;
+						temp /= i;
 					}
 					if(count > 0){
 						result.push(i + getExp(count));
@@ -7325,7 +7345,7 @@
 					return;
 				}
 				const modExp = (b, e, m) => {
-					let r = 1n; 
+					let r = 1n;
 					b %= m;
 					while(e > 0n){
 						if(e%2n === 1n){
@@ -7864,8 +7884,8 @@
 				osc.type = "sine";
 				osc.frequency.setValueAtTime(freq, now);
 				g.gain.setValueAtTime(0, now);
-				g.gain.linearRampToValueAtTime(gainVal, now + 0.01); 
-				osc.connect(g); 
+				g.gain.linearRampToValueAtTime(gainVal, now + 0.01);
+				osc.connect(g);
 				g.connect(parentGain);
 				osc.start();
 				return {osc, gain: g};
@@ -7912,7 +7932,7 @@
 						v.harmonics.h4.osc.stop();
 						v.gain.disconnect();
 					}catch(e){} 
-					ACTIVE_VOICES.delete(id); 
+					ACTIVE_VOICES.delete(id);
 				}, r*1000 + 50);
 			}
 
@@ -8038,7 +8058,8 @@
 				g.gain.value = 0.3;
 				sOsc.type = sWave;
 				sOsc.frequency.setValueAtTime(sMin, audioContext.currentTime);
-				sOsc.connect(g); g.connect(lowPassFilter);
+				sOsc.connect(g);
+				g.connect(lowPassFilter);
 				sOsc.start();
 				let state = true;
 				sInt = setInterval(() => {
@@ -8095,7 +8116,8 @@
 				if(key in KEY_MAP){
 					const btn = document.getElementById(KEY_MAP[key]);
 					if(btn && !btn.classList.contains("pressed")){
-						btn.classList.add("pressed"); playVoice(btn.id, FREQ_MAP[btn.id]);
+						btn.classList.add("pressed");
+						playVoice(btn.id, FREQ_MAP[btn.id]);
 					}
 				}else if(key === "l"){
 					if(sirenIsOn){
@@ -8679,8 +8701,8 @@
 				const previousValue = inputField.value;
 				inputField.value = newValue;
 				if(doBlink && newValue.toString() === previousValue.toString() && days1 >= 0 && days2 >= 0){
-					inputField.classList.remove("blink"); 
-					void inputField.offsetWidth; 
+					inputField.classList.remove("blink");
+					void inputField.offsetWidth;
 					inputField.classList.add("blink");
 				}
 			}
@@ -9734,8 +9756,8 @@
 					border-bottom: 2px solid #333;
 				}
 				#v3 h1#v3_valueHexCode{
-					background: #FFFF00; 
-					padding: 5px; 
+					background: #FFFF00;
+					padding: 5px;
 					margin: 0 0 10px 0 !important;
 					font-size: 1.2em;
 				}
@@ -9951,9 +9973,9 @@
 		<div id="v4" class="version-container"> <!--EX MARIO-->
 			<style>
 				#v4 .v4-body{
-					transition: background-color 0.3s, color 0.3s; 
-					text-align: center; 
-					font-family: 'Segoe UI', Arial, sans-serif; 
+					transition: background-color 0.3s, color 0.3s;
+					text-align: center;
+					font-family: 'Segoe UI', Arial, sans-serif;
 					padding: 10px;
 					margin: 0;
 					min-height: 100vh;
@@ -9992,9 +10014,9 @@
 					margin-top: 15px;
 				}
 				#v4 button{
-					cursor: pointer; 
+					cursor: pointer;
 					margin: 0;
-					border: 2px solid rgba(0,0,0,0.1); 
+					border: 2px solid rgba(0,0,0,0.1);
 					border-radius: 8px;
 					font-weight: bold;
 					transition: all 0.2s;
@@ -10024,7 +10046,7 @@
 					font-family: monospace;
 				}
 				#v4 #mainLabel{
-					font-size: 2.5em; 
+					font-size: 2.5em;
 					font-weight: 900;
 					font-family: monospace;
 					display: inline-block;
@@ -10060,7 +10082,7 @@
 						for(let j = 0; j < 5; j++){
 							let btn = document.createElement("button");
 							btn.id = i + "-" + j;
-							btn.style.width = "18%"; 
+							btn.style.width = "18%";
 							btn.style.maxWidth = "60px";
 							btn.innerHTML = \`<span class="num-label">\${j}</span>\`;
 							btn.onclick = () => v4_setBackgroundColor(i, j);
@@ -10129,7 +10151,7 @@
 
 				function v4_setRandomBackgroundColor(){
 					v4_actualComponents = v4_actualComponents.map(() => Math.floor(Math.random()*5));
-					v4_updateInterface(); 
+					v4_updateInterface();
 				}
 
 				function v4_playErrorSound(){
@@ -10457,7 +10479,7 @@
 					}
 					const decimalValue = BigInt(base === 16 ? '0x' + val : '0b' + val);
 					numField.value = decimalValue.toString();
-					const tempVal = numField.value; 
+					const tempVal = numField.value;
 					convertToAlpha();
 				}catch (e){}
 			}
@@ -10569,7 +10591,7 @@
 					console.error("Incapace di copiare", err);
 				}
 				window.getSelection().removeAllRanges();
-				inputField.blur(); 
+				inputField.blur();
 			}
 
 			function getExp(iExp){
@@ -10594,7 +10616,8 @@
 				for(let i = 3; i*i <= temp; i += 2){
 					count = 0;
 					while(temp%i === 0){
-						count++; temp /= i;
+						count++;
+						temp /= i;
 					}
 					if(count > 0){
 						result.push(i + getExp(count));
