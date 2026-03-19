@@ -13,7 +13,7 @@
 				--last-move: rgba(255, 255, 0, 0.4);
 				--status-color: #f1c40f;
 				--sq-size: clamp(35px, 10vw, 60px);
-				--save-empty: #4834d4; 
+				--save-empty: #4834d4;
 				--save-full: #686de0;
 			}
 			body{
@@ -212,7 +212,8 @@
 				border: none;
 				border-radius: 5px;
 				cursor: pointer;
-				width: 60px; height: 60px;
+				width: 60px;
+				height: 60px;
 				display: flex;
 				justify-content: center;
 				align-items: center;
@@ -866,7 +867,7 @@
 						let v = minimax(tmp, depth - 1, -Infinity, Infinity, false);
 						if(v > bestValue){ 
 							bestValue = v;
-							bestMove = m; 
+							bestMove = m;
 							if(isPromo){
 								bestPromo = choice;
 							}

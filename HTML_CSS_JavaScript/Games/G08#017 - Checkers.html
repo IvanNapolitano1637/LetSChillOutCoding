@@ -235,7 +235,8 @@
 						const cell = document.createElement('div');
 						const isPlayable = cfg.ortho ? (r > 0 && r < cfg.s - 1) : (cfg.reverse ? (r + c)%2 === 0 : (r + c)%2 !== 0);
 						cell.className = `cell ${isPlayable ? 'black-cell' : 'white-cell'}`;
-						cell.dataset.r = r; cell.dataset.c = c;
+						cell.dataset.r = r;
+						cell.dataset.c = c;
 						if(isPlayable){
 							if(r < cfg.start){
 								createPiece(cell, 'black');
@@ -407,7 +408,8 @@
 			function checkWin(){
 				const w = document.querySelectorAll('.white-piece').length, b = document.querySelectorAll('.black-piece').length;
 				if(w === 0){
-					alert("GAME OVER! Black Wins."); location.reload();
+					alert("GAME OVER! Black Wins.");
+					location.reload();
 					return true;
 				}
 				if(b === 0){

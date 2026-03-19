@@ -252,7 +252,7 @@
 					}
 					const decimalValue = BigInt(base === 16 ? '0x' + val : '0b' + val);
 					numField.value = decimalValue.toString();
-					const tempVal = numField.value; 
+					const tempVal = numField.value;
 					convertToAlpha();
 				}catch (e){}
 			}
@@ -364,7 +364,7 @@
 					console.error("Incapace di copiare", err);
 				}
 				window.getSelection().removeAllRanges();
-				inputField.blur(); 
+				inputField.blur();
 			}
 
 			function getExp(iExp){
@@ -389,7 +389,8 @@
 				for(let i = 3; i*i <= temp; i += 2){
 					count = 0;
 					while(temp%i === 0){
-						count++; temp /= i;
+						count++;
+						temp /= i;
 					}
 					if(count > 0){
 						result.push(i + getExp(count));

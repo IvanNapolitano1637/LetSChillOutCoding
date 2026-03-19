@@ -46,7 +46,7 @@
 				height: 45px;
 			}
 			#starter{
-				flex-basis: 100%; 
+				flex-basis: 100%;
 				margin-top: 15px;
 				display: inline-block;
 			}
@@ -157,7 +157,7 @@
 				numberOfMoves = 0;
 				goOn = true;
 				moveYellow = document.getElementById("Yellow").checked;
-				humanIsYellow = moveYellow; 
+				humanIsYellow = moveYellow;
 				canvas.width = COLUMN_NUMBER*DIAMETER + GRID_THICKNESS*(COLUMN_NUMBER + 1);
 				canvas.height = ROW_NUMBER*DIAMETER + GRID_THICKNESS*(ROW_NUMBER + 1);
 				ctx.fillStyle = BLUE_COLOR;
@@ -228,7 +228,7 @@
 				if(check(row, col)){
 					return 10000;
 				}
-				grid[row][col] = 0; 
+				grid[row][col] = 0;
 				if(check(row, col)){
 					grid[row][col] = 1;
 					return 5000;
@@ -367,7 +367,8 @@
 						let r = row + dr, c = col + dc;
 						while(r >= 0 && r < ROW_NUMBER && c >= 0 && c < COLUMN_NUMBER && grid[r][c] === current){
 							cells.push({r: r, c: c});
-							r += dr; c += dc;
+							r += dr;
+							c += dc;
 						}
 					}
 					if(cells.length >= 4){

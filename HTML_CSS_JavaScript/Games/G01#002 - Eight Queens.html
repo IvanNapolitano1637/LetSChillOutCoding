@@ -251,7 +251,8 @@
 				document.body.style.background = (!safe && semaphoreFlag) ? RED_SEMAPHORE_COLOR : BACKGROUND_COLOR;
 				if(safe && numberOfQueens === order){
 					document.body.style.background = BACKGROUND_WIN_COLOR;
-					hasWon = true; setTimeout(() => alert("You win!"), 100);
+					hasWon = true;
+					setTimeout(() => alert("You win!"), 100);
 				}
 			}
 
@@ -309,7 +310,7 @@
 				updateAttack();
 				drawAll();
 				setQueensLimitButtonLabel();
-				document.body.style.background = "#add8e6"; 
+				document.body.style.background = "#add8e6";
 				hasWon = false;
 			}
 

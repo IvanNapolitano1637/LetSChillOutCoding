@@ -139,11 +139,11 @@
 			.cell.matched{
 				background-color: var(--match-color) !important;
 				color: white;
-				font-size: 0.85em; 
+				font-size: 0.85em;
 				line-height: 1;
 				border-color: #689f38;
 				cursor: default;
-				white-space: nowrap; 
+				white-space: nowrap;
 			}
 			.cell.matched sup{
 				font-size: 0.7em;
@@ -264,8 +264,8 @@
 						}, 400);
 						if(currentErrors >= MAX_NUMBER_OF_ERRORS){
 							setTimeout(() => {
-								alert('Maximum number of errors reached. Try again!'); 
-								initGame(); 
+								alert('Maximum number of errors reached. Try again!');
+								initGame();
 							}, 100);
 						}
 					}
@@ -281,7 +281,7 @@
 				}
 
 				function checkWin(){
-					const target = isPrime(P) ? P - 1 : matchedNumbersCount; 
+					const target = isPrime(P) ? P - 1 : matchedNumbersCount;
 					if(matchedNumbersCount === P - 1){
 						setTimeout(() => alert('Congratulations! :-D You win! :-D'), 200);
 					}

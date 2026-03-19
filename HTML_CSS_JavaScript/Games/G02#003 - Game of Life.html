@@ -80,7 +80,7 @@
 			};
 
 			function updateSpeed(val){
-				currentInterval = 1010 - val; 
+				currentInterval = 1010 - val;
 				document.getElementById("speedVal").innerText = currentInterval;
 				if(goOnAlone){
 					clearInterval(nIntervId);
@@ -129,13 +129,14 @@
 					coords = [[-4,0], [-3,0], [-2,0], [-1,0], [0,0], [1,0], [2,0], [3,0], [4,0], [5,0]];
 				}
 				coords.forEach(([dx, dy]) => {
-					let x = midX + dx; let y = midY + dy;
+					let x = midX + dx;
+					let y = midY + dy;
 					if(x >= 0 && x < ROW_NUMBER && y >= 0 && y < COLUMN_NUMBER){
 						grid[x][y] = true;
 						drawSquare(x, y, ALIVE_COLOR);
 					}
 				});
-				document.getElementById("patterns").value = ""; 
+				document.getElementById("patterns").value = "";
 			}
 
 			function select(e){

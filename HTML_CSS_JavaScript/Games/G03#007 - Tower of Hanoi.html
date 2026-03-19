@@ -133,12 +133,12 @@
 			const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
 			const UNIT = DESKTOP ? 9 : 7;
 			const H_SPACE = 8*UNIT, V_SPACE = 6*UNIT;
-			const WIDTH = 36*UNIT; 
-			const PAGE_WIDTH = 3.5*UNIT; 
+			const WIDTH = 36*UNIT;
+			const PAGE_WIDTH = 3.5*UNIT;
 			const BASE_HEIGHT = 2.5*UNIT;
-			const DISK_INCREASE = 3*UNIT; 
-			const DISK_BASE_LENGTH = 12*UNIT; 
-			const DISK_HEIGHT = (DESKTOP ? 5 : 8)*UNIT; 
+			const DISK_INCREASE = 3*UNIT;
+			const DISK_BASE_LENGTH = 12*UNIT;
+			const DISK_HEIGHT = (DESKTOP ? 5 : 8)*UNIT;
 			const UPPER_MARGIN = 4*UNIT, UPPER_PAGE_MARGIN = 2*UNIT, LOWER_MARGIN = 2*UNIT;
 			const TOTAL_WIDTH = (3*WIDTH) + (4*H_SPACE);
 			const BROWN = "#8D6E63", ORANGE = "#FFCA28";
@@ -197,7 +197,8 @@
 				if(select.innerHTML === ""){
 					for(let i = 1; i <= 10; i++){
 						let opt = document.createElement("option");
-						opt.value = i; opt.text = "Level " + i;
+						opt.value = i;
+						opt.text = "Level " + i;
 						if(i === numberOfDisks){
 							opt.selected = true;
 						}
@@ -221,7 +222,7 @@
 			}
 
 			function drawTower(idx){
-				let x0 = H_SPACE + idx*(WIDTH + H_SPACE); 
+				let x0 = H_SPACE + idx*(WIDTH + H_SPACE);
 				context.fillStyle = selectedTower[idx] ? ORANGE : "rgba(0,0,0,0.06)";
 				context.fillRect(x0, V_SPACE, WIDTH, totalHeight - V_SPACE);
 				context.fillStyle = BROWN;
@@ -237,8 +238,8 @@
 
 			function drawDisk(tIdx, level, dSize){
 				let w = DISK_BASE_LENGTH + dSize*DISK_INCREASE;
-				let x0 = H_SPACE + tIdx*(WIDTH + H_SPACE); 
-				let x = x0 + (WIDTH - w)/2; 
+				let x0 = H_SPACE + tIdx*(WIDTH + H_SPACE);
+				let x = x0 + (WIDTH - w)/2;
 				let y = V_SPACE + level*DISK_HEIGHT + UPPER_MARGIN + UPPER_PAGE_MARGIN;
 				let h = DISK_HEIGHT - 2;
 				context.fillStyle = COLORS[dSize];
@@ -260,7 +261,7 @@
 				}
 				let towerIdx = -1;
 				for(let i = 0; i < 3; i++){
-					let xStart = H_SPACE + i*(WIDTH + H_SPACE); 
+					let xStart = H_SPACE + i*(WIDTH + H_SPACE);
 					if(cursorX >= xStart && cursorX <= xStart + WIDTH){
 						towerIdx = i;
 						break;

@@ -148,14 +148,16 @@
 			let flagDiagonals = false;
 			const CANVAS = document.getElementById('canvas');
 			if(window.innerWidth < 600){
-				CANVAS.width = 300; CANVAS.height = 300;
+				CANVAS.width = 300;
+				CANVAS.height = 300;
 			}
 
 			function fillSelectOption(){
 				const select = document.getElementById("numberOfSides");
 				for(let i = 3; i <= 60; i++){
 					let opt = document.createElement('option');
-					opt.value = i; opt.innerHTML = i;
+					opt.value = i;
+					opt.innerHTML = i;
 					select.appendChild(opt);
 				}
 			}
@@ -185,7 +187,8 @@
 				for(let i = 1; i < numberOfSides; i++){
 					ctx.lineTo(vertices[i].x, vertices[i].y);
 				}
-				ctx.closePath(); ctx.stroke();
+				ctx.closePath();
+				ctx.stroke();
 				if(flagDiagonals){
 					ctx.strokeStyle = "rgba(192, 57, 43, 0.2)";
 					ctx.lineWidth = 1;
@@ -279,7 +282,8 @@
 				for(let i = 3; i*i <= temp; i += 2){
 					count = 0;
 					while(temp%i === 0){
-						count++; temp /= i;
+						count++;
+						temp /= i;
 					}
 					if(count > 0){
 						result.push(i + getExp(count));
@@ -321,7 +325,7 @@
 					return;
 				}
 				const modExp = (b, e, m) => {
-					let r = 1n; 
+					let r = 1n;
 					b %= m;
 					while(e > 0n){
 						if(e%2n === 1n){

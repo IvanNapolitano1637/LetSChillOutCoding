@@ -770,8 +770,8 @@
 					border-bottom: 2px solid #333;
 				}
 				#v3 h1#v3_valueHexCode{
-					background: #FFFF00; 
-					padding: 5px; 
+					background: #FFFF00;
+					padding: 5px;
 					margin: 0 0 10px 0 !important;
 					font-size: 1.2em;
 				}
@@ -987,9 +987,9 @@
 		<div id="v4" class="version-container"> <!--EX MARIO-->
 			<style>
 				#v4 .v4-body{
-					transition: background-color 0.3s, color 0.3s; 
-					text-align: center; 
-					font-family: 'Segoe UI', Arial, sans-serif; 
+					transition: background-color 0.3s, color 0.3s;
+					text-align: center;
+					font-family: 'Segoe UI', Arial, sans-serif;
 					padding: 10px;
 					margin: 0;
 					min-height: 100vh;
@@ -1028,9 +1028,9 @@
 					margin-top: 15px;
 				}
 				#v4 button{
-					cursor: pointer; 
+					cursor: pointer;
 					margin: 0;
-					border: 2px solid rgba(0,0,0,0.1); 
+					border: 2px solid rgba(0,0,0,0.1);
 					border-radius: 8px;
 					font-weight: bold;
 					transition: all 0.2s;
@@ -1060,7 +1060,7 @@
 					font-family: monospace;
 				}
 				#v4 #mainLabel{
-					font-size: 2.5em; 
+					font-size: 2.5em;
 					font-weight: 900;
 					font-family: monospace;
 					display: inline-block;
@@ -1096,7 +1096,7 @@
 						for(let j = 0; j < 5; j++){
 							let btn = document.createElement("button");
 							btn.id = i + "-" + j;
-							btn.style.width = "18%"; 
+							btn.style.width = "18%";
 							btn.style.maxWidth = "60px";
 							btn.innerHTML = `<span class="num-label">${j}</span>`;
 							btn.onclick = () => v4_setBackgroundColor(i, j);
@@ -1165,7 +1165,7 @@
 
 				function v4_setRandomBackgroundColor(){
 					v4_actualComponents = v4_actualComponents.map(() => Math.floor(Math.random()*5));
-					v4_updateInterface(); 
+					v4_updateInterface();
 				}
 
 				function v4_playErrorSound(){

@@ -11,7 +11,7 @@
 				--bg-C: #4FC3F7;
 				--bg-S: #CE93D8;
 				--bg-B: #FFAB76;
-				--card-width: clamp(40px, 13vw, 85px); 
+				--card-width: clamp(40px, 13vw, 85px);
 				--card-height: clamp(58px, 19vw, 125px);
 				--gap: clamp(2px, 1.2vw, 15px);
 				--overlap: clamp(50px, 12.5vw, 100px);
@@ -146,7 +146,8 @@
 			}
 			.foundation-slot .card, .waste-slot .card{
 				position: absolute;
-				top: 0; left: 0;
+				top: 0;
+				left: 0;
 				margin-bottom: 0;
 			}
 			.foundation-slot .card{
@@ -346,7 +347,7 @@
 						}else{
 							if(card !== parent.lastElementChild){
 								console.log("Puoi muovere solo l'ultima carta della colonna!");
-								return; 
+								return;
 							}
 							selection = {
 								cards: [card],

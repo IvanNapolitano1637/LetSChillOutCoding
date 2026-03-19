@@ -205,8 +205,10 @@
 				osc.frequency.setValueAtTime(isReflected ? 150 : 800, AUDIO_CTX.currentTime);
 				gain.gain.setValueAtTime(0.05, AUDIO_CTX.currentTime);
 				gain.gain.exponentialRampToValueAtTime(0.00001, AUDIO_CTX.currentTime + 0.1);
-				osc.connect(gain); gain.connect(AUDIO_CTX.destination);
-				osc.start(); osc.stop(AUDIO_CTX.currentTime + 0.1);
+				osc.connect(gain);
+				gain.connect(AUDIO_CTX.destination);
+				osc.start();
+				osc.stop(AUDIO_CTX.currentTime + 0.1);
 			}
 
 			function drawNumbers(){

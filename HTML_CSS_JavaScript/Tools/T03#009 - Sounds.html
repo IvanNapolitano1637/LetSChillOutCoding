@@ -408,8 +408,8 @@
 				osc.type = "sine";
 				osc.frequency.setValueAtTime(freq, now);
 				g.gain.setValueAtTime(0, now);
-				g.gain.linearRampToValueAtTime(gainVal, now + 0.01); 
-				osc.connect(g); 
+				g.gain.linearRampToValueAtTime(gainVal, now + 0.01);
+				osc.connect(g);
 				g.connect(parentGain);
 				osc.start();
 				return {osc, gain: g};
@@ -456,7 +456,7 @@
 						v.harmonics.h4.osc.stop();
 						v.gain.disconnect();
 					}catch(e){} 
-					ACTIVE_VOICES.delete(id); 
+					ACTIVE_VOICES.delete(id);
 				}, r*1000 + 50);
 			}
 
@@ -582,7 +582,8 @@
 				g.gain.value = 0.3;
 				sOsc.type = sWave;
 				sOsc.frequency.setValueAtTime(sMin, audioContext.currentTime);
-				sOsc.connect(g); g.connect(lowPassFilter);
+				sOsc.connect(g);
+				g.connect(lowPassFilter);
 				sOsc.start();
 				let state = true;
 				sInt = setInterval(() => {
@@ -639,7 +640,8 @@
 				if(key in KEY_MAP){
 					const btn = document.getElementById(KEY_MAP[key]);
 					if(btn && !btn.classList.contains("pressed")){
-						btn.classList.add("pressed"); playVoice(btn.id, FREQ_MAP[btn.id]);
+						btn.classList.add("pressed");
+						playVoice(btn.id, FREQ_MAP[btn.id]);
 					}
 				}else if(key === "l"){
 					if(sirenIsOn){

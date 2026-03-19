@@ -270,10 +270,14 @@
 
 			function init(){
 				for(let i = 0; i < 5; i++){
-					INPUTS[i].min = 0; INPUTS[i].max = 255; INPUTS[i].step = 1;
+					INPUTS[i].min = 0;
+					INPUTS[i].max = 255;
+					INPUTS[i].step = 1;
 				}
 				for(let i = 5; i < 9; i++){
-					INPUTS[i].min = 0; INPUTS[i].max = 1; INPUTS[i].step = 0.01;
+					INPUTS[i].min = 0;
+					INPUTS[i].max = 1;
+					INPUTS[i].step = 0.01;
 				}
 				setColor(255, 255, 255);
 				VALUES[9].onclick = function(){

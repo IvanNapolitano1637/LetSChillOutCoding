@@ -524,8 +524,8 @@
 				const previousValue = inputField.value;
 				inputField.value = newValue;
 				if(doBlink && newValue.toString() === previousValue.toString() && days1 >= 0 && days2 >= 0){
-					inputField.classList.remove("blink"); 
-					void inputField.offsetWidth; 
+					inputField.classList.remove("blink");
+					void inputField.offsetWidth;
 					inputField.classList.add("blink");
 				}
 			}
