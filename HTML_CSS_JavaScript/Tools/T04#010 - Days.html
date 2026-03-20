@@ -78,7 +78,10 @@
 			}
 			.btn-today{
 				background-color: #27ae60;
-				min-width: 80px;
+				min-width: 95px;
+				font-size: 0.8em;
+				padding: 8px 5px;
+				letter-spacing: -0.3px;
 			}
 			.btn-clear{
 				background-color: #e74c3c;
@@ -106,6 +109,66 @@
 				padding: 5px;
 				font-family: monospace;
 			}
+			.language-selector{
+				display: flex;
+				justify-content: flex-end;
+				gap: 8px;
+				margin-bottom: 15px;
+				flex-wrap: wrap;
+			}
+			.flag-icon:hover{
+				transform: scale(1.1);
+				border-color: #5c5cff;
+			}
+			.flag-icon.active{
+				border-color: #5c5cff;
+				background: #e0e0ff;
+			}
+			.custom-select-container{
+				position: relative;
+				display: inline-block;
+				width: 60px;
+				cursor: pointer;
+				user-select: none;
+			}
+			.selected-flag{
+				padding: 5px;
+				border: 1px solid #5c5cff;
+				border-radius: 4px;
+				background: white;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			.options-container{
+				display: none;
+				position: absolute;
+				top: 100%;
+				right: 0;
+				z-index: 100;
+				background: white;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+				margin-top: 5px;
+				width: 50px;
+			}
+			.options-container.show{
+				display: block;
+			}
+			.option-flag{
+				padding: 8px;
+				transition: background 0.2s;
+				display: flex;
+				justify-content: center;
+			}
+			.option-flag:hover{
+				background-color: #f0f0ff;
+			}
+			.flag-svg{
+				width: 30px;
+				height: 20px;
+			}
 			@keyframes blink-effect{
 				0%{
 					background-color: #f0f0f0;
@@ -120,12 +183,29 @@
 			.blink{
 				animation: blink-effect 0.4s ease-in-out 2;
 			}
+			@media (max-width: 400px){
+				.row-group{
+					gap: 5px;
+				}
+				.btn-today{
+					min-width: 85px;
+					font-size: 0.75em;
+				}
+				input[type="text"]{
+					padding: 8px 4px;
+				}
+			}
 		</style>
 	</head>
 	<body>
 		<div class="container">
 			<div class="language-selector">
-				<select id="langSelect" onchange="changeLanguage(this.value)"></select>
+				<div class="custom-select-container" id="customSelect">
+					<div class="selected-flag" id="currentFlag">
+						</div>
+					<div class="options-container" id="optionsContainer">
+						</div>
+				</div>
 			</div>
 			<h3 data-key="title">Days</h3>
 			<div class="section">
@@ -367,20 +447,50 @@
 					phExtended: "詳細日付"
 				}
 			};
+			const FLAGS_SVG = [
+				'<svg class="flag-svg" viewBox="0 0 7410 3900"><rect width="7410" height="3900" fill="#b22234"/><path d="M0 300h7410M0 900h7410M0 1500h7410M0 2100h7410M0 2700h7410M0 3300h7410" stroke="#fff" stroke-width="300"/><rect width="2964" height="2100" fill="#3c3b6e"/><path d="M247 175l247 759-646-469h798l-646 469z" fill="#fff" transform="scale(.2)"/></svg>', // US
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>', // IT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg>', // FR
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#c60b1e"/><rect width="3" height="1" y="0.5" fill="#ffc400"/></svg>', // ES
+				'<svg class="flag-svg" viewBox="0 0 5 3"><rect width="5" height="3"/><rect width="5" height="2" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg>', // DE
+				'<svg class="flag-svg" viewBox="0 0 600 400"><rect width="240" height="400" fill="#006600"/><rect x="240" width="360" height="400" fill="#ff0000"/></svg>', // PT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002b7f"/><rect width="1" height="2" x="1" fill="#fcd116"/><rect width="1" height="2" x="2" fill="#ce1126"/></svg>', // RO
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>', // UA
+				'<svg class="flag-svg" viewBox="0 0 27 18"><rect width="27" height="18" fill="#005bae"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#005bae"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>', // GR
+				'<svg class="flag-svg" viewBox="0 0 1 1"><rect width="0.5" height="1" fill="#ffe000"/><rect x="0.5" width="0.5" height="1" fill="#fff"/></svg>', // VA
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#de2110"/><path d="M.5 1.1l.3-.9.3.9-1-.6h1z" fill="#ffde00" transform="matrix(.4 0 0 .4 .1 .1)"/></svg>', // CN
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>' // JP
+			];
 
 			const NUMBER_OF_DAY_OF_EACH_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 			const PATCH = 5;
 			let currentLang = "English";
 
-			function init(){
-				const select = document.getElementById("langSelect");
-				Object.keys(TRANSLATIONS).forEach(lang => {
-					let opt = document.createElement("option");
-					opt.value = lang;
-					opt.textContent = lang;
-					select.appendChild(opt);
+			function init() {
+				const currentFlagDiv = document.getElementById("currentFlag");
+				const optionsContainer = document.getElementById("optionsContainer");
+				const langKeys = Object.keys(TRANSLATIONS);
+				langKeys.forEach((lang, index) => {
+					let opt = document.createElement("div");
+					opt.className = "option-flag";
+					opt.innerHTML = FLAGS_SVG[index];
+					opt.title = lang;
+					opt.onclick = (e) => {
+						e.stopPropagation();
+						currentFlagDiv.innerHTML = FLAGS_SVG[index];
+						changeLanguage(lang);
+						optionsContainer.classList.remove("show");
+					};
+					optionsContainer.appendChild(opt);
 				});
-				select.value = "English";
+				document.getElementById("customSelect").onclick = function(e) {
+					optionsContainer.classList.toggle("show");
+					e.stopPropagation();
+				};
+				window.onclick = function() {
+					optionsContainer.classList.remove("show");
+				};
+				currentFlagDiv.innerHTML = FLAGS_SVG[0];
 				changeLanguage("English");
 			}
 
