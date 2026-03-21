@@ -251,7 +251,7 @@
 <body>
 <div id="dashboard">
 	<h1>Toolbox & Playground</h1>
-	<div class='section'><h2 class='section-header' onclick="toggleSection('grid-clocks')"><span>🕰️ Clocks</span><span class='arrow'>&#9654;</span></h2><div class='grid' id='grid-clocks'><button class='card' onclick="openPage('Clocks_Binary Clock.html')">Binary Clock</button><button class='card' onclick="openPage('Clocks_24h Clock.html')">24h Clock</button><button class='card' onclick="openPage('Clocks_Orbit Clock.html')">Orbit Clock</button><button class='card' onclick="openPage('Clocks_Strange Clock.html')">Strange Clock</button><button class='card' onclick="openPage('Clocks_World Time Zones.html')">World Time Zones</button><button class='card' onclick="openPage('Clocks_Digital Clock.html')">Digital Clock</button><button class='card' onclick="openPage('Clocks_Analog Clock.html')">Analog Clock</button><button class='card' onclick="openPage('Clocks_Seven-Segment Digital Clock.html')">Seven-Segment Digital Clock</button></div></div><div class='section'><h2 class='section-header' onclick="toggleSection('grid-games')"><span>🎮 Games</span><span class='arrow'>&#9654;</span></h2><div class='grid' id='grid-games'><button class='card' onclick="openPage('Games_Eight Queens.html')">Eight Queens</button><button class='card' onclick="openPage('Games_Game of Life.html')">Game of Life</button><button class='card' onclick="openPage('Games_Tower of Hanoi.html')">Tower of Hanoi</button><button class='card' onclick="openPage('Games_Connect Four.html')">Connect Four</button><button class='card' onclick="openPage('Games_Modular Matching.html')">Modular Matching</button><button class='card' onclick="openPage('Games_Fifteen.html')">Fifteen</button><button class='card' onclick="openPage('Games_Chess.html')">Chess</button><button class='card' onclick="openPage('Games_Checkers.html')">Checkers</button><button class='card' onclick="openPage('Games_Backgammon.html')">Backgammon</button><button class='card' onclick="openPage('Games_Solitario carte napoletane.html')">Solitario carte napoletane</button></div></div><div class='section'><h2 class='section-header' onclick="toggleSection('grid-tools')"><span>🛠️ Tools</span><span class='arrow'>&#9654;</span></h2><div class='grid' id='grid-tools'><button class='card' onclick="openPage('Tools_Colors Pro.html')">Colors Pro</button><button class='card' onclick="openPage('Tools_Some Maths.html')">Some Maths</button><button class='card' onclick="openPage('Tools_Sounds.html')">Sounds</button><button class='card' onclick="openPage('Tools_Days.html')">Days</button><button class='card' onclick="openPage('Tools_SuperEnalotto.html')">SuperEnalotto</button><button class='card' onclick="openPage('Tools_Colors Hub.html')">Colors Hub</button><button class='card' onclick="openPage('Tools_Alpha-Numeric Converter.html')">Alpha-Numeric Converter</button><button class='card' onclick="openPage('Tools_Sintetizzatore Fonetico Vocali Italiane.html')">Sintetizzatore Fonetico Vocali Italiane</button></div></div>
+	<div class='section'><h2 class='section-header' onclick="toggleSection('grid-clocks')"><span>🕰️ Clocks</span><span class='arrow'>&#9654;</span></h2><div class='grid' id='grid-clocks'><button class='card' onclick="openPage('Clocks_Binary Clock.html')">Binary Clock</button><button class='card' onclick="openPage('Clocks_24h Clock.html')">24h Clock</button><button class='card' onclick="openPage('Clocks_Orbit Clock.html')">Orbit Clock</button><button class='card' onclick="openPage('Clocks_Strange Clock.html')">Strange Clock</button><button class='card' onclick="openPage('Clocks_World Time Zones.html')">World Time Zones</button><button class='card' onclick="openPage('Clocks_Digital Clock.html')">Digital Clock</button><button class='card' onclick="openPage('Clocks_Analog Clock.html')">Analog Clock</button><button class='card' onclick="openPage('Clocks_Seven-Segment Digital Clock.html')">Seven-Segment Digital Clock</button></div></div><div class='section'><h2 class='section-header' onclick="toggleSection('grid-games')"><span>🎮 Games</span><span class='arrow'>&#9654;</span></h2><div class='grid' id='grid-games'><button class='card' onclick="openPage('Games_Eight Queens.html')">Eight Queens</button><button class='card' onclick="openPage('Games_Game of Life.html')">Game of Life</button><button class='card' onclick="openPage('Games_Tower of Hanoi.html')">Tower of Hanoi</button><button class='card' onclick="openPage('Games_Connect Four.html')">Connect Four</button><button class='card' onclick="openPage('Games_Modular Matching.html')">Modular Matching</button><button class='card' onclick="openPage('Games_Fifteen.html')">Fifteen</button><button class='card' onclick="openPage('Games_Chess.html')">Chess</button><button class='card' onclick="openPage('Games_Checkers.html')">Checkers</button><button class='card' onclick="openPage('Games_Backgammon.html')">Backgammon</button><button class='card' onclick="openPage('Games_Solitario carte napoletane.html')">Solitario carte napoletane</button><button class='card' onclick="openPage('Games_Go.html')">Go</button></div></div><div class='section'><h2 class='section-header' onclick="toggleSection('grid-tools')"><span>🛠️ Tools</span><span class='arrow'>&#9654;</span></h2><div class='grid' id='grid-tools'><button class='card' onclick="openPage('Tools_Colors Pro.html')">Colors Pro</button><button class='card' onclick="openPage('Tools_Some Maths.html')">Some Maths</button><button class='card' onclick="openPage('Tools_Sounds.html')">Sounds</button><button class='card' onclick="openPage('Tools_Days.html')">Days</button><button class='card' onclick="openPage('Tools_SuperEnalotto.html')">SuperEnalotto</button><button class='card' onclick="openPage('Tools_Colors Hub.html')">Colors Hub</button><button class='card' onclick="openPage('Tools_Alpha-Numeric Converter.html')">Alpha-Numeric Converter</button><button class='card' onclick="openPage('Tools_Sintetizzatore Fonetico Vocali Italiane.html')">Sintetizzatore Fonetico Vocali Italiane</button></div></div>
 </div>
 <div id="viewer">
 	<div id="app-header">
@@ -6606,6 +6606,777 @@
 			}
 
 			initGame();
+		<\/script>
+	</body>
+</html>` },
+
+	// --- Go ---
+	'Games_Go.html': { name: `Go`, content: `<!DOCTYPE html>
+<html lang="en"><!--G11#027 - Michele - Go-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>囲碁 · Go</title>
+		<style>
+			@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=Cinzel:wght@400;600&display=swap');
+			:root{
+				--wood-light: #d4a853;
+				--wood-mid: #b8832a;
+				--wood-dark: #7a5218;
+				--wood-grain: #c49a3c;
+				--ink: #1a0f00;
+				--paper: #f5e8c4;
+				--shadow: rgba(60,30,0,0.35);
+			}
+			*{
+				margin:0;
+				padding:0;
+				box-sizing:border-box;
+			}
+			body{
+				min-height: 100vh;
+				min-height: 100dvh;
+				background: #2b1a08;
+				background-image:
+				repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px),
+				repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
+				font-family: 'Noto Serif JP', serif;
+				color: var(--ink);
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				padding: 10px 8px 16px;
+				touch-action: manipulation;
+				overflow-x: hidden;
+			}
+			h1{
+				font-family: 'Cinzel', serif;
+				font-size: clamp(1.1rem, 4vw, 2.2rem);
+				color: var(--wood-light);
+				letter-spacing: .2em;
+				text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+				margin-bottom: 2px;
+			}
+			.subtitle{
+				font-size: .7rem;
+				color: var(--wood-grain);
+				letter-spacing: .3em;
+				margin-bottom: 8px;
+				opacity:.8;
+			}
+			
+			.size-bar{
+				display: flex;
+				gap: 8px;
+				margin-bottom: 8px;
+			}
+			.size-btn{
+				font-family: 'Cinzel', serif;
+				font-size: .8rem;
+				padding: 5px 14px;
+				border-radius: 3px;
+				border: 1.5px solid var(--wood-mid);
+				background: transparent;
+				color: var(--wood-light);
+				cursor: pointer;
+				transition: background .2s, color .2s;
+				letter-spacing:.08em;
+			}
+			.size-btn.active, .size-btn:hover{
+				background: var(--wood-mid);
+				color: #fff8ee;
+			}
+			.info-bar{
+				display: flex;
+				gap: 6px;
+				margin-bottom: 6px;
+				align-items: center;
+				flex-wrap: nowrap;
+				justify-content: center;
+				width: 100%;
+				max-width: 600px;
+			}
+			.player-card{
+				display:flex; align-items:center; gap:6px;
+				background: rgba(0,0,0,0.35);
+				border: 1px solid var(--wood-dark);
+				border-radius: 4px;
+				padding: 5px 8px;
+				flex: 1;
+				min-width: 0;
+				overflow: hidden;
+			}
+			.player-card.active-turn{
+				border-color: var(--wood-light);
+				box-shadow: 0 0 8px rgba(212,168,83,0.4);
+			}
+			.stone-preview{
+				width: 16px; height: 16px; border-radius: 50%;
+				flex-shrink: 0;
+			}
+			.stone-preview.black{
+				background: radial-gradient(circle at 35% 35%, #555, #111);
+				box-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+			}
+			.stone-preview.white{
+				background: radial-gradient(circle at 35% 35%, #fff, #ccc);
+				box-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+			}
+			.player-info{
+				display:flex;
+				flex-direction:column;
+				min-width:0;
+			}
+			.player-name{
+				font-size: .65rem; color: var(--wood-grain);
+				letter-spacing:.02em;
+				white-space:nowrap;
+				overflow:hidden;
+				text-overflow:ellipsis;
+			}
+			.player-captures{
+				font-size: .72rem;
+				color: var(--paper);
+				font-weight:600;
+				white-space:nowrap;
+			}
+			.btn-pass, .btn-resign, .btn-new{
+				font-family: 'Cinzel', serif;
+				font-size: .65rem;
+				padding: 4px 7px;
+				border-radius: 3px;
+				border: 1.5px solid var(--wood-mid);
+				background: transparent;
+				color: var(--wood-light);
+				cursor: pointer;
+				letter-spacing:.03em;
+				transition: background .15s;
+				white-space: nowrap;
+			}
+			.btn-pass:hover, .btn-resign:hover, .btn-new:hover {
+				background: var(--wood-dark);
+			}
+			#status{
+				font-size: .8rem;
+				color: var(--paper);
+				background: rgba(0,0,0,0.4);
+				padding: 4px 16px;
+				border-radius: 20px;
+				margin-bottom: 8px;
+				min-height: 24px;
+				letter-spacing:.04em;
+			}
+			.board-wrap{
+				position: relative;
+				border-radius: 4px;
+				box-shadow: 0 8px 40px rgba(0,0,0,0.8), inset 0 0 30px rgba(0,0,0,0.15);
+			}
+			canvas#goban{
+				display: block;
+				border-radius: 4px;
+				cursor: crosshair;
+			}
+			#thinking-overlay{
+				display: none;
+				align-items: center;
+				justify-content: center;
+				gap: 10px;
+				margin-top: 10px;
+			}
+			#thinking-overlay.show{
+				display: flex;
+			}
+			.spinner{
+				width: 36px; height: 36px;
+				border: 3px solid rgba(212,168,83,0.25);
+				border-top-color: var(--wood-light);
+				border-radius: 50%;
+				animation: spin .8s linear infinite;
+			}
+			@keyframes spin{
+				to{
+					transform: rotate(360deg);
+				}
+			}
+			.thinking-label{
+				color: var(--wood-light);
+				font-family: 'Cinzel', serif;
+				font-size: .8rem;
+				letter-spacing: .1em;
+			}
+			.modal-overlay{
+				display:none;
+				position:fixed;
+				inset:0;
+				background: rgba(0,0,0,0.75);
+				align-items:center;
+				justify-content:center;
+				z-index:100;
+			}
+			.modal-overlay.show{
+				display:flex;
+			}
+			.modal-box{
+				background: #2e1c08;
+				border: 2px solid var(--wood-mid);
+				border-radius: 8px;
+				padding: 32px 40px;
+				text-align:center;
+				box-shadow: 0 12px 60px rgba(0,0,0,0.8);
+				max-width: 320px;
+			}
+			.modal-box h2{
+				font-family:'Cinzel',serif;
+				color:var(--wood-light);
+				font-size:1.4rem;
+				margin-bottom:12px;
+			}
+			.modal-box p{
+				color: var(--paper);
+				font-size:.9rem;
+				margin-bottom:24px;
+				line-height:1.6;
+				white-space:pre-line;
+			}
+			.modal-btn{
+				font-family:'Cinzel',serif;
+				font-size:.85rem;
+				padding:8px 24px;
+				border-radius:4px;
+				border:1.5px solid var(--wood-mid);
+				background: var(--wood-dark);
+				color:#fff8ee;
+				cursor:pointer;
+				letter-spacing:.08em;
+				transition: background .15s;
+			}
+			.modal-btn:hover{
+				background: var(--wood-mid);
+			}
+		</style>
+	</head>
+	<body>
+		<h1>囲碁 · GO</h1>
+		<p class="subtitle">GAME OF GO · MCTS AI</p>
+		<div class="size-bar">
+			<button class="size-btn active" data-size="9">9 × 9</button>
+			<button class="size-btn" data-size="13">13 × 13</button>
+			<button class="size-btn" data-size="19">19 × 19</button>
+		</div>
+		<div class="info-bar">
+			<div class="player-card active-turn" id="card-black">
+				<div class="stone-preview black"></div>
+				<div class="player-info">
+					<span class="player-name">YOU · BLACK</span>
+					<span class="player-captures" id="cap-black">Captures: 0</span>
+				</div>
+			</div>
+			<div style="display:flex;flex-direction:column;gap:4px;align-items:center;flex-shrink:0;">
+				<button class="btn-pass" id="btn-pass">Pass</button>
+				<button class="btn-resign" id="btn-resign">Resign</button>
+				<button class="btn-new" id="btn-new">New</button>
+			</div>
+			<div class="player-card" id="card-white">
+				<div class="stone-preview white"></div>
+				<div class="player-info">
+					<span class="player-name">AI · WHITE</span>
+					<span class="player-captures" id="cap-white">Captures: 0</span>
+				</div>
+			</div>
+		</div>
+		<div id="status">Your turn — place a black stone</div>
+		<div class="board-wrap">
+			<canvas id="goban"></canvas>
+		</div>
+		<div id="thinking-overlay">
+			<div class="spinner"></div>
+			<div class="thinking-label">AI is thinking…</div>
+		</div>
+		<div class="modal-overlay" id="modal">
+			<div class="modal-box">
+				<h2 id="modal-title">Game Over</h2>
+				<p id="modal-body">—</p>
+				<button class="modal-btn" id="modal-ok">New Game</button>
+			</div>
+		</div>
+		<script>
+			const EMPTY = 0, BLACK = 1, WHITE = 2;
+			const KOMI = 6.5;
+			let N = 9;
+			let board, koPoint, captures, currentPlayer, gameOver, consecutivePasses, lastPlaced, aiThinking;
+			const canvas = document.getElementById('goban');
+			const ctx = canvas.getContext('2d');
+
+			function initBoard(size){
+				N = size;
+				board = new Int8Array(N*N);
+				koPoint = -1;
+				captures = { [BLACK]: 0, [WHITE]: 0 };
+				currentPlayer = BLACK;
+				gameOver = false;
+				consecutivePasses = 0;
+				aiThinking = false;
+				lastPlaced = -1;
+				updateUI();
+				resizeCanvas();
+				drawBoard();
+				setStatus('Your turn — place a black stone');
+			}
+
+			const idx = (r, c) => r*N + c;
+			const row = i => (i/N)|0;
+			const col = i => i%N;
+
+			function neighbors(i){
+				const r = row(i), c = col(i), nb = [];
+				if(r > 0){
+					nb.push(i - N);
+				}
+				if(r < N - 1){
+					nb.push(i + N);
+				}
+				if(c > 0){
+					nb.push(i - 1);
+				}
+				if(c < N - 1){
+					nb.push(i + 1);
+				}
+				return nb;
+			}
+
+			function getGroup(pos, bd){
+				const color = bd[pos], visited = new Set([pos]), queue = [pos];
+				while(queue.length){
+					for(const nb of neighbors(queue.pop())){
+						if(!visited.has(nb) && bd[nb] === color){
+							visited.add(nb);
+							queue.push(nb);
+						}
+					}
+				}
+				return visited;
+			}
+
+			function getLiberties(group, bd){
+				const libs = new Set();
+				for(const p of group){
+					for(const nb of neighbors(p)){
+						if(bd[nb] === EMPTY){
+							libs.add(nb);
+						}
+					}
+				}
+				return libs;
+			}
+
+			function tryPlace(pos, color, bd, ko){
+				if(bd[pos] !== EMPTY || pos === ko){
+					return null;
+				}
+				const newBd = bd.slice();
+				newBd[pos] = color;
+				const opp = 3 - color;
+				let totalCaptured = 0, lastCapturedPos = -1;
+				for(const nb of neighbors(pos)){
+					if(newBd[nb] === opp){
+						const grp = getGroup(nb, newBd);
+						if(getLiberties(grp, newBd).size === 0){
+							for(const p of grp){
+								newBd[p] = EMPTY;
+								lastCapturedPos = p;
+							}
+							totalCaptured += grp.size;
+						}
+					}
+				}
+				if(getLiberties(getGroup(pos, newBd), newBd).size === 0){
+					return null;
+				}
+				const newKo = (totalCaptured === 1 && getGroup(pos, newBd).size === 1) ? lastCapturedPos : -1;
+				return { board: newBd, captured: totalCaptured, ko: newKo };
+			}
+
+			function placeStone(pos){
+				if(gameOver || aiThinking || currentPlayer !== BLACK){
+					return;
+				}
+				const result = tryPlace(pos, BLACK, board, koPoint);
+				if(!result){
+					flashStatus('Invalid move!');
+					return;
+				}
+				applyMove(result, pos, BLACK);
+				currentPlayer = WHITE;
+				consecutivePasses = 0;
+				updateUI();
+				drawBoard();
+				scheduleAI();
+			}
+
+			function applyMove(result, pos, color){
+				board = result.board;
+				captures[color] += result.captured;
+				koPoint	= result.ko;
+				lastPlaced = pos;
+			}
+
+			function scheduleAI(){
+				setStatus('AI is thinking…');
+				document.getElementById('thinking-overlay').classList.add('show');
+				setTimeout(() => {
+					const move = heuristicChoose(board, WHITE, koPoint);
+					document.getElementById('thinking-overlay').classList.remove('show');
+					if(move === -1){
+						consecutivePasses++;
+						currentPlayer = BLACK;
+						if(consecutivePasses >= 2){
+							endGame();
+							return;
+						}
+						updateUI();
+						drawBoard();
+						setStatus('AI passed — your turn');
+						return;
+					}
+					const result = tryPlace(move, WHITE, board, koPoint);
+					if(!result){
+						consecutivePasses++;
+						currentPlayer = BLACK;
+						updateUI();
+						drawBoard();
+						setStatus('AI passed — your turn');
+						return;
+					}
+					applyMove(result, move, WHITE);
+					consecutivePasses = 0;
+					currentPlayer = BLACK;
+					updateUI();
+					drawBoard();
+					setStatus('Your turn — black stone');
+				}, 30);
+			}
+
+			function heuristicChoose(bd, color, ko){
+				const opp = 3 - color;
+				const moves = [];
+				for(let i = 0; i < N*N; i++){
+					if(bd[i] !== EMPTY || i === ko){
+						continue;
+					}
+					const result = tryPlace(i, color, bd, ko);
+					if(!result){
+						continue;
+					}
+					moves.push({ pos: i, score: scoreHeuristic(i, result.board, result.captured, color, opp) });
+				}
+				if(moves.length === 0){
+					return -1;
+				}
+				moves.sort((a, b) => b.score - a.score);
+				const topN = Math.min(3, moves.length);
+				return moves[Math.floor(Math.random()*topN)].pos;
+			}
+
+			function scoreHeuristic(pos, newBd, captured, color, opp){
+				let score = 0;
+				score += captured*15;
+				for(const nb of neighbors(pos)){
+					if(newBd[nb] === opp){
+						const grp = getGroup(nb, newBd);
+						const libs = getLiberties(grp, newBd).size;
+						if(libs === 1){
+							score += 12;
+						}else if(libs === 2){
+							score += 5;
+						}
+					}
+				}
+				for(const nb of neighbors(pos)){
+					if(newBd[nb] === color) {
+						const grp = getGroup(nb, newBd);
+						const libs = getLiberties(grp, newBd).size;
+						if(libs >= 3){
+							score += 4;
+						}else if(libs === 2){
+							score += 2;
+						}
+					}
+				}
+				let friendlyNb = 0;
+				for(const nb of neighbors(pos)){
+					if(newBd[nb] === color){
+						friendlyNb++;
+					}
+				}
+				score += friendlyNb*2;
+				const r = row(pos), c = col(pos);
+				const edge = Math.min(r, c, N - 1 - r, N - 1 - c);
+				if(edge === 2 || edge === 3){
+					score += 3;
+				}else if(edge === 0 || edge === 1){
+					score -= 2;
+				}
+				const cx = (N - 1)/2;
+				const dist = Math.abs(r - cx) + Math.abs(c - cx);
+				score += (N - dist)*0.4;
+				score += Math.random()*1.5;
+				return score;
+			}
+
+			function computeScore(){
+				let black = captures[BLACK], white = captures[WHITE] + KOMI;
+				const visited = new Uint8Array(N*N);
+				for(let i = 0; i < N*N; i++){
+					if(board[i] === BLACK){
+						black++;
+						continue;
+					}
+					if(board[i] === WHITE){
+						white++;
+						continue;
+					}
+					if(visited[i]){
+						continue;
+					}
+					const region = [], queue = [i];
+					visited[i] = 1;
+					let bBorder = 0, wBorder = 0;
+					while(queue.length){
+						const cur = queue.pop();
+						region.push(cur);
+						for(const nb of neighbors(cur)){
+							if(board[nb] === BLACK){
+								bBorder++;
+							}else if(board[nb] === WHITE){
+								wBorder++;
+							}else if(!visited[nb]){
+								visited[nb] = 1;
+								queue.push(nb);
+							}
+						}
+					}
+					if(bBorder > 0 && wBorder === 0){
+						black += region.length;
+					}else if(wBorder > 0 && bBorder === 0){
+						white += region.length;
+					}
+				}
+				return { black, white };
+			}
+
+			function endGame(){
+				gameOver = true;
+				const s = computeScore();
+				const winner = s.black > s.white ? 'Black (You)' : 'White (AI)';
+				const diff = Math.abs(s.black - s.white).toFixed(1);
+				showModal('Game Over', \`Black: \${s.black.toFixed(1)} points\\nWhite: \${s.white.toFixed(1)} points (komi \${KOMI})\\n\\n\${winner} wins by \${diff} points!\`);
+			}
+
+			function resizeCanvas(){
+				const UI_H = 155;
+				const availH = window.innerHeight - UI_H;
+				const availW = window.innerWidth - 8;
+				const maxW = Math.min(availW, availH, 700);
+				const cell = Math.floor(maxW/(N + 1));
+				canvas.width = canvas.height = cell*(N + 1);
+			}
+
+			const CELL = () => Math.floor(canvas.width/(N + 1));
+			const MARGIN = () => CELL();
+			const BW = () => CELL()*(N - 1);
+
+			function drawBoard(){
+				const W = canvas.width, cell = CELL(), mg = MARGIN();
+				const grad = ctx.createLinearGradient(0, 0, W, W);
+				grad.addColorStop(0, '#d4a853');
+				grad.addColorStop(0.3, '#c49a3c');
+				grad.addColorStop(0.6, '#b8832a');
+				grad.addColorStop(1, '#a07020');
+				ctx.fillStyle = grad;
+				ctx.fillRect(0, 0, W, W);
+				ctx.save();
+				ctx.globalAlpha = 0.06;
+				for(let i = 0; i < W; i += 4){
+					ctx.beginPath();
+					ctx.moveTo(i, 0);
+					ctx.lineTo(i + 8, W);
+					ctx.strokeStyle = '#7a5000';
+					ctx.lineWidth = 1;
+					ctx.stroke();
+				}
+				ctx.restore();
+				ctx.strokeStyle = '#5a3a0a';
+				ctx.lineWidth = 1;
+				for(let i = 0; i < N; i++){
+					const x = mg + i*cell, y = mg + i*cell;
+					ctx.beginPath();
+					ctx.moveTo(x, mg);
+					ctx.lineTo(x, mg + BW());
+					ctx.stroke();
+					ctx.beginPath();
+					ctx.moveTo(mg, y);
+					ctx.lineTo(mg + BW(), y);
+					ctx.stroke();
+				}
+				ctx.strokeStyle = '#3a2000';
+				ctx.lineWidth = 2;
+				ctx.strokeRect(mg, mg, BW(), BW());
+				for(const [r,c] of getStarPoints()){
+					ctx.beginPath();
+					ctx.arc(mg + c*cell, mg + r*cell, cell*0.13, 0, Math.PI*2);
+					ctx.fillStyle = '#3a2000';
+					ctx.fill();
+				}
+				for(let i = 0; i < N*N; i++){
+					if(board[i] !== EMPTY){
+						drawStone(i, board[i], i === lastPlaced);
+					}
+				}
+			}
+
+			function getStarPoints(){
+				if(N === 9){
+					return [[2,2],[2,6],[6,2],[6,6],[4,4]];
+				}
+				if(N === 13){
+					return [[3,3],[3,9],[9,3],[9,9],[6,6]];
+				}
+				if(N === 19){
+					return [[3,3],[3,9],[3,15],[9,3],[9,9],[9,15],[15,3],[15,9],[15,15]];
+				}
+				return [];
+			}
+
+			function drawStone(i, color, isLast){
+				const cell = CELL(), mg = MARGIN();
+				const x = mg + col(i)*cell, y = mg + row(i)*cell;
+				const rad = cell*0.46;
+				ctx.save();
+				ctx.shadowColor = 'rgba(0,0,0,0.55)';
+				ctx.shadowBlur = cell*0.3;
+				ctx.shadowOffsetX = cell*0.07;
+				ctx.shadowOffsetY = cell*0.1;
+				const g = ctx.createRadialGradient(x - rad*0.3, y - rad*0.3, rad*0.05, x, y, rad);
+				if(color === BLACK){
+					g.addColorStop(0, '#686868');
+					g.addColorStop(0.4, '#2a2a2a');
+					g.addColorStop(1, '#080808');
+				}else{
+					g.addColorStop(0, '#ffffff');
+					g.addColorStop(0.5, '#e8e4dc');
+					g.addColorStop(1, '#b8b0a0');
+				}
+				ctx.beginPath();
+				ctx.arc(x, y, rad, 0, Math.PI*2);
+				ctx.fillStyle = g;
+				ctx.fill();
+				ctx.restore();
+				if(isLast){
+					ctx.beginPath();
+					ctx.arc(x, y, rad*0.28, 0, Math.PI*2);
+					ctx.fillStyle = color === BLACK ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.35)';
+					ctx.fill();
+				}
+			}
+
+			function updateUI(){
+				document.getElementById('cap-black').textContent = \`Captures: \${captures[BLACK]}\`;
+				document.getElementById('cap-white').textContent = \`Captures: \${captures[WHITE]}\`;
+				document.getElementById('card-black').classList.toggle('active-turn', currentPlayer === BLACK && !gameOver);
+				document.getElementById('card-white').classList.toggle('active-turn', currentPlayer === WHITE && !gameOver);
+			}
+
+			function setStatus(msg){
+				document.getElementById('status').textContent = msg;
+			}
+
+			let flashTimer;
+
+			function flashStatus(msg){
+				setStatus(msg);
+				clearTimeout(flashTimer);
+				flashTimer = setTimeout(() => setStatus('Your turn — black stone'), 1500);
+			}
+
+			function showModal(title, body){
+				document.getElementById('modal-title').textContent = title;
+				document.getElementById('modal-body').textContent = body;
+				document.getElementById('modal').classList.add('show');
+			}
+
+			function hideModal(){
+				document.getElementById('modal').classList.remove('show');
+			}
+
+			canvas.addEventListener('click', e => {
+				if(gameOver || aiThinking || currentPlayer !== BLACK){
+					return;
+				}
+				const rect = canvas.getBoundingClientRect();
+				const sx = canvas.width/rect.width, sy = canvas.height/rect.height;
+				const cx = (e.clientX - rect.left)*sx, cy = (e.clientY - rect.top)*sy;
+				const cell = CELL(), mg = MARGIN();
+				const c = Math.round((cx - mg)/cell), r = Math.round((cy - mg)/cell);
+				if(r < 0 || r >= N || c < 0 || c >= N){
+					return;
+				}
+				placeStone(idx(r, c));
+			});
+
+			canvas.addEventListener('touchend', e => {
+				e.preventDefault();
+				const t = e.changedTouches[0];
+				canvas.dispatchEvent(new MouseEvent('click', { clientX: t.clientX, clientY: t.clientY }));
+			}, { passive: false });
+
+			document.getElementById('btn-pass').addEventListener('click', () => {
+				if(gameOver || aiThinking || currentPlayer !== BLACK){
+					return;
+				}
+				consecutivePasses++;
+				lastPlaced = -1;
+				if(consecutivePasses >= 2){
+					endGame();
+					return;
+				}
+				currentPlayer = WHITE;
+				updateUI();
+				drawBoard();
+				scheduleAI();
+			});
+
+			document.getElementById('btn-resign').addEventListener('click', () => {
+				if(gameOver){
+					return;
+				}
+				gameOver = true;
+				showModal('You Resigned', 'White (AI) wins by resignation.');
+			});
+
+			document.getElementById('btn-new').addEventListener('click', () => {
+				hideModal();
+				initBoard(N);
+			});
+
+			document.getElementById('modal-ok').addEventListener('click', () => {
+				hideModal();
+				initBoard(N);
+			});
+
+			document.querySelectorAll('.size-btn').forEach(btn => {
+				btn.addEventListener('click', () => {
+					document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+					btn.classList.add('active');
+					initBoard(parseInt(btn.dataset.size));
+				});
+			});
+
+			window.addEventListener('resize', () => {
+				resizeCanvas();
+				drawBoard();
+			});
+
+			initBoard(9);
 		<\/script>
 	</body>
 </html>` },
