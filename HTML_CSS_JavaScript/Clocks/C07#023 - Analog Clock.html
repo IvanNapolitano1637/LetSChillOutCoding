@@ -1,116 +1,186 @@
 <!DOCTYPE html>
 <html lang="en"><!--C07#023 - Simone - Analog Clock-->
 	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<title>Analog Clock</title>
 		<style>
+			*{
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
 			body{
 				display: flex;
-				height: 100vh;
-				margin: 0;
-				background: #111;
 				justify-content: center;
 				align-items: center;
+				min-height: 100vh;
+				min-height: 100dvh;
+				background: #081b29;
 				overflow: hidden;
-				font-family: Arial, sans-serif;
+				touch-action: none;
 			}
-			canvas{
-				background-color: #000;
+			.wrapper{
+				position: relative;
+				width: 500px;
+				height: 500px;
 				border-radius: 50%;
-				box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
-				max-width: 90vw;
-				max-height: 90vh;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				animation: colorful 30s linear infinite;
+				scale: min(calc(100vw / 540px), calc(100vh / 540px), 1);
+			}
+			@keyframes colorful{
+				100%{
+					filter: hue-rotate(360deg);
+				}
+			}
+			.bar-seconds,
+			.number-hours{
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				border-radius: 50%;
+			}
+			.bar-seconds span{
+				position: absolute;
+				transform: rotate(calc(var(--index) * 6deg));
+				inset: -20px;
+				text-align: center;
+			}
+			.bar-seconds span p{
+				display: inline-block;
+				width: 2px;
+				height: 12px;
+				background: #0ef;
+				border-radius: 2px;
+				box-shadow: 0 0 10px #0ef;
+			}
+			.bar-seconds span:nth-child(5n) p{
+				width: 6px;
+				height: 18px;
+				transform: translateY(1px);
+			}
+			.number-hours span{
+				position: absolute;
+				transform: rotate(calc(var(--index) * 30deg));
+				inset: 6px;
+				text-align: center;
+			}
+			.number-hours span p{
+				font-size: 52px;
+				color: #0ef;
+				text-shadow: 0 0 10px #0ef;
+				transform: rotate(calc(var(--index) * -30deg));
+			}
+			.hands-box{
+				position: relative;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			.hands-box .hand{
+				position: absolute;
+				border-radius: 50%;
+				display: flex;
+				justify-content: center;
+			}
+			.hands-box .hand i{
+				display: inline-block;
+				transform-origin: bottom;
+				border-radius: 50%;
+				box-shadow: 0 0 10px #0ef;
+			}
+			.hands-box .hours{
+				width: 320px;
+				height: 320px;
+			}
+			.hands-box .hours i{
+				width: 8px;
+				height: 160px;
+				background: #0ef;
+			}
+			.hands-box .minutes{
+				width: 450px;
+				height: 450px;
+			}
+			.hands-box .minutes::before{
+				content: '';
+				position: absolute;
+				top: 50%;
+				transform: translateY(-50%);
+				width: 25px;
+				height: 25px;
+				background: #0ef;
+				border-radius: 50%;
+				box-shadow: 0 0 5px #0ef;
+			}
+			.hands-box .minutes i{
+				width: 8px;
+				height: 225px;
+				background: #0ef;
+			}
+			.hands-box .seconds{
+				width: 480px;
+				height: 480px;
+			}
+			.hands-box .seconds::before{
+				content: '';
+				position: absolute;
+				top: 50%;
+				transform: translateY(-50%);
+				width: 20px;
+				height: 20px;
+				background: #fff;
+				border-radius: 50%;
+				box-shadow: 0 0 2px rgba(0, 0, 0, .5);
+			}
+			.hands-box .seconds i{
+				width: 4px;
+				height: calc(240px + 70px);
+				background: white;
+				box-shadow: none;
 			}
 		</style>
 	</head>
 	<body>
-		<canvas id="analogClock"></canvas>
+		<div class="wrapper">
+			<div class="bar-seconds"></div>
+			<div class="number-hours"></div>
+			<div class="hands-box">
+				<div class="hand hours"><i></i></div>
+				<div class="hand minutes"><i></i></div>
+				<div class="hand seconds"><i></i></div>
+			</div>
+		</div>
 		<script>
-			const CANVAS = document.getElementById('analogClock');
-			const CTX = CANVAS.getContext('2d');
-			let radius;
+			const numberHours = document.querySelector('.number-hours');
+			const barSeconds  = document.querySelector('.bar-seconds');
 
-			function resizeCanvas(){
-				const size = Math.min(window.innerWidth, window.innerHeight)*0.85;
-				CANVAS.width = size;
-				CANVAS.height = size;
-				radius = CANVAS.height/2;
-				CTX.setTransform(1, 0, 0, 1, 0, 0);
-				CTX.translate(radius, radius);
-				drawClock();
+			for(let i = 1; i <= 12; i++){
+				numberHours.insertAdjacentHTML("afterbegin", `<span style="--index:${i};"><p>${i}</p></span>`);
 			}
 
-			function drawClock(){
-				drawFace(CTX, radius);
-				drawNumbers(CTX, radius);
-				drawTime(CTX, radius);
+			for(let i = 0; i < 60; i++){
+				barSeconds.insertAdjacentHTML("afterbegin", `<span style="--index:${i};"><p></p></span>`);
 			}
 
-			function drawFace(CTX, radius){
-				CTX.beginPath();
-				CTX.arc(0, 0, radius*0.95, 0, 2*Math.PI);
-				CTX.fillStyle = '#000';
-				CTX.fill();
-				const grad = CTX.createRadialGradient(0, 0, radius*0.85, 0, 0, radius*1.05);
-				grad.addColorStop(0, '#0ff');
-				grad.addColorStop(0.5, '#222');
-				grad.addColorStop(1, '#0ff');
-				CTX.strokeStyle = grad;
-				CTX.lineWidth = radius*0.07;
-				CTX.stroke();
-				CTX.beginPath();
-				CTX.arc(0, 0, radius*0.05, 0, 2*Math.PI);
-				CTX.fillStyle = '#0ff';
-				CTX.fill();
-			}
+			const handHours   = document.querySelector('.hand.hours');
+			const handMinutes = document.querySelector('.hand.minutes');
+			const handSeconds = document.querySelector('.hand.seconds');
 
-			function drawNumbers(CTX, radius){
-				CTX.font = radius*0.15 + "px Arial";
-				CTX.fillStyle = '#0ff';
-				CTX.textBaseline = "middle";
-				CTX.textAlign = "center";
-				for(let num = 1; num <= 12; num++){
-					const ang = num*Math.PI/6;
-					CTX.rotate(ang);
-					CTX.translate(0, -radius*0.78);
-					CTX.rotate(-ang);
-					CTX.fillText(num.toString(), 0, 0);
-					CTX.rotate(ang);
-					CTX.translate(0, radius*0.78);
-					CTX.rotate(-ang);
-				}
+			function getCurrentTime(){
+				const date           = new Date();
+				const currentHours   = date.getHours();
+				const currentMinutes = date.getMinutes();
+				const currentSeconds = date.getSeconds();
+				handHours.style.transform   = `rotate(${currentHours * 30 + currentMinutes / 2}deg)`;
+				handMinutes.style.transform = `rotate(${currentMinutes * 6}deg)`;
+				handSeconds.style.transform = `rotate(${currentSeconds * 6}deg)`;
 			}
-
-			function drawTime(CTX, radius){
-				const now = new Date();
-				let hour = now.getHours();
-				let minute = now.getMinutes();
-				let second = now.getSeconds();
-				hour = hour%12;
-				const hourAngle = (hour*Math.PI/6) + (minute*Math.PI/(6*60)) + (second*Math.PI/(360*60));
-				const minuteAngle = (minute*Math.PI/30) + (second*Math.PI/(30*60));
-				const secondAngle = second*Math.PI/30;
-				drawHand(CTX, hourAngle, radius*0.5, radius*0.06, '#0ff');
-				drawHand(CTX, minuteAngle, radius*0.75, radius*0.04, '#0ff');
-				drawHand(CTX, secondAngle, radius*0.85, radius*0.02, '#f00');
-			}
-
-			function drawHand(CTX, pos, length, width, color){
-				CTX.beginPath();
-				CTX.lineWidth = width;
-				CTX.lineCap = "round";
-				CTX.strokeStyle = color;
-				CTX.moveTo(0, 0);
-				CTX.rotate(pos);
-				CTX.lineTo(0, -length);
-				CTX.stroke();
-				CTX.rotate(-pos);
-			}
-
-			window.addEventListener('resize', resizeCanvas);
-			setInterval(drawClock, 200);
-			resizeCanvas();
+			getCurrentTime();
+			setInterval(getCurrentTime, 1000);
 		</script>
 	</body>
 </html>
