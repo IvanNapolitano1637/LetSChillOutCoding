@@ -413,6 +413,7 @@ public class HTML_Pages_Unifier{
 	}
 
 	window.history.pushState(null, null, window.location.href);
+
 	window.onpopstate = function(){
 		if(document.getElementById('viewer').style.display === 'flex'){
 			window.history.pushState(null, null, window.location.href);
