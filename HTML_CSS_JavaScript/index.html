@@ -10172,21 +10172,23 @@
 				}
 				#v1 .btn-group button{
 					cursor: pointer;
-					padding: 8px 12px;
-					margin: 2px;
+					padding: 12px 16px;
+					margin: 3px;
 					border: 1px solid #ccc;
-					border-radius: 5px;
+					border-radius: 8px;
 					font-weight: bold;
+					font-size: 1.8em;
 					min-width: 75px;
 					background: white;
 					outline: none;
 					user-select: none;
+					line-height: 1;
 				}
 				#v1_more, #v1_less{
 					min-width: 0 !important;
 					width: auto;
-					padding-left: 10px;
-					padding-right: 10px;
+					padding-left: 14px;
+					padding-right: 14px;
 				}
 				#v1 .control-group{
 					display: flex;
@@ -10253,12 +10255,13 @@
 						width: 98%;
 					}
 					#v1 .btn-group button{
-						padding: 10px 5px;
-						min-width: 65px;
-						font-size: 0.8em;
+						padding: 14px 10px;
+						min-width: 52px;
+						font-size: 2em;
 					}
 					#v1_more, #v1_less{
-						padding: 10px 8px;
+						padding: 14px 12px;
+						min-width: 0 !important;
 					}
 				}
 			</style>
@@ -10269,10 +10272,10 @@
 						<button id="refresh-btn" type="button" onclick="window.parent.postMessage('RELOAD_REQUEST','*')" style="cursor: pointer; padding: 2px 8px; border-radius: 5px; border: 1px solid #ccc; background: white;">⟳</button>
 					</h3>
 					<div class="btn-group">
-						<button type="button" onclick="v1_revert()">Revert</button>
-						<button type="button" onclick="v1_random()">Random</button>
-						<button type="button" onclick="v1_setColor(255, 255, 255)">White</button>
-						<button type="button" onclick="v1_setColor(0, 0, 0)">Black</button>
+						<button type="button" onclick="v1_revert()">⇄</button>
+						<button type="button" onclick="v1_random()">⚄</button>
+						<button type="button" onclick="v1_setColor(255, 255, 255)">◻</button>
+						<button type="button" onclick="v1_setColor(0, 0, 0)">◼</button>
 						<button id="v1_more" type="button" onclick="v1_showMore()">↓</button>
 						<button id="v1_less" type="button" onclick="v1_showLess()">↑</button>
 					</div>
@@ -10280,8 +10283,8 @@
 						<div class="slider-row"><label>R</label> <input type="range" id="v1_red" class="slider" oninput="v1_setAndPatch(0)"/> <output id="v1_valueR"></output></div>
 						<div class="slider-row"><label>G</label> <input type="range" id="v1_green" class="slider" oninput="v1_setAndPatch(1)"/> <output id="v1_valueG"></output></div>
 						<div class="slider-row"><label>B</label> <input type="range" id="v1_blue" class="slider" oninput="v1_setAndPatch(2)"/> <output id="v1_valueB"></output></div>
-						<div class="slider-row"><label>Gray</label> <input type="range" id="v1_gray" class="slider" oninput="v1_setAndPatch(3)"/> <output id="v1_valueGray"></output></div>
-						<div class="slider-row"><label>Light</label> <input type="range" id="v1_light" class="slider" oninput="v1_setAndPatch(4)"/> <output id="v1_valueLight"></output></div>
+						<div class="slider-row"><label>▨</label> <input type="range" id="v1_gray" class="slider" oninput="v1_setAndPatch(3)"/> <output id="v1_valueGray"></output></div>
+						<div class="slider-row"><label>☀</label> <input type="range" id="v1_light" class="slider" oninput="v1_setAndPatch(4)"/> <output id="v1_valueLight"></output></div>
 						<div class="slider-row"><label>C</label> <input type="range" id="v1_cyan" class="slider" oninput="v1_setAndPatch(5)"/> <output id="v1_valueC"></output></div>
 						<div class="slider-row"><label>M</label> <input type="range" id="v1_magenta" class="slider" oninput="v1_setAndPatch(6)"/> <output id="v1_valueM"></output></div>
 						<div class="slider-row"><label>Y</label> <input type="range" id="v1_yellow" class="slider" oninput="v1_setAndPatch(7)"/> <output id="v1_valueY"></output></div>
