@@ -176,10 +176,10 @@
 		<div id="optionZone">
 			<h3 style="margin-top:0">HEX: <output id="valueHexCode" style="width: auto;" title="Clicca per copiare"></output></h3>
 			<div class="btn-group">
-				<button type="button" onclick="revert()">Revert</button>
-				<button type="button" onclick="random()">Random</button>
-				<button type="button" onclick="setColor(255, 255, 255)">White</button>
-				<button type="button" onclick="setColor(0, 0, 0)">Black</button>
+				<button type="button" onclick="revert()">⇄</button>
+				<button type="button" onclick="random()">⚄</button>
+				<button type="button" onclick="setColor(255, 255, 255)">◻</button>
+				<button type="button" onclick="setColor(0, 0, 0)">◼</button>
 				<button id="more" type="button" onclick="showMore()">↓</button>
 				<button id="less" type="button" onclick="showLess()">↑</button>
 			</div>
@@ -187,8 +187,8 @@
 				<div class="slider-row"><label>R</label> <input type="range" id="red" class="slider" oninput="setAndPatch(0)"/> <output id="valueR"></output></div>
 				<div class="slider-row"><label>G</label> <input type="range" id="green" class="slider" oninput="setAndPatch(1)"/> <output id="valueG"></output></div>
 				<div class="slider-row"><label>B</label> <input type="range" id="blue" class="slider" oninput="setAndPatch(2)"/> <output id="valueB"></output></div>
-				<div class="slider-row"><label>Gray</label> <input type="range" id="gray" class="slider" oninput="setAndPatch(3)"/> <output id="valueGray"></output></div>
-				<div class="slider-row"><label>Light</label> <input type="range" id="light" class="slider" oninput="setAndPatch(4)"/> <output id="valueLight"></output></div>
+				<div class="slider-row"><label>▨</label> <input type="range" id="gray" class="slider" oninput="setAndPatch(3)"/> <output id="valueGray"></output></div>
+				<div class="slider-row"><label>☀</label> <input type="range" id="light" class="slider" oninput="setAndPatch(4)"/> <output id="valueLight"></output></div>
 				<div class="slider-row"><label>C</label> <input type="range" id="cyan" class="slider" oninput="setAndPatch(5)"/> <output id="valueC"></output></div>
 				<div class="slider-row"><label>M</label> <input type="range" id="magenta" class="slider" oninput="setAndPatch(6)"/> <output id="valueM"></output></div>
 				<div class="slider-row"><label>Y</label> <input type="range" id="yellow" class="slider" oninput="setAndPatch(7)"/> <output id="valueY"></output></div>

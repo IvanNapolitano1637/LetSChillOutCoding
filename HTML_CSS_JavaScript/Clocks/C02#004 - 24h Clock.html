@@ -149,6 +149,14 @@
 					font-size: 1.2rem;
 				}
 			}
+			.clock.roman .number{
+				font-size: 1.1rem;
+			}
+			@media (max-width: 768px){
+				.clock.roman .number{
+					font-size: 0.7rem;
+				}
+			}
 		</style>
 	</head>
 	<body>
@@ -165,7 +173,7 @@
 					<button type="button" id="btnClockDirection" onclick="changeClockDirection()">Turn to clockwise</button><br><br>
 					<button type="button" id="btnColors" onclick="changeColorsRules()">Colors' rule: random</button>
 					<button type="button" id="btnChangeBackgroundColor" onclick="changeBackgroundColor()" style="display:none">⟳</button><br><br>
-					<button type="button" id="btnMidnightNumber" onclick="changeMidnightNumber()">Change midnight number</button>
+					<button type="button" id="btnNumeralStyle" onclick="changeNumeralStyle()">Switch to Roman numerals</button>
 				</div>
 			</form>
 		</div>
@@ -174,7 +182,6 @@
 			setInterval(setClock, 200);
 			let choice = 9;
 			let clockwise = false;
-			let fromZero = true;
 			let settledColor = false;
 			const ANALOG = true;
 			const HOUR_HAND = document.querySelector('[data-hour-hand]');
@@ -202,17 +209,32 @@
 				document.getElementById("title").innerHTML = clockwise ? "24h clock" : "Reversed 24h clock";
 			}
 
+			let useRoman = false;
+			const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX', 'XXI', 'XXII', 'XXIII', 'XXIV', 'XXV', 'XXVI', 'XXVII', 'XXVIII', 'XXIX', 'XXX', 'XXXI', 'XXXII', 'XXXIII', 'XXXIV', 'XXXV', 'XXXVI', 'XXXVII', 'XXXVIII', 'XXXIX', 'XL', 'XLI', 'XLII', 'XLIII', 'XLIV', 'XLV', 'XLVI', 'XLVII', 'XLVIII', 'XLIX', 'L', 'LI', 'LII', 'LIII', 'LIV', 'LV'];
+
+			function toNumeral(n){
+				return useRoman ? ROMAN[n] : String(n);
+			}
+
+			function changeNumeralStyle(){
+				useRoman = !useRoman;
+				document.getElementById("btnNumeralStyle").textContent = useRoman ? "Switch to Arabic numerals" : "Switch to Roman numerals";
+				document.getElementById("clockDial").classList.toggle("roman", useRoman);
+				drawNumbers();
+				document.activeElement.blur();
+			}
+
 			function drawNumbers(){
 				const oldNumbers = document.querySelectorAll('.number');
 				oldNumbers.forEach(n => n.remove());
 				const dial = document.getElementById("clockDial");
 				for(let i = 0; i < 24; i++){
-					let val = fromZero ? i : (i === 0 ? 24 : i);
+					let val = i === 0 ? 24 : i;
 					let degrees = 15*i;
 					let numDiv = document.createElement('div');
 					numDiv.className = 'number';
 					numDiv.style.setProperty('--rotation', degrees + 'deg');
-					numDiv.innerHTML = val + ((i%2 === 0) ? ("<br>" + ((i/2*5)%60)) : "");
+					numDiv.innerHTML = toNumeral(val) + ((i%2 === 0) ? ("<br>" + toNumeral((i/2*5)%60)) : "");
 					dial.appendChild(numDiv);
 				}
 			}
@@ -271,12 +293,6 @@
 			function changeClockDirection(){
 				clockwise = !clockwise;
 				syncClockDirection();
-				document.activeElement.blur();
-			}
-
-			function changeMidnightNumber(){
-				fromZero = !fromZero;
-				drawNumbers();
 				document.activeElement.blur();
 			}
 
