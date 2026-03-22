@@ -1836,6 +1836,7 @@
 				align-items: center;
 				animation: colorful 30s linear infinite;
 				scale: min(calc(100vw / 540px), calc(100vh / 540px), 1);
+				cursor: pointer;
 			}
 			@keyframes colorful{
 				100%{
@@ -1879,6 +1880,14 @@
 				color: #0ef;
 				text-shadow: 0 0 10px #0ef;
 				transform: rotate(calc(var(--index) * -30deg));
+				transition: opacity 0.3s ease, transform 0.3s ease;
+			}
+			.number-hours span p.roman{
+				font-size: 28px;
+			}
+			.number-hours span p.switching{
+				opacity: 0;
+				transform: rotate(calc(var(--index) * -30deg)) scale(0.6);
 			}
 			.hands-box{
 				position: relative;
@@ -1961,16 +1970,37 @@
 			</div>
 		</div>
 		<script>
+			const romanNumerals = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+			let useRoman = false;
+
 			const numberHours = document.querySelector('.number-hours');
 			const barSeconds  = document.querySelector('.bar-seconds');
 
 			for(let i = 1; i <= 12; i++){
-				numberHours.insertAdjacentHTML("afterbegin", \`<span style="--index:\${i};"><p>\${i}</p></span>\`);
+				numberHours.insertAdjacentHTML("afterbegin", \`<span style="--index:\${i};"><p data-n="\${i}">\${i}</p></span>\`);
 			}
 
 			for(let i = 0; i < 60; i++){
 				barSeconds.insertAdjacentHTML("afterbegin", \`<span style="--index:\${i};"><p></p></span>\`);
 			}
+
+			document.querySelector('.wrapper').addEventListener('click', () => {
+				useRoman = !useRoman;
+				const labels = document.querySelectorAll('.number-hours span p');
+				labels.forEach(p => p.classList.add('switching'));
+				setTimeout(() => {
+					labels.forEach(p => {
+						const n = parseInt(p.dataset.n);
+						p.textContent = useRoman ? romanNumerals[n - 1] : n;
+						if(useRoman){
+							p.classList.add('roman');
+						}else{
+							p.classList.remove('roman');
+						}
+					});
+					labels.forEach(p => p.classList.remove('switching'));
+				}, 300);
+			});
 
 			const handHours   = document.querySelector('.hand.hours');
 			const handMinutes = document.querySelector('.hand.minutes');
