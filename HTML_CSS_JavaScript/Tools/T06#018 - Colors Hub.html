@@ -19,6 +19,15 @@
 				background: #f0f2f5;
 				user-select: none;
 			}
+			button:focus, 
+			input:focus, 
+			.card:focus{
+				outline: none !important;
+				box-shadow: none !important;
+			}
+			*{
+				-webkit-tap-highlight-color: transparent;
+			}
 			.grid{
 				display: grid;
 				grid-template-columns: 1fr 1fr;
@@ -42,6 +51,37 @@
 				width: 100%;
 				height: 100vh;
 			}
+			.icon-btn{
+				width: 45px !important;
+				height: 45px !important;
+				border-radius: 50% !important;
+				padding: 0 !important;
+				font-size: 1.4em !important;
+				display: inline-flex !important;
+				align-items: center !important;
+				justify-content: center !important;
+				cursor: pointer;
+				border: 2px solid #333;
+				background: white;
+				box-sizing: border-box;
+			}
+			.icon-btn-v4{
+				width: 45px !important;
+				height: 45px !important;
+				border-radius: 50% !important;
+				padding: 0 !important;
+				font-size: 1.4em !important;
+				display: inline-flex !important;
+				align-items: center !important;
+				justify-content: center !important;
+				cursor: pointer;
+				border: 2px solid #333;
+				background: white;
+				box-sizing: border-box;
+				grid-column: span 2;
+				justify-self: center;
+				margin-top: 4px;
+			}
 			.home-btn{
 				position: fixed;
 				bottom: 20px;
@@ -50,215 +90,220 @@
 				z-index: 1000;
 				cursor: pointer;
 			}
+			.btn-universal{
+				border-radius: 20px !important;
+				border: 2px solid #333 !important;
+				font-weight: bold;
+				cursor: pointer;
+				outline: none !important;
+				-webkit-tap-highlight-color: transparent;
+			}
 		</style>
 	</head>
 	<body>
 		<div id="selector-screen">
 			<div class="grid">
-				<div class="card" onclick="showVersion('v1')">Version 1</div>
-				<div class="card" onclick="showVersion('v2')">Version 2</div>
-				<div class="card" onclick="showVersion('v3')">Version 3</div>
-				<div class="card" onclick="showVersion('v4')">Version 4</div>
+				<div class="card" onclick="showVersion('v1')">I</div>
+				<div class="card" onclick="showVersion('v2')">II</div>
+				<div class="card" onclick="showVersion('v3')">III</div>
+				<div class="card" onclick="showVersion('v4')">IIII</div>
 			</div>
 		</div>
 		<div id="v1" class="version-container"> <!--EX IRENE-->
 			<style>
-				#v1 body, #v1 html{
-					margin: 0;
-					min-height: 100vh;
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					font-family: sans-serif;
-				}
 				#v1 .v1-body{
 					min-height: 100vh;
 					display: flex;
 					justify-content: center;
 					align-items: center;
 					transition: background-color 0.1s;
+					font-family: sans-serif;
+					overflow-x: hidden;
 				}
 				#v1 #v1_optionZone{
 					background-color: rgba(255, 255, 255, 0.85);
 					text-align: center;
-					padding: 25px;
+					padding: 16px;
 					border-radius: 20px;
 					box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 					backdrop-filter: blur(5px);
 					width: 600px;
-					max-width: 95%;
-					max-height: 95vh;
-					overflow-y: auto;
+					max-width: 92%;
+					box-sizing: border-box;
 					user-select: none;
 				}
-				#v1 #sliders{
-					display: block;
-					width: 100%;
-					margin-top: 20px;
+				#v1 #v1_valueHexCode{
+					background: #FFFF00;
+					color: #000;
+					font-family: monospace;
+					font-weight: bold;
+					font-size: clamp(1.1em, 4vw, 1.8em);
+					padding: 5px 12px;
+					border: 2px solid #333;
+					border-radius: 8px;
+				}
+				#v1 .btn-group{
+					margin: 20px auto;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					gap: 8px;
+					flex-wrap: nowrap;
+					max-width: 100%;
+				}
+				#v1 .btn-group button{
+					cursor: pointer;
+					height: 45px;
+					min-width: 50px;
+					padding: 0 15px;
+					border: 2px solid #333;
+					border-radius: 25px;
+					background: white;
+					font-weight: bold;
+					font-size: 1.1em;
+					display: inline-flex;
+					align-items: center;
+					justify-content: center;
+					transition: all 0.1s;
+					box-sizing: border-box;
+					outline: none !important;
+				}
+				#v1 .random-btn-v1{
+					width: 45px !important; 
+					font-size: 1.4em !important; 
+				}
+				#v1 .color-preset-btn{
+					width: 45px !important;
+					height: 45px !important;
+					border-radius: 50% !important;
+					padding: 0 !important;
+				}
+				#v1 #v1_more, #v1 #v1_less{
+					width: 36px !important;
+					min-width: 36px !important;
+					padding: 0 !important;
 				}
 				#v1 .slider-row{
 					display: flex;
 					align-items: center;
-					gap: 10px;
-					margin-bottom: 15px;
-					width: 100%;
+					gap: 6px;
+					margin-bottom: 12px;
+					min-width: 0;
 				}
 				#v1 .slider-row label{
-					flex-basis: 50px;
+					flex-basis: 24px;
 					flex-shrink: 0;
-					text-align: right;
 					font-weight: bold;
-					font-size: 0.9em;
+				}
+				#v1 .slider-row output{
+					flex-shrink: 0;
+					min-width: 28px;
+					font-size: 0.85em;
 				}
 				#v1 .slider{
-					-webkit-appearance: none;
-					appearance: none;
-					flex-grow: 1;
+					flex: 1 1 0;
+					min-width: 0;
 					height: 8px;
 					border-radius: 5px;
 					background: #ddd;
 					outline: none;
+					appearance: none;
 				}
 				#v1 .slider::-webkit-slider-thumb{
-					-webkit-appearance: none;
-					width: 20px;
-					height: 20px;
+					appearance: none;
+					width: 18px;
+					height: 18px;
 					background: #0075FF;
-					cursor: pointer;
 					border-radius: 50%;
 					border: 2px solid white;
-				}
-				#v1 output{
-					background: #FFFF00;
-					flex-basis: 45px;
-					flex-shrink: 0;
-					text-align: center;
-					font-family: monospace;
-					font-weight: bold;
-					border-radius: 4px;
-					padding: 2px 5px;
-				}
-				#v1 #v1_valueHexCode{
 					cursor: pointer;
-					padding: 5px 15px;
-					transition: transform 0.1s;
 				}
-				#v1 #v1_valueHexCode:active{
-					transform: scale(0.9);
-				}
-				#v1 .btn-group{
-					margin: 10px 0;
-					display: flex;
-					justify-content: center;
-				}
-				#v1 .btn-group button{
-					cursor: pointer;
-					padding: 12px 16px;
-					margin: 3px;
-					border: 1px solid #ccc;
-					border-radius: 8px;
-					font-weight: bold;
-					font-size: 1.8em;
-					min-width: 75px;
-					background: white;
-					outline: none;
-					user-select: none;
-					line-height: 1;
-				}
-				#v1_more, #v1_less{
-					min-width: 0 !important;
-					width: auto;
-					padding-left: 14px;
-					padding-right: 14px;
-				}
-				#v1 .control-group{
-					display: flex;
+				#v1 #colorButtons{
+					display: none;
 					flex-direction: column;
-					gap: 8px;
-					margin-top: 15px;
-					user-select: none;
+					gap: 15px;
+					margin-top: 20px;
+					width: 100%;
 				}
 				#v1 .button-row{
 					display: flex;
 					justify-content: center;
-					gap: 1px;
-					flex-wrap: nowrap;
+					align-items: center;
+					gap: 2px;
 					width: 100%;
+					flex-wrap: nowrap;
 				}
 				#v1 button.step{
 					flex: 1;
-					min-width: 25px;
 					max-width: 45px;
-					padding: 8px 0;
-					margin: 0;
-					font-size: 10px;
+					height: 35px;
+					font-size: 11px;
 					border: none;
 					border-radius: 4px;
 					cursor: pointer;
 					font-weight: bold;
-					box-sizing: border-box;
-					outline: none;
-					user-select: none;
+					color: white;
 				}
 				#v1 .redButtons{
-					background: #ff4d4d;
-					color: white;
+					background: #FF0000;
 				}
 				#v1 .greenButtons{
-					background: #2ecc71;
-					color: white;
+					background: #00FF00;
 				}
 				#v1 .blueButtons{
-					background: #3498db;
-					color: white;
+					background: #0000FF;
 				}
 				#v1 .grayButtons{
-					background: #7f8c8d;
-					color: white;
+					background: #808080;
+				}
+				#v1 #v1_header{
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					gap: 12px;
+					margin-bottom: 25px;
+					width: 100%;
+				}
+				#v1 #v1_colorPreviewCircle{
+					width: 45px;
+					height: 45px;
+					border-radius: 50%;
+					border: 2px solid #333;
+					background-color: #FFFFFF;
+					box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+					pointer-events: none;
+					transition: background-color 0.1s ease;
+					box-sizing: border-box;
 				}
 				#v1 #refresh-btn{
-					font-size: 1.2rem;
-					line-height: 1;
-					vertical-align: middle;
-					transition: transform 0.2s;
-				}
-				@media (max-width: 480px){
-					#v1 button.step{
-						min-width: 20px;
-						padding: 10px 0;
-						font-size: 10px;
-					}
-					#v1 .button-row {
-						gap: 1px;
-					}
-					#v1 #v1_optionZone{
-						padding: 10px;
-						width: 98%;
-					}
-					#v1 .btn-group button{
-						padding: 14px 10px;
-						min-width: 52px;
-						font-size: 2em;
-					}
-					#v1_more, #v1_less{
-						padding: 14px 12px;
-						min-width: 0 !important;
-					}
+					cursor: pointer;
+					width: 45px;
+					height: 45px;
+					border-radius: 50%;
+					border: 2px solid #333;
+					background: white;
+					font-size: 1.2em;
+					display: inline-flex;
+					align-items: center;
+					justify-content: center;
+					padding: 0;
+					margin: 0;
 				}
 			</style>
 			<div class="v1-body" id="v1-body">
 				<div id="v1_optionZone">
-					<h3 style="margin-top:0; display: flex; align-items: center; justify-content: center; gap: 10px;">
-						HEX: <output id="v1_valueHexCode" style="width: auto;" title="Clicca per copiare"></output>
-						<button id="refresh-btn" type="button" onclick="location.reload()" style="cursor: pointer; padding: 2px 8px; border-radius: 5px; border: 1px solid #ccc; background: white;">⟳</button>
-					</h3>
+					<div style="margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 15px;">
+						<button type="button" class="color-preset-btn" onclick="v1_setColor(255, 255, 255)" style="background: white;"></button>
+						<output id="v1_valueHexCode" title="Clicca per copiare">#FFFFFF</output>
+						<button type="button" class="color-preset-btn" onclick="v1_setColor(0, 0, 0)" style="background: black;"></button>
+					</div>
 					<div class="btn-group">
-						<button type="button" onclick="v1_revert()">⇄</button>
-						<button type="button" onclick="v1_random()">⚄</button>
-						<button type="button" onclick="v1_setColor(255, 255, 255)">◻</button>
-						<button type="button" onclick="v1_setColor(0, 0, 0)">◼</button>
+						<button type="button" class="icon-btn random-btn-v1" onclick="v1_random()">🎲</button>
+						<button type="button" class="icon-btn" onclick="v1_revert()">⇄</button>
+						<div id="v1_colorPreviewCircle" title="Current Color Preview"></div>
 						<button id="v1_more" type="button" onclick="v1_showMore()">↓</button>
 						<button id="v1_less" type="button" onclick="v1_showLess()">↑</button>
+						<button id="refresh-btn" type="button" class="icon-btn" onclick="location.reload()">⟳</button>
 					</div>
 					<div id="sliders">
 						<div class="slider-row"><label>R</label> <input type="range" id="v1_red" class="slider" oninput="v1_setAndPatch(0)"/> <output id="v1_valueR"></output></div>
@@ -366,10 +411,11 @@
 						v1_INPUTS[i].step = 0.01;
 					}
 					v1_setColor(255, 255, 255);
+					v1_changeSetting(0);
 					v1_VALUES[9].onclick = function(){
 						navigator.clipboard.writeText(this.textContent);
 						const oldText = this.textContent;
-						this.textContent = "COPIED!";
+						this.textContent = "📋";
 						setTimeout(() => {this.textContent = oldText;}, 800);
 					};
 				}
@@ -496,7 +542,8 @@
 					});
 					let hex = "#" + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase();
 					v1_VALUES[9].textContent = hex;
-					document.body.style.backgroundColor = hex;
+					document.getElementById('v1-body').style.backgroundColor = hex;
+					document.getElementById('v1_colorPreviewCircle').style.backgroundColor = hex;
 				}
 
 				function v1_setColor_CMYK(c, m, y, k){
@@ -546,19 +593,22 @@
 					}
 					v1_currentModeIndex += direction;
 					const mode = v1_viewModes[v1_currentModeIndex];
-					const rows = document.querySelectorAll(".slider-row");
+					const rows = document.querySelectorAll("#v1 .slider-row");
 					const colorBtnGroup = document.getElementById("colorButtons");
 					const sliderContainer = document.getElementById("sliders");
 					if(mode === "Maxi"){
 						sliderContainer.style.display = "block";
 						rows.forEach(row => row.style.display = "flex");
+						// FIX: Forza la colonna per evitare che i 40 tasti si allineino
 						colorBtnGroup.style.display = "flex";
+						colorBtnGroup.style.flexDirection = "column"; 
 					}else if(mode === "Medium"){
 						sliderContainer.style.display = "block";
 						rows.forEach((row, i) => {
 							row.style.display = i < 3 ? "flex" : "none";
 						});
 						colorBtnGroup.style.display = "flex";
+						colorBtnGroup.style.flexDirection = "column";
 					}else if(mode === "Mini"){
 						sliderContainer.style.display = "block";
 						rows.forEach((row, i) => {
@@ -587,7 +637,6 @@
 				#v2 .v2-body{
 					transition: background-color 0.3s;
 					text-align: center;
-					font-family: sans-serif;
 					min-height: 100vh;
 					display: flex;
 					flex-direction: column;
@@ -610,13 +659,22 @@
 					padding: 8px 15px;
 					margin: 5px;
 					cursor: pointer;
-					border-radius: 5px;
-					border: 1px solid #ccc;
+					border-radius: 20px;
+					border: 2px solid #333;
 					font-weight: bold;
+					min-width: 60px;
+					min-height: 35px;
+					display: inline-flex;
+					align-items: center;
+					justify-content: center;
+					transition: opacity 0.2s, transform 0.1s;
+					background: white;
 				}
-				#v2 #refresh-btn{
-					min-width: unset;
-					width: 40px;
+				#v2 button:hover{
+					opacity: 0.8;
+				}
+				#v2 button:active{
+					transform: scale(0.95);
 				}
 				#v2 .hex-container{
 					font-family: monospace;
@@ -624,35 +682,35 @@
 					font-weight: bold;
 				}
 				#v2 #v2_valueHexCode{
-					font-family: inherit;
-					font-size: 1em;
-					color: #333;
 					background: #eee;
-					padding: 2px 6px;
-					border-radius: 3px;
-					display: inline-block;
-					vertical-align: middle;
-					transition: color 0.1s;
+					padding: 2px 8px;
+					border-radius: 4px;
+					border: 1px solid #ccc;
+				}
+				#v2 .home-refresh-btn{
+					margin-top: 20px;
+					min-width: 45px !important;
+					border-radius: 50% !important;
 				}
 			</style>
 			<div class="v2-body" id="v2-body">
 				<div id="v2_optionZone">
-					<span class="hex-container">Background HEX: <output id="v2_valueHexCode">#FFFFFF</output></span><br>
-					R:
+					<span class="hex-container"><output id="v2_valueHexCode">#FFFFFF</output></span><br>
+					<span style="color:red">R</span>:
 					<input type="radio" name="v2_Red" value="00"/>00
 					<input type="radio" name="v2_Red" value="33"/>33
 					<input type="radio" name="v2_Red" value="66"/>66
 					<input type="radio" name="v2_Red" value="99"/>99
 					<input type="radio" name="v2_Red" value="CC"/>CC
 					<input type="radio" name="v2_Red" value="FF" checked/>FF<br>
-					G:
+					<span style="color:green">G</span>:
 					<input type="radio" name="v2_Green" value="00"/>00
 					<input type="radio" name="v2_Green" value="33"/>33
 					<input type="radio" name="v2_Green" value="66"/>66
 					<input type="radio" name="v2_Green" value="99"/>99
 					<input type="radio" name="v2_Green" value="CC"/>CC
 					<input type="radio" name="v2_Green" value="FF" checked/>FF<br>
-					B:
+					<span style="color:blue">B</span>:
 					<input type="radio" name="v2_Blue" value="00"/>00
 					<input type="radio" name="v2_Blue" value="33"/>33
 					<input type="radio" name="v2_Blue" value="66"/>66
@@ -661,31 +719,31 @@
 					<input type="radio" name="v2_Blue" value="FF" checked/>FF<br>
 				</div>
 				<div class="controls">
-					<button type="button" onclick="v2_color(0,0,0)">Black</button>
-					<button type="button" onclick="v2_color(5,5,5)">White</button><br/>
-					<button type="button" onclick="v2_color(5,0,0)" style="color:red">Red</button>
-					<button type="button" onclick="v2_color(0,5,0)" style="color:green">Green</button>
-					<button type="button" onclick="v2_color(0,0,5)" style="color:blue">Blue</button><br/>
-					<button type="button" onclick="v2_color(0,5,5)">Cyan</button>
-					<button type="button" onclick="v2_color(5,0,5)">Magenta</button>
-					<button type="button" onclick="v2_color(5,5,0)">Yellow</button><br/>
-					<button type="button" onclick="v2_changeBrightness(-1)">Darker</button>
-					<button type="button" onclick="v2_changeBrightness(1)">Brighter</button><br/>
-					<button type="button" onclick="v2_random()">Random</button>
+					<button type="button" onclick="v2_color(0,0,0)" style="background:black;"></button>
+					<button type="button" onclick="v2_color(5,5,5)" style="background:white;"></button><br/>
+					<button type="button" onclick="v2_color(5,0,0)" style="background:#FF0000;"></button>
+					<button type="button" onclick="v2_color(0,5,0)" style="background:#00FF00;"></button>
+					<button type="button" onclick="v2_color(0,0,5)" style="background:#0000FF;"></button><br/>
+					<button type="button" onclick="v2_color(0,5,5)" style="background:#00FFFF;"></button>
+					<button type="button" onclick="v2_color(5,0,5)" style="background:#FF00FF;"></button>
+					<button type="button" onclick="v2_color(5,5,0)" style="background:#FFFF00;"></button><br/>
+					<button type="button" onclick="v2_changeBrightness(-1)">➖</button>
+					<button type="button" onclick="v2_changeBrightness(1)">➕</button><br/>
+					<button type="button" class="icon-btn" onclick="v2_random()">🎲</button>
 				</div>
-				<button onclick="location.reload()">⟳</button>
+				<button class="home-refresh-btn icon-btn" onclick="location.reload()">⟳</button>
 			</div>
 			<script>
 				const v2_BASIC_COLORS = ['v2_Red', 'v2_Green', 'v2_Blue'];
 				const v2_HEX_OUTPUT = document.getElementById('v2_valueHexCode');
 
 				function v2_getColor(){
-					let backgroundColor = "#";
+					let color = "#";
 					v2_BASIC_COLORS.forEach(name => {
-						const checkedRadio = document.querySelector(`input[name="${name}"]:checked`);
-						backgroundColor += checkedRadio ? checkedRadio.value : "00";
+						const checked = document.querySelector(`input[name="${name}"]:checked`);
+						color += checked ? checked.value : "00";
 					});
-					return backgroundColor;
+					return color;
 				}
 
 				function v2_updateUI(){
@@ -694,70 +752,40 @@
 					v2_HEX_OUTPUT.textContent = color;
 				}
 
-				document.querySelectorAll('input[type="radio"]').forEach(radio => {
+				document.querySelectorAll('#v2 input[type="radio"]').forEach(radio => {
 					radio.addEventListener('change', v2_updateUI);
 				});
-
-				function v2_playErrorSound(){
-					const context = new (window.AudioContext || window.webkitAudioContext)();
-					const oscillator = context.createOscillator();
-					const gain = context.createGain();
-					oscillator.type = 'sine';
-					oscillator.frequency.setValueAtTime(150, context.currentTime);
-					gain.gain.setValueAtTime(0.1, context.currentTime);
-					gain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.2);
-					oscillator.connect(gain);
-					gain.connect(context.destination);
-					oscillator.start();
-					oscillator.stop(context.currentTime + 0.2);
-				}
-
-				function v2_flashError(){
-					const output = document.getElementById("v2_valueHexCode");
-					output.style.color = "red";
-					setTimeout(() => {
-						output.style.color = "#333";
-					}, 200);
-					v2_playErrorSound();
-				}
 
 				function v2_changeBrightness(step){
 					const canMove = v2_BASIC_COLORS.every(name => {
 						let radios = document.getElementsByName(name);
-						let currentIndex = Array.from(radios).findIndex(r => r.checked);
-						let newIndex = currentIndex + step;
-						return newIndex >= 0 && newIndex < radios.length;
+						let idx = Array.from(radios).findIndex(r => r.checked) + step;
+						return idx >= 0 && idx < radios.length;
 					});
 					if(canMove){
 						v2_BASIC_COLORS.forEach(name => {
 							let radios = document.getElementsByName(name);
-							let currentIndex = Array.from(radios).findIndex(r => r.checked);
-							let newIndex = currentIndex + step;
-							radios[newIndex].checked = true;
+							let idx = Array.from(radios).findIndex(r => r.checked) + step;
+							radios[idx].checked = true;
 						});
 						v2_updateUI();
-					}else{
-						v2_flashError();
 					}
 				}
 
-				function v2_color(rIdx, gIdx, bIdx){
-					document.getElementsByName("v2_Red")[rIdx].checked = true;
-					document.getElementsByName("v2_Green")[gIdx].checked = true;
-					document.getElementsByName("v2_Blue")[bIdx].checked = true;
+				function v2_color(r, g, b){
+					document.getElementsByName("v2_Red")[r].checked = true;
+					document.getElementsByName("v2_Green")[g].checked = true;
+					document.getElementsByName("v2_Blue")[b].checked = true;
 					v2_updateUI();
 				}
 
 				function v2_random(){
 					v2_BASIC_COLORS.forEach(name => {
 						const radios = document.getElementsByName(name);
-						const randomIndex = Math.floor(Math.random()*radios.length);
-						radios[randomIndex].checked = true;
+						radios[Math.floor(Math.random()*radios.length)].checked = true;
 					});
 					v2_updateUI();
 				}
-
-				v2_updateUI();
 			</script>
 		</div>
 		<div id="v3" class="version-container"> <!--EX ANASTASIA-->
@@ -773,10 +801,14 @@
 					border-bottom: 2px solid #333;
 				}
 				#v3 h1#v3_valueHexCode{
-					background: #FFFF00;
-					padding: 5px;
+					background: #FFFF00 !important;
+					color: #000000 !important;
+					padding: 10px 20px;
 					margin: 0 0 10px 0 !important;
 					font-size: 1.2em;
+					border: 2px solid #333;
+					display: inline-block;
+					border-radius: 5px;
 				}
 				#v3 .color-row{
 					padding: 5px;
@@ -791,42 +823,42 @@
 				#v3 .radio-group{
 					display: inline-flex;
 					align-items: center;
-					white-space: nowrap;
 					margin: 2px;
 				}
 				#v3 output{
 					display: inline-block;
-					width: 22px;
-					border-radius: 3px;
+					width: 24px;
 					font-family: monospace;
-					margin-left: 2px;
 					font-size: 0.9em;
 					text-align: center;
 				}
 				#v3 button{
 					cursor: pointer;
-					padding: 5px 10px;
+					padding: 5px 15px;
 					font-weight: bold;
+					border: 2px solid #333;
+					border-radius: 20px;
+					background: white;
+					transition: transform 0.1s;
+				}
+				#v3 button:active{
+					transform: scale(0.95);
 				}
 				#v3 .nav-buttons{
 					padding: 10px !important;
+					text-align: center;
 				}
 				#v3 .nav-buttons button{
-					width: 100px;
+					width: 70px;
 					height: 35px;
-					font-size: 0.9em;
-					margin: 3px;
-				}
-				#v3 #refresh-btn{
-					min-width: unset;
-					width: 40px;
+					margin: 4px;
 				}
 			</style>
 			<div class="v3-body" id="v3-body">
-				<div id="v3_optionZone" style="background-color:#FFFFFF; text-align:center;">
-					<h1 id="v3_valueHexCode" style="background: #FFFF00; padding: 10px; margin: 0 0 20px 0;">Background page color hex code: #FFFFFF</h1>
-					<div class="color-row" style="background-color: #FF0000;">
-						<button type="button" onclick="v3_changeColor(0,-1)">(-)</button>
+				<div id="v3_optionZone" style="text-align:center;">
+					<h1 id="v3_valueHexCode">#FFFFFF</h1>
+					<div class="color-row" style="background-color: #FF4444;">
+						<button type="button" onclick="v3_changeColor(0,-1)">-</button>
 						<script>
 							const vals = ['00','11','22','33','44','55','66','77','88','99','aa','bb','cc','dd','ee','ff'];
 							vals.forEach(v => {
@@ -834,42 +866,41 @@
 								document.write(`<span class="radio-group"><input type="radio" name="v3_Red" value="${v}" ${chk} onchange="v3_changeBackgroundColor()"><output style="background:#FDCE98"><b>${v.toUpperCase()}</b></output></span>`);
 							});
 						</script>
-						<button type="button" onclick="v3_changeColor(0,1)">(+)</button>
+						<button type="button" onclick="v3_changeColor(0,1)">+</button>
 					</div>
-					<div class="color-row" style="background-color: #00FF00;">
-						<button type="button" onclick="v3_changeColor(1,-1)">(-)</button>
+					<div class="color-row" style="background-color: #44FF44;">
+						<button type="button" onclick="v3_changeColor(1,-1)">-</button>
 						<script>
 							vals.forEach(v => {
 								let chk = v === 'ff' ? 'checked' : '';
 								document.write(`<span class="radio-group"><input type="radio" name="v3_Green" value="${v}" ${chk} onchange="v3_changeBackgroundColor()"><output style="background:#FFF500"><b>${v.toUpperCase()}</b></output></span>`);
 							});
 						</script>
-						<button type="button" onclick="v3_changeColor(1,1)">(+)</button>
+						<button type="button" onclick="v3_changeColor(1,1)">+</button>
 					</div>
-					<div class="color-row" style="background-color: #0000FF;">
-						<button type="button" onclick="v3_changeColor(2,-1)">(-)</button>
+					<div class="color-row" style="background-color: #4444FF;">
+						<button type="button" onclick="v3_changeColor(2,-1)">-</button>
 						<script>
 							vals.forEach(v => {
 								let chk = v === 'ff' ? 'checked' : '';
 								document.write(`<span class="radio-group"><input type="radio" name="v3_Blue" value="${v}" ${chk} onchange="v3_changeBackgroundColor()"><output style="background:#56DDFF"><b>${v.toUpperCase()}</b></output></span>`);
 							});
 						</script>
-						<button type="button" onclick="v3_changeColor(2,1)">(+)</button>
+						<button type="button" onclick="v3_changeColor(2,1)">+</button>
 					</div>
 				</div>
-				<div class="nav-buttons" style="text-align: center; padding: 20px;">
-					<button type="button" onclick="v3_color(0,0,0)">Black</button>
-					<button type="button" onclick="v3_color(15,15,15)">White</button><br>
-					<button type="button" onclick="v3_color(15,0,0)">Red</button>
-					<button type="button" onclick="v3_color(0,15,0)">Green</button>
-					<button type="button" onclick="v3_color(0,0,15)">Blue</button><br>
-					<button type="button" onclick="v3_color(0,15,15)">Cyan</button>
-					<button type="button" onclick="v3_color(15,0,15)">Magenta</button>
-					<button type="button" onclick="v3_color(15,15,0)">Yellow</button><br>
-					<button type="button" onclick="v3_darkerAll()">Darker</button>
-					<button type="button" onclick="v3_brighterAll()">Brighter</button><br>
-					<button type="button" onclick="v3_random()">Random</button><br>
-					<button id="refresh-btn" onclick="location.reload()">⟳</button>
+				<div class="nav-buttons">
+					<button type="button" onclick="v3_color(0,0,0)" style="background:black;"></button>
+					<button type="button" onclick="v3_color(15,15,15)" style="background:white;"></button><br>
+					<button type="button" onclick="v3_color(15,0,0)" style="background:#FF0000;"></button>
+					<button type="button" onclick="v3_color(0,15,0)" style="background:#00FF00;"></button>
+					<button type="button" onclick="v3_color(0,0,15)" style="background:#0000FF;"></button><br>
+					<button type="button" onclick="v3_color(0,15,15)" style="background:#00FFFF;"></button>
+					<button type="button" onclick="v3_color(15,0,15)" style="background:#FF00FF;"></button>
+					<button type="button" onclick="v3_color(15,15,0)" style="background:#FFFF00;"></button><br>
+					<button type="button" onclick="v3_darkerAll()">➖</button>
+					<button type="button" onclick="v3_brighterAll()">➕</button><br> <button type="button" class="icon-btn" onclick="v3_random()">🎲</button><br>
+					<button id="refresh-btn" class="icon-btn" onclick="location.reload()" style="margin-top:15px;">⟳</button>
 				</div>
 			</div>
 			<script>
@@ -887,7 +918,7 @@
 				function v3_changeBackgroundColor(){
 					const color = v3_getColor();
 					document.getElementById('v3-body').style.backgroundColor = color;
-					document.getElementById("v3_valueHexCode").innerText = "Background page color hex code: " + color;
+					document.getElementById("v3_valueHexCode").innerText = color;
 					document.getElementById("v3_optionZone").style.backgroundColor = color;
 				}
 
@@ -924,44 +955,12 @@
 					v3_changeBackgroundColor();
 				}
 
-				function v3_playErrorSound(){
-					const context = new (window.AudioContext || window.webkitAudioContext)();
-					const oscillator = context.createOscillator();
-					const gain = context.createGain();
-					oscillator.type = 'sine';
-					oscillator.frequency.setValueAtTime(150, context.currentTime);
-					gain.gain.setValueAtTime(0.1, context.currentTime);
-					gain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.2);
-					oscillator.connect(gain);
-					gain.connect(context.destination);
-					oscillator.start();
-					oscillator.stop(context.currentTime + 0.2);
-				}
-
-				function v3_flashError(){
-					const output = document.getElementById("v3_valueHexCode");
-					output.style.transition = "0.1s";
-					output.style.color = "red";
-					setTimeout(() => {
-						output.style.color = "black";
-					}, 200);
-					v3_playErrorSound();
-				}
-
 				function v3_brighterAll(){
-					if(v3_canMoveAll(1)){
-						[0, 1, 2].forEach(i => v3_brighterBasic(i));
-					}else{
-						v3_flashError();
-					}
+					if(v3_canMoveAll(1)) [0, 1, 2].forEach(i => v3_brighterBasic(i));
 				}
 
 				function v3_darkerAll(){
-					if(v3_canMoveAll(-1)){
-						[0, 1, 2].forEach(i => v3_darkerBasic(i));
-					}else{
-						v3_flashError();
-					}
+					if(v3_canMoveAll(-1)) [0, 1, 2].forEach(i => v3_darkerBasic(i));
 				}
 
 				function v3_color(r, g, b){
@@ -978,130 +977,110 @@
 				function v3_random(){
 					v3_BASIC_COLORS.forEach(name => {
 						let ele = document.getElementsByName(name);
-						let r = Math.floor(Math.random()*ele.length);
-						ele[r].checked = true;
+						ele[Math.floor(Math.random()*ele.length)].checked = true;
 					});
 					v3_changeBackgroundColor();
 				}
-
-				v3_changeBackgroundColor();
 			</script>
 		</div>
 		<div id="v4" class="version-container"> <!--EX MARIO-->
 			<style>
 				#v4 .v4-body{
-					transition: background-color 0.3s, color 0.3s;
+					transition: background-color 0.3s;
 					text-align: center;
-					font-family: 'Segoe UI', Arial, sans-serif;
-					padding: 10px;
-					margin: 0;
 					min-height: 100vh;
 					display: flex;
 					flex-direction: column;
 					align-items: center;
 					justify-content: center;
+					padding: 10px;
 				}
-				#v4 #headerContainer{
-					padding: 15px;
+				#v4 #mainLabel{
+					background: #FFFF00 !important;
+					color: #000 !important;
+					padding: 10px 25px;
+					border: 2px solid #333;
+					border-radius: 8px;
+					font-size: 2em;
+					font-weight: 900;
+					font-family: monospace;
+					display: inline-block;
 					margin-bottom: 20px;
-					border-radius: 10px;
-					transition: background 0.3s;
 				}
 				#v4 .control-panel{
-					background: rgba(255, 255, 255, 0.2);
-					backdrop-filter: blur(5px);
-					padding: 15px;
-					border-radius: 15px;
-					border: 1px solid rgba(255,255,255,0.3);
-					width: 100%;
-					max-width: 400px;
+					background: rgba(255, 255, 255, 0.25);
+					backdrop-filter: blur(10px);
+					padding: 25px;
+					border-radius: 20px;
+					border: 2px solid rgba(0,0,0,0.1);
+					width: 380px;
 					box-sizing: border-box;
 				}
 				#v4 .row{
 					display: flex;
 					justify-content: center;
-					gap: 6px;
-					margin-bottom: 10px;
-				}
-				#v4 .footer-row{
-					display: flex;
-					flex-wrap: wrap;
-					justify-content: center;
-					gap: 8px;
-					margin-top: 15px;
+					gap: 10px;
+					margin-bottom: 12px;
 				}
 				#v4 button{
 					cursor: pointer;
-					margin: 0;
-					border: 2px solid rgba(0,0,0,0.1);
-					border-radius: 8px;
+					border: 2px solid #333;
+					border-radius: 25px;
 					font-weight: bold;
-					transition: all 0.2s;
-					height: 45px;
+					transition: all 0.1s;
 					display: flex;
 					align-items: center;
 					justify-content: center;
+					background: white;
+					box-sizing: border-box;
 				}
-				#v4 #refresh-btn{
-					min-width: unset;
-					width: 45px;
-					height: 45px;
-					margin-left: 5px;
-				}
-				#v4 button:hover{
-					transform: translateY(-2px);
-					box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+				#v4 .channel-btn{
+					width: 55px;
+					height: 40px;
+					font-size: 1.1em;
 				}
 				#v4 button:active{
-					transform: translateY(0);
+					transform: scale(0.95);
 				}
-				#v4 .num-label{
-					font-size: 1.1em;
-					color: inherit;
+				#v4 .footer-row{
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					gap: 10px;
+					margin-top: 14px;
+					flex-wrap: nowrap;
 				}
-				#v4 output{
-					font-family: monospace;
-				}
-				#v4 #mainLabel{
-					font-size: 2.5em;
-					font-weight: 900;
-					font-family: monospace;
-					display: inline-block;
-					vertical-align: middle;
-				}
-				#v4 #v4_valueHexCode{
-					font-size: 1em;
-					font-family: monospace;
-					letter-spacing: 0px;
-					margin-left: 5px;
+				#v4 .footer-btn{
+					width: 45px !important;
+					height: 45px !important;
+					border-radius: 50% !important;
+					padding: 0 !important;
+					font-size: 1.2em;
+					flex-shrink: 0;
 				}
 			</style>
 			<div class="v4-body" id="v4-body">
 				<div id="headerContainer">
-					<span id="mainLabel">HEX: <output id="v4_valueHexCode">#FFFFFF</output></span>
+					<span id="mainLabel"><output id="v4_valueHexCode">#FFFFFF</output></span>
 				</div>
-				<br>
 				<div id="mainPanel" class="control-panel"></div>
 			</div>
 			<script>
 				const v4_COMPONENTS = ['00', '3F', '7F', 'BF', 'FF'];
-				const v4_BUTTONS_COLORS = ['#FF4136', '#2ECC40', '#0074D9'];
-				const v4_BUTTON_WIDTH_1 = 65;
-				const v4_BUTTON_WIDTH_2 = 165;
-				const v4_BUTTON_WIDTH_3 = 340;
+				const v4_BUTTONS_COLORS = ['#FF0000', '#00FF00', '#0000FF'];
 				let v4_actualComponents = [4, 4, 4];
 
 				function v4_fillBody(){
 					const panel = document.getElementById("mainPanel");
+					panel.innerHTML = ""; 
 					for(let i = 0; i < 3; i++){
 						let row = document.createElement("div");
 						row.className = "row";
 						for(let j = 0; j < 5; j++){
 							let btn = document.createElement("button");
-							btn.id = i + "-" + j;
-							btn.style.width = "18%";
-							btn.style.maxWidth = "60px";
-							btn.innerHTML = `<span class="num-label">${j}</span>`;
+							btn.className = "channel-btn";
+							btn.id = "v4-" + i + "-" + j;
+							btn.innerHTML = j;
 							btn.onclick = () => v4_setBackgroundColor(i, j);
 							row.appendChild(btn);
 						}
@@ -1109,26 +1088,26 @@
 					}
 					const footer = document.createElement("div");
 					footer.className = "footer-row";
-					const btnConfigs = [
-						{text: "BLACK", cmd: v4_setBlack, flex: "0 1 45%" },
-						{text: "WHITE", cmd: v4_setWhite, flex: "0 1 45%" },
-						{text: "DARKER", cmd: v4_darker, flex: "0 1 45%" },
-						{text: "BRIGHTER", cmd: v4_brighter, flex: "0 1 45%" },
-						{text: "RANDOM", cmd: v4_setRandomBackgroundColor, flex: "0 1 92%" }
+					const controls = [
+						{bg: "black", cmd: v4_setBlack},
+						{bg: "white", cmd: v4_setWhite},
+						{text: "➖", cmd: v4_darker},
+						{text: "➕", cmd: v4_brighter},
+						{text: "🎲", cmd: v4_setRandomBackgroundColor},
+						{text: "⟳", cmd: () => location.reload()}
 					];
-					btnConfigs.forEach((cfg) => {
+					controls.forEach(ctrl => {
 						let b = document.createElement("button");
-						b.style.flex = cfg.flex;
-						b.style.minWidth = "120px";
-						b.textContent = cfg.text;
-						b.onclick = cfg.cmd;
+						b.className = "footer-btn";
+						if(ctrl.bg){
+							b.style.background = ctrl.bg;
+						}
+						if(ctrl.text){
+							b.textContent = ctrl.text;
+						}
+						b.onclick = ctrl.cmd;
 						footer.appendChild(b);
 					});
-					let refreshBtn = document.createElement("button");
-					refreshBtn.id = "refresh-btn";
-					refreshBtn.innerHTML = "⟳";
-					refreshBtn.onclick = () => location.reload();
-					footer.appendChild(refreshBtn);
 					panel.appendChild(footer);
 					v4_updateInterface();
 				}
@@ -1139,28 +1118,20 @@
 				}
 
 				function v4_updateInterface(){
-					const r = parseInt(v4_COMPONENTS[v4_actualComponents[0]], 16);
-					const g = parseInt(v4_COMPONENTS[v4_actualComponents[1]], 16);
-					const b = parseInt(v4_COMPONENTS[v4_actualComponents[2]], 16);
 					const hex = "#" + v4_COMPONENTS[v4_actualComponents[0]] + v4_COMPONENTS[v4_actualComponents[1]] + v4_COMPONENTS[v4_actualComponents[2]];
-					document.body.style.backgroundColor = hex;
+					document.getElementById('v4-body').style.backgroundColor = hex;
 					document.getElementById("v4_valueHexCode").textContent = hex;
-					const brightness = (r*299 + g*587 + b*114)/1000;
-					const textColor = brightness > 125 ? "black" : "white";
-					const labelBg = brightness > 125 ? "rgba(255,255,0,0.8)" : "rgba(255,255,0,1)";
-					document.body.style.color = textColor;
-					document.getElementById("headerContainer").style.background = brightness > 125 ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.3)";
 					for(let i = 0; i < 3; i++){
 						for(let j = 0; j < 5; j++){
-							let btn = document.getElementById(i + "-" + j);
+							let btn = document.getElementById("v4-" + i + "-" + j);
 							if(v4_actualComponents[i] === j){
 								btn.style.backgroundColor = "#FFFF00";
 								btn.style.color = "black";
-								btn.style.borderColor = "black";
+								btn.style.borderWidth = "3px";
 							}else{
 								btn.style.backgroundColor = v4_BUTTONS_COLORS[i];
 								btn.style.color = "white";
-								btn.style.borderColor = "transparent";
+								btn.style.borderWidth = "2px";
 							}
 						}
 					}
@@ -1171,51 +1142,17 @@
 					v4_updateInterface();
 				}
 
-				function v4_playErrorSound(){
-					try{
-						const context = new (window.AudioContext || window.webkitAudioContext)();
-						const oscillator = context.createOscillator();
-						const gain = context.createGain();
-						oscillator.type = 'sine';
-						oscillator.frequency.setValueAtTime(150, context.currentTime);
-						gain.gain.setValueAtTime(0.1, context.currentTime);
-						gain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.2);
-						oscillator.connect(gain);
-						gain.connect(context.destination);
-						oscillator.start();
-						oscillator.stop(context.currentTime + 0.2);
-					}catch(e){
-						console.log("Audio not supported or blocked by browser");
-					}
-				}
-
-				function v4_flashError(){
-					const label = document.getElementById("mainLabel");
-					label.style.transition = "0.1s";
-					label.style.color = "red";
-					setTimeout(() => {
-						label.style.color = "";
-					}, 200);
-					v4_playErrorSound();
-				}
-
 				function v4_brighter(){
-					const canMove = v4_actualComponents.every(v => v < 4);
-					if(canMove){
+					if(v4_actualComponents.every(v => v < 4)){
 						v4_actualComponents = v4_actualComponents.map(v => v + 1);
 						v4_updateInterface();
-					}else{
-						v4_flashError();
 					}
 				}
 
 				function v4_darker(){
-					const canMove = v4_actualComponents.every(v => v > 0);
-					if(canMove){
+					if(v4_actualComponents.every(v => v > 0)){
 						v4_actualComponents = v4_actualComponents.map(v => v - 1);
 						v4_updateInterface();
-					}else{
-						v4_flashError();
 					}
 				}
 
