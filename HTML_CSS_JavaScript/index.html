@@ -7966,46 +7966,38 @@
 				if(e.target.tagName === 'INPUT'){
 					return;
 				}
-				switch(e.key){
-					case 'ArrowUp':
+				switch(e.key.toLowerCase()){
+					case 'arrowup':
+					case 'm':
 						e.preventDefault();
 						showMore();
 						break;
-					case 'ArrowDown':
+					case 'arrowdown':
+					case 'l':
 						e.preventDefault();
 						showLess();
 						break;
 					case 'u':
-					case 'U':
 						changeGray(1);
 						break;
 					case 'd':
-					case 'D':
 						changeGray(-1);
 						break;
-					case 'm':
-					case 'M':
-						showMore();
-						break;
-					case 'l':
-					case 'L':
-						showLess();
-						break;
 					case 'b':
-					case 'B':
 						setColor(0, 0, 0);
 						break;
 					case 'w':
-					case 'W':
 						setColor(255, 255, 255);
 						break;
 					case 'r':
-					case 'R':
 						random();
 						break;
 					case 'o':
-					case 'O':
 						revert();
+						break;
+					case 'escape':
+					case 'esc':
+						window.parent.postMessage('RELOAD_REQUEST','*');
 						break;
 				}
 			});
@@ -10695,7 +10687,6 @@
 					if(mode === "Maxi"){
 						sliderContainer.style.display = "block";
 						rows.forEach(row => row.style.display = "flex");
-						// FIX: Forza la colonna per evitare che i 40 tasti si allineino
 						colorBtnGroup.style.display = "flex";
 						colorBtnGroup.style.flexDirection = "column"; 
 					}else if(mode === "Medium"){
@@ -11270,6 +11261,129 @@
 				document.getElementById('selector-screen').style.display = 'none';
 				document.getElementById(id).style.display = 'block';
 			}
+
+			function switchVersion(versionId) {
+				const selector = document.getElementById('selector-screen');
+				if(selector){
+					selector.style.display = 'none';
+				}
+				const allVersions = document.querySelectorAll('.version-container');
+				allVersions.forEach(v => v.style.display = 'none');
+				const target = document.getElementById(versionId);
+				if(target){
+					target.style.display = 'block';
+				}
+			}
+
+			document.addEventListener('keydown', function(e){
+				if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA'){
+					return;
+				}
+				switch(e.key.toLowerCase()){
+					case 'arrowup':
+						e.preventDefault();
+						v1_showMore();
+						break;
+					case 'arrowdown':
+						e.preventDefault();
+						v1_showLess();
+						break;
+					case '1':
+						v1_setColor(255, 255, 255);
+						switchVersion('v1');
+						break;
+					case '2':
+						v2_color(5, 5, 5);
+						switchVersion('v2');
+						break;
+					case '3':
+						v3_color(15, 15, 15);
+						switchVersion('v3');
+						break;
+					case '4':
+						v4_setWhite();
+						switchVersion('v4');
+						break;
+					case 'escape':
+					case 'esc':
+						window.parent.postMessage('RELOAD_REQUEST','*');
+						break;
+					case 'a':
+						v1_random();
+						v2_random();
+						v3_random();
+						v4_setRandomBackgroundColor();
+						break;
+					case 'k':
+						v1_setColor(0, 0, 0);
+						v2_color(0, 0, 0);
+						v3_color(0, 0, 0);
+						v4_actualComponents = [0, 0, 0];
+						v4_updateInterface();
+						break;
+					case 'r':
+						v1_setColor(255, 0, 0);
+						v2_color(5, 0, 0);
+						v3_color(15, 0, 0);
+						v4_actualComponents = [4, 0, 0];
+						v4_updateInterface();
+						break;
+					case 'g':
+						v1_setColor(0, 255, 0);
+						v2_color(0, 5, 0);
+						v3_color(0, 15, 0);
+						v4_actualComponents = [0, 4, 0];
+						v4_updateInterface();
+						break;
+					case 'b':
+						v1_setColor(0, 0, 255);
+						v2_color(0, 0, 5);
+						v3_color(0, 0, 15);
+						v4_actualComponents = [0, 0, 4];
+						v4_updateInterface();
+						break;
+					case 'c':
+						v1_setColor(0, 255, 255);
+						v2_color(0, 5, 5);
+						v3_color(0, 15, 15);
+						v4_actualComponents = [0, 4, 4];
+						v4_updateInterface();
+						break;
+					case 'm':
+						v1_setColor(255, 0, 255);
+						v2_color(5, 0, 5);
+						v3_color(15, 0, 15);
+						v4_actualComponents = [4, 0, 4];
+						v4_updateInterface();
+						break;
+					case 'y':
+						v1_setColor(255, 255, 0);
+						v2_color(5, 5, 0);
+						v3_color(15, 15, 0);
+						v4_actualComponents = [4, 4, 0];
+						v4_updateInterface();
+						break;
+					case 'w':
+						v1_setColor(255, 255, 255);
+						v2_color(5, 5, 5);
+						v3_color(15, 15, 15);
+						v4_actualComponents = [4, 4, 4];
+						v4_updateInterface();
+						break;
+					case 'arrowright':
+						v1_changeGray(1);
+						v2_changeBrightness(1);
+						v3_brighterAll();
+						v4_brighter();
+						break;
+					case 'arrowleft':
+						v1_changeGray(-1);
+						v2_changeBrightness(-1);
+						v3_darkerAll();
+						v4_darker();
+						break;
+				}
+			});
 		<\/script>
 	</body>
 </html>` },
