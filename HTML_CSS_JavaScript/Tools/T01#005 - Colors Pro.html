@@ -527,41 +527,54 @@
 			}
 
 			document.addEventListener('keydown', function(e){
-				if(e.target.tagName === 'INPUT'){
+				if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA'){
 					return;
 				}
 				switch(e.key.toLowerCase()){
 					case 'arrowup':
-					case 'm':
 						e.preventDefault();
 						showMore();
 						break;
 					case 'arrowdown':
-					case 'l':
 						e.preventDefault();
 						showLess();
-						break;
-					case 'u':
-						changeGray(1);
-						break;
-					case 'd':
-						changeGray(-1);
-						break;
-					case 'b':
-						setColor(0, 0, 0);
-						break;
-					case 'w':
-						setColor(255, 255, 255);
-						break;
-					case 'r':
-						random();
-						break;
-					case 'o':
-						revert();
 						break;
 					case 'escape':
 					case 'esc':
 						location.reload();
+						break;
+					case 'a':
+						random();
+						break;
+					case 'k':
+						setColor(0, 0, 0);
+						break;
+					case 'r':
+						setColor(255, 0, 0);
+						break;
+					case 'g':
+						setColor(0, 255, 0);
+						break;
+					case 'b':
+						setColor(0, 0, 255);
+						break;
+					case 'c':
+						setColor(0, 255, 255);
+						break;
+					case 'm':
+						setColor(255, 0, 255);
+						break;
+					case 'y':
+						setColor(255, 255, 0);
+						break;
+					case 'w':
+						setColor(255, 255, 255);
+						break;
+					case 'arrowright':
+						changeGray(1);
+						break;
+					case 'arrowleft':
+						changeGray(-1);
 						break;
 				}
 			});
