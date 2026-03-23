@@ -10,6 +10,7 @@ import java.util.*;
 //L'ordine è basato sul codice anteposto al nome del file quindi è customizzabile.
 //Unica differenza tra le pagine originali e quelle contenute nel file creato qui è una sezione con un pulsante per tornare all'indice di tutte le pagine.
 //Nuova modifica fatta mercoledì diciotto marzo duemilaventisei.
+//Nuova modifica fatta lunedì ventitré marzo duemilaventisei. Padding.
 //Ora le pagine stanno in sezioni che di default sono chiuse.
 //Il numero di pagine cresce sempre più e stanno per arrivarne diverse altre.
 //Da mettere nella cartella in cui ci sono: "Clocks", "Games" e "Tools".
