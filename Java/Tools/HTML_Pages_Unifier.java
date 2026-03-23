@@ -206,7 +206,6 @@ public class HTML_Pages_Unifier{
 	}
 
 	.grid{
-		overflow: hidden;
 		animation: expandGrid 0.3s ease-out;
 	}
 
@@ -224,7 +223,7 @@ public class HTML_Pages_Unifier{
 		display: none;
 		grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
 		gap: 20px;
-		overflow: hidden;
+		padding-top: 8px;
 	}
 
 	.card{
