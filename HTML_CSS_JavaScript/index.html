@@ -11409,27 +11409,73 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Alpha-Numeric Converter</title>
 		<style>
+			:root{
+				--bg-body: #f0e97a;
+				--bg-container: #fffde8;
+				--text-main: #5a4a00;
+				--text-secondary: #6b5800;
+				--accent-color: #b8a000;
+				--border-color: #e0d04a;
+				--btn-bg: #fdf7b0;
+				--btn-hover: #f7ef80;
+				--input-bg: #fffeef;
+				--shadow: rgba(180,160,0,0.15);
+				--copy-success: #5a8a5a;
+			}
+			.alt-theme{
+				--bg-body: #f0f2f5;
+				--bg-container: #ffffff;
+				--text-main: #1a1a1a;
+				--text-secondary: #444444;
+				--accent-color: #007bff;
+				--border-color: #e0e0e0;
+				--btn-bg: #f8f9fa;
+				--btn-hover: #eef2f7;
+				--input-bg: #ffffff;
+				--shadow: rgba(0,0,0,0.1);
+				--copy-success: #28a745;
+			}
 			body{
 				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 				display: flex;
 				justify-content: center;
 				align-items: center;
 				min-height: 100vh;
-				background-color: #f0f2f5;
+				background-color: var(--bg-body);
 				margin: 0;
+				transition: background-color 0.4s ease;
 			}
 			.container{
-				background: white;
+				background: var(--bg-container);
 				padding: 2rem;
 				border-radius: 12px;
-				box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+				box-shadow: 0 8px 30px var(--shadow);
 				width: 100%;
 				max-width: 420px;
+				transition: background-color 0.4s ease, box-shadow 0.4s ease;
 			}
 			h2{
-				color: #1a1a1a;
+				color: var(--text-main);
 				text-align: center;
 				margin-bottom: 1.5rem;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			.theme-switch{
+				cursor: pointer;
+				font-size: 1.2rem;
+				margin-left: 12px;
+				opacity: 0.7;
+				transition: transform 0.3s ease, opacity 0.2s;
+				user-select: none;
+				display: inline-block;
+			}
+			.theme-switch:hover{
+				opacity: 1;
+			}
+			.theme-switch:active{
+				transform: rotate(180deg) scale(1.2);
 			}
 			.radio-group{
 				display: flex;
@@ -11442,15 +11488,15 @@
 				align-items: center;
 				cursor: pointer;
 				font-size: 0.9rem;
-				color: #444;
-				background: #f8f9fa;
+				color: var(--text-secondary);
+				background: var(--btn-bg);
 				padding: 8px 12px;
 				border-radius: 6px;
-				border: 1px solid #e0e0e0;
+				border: 1px solid var(--border-color);
 				transition: all 0.2s;
 			}
 			.radio-option:hover{
-				background: #eef2f7;
+				background: var(--btn-hover);
 			}
 			.radio-option input{
 				margin-right: 8px;
@@ -11470,65 +11516,53 @@
 			.radio-label-text::after{
 				content: '\\2192';
 				margin-left: 6px;
-				color: #007bff;
+				color: var(--accent-color);
 				font-weight: bold;
 			}
 			.group{
 				margin-bottom: 1.2rem;
+				position: relative;
 			}
 			label.input-label{
 				display: block;
 				margin-bottom: 0.4rem;
 				font-weight: 600;
-				color: #444;
+				color: var(--text-secondary);
 				font-size: 0.9rem;
 			}
 			input[type="text"], input[type="number"]{
 				width: 100%;
 				padding: 12px;
-				border: 2px solid #e0e0e0;
+				border: 2px solid var(--border-color);
 				border-radius: 8px;
 				box-sizing: border-box;
 				font-size: 1rem;
 				transition: all 0.2s;
+				background: var(--input-bg);
+				color: var(--text-main);
 			}
 			input:focus{
-				border-color: #007bff;
+				border-color: var(--accent-color);
 				outline: none;
-				background-color: #f8fbff;
 			}
 			.info{
 				font-size: 0.8rem;
-				color: #666;
+				color: var(--text-secondary);
 				margin-top: 1rem;
 				line-height: 1.4;
-				border-top: 1px solid #eee;
+				border-top: 1px solid var(--border-color);
 				padding-top: 10px;
 				text-align: center;
 			}
 			.highlight{
-				color: #007bff;
+				color: var(--accent-color);
 				font-weight: bold;
-				word-spacing: 1px;
-			}
-			.group{
-				position: relative;
-				margin-bottom: 1.5rem;
-			}
-			.group small{
-				display: block;
-				text-align: right;
-				margin-top: 4px;
-				font-weight: 500;
-			}
-			input, select, button, .copy-btn{
-				-webkit-tap-highlight-color: transparent;
 			}
 			.copy-btn{
-				background: #eef2f7;
+				background: var(--btn-bg);
 				border: none;
 				border-radius: 4px;
-				color: #007bff;
+				color: var(--accent-color);
 				font-size: 0.75rem;
 				font-weight: 600;
 				padding: 4px 8px;
@@ -11537,28 +11571,62 @@
 				margin-top: 4px;
 				transition: background 0.2s;
 				user-select: none;
-				-webkit-user-select: none;
-				touch-action: manipulation;
 			}
-			.copy-btn:active {
-				background: #d0d7de;
+			.copy-btn:active{
+				opacity: 0.7;
+			}
+			#factorResult{
+				color: var(--accent-color);
+				font-size: 0.85rem;
+				text-align: center;
+				margin-bottom: 1rem;
+				font-weight: bold;
+				min-height: 1.2em;
+			}
+			.lang-bar{
+				display: grid;
+				grid-template-columns: repeat(6, 1fr);
+				gap: 6px;
+				margin-top: 1.2rem;
+				padding-top: 10px;
+				border-top: 1px solid var(--border-color);
+			}
+			.flag-btn{
+				width: 100%;
+				background: var(--btn-bg);
+				border: 2px solid transparent;
+				border-radius: 4px;
+				padding: 2px 4px;
+				cursor: pointer;
+				transition: all 0.2s;
+				display: flex;
+				justify-content: center;
+			}
+			.flag-btn:hover, .flag-btn.active{
+				border-color: var(--accent-color);
+				background: var(--btn-hover);
+			}
+			.flag-svg{
+				width: 32px;
+				height: 20px;
+				display: block;
 			}
 		</style>
 	</head>
 	<body>
 		<div class="container">
-			<h2>Alpha-Numeric Converter</h2>
+			<h2 id="mainTitle">Alpha-Numeric Converter <span class="theme-switch" onclick="toggleTheme()" title="Change Theme">🌓</span></h2>
 			<div class="radio-group">
-				<label class="radio-label-text">Keep</label> 
-				<label class="radio-option">
+				<label class="radio-label-text" data-key="keep">Keep </label>
+				<label class="radio-option" data-key="string">
 					<input type="radio" name="keepPreference" value="alpha" onchange="resetAndRecalculate()"> String
 				</label>
-				<label class="radio-option">
+				<label class="radio-option" data-key="number">
 					<input type="radio" name="keepPreference" value="num" checked onchange="resetAndRecalculate()"> Number
 				</label>
 			</div>
 			<div class="radio-group">
-				<label class="radio-label-text">Letters</label>
+				<label class="radio-label-text" data-key="letters">Letters </label>
 				<label class="radio-option">
 					<input type="radio" name="alphabet" value="26" onclick="resetAndRecalculate()"> 26
 				</label>
@@ -11570,38 +11638,45 @@
 				</label>
 			</div>
 			<div class="group">
-				<label class="input-label" for="alphaInput">Alphabetic String</label>
+				<label class="input-label" for="alphaInput" id="labelAlpha">Alphabetic String</label>
 				<input type="text" id="alphaInput" oninput="convertToNumber()">
 				<div style="display: flex; justify-content: flex-end; align-items: center; gap: 5px; margin-top: 8px;">
-					<label style="font-size: 0.75rem; font-weight: 600; color: #666;">Shift:</label>
-					<input type="number" id="shiftValue" value="3" style="width: 45px; padding: 2px 5px; font-size: 0.75rem; border: 1px solid #ccc; border-radius: 4px; height: 24px;">
-					<button type="button" class="copy-btn" onclick="caesarShift(true)">Enc +</button>
-					<button type="button" class="copy-btn" onclick="caesarShift(false)">Dec -</button>
-					<button type="button" class="copy-btn" onclick="copyValue('alphaInput')">Copy</button>
+					<label data-key="shift" style="font-size: 0.75rem; font-weight: 600; color: #666;">Shift:</label>
+					<input type="number" id="shiftValue" value="3" style="width: 45px; padding: 2px 5px; font-size: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; height: 24px; background: var(--input-bg);">
+					<button type="button" id="btnEncPlus" class="copy-btn" onclick="caesarShift(true)">Enc +</button>
+					<button type="button" id="btnDecMinus" class="copy-btn" onclick="caesarShift(false)">Dec -</button>
+					<button type="button" class="copy-btn" data-copy onclick="copyValue('alphaInput')">Copy</button>
 				</div>
 			</div>
 			<div class="group">
-				<label class="input-label" for="numInput">Decimal</label>
+				<label class="input-label" for="numInput" id="labelNum">Decimal</label>
 				<input type="text" id="numInput" min="1" oninput="convertToAlpha()">
-				<button type="button" class="copy-btn" onclick="copyValue('numInput')">Copy</button>
-				<button type="button" class="copy-btn" style="margin-right: 8px;" onclick="factorize()">Factorize</button>
+				<button type="button" class="copy-btn" data-copy onclick="copyValue('numInput')">Copy</button>
+				<button type="button" id="btnFactorize" class="copy-btn" style="margin-right: 8px;" onclick="factorize()">Factorize</button>
 			</div>
 			<div class="group">
-				<label class="input-label" for="binInput">Binary</label>
+				<label class="input-label" for="binInput" id="labelBin">Binary</label>
 				<input type="text" id="binInput" oninput="convertFromBase(2, 'binInput')">
-				<button type="button" class="copy-btn" onclick="copyValue('binInput')">Copy</button>
+				<button type="button" class="copy-btn" data-copy onclick="copyValue('binInput')">Copy</button>
 			</div>
 			<div class="group">
-				<label class="input-label" for="hexInput">Hexadecimal</label>
+				<label class="input-label" for="hexInput" id="labelHex">Hexadecimal</label>
 				<input type="text" id="hexInput" oninput="convertFromBase(16, 'hexInput')">
-				<button type="button" class="copy-btn" onclick="copyValue('hexInput')">Copy</button>
+				<button type="button" class="copy-btn" data-copy onclick="copyValue('hexInput')">Copy</button>
 			</div>
-			<div id="factorResult" style="font-size: 0.85rem; color: #007bff; text-align: center; margin-bottom: 1rem; font-weight: bold; min-height: 1.2em;"></div>
+			<div id="factorResult"></div>
 			<div class="info" id="alphabetDisplay">
 				<span class="highlight">A B C D E F G H I J K L M N O P Q R S T U V W X Y Z</span>
 			</div>
+			<div class="lang-bar" id="langBar"></div>
 		</div>
 		<script>
+			let isAltTheme = false;
+			function toggleTheme(){
+				isAltTheme = !isAltTheme;
+				document.body.classList.toggle('alt-theme', isAltTheme);
+			}
+
 			const alphabets = {
 				"26": "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
 				"23": "ABCDEFGHIKLMNOPQRSTVXYZ".split(""),
@@ -11624,7 +11699,7 @@
 				}
 			}
 
-			function updateAllFields(decimalValue) {
+			function updateAllFields(decimalValue){
 				document.getElementById('factorResult').innerText = '';
 				const numField = document.getElementById('numInput');
 				const binField = document.getElementById('binInput');
@@ -11645,33 +11720,28 @@
 				}else if(base === 16){
 					inputEl.value = inputEl.value.toUpperCase().replace(/[^0-9A-F]/g, '').replace(/^0+(?!$)/, '');
 				}
-				const val = inputEl.value;
-				const numField = document.getElementById('numInput');
 				try{
-					if(val === ''){
-						numField.value = '';
+					if(inputEl.value === ''){
+						document.getElementById('numInput').value = '';
 						document.getElementById('alphaInput').value = '';
 						updateAllFields(0n);
 						return;
 					}
-					const decimalValue = BigInt(base === 16 ? '0x' + val : '0b' + val);
-					numField.value = decimalValue.toString();
-					const tempVal = numField.value;
+					const decimalValue = BigInt(base === 16 ? '0x' + inputEl.value : '0b' + inputEl.value);
+					document.getElementById('numInput').value = decimalValue.toString();
 					convertToAlpha();
-				}catch (e){}
+				}catch(e){}
 			}
 
 			function convertToNumber(){
 				const inputEl = document.getElementById('alphaInput');
 				const chars = getActiveAlphabet();
-				const regex = new RegExp(\`[^\${chars.join("")}]\`, 'gi');
-				inputEl.value = inputEl.value.toUpperCase().replace(regex, '');
+				inputEl.value = inputEl.value.toUpperCase().replace(new RegExp(\`[^\${chars.join("")}]\`, 'gi'), '');
 				const str = inputEl.value;
 				const base = BigInt(chars.length);
 				let result = 0n;
 				for(let i = 0; i < str.length; i++){
-					const charIndex = chars.indexOf(str[i]);
-					result = result * base + BigInt(charIndex + 1);
+					result = result * base + BigInt(chars.indexOf(str[i]) + 1);
 				}
 				updateAllFields(result);
 			}
@@ -11679,14 +11749,12 @@
 			function convertToAlpha(){
 				const numEl = document.getElementById('numInput');
 				numEl.value = numEl.value.replace(/\\D/g, '').replace(/^0+/, '');
-				const numInput = numEl.value;
-				const alphaField = document.getElementById('alphaInput');
-				if(!numInput){
-					alphaField.value = '';
+				if(!numEl.value){
+					document.getElementById('alphaInput').value = '';
 					updateAllFields(0n);
 					return;
 				}
-				let num = BigInt(numInput);
+				let num = BigInt(numEl.value);
 				updateAllFields(num);
 				const chars = getActiveAlphabet();
 				const base = BigInt(chars.length);
@@ -11696,17 +11764,13 @@
 					result = chars[modulo] + result;
 					num = (num - 1n)/base;
 				}
-				alphaField.value = result;
+				document.getElementById('alphaInput').value = result;
 			}
 
-			function caesarShift(isForward) {
+			function caesarShift(isForward){
 				const inputEl = document.getElementById('alphaInput');
-				const shiftInput = document.getElementById('shiftValue');
-				let shift = parseInt(shiftInput.value) || 0;
-				if(!isForward){
-					shift = -shift;
-				}
-				let str = inputEl.value.toUpperCase();
+				const shift = (parseInt(document.getElementById('shiftValue').value) || 0)*(isForward ? 1 : -1);
+				const str = inputEl.value.toUpperCase();
 				if(!str){
 					return;
 				}
@@ -11714,16 +11778,15 @@
 				const size = chars.length;
 				let result = "";
 				for(let i = 0; i < str.length; i++){
-					const char = str[i];
-					const index = chars.indexOf(char);
+					const index = chars.indexOf(str[i]);
 					if(index !== -1){
-						let newIndex = (index + shift)%size;
+						let newIndex = (index + shift) % size;
 						if(newIndex < 0){
 							newIndex += size;
 						}
 						result += chars[newIndex];
 					}else{
-						result += char;
+						result += str[i];
 					}
 				}
 				inputEl.value = result;
@@ -11736,53 +11799,26 @@
 				if(!inputField.value){
 					return;
 				}
-				const showSuccess = () => {
-					const originalText = btn.innerText;
+				navigator.clipboard.writeText(inputField.value).then(() => {
+					const oldTxt = btn.innerText;
+					const oldCol = btn.style.color;
 					btn.innerText = "Saved!";
-					btn.style.color = "#28a745";
+					btn.style.color = "var(--copy-success)";
 					setTimeout(() => {
-						btn.innerText = originalText;
-						btn.style.color = "#007bff";
+						btn.innerText = oldTxt;
+						btn.style.color = oldCol;
 					}, 1000);
-				};
-				if(navigator.clipboard && window.isSecureContext){
-					navigator.clipboard.writeText(inputField.value)
-						.then(showSuccess)
-						.catch(() => {
-							copyFallback(inputField, showSuccess);
-						});
-				}else{
-					copyFallback(inputField, showSuccess);
-				}
+				});
 			}
 
-			function copyFallback(inputField, successCallback) {
-				inputField.select();
-				inputField.setSelectionRange(0, 99999);
-				try{
-					const successful = document.execCommand('copy');
-					if(successful){
-						successCallback();
-					}
-				}catch(err){
-					console.error("Incapace di copiare", err);
-				}
-				window.getSelection().removeAllRanges();
-				inputField.blur();
-			}
-
-			function getExp(iExp){
-				const expDigits = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
-				return iExp <= 1 ? "" : iExp.toString().split('').map(d => expDigits[d]).join('');
-			}
-
-			function factorize() {
+			function factorize(){
 				let n = parseInt(document.getElementById("numInput").value);
 				const resDiv = document.getElementById('factorResult');
 				if(isNaN(n) || n <= 1){
 					return;
 				}
 				let temp = n, result = [], count = 0;
+				const getExp = (e) => ["","","²","³","⁴","⁵","⁶","⁷","⁸","⁹"][e] || e;
 				while(temp%2 === 0){
 					count++;
 					temp /= 2;
@@ -11803,10 +11839,76 @@
 				if(temp > 1){
 					result.push(temp.toString());
 				}
-				resDiv.innerText = (result.length === 1 && parseInt(result[0]) === n) ? "Prime number! :-D" : n + " = " + result.join(" × ");
+				resDiv.innerText = (result.length === 1 && parseInt(result[0]) === n) ? currentPrimeLabel : n + " = " + result.join(" × ");
+			}
+
+			const FLAGS_SVG = [
+				'<svg class="flag-svg" viewBox="0 0 60 30"><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#c60b1e"/><rect width="3" height="1" y="0.5" fill="#ffc400"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 5 3"><rect width="5" height="3"/><rect width="5" height="2" y="1" fill="#000"/><rect width="5" height="1" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 600 400"><rect width="240" height="400" fill="#006600"/><rect x="240" width="360" height="400" fill="#ff0000"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002b7f"/><rect width="1" height="2" x="1" fill="#fcd116"/><rect width="1" height="2" x="2" fill="#ce1126"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 27 18"><rect width="27" height="18" fill="#005bae"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#005bae"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#800000"/><text x="1.5" y="1.15" font-family="serif" font-weight="bold" font-size="0.4" fill="#FFD700" text-anchor="middle">SPQR</text></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#de2110"/><path d="M.5 1.1l.3-.9.3.9-1-.6h1z" fill="#ffde00" transform="matrix(.4 0 0 .4 .1 .1)"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>'
+			];
+			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
+			const TRANSLATIONS = {
+				en: { title:"Alpha-Numeric Converter", keep:"Keep", string:"String", number:"Number", letters:"Letters", alphaLabel:"Alphabetic String", shift:"Shift", decimalLabel:"Decimal", binaryLabel:"Binary", hexLabel:"Hexadecimal", encBtn:"Enc +", decBtn:"Dec -", copyBtn:"Copy", factorBtn:"Factorize", prime:"Prime number! :-D" },
+				it: { title:"Convertitore Alfa-Numerico", keep:"Mantieni", string:"Stringa", number:"Numero", letters:"Lettere", alphaLabel:"Stringa Alfabetica", shift:"Turno", decimalLabel:"Decimale", binaryLabel:"Binario", hexLabel:"Esadecimale", encBtn:"Cif +", decBtn:"Dec -", copyBtn:"Copia", factorBtn:"Fattorizza", prime:"Numero primo! :-D" },
+				fr: { title:"Convertisseur Alpha-Numérique", keep:"Garder", string:"Chaîne", number:"Nombre", letters:"Lettres", alphaLabel:"Chaîne Alphabétique", shift:"Décalage", decimalLabel:"Décimal", binaryLabel:"Binaire", hexLabel:"Hexadécimal", encBtn:"Chif +", decBtn:"Déch -", copyBtn:"Copier", factorBtn:"Factoriser", prime:"Nombre premier! :-D" },
+				es: { title:"Convertidor Alfa-Numérico", keep:"Mantener", string:"Cadena", number:"Número", letters:"Letras", alphaLabel:"Cadena Alfabética", shift:"Desplaz.", decimalLabel:"Decimal", binaryLabel:"Binario", hexLabel:"Hexadecimal", encBtn:"Cifr +", decBtn:"Desc -", copyBtn:"Copiar", factorBtn:"Factorizar", prime:"¡Número primo! :-D" },
+				de: { title:"Alpha-Numerischer Konverter", keep:"Behalten", string:"Text", number:"Zahl", letters:"Buchst.", alphaLabel:"Alphabetische Zeichenf.", shift:"Versch.", decimalLabel:"Dezimal", binaryLabel:"Binär", hexLabel:"Hexadezimal", encBtn:"Versch +", decBtn:"Entsch -", copyBtn:"Kopieren", factorBtn:"Faktorisieren", prime:"Primzahl! :-D" },
+				pt: { title:"Conversor Alfa-Numérico", keep:"Manter", string:"Texto", number:"Número", letters:"Letras", alphaLabel:"String Alfabética", shift:"Desloc.", decimalLabel:"Decimal", binaryLabel:"Binário", hexLabel:"Hexadecimal", encBtn:"Cifr +", decBtn:"Decifr -", copyBtn:"Copiar", factorBtn:"Fatorar", prime:"Número primo! :-D" },
+				ro: { title:"Convertor Alfa-Numeric", keep:"Păstrează", string:"Șir", number:"Număr", letters:"Litere", alphaLabel:"Șir Alfabetic", shift:"Schimb", decimalLabel:"Decimal", binaryLabel:"Binar", hexLabel:"Hexazecimal", encBtn:"Cifr +", decBtn:"Decifr -", copyBtn:"Copiază", factorBtn:"Factorizează", prime:"Număr prim! :-D" },
+				uk: { title:"Альфа-цифровий конвертер", keep:"Зберегти", string:"Рядок", number:"Число", letters:"Літери", alphaLabel:"Алфавітний рядок", shift:"Зсув", decimalLabel:"Десяткове", binaryLabel:"Binary", hexLabel:"Hex", encBtn:"Зашифр +", decBtn:"Розшифр -", copyBtn:"Копіювати", factorBtn:"Фактор", prime:"Просте число! :-D" },
+				el: { title:"Μετατροπέας Αλφαριθμητικών", keep:"Κράτα", string:"Συμβ.", number:"Αριθμός", letters:"Γράμματα", alphaLabel:"Αλφαβητικό", shift:"Μετατ.", decimalLabel:"Δεκαδικό", binaryLabel:"Δυαδικό", hexLabel:"Δεκαεξαδικό", encBtn:"Κρυπτ +", decBtn:"Αποκρ -", copyBtn:"Αντιγραφή", factorBtn:"Παραγοντ", prime:"Πρώτος αριθμός! :-D" },
+				la: { title:"Conversor Alpha-Numericus", keep:"Serva", string:"Series", number:"Numerus", letters:"Litterae", alphaLabel:"Series Alphabetica", shift:"Ambitus", decimalLabel:"Decimalis", binaryLabel:"Binarius", hexLabel:"Hexadecimalis", encBtn:"Enc +", decBtn:"Dec -", copyBtn:"Copy", factorBtn:"Factor", prime:"Numerus primus! :-D" },
+				zh: { title:"字母数字转换器", keep:"保持", string:"字符串", number:"数字", letters:"字母", alphaLabel:"字母字符串", shift:"位移", decimalLabel:"十进制", binaryLabel:"二进制", hexLabel:"十六进制", encBtn:"加密 +", decBtn:"解密 -", copyBtn:"复制", factorBtn:"因数分解", prime:"质数! :-D" },
+				ja: { title:"英数字コンバーター", keep:"保持", string:"文字列", number:"数値", letters:"文字数", alphaLabel:"アルファベット文字列", shift:"シフト", decimalLabel:"10進数", binaryLabel:"2進数", hexLabel:"16進数", encBtn:"暗号化 +", decBtn:"復号化 -", copyBtn:"コピー", factorBtn:"因数分解", prime:"素数です! :-D" }
+			};
+
+			let currentPrimeLabel = TRANSLATIONS['en'].prime;
+
+			function applyTranslation(lang){
+				const t = TRANSLATIONS[lang] || TRANSLATIONS['en'];
+				const titleEl = document.getElementById('mainTitle');
+				titleEl.childNodes[0].textContent = t.title + ' ';
+				document.querySelector('[data-key="keep"]').childNodes[0].textContent = t.keep + ' ';
+				document.querySelector('[data-key="string"]').lastChild.textContent = ' ' + t.string;
+				document.querySelector('[data-key="number"]').lastChild.textContent = ' ' + t.number;
+				document.querySelector('[data-key="letters"]').childNodes[0].textContent = t.letters + ' ';
+				document.getElementById('labelAlpha').textContent = t.alphaLabel;
+				document.querySelector('[data-key="shift"]').textContent = t.shift + ':';
+				document.getElementById('labelNum').textContent = t.decimalLabel;
+				document.getElementById('labelBin').textContent = t.binaryLabel;
+				document.getElementById('labelHex').textContent = t.hexLabel;
+				document.getElementById('btnEncPlus').textContent = t.encBtn;
+				document.getElementById('btnDecMinus').textContent = t.decBtn;
+				document.querySelectorAll('[data-copy]').forEach(b => b.textContent = t.copyBtn);
+				document.getElementById('btnFactorize').textContent = t.factorBtn;
+				currentPrimeLabel = t.prime;
+				document.querySelectorAll('.flag-btn').forEach((b,i) => b.classList.toggle('active', LANG_KEYS[i] === lang));
+			}
+
+			function initLangBar(){
+				const bar = document.getElementById('langBar');
+				LANG_KEYS.forEach((lang, i) => {
+					const btn = document.createElement('button');
+					btn.type = 'button';
+					btn.className = 'flag-btn' + (lang === 'en' ? ' active' : '');
+					btn.innerHTML = FLAGS_SVG[i];
+					btn.onclick = () => applyTranslation(lang);
+					bar.appendChild(btn);
+				});
 			}
 
 			resetAndRecalculate();
+			initLangBar();
 		<\/script>
 	</body>
 </html>` },
