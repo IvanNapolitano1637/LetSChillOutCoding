@@ -9385,6 +9385,9 @@
 				.full-width-slider{
 					width: 100%;
 				}
+				.radio-grid{
+					grid-template-columns: 1fr;
+				}
 			}
 			.flex-column{
 				display: flex;
@@ -9402,73 +9405,95 @@
 				grid-template-columns: 1fr 1fr;
 				gap: 10px;
 				width: 100%;
-				max-width: 300px;
+				max-width: 450px;
 			}
 			.radio-option{
 				display: flex;
 				align-items: center;
 				background: rgba(255, 255, 255, 0.2);
-				padding: 5px;
+				padding: 8px;
 				border-radius: 5px;
+				white-space: nowrap;
 			}
 			.radio-option output{
 				margin-left: 5px;
 				flex-grow: 1;
 				text-align: center;
+				overflow: hidden;
 			}
 			.hidden{
 				display: none !important;
+			}
+			.flag-svg{
+				width: 28px;
+				height: 18px;
+				display: inline-block;
+				vertical-align: middle;
+				border: 1px solid #999;
+				border-radius: 2px;
+				flex-shrink: 0;
+			}
+			#translateBtn{
+				display: inline-flex;
+				align-items: center;
+				gap: 6px;
+			}
+			.radio-option input[type="radio"]{
+				transform: scale(1.5);
+				margin: 0 10px;
+				cursor: pointer;
 			}
 		</style>
 	</head>
 	<body>
 		<canvas id="scope"></canvas>
-		<div class="section-title">OSCILLATOR & ADDITIVE SYNTHESIS</div>
+		<div class="section-title" data-i18n="section_osc">OSCILLATOR &amp; ADDITIVE SYNTHESIS</div>
 			<div class="flex-column">
-				<b>Oscillator type:</b>
+				<b data-i18n="label_osc_type">Oscillator type:</b>
 				<div class="radio-grid">
-				<div class="radio-option"><input type="radio" id="sine" name="oscillatorType" value="sine" checked><output>sine</output></div>
-				<div class="radio-option"><input type="radio" id="sawtooth" name="oscillatorType" value="sawtooth"><output>sawtooth</output></div>
-				<div class="radio-option"><input type="radio" id="square" name="oscillatorType" value="square"><output>square</output></div>
-				<div class="radio-option"><input type="radio" id="triangle" name="oscillatorType" value="triangle"><output>triangle</output></div>
+				<div class="radio-option"><input type="radio" id="sine" name="oscillatorType" value="sine" checked><output><span data-i18n="wave_sine">sine</span></output></div>
+				<div class="radio-option"><input type="radio" id="sawtooth" name="oscillatorType" value="sawtooth"><output><span data-i18n="wave_sawtooth">sawtooth</span></output></div>
+				<div class="radio-option"><input type="radio" id="square" name="oscillatorType" value="square"><output><span data-i18n="wave_square">square</span></output></div>
+				<div class="radio-option"><input type="radio" id="triangle" name="oscillatorType" value="triangle"><output><span data-i18n="wave_triangle">triangle</span></output></div>
 			</div>
 		</div>
 		<div id="HarmonicList" class="row hidden">
-			<div id="Harmonic_2" class="slider-container"><span class="slider-label">2nd Harmonic:<output id="h2_val">0.00</output></span><input id="h2" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
-			<div id="Harmonic_3" class="slider-container"><span class="slider-label">3rd Harmonic:<output id="h3_val">0.00</output></span><input id="h3" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
-			<div id="Harmonic_4" class="slider-container"><span class="slider-label">4th Harmonic:<output id="h4_val">0.00</output></span><input id="h4" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
+			<div id="Harmonic_2" class="slider-container"><span class="slider-label"><span data-i18n="label_h2">2nd Harmonic:</span><output id="h2_val">0.00</output></span><input id="h2" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
+			<div id="Harmonic_3" class="slider-container"><span class="slider-label"><span data-i18n="label_h3">3rd Harmonic:</span><output id="h3_val">0.00</output></span><input id="h3" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
+			<div id="Harmonic_4" class="slider-container"><span class="slider-label"><span data-i18n="label_h4">4th Harmonic:</span><output id="h4_val">0.00</output></span><input id="h4" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
 		</div>
-		<div id="LowPassFilter" class="section-title hidden">LOW PASS FILTER(VCF)</div>
+		<div id="LowPassFilter" class="section-title hidden" data-i18n="section_lpf">LOW PASS FILTER (VCF)</div>
 		<div class="row">
 			<div id="Cutoff" class="slider-container hidden">
-				<span class="slider-label">Cutoff(Freq):<output id="cutoff_val">20000 Hz</output></span>
+				<span class="slider-label"><span data-i18n="label_cutoff">Cutoff(Freq):</span><output id="cutoff_val">20000 Hz</output></span>
 				<input id="cutoff" type="range" class="full-width-slider" min="20" max="20000" step="1" value="20000" oninput="updateFilter()">			
 			</div>
 			<div id="Resonance" class="slider-container hidden">
-				<span class="slider-label">Resonance(Q):<output id="resonance_val">1.0</output></span>
+				<span class="slider-label"><span data-i18n="label_resonance">Resonance(Q):</span><output id="resonance_val">1.0</output></span>
 				<input id="resonance" type="range" class="full-width-slider" min="0" max="20" step="0.1" value="1" oninput="updateFilter()">
 			</div>
 		</div>
 		<div class="slider-container">
-			<span class="slider-label">Frequency</span>
+			<span class="slider-label" data-i18n="label_frequency">Frequency</span>
 			<input type="range" id="frequencyRange" class="full-width-slider" name="frequency" oninput="setFrequency()">
 			<div style="display: flex; justify-content: space-between; font-size: 0.8em; font-weight: bold; color: #444; margin-top: -2px;">
-				<span>Min: <output id="FREQUENCY_MIN_VALUE" style="background:transparent; padding:0;">0 Hz</output></span>
-				<span>Current: <output id="FREQUENCY_VALUE" style="background:transparent; padding:0;">440 Hz</output></span>
-				<span>Max: <output id="FREQUENCY_MAX_VALUE" style="background:transparent; padding:0;">1000 Hz</output></span>
+				<span><span data-i18n="label_freq_min">Min:</span> <output id="FREQUENCY_MIN_VALUE" style="background:transparent; padding:0;">0 Hz</output></span>
+				<span><span data-i18n="label_freq_cur">Current:</span> <output id="FREQUENCY_VALUE" style="background:transparent; padding:0;">440 Hz</output></span>
+				<span><span data-i18n="label_freq_max">Max:</span> <output id="FREQUENCY_MAX_VALUE" style="background:transparent; padding:0;">1000 Hz</output></span>
 			</div>
 		</div>
 		<div class="flex-row">
 			<button id="play_and_stop_button" onclick="play_and_stop()">▶</button>
 			<button onclick="multiplyFREQUENCY_VALUE(0.5)">f/2</button>
 			<button onclick="multiplyFREQUENCY_VALUE(2)">f×2</button>
-			<button id="showingButton" onclick="toggleShowing()">Pro</button>
-			<button onclick="window.parent.postMessage('RELOAD_REQUEST','*');">⟳ Page</button>
+			<button id="showingButton" onclick="toggleShowing()" data-i18n="btn_pro">Pro</button>
+			<button onclick="window.parent.postMessage('RELOAD_REQUEST','*');" data-i18n="btn_page">⟳ Page</button>
+			<button id="translateBtn" onclick="nextLanguage()"><span id="flagIcon"></span></button>
 		</div>
 		<div class="flex-row" style="align-items: flex-start;">
 			<div class="row" style="min-width: 100px;">
-				<b>Max freq:</b><br>
-				<button onclick="halveMax()">Smaller Max</button><br>
+				<b data-i18n="label_max_freq">Max freq:</b><br>
+				<button onclick="halveMax()" data-i18n="btn_smaller_max">Smaller Max</button><br>
 				<input type="radio" name="maxFrequency" value="50" onchange="setMaxFrequency()" disabled>50<br>
 				<input type="radio" name="maxFrequency" value="100" onchange="setMaxFrequency()" disabled>100<br>
 				<input type="radio" name="maxFrequency" value="200" onchange="setMaxFrequency()" disabled>200<br>
@@ -9479,20 +9504,20 @@
 				<input type="radio" name="maxFrequency" value="8000" onchange="setMaxFrequency()">8000<br>
 				<input type="radio" name="maxFrequency" value="16000" onchange="setMaxFrequency()">16000<br>
 				<input type="radio" name="maxFrequency" value="24000" onchange="setMaxFrequency()">24000<br>
-				<button onclick="doubleMax()">Bigger Max</button>
+				<button onclick="doubleMax()" data-i18n="btn_bigger_max">Bigger Max</button>
 			</div>
 			<div id="ADSR" class="row hidden" style="flex-grow: 1;">
-				<b>ADSR & Master Vol:</b>
-				<div class="slider-container"><span class="slider-label">Attack:<output id="attack_val">10</output></span><input id="attack" type="range" class="full-width-slider" min="0" max="2000" value="10" oninput="updateAdsLabel()"></div>
-				<div class="slider-container"><span class="slider-label">Decay:<output id="decay_val">100</output></span><input id="decay" type="range" class="full-width-slider" min="0" max="2000" value="100" oninput="updateAdsLabel()"></div>
-				<div class="slider-container"><span class="slider-label">Sustain:<output id="sustain_val">0.80</output></span><input id="sustain" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0.8" oninput="updateAdsLabel()"></div>
-				<div class="slider-container"><span class="slider-label">Release:<output id="release_val">150</output></span><input id="release" type="range" class="full-width-slider" min="0" max="3000" value="150" oninput="updateAdsLabel()"></div>
-				<div class="slider-container"><span class="slider-label">Master Vol:<output id="masterVol_val">0.60</output></span><input id="masterVol" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0.6" oninput="setMasterVol()"></div>
+				<b data-i18n="label_adsr">ADSR &amp; Master Vol:</b>
+				<div class="slider-container"><span class="slider-label"><span data-i18n="label_attack">Attack:</span><output id="attack_val">10</output></span><input id="attack" type="range" class="full-width-slider" min="0" max="2000" value="10" oninput="updateAdsLabel()"></div>
+				<div class="slider-container"><span class="slider-label"><span data-i18n="label_decay">Decay:</span><output id="decay_val">100</output></span><input id="decay" type="range" class="full-width-slider" min="0" max="2000" value="100" oninput="updateAdsLabel()"></div>
+				<div class="slider-container"><span class="slider-label"><span data-i18n="label_sustain">Sustain:</span><output id="sustain_val">0.80</output></span><input id="sustain" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0.8" oninput="updateAdsLabel()"></div>
+				<div class="slider-container"><span class="slider-label"><span data-i18n="label_release">Release:</span><output id="release_val">150</output></span><input id="release" type="range" class="full-width-slider" min="0" max="3000" value="150" oninput="updateAdsLabel()"></div>
+				<div class="slider-container"><span class="slider-label"><span data-i18n="label_master_vol">Master Vol:</span><output id="masterVol_val">0.60</output></span><input id="masterVol" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0.6" oninput="setMasterVol()"></div>
 			</div>
 		</div>
-		<div class="section-title">SIRENS</div>
+		<div class="section-title" data-i18n="section_sirens">SIRENS</div>
 		<div class="flex-column">
-			<b>Siren type:</b>
+			<b data-i18n="label_siren_type">Siren type:</b>
 			<div>
 				<input type="radio" id="s0" name="sirenType" onchange="changeSirenType(800,1200,300)" checked><output>I</output>
 				<input type="radio" id="s1" name="sirenType" onchange="changeSirenType(300,600,500)"><output>II</output>
@@ -9503,16 +9528,16 @@
 			</div>
 		</div>
 		<div class="flex-column">
-			<b>Siren Wave:</b>
+			<b data-i18n="label_siren_wave">Siren Wave:</b>
 			<div class="radio-grid">
-				<div class="radio-option"><input type="radio" name="sirenWave" value="sine" checked onchange="updateSirenWave()"><output>sine</output></div>
-				<div class="radio-option"><input type="radio" name="sirenWave" value="sawtooth" onchange="updateSirenWave()"><output>sawtooth</output></div>
-				<div class="radio-option"><input type="radio" name="sirenWave" value="square" onchange="updateSirenWave()"><output>square</output></div>
-				<div class="radio-option"><input type="radio" name="sirenWave" value="triangle" onchange="updateSirenWave()"><output>triangle</output></div>
+				<div class="radio-option"><input type="radio" name="sirenWave" value="sine" checked onchange="updateSirenWave()"><output><span data-i18n="wave_sine">sine</span></output></div>
+				<div class="radio-option"><input type="radio" name="sirenWave" value="sawtooth" onchange="updateSirenWave()"><output><span data-i18n="wave_sawtooth">sawtooth</span></output></div>
+				<div class="radio-option"><input type="radio" name="sirenWave" value="square" onchange="updateSirenWave()"><output><span data-i18n="wave_square">square</span></output></div>
+				<div class="radio-option"><input type="radio" name="sirenWave" value="triangle" onchange="updateSirenWave()"><output><span data-i18n="wave_triangle">triangle</span></output></div>
 			</div>
 		</div>
 		<div class="flex-row">
-			<button id="sirenButton" onclick="sirenOnOff()">Siren On</button>
+			<button id="sirenButton" onclick="sirenOnOff()" data-i18n="btn_siren_on">Siren On</button>
 		</div>
 		<div id="keyboard">
 			<button class="white" id="C4">C4</button>
@@ -9544,6 +9569,482 @@
 			const MAX_FREQUENCY_VALUE = [50,100,200,500,1000,2000,4000,8000,16000,24000];
 			const KEY_MAP = {"a":"C4","w":"Csharp4","s":"D4","e":"Dsharp4","d":"E4","f":"F4","t":"Fsharp4","g":"G4","y":"Gsharp4","h":"A4","u":"Asharp4","j":"B4","k":"C5"};
 			const FREQ_MAP = {"C4":261.62,"Csharp4":277.18,"D4":293.66,"Dsharp4":311.12,"E4":329.62,"F4":349.22,"Fsharp4":369.99,"G4":391.99,"Gsharp4":415.3,"A4":440,"Asharp4":466.16,"B4":493.88,"C5":523.25};
+			const FLAGS_SVG = [
+				'<svg class="flag-svg" viewBox="0 0 60 30"><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#c60b1e"/><rect width="3" height="1" y="0.5" fill="#ffc400"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 5 3"><rect width="5" height="3"/><rect width="5" height="2" y="1" fill="#000"/><rect width="5" height="1" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 600 400"><rect width="240" height="400" fill="#006600"/><rect x="240" width="360" height="400" fill="#ff0000"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002b7f"/><rect width="1" height="2" x="1" fill="#fcd116"/><rect width="1" height="2" x="2" fill="#ce1126"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 27 18"><rect width="27" height="18" fill="#005bae"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#005bae"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#800000"/><text x="1.5" y="1.15" font-family="serif" font-weight="bold" font-size="0.4" fill="#FFD700" text-anchor="middle">SPQR</text></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#de2110"/><path d="M.5 1.1l.3-.9.3.9-1-.6h1z" fill="#ffde00" transform="matrix(.4 0 0 .4 .1 .1)"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>'
+			];
+			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
+			const TRANSLATIONS = {
+				en: {
+					section_osc: "OSCILLATOR & ADDITIVE SYNTHESIS",
+					section_lpf: "LOW PASS FILTER (VCF)",
+					section_sirens: "SIRENS",
+					label_osc_type: "Oscillator type:",
+					wave_sine: "sine",
+					wave_sawtooth: "sawtooth",
+					wave_square: "square",
+					wave_triangle: "triangle",
+					label_h2: "2nd Harmonic:",
+					label_h3: "3rd Harmonic:",
+					label_h4: "4th Harmonic:",
+					label_cutoff: "Cutoff(Freq):",
+					label_resonance: "Resonance(Q):",
+					label_frequency: "Frequency",
+					label_freq_min: "Min:",
+					label_freq_cur: "Current:",
+					label_freq_max: "Max:",
+					btn_pro: "Pro",
+					btn_page: "⟳",
+					btn_translate: " Translate",
+					label_max_freq: "Max freq:",
+					btn_smaller_max: "Smaller Max",
+					btn_bigger_max: "Bigger Max",
+					label_adsr: "ADSR & Master Vol:",
+					label_attack: "Attack:",
+					label_decay: "Decay:",
+					label_sustain: "Sustain:",
+					label_release: "Release:",
+					label_master_vol: "Master Vol:",
+					label_siren_type: "Siren type:",
+					label_siren_wave: "Siren Wave:",
+					btn_siren_on: "Siren On",
+					btn_siren_off: "Siren Off",
+					btn_basic: "Basic"
+				},
+				it: {
+					section_osc: "OSCILLATORE & SINTESI ADDITIVA",
+					section_lpf: "FILTRO PASSA-BASSO (VCF)",
+					section_sirens: "SIRENE",
+					label_osc_type: "Tipo di oscillatore:",
+					wave_sine: "sinusoide",
+					wave_sawtooth: "dente di sega",
+					wave_square: "onda quadra",
+					wave_triangle: "triangolare",
+					label_h2: "2° Armonico:",
+					label_h3: "3° Armonico:",
+					label_h4: "4° Armonico:",
+					label_cutoff: "Taglio(Freq):",
+					label_resonance: "Risonanza(Q):",
+					label_frequency: "Frequenza",
+					label_freq_min: "Min:",
+					label_freq_cur: "Corrente:",
+					label_freq_max: "Max:",
+					btn_pro: "Pro",
+					btn_page: "⟳",
+					btn_translate: " Traduci",
+					label_max_freq: "Freq. max:",
+					btn_smaller_max: "Max più piccolo",
+					btn_bigger_max: "Max più grande",
+					label_adsr: "ADSR & Vol. Principale:",
+					label_attack: "Attacco:",
+					label_decay: "Decadimento:",
+					label_sustain: "Sustain:",
+					label_release: "Rilascio:",
+					label_master_vol: "Vol. Principale:",
+					label_siren_type: "Tipo di sirena:",
+					label_siren_wave: "Onda sirena:",
+					btn_siren_on: "Sirena On",
+					btn_siren_off: "Sirena Off",
+					btn_basic: "Base"
+				},
+				fr: {
+					section_osc: "OSCILLATEUR & SYNTHÈSE ADDITIVE",
+					section_lpf: "FILTRE PASSE-BAS (VCF)",
+					section_sirens: "SIRÈNES",
+					label_osc_type: "Type d'oscillateur :",
+					wave_sine: "sinusoïde",
+					wave_sawtooth: "dent de scie",
+					wave_square: "carré",
+					wave_triangle: "triangle",
+					label_h2: "2e Harmonique :",
+					label_h3: "3e Harmonique :",
+					label_h4: "4e Harmonique :",
+					label_cutoff: "Coupure(Fréq) :",
+					label_resonance: "Résonance(Q) :",
+					label_frequency: "Fréquence",
+					label_freq_min: "Min :",
+					label_freq_cur: "Actuel :",
+					label_freq_max: "Max :",
+					btn_pro: "Pro",
+					btn_page: "⟳",
+					btn_translate: " Traduire",
+					label_max_freq: "Fréq. max :",
+					btn_smaller_max: "Max plus petit",
+					btn_bigger_max: "Max plus grand",
+					label_adsr: "ADSR & Vol. Principal :",
+					label_attack: "Attaque :",
+					label_decay: "Déclin :",
+					label_sustain: "Maintien :",
+					label_release: "Relâche :",
+					label_master_vol: "Vol. Principal :",
+					label_siren_type: "Type de sirène :",
+					label_siren_wave: "Onde sirène :",
+					btn_siren_on: "Sirène On",
+					btn_siren_off: "Sirène Off",
+					btn_basic: "Basique"
+				},
+				es: {
+					section_osc: "OSCILADOR & SÍNTESIS ADITIVA",
+					section_lpf: "FILTRO PASA-BAJO (VCF)",
+					section_sirens: "SIRENAS",
+					label_osc_type: "Tipo de oscilador:",
+					wave_sine: "senoidal",
+					wave_sawtooth: "diente de sierra",
+					wave_square: "cuadrada",
+					wave_triangle: "triangular",
+					label_h2: "2° Armónico:",
+					label_h3: "3° Armónico:",
+					label_h4: "4° Armónico:",
+					label_cutoff: "Corte(Frec):",
+					label_resonance: "Resonancia(Q):",
+					label_frequency: "Frecuencia",
+					label_freq_min: "Mín:",
+					label_freq_cur: "Actual:",
+					label_freq_max: "Máx:",
+					btn_pro: "Pro",
+					btn_page: "⟳",
+					btn_translate: " Traducir",
+					label_max_freq: "Frec. máx:",
+					btn_smaller_max: "Max más pequeño",
+					btn_bigger_max: "Max más grande",
+					label_adsr: "ADSR & Vol. Principal:",
+					label_attack: "Ataque:",
+					label_decay: "Decaimiento:",
+					label_sustain: "Sustain:",
+					label_release: "Liberación:",
+					label_master_vol: "Vol. Principal:",
+					label_siren_type: "Tipo de sirena:",
+					label_siren_wave: "Onda sirena:",
+					btn_siren_on: "Sirena On",
+					btn_siren_off: "Sirena Off",
+					btn_basic: "Básico"
+				},
+				de: {
+					section_osc: "OSZILLATOR & ADDITIVE SYNTHESE",
+					section_lpf: "TIEFPASSFILTER (VCF)",
+					section_sirens: "SIRENEN",
+					label_osc_type: "Oszillatortyp:",
+					wave_sine: "Sinus",
+					wave_sawtooth: "Sägezahn",
+					wave_square: "Rechteck",
+					wave_triangle: "Dreieck",
+					label_h2: "2. Oberton:",
+					label_h3: "3. Oberton:",
+					label_h4: "4. Oberton:",
+					label_cutoff: "Grenzfrequenz:",
+					label_resonance: "Resonanz(Q):",
+					label_frequency: "Frequenz",
+					label_freq_min: "Min:",
+					label_freq_cur: "Aktuell:",
+					label_freq_max: "Max:",
+					btn_pro: "Pro",
+					btn_page: "⟳",
+					btn_translate: " Übersetzen",
+					label_max_freq: "Max Freq.:",
+					btn_smaller_max: "Kleineres Max",
+					btn_bigger_max: "Größeres Max",
+					label_adsr: "ADSR & Hauptlautstärke:",
+					label_attack: "Anschlag:",
+					label_decay: "Abfall:",
+					label_sustain: "Sustain:",
+					label_release: "Freigabe:",
+					label_master_vol: "Hauptlautstärke:",
+					label_siren_type: "Sirenentyp:",
+					label_siren_wave: "Sirenenwelle:",
+					btn_siren_on: "Sirene An",
+					btn_siren_off: "Sirene Aus",
+					btn_basic: "Basis"
+				},
+				pt: {
+					section_osc: "OSCILADOR & SÍNTESE ADITIVA",
+					section_lpf: "FILTRO PASSA-BAIXO (VCF)",
+					section_sirens: "SIRENES",
+					label_osc_type: "Tipo de oscilador:",
+					wave_sine: "senoidal",
+					wave_sawtooth: "dente de serra",
+					wave_square: "quadrada",
+					wave_triangle: "triangular",
+					label_h2: "2° Harmônico:",
+					label_h3: "3° Harmônico:",
+					label_h4: "4° Harmônico:",
+					label_cutoff: "Corte(Freq):",
+					label_resonance: "Ressonância(Q):",
+					label_frequency: "Frequência",
+					label_freq_min: "Mín:",
+					label_freq_cur: "Atual:",
+					label_freq_max: "Máx:",
+					btn_pro: "Pro",
+					btn_page: "⟳",
+					btn_translate: " Traduzir",
+					label_max_freq: "Freq. máx:",
+					btn_smaller_max: "Max menor",
+					btn_bigger_max: "Max maior",
+					label_adsr: "ADSR & Vol. Principal:",
+					label_attack: "Ataque:",
+					label_decay: "Decaimento:",
+					label_sustain: "Sustain:",
+					label_release: "Liberação:",
+					label_master_vol: "Vol. Principal:",
+					label_siren_type: "Tipo de sirene:",
+					label_siren_wave: "Onda da sirene:",
+					btn_siren_on: "Sirene On",
+					btn_siren_off: "Sirene Off",
+					btn_basic: "Básico"
+				},
+				ro: {
+					section_osc: "OSCILATOR & SINTEZĂ ADITIVĂ",
+					section_lpf: "FILTRU TRECE-JOS (VCF)",
+					section_sirens: "SIRENE",
+					label_osc_type: "Tip oscilator:",
+					wave_sine: "sinusoidă",
+					wave_sawtooth: "ferăstrău",
+					wave_square: "pătrat",
+					wave_triangle: "triunghi",
+					label_h2: "Armonicul 2:",
+					label_h3: "Armonicul 3:",
+					label_h4: "Armonicul 4:",
+					label_cutoff: "Frecv. tăiere:",
+					label_resonance: "Rezonanță(Q):",
+					label_frequency: "Frecvență",
+					label_freq_min: "Min:",
+					label_freq_cur: "Curent:",
+					label_freq_max: "Max:",
+					btn_pro: "Pro",
+					btn_page: "⟳",
+					btn_translate: " Traduce",
+					label_max_freq: "Freq. max:",
+					btn_smaller_max: "Max mai mic",
+					btn_bigger_max: "Max mai mare",
+					label_adsr: "ADSR & Vol. Principal:",
+					label_attack: "Atac:",
+					label_decay: "Decădere:",
+					label_sustain: "Susținere:",
+					label_release: "Eliberare:",
+					label_master_vol: "Vol. Principal:",
+					label_siren_type: "Tip sirenă:",
+					label_siren_wave: "Undă sirenă:",
+					btn_siren_on: "Sirenă On",
+					btn_siren_off: "Sirenă Off",
+					btn_basic: "De bază"
+				},
+				uk: {
+					section_osc: "ОСЦИЛЯТОР & АДИТИВНИЙ СИНТЕЗ",
+					section_lpf: "ФІЛЬТР НИЗЬКИХ ЧАСТОТ (VCF)",
+					section_sirens: "СИРЕНИ",
+					label_osc_type: "Тип осцилятора:",
+					wave_sine: "синус",
+					wave_sawtooth: "пилка",
+					wave_square: "прямокутна",
+					wave_triangle: "трикутна",
+					label_h2: "2-й гармонік:",
+					label_h3: "3-й гармонік:",
+					label_h4: "4-й гармонік:",
+					label_cutoff: "Зріз(Частота):",
+					label_resonance: "Резонанс(Q):",
+					label_frequency: "Частота",
+					label_freq_min: "Мін:",
+					label_freq_cur: "Поточна:",
+					label_freq_max: "Макс:",
+					btn_pro: "Про",
+					btn_page: "⟳",
+					btn_translate: " Перекласти",
+					label_max_freq: "Макс. частота:",
+					btn_smaller_max: "Менший макс.",
+					btn_bigger_max: "Більший макс.",
+					label_adsr: "ADSR & Основна гучність:",
+					label_attack: "Атака:",
+					label_decay: "Спад:",
+					label_sustain: "Тримання:",
+					label_release: "Відпускання:",
+					label_master_vol: "Основна гучність:",
+					label_siren_type: "Тип сирени:",
+					label_siren_wave: "Хвиля сирени:",
+					btn_siren_on: "Сирена Увімк.",
+					btn_siren_off: "Сирена Вимк.",
+					btn_basic: "Базовий"
+				},
+				el: {
+					section_osc: "ΤΑΛΑΝΤΩΤΗΣ & ΠΡΟΣΘΕΤΙΚΗ ΣΥΝΘΕΣΗ",
+					section_lpf: "ΦΙΛΤΡΟ ΧΑΜΗΛΩΝ ΣΥΧΝΟΤΗΤΩΝ (VCF)",
+					section_sirens: "ΣΕΙΡΗΝΕΣ",
+					label_osc_type: "Τύπος ταλαντωτή:",
+					wave_sine: "ημίτονο",
+					wave_sawtooth: "πριόνι",
+					wave_square: "τετράγωνο",
+					wave_triangle: "τρίγωνο",
+					label_h2: "2η Αρμονική:",
+					label_h3: "3η Αρμονική:",
+					label_h4: "4η Αρμονική:",
+					label_cutoff: "Αποκοπή(Συχν.):",
+					label_resonance: "Συντονισμός(Q):",
+					label_frequency: "Συχνότητα",
+					label_freq_min: "Ελάχ.:",
+					label_freq_cur: "Τρέχουσα:",
+					label_freq_max: "Μέγ.:",
+					btn_pro: "Επαγ.",
+					btn_page: "⟳",
+					btn_translate: " Μετάφραση",
+					label_max_freq: "Μέγ. συχν.:",
+					btn_smaller_max: "Μικρότερο μέγ.",
+					btn_bigger_max: "Μεγαλύτερο μέγ.",
+					label_adsr: "ADSR & Κύρια Ένταση:",
+					label_attack: "Προσβολή:",
+					label_decay: "Κατάπτωση:",
+					label_sustain: "Διατήρηση:",
+					label_release: "Απελευθέρωση:",
+					label_master_vol: "Κύρια Ένταση:",
+					label_siren_type: "Τύπος σειρήνας:",
+					label_siren_wave: "Κύμα σειρήνας:",
+					btn_siren_on: "Σειρήνα On",
+					btn_siren_off: "Σειρήνα Off",
+					btn_basic: "Βασικό"
+				},
+				la: {
+					section_osc: "OSCILLATOR & SYNTHESIS ADDITIVA",
+					section_lpf: "FILTRUM FREQUENTIARUM HUMILIUM (VCF)",
+					section_sirens: "SIRENAE",
+					label_osc_type: "Genus oscillatoris:",
+					wave_sine: "sinusoida",
+					wave_sawtooth: "serra",
+					wave_square: "quadratum",
+					wave_triangle: "triangulum",
+					label_h2: "Harmonicus II:",
+					label_h3: "Harmonicus III:",
+					label_h4: "Harmonicus IV:",
+					label_cutoff: "Sectio(Freq):",
+					label_resonance: "Resonantia(Q):",
+					label_frequency: "Frequentia",
+					label_freq_min: "Min:",
+					label_freq_cur: "Praesens:",
+					label_freq_max: "Max:",
+					btn_pro: "Pro",
+					btn_page: "⟳",
+					btn_translate: " Converte",
+					label_max_freq: "Freq. max:",
+					btn_smaller_max: "Max minor",
+					btn_bigger_max: "Max maior",
+					label_adsr: "ADSR & Volumen Principale:",
+					label_attack: "Impetus:",
+					label_decay: "Decessus:",
+					label_sustain: "Sustentatio:",
+					label_release: "Relaxatio:",
+					label_master_vol: "Volumen Principale:",
+					label_siren_type: "Genus sirenae:",
+					label_siren_wave: "Unda sirenae:",
+					btn_siren_on: "Sirena On",
+					btn_siren_off: "Sirena Off",
+					btn_basic: "Simplex"
+				},
+				zh: {
+					section_osc: "振荡器 & 加法合成",
+					section_lpf: "低通滤波器 (VCF)",
+					section_sirens: "警报",
+					label_osc_type: "振荡器类型：",
+					wave_sine: "正弦波",
+					wave_sawtooth: "锯齿波",
+					wave_square: "方波",
+					wave_triangle: "三角波",
+					label_h2: "第2谐波：",
+					label_h3: "第3谐波：",
+					label_h4: "第4谐波：",
+					label_cutoff: "截止频率：",
+					label_resonance: "共振(Q)：",
+					label_frequency: "频率",
+					label_freq_min: "最小：",
+					label_freq_cur: "当前：",
+					label_freq_max: "最大：",
+					btn_pro: "专业",
+					btn_page: "⟳",
+					btn_translate: " 翻译",
+					label_max_freq: "最大频率：",
+					btn_smaller_max: "减小最大值",
+					btn_bigger_max: "增大最大值",
+					label_adsr: "ADSR & 主音量：",
+					label_attack: "起音：",
+					label_decay: "衰减：",
+					label_sustain: "持音：",
+					label_release: "释音：",
+					label_master_vol: "主音量：",
+					label_siren_type: "警报类型：",
+					label_siren_wave: "警报波形：",
+					btn_siren_on: "警报 开",
+					btn_siren_off: "警报 关",
+					btn_basic: "基础"
+				},
+				ja: {
+					section_osc: "オシレーター & 加算合成",
+					section_lpf: "ローパスフィルター (VCF)",
+					section_sirens: "サイレン",
+					label_osc_type: "オシレーターの種類：",
+					wave_sine: "サイン波",
+					wave_sawtooth: "のこぎり波",
+					wave_square: "矩形波",
+					wave_triangle: "三角波",
+					label_h2: "第2倍音：",
+					label_h3: "第3倍音：",
+					label_h4: "第4倍音：",
+					label_cutoff: "カットオフ(周波数)：",
+					label_resonance: "レゾナンス(Q)：",
+					label_frequency: "周波数",
+					label_freq_min: "最小：",
+					label_freq_cur: "現在：",
+					label_freq_max: "最大：",
+					btn_pro: "プロ",
+					btn_page: "⟳",
+					btn_translate: " 翻訳",
+					label_max_freq: "最大周波数：",
+					btn_smaller_max: "最大値を下げる",
+					btn_bigger_max: "最大値を上げる",
+					label_adsr: "ADSR & マスター音量：",
+					label_attack: "アタック：",
+					label_decay: "ディケイ：",
+					label_sustain: "サスティン：",
+					label_release: "リリース：",
+					label_master_vol: "マスター音量：",
+					label_siren_type: "サイレンの種類：",
+					label_siren_wave: "サイレン波形：",
+					btn_siren_on: "サイレン On",
+					btn_siren_off: "サイレン Off",
+					btn_basic: "基本"
+				}
+			};
+
+			let currentLangIndex = 0;
+
+			function applyTranslation(langIndex){
+				const langKey = LANG_KEYS[langIndex];
+				const t = TRANSLATIONS[langKey];
+				if(!t){
+					return;
+				}
+				document.querySelectorAll('[data-i18n]').forEach(el => {
+					const key = el.getAttribute('data-i18n');
+					if(t[key] !== undefined){
+						el.textContent = t[key];
+					}
+				});
+				document.documentElement.lang = langKey;
+				document.getElementById('flagIcon').innerHTML = FLAGS_SVG[langIndex];
+				const sirenBtn = document.getElementById('sirenButton');
+				sirenBtn.textContent = sirenIsOn ? t['btn_siren_off'] : t['btn_siren_on'];
+				const showBtn = document.getElementById('showingButton');
+				showBtn.textContent = basic ? t['btn_pro'] : t['btn_basic'];
+			}
+
+			function nextLanguage(){
+				currentLangIndex = (currentLangIndex + 1)%LANG_KEYS.length;
+				applyTranslation(currentLangIndex);
+			}
 
 			function initAudio(){
 				if(!audioContext){
@@ -9775,7 +10276,9 @@
 			document.getElementsByName("oscillatorType").forEach(el => {
 				el.addEventListener("change",() => {
 					oscillatorinputType = el.value; 
-					if(ACTIVE_VOICES.has("mono")) ACTIVE_VOICES.get("mono").osc.type = el.value;
+					if(ACTIVE_VOICES.has("mono")){
+						ACTIVE_VOICES.get("mono").osc.type = el.value;
+					}
 				});
 			});
 
@@ -9830,7 +10333,8 @@
 
 			function sirenOnOff(){
 				sirenIsOn = !sirenIsOn;
-				document.getElementById("sirenButton").textContent = sirenIsOn ? "Siren Off" : "Siren On";
+				const t = TRANSLATIONS[LANG_KEYS[currentLangIndex]];
+				document.getElementById("sirenButton").textContent = sirenIsOn ? t['btn_siren_off'] : t['btn_siren_on'];
 				if(sirenIsOn){
 					sirenOn();
 				}else{
@@ -9847,9 +10351,10 @@
 				}
 			}
 
-			function toggleShowing() {
+			function toggleShowing(){
 				basic = !basic;
-				document.getElementById("showingButton").textContent = basic ? "Pro" : "Basic";
+				const t = TRANSLATIONS[LANG_KEYS[currentLangIndex]];
+				document.getElementById("showingButton").textContent = basic ? t['btn_pro'] : t['btn_basic'];
 				const elementsToToggle = ["HarmonicList", "Harmonic_2", "Harmonic_3", "Harmonic_4", "LowPassFilter", "Cutoff", "Resonance", "ADSR"];
 				elementsToToggle.forEach(id => {
 					const el = document.getElementById(id);
@@ -9918,6 +10423,7 @@
 			document.getElementById("FREQUENCY_MAX_VALUE").textContent = "1000 Hz";
 			document.getElementById("frequencyRange").max = 1000;
 			document.getElementById("frequencyRange").value = 440;
+			applyTranslation(currentLangIndex);
 		<\/script>
 	</body>
 </html>` },
