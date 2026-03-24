@@ -59,68 +59,469 @@
 				margin-top: 0;
 				color: #27ae60;
 			}
+			.action-btn {
+				color: white;
+				border: none;
+				padding: 12px 30px;
+				border-radius: 8px;
+				font-weight: bold;
+				cursor: pointer;
+				font-size: 1rem;
+				display: inline-flex;
+				align-items: center;
+				gap: 8px;
+			}
+			.btn-reset {
+				background-color: #e66465;
+			}
+			.btn-translate {
+				background-color: #4a90d9;
+			}
+			.flag-svg {
+				width: 32px;
+				height: 20px;
+				display: inline-block;
+				vertical-align: middle;
+				border: 1px solid #aaa;
+				border-radius: 2px;
+				flex-shrink: 0;
+			}
 		</style>
 	</head>
 	<body style="background-color:#ccffcc;">
 		<div class="container">
 			<form id="mathForm">
-				<h3>Number Theory</h3>
-				<label>Primality test</label>
+				<h3 data-i18n="title_number_theory">Number Theory</h3>
+				<label data-i18n="label_primality">Primality test</label>
 				<input type="number" id="firstNumber"/>
-				<button type="button" id="primalityTestButton" onclick="handleAction('checkNumber')">Check</button>
+				<button type="button" id="primalityTestButton" onclick="handleAction('checkNumber')" data-i18n="btn_check">Check</button>
 				<output id="isPrime" class="output-text"></output>
-				<label>Square of a number</label>
+				<label data-i18n="label_square">Square of a number</label>
 				<input type="number" id="tenthNumber"/>
-				<button type="button" onclick="handleAction('calculateSquare')">Calculate</button>
+				<button type="button" onclick="handleAction('calculateSquare')" data-i18n="btn_calculate">Calculate</button>
 				<output id="squareOutput" class="output-text"></output>
-				<label>Square root</label>
+				<label data-i18n="label_sqrt">Square root</label>
 				<input type="number" id="secondNumber"/>
-				<button type="button" id="squareRootButton" onclick="handleAction('squareRoot')">Calculate</button>
+				<button type="button" id="squareRootButton" onclick="handleAction('squareRoot')" data-i18n="btn_calculate">Calculate</button>
 				<output id="sqrt" class="output-text"></output>
-				<label>Triangular of a number</label>
+				<label data-i18n="label_triangular">Triangular of a number</label>
 				<input type="number" id="eleventhNumber"/>
-				<button type="button" onclick="handleAction('calculateTriangular')">Calculate</button>
+				<button type="button" onclick="handleAction('calculateTriangular')" data-i18n="btn_calculate">Calculate</button>
 				<output id="triangularOutput" class="output-text"></output>
-				<label>Triangular root</label>
+				<label data-i18n="label_triangular_root">Triangular root</label>
 				<input type="number" id="twelfthNumber"/>
-				<button type="button" onclick="handleAction('checkTriangularity')">Calculate</button>
+				<button type="button" onclick="handleAction('checkTriangularity')" data-i18n="btn_calculate">Calculate</button>
 				<output id="checkTriangularOutput" class="output-text"></output>
-				<label>Factorization</label>
+				<label data-i18n="label_factorization">Factorization</label>
 				<input type="number" id="thirdNumber"/>
-				<button type="button" id="factorization" onclick="handleAction('factorize')">Factorize</button>
+				<button type="button" id="factorization" onclick="handleAction('factorize')" data-i18n="btn_factorize">Factorize</button>
 				<output id="scomposition" class="output-text"></output>
-				<label>Bézout's relation</label>
-				<input type="number" id="fourthNumber" placeholder="First number"/><br>
-				<input type="number" id="fifthNumber" placeholder="Latter number"/>
-				<button type="button" id="Bezout" onclick="handleAction('computeBezoutRelation')">Calculate</button>
+				<label data-i18n="label_bezout">Bézout's relation</label>
+				<input type="number" id="fourthNumber" data-i18n-placeholder="placeholder_first"/><br>
+				<input type="number" id="fifthNumber" data-i18n-placeholder="placeholder_latter"/>
+				<button type="button" id="Bezout" onclick="handleAction('computeBezoutRelation')" data-i18n="btn_calculate">Calculate</button>
 				<output id="BezoutsRelation" class="output-text"></output>
-				<label>Fermat's primality test</label>
+				<label data-i18n="label_fermat">Fermat's primality test</label>
 				<input type="number" id="sixthNumber"/>
-				<button type="button" id="primalityTestOfFermatButton" onclick="handleAction('applyFermatsPrimalityTest')">Test</button>
+				<button type="button" id="primalityTestOfFermatButton" onclick="handleAction('applyFermatsPrimalityTest')" data-i18n="btn_test">Test</button>
 				<output id="mayBePrime" class="output-text"></output>
-				<label>Regular polygon area</label>
-				<input type="number" id="seventhNumber" placeholder="Number of sides"/><br>
-				<input type="number" id="eighthNumber" placeholder="Length of the side"/>
-				<button type="button" id="calculateAreaButton" onclick="handleAction('calculatePolygonArea')">Calculate the area</button>
+				<label data-i18n="label_polygon_area">Regular polygon area</label>
+				<input type="number" id="seventhNumber" data-i18n-placeholder="placeholder_sides"/><br>
+				<input type="number" id="eighthNumber" data-i18n-placeholder="placeholder_side_length"/>
+				<button type="button" id="calculateAreaButton" onclick="handleAction('calculatePolygonArea')" data-i18n="btn_calc_area">Calculate the area</button>
 				<output id="polygonArea" class="output-text"></output>
-				<label>Sum of two squares</label>
+				<label data-i18n="label_sum_squares">Sum of two squares</label>
 				<input type="number" id="ninthNumber"/>
-				<button type="button" id="sumOfSquares" onclick="handleAction('writeAsSumOfSquares')">Find</button>
+				<button type="button" id="sumOfSquares" onclick="handleAction('writeAsSumOfSquares')" data-i18n="btn_find">Find</button>
 				<div id="squares" class="output-text"></div>
 			</form>
-			<div style="width: 100%; text-align: center; margin: 10px 0;">
-				<button type="button" style="background-color: #e66465; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem;" onclick="clearAll()">Reset Page</button>
+			<div style="width: 100%; text-align: center; margin: 10px 0; display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
+				<button type="button" class="action-btn btn-reset" onclick="clearAll()" data-i18n="btn_reset">Reset Page</button>
+				<button type="button" id="translateBtn" class="action-btn btn-translate" onclick="nextLanguage()">
+					<span id="flagIcon"></span>
+				</button>
 			</div>
 			<form>
-				<h3>Polygon View</h3>
-				<label for="numberOfSides">Number of sides: <select id="numberOfSides"></select></label><br>
+				<h3 data-i18n="title_polygon_view">Polygon View</h3>
+				<label for="numberOfSides"><span data-i18n="label_sides">Number of sides:</span> <select id="numberOfSides"></select></label><br>
 				<label style="display:inline;">
-					<input id="diagonals" type="checkbox" onChange="toggleDiagonals()"> Show diagonals
+					<input id="diagonals" type="checkbox" onChange="toggleDiagonals()"> <span data-i18n="label_diagonals">Show diagonals</span>
 				</label><br>
 				<canvas id="canvas" width="600" height="600"></canvas>
 			</form>
 		</div>
 		<script>
+
+			const FLAGS_SVG = [
+				'<svg class="flag-svg" viewBox="0 0 60 30"><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#c60b1e"/><rect width="3" height="1" y="0.5" fill="#ffc400"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 5 3"><rect width="5" height="3"/><rect width="5" height="2" y="1" fill="#000"/><rect width="5" height="1" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 600 400"><rect width="240" height="400" fill="#006600"/><rect x="240" width="360" height="400" fill="#ff0000"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002b7f"/><rect width="1" height="2" x="1" fill="#fcd116"/><rect width="1" height="2" x="2" fill="#ce1126"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 27 18"><rect width="27" height="18" fill="#005bae"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#005bae"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#800000"/><text x="1.5" y="1.15" font-family="serif" font-weight="bold" font-size="0.4" fill="#FFD700" text-anchor="middle">SPQR</text></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#de2110"/><path d="M.5 1.1l.3-.9.3.9-1-.6h1z" fill="#ffde00" transform="matrix(.4 0 0 .4 .1 .1)"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>'
+			];
+			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
+			const TRANSLATIONS = {
+				en: {
+					title_number_theory: "Number Theory",
+					title_polygon_view: "Polygon View",
+					label_primality: "Primality test",
+					label_square: "Square of a number",
+					label_sqrt: "Square root",
+					label_triangular: "Triangular of a number",
+					label_triangular_root: "Triangular root",
+					label_factorization: "Factorization",
+					label_bezout: "Bézout's relation",
+					label_fermat: "Fermat's primality test",
+					label_polygon_area: "Regular polygon area",
+					label_sum_squares: "Sum of two squares",
+					label_sides: "Number of sides:",
+					label_diagonals: "Show diagonals",
+					btn_check: "Check",
+					btn_calculate: "Calculate",
+					btn_factorize: "Factorize",
+					btn_test: "Test",
+					btn_calc_area: "Calculate the area",
+					btn_find: "Find",
+					btn_reset: "Reset Page",
+					placeholder_first: "First number",
+					placeholder_latter: "Latter number",
+					placeholder_sides: "Number of sides",
+					placeholder_side_length: "Length of the side"
+				},
+				it: {
+					title_number_theory: "Teoria dei Numeri",
+					title_polygon_view: "Vista Poligono",
+					label_primality: "Test di primalità",
+					label_square: "Quadrato di un numero",
+					label_sqrt: "Radice quadrata",
+					label_triangular: "Triangolare di un numero",
+					label_triangular_root: "Radice triangolare",
+					label_factorization: "Fattorizzazione",
+					label_bezout: "Relazione di Bézout",
+					label_fermat: "Test di primalità di Fermat",
+					label_polygon_area: "Area di un poligono regolare",
+					label_sum_squares: "Somma di due quadrati",
+					label_sides: "Numero di lati:",
+					label_diagonals: "Mostra diagonali",
+					btn_check: "Verifica",
+					btn_calculate: "Calcola",
+					btn_factorize: "Fattorizza",
+					btn_test: "Testa",
+					btn_calc_area: "Calcola l'area",
+					btn_find: "Trova",
+					btn_reset: "Reimposta",
+					placeholder_first: "Primo numero",
+					placeholder_latter: "Secondo numero",
+					placeholder_sides: "Numero di lati",
+					placeholder_side_length: "Lunghezza del lato"
+				},
+				fr: {
+					title_number_theory: "Théorie des Nombres",
+					title_polygon_view: "Vue Polygone",
+					label_primality: "Test de primalité",
+					label_square: "Carré d'un nombre",
+					label_sqrt: "Racine carrée",
+					label_triangular: "Triangulaire d'un nombre",
+					label_triangular_root: "Racine triangulaire",
+					label_factorization: "Factorisation",
+					label_bezout: "Relation de Bézout",
+					label_fermat: "Test de primalité de Fermat",
+					label_polygon_area: "Aire d'un polygone régulier",
+					label_sum_squares: "Somme de deux carrés",
+					label_sides: "Nombre de côtés :",
+					label_diagonals: "Afficher les diagonales",
+					btn_check: "Vérifier",
+					btn_calculate: "Calculer",
+					btn_factorize: "Factoriser",
+					btn_test: "Tester",
+					btn_calc_area: "Calculer l'aire",
+					btn_find: "Trouver",
+					btn_reset: "Réinitialiser",
+					placeholder_first: "Premier nombre",
+					placeholder_latter: "Deuxième nombre",
+					placeholder_sides: "Nombre de côtés",
+					placeholder_side_length: "Longueur du côté"
+				},
+				es: {
+					title_number_theory: "Teoría de Números",
+					title_polygon_view: "Vista Polígono",
+					label_primality: "Test de primalidad",
+					label_square: "Cuadrado de un número",
+					label_sqrt: "Raíz cuadrada",
+					label_triangular: "Triangular de un número",
+					label_triangular_root: "Raíz triangular",
+					label_factorization: "Factorización",
+					label_bezout: "Relación de Bézout",
+					label_fermat: "Test de primalidad de Fermat",
+					label_polygon_area: "Área de polígono regular",
+					label_sum_squares: "Suma de dos cuadrados",
+					label_sides: "Número de lados:",
+					label_diagonals: "Mostrar diagonales",
+					btn_check: "Verificar",
+					btn_calculate: "Calcular",
+					btn_factorize: "Factorizar",
+					btn_test: "Probar",
+					btn_calc_area: "Calcular el área",
+					btn_find: "Encontrar",
+					btn_reset: "Restablecer",
+					placeholder_first: "Primer número",
+					placeholder_latter: "Segundo número",
+					placeholder_sides: "Número de lados",
+					placeholder_side_length: "Longitud del lado"
+				},
+				de: {
+					title_number_theory: "Zahlentheorie",
+					title_polygon_view: "Polygon-Ansicht",
+					label_primality: "Primzahltest",
+					label_square: "Quadrat einer Zahl",
+					label_sqrt: "Quadratwurzel",
+					label_triangular: "Dreieckszahl",
+					label_triangular_root: "Dreieckswurzel",
+					label_factorization: "Faktorisierung",
+					label_bezout: "Bézout-Relation",
+					label_fermat: "Fermatscher Primzahltest",
+					label_polygon_area: "Fläche eines regelmäßigen Polygons",
+					label_sum_squares: "Summe zweier Quadrate",
+					label_sides: "Anzahl der Seiten:",
+					label_diagonals: "Diagonalen anzeigen",
+					btn_check: "Prüfen",
+					btn_calculate: "Berechnen",
+					btn_factorize: "Faktorisieren",
+					btn_test: "Testen",
+					btn_calc_area: "Fläche berechnen",
+					btn_find: "Finden",
+					btn_reset: "Zurücksetzen",
+					placeholder_first: "Erste Zahl",
+					placeholder_latter: "Zweite Zahl",
+					placeholder_sides: "Anzahl der Seiten",
+					placeholder_side_length: "Seitenlänge"
+				},
+				pt: {
+					title_number_theory: "Teoria dos Números",
+					title_polygon_view: "Vista Polígono",
+					label_primality: "Teste de primalidade",
+					label_square: "Quadrado de um número",
+					label_sqrt: "Raiz quadrada",
+					label_triangular: "Triangular de um número",
+					label_triangular_root: "Raiz triangular",
+					label_factorization: "Fatorização",
+					label_bezout: "Relação de Bézout",
+					label_fermat: "Teste de primalidade de Fermat",
+					label_polygon_area: "Área de polígono regular",
+					label_sum_squares: "Soma de dois quadrados",
+					label_sides: "Número de lados:",
+					label_diagonals: "Mostrar diagonais",
+					btn_check: "Verificar",
+					btn_calculate: "Calcular",
+					btn_factorize: "Fatorizar",
+					btn_test: "Testar",
+					btn_calc_area: "Calcular a área",
+					btn_find: "Encontrar",
+					btn_reset: "Redefinir",
+					placeholder_first: "Primeiro número",
+					placeholder_latter: "Segundo número",
+					placeholder_sides: "Número de lados",
+					placeholder_side_length: "Comprimento do lado"
+				},
+				ro: {
+					title_number_theory: "Teoria Numerelor",
+					title_polygon_view: "Vedere Poligon",
+					label_primality: "Test de primalitate",
+					label_square: "Pătratul unui număr",
+					label_sqrt: "Rădăcină pătrată",
+					label_triangular: "Triunghiular al unui număr",
+					label_triangular_root: "Rădăcină triunghiulară",
+					label_factorization: "Factorizare",
+					label_bezout: "Relația lui Bézout",
+					label_fermat: "Testul de primalitate al lui Fermat",
+					label_polygon_area: "Aria unui poligon regulat",
+					label_sum_squares: "Suma a două pătrate",
+					label_sides: "Număr de laturi:",
+					label_diagonals: "Arată diagonalele",
+					btn_check: "Verifică",
+					btn_calculate: "Calculează",
+					btn_factorize: "Factorizează",
+					btn_test: "Testează",
+					btn_calc_area: "Calculează aria",
+					btn_find: "Găsește",
+					btn_reset: "Resetează",
+					placeholder_first: "Primul număr",
+					placeholder_latter: "Al doilea număr",
+					placeholder_sides: "Număr de laturi",
+					placeholder_side_length: "Lungimea laturii"
+				},
+				uk: {
+					title_number_theory: "Теорія чисел",
+					title_polygon_view: "Вигляд багатокутника",
+					label_primality: "Тест на простоту",
+					label_square: "Квадрат числа",
+					label_sqrt: "Квадратний корінь",
+					label_triangular: "Трикутне число",
+					label_triangular_root: "Трикутний корінь",
+					label_factorization: "Факторизація",
+					label_bezout: "Відношення Безу",
+					label_fermat: "Тест Ферма на простоту",
+					label_polygon_area: "Площа правильного багатокутника",
+					label_sum_squares: "Сума двох квадратів",
+					label_sides: "Кількість сторін:",
+					label_diagonals: "Показати діагоналі",
+					btn_check: "Перевірити",
+					btn_calculate: "Обчислити",
+					btn_factorize: "Факторизувати",
+					btn_test: "Тестувати",
+					btn_calc_area: "Обчислити площу",
+					btn_find: "Знайти",
+					btn_reset: "Скинути",
+					placeholder_first: "Перше число",
+					placeholder_latter: "Друге число",
+					placeholder_sides: "Кількість сторін",
+					placeholder_side_length: "Довжина сторони"
+				},
+				el: {
+					title_number_theory: "Θεωρία Αριθμών",
+					title_polygon_view: "Προβολή Πολυγώνου",
+					label_primality: "Έλεγχος πρώτου αριθμού",
+					label_square: "Τετράγωνο αριθμού",
+					label_sqrt: "Τετραγωνική ρίζα",
+					label_triangular: "Τριγωνικός αριθμός",
+					label_triangular_root: "Τριγωνική ρίζα",
+					label_factorization: "Παραγοντοποίηση",
+					label_bezout: "Σχέση Bézout",
+					label_fermat: "Κριτήριο πρωτότητας Fermat",
+					label_polygon_area: "Εμβαδόν κανονικού πολυγώνου",
+					label_sum_squares: "Άθροισμα δύο τετραγώνων",
+					label_sides: "Αριθμός πλευρών:",
+					label_diagonals: "Εμφάνιση διαγωνίων",
+					btn_check: "Έλεγχος",
+					btn_calculate: "Υπολογισμός",
+					btn_factorize: "Παραγοντοποίηση",
+					btn_test: "Δοκιμή",
+					btn_calc_area: "Υπολογισμός εμβαδού",
+					btn_find: "Εύρεση",
+					btn_reset: "Επαναφορά",
+					placeholder_first: "Πρώτος αριθμός",
+					placeholder_latter: "Δεύτερος αριθμός",
+					placeholder_sides: "Αριθμός πλευρών",
+					placeholder_side_length: "Μήκος πλευράς"
+				},
+				la: {
+					title_number_theory: "Theoria Numerorum",
+					title_polygon_view: "Visio Polygoni",
+					label_primality: "Probatio primalitatis",
+					label_square: "Quadratum numeri",
+					label_sqrt: "Radix quadrata",
+					label_triangular: "Numerus triangularis",
+					label_triangular_root: "Radix triangularis",
+					label_factorization: "Factorizatio",
+					label_bezout: "Relatio Bezout",
+					label_fermat: "Probatio Fermati",
+					label_polygon_area: "Area polygoni regularis",
+					label_sum_squares: "Summa duorum quadratorum",
+					label_sides: "Numerus laterum:",
+					label_diagonals: "Monstra diagonales",
+					btn_check: "Verifica",
+					btn_calculate: "Computa",
+					btn_factorize: "Factoriza",
+					btn_test: "Proba",
+					btn_calc_area: "Computa aream",
+					btn_find: "Inveni",
+					btn_reset: "Restitue",
+					placeholder_first: "Primus numerus",
+					placeholder_latter: "Alter numerus",
+					placeholder_sides: "Numerus laterum",
+					placeholder_side_length: "Longitudo lateris"
+				},
+				zh: {
+					title_number_theory: "数论",
+					title_polygon_view: "多边形视图",
+					label_primality: "素数测试",
+					label_square: "数的平方",
+					label_sqrt: "平方根",
+					label_triangular: "三角数",
+					label_triangular_root: "三角根",
+					label_factorization: "因式分解",
+					label_bezout: "贝祖关系",
+					label_fermat: "费马素性测试",
+					label_polygon_area: "正多边形面积",
+					label_sum_squares: "两个平方的和",
+					label_sides: "边数：",
+					label_diagonals: "显示对角线",
+					btn_check: "检查",
+					btn_calculate: "计算",
+					btn_factorize: "分解",
+					btn_test: "测试",
+					btn_calc_area: "计算面积",
+					btn_find: "查找",
+					btn_reset: "重置",
+					placeholder_first: "第一个数",
+					placeholder_latter: "第二个数",
+					placeholder_sides: "边数",
+					placeholder_side_length: "边长"
+				},
+				ja: {
+					title_number_theory: "数論",
+					title_polygon_view: "多角形ビュー",
+					label_primality: "素数判定",
+					label_square: "数の二乗",
+					label_sqrt: "平方根",
+					label_triangular: "三角数",
+					label_triangular_root: "三角根",
+					label_factorization: "素因数分解",
+					label_bezout: "ベズーの関係",
+					label_fermat: "フェルマーの素数判定",
+					label_polygon_area: "正多角形の面積",
+					label_sum_squares: "二つの平方の和",
+					label_sides: "辺の数：",
+					label_diagonals: "対角線を表示",
+					btn_check: "確認",
+					btn_calculate: "計算",
+					btn_factorize: "因数分解",
+					btn_test: "テスト",
+					btn_calc_area: "面積を計算",
+					btn_find: "検索",
+					btn_reset: "リセット",
+					placeholder_first: "最初の数",
+					placeholder_latter: "次の数",
+					placeholder_sides: "辺の数",
+					placeholder_side_length: "辺の長さ"
+				}
+			};
+
+			let currentLangIndex = 0;
+
+			function applyTranslation(langIndex){
+				const langKey = LANG_KEYS[langIndex];
+				const t = TRANSLATIONS[langKey];
+				if(!t){
+					return;
+				}
+				document.querySelectorAll('[data-i18n]').forEach(el => {
+					const key = el.getAttribute('data-i18n');
+					if(t[key] !== undefined){
+						el.textContent = t[key];
+					}
+				});
+				document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+					const key = el.getAttribute('data-i18n-placeholder');
+					if(t[key] !== undefined){
+						el.placeholder = t[key];
+					}
+				});
+				document.documentElement.lang = langKey;
+				document.getElementById('flagIcon').innerHTML = FLAGS_SVG[langIndex];
+			}
+
+			function nextLanguage(){
+				currentLangIndex = (currentLangIndex + 1)%LANG_KEYS.length;
+				applyTranslation(currentLangIndex);
+			}
 
 			function clearAll(){
 				location.reload();
@@ -245,7 +646,9 @@
 
 			function calculateTriangular(){
 				const n = parseInt(document.getElementById("eleventhNumber").value);
-				if (isNaN(n) || n < 0) return;
+				if(isNaN(n) || n < 0){
+					return;
+				}
 				const triangular = (n*(n + 1))/2;
 				document.getElementById("triangularOutput").value = `T(${n}) = ${triangular}`;
 			}
@@ -442,13 +845,16 @@
 					if(e.key === 'Enter'){
 						e.preventDefault();
 						const btn = input.nextElementSibling?.tagName === 'BUTTON' ? input.nextElementSibling : input.parentElement.querySelector('button');
-						if(btn) btn.click();
+						if(btn){
+							btn.click();
+						}
 					}
 				});
 			});
 
 			fillSelectOption();
 			drawPolygon();
+			applyTranslation(currentLangIndex);
 		</script>
 	</body>
 </html>

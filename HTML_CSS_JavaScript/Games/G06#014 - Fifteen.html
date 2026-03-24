@@ -74,6 +74,14 @@
 				transform: translateY(2px);
 				box-shadow: none !important;
 			}
+			.flag-svg{
+				width: 36px;
+				height: 22px;
+				display: inline-block;
+				vertical-align: middle;
+				border: 1px solid #aaa;
+				border-radius: 2px;
+			}
 		</style>
 	</head>
 	<body id="body">
@@ -102,6 +110,54 @@
 			document.documentElement.style.setProperty('--unit', UNIT + 'px');
 			document.documentElement.style.setProperty('--side', SIDE + 'px');
 			document.documentElement.style.setProperty('--border-color', BORDER_COLOR);
+
+			const FLAGS_SVG = [
+				'<svg class="flag-svg" viewBox="0 0 60 30"><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#c60b1e"/><rect width="3" height="1" y="0.5" fill="#ffc400"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 5 3"><rect width="5" height="3"/><rect width="5" height="2" y="1" fill="#000"/><rect width="5" height="1" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 600 400"><rect width="240" height="400" fill="#006600"/><rect x="240" width="360" height="400" fill="#ff0000"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002b7f"/><rect width="1" height="2" x="1" fill="#fcd116"/><rect width="1" height="2" x="2" fill="#ce1126"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 27 18"><rect width="27" height="18" fill="#005bae"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#005bae"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#800000"/><text x="1.5" y="1.15" font-family="serif" font-weight="bold" font-size="0.4" fill="#FFD700" text-anchor="middle">SPQR</text></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#de2110"/><path d="M.5 1.1l.3-.9.3.9-1-.6h1z" fill="#ffde00" transform="matrix(.4 0 0 .4 .1 .1)"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>'
+			];
+			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
+			const TRANSLATIONS = {
+				en: { shuffle: "Shuffle", solve: "Solve", wait: "Wait...", solved: "Solved in ", moves: " moves!", tooComplex: "Too complex..." },
+				it: { shuffle: "Mescola", solve: "Risolvi", wait: "Aspetta...", solved: "Risolto in ", moves: " mosse!", tooComplex: "Troppo complesso..." },
+				fr: { shuffle: "Mélanger", solve: "Résoudre", wait: "Patientez...", solved: "Résolu en ", moves: " coups!", tooComplex: "Trop complexe..." },
+				es: { shuffle: "Mezclar", solve: "Resolver", wait: "Espera...", solved: "Resuelto en ", moves: " movimientos!", tooComplex: "Demasiado complejo..." },
+				de: { shuffle: "Mischen", solve: "Lösen", wait: "Warte...", solved: "Gelöst in ", moves: " Zügen!", tooComplex: "Zu komplex..." },
+				pt: { shuffle: "Embaralhar", solve: "Resolver", wait: "Aguarde...", solved: "Resolvido em ", moves: " movimentos!", tooComplex: "Complexo demais..." },
+				ro: { shuffle: "Amestecă", solve: "Rezolvă", wait: "Așteaptă...", solved: "Rezolvat în ", moves: " mutări!", tooComplex: "Prea complex..." },
+				uk: { shuffle: "Перемішати", solve: "Вирішити", wait: "Зачекайте...", solved: "Вирішено за ", moves: " ходів!", tooComplex: "Занадто складно..." },
+				el: { shuffle: "Ανακάτεμα", solve: "Επίλυση", wait: "Περιμένετε...", solved: "Λύθηκε σε ", moves: " κινήσεις!", tooComplex: "Πολύ πολύπλοκο..." },
+				la: { shuffle: "Misce", solve: "Solve", wait: "Expecta...", solved: "Solutum in ", moves: " motibus!", tooComplex: "Nimis complexum..." },
+				zh: { shuffle: "打乱", solve: "求解", wait: "请稍候...", solved: "用 ", moves: " 步解决！", tooComplex: "太复杂了..." },
+				ja: { shuffle: "シャッフル", solve: "解く", wait: "お待ちください...", solved: "", moves: " 手で解けた！", tooComplex: "複雑すぎます..." }
+			};
+			let currentLangIndex = 0;
+
+			function t(key){
+				return TRANSLATIONS[LANG_KEYS[currentLangIndex]][key];
+			}
+
+			function nextLanguage(){
+				currentLangIndex = (currentLangIndex + 1) % LANG_KEYS.length;
+				const flagBtn = document.getElementById("langBtn");
+				if(flagBtn){
+					flagBtn.innerHTML = FLAGS_SVG[currentLangIndex];
+				}
+				document.getElementById("shuffleBtn").innerHTML = t("shuffle");
+				const solveBtn = document.getElementById("solveBtn");
+				if(!solveBtn.disabled){
+					solveBtn.innerHTML = t("solve");
+				}
+			}
 
 			drawBoard();
 
@@ -156,8 +212,9 @@
 				container.style.width = boardWidth + "px";
 				container.style.gap = UNIT + "px";
 				const btnData = [
-					{id: "shuffleBtn", txt: "Shuffle", click: "shuffleTiles()"},
-					{id: "solveBtn", txt: "Solve", click: "solve()"}
+					{id: "shuffleBtn", txt: t("shuffle"), click: "shuffleTiles()"},
+					{id: "langBtn", txt: FLAGS_SVG[currentLangIndex], click: "nextLanguage()"},
+					{id: "solveBtn", txt: t("solve"), click: "solve()"}
 				];
 				btnData.forEach(b => {
 					let btn = document.createElement("button");
@@ -214,7 +271,7 @@
 					if(begun && checkWin()){
 						gameFinished = true;
 						document.body.style.background = WINNING_COLOR;
-						setTimeout(() => alert("Solved in " + counterMoves + " moves!"), 100);
+						setTimeout(() => alert(t("solved") + counterMoves + t("moves")), 100);
 					}
 				}
 			}
@@ -265,7 +322,7 @@
 					return;
 				}
 				const btn = document.getElementById("solveBtn");
-				btn.innerHTML = "Wait...";
+				btn.innerHTML = t("wait");
 				btn.disabled = true;
 				isSolving = true;
 				let state = [];
@@ -278,7 +335,7 @@
 					if(path){
 						animate(path);
 					}else{
-						alert("Too complex...");
+						alert(t("tooComplex"));
 						resetUI();
 					}
 				}, 50);
@@ -354,7 +411,7 @@
 						gameFinished = true;
 						document.body.style.background = WINNING_COLOR;
 						resetUI();
-						setTimeout(() => alert("Solved in " + counterMoves + " moves!"), 50);
+						setTimeout(() => alert(t("solved") + counterMoves + t("moves")), 50);
 						return;
 					}
 					let zIdx = r1*4 + c1, tIdx = zIdx + (moves[i] === "U" ? -4 : moves[i] === "D" ? 4 : moves[i] === "L" ? -1 : 1);
@@ -368,7 +425,7 @@
 
 			function resetUI(){
 				isSolving = false;
-				document.getElementById("solveBtn").innerHTML = "Solve";
+				document.getElementById("solveBtn").innerHTML = t("solve");
 				document.getElementById("solveBtn").disabled = false;
 			}
 		</script>

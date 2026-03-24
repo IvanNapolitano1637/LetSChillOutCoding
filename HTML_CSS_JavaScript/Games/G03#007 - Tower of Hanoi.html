@@ -94,6 +94,14 @@
 				background-color: var(--button-hover);
 				transform: translateY(-2px);
 			}
+			.flag-svg{
+				width: 32px;
+				height: 20px;
+				display: inline-block;
+				vertical-align: middle;
+				border: 1px solid rgba(255,255,255,0.5);
+				border-radius: 2px;
+			}
 			@media screen and (max-width: 600px){
 				.controls{
 					width: 90%;
@@ -104,14 +112,74 @@
 	<body>
 		<div class="top-bar">
 			<select id="disksNumber" onchange="changeDiskCount()"></select>
-			<div class="stats">Moves: <span id="moveCounter">0</span></div>
+			<div class="stats"><span id="movesLabel">Moves:</span> <span id="moveCounter">0</span></div>
 		</div>
 		<canvas id="universe"></canvas>
 		<div class="controls">
-			<button type="button" onclick="resetGame()">Restart</button>
-			<button type="button" onclick="animatedSolving()">How To (Demo)</button>
+			<button type="button" id="restartBtn" onclick="resetGame()">⟳</button>
+			<button type="button" id="demoBtn" onclick="animatedSolving()">Solve</button>
+			<button type="button" id="langBtn" onclick="nextLanguage()"></button>
 		</div>
 		<script>
+			const FLAGS_SVG = [
+				'<svg class="flag-svg" viewBox="0 0 60 30"><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#c60b1e"/><rect width="3" height="1" y="0.5" fill="#ffc400"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 5 3"><rect width="5" height="3"/><rect width="5" height="2" y="1" fill="#000"/><rect width="5" height="1" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 600 400"><rect width="240" height="400" fill="#006600"/><rect x="240" width="360" height="400" fill="#ff0000"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002b7f"/><rect width="1" height="2" x="1" fill="#fcd116"/><rect width="1" height="2" x="2" fill="#ce1126"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 27 18"><rect width="27" height="18" fill="#005bae"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#005bae"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#800000"/><text x="1.5" y="1.15" font-family="serif" font-weight="bold" font-size="0.4" fill="#FFD700" text-anchor="middle">SPQR</text></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#de2110"/><path d="M.5 1.1l.3-.9.3.9-1-.6h1z" fill="#ffde00" transform="matrix(.4 0 0 .4 .1 .1)"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>'
+			];
+			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
+			const TRANSLATIONS = {
+				en: { restart:"Restart", demo:"Solve", level:"Level", moves:"Moves", win:"Wonderful! :-D You win in ", move:"move", moves_pl:"moves" },
+				it: { restart:"Ricomincia", demo:"Risolvi", level:"Livello", moves:"Mosse", win:"Fantastico! :-D Hai vinto in ", move:"mossa", moves_pl:"mosse" },
+				fr: { restart:"Recommencer", demo:"Résoudre", level:"Niveau", moves:"Coups", win:"Magnifique ! :-D Tu gagnes en ", move:"coup", moves_pl:"coups" },
+				es: { restart:"Reiniciar", demo:"Resolver", level:"Nivel", moves:"Movimientos", win:"¡Maravilloso! :-D Ganaste en ", move:"movimiento", moves_pl:"movimientos" },
+				de: { restart:"Neustart", demo:"Lösen", level:"Stufe", moves:"Züge", win:"Wunderbar! :-D Du gewinnst in ", move:"Zug", moves_pl:"Zügen" },
+				pt: { restart:"Reiniciar", demo:"Resolver", level:"Nível", moves:"Movimentos", win:"Maravilhoso! :-D Você venceu em ", move:"movimento", moves_pl:"movimentos" },
+				ro: { restart:"Repornire", demo:"Rezolvă", level:"Nivel", moves:"Mutări", win:"Minunat! :-D Ai câștigat în ", move:"mutare", moves_pl:"mutări" },
+				uk: { restart:"Перезапуск", demo:"Вирішити", level:"Рівень", moves:"Ходи", win:"Чудово! :-D Ви виграли за ", move:"хід", moves_pl:"ходів" },
+				el: { restart:"Επανεκκίνηση", demo:"Επίλυση", level:"Επίπεδο", moves:"Κινήσεις", win:"Υπέροχα! :-D Κερδίσατε σε ", move:"κίνηση", moves_pl:"κινήσεις" },
+				la: { restart:"Restitue", demo:"Solve", level:"Gradus", moves:"Motus", win:"Mirabile! :-D Vicisti in ", move:"motu", moves_pl:"motibus" },
+				zh: { restart:"重新开始", demo:"求解", level:"等级", moves:"步数", win:"太棒了！:-D 你用 ", move:"步", moves_pl:"步" },
+				ja: { restart:"リスタート", demo:"解く", level:"レベル", moves:"手数", win:"素晴らしい！:-D ", move:"手で勝利！", moves_pl:"手で勝利！" }
+			};
+			let currentLangIndex = 0;
+
+			function tr(key){
+				return TRANSLATIONS[LANG_KEYS[currentLangIndex]][key];
+			}
+
+			function nextLanguage(){
+				currentLangIndex = (currentLangIndex + 1)%LANG_KEYS.length;
+				applyTranslation();
+			}
+
+			function applyTranslation(){
+				document.getElementById("langBtn").innerHTML = FLAGS_SVG[currentLangIndex];
+				document.getElementById("restartBtn").textContent = "⟳";
+				document.getElementById("demoBtn").textContent = tr("demo");
+				document.getElementById("movesLabel").textContent = tr("moves") + ":";
+				const select = document.getElementById("disksNumber");
+				const current = select.value;
+				select.innerHTML = "";
+				for(let i = 1; i <= 10; i++){
+					let opt = document.createElement("option");
+					opt.value = i;
+					opt.text = tr("level") + " " + i;
+					if(String(i) === String(current)){
+						opt.selected = true;
+					}
+					select.add(opt);
+				}
+			}
+
 			const AUDIO_CTX = new (window.AudioContext || window.webkitAudioContext)();
 
 			function playTone(freq, type, duration){
@@ -151,7 +219,10 @@
 			let cursorX = 0;
 			let totalHeight, pegHeight;
 
-			window.onload = initGame;
+			window.onload = function(){
+				applyTranslation();
+				initGame();
+			};
 
 			function initGame(){
 				universe = document.getElementById("universe");
@@ -198,7 +269,7 @@
 					for(let i = 1; i <= 10; i++){
 						let opt = document.createElement("option");
 						opt.value = i;
-						opt.text = "Level " + i;
+						opt.text = tr("level") + " " + i;
 						if(i === numberOfDisks){
 							opt.selected = true;
 						}
@@ -322,7 +393,7 @@
 					document.body.style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
 					playTone(800, 'sine', 0.4);
 					if(!demo){
-						setTimeout(() => alert("Wonderful! :-D You win in " + moves + " move" + (moves > 1 ? "s" : "") + "! :-D"), 200);
+						setTimeout(() => alert(tr("win") + moves + " " + (moves === 1 ? tr("move") : tr("moves_pl")) + "! :-D"), 200);
 					}
 				}
 			}
