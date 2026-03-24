@@ -68,7 +68,11 @@ public class HTML_Pages_Unifier{
 			}
 			htmlMenuBuilder.append("</div></div>");
 		}
-		generateFinalHtml(htmlMenuBuilder.toString(), jsDataBuilder.toString());
+		String jsContent = jsDataBuilder.toString();
+		if (jsContent.endsWith(",\n")) {
+			jsContent = jsContent.substring(0, jsContent.length() - 2);
+		}
+		generateFinalHtml(htmlMenuBuilder.toString(), jsContent);
 	}
 
 	private static String replaceReloadCalls(String content){
@@ -447,7 +451,8 @@ public class HTML_Pages_Unifier{
 """;
 		String finalHtml = template
 				.replace("{{MENU_CONTENT}}", menuHtml)
-				.replace("{{JS_CONTENT}}", jsObjectContent);
+				.replace("{{JS_CONTENT}}", jsObjectContent)
+				.stripTrailing();
 		try{
 			Files.writeString(Paths.get("index.html"), finalHtml);
 		}catch(IOException e){
