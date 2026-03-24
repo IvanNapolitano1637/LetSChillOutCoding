@@ -13351,6 +13351,26 @@
 			closePage();
 		}
 	};
+
+	document.addEventListener('keydown', function(e){
+		if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA'){
+			return;
+		}
+		switch(e.key.toLowerCase()){
+			case 'c':
+				toggleSection("grid-clocks");
+				break;
+			case 'g':
+				toggleSection("grid-games");
+				break;
+			case 't':
+				toggleSection("grid-tools");
+				break;
+			case 'escape':
+				closePage();
+				break;
+		}
+	});
 </script>
 </body>
 </html>

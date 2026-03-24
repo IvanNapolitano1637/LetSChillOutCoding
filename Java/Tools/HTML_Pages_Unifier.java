@@ -11,6 +11,7 @@ import java.util.*;
 //Unica differenza tra le pagine originali e quelle contenute nel file creato qui è una sezione con un pulsante per tornare all'indice di tutte le pagine.
 //Nuova modifica fatta mercoledì diciotto marzo duemilaventisei.
 //Nuova modifica fatta lunedì ventitré marzo duemilaventisei. Padding.
+//Nuova modifica fatta martedì ventiquattro marzo duemilaventisei. "document.addEventListener('keydown'..."
 //Ora le pagine stanno in sezioni che di default sono chiuse.
 //Il numero di pagine cresce sempre più e stanno per arrivarne diverse altre.
 //Da mettere nella cartella in cui ci sono: "Clocks", "Games" e "Tools".
@@ -420,6 +421,26 @@ public class HTML_Pages_Unifier{
 			closePage();
 		}
 	};
+
+	document.addEventListener('keydown', function(e){
+		if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA'){
+			return;
+		}
+		switch(e.key.toLowerCase()){
+			case 'c':
+				toggleSection("grid-clocks");
+				break;
+			case 'g':
+				toggleSection("grid-games");
+				break;
+			case 't':
+				toggleSection("grid-tools");
+				break;
+			case 'escape':
+				closePage();
+				break;
+		}
+	});
 </script>
 </body>
 </html>
