@@ -6121,11 +6121,10 @@
 
 	// --- Backgammon ---
 	'Games_Backgammon.html': { name: `Backgammon`, content: `<!DOCTYPE html>
-<html lang="en"><!--G09#019 - Samuele - Backgammon-->
-	<head>
+<html lang="en"><head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-		<title>Backgammon</title>
+		<title>Backgammon Elite</title>
 	<style>
 		:root{
 			--wood: #3e2723;
@@ -6193,11 +6192,32 @@
 		.score-container{
 			width: 100%;
 			display: flex;
-			justify-content: space-around;
+			justify-content: space-between;
+			align-items: center;
 			margin-top: 5px;
-			font-size: 0.9em;
 			border-top: 1px solid #444;
 			padding-top: 10px;
+		}
+		.btn-lang{
+			background: #444;
+			border: 1px solid #666;
+			padding: 5px;
+			border-radius: 6px;
+			cursor: pointer;
+			transition: 0.3s;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 50px;
+			height: 35px;
+		}
+		.btn-lang:hover{
+			background: #555;
+		}
+		.flag-svg{
+			width: 32px;
+			height: 22px;
+			pointer-events: none;
 		}
 		@media (min-width: 850px){
 			#game-container{
@@ -6226,7 +6246,7 @@
 			.score-container{
 				flex-direction: column;
 				align-items: center;
-				gap: 10px;
+				gap: 15px;
 				margin-top: auto;
 				border-top: none;
 			}
@@ -6241,13 +6261,71 @@
 				<div id="dice-ui" style="font-size:3em; margin-bottom:10px">🎲</div>
 				<button id="roll-btn" class="btn">ROLL THE DICE</button>
 				<button id="undo-btn" class="btn btn-undo" disabled>UNDO</button>
-				<div style="margin-top:20px; text-align:center">
-					⚪ YOU: <span id="w-off">0</span>/15<br/>
-					⚫ AI: <span id="b-off">0</span>/15
+				
+				<div class="score-container">
+					<div id="score-text" style="text-align:left; font-size: 0.9em;">
+						⚪ <span id="txt-you">YOU</span>: <span id="w-off">0</span>/15<br/>
+						⚫ <span id="txt-ai">AI</span>: <span id="b-off">0</span>/15
+					</div>
+					<button class="btn-lang" id="btnLang" onclick="nextLang()"></button>
 				</div>
 			</div>
 		</div>
+
 		<script>
+			const FLAGS_SVG = [
+				'<svg class="flag-svg" viewBox="0 0 60 30"><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#c60b1e"/><rect width="3" height="1" y="0.5" fill="#ffc400"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 5 3"><rect width="5" height="3"/><rect width="5" height="2" y="1" fill="#000"/><rect width="5" height="1" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 600 400"><rect width="240" height="400" fill="#006600"/><rect x="240" width="360" height="400" fill="#ff0000"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002b7f"/><rect width="1" height="2" x="1" fill="#fcd116"/><rect width="1" height="2" x="2" fill="#ce1126"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 27 18"><rect width="27" height="18" fill="#005bae"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#005bae"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#800000"/><text x="1.5" y="1.15" font-family="serif" font-weight="bold" font-size="0.4" fill="#FFD700" text-anchor="middle">SPQR</text></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#de2110"/><path d="M.5 1.1l.3-.9.3.9-1-.6h1z" fill="#ffde00" transform="matrix(.4 0 0 .4 .1 .1)"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>'
+			];
+			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
+			const TRANSLATIONS = {
+				en: { roll: "ROLL THE DICE", undo: "UNDO", you: "YOU", ai: "AI", start: "Roll the dice to play", move: "You to move!", aiMove: "AI is playing..." },
+				it: { roll: "TIRA I DADI", undo: "ANNULLA", you: "TU", ai: "CPU", start: "Tira i dadi per giocare", move: "Tocca a te!", aiMove: "La CPU sta giocando..." },
+				fr: { roll: "LANCER DÉS", undo: "ANNULER", you: "VOUS", ai: "IA", start: "Lancez les dés", move: "À vous de jouer !", aiMove: "L'IA joue..." },
+				es: { roll: "TIRAR DADOS", undo: "DESHACER", you: "TÚ", ai: "IA", start: "Tira los dados", move: "¡Tu turno!", aiMove: "IA jugando..." },
+				de: { roll: "WÜRFELN", undo: "ZURÜCK", you: "DU", ai: "KI", start: "Würfeln zum Starten", move: "Du bist dran!", aiMove: "KI spielt..." },
+				pt: { roll: "LANÇAR DADOS", undo: "DESFAZER", you: "VOCÊ", ai: "IA", start: "Lance os dados", move: "Sua vez!", aiMove: "IA jogando..." },
+				ro: { roll: "DAȚI CUBURILE", undo: "ANULARE", you: "TU", ai: "IA", start: "Aruncă zarurile", move: "Rândul tău!", aiMove: "IA gândește..." },
+				uk: { roll: "КИНУТИ КУБИКИ", undo: "НАЗАД", you: "ВИ", ai: "AI", start: "Киньте кубики", move: "Ваш хід!", aiMove: "AI грає..." },
+				el: { roll: "ΡΙΞΕ ΖΑΡΙΑ", undo: "ΑΝΑΙΡΕΣΗ", you: "ΕΣΥ", ai: "AI", start: "Ρίξτε τα ζάρια", move: "Σειρά σας!", aiMove: "Η AI παίζει..." },
+				la: { roll: "ALEAM IACERE", undo: "REVERTERE", you: "TU", ai: "AI", start: "Iace aleam", move: "Tua pars!", aiMove: "AI ludit..." },
+				zh: { roll: "掷骰子", undo: "撤销", you: "你", ai: "人工智能", start: "掷骰子开始", move: "轮到你了！", aiMove: "AI正在行动..." },
+				ja: { roll: "サイコロを振る", undo: "戻す", you: "あなた", ai: "AI", start: "サイコロを振ってください", move: "あなたの番です！", aiMove: "AIが考えています..." }
+			};
+			let currentLangIndex = 0;
+
+			function updateUI() {
+				const lang = TRANSLATIONS[LANG_KEYS[currentLangIndex]];
+				document.getElementById('roll-btn').innerText = lang.roll;
+				document.getElementById('undo-btn').innerText = lang.undo;
+				document.getElementById('txt-you').innerText = lang.you;
+				document.getElementById('txt-ai').innerText = lang.ai;
+				document.getElementById('btnLang').innerHTML = FLAGS_SVG[currentLangIndex];
+				const status = document.getElementById('status');
+				if(game.moves.length === 0){
+					status.innerText = lang.start;
+				}else if(game.turn === 1){
+					status.innerText = lang.move;
+				}else{
+					status.innerText = lang.aiMove;
+				}
+			}
+
+			function nextLang() {
+				currentLangIndex = (currentLangIndex + 1)%LANG_KEYS.length;
+				updateUI();
+			}
+
 			const CANVAS = document.getElementById('board');
 			const CTX = CANVAS.getContext('2d');
 			const ROLL_BTN = document.getElementById('roll-btn');
@@ -6317,11 +6395,9 @@
 				game.dice = [Math.floor(Math.random()*6) + 1, Math.floor(Math.random()*6) + 1];
 				game.moves = (game.dice[0] === game.dice[1]) ? [game.dice[0], game.dice[0], game.dice[0], game.dice[0]] : [...game.dice];
 				document.getElementById('dice-ui').innerText = game.dice.join(" ");
+				updateUI();
 				if(game.turn === -1){
-					document.getElementById('status').innerText = "AI is playing...";
 					setTimeout(aiPlay, 1000);
-				}else{
-					document.getElementById('status').innerText = "You to move!";
 				}
 				draw();
 			}
@@ -6428,16 +6504,17 @@
 					}else{
 						game.moves = [];
 						game.turn = 1;
-						document.getElementById('status').innerText = "You to move!";
+						updateUI();
 						draw();
 					}
 				}else{
 					game.turn = 1;
-					document.getElementById('status').innerText = "You to move!";
+					updateUI();
 					draw();
 				}
 			}
 
+			updateUI();
 			draw();
 		<\/script>
 	</body>
