@@ -115,8 +115,12 @@
 			#langToggle{
 				background: var(--accent);
 				color: #000;
-				font-size: 0.9rem;
+				font-size: 0.75rem;
 				font-family: 'Space Mono', monospace;
+				width: auto;
+				min-width: 50px;
+				padding: 0 10px;
+				border-radius: 25px;
 			}
 			.filter-section{
 				max-width: 1200px;
@@ -237,7 +241,7 @@
 	</head>
 	<body>
 		<div class="controls">
-			<button class="fab" id="langToggle" title="Switch Language">IT</button>
+			<button class="fab" id="langToggle" title="Switch Language">EN</button>
 			<button class="fab" id="themeToggle" title="Toggle Light/Dark Mode">☀️</button>
 		</div>
 		<header>
@@ -257,16 +261,16 @@
 		<div class="container" id="container"></div>
 		<script>
 			const CONTINENT_LABELS = {
-				'Africa':     { en: 'Africa',              it: 'Africa' },
-				'America':    { en: 'Americas',            it: 'Americhe' },
-				'Antarctica': { en: 'Antarctica',          it: 'Antartide' },
-				'Arctic':     { en: 'Arctic',              it: 'Artide' },
-				'Asia':       { en: 'Asia',                it: 'Asia' },
-				'Atlantic':   { en: 'Atlantic',            it: 'Atlantico' },
-				'Australia':  { en: 'Australia / Oceania', it: 'Australia / Oceania' },
-				'Europe':     { en: 'Europe',              it: 'Europa' },
-				'Indian':     { en: 'Indian Ocean',        it: 'Oceano Indiano' },
-				'Pacific':    { en: 'Pacific',             it: 'Pacifico' }
+				'Africa':     { en:'Africa',              it:'Africa',           fr:'Afrique',          es:'África',          de:'Afrika',          pt:'África',          ro:'Africa',         uk:'Африка',      el:'Αφρική',      la:'Africa',         zh:'非洲',       ja:'アフリカ' },
+				'America':    { en:'Americas',            it:'Americhe',         fr:'Amériques',        es:'Américas',        de:'Amerika',         pt:'Américas',        ro:'Americi',        uk:'Америка',     el:'Αμερική',     la:'America',        zh:'美洲',       ja:'南北アメリカ' },
+				'Antarctica': { en:'Antarctica',          it:'Antartide',        fr:'Antarctique',      es:'Antártida',       de:'Antarktis',       pt:'Antártida',       ro:'Antarctica',     uk:'Антарктида',  el:'Ανταρκτική',  la:'Antarctica',     zh:'南极洲',     ja:'南極' },
+				'Arctic':     { en:'Arctic',              it:'Artide',           fr:'Arctique',         es:'Ártico',          de:'Arktis',          pt:'Ártico',          ro:'Arctic',         uk:'Арктика',     el:'Αρκτική',     la:'Arctos',         zh:'北极',       ja:'北極' },
+				'Asia':       { en:'Asia',                it:'Asia',             fr:'Asie',             es:'Asia',            de:'Asien',           pt:'Ásia',            ro:'Asia',           uk:'Азія',        el:'Ασία',        la:'Asia',           zh:'亚洲',       ja:'アジア' },
+				'Atlantic':   { en:'Atlantic',            it:'Atlantico',        fr:'Atlantique',       es:'Atlántico',       de:'Atlantik',        pt:'Atlântico',       ro:'Atlantic',       uk:'Атлантика',   el:'Ατλαντικός',  la:'Oceanus Atlanticus', zh:'大西洋', ja:'大西洋' },
+				'Australia':  { en:'Australia / Oceania', it:'Australia / Oceania', fr:'Australie / Océanie', es:'Australia / Oceanía', de:'Australien / Ozeanien', pt:'Austrália / Oceânia', ro:'Australia / Oceania', uk:'Австралія / Океанія', el:'Αυστραλία / Ωκεανία', la:'Australia / Oceania', zh:'澳洲/大洋洲', ja:'オーストラリア/オセアニア' },
+				'Europe':     { en:'Europe',              it:'Europa',           fr:'Europe',           es:'Europa',          de:'Europa',          pt:'Europa',          ro:'Europa',         uk:'Європа',      el:'Ευρώπη',      la:'Europa',         zh:'欧洲',       ja:'ヨーロッパ' },
+				'Indian':     { en:'Indian Ocean',        it:'Oceano Indiano',   fr:'Océan Indien',     es:'Océano Índico',   de:'Indischer Ozean', pt:'Oceano Índico',   ro:'Oceanul Indian', uk:'Індійський океан', el:'Ινδικός Ωκεανός', la:'Oceanus Indicus', zh:'印度洋', ja:'インド洋' },
+				'Pacific':    { en:'Pacific',             it:'Pacifico',         fr:'Pacifique',        es:'Pacífico',        de:'Pazifik',         pt:'Pacífico',        ro:'Pacific',        uk:'Тихий океан', el:'Ειρηνικός',   la:'Oceanus Pacificus', zh:'太平洋', ja:'太平洋' }
 			};
 			const CITY_TO_CODE = {
 				'Abidjan':'CI','Accra':'GH','Addis_Ababa':'ET','Algiers':'DZ','Asmara':'ER','Bamako':'ML',
@@ -363,7 +367,8 @@
 					all: "All",
 					anyTime: "Any",
 					found: "time zones found",
-					foundSingle: "time zone found"
+					foundSingle: "time zone found",
+					label: "EN"
 				},
 				it: {
 					title: "🌍 Fusi Orari Mondiali",
@@ -374,9 +379,131 @@
 					all: "Tutti",
 					anyTime: "Tutti",
 					found: "fusi orari trovati",
-					foundSingle: "fuso orario trovato"
+					foundSingle: "fuso orario trovato",
+					label: "IT"
+				},
+				fr: {
+					title: "🌍 Fuseaux Horaires Mondiaux",
+					subtitle: "Horloges en temps réel par lieu et heure",
+					placeholder: "Rechercher une ville ou un pays...",
+					filterContinent: "Filtrer par Continent",
+					filterHour: "Filtrer par Heure Actuelle",
+					all: "Tous",
+					anyTime: "Tous",
+					found: "fuseaux horaires trouvés",
+					foundSingle: "fuseau horaire trouvé",
+					label: "FR"
+				},
+				es: {
+					title: "🌍 Zonas Horarias Mundiales",
+					subtitle: "Relojes en tiempo real por ubicación y hora",
+					placeholder: "Buscar ciudad o país...",
+					filterContinent: "Filtrar por Continente",
+					filterHour: "Filtrar por Hora Actual",
+					all: "Todos",
+					anyTime: "Todos",
+					found: "zonas horarias encontradas",
+					foundSingle: "zona horaria encontrada",
+					label: "ES"
+				},
+				de: {
+					title: "🌍 Weltzeitzonen",
+					subtitle: "Echtzeit-Uhren nach Ort und Stunde",
+					placeholder: "Stadt oder Land suchen...",
+					filterContinent: "Nach Kontinent filtern",
+					filterHour: "Nach aktueller Stunde filtern",
+					all: "Alle",
+					anyTime: "Alle",
+					found: "Zeitzonen gefunden",
+					foundSingle: "Zeitzone gefunden",
+					label: "DE"
+				},
+				pt: {
+					title: "🌍 Fusos Horários Mundiais",
+					subtitle: "Relógios em tempo real por localização e hora",
+					placeholder: "Pesquisar cidade ou país...",
+					filterContinent: "Filtrar por Continente",
+					filterHour: "Filtrar por Hora Atual",
+					all: "Todos",
+					anyTime: "Todos",
+					found: "fusos horários encontrados",
+					foundSingle: "fuso horário encontrado",
+					label: "PT"
+				},
+				ro: {
+					title: "🌍 Zone Orare Mondiale",
+					subtitle: "Ceasuri în timp real după locație și oră",
+					placeholder: "Caută oraș sau țară...",
+					filterContinent: "Filtrează după Continent",
+					filterHour: "Filtrează după Ora Curentă",
+					all: "Toate",
+					anyTime: "Toate",
+					found: "zone orare găsite",
+					foundSingle: "zonă orară găsită",
+					label: "RO"
+				},
+				uk: {
+					title: "🌍 Світові Часові Пояси",
+					subtitle: "Годинники в реальному часі за місцем і годиною",
+					placeholder: "Пошук міста або країни...",
+					filterContinent: "Фільтр за Континентом",
+					filterHour: "Фільтр за Поточною Годиною",
+					all: "Усі",
+					anyTime: "Усі",
+					found: "часових поясів знайдено",
+					foundSingle: "часовий пояс знайдено",
+					label: "УК"
+				},
+				el: {
+					title: "🌍 Παγκόσμιες Ζώνες Ώρας",
+					subtitle: "Ρολόγια σε πραγματικό χρόνο ανά τοποθεσία και ώρα",
+					placeholder: "Αναζήτηση πόλης ή χώρας...",
+					filterContinent: "Φίλτρο ανά Ήπειρο",
+					filterHour: "Φίλτρο ανά Τρέχουσα Ώρα",
+					all: "Όλα",
+					anyTime: "Όλα",
+					found: "ζώνες ώρας βρέθηκαν",
+					foundSingle: "ζώνη ώρας βρέθηκε",
+					label: "ΕΛ"
+				},
+				la: {
+					title: "🌍 Zonae Temporis Mundi",
+					subtitle: "Horologia in tempore reali per locum et horam",
+					placeholder: "Quaere urbem vel nationem...",
+					filterContinent: "Filtra per Continentem",
+					filterHour: "Filtra per Horam Praesentem",
+					all: "Omnes",
+					anyTime: "Omnes",
+					found: "zonae temporis inventae",
+					foundSingle: "zona temporis inventa",
+					label: "LA"
+				},
+				zh: {
+					title: "🌍 世界时区",
+					subtitle: "按地点和小时实时显示时钟",
+					placeholder: "搜索城市或国家...",
+					filterContinent: "按洲筛选",
+					filterHour: "按当前小时筛选",
+					all: "全部",
+					anyTime: "全部",
+					found: "个时区已找到",
+					foundSingle: "个时区已找到",
+					label: "中文"
+				},
+				ja: {
+					title: "🌍 世界のタイムゾーン",
+					subtitle: "場所と時刻によるリアルタイム時計",
+					placeholder: "都市または国を検索...",
+					filterContinent: "大陸でフィルター",
+					filterHour: "現在時刻でフィルター",
+					all: "すべて",
+					anyTime: "すべて",
+					found: "タイムゾーンが見つかりました",
+					foundSingle: "タイムゾーンが見つかりました",
+					label: "日本語"
 				}
 			};
+			const LANG_ORDER = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
 			let currentLang = 'en';
 			const TIME_ZONES = Intl.supportedValuesOf('timeZone');
 			const CONTAINER = document.getElementById('container');
@@ -392,9 +519,18 @@
 			const DISPLAY_NAMES = {};
 
 			function getDisplayNames(lang){
-				const locale = lang === 'it' ? 'it-IT' : 'en-US';
+				const localeMap = {
+					en:'en-US', it:'it-IT', fr:'fr-FR', es:'es-ES', de:'de-DE',
+					pt:'pt-PT', ro:'ro-RO', uk:'uk-UA', el:'el-GR', la:'la',
+					zh:'zh-CN', ja:'ja-JP'
+				};
+				const locale = localeMap[lang] || 'en-US';
 				if(!DISPLAY_NAMES[lang]){
-					DISPLAY_NAMES[lang] = new Intl.DisplayNames([locale], {type: 'region'});
+					try{
+						DISPLAY_NAMES[lang] = new Intl.DisplayNames([locale], {type: 'region'});
+					}catch(e){
+						DISPLAY_NAMES[lang] = new Intl.DisplayNames(['en-US'], {type: 'region'});
+					}
 				}
 				return DISPLAY_NAMES[lang];
 			}
@@ -425,8 +561,9 @@
 			});
 
 			LANG_TOGGLE.addEventListener('click', () => {
-				currentLang = currentLang === 'en' ? 'it' : 'en';
-				LANG_TOGGLE.textContent = currentLang === 'en' ? 'IT' : 'EN';
+				const idx = LANG_ORDER.indexOf(currentLang);
+				currentLang = LANG_ORDER[(idx + 1) % LANG_ORDER.length];
+				LANG_TOGGLE.textContent = TRANSLATIONS[currentLang].label;
 				updateLanguage();
 			});
 
@@ -546,7 +683,12 @@
 
 			function updateTimes(){
 				const now = new Date();
-				const locale = currentLang === 'en' ? 'en-GB' : 'it-IT';
+				const localeMap = {
+					en:'en-GB', it:'it-IT', fr:'fr-FR', es:'es-ES', de:'de-DE',
+					pt:'pt-PT', ro:'ro-RO', uk:'uk-UA', el:'el-GR', la:'en-GB',
+					zh:'zh-CN', ja:'ja-JP'
+				};
+				const locale = localeMap[currentLang] || 'en-GB';
 				let hourFilterChanged = false;
 				TIME_ZONES.forEach(zone => {
 					const id = zone.replaceAll('/', '_');
