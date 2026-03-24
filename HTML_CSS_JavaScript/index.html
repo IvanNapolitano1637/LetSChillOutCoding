@@ -5839,54 +5839,298 @@
 				font-weight: bold;
 				font-size: 1em;
 				transition: 0.3s;
+				flex: 1;
 			}
 			.btn-start{
 				background: var(--accent);
-				width: 100%;
 			}
 			.btn-reset{
 				background: var(--danger);
+			}
+			.btn-lang{
+				background: #444;
+				border: 1px solid #666;
+				padding: 15px 18px;
+				border-radius: 8px;
+				cursor: pointer;
+				transition: 0.3s;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				min-width: 70px;
+			}
+			.btn-lang:hover{
+				background: #555;
+			}
+			.btn-lang .flag-svg{
+				width: 32px;
+				height: 22px;
+				display: block;
+				pointer-events: none;
+			}
+			.button-row{
+				display: flex; 
+				gap: 10px; 
+				width: 100%;
 				margin-top: 20px;
 			}
 		</style>
 	</head>
 	<body>
 		<div id="setup-menu">
-			<h1 style="margin-top:0">Checkers Elite</h1>
-			<p style="color: #aaa">Select a Rule Set</p>
-			<div class="variant-grid">
-				<label><input type="radio" name="v" value="int" checked>International <span>(10x10)</span></label>
-				<label><input type="radio" name="v" value="it">Italian <span>(8x8)</span></label>
-				<label><input type="radio" name="v" value="en">English/USA <span>(8x8)</span></label>
-				<label><input type="radio" name="v" value="br">Brazilian <span>(8x8)</span></label>
-				<label><input type="radio" name="v" value="ru">Russian <span>(8x8)</span></label>
-				<label><input type="radio" name="v" value="es">Spanish <span>(8x8)</span></label>
-				<label><input type="radio" name="v" value="pool">Pool <span>(8x8)</span></label>
-				<label><input type="radio" name="v" value="ca">Canadian <span>(12x12)</span></label>
-				<label><input type="radio" name="v" value="tu">Turkish <span>(8x8)</span></label>
+			<h1 style="margin-top:0" id="titleText">Checkers Elite</h1>
+			<p style="color: #aaa" id="subtitleText">Select a Rule Set</p>
+			<div class="variant-grid" id="variantGrid">
+				<label><input type="radio" name="v" value="int" checked><span id="v-int">International</span> <span>(10x10)</span></label>
+				<label><input type="radio" name="v" value="it"><span id="v-it">Italian</span> <span>(8x8)</span></label>
+				<label><input type="radio" name="v" value="en"><span id="v-en">English/USA</span> <span>(8x8)</span></label>
+				<label><input type="radio" name="v" value="br"><span id="v-br">Brazilian</span> <span>(8x8)</span></label>
+				<label><input type="radio" name="v" value="ru"><span id="v-ru">Russian</span> <span>(8x8)</span></label>
+				<label><input type="radio" name="v" value="es"><span id="v-es">Spanish</span> <span>(8x8)</span></label>
+				<label><input type="radio" name="v" value="pool"><span id="v-pool">Pool</span> <span>(8x8)</span></label>
+				<label><input type="radio" name="v" value="ca"><span id="v-ca">Canadian</span> <span>(12x12)</span></label>
+				<label><input type="radio" name="v" value="tu"><span id="v-tu">Turkish</span> <span>(8x8)</span></label>
 			</div>
-			<button class="btn btn-start" onclick="startGame()">Start Game</button>
+			<div class="button-row">
+				<button class="btn btn-start" id="btnStart" onclick="startGame()">Start Game</button>
+				<button class="btn-lang" id="btnLang1" onclick="nextLang()"></button>
+			</div>
 		</div>
 		<div id="game-container">
 			<div class="variant-badge" id="active-variant-name">Mode: International</div>
 			<div class="status-bar" id="status">White to move.</div>
 			<div id="board"></div>
-			<button class="btn btn-reset" onclick="window.parent.postMessage('RELOAD_REQUEST','*')">Exit to Menu</button>
+			<div class="button-row" style="max-width: 400px;"> <button class="btn btn-reset" id="btnExit" onclick="window.parent.postMessage('RELOAD_REQUEST','*')">Exit to Menu</button>
+				<button class="btn-lang" id="btnLang2" onclick="nextLang()"></button>
+			</div>
 		</div>
 		<script>
+			const FLAGS_SVG = [
+				'<svg class="flag-svg" viewBox="0 0 60 30"><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#c60b1e"/><rect width="3" height="1" y="0.5" fill="#ffc400"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 5 3"><rect width="5" height="3"/><rect width="5" height="2" y="1" fill="#000"/><rect width="5" height="1" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 600 400"><rect width="240" height="400" fill="#006600"/><rect x="240" width="360" height="400" fill="#ff0000"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002b7f"/><rect width="1" height="2" x="1" fill="#fcd116"/><rect width="1" height="2" x="2" fill="#ce1126"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 27 18"><rect width="27" height="18" fill="#005bae"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#005bae"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#800000"/><text x="1.5" y="1.15" font-family="serif" font-weight="bold" font-size="0.4" fill="#FFD700" text-anchor="middle">SPQR</text></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#de2110"/><path d="M.5 1.1l.3-.9.3.9-1-.6h1z" fill="#ffde00" transform="matrix(.4 0 0 .4 .1 .1)"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>'
+			];
+			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
+			const TRANSLATIONS = {
+				en: {
+					title: "Checkers Elite",
+					subtitle: "Select a Rule Set",
+					start: "Start Game",
+					exit: "Exit to Menu",
+					whiteMove: "White to move.",
+					blackMove: "Black to move.",
+					mode: "Mode",
+					youWin: "You Win! CPU is blocked.",
+					blackWins: "GAME OVER! Black Wins.",
+					victory: "VICTORY! You defeated the CPU.",
+					variants: {int:"International",it:"Italian",en:"English/USA",br:"Brazilian",ru:"Russian",es:"Spanish",pool:"Pool",ca:"Canadian",tu:"Turkish"}
+				},
+				it: {
+					title: "Dama Elite",
+					subtitle: "Scegli un regolamento",
+					start: "Inizia",
+					exit: "Esci al menu",
+					whiteMove: "Turno del bianco.",
+					blackMove: "Turno del nero.",
+					mode: "Modalità",
+					youWin: "Hai vinto! La CPU è bloccata.",
+					blackWins: "GAME OVER! Vince il nero.",
+					victory: "VITTORIA! Hai sconfitto la CPU.",
+					variants: {int:"Internazionale",it:"Italiana",en:"Inglese/USA",br:"Brasiliana",ru:"Russa",es:"Spagnola",pool:"Pool",ca:"Canadese",tu:"Turca"}
+				},
+				fr: {
+					title: "Dames Élite",
+					subtitle: "Choisissez un règlement",
+					start: "Commencer",
+					exit: "Retour au menu",
+					whiteMove: "Tour des blancs.",
+					blackMove: "Tour des noirs.",
+					mode: "Mode",
+					youWin: "Vous gagnez ! La CPU est bloquée.",
+					blackWins: "GAME OVER ! Les noirs gagnent.",
+					victory: "VICTOIRE ! Vous avez battu la CPU.",
+					variants: {int:"International",it:"Italien",en:"Anglais/USA",br:"Brésilien",ru:"Russe",es:"Espagnol",pool:"Pool",ca:"Canadien",tu:"Turc"}
+				},
+				es: {
+					title: "Damas Élite",
+					subtitle: "Elige un reglamento",
+					start: "Iniciar",
+					exit: "Volver al menú",
+					whiteMove: "Turno de blancas.",
+					blackMove: "Turno de negras.",
+					mode: "Modo",
+					youWin: "¡Ganaste! La CPU está bloqueada.",
+					blackWins: "¡GAME OVER! Ganan las negras.",
+					victory: "¡VICTORIA! Derrotaste a la CPU.",
+					variants: {int:"Internacional",it:"Italiano",en:"Inglés/USA",br:"Brasileño",ru:"Ruso",es:"Español",pool:"Pool",ca:"Canadiense",tu:"Turco"}
+				},
+				de: {
+					title: "Dame Elite",
+					subtitle: "Wähle ein Regelwerk",
+					start: "Spiel starten",
+					exit: "Zurück zum Menü",
+					whiteMove: "Weiß ist dran.",
+					blackMove: "Schwarz ist dran.",
+					mode: "Modus",
+					youWin: "Du gewinnst! Die CPU ist blockiert.",
+					blackWins: "GAME OVER! Schwarz gewinnt.",
+					victory: "SIEG! Du hast die CPU besiegt.",
+					variants: {int:"International",it:"Italienisch",en:"Englisch/USA",br:"Brasilianisch",ru:"Russisch",es:"Spanisch",pool:"Pool",ca:"Kanadisch",tu:"Türkisch"}
+				},
+				pt: {
+					title: "Damas Elite",
+					subtitle: "Escolha um regulamento",
+					start: "Iniciar gioco",
+					exit: "Voltar ao menu",
+					whiteMove: "Vez das brancas.",
+					blackMove: "Vez das pretas.",
+					mode: "Modo",
+					youWin: "Você ganhou! A CPU está bloqueada.",
+					blackWins: "GAME OVER! As pretas vencem.",
+					victory: "VITÓRIA! Você derrotou a CPU.",
+					variants: {int:"Internacional",it:"Italiana",en:"Inglesa/EUA",br:"Brasileira",ru:"Russa",es:"Espanhola",pool:"Pool",ca:"Canadense",tu:"Turca"}
+				},
+				ro: {
+					title: "Dame Elită",
+					subtitle: "Alege un regulament",
+					start: "Începe jocul",
+					exit: "Înapoi la meniu",
+					whiteMove: "Rândul albelor.",
+					blackMove: "Rândul negrelor.",
+					mode: "Mod",
+					youWin: "Ai câștigat! CPU este blocată.",
+					blackWins: "GAME OVER! Negrele câștigă.",
+					victory: "VICTORIE! Ai învins CPU.",
+					variants: {int:"Internațional",it:"Italian",en:"Englezesc/SUA",br:"Brazilian",ru:"Rusesc",es:"Spaniol",pool:"Pool",ca:"Canadian",tu:"Turcesc"}
+				},
+				uk: {
+					title: "Шашки Еліт",
+					subtitle: "Оберіть правила",
+					start: "Почати гру",
+					exit: "Вийти в меню",
+					whiteMove: "Хід білих.",
+					blackMove: "Хід чорних.",
+					mode: "Режим",
+					youWin: "Ти виграв! CPU заблокована.",
+					blackWins: "GAME OVER! Чорні виграють.",
+					victory: "ПЕРЕМОГА! Ти переміг CPU.",
+					variants: {int:"Міжнародні",it:"Італійські",en:"Англійські/США",br:"Бразильські",ru:"Російські",es:"Іспанські",pool:"Пул",ca:"Канадські",tu:"Турецькі"}
+				},
+				el: {
+					title: "Ντάμα Ελίτ",
+					subtitle: "Επιλέξτε κανονισμό",
+					start: "Έναρξη",
+					exit: "Πίσω στο μενού",
+					whiteMove: "Σειρά λευκών.",
+					blackMove: "Σειρά μαύρων.",
+					mode: "Λειτουργία",
+					youWin: "Κερδίσατε! Η CPU μπλοκαρίστηκε.",
+					blackWins: "GAME OVER! Νικούν τα μαύρα.",
+					victory: "ΝΙΚΗ! Νικήσατε την CPU.",
+					variants: {int:"Διεθνές",it:"Ιταλικό",en:"Αγγλικό/ΗΠΑ",br:"Βραζιλιάνικο",ru:"Ρωσικό",es:"Ισπανικό",pool:"Pool",ca:"Καναδικό",tu:"Τουρκικό"}
+				},
+				la: {
+					title: "Latrunculorum Elitae",
+					subtitle: "Elige regulam",
+					start: "Incipe ludum",
+					exit: "Revertere ad electionem",
+					whiteMove: "Alborum tessera.",
+					blackMove: "Nigrorum tessera.",
+					mode: "Modus",
+					youWin: "Vincis! CPU impedita est.",
+					blackWins: "FINIS LUDI! Nigri vincunt.",
+					victory: "VICTORIA! CPU vicisti.",
+					variants: {int:"Internationalis",it:"Italica",en:"Anglica/USA",br:"Brasiliensis",ru:"Russica",es:"Hispanica",pool:"Pool",ca:"Canadensis",tu:"Turcica"}
+				},
+				zh: {
+					title: "精英跳棋",
+					subtitle: "选择规则",
+					start: "开始游戏",
+					exit: "返回菜单",
+					whiteMove: "白方行动。",
+					blackMove: "黑方行动。",
+					mode: "模式",
+					youWin: "你赢了！CPU被封堵。",
+					blackWins: "游戏结束！黑方获勝。",
+					victory: "胜利！你击败了CPU。",
+					variants: {int:"国际",it:"意大利",en:"英式/美式",br:"巴西",ru:"俄罗斯",es:"西班牙",pool:"池式",ca:"加拿大",tu:"土耳其"}
+				},
+				ja: {
+					title: "エリートチェッカーズ",
+					subtitle: "ルールを選んでください",
+					start: "ゲーム開始",
+					exit: "メニューへ戻る",
+					whiteMove: "白の番です。",
+					blackMove: "黒の番です。",
+					mode: "モード",
+					youWin: "あなたの勝ちです！CPUはブロックされました。",
+					blackWins: "ゲームオーバー！黒の勝ちです。",
+					victory: "勝利！CPUを倒しました。",
+					variants: {int:"国際",it:"イタリア",en:"英国/米国",br:"ブラジル",ru:"ロシア",es:"スペイン",pool:"プール",ca:"カナダ",tu:"トルコ"}
+				}
+			};
+
+			let currentLangIndex = 0;
+			function t(key){
+				return TRANSLATIONS[LANG_KEYS[currentLangIndex]][key];
+			}
+
+			function tv(key){
+				return TRANSLATIONS[LANG_KEYS[currentLangIndex]].variants[key];
+			}
+
+			function updateUI(){
+				document.getElementById('titleText').textContent = t('title');
+				document.getElementById('subtitleText').textContent = t('subtitle');
+				document.getElementById('btnStart').textContent = t('start');
+				document.getElementById('btnExit').textContent = t('exit');
+				['int','it','en','br','ru','es','pool','ca','tu'].forEach(k => {
+					const el = document.getElementById('v-' + k);
+					if(el) el.textContent = tv(k);
+				});
+				const flag = FLAGS_SVG[currentLangIndex];
+				document.getElementById('btnLang1').innerHTML = flag;
+				document.getElementById('btnLang2').innerHTML = flag;
+				const statusEl = document.getElementById('status');
+				if(statusEl){
+					if(statusEl.textContent.includes('White') || statusEl.textContent.includes(TRANSLATIONS[LANG_KEYS[currentLangIndex]].whiteMove)){
+						statusEl.textContent = t('whiteMove');
+					} else {
+						statusEl.textContent = t('blackMove');
+					}
+				}
+			}
+
+			function nextLang(){
+				currentLangIndex = (currentLangIndex + 1) % LANG_KEYS.length;
+				updateUI();
+			}
+
+			document.getElementById('btnLang1').innerHTML = FLAGS_SVG[0];
+			document.getElementById('btnLang2').innerHTML = FLAGS_SVG[0];
+
 			let cfg ={}, turn = 'white', selected = null, isAITurn = false;
 			const AUDIO_CTX = new (window.AudioContext || window.webkitAudioContext)();
 
 			const VARIANTS ={
-				int: {name: "International", s: 10, fly: true, back: true,  kingEat: true,  start: 4, ortho: false, reverse: false},
-				it:  {name: "Italian", s: 8,  fly: false, back: false, kingEat: false, start: 3, ortho: false, reverse: false},
-				en:  {name: "English/USA", s: 8,  fly: false, back: false, kingEat: true,  start: 3, ortho: false, reverse: false},
-				br:  {name: "Brazilian", s: 8,  fly: true,  back: true,  kingEat: true,  start: 3, ortho: false, reverse: false},
-				ru:  {name: "Russian", s: 8,  fly: true,  back: true,  kingEat: true,  start: 3, ortho: false, reverse: false},
-				es:  {name: "Spanish", s: 8,  fly: true,  back: false, kingEat: true,  start: 3, ortho: false, reverse: true},
-				pool:{name: "Pool Checkers", s: 8,  fly: true,  back: true,  kingEat: true,  start: 3, ortho: false, reverse: false},
-				ca:  {name: "Canadian", s: 12, fly: true,  back: true,  kingEat: true,  start: 5, ortho: false, reverse: false},
-				tu:  {name: "Turkish", s: 8,  fly: true,  back: false, kingEat: true,  start: 3, ortho: true,  reverse: false}
+				int: {s: 10, fly: true,  back: true,  kingEat: true,  start: 4, ortho: false, reverse: false},
+				it:  {s: 8,  fly: false, back: false, kingEat: false, start: 3, ortho: false, reverse: false},
+				en:  {s: 8,  fly: false, back: false, kingEat: true,  start: 3, ortho: false, reverse: false},
+				br:  {s: 8,  fly: true,  back: true,  kingEat: true,  start: 3, ortho: false, reverse: false},
+				ru:  {s: 8,  fly: true,  back: true,  kingEat: true,  start: 3, ortho: false, reverse: false},
+				es:  {s: 8,  fly: true,  back: false, kingEat: true,  start: 3, ortho: false, reverse: true},
+				pool:{s: 8,  fly: true,  back: true,  kingEat: true,  start: 3, ortho: false, reverse: false},
+				ca:  {s: 12, fly: true,  back: true,  kingEat: true,  start: 5, ortho: false, reverse: false},
+				tu:  {s: 8,  fly: true,  back: false, kingEat: true,  start: 3, ortho: true,  reverse: false}
 			};
 
 			function playSound(isCapture){
@@ -5907,9 +6151,11 @@
 			function startGame(){
 				const v = document.querySelector('input[name="v"]:checked').value;
 				cfg = VARIANTS[v];
-				document.getElementById('active-variant-name').innerText = \`Mode: \${cfg.name} (\${cfg.s}x\${cfg.s})\`;
+				cfg.variantKey = v;
+				document.getElementById('active-variant-name').innerText = \`\${t('mode')}: \${tv(v)} (\${cfg.s}x\${cfg.s})\`;
 				document.getElementById('setup-menu').style.display = 'none';
 				document.getElementById('game-container').style.display = 'flex';
+				document.getElementById('status').innerText = t('whiteMove');
 				initBoard();
 			}
 
@@ -5973,7 +6219,7 @@
 				if(cfg.ortho){
 					if(absR + absC === 1){
 						if(!isKing && ((col === 'white' && dr > 0) || (col === 'black' && dr < 0))){
-							return {valid:false};
+							return{valid:false};
 						}
 						return{valid: true, cap: null};
 					}
@@ -6046,7 +6292,7 @@
 			function endTurn(){
 				deselect();
 				turn = (turn === 'white') ? 'black' : 'white';
-				document.getElementById('status').innerText = ((turn === 'white' ? "White" : "Black") + " to move.");
+				document.getElementById('status').innerText = (turn === 'white') ? t('whiteMove') : t('blackMove');
 				setTimeout(() => {
 					if(checkWin()){
 						return;
@@ -6087,7 +6333,7 @@
 						endTurn();
 					}
 				}else{
-					alert("You Win! CPU is blocked.");
+					alert(t('youWin'));
 					window.parent.postMessage('RELOAD_REQUEST','*');
 				}
 			}
@@ -6095,12 +6341,12 @@
 			function checkWin(){
 				const w = document.querySelectorAll('.white-piece').length, b = document.querySelectorAll('.black-piece').length;
 				if(w === 0){
-					alert("GAME OVER! Black Wins.");
+					alert(t('blackWins'));
 					window.parent.postMessage('RELOAD_REQUEST','*');
 					return true;
 				}
 				if(b === 0){
-					alert("VICTORY! You defeated the CPU.");
+					alert(t('victory'));
 					window.parent.postMessage('RELOAD_REQUEST','*');
 					return true;
 				}
@@ -6121,7 +6367,7 @@
 
 	// --- Backgammon ---
 	'Games_Backgammon.html': { name: `Backgammon`, content: `<!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en"><head><!--G09#019 - Samuele - Backgammon-->
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<title>Backgammon Elite</title>
