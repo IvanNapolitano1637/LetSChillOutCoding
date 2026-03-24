@@ -519,7 +519,8 @@
 <html lang="en"><!--C02#004 - Giovanna - 24h Clock-->
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0"> <meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
 		<title id="title">Clock</title>
 		<style>
 			*, *::after, *::before{
@@ -618,17 +619,19 @@
 			#controlsForm button{
 				color: white;
 				border-radius: 50px;
-				padding: 10px 28px;
-				font-size: 1rem;
+				padding: 10px 18px;
+				font-size: 1.3rem;
 				cursor: pointer;
 				transition: all 0.3s ease;
 				background-color: rgba(0, 0, 0, 0.25);
 				border: 2px solid rgba(0, 0, 0, 0.3);
 				outline: none;
 				-webkit-tap-highlight-color: transparent;
+				line-height: 1;
+				vertical-align: middle;
 			}
 			@media (hover: hover) and (pointer: fine){
-				#controlsForm button:hover {
+				#controlsForm button:hover{
 					background-color: rgba(255, 255, 255, 0.35);
 					transform: scale(1.07);
 					box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
@@ -650,12 +653,25 @@
 				-webkit-tap-highlight-color: transparent;
 				outline: none;
 			}
-			#btnChangeBackgroundColor {
+			#btnChangeBackgroundColor{
 				display: none;
-				padding: 10px 18px !important;
+				padding: 10px 14px !important;
 				margin-left: 5px;
 				font-weight: bold;
 				vertical-align: middle;
+			}
+			.btn-icon svg{
+				width: 1.4em;
+				height: 1.4em;
+				vertical-align: middle;
+				fill: white;
+				display: inline-block;
+			}
+			.btn-flag svg{
+				width: 1.6em;
+				height: 1.1em;
+				vertical-align: middle;
+				display: inline-block;
 			}
 			@media (max-width: 768px){
 				.clock{
@@ -684,13 +700,61 @@
 				<div class="hand second" data-second-hand></div>
 			</div>
 			<form id="controlsForm">
-				<button type="button" id="btnSettings" onclick="toggleSettings()">Show Settings</button>
+				<button type="button" id="btnSettings" class="btn-icon" onclick="toggleSettings()" title="Impostazioni">
+					<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+						<path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.92c.04-.34.07-.69.07-1.08s-.03-.74-.07-1.08l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 10.92c-.04.34-.07.69-.07 1.08s.03.74.07 1.08L2.46 14.71c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.58 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.63z"/>
+					</svg>
+				</button>
 				<br><br>
 				<div id="extraButtons" style="display:none">
-					<button type="button" id="btnClockDirection" onclick="changeClockDirection()">Turn to clockwise</button><br><br>
-					<button type="button" id="btnColors" onclick="changeColorsRules()">Colors' rule: random</button>
-					<button type="button" id="btnChangeBackgroundColor" onclick="changeBackgroundColor()" style="display:none">⟳</button><br><br>
-					<button type="button" id="btnNumeralStyle" onclick="changeNumeralStyle()">Switch to Roman numerals</button>
+					<button type="button" id="btnClockDirection" class="btn-icon" onclick="changeClockDirection()" title="Senso di rotazione">
+						<svg id="iconDirection" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+							<path d="M12 5V2L8 6l4 4V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+						</svg>
+					</button><br><br>
+					<button type="button" id="btnColors" class="btn-icon" onclick="changeColorsRules()" title="Regola colori">
+						<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+							<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" style="display:none"/>
+							<path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+						</svg>
+						<span id="colorRuleLabel" style="font-size:1rem; font-family:'Gotham Rounded',sans-serif; margin-left:5px; vertical-align:middle; letter-spacing:0.5px;"></span>
+					</button>
+					<button type="button" id="btnChangeBackgroundColor" class="btn-icon" onclick="changeBackgroundColor()" title="Colore casuale" style="display:none">
+						<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+							<path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+						</svg>
+					</button><br><br>
+					<button type="button" id="btnNumeralStyle" class="btn-flag" onclick="changeNumeralStyle()" title="Stile numerazione">
+						<svg id="flagArabic" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg" style="display:inline-block">
+							<rect width="30" height="20" fill="#006C35"/>
+							<rect x="3" y="5" width="24" height="5" rx="1" fill="white" opacity="0.9"/>
+							<rect x="4" y="6" width="22" height="3" rx="0.5" fill="#006C35"/>
+							<rect x="5" y="6.5" width="3" height="2" rx="0.3" fill="white"/>
+							<rect x="9" y="6.5" width="2" height="2" rx="0.3" fill="white"/>
+							<rect x="12" y="6.5" width="4" height="2" rx="0.3" fill="white"/>
+							<rect x="17" y="6.5" width="2" height="2" rx="0.3" fill="white"/>
+							<rect x="20" y="6.5" width="3.5" height="2" rx="0.3" fill="white"/>
+							<rect x="8" y="13" width="14" height="1.2" rx="0.6" fill="white"/>
+							<polygon points="22,13 24,13.6 22,14.2" fill="white"/>
+						</svg>
+						<span style="color:white; font-size:0.9rem; vertical-align:middle; margin: 0 4px;">⇄</span>
+						<svg id="flagRoman" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg" style="display:inline-block">
+							<rect width="30" height="20" fill="#8B0000"/>
+							<rect x="1" y="1" width="28" height="18" fill="none" stroke="#FFD700" stroke-width="1"/>
+							<ellipse cx="15" cy="12" rx="2.5" ry="3.5" fill="#FFD700"/>
+							<circle cx="15" cy="7.5" r="2" fill="#FFD700"/>
+							<polygon points="15,8.5 17,9.5 15,10" fill="#8B0000"/>
+							<path d="M12.5 10 Q7 7 5 9 Q8 10 12 12Z" fill="#FFD700"/>
+							<path d="M17.5 10 Q23 7 25 9 Q22 10 18 12Z" fill="#FFD700"/>
+							<line x1="13.5" y1="15.5" x2="12" y2="18" stroke="#FFD700" stroke-width="0.8"/>
+							<line x1="16.5" y1="15.5" x2="18" y2="18" stroke="#FFD700" stroke-width="0.8"/>
+							<line x1="12" y1="18" x2="10.5" y2="18.5" stroke="#FFD700" stroke-width="0.7"/>
+							<line x1="12" y1="18" x2="12" y2="19.2" stroke="#FFD700" stroke-width="0.7"/>
+							<line x1="18" y1="18" x2="19.5" y2="18.5" stroke="#FFD700" stroke-width="0.7"/>
+							<line x1="18" y1="18" x2="18" y2="19.2" stroke="#FFD700" stroke-width="0.7"/>
+							<text x="15" y="5.5" text-anchor="middle" font-size="2.5" font-family="serif" fill="#FFD700" font-weight="bold">SPQR</text>
+						</svg>
+					</button>
 				</div>
 			</form>
 		</div>
@@ -710,18 +774,20 @@
 			const SUNSET_COLOR = "#e66465";
 			const COLORS_1 = ['#f00', '#ff0', '#0f0', '#0ff', '#00f', '#f0f'];
 			const COLORS_2 = ['#f00', '#f30', '#f60', '#f90', '#fc0', '#ff0', '#cf0', '#9f0', '#6f0', '#3f0', '#0f0', '#0f3', '#0f6', '#0f9', '#0fc', '#0ff', '#0cf', '#09f', '#06f', '#03f', '#00f', '#30f', '#60f', '#90f', '#c0f', '#f0f', '#f0c', '#f09', '#f06', '#f03'];
-			const COLORS_3 = ['#000', '#a60', '#f00', '#f90', '#ff0', '#0f0', '#00f', '#b0b' , '#777', '#fff'];
+			const COLORS_3 = ['#000', '#a60', '#f00', '#f90', '#ff0', '#0f0', '#00f', '#b0b', '#777', '#fff'];
 			const LABELS = ["", "first (1h; 6)", "second (1s; 6)", "third (1s; 30)", "fourth (1s; 10)", "fifth (6s; 10)", "sixth (6m; 10)", "seventh (2h 24m; 10)", "eighth (one color)", "ninth (5,8,17,20; 4)"];
+			const ICON_CCW = "M12 5V2L8 6l4 4V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z";
+			const ICON_CW  = "M12 5V2l4 4-4 4V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z";
 
 			function syncClockDirection(){
 				const dial = document.getElementById("clockDial");
-				const btn = document.getElementById("btnClockDirection");
+				const iconPath = document.querySelector('#iconDirection path');
 				if(!clockwise){
 					dial.classList.add('reflected');
-					btn.textContent = "Turn to clockwise";
+					iconPath.setAttribute('d', ICON_CCW);
 				}else{
 					dial.classList.remove('reflected');
-					btn.textContent = "Turn to reversed clockwise";
+					iconPath.setAttribute('d', ICON_CW);
 				}
 				document.getElementById("title").innerHTML = clockwise ? "24h clock" : "Reversed 24h clock";
 			}
@@ -733,11 +799,15 @@
 				return useRoman ? ROMAN[n] : String(n);
 			}
 
+			function updateColorRuleLabel(){
+				document.getElementById("colorRuleLabel").textContent = toNumeral(choice);
+			}
+
 			function changeNumeralStyle(){
 				useRoman = !useRoman;
-				document.getElementById("btnNumeralStyle").textContent = useRoman ? "Switch to Arabic numerals" : "Switch to Roman numerals";
 				document.getElementById("clockDial").classList.toggle("roman", useRoman);
 				drawNumbers();
+				updateColorRuleLabel();
 				document.activeElement.blur();
 			}
 
@@ -777,14 +847,13 @@
 				}else if(choice === 6){
 					document.body.style.backgroundColor = COLORS_3[Math.floor(currentDate.getMinutes()/6)];
 				}else if(choice === 7){
-					document.body.style.backgroundColor = COLORS_3[Math.floor(((currentDate.getHours()*3600) +(currentDate.getMinutes()*60) + (currentDate.getSeconds()))/8640)];
+					document.body.style.backgroundColor = COLORS_3[Math.floor(((currentDate.getHours()*3600) + (currentDate.getMinutes()*60) + (currentDate.getSeconds()))/8640)];
 				}else if(choice === 8 && !settledColor){
 					changeBackgroundColor();
 				}else if(choice === 9){
 					const hour = currentDate.getHours();
 					document.body.style.backgroundColor = (hour >= 20 || hour < 5) ? NIGHT_COLOR : (hour >= 5 && hour < 8) ? SUNRISE_COLOR : (hour >= 8 && hour < 17) ? DAY_COLOR : SUNSET_COLOR;
 				}
-				document.getElementById("btnColors").textContent = "Colors' rule: " + LABELS[choice];
 			}
 
 			function setRotation(element, rotationRatio){
@@ -795,9 +864,9 @@
 			function changeColorsRules(){
 				choice = choice >= 9 ? 1 : choice + 1;
 				settledColor = false;
-				document.getElementById("btnColors").textContent = "Colors' rule: " + LABELS[choice];
 				const btnReset = document.getElementById("btnChangeBackgroundColor");
 				btnReset.style.display = (choice === 8 ? "inline-block" : "none");
+				updateColorRuleLabel();
 				document.activeElement.blur();
 			}
 
@@ -817,10 +886,9 @@
 				const extra = document.getElementById("extraButtons");
 				if(extra.style.display === "none"){
 					extra.style.display = "block";
-					document.getElementById("btnSettings").textContent = "Hide Settings";
+					document.getElementById("btnSettings").style.opacity = "1";
 				}else{
 					extra.style.display = "none";
-					document.getElementById("btnSettings").textContent = "Show Settings";
 				}
 				document.activeElement.blur();
 			}
@@ -829,6 +897,7 @@
 			drawNumbers();
 			setClock();
 			syncClockDirection();
+			updateColorRuleLabel();
 		<\/script>
 	</body>
 </html>` },
