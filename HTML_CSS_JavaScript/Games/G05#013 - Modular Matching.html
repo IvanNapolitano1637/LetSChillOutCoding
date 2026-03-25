@@ -230,7 +230,7 @@
 			}
 
 			function nextLang(){
-				currentLangIndex = (currentLangIndex + 1) % LANG_KEYS.length;
+				currentLangIndex = (currentLangIndex + 1)%(LANG_KEYS.length);
 				updateUI();
 				document.querySelectorAll('.cell.matched').forEach(cell => {
 					const n1 = cell.dataset.number;

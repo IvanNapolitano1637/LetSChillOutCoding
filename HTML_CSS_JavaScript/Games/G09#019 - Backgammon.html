@@ -228,7 +228,7 @@
 				CTX.fillStyle = "#1b5e20";
 				CTX.fillRect(10, 10, BW - 20, BH - 20);
 				for(let i = 0; i < 24; i++){
-					CTX.fillStyle = (i % 2 === 0) ? "#d7ccc8" : "#8d6e63";
+					CTX.fillStyle = (i%2 === 0) ? "#d7ccc8" : "#8d6e63";
 					let x = getX(i), y = i >= 12 ? 10 : BH - 10;
 					CTX.beginPath();
 					CTX.moveTo(x, y);

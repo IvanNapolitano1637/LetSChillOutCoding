@@ -170,7 +170,7 @@
 			}
 
 			function nextLang(){
-				currentLangIndex = (currentLangIndex + 1) % LANG_KEYS.length;
+				currentLangIndex = (currentLangIndex + 1)%LANG_KEYS.length;
 				updateUI();
 			}
 
@@ -255,10 +255,10 @@
 
 			function select(e){
 				const rect = canvas.getBoundingClientRect();
-				const scaleX = canvas.width / rect.width;
-				const scaleY = canvas.height / rect.height;
-				const x = (e.clientX - rect.left) * scaleX;
-				const y = (e.clientY - rect.top) * scaleY;
+				const scaleX = canvas.width/rect.width;
+				const scaleY = canvas.height/rect.height;
+				const x = (e.clientX - rect.left)*scaleX;
+				const y = (e.clientY - rect.top)*scaleY;
 				let row = Math.floor(x/(SIDE + GRID_THICKNESS));
 				let col = Math.floor(y/(SIDE + GRID_THICKNESS));
 				if(row >= 0 && row < ROW_NUMBER && col >= 0 && col < COLUMN_NUMBER){

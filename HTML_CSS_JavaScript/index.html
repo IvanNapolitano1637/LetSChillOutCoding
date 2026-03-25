@@ -1805,7 +1805,7 @@
 
 			LANG_TOGGLE.addEventListener('click', () => {
 				const idx = LANG_ORDER.indexOf(currentLang);
-				currentLang = LANG_ORDER[(idx + 1) % LANG_ORDER.length];
+				currentLang = LANG_ORDER[(idx + 1)%LANG_ORDER.length];
 				LANG_TOGGLE.textContent = TRANSLATIONS[currentLang].label;
 				updateLanguage();
 			});
@@ -2243,9 +2243,9 @@
 				const currentHours   = date.getHours();
 				const currentMinutes = date.getMinutes();
 				const currentSeconds = date.getSeconds();
-				handHours.style.transform   = \`rotate(\${currentHours * 30 + currentMinutes / 2}deg)\`;
-				handMinutes.style.transform = \`rotate(\${currentMinutes * 6}deg)\`;
-				handSeconds.style.transform = \`rotate(\${currentSeconds * 6}deg)\`;
+				handHours.style.transform   = \`rotate(\${currentHours*30 + currentMinutes/2}deg)\`;
+				handMinutes.style.transform = \`rotate(\${currentMinutes*6}deg)\`;
+				handSeconds.style.transform = \`rotate(\${currentSeconds*6}deg)\`;
 			}
 			getCurrentTime();
 			setInterval(getCurrentTime, 1000);
@@ -2855,7 +2855,7 @@
 			}
 
 			function nextLang(){
-				currentLangIndex = (currentLangIndex + 1) % LANG_KEYS.length;
+				currentLangIndex = (currentLangIndex + 1)%LANG_KEYS.length;
 				updateUI();
 			}
 
@@ -3285,7 +3285,7 @@
 			}
 
 			function nextLang(){
-				currentLangIndex = (currentLangIndex + 1) % LANG_KEYS.length;
+				currentLangIndex = (currentLangIndex + 1)%LANG_KEYS.length;
 				updateUI();
 			}
 
@@ -3370,10 +3370,10 @@
 
 			function select(e){
 				const rect = canvas.getBoundingClientRect();
-				const scaleX = canvas.width / rect.width;
-				const scaleY = canvas.height / rect.height;
-				const x = (e.clientX - rect.left) * scaleX;
-				const y = (e.clientY - rect.top) * scaleY;
+				const scaleX = canvas.width/rect.width;
+				const scaleY = canvas.height/rect.height;
+				const x = (e.clientX - rect.left)*scaleX;
+				const y = (e.clientY - rect.top)*scaleY;
 				let row = Math.floor(x/(SIDE + GRID_THICKNESS));
 				let col = Math.floor(y/(SIDE + GRID_THICKNESS));
 				if(row >= 0 && row < ROW_NUMBER && col >= 0 && col < COLUMN_NUMBER){
@@ -4624,7 +4624,7 @@
 			}
 
 			function nextLang(){
-				currentLangIndex = (currentLangIndex + 1) % LANG_KEYS.length;
+				currentLangIndex = (currentLangIndex + 1)%(LANG_KEYS.length);
 				updateUI();
 				document.querySelectorAll('.cell.matched').forEach(cell => {
 					const n1 = cell.dataset.number;
@@ -6775,7 +6775,7 @@
 			}
 
 			function nextLang(){
-				currentLangIndex = (currentLangIndex + 1) % LANG_KEYS.length;
+				currentLangIndex = (currentLangIndex + 1)%(LANG_KEYS.length);
 				updateUI();
 			}
 
@@ -7268,7 +7268,7 @@
 				CTX.fillStyle = "#1b5e20";
 				CTX.fillRect(10, 10, BW - 20, BH - 20);
 				for(let i = 0; i < 24; i++){
-					CTX.fillStyle = (i % 2 === 0) ? "#d7ccc8" : "#8d6e63";
+					CTX.fillStyle = (i%2 === 0) ? "#d7ccc8" : "#8d6e63";
 					let x = getX(i), y = i >= 12 ? 10 : BH - 10;
 					CTX.beginPath();
 					CTX.moveTo(x, y);
@@ -14139,7 +14139,7 @@
 				const base = BigInt(chars.length);
 				let result = 0n;
 				for(let i = 0; i < str.length; i++){
-					result = result * base + BigInt(chars.indexOf(str[i]) + 1);
+					result = result*base + BigInt(chars.indexOf(str[i]) + 1);
 				}
 				updateAllFields(result);
 			}
@@ -14178,7 +14178,7 @@
 				for(let i = 0; i < str.length; i++){
 					const index = chars.indexOf(str[i]);
 					if(index !== -1){
-						let newIndex = (index + shift) % size;
+						let newIndex = (index + shift)%size;
 						if(newIndex < 0){
 							newIndex += size;
 						}

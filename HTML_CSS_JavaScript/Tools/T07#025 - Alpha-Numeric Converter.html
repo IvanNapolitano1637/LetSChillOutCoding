@@ -340,7 +340,7 @@
 				const base = BigInt(chars.length);
 				let result = 0n;
 				for(let i = 0; i < str.length; i++){
-					result = result * base + BigInt(chars.indexOf(str[i]) + 1);
+					result = result*base + BigInt(chars.indexOf(str[i]) + 1);
 				}
 				updateAllFields(result);
 			}
@@ -379,7 +379,7 @@
 				for(let i = 0; i < str.length; i++){
 					const index = chars.indexOf(str[i]);
 					if(index !== -1){
-						let newIndex = (index + shift) % size;
+						let newIndex = (index + shift)%size;
 						if(newIndex < 0){
 							newIndex += size;
 						}
