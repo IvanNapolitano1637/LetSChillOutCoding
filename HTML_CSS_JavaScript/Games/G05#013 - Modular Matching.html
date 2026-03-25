@@ -384,16 +384,37 @@
 					initGame();
 				});
 
-				document.getElementById('btnDouble').addEventListener('click',(e) => {
+				function highlightDouble(){
 					showDoubles = !showDoubles;
-					e.target.classList.toggle('active');
+					document.getElementById('btnDouble').classList.toggle('active', showDoubles);
 					updateHighlights();
+				}
+
+				document.getElementById('btnDouble').addEventListener('click',() => {
+					highlightDouble();
 				});
 
-				document.getElementById('btnOpposite').addEventListener('click',(e) => {
+				function highlightOpposite(){
 					showOpposites = !showOpposites;
-					e.target.classList.toggle('active');
+					document.getElementById('btnOpposite').classList.toggle('active', showOpposites);
 					updateHighlights();
+				}
+
+				document.getElementById('btnOpposite').addEventListener('click',() => {
+					highlightOpposite();
+				});
+
+				document.addEventListener("keydown", e => {
+					if(e.key.toLowerCase() === "l"){
+						nextLang();
+					}else if(e.key.toLowerCase() === "d"){
+						highlightDouble();
+					}else if(e.key.toLowerCase() === "o"){
+						highlightOpposite();
+					}else if(e.key.toLowerCase() === "z"){
+						currentErrors = 0;
+						document.getElementById('errors').textContent = currentErrors;
+					}
 				});
 
 				initGame();

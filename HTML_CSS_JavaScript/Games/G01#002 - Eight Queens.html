@@ -601,6 +601,24 @@
 					drawChessboard();
 				}
 			}
+
+			document.addEventListener("keydown", e => {
+				if(e.key.toLowerCase() === "s"){
+					changeFlagValue();
+				}else if(e.key.toLowerCase() === "d"){
+					changeDifficulty();
+				}else if(e.key.toLowerCase() === "r"){
+					refresh();
+				}else if(e.key.toLowerCase() === "+"){
+					bigger();
+				}else if(e.key.toLowerCase() === "-"){
+					smaller();
+				}else if(e.key.toLowerCase() === "l"){
+					nextLang();
+				}else if(e.key.toLowerCase() === "q"){
+					changeTheMaxNumberOfTheQueens();
+				}
+			});
 		</script>
 	</body>
 </html>

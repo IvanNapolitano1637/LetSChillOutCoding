@@ -680,6 +680,14 @@
 				document.querySelectorAll('.piece').forEach(p => p.classList.remove('selected'));
 				selected = null;
 			}
+
+			document.addEventListener("keydown", e => {
+				if(e.key.toLowerCase() === "e"){
+					location.reload();
+				}else if(e.key.toLowerCase() === "l"){
+					nextLang();
+				}
+			});
 		</script>
 	</body>
 </html>

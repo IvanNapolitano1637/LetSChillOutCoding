@@ -361,7 +361,7 @@
 			}
 
 			function nextLang(){
-				currentLangIndex = (currentLangIndex + 1) % LANG_KEYS.length;
+				currentLangIndex = (currentLangIndex + 1)%LANG_KEYS.length;
 				document.getElementById('btn-lang').innerHTML = FLAGS_SVG[currentLangIndex];
 				applyLang();
 				if(!gameOver && !aiThinking){
@@ -791,7 +791,7 @@
 				canvas.dispatchEvent(new MouseEvent('click', { clientX: t.clientX, clientY: t.clientY }));
 			}, { passive: false });
 
-			document.getElementById('btn-pass').addEventListener('click', () => {
+			function pass(){
 				if(gameOver || aiThinking || currentPlayer !== BLACK){
 					return;
 				}
@@ -805,19 +805,31 @@
 				updateUI();
 				drawBoard();
 				scheduleAI();
+			}
+
+			document.getElementById('btn-pass').addEventListener('click', () => {
+				pass();
 			});
 
-			document.getElementById('btn-resign').addEventListener('click', () => {
+			function resign(){
 				if(gameOver){
 					return;
 				}
 				gameOver = true;
 				showModal(t('resigned'), t('resignMsg'));
+			}
+
+			document.getElementById('btn-resign').addEventListener('click', () => {
+				resign();
 			});
 
-			document.getElementById('btn-new').addEventListener('click', () => {
+			function newGame(){
 				hideModal();
 				initBoard(N);
+			}
+
+			document.getElementById('btn-new').addEventListener('click', () => {
+				newGame();
 			});
 
 			document.getElementById('modal-ok').addEventListener('click', () => {
@@ -840,6 +852,19 @@
 
 			document.getElementById('btn-lang').innerHTML = FLAGS_SVG[0];
 			document.getElementById('btn-lang').addEventListener('click', nextLang);
+
+			document.addEventListener("keydown", e => {
+				if(e.key.toLowerCase() === "p"){
+					pass();
+				}else if(e.key.toLowerCase() === "r"){
+					resign();
+				}else if(e.key.toLowerCase() === "n"){
+					newGame();
+				}else if(e.key.toLowerCase() === "l"){
+					nextLang();
+				}
+			});
+
 			initBoard(9);
 		</script>
 	</body>

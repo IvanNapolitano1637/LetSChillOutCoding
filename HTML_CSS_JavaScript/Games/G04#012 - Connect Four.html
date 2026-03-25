@@ -452,6 +452,30 @@
 			function refresh(){
 				drawUniverse();
 			}
+
+			function dropInColumn(column){
+				if(!goOn || moveYellow !== humanIsYellow){
+					return;
+				}
+				const rect = canvas.getBoundingClientRect();
+				const fakeX = rect.left + column*(DIAMETER + GRID_THICKNESS) + RADIUS;
+				select({ clientX: fakeX, clientY: rect.top });
+			}
+
+			document.addEventListener("keydown", e => {
+				const num = parseInt(e.key);
+				if(num >= 1 && num <= COLUMN_NUMBER){
+					dropInColumn(num - 1);
+				}else if(e.key.toLowerCase() === "u"){
+					undoLastMove();
+				}else if(e.key.toLowerCase() === "d"){
+					cycleDifficulty();
+				}else if(e.key.toLowerCase() === "r"){
+					refresh();
+				}else if(e.key.toLowerCase() === "l"){
+					cycleLanguage();
+				}
+			});
 		</script>
 	</body>
 </html>

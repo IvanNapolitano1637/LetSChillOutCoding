@@ -1,135 +1,136 @@
 <!DOCTYPE html>
-<html lang="en"><head><!--G09#019 - Samuele - Backgammon-->
+<html lang="en"><!--G09#019 - Samuele - Backgammon-->
+	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<title>Backgammon Elite</title>
-	<style>
-		:root{
-			--wood: #3e2723;
-			--felt: #1b5e20;
-			--accent: #f1c40f;
-		}
-		body{
-			background: #121212;
-			font-family: sans-serif;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			color: white;
-			margin: 0;
-			padding: 10px;
-			-webkit-tap-highlight-color: transparent;
-			user-select: none;
-			touch-action: manipulation;
-		}
-		canvas{
-			background: var(--felt);
-			border: 10px solid var(--wood);
-			border-radius: 12px;
-			max-width: 100%;
-			height: auto;
-			cursor: pointer;
-		}
-		.panel{
-			display: flex;
-			width: 100%;
-			max-width: 660px;
-			flex-wrap: wrap;
-			justify-content: center;
-			align-items: center;
-			background: #252525;
-			padding: 15px;
-			border-radius: 12px;
-			margin-top: 10px;
-			box-sizing: border-box;
-			gap: 10px;
-		}
-		#dice-ui{
-			font-size: 2em;
-			min-width: 50px;
-			text-align: center;
-		}
-		.btn{
-			padding: 12px;
-			font-size: 0.9em;
-			cursor: pointer;
-			background: #c0392b;
-			border: none;
-			color: white;
-			border-radius: 6px;
-			font-weight: bold;
-			flex: 1;
-			min-width: 80px;
-		}
-		.btn-undo{
-			background: #2980b9;
-		}
-		.btn:disabled{
-			opacity: 0.3;
-		}
-		.score-container{
-			width: 100%;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			margin-top: 5px;
-			border-top: 1px solid #444;
-			padding-top: 10px;
-		}
-		.btn-lang{
-			background: #444;
-			border: 1px solid #666;
-			padding: 5px;
-			border-radius: 6px;
-			cursor: pointer;
-			transition: 0.3s;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			width: 50px;
-			height: 35px;
-		}
-		.btn-lang:hover{
-			background: #555;
-		}
-		.flag-svg{
-			width: 32px;
-			height: 22px;
-			pointer-events: none;
-		}
-		@media (min-width: 850px){
-			#game-container{
+		<style>
+			:root{
+				--wood: #3e2723;
+				--felt: #1b5e20;
+				--accent: #f1c40f;
+			}
+			body{
+				background: #121212;
+				font-family: sans-serif;
 				display: flex;
-				flex-direction: row;
-				align-items: flex-start;
-				gap: 20px;
-			}
-			.panel{
-				flex-direction: column;
-				width: 180px;
-				flex-wrap: nowrap;
-				margin-top: 0;
-				height: 540px;
-				justify-content: flex-start;
-			}
-			.btn{
-				width: 100%;
-				flex: 0 0 auto;
-				margin-bottom: 5px;
-			}
-			#dice-ui{
-				margin-bottom: 20px;
-				font-size: 3em;
-			}
-			.score-container{
 				flex-direction: column;
 				align-items: center;
-				gap: 15px;
-				margin-top: auto;
-				border-top: none;
+				color: white;
+				margin: 0;
+				padding: 10px;
+				-webkit-tap-highlight-color: transparent;
+				user-select: none;
+				touch-action: manipulation;
 			}
-		}
-	</style>
+			canvas{
+				background: var(--felt);
+				border: 10px solid var(--wood);
+				border-radius: 12px;
+				max-width: 100%;
+				height: auto;
+				cursor: pointer;
+			}
+			.panel{
+				display: flex;
+				width: 100%;
+				max-width: 660px;
+				flex-wrap: wrap;
+				justify-content: center;
+				align-items: center;
+				background: #252525;
+				padding: 15px;
+				border-radius: 12px;
+				margin-top: 10px;
+				box-sizing: border-box;
+				gap: 10px;
+			}
+			#dice-ui{
+				font-size: 2em;
+				min-width: 50px;
+				text-align: center;
+			}
+			.btn{
+				padding: 12px;
+				font-size: 0.9em;
+				cursor: pointer;
+				background: #c0392b;
+				border: none;
+				color: white;
+				border-radius: 6px;
+				font-weight: bold;
+				flex: 1;
+				min-width: 80px;
+			}
+			.btn-undo{
+				background: #2980b9;
+			}
+			.btn:disabled{
+				opacity: 0.3;
+			}
+			.score-container{
+				width: 100%;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-top: 5px;
+				border-top: 1px solid #444;
+				padding-top: 10px;
+			}
+			.btn-lang{
+				background: #444;
+				border: 1px solid #666;
+				padding: 5px;
+				border-radius: 6px;
+				cursor: pointer;
+				transition: 0.3s;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				width: 50px;
+				height: 35px;
+			}
+			.btn-lang:hover{
+				background: #555;
+			}
+			.flag-svg{
+				width: 32px;
+				height: 22px;
+				pointer-events: none;
+			}
+			@media (min-width: 850px){
+				#game-container{
+					display: flex;
+					flex-direction: row;
+					align-items: flex-start;
+					gap: 20px;
+				}
+				.panel{
+					flex-direction: column;
+					width: 180px;
+					flex-wrap: nowrap;
+					margin-top: 0;
+					height: 540px;
+					justify-content: flex-start;
+				}
+				.btn{
+					width: 100%;
+					flex: 0 0 auto;
+					margin-bottom: 5px;
+				}
+				#dice-ui{
+					margin-bottom: 20px;
+					font-size: 3em;
+				}
+				.score-container{
+					flex-direction: column;
+					align-items: center;
+					gap: 15px;
+					margin-top: auto;
+					border-top: none;
+				}
+			}
+		</style>
 	</head>
 	<body>
 		<div id="status" style="margin-bottom:10px">Roll the dice to play</div>
@@ -139,7 +140,6 @@
 				<div id="dice-ui" style="font-size:3em; margin-bottom:10px">🎲</div>
 				<button id="roll-btn" class="btn">ROLL THE DICE</button>
 				<button id="undo-btn" class="btn btn-undo" disabled>UNDO</button>
-				
 				<div class="score-container">
 					<div id="score-text" style="text-align:left; font-size: 0.9em;">
 						⚪ <span id="txt-you">YOU</span>: <span id="w-off">0</span>/15<br/>
@@ -149,7 +149,6 @@
 				</div>
 			</div>
 		</div>
-
 		<script>
 			const FLAGS_SVG = [
 				'<svg class="flag-svg" viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#s)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>', // UK
@@ -255,20 +254,27 @@
 				document.getElementById('w-off').innerText = game.off[1];
 				document.getElementById('b-off').innerText = game.off[-1];
 			}
-
-			ROLL_BTN.onclick = () => {
+			function rollTheDice(){
 				if(game.turn === 1 && game.moves.length === 0){
 					history = [];
 					rollDice();
 				}
+			}
+
+			ROLL_BTN.onclick = () => {
+				rollTheDice();
 			};
 
-			UNDO_BTN.onclick = () => {
+			function undo(){
 				if(history.length > 0){
 					game = JSON.parse(history.pop());
 					UNDO_BTN.disabled = history.length === 0;
 					draw();
 				}
+			}
+
+			UNDO_BTN.onclick = () => {
+				undo();
 			};
 
 			function rollDice(){
@@ -393,6 +399,16 @@
 					draw();
 				}
 			}
+
+			document.addEventListener("keydown", e => {
+				if(e.key.toLowerCase() === "r"){
+					rollTheDice();
+				}else if(e.key.toLowerCase() === "u"){
+					undo();
+				}else if(e.key.toLowerCase() === "l"){
+					nextLang();
+				}
+			});
 
 			updateUI();
 			draw();

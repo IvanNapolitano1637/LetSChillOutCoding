@@ -441,6 +441,16 @@
 					}
 				}, 500);
 			}
+
+			document.addEventListener("keydown", e => {
+				if(e.key.toLowerCase() === "r"){
+					resetGame();
+				}else if(e.key.toLowerCase() === "s"){
+					animatedSolving();
+				}else if(e.key.toLowerCase() === "l"){
+					nextLanguage();
+				}
+			});
 		</script>
 	</body>
 </html>

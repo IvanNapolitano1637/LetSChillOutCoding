@@ -3090,6 +3090,24 @@
 					drawChessboard();
 				}
 			}
+
+			document.addEventListener("keydown", e => {
+				if(e.key.toLowerCase() === "s"){
+					changeFlagValue();
+				}else if(e.key.toLowerCase() === "d"){
+					changeDifficulty();
+				}else if(e.key.toLowerCase() === "r"){
+					refresh();
+				}else if(e.key.toLowerCase() === "+"){
+					bigger();
+				}else if(e.key.toLowerCase() === "-"){
+					smaller();
+				}else if(e.key.toLowerCase() === "l"){
+					nextLang();
+				}else if(e.key.toLowerCase() === "q"){
+					changeTheMaxNumberOfTheQueens();
+				}
+			});
 		<\/script>
 	</body>
 </html>` },
@@ -3416,6 +3434,18 @@
 				if(goOnAlone) live();
 				drawUniverse();
 			}
+
+			document.addEventListener("keydown", e => {
+				if(e.key.toLowerCase() === "r"){
+					refreshPage();
+				}else if(e.key.toLowerCase() === "n"){
+					nextGeneration();
+				}else if(e.key.toLowerCase() === "s"){
+					live();
+				}else if(e.key.toLowerCase() === "l"){
+					nextLang();
+				}
+			});
 		<\/script>
 	</body>
 </html>` },
@@ -3864,6 +3894,16 @@
 					}
 				}, 500);
 			}
+
+			document.addEventListener("keydown", e => {
+				if(e.key.toLowerCase() === "r"){
+					resetGame();
+				}else if(e.key.toLowerCase() === "s"){
+					animatedSolving();
+				}else if(e.key.toLowerCase() === "l"){
+					nextLanguage();
+				}
+			});
 		<\/script>
 	</body>
 </html>` },
@@ -4323,6 +4363,30 @@
 			function refresh(){
 				drawUniverse();
 			}
+
+			function dropInColumn(column){
+				if(!goOn || moveYellow !== humanIsYellow){
+					return;
+				}
+				const rect = canvas.getBoundingClientRect();
+				const fakeX = rect.left + column*(DIAMETER + GRID_THICKNESS) + RADIUS;
+				select({ clientX: fakeX, clientY: rect.top });
+			}
+
+			document.addEventListener("keydown", e => {
+				const num = parseInt(e.key);
+				if(num >= 1 && num <= COLUMN_NUMBER){
+					dropInColumn(num - 1);
+				}else if(e.key.toLowerCase() === "u"){
+					undoLastMove();
+				}else if(e.key.toLowerCase() === "d"){
+					cycleDifficulty();
+				}else if(e.key.toLowerCase() === "r"){
+					refresh();
+				}else if(e.key.toLowerCase() === "l"){
+					cycleLanguage();
+				}
+			});
 		<\/script>
 	</body>
 </html>` },
@@ -4714,16 +4778,37 @@
 					initGame();
 				});
 
-				document.getElementById('btnDouble').addEventListener('click',(e) => {
+				function highlightDouble(){
 					showDoubles = !showDoubles;
-					e.target.classList.toggle('active');
+					document.getElementById('btnDouble').classList.toggle('active', showDoubles);
 					updateHighlights();
+				}
+
+				document.getElementById('btnDouble').addEventListener('click',() => {
+					highlightDouble();
 				});
 
-				document.getElementById('btnOpposite').addEventListener('click',(e) => {
+				function highlightOpposite(){
 					showOpposites = !showOpposites;
-					e.target.classList.toggle('active');
+					document.getElementById('btnOpposite').classList.toggle('active', showOpposites);
 					updateHighlights();
+				}
+
+				document.getElementById('btnOpposite').addEventListener('click',() => {
+					highlightOpposite();
+				});
+
+				document.addEventListener("keydown", e => {
+					if(e.key.toLowerCase() === "l"){
+						nextLang();
+					}else if(e.key.toLowerCase() === "d"){
+						highlightDouble();
+					}else if(e.key.toLowerCase() === "o"){
+						highlightOpposite();
+					}else if(e.key.toLowerCase() === "z"){
+						currentErrors = 0;
+						document.getElementById('errors').textContent = currentErrors;
+					}
 				});
 
 				initGame();
@@ -4884,7 +4969,7 @@
 			}
 
 			function nextLanguage(){
-				currentLangIndex = (currentLangIndex + 1) % LANG_KEYS.length;
+				currentLangIndex = (currentLangIndex + 1)%(LANG_KEYS.length);
 				const flagBtn = document.getElementById("langBtn");
 				if(flagBtn){
 					flagBtn.innerHTML = FLAGS_SVG[currentLangIndex];
@@ -5165,6 +5250,44 @@
 				document.getElementById("solveBtn").innerHTML = t("solve");
 				document.getElementById("solveBtn").disabled = false;
 			}
+
+			document.addEventListener("keydown", e => {
+				if(e.key.toLowerCase() === "r"){
+					shuffleTiles();
+				}else if(e.key.toLowerCase() === "l"){
+					nextLanguage();
+				}else if(e.key.toLowerCase() === "s"){
+					solve();
+				}else if(e.key === "ArrowUp"){
+					e.preventDefault();
+					if(r1 < 3){
+						cursorX = (c1*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+						cursorY = ((r1 + 1)*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+						select();
+					}
+				}else if(e.key === "ArrowDown"){
+					e.preventDefault();
+					if(r1 > 0){
+						cursorX = (c1*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+						cursorY = ((r1 - 1)*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+						select();
+					}
+				}else if(e.key === "ArrowLeft"){
+					e.preventDefault();
+					if(c1 < 3){
+							cursorX = ((c1 + 1)*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+							cursorY = (r1*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+							select();
+						}
+				}else if(e.key === "ArrowRight"){
+					e.preventDefault();
+					if(c1 > 0){
+						cursorX = ((c1 - 1)*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+						cursorY = (r1*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+						select();
+					}
+				}
+			});
 		<\/script>
 	</body>
 </html>` },
@@ -6902,143 +7025,152 @@
 				document.querySelectorAll('.piece').forEach(p => p.classList.remove('selected'));
 				selected = null;
 			}
+
+			document.addEventListener("keydown", e => {
+				if(e.key.toLowerCase() === "e"){
+					window.parent.postMessage('RELOAD_REQUEST','*');
+				}else if(e.key.toLowerCase() === "l"){
+					nextLang();
+				}
+			});
 		<\/script>
 	</body>
 </html>` },
 
 	// --- Backgammon ---
 	'Games_Backgammon.html': { name: `Backgammon`, content: `<!DOCTYPE html>
-<html lang="en"><head><!--G09#019 - Samuele - Backgammon-->
+<html lang="en"><!--G09#019 - Samuele - Backgammon-->
+	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<title>Backgammon Elite</title>
-	<style>
-		:root{
-			--wood: #3e2723;
-			--felt: #1b5e20;
-			--accent: #f1c40f;
-		}
-		body{
-			background: #121212;
-			font-family: sans-serif;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			color: white;
-			margin: 0;
-			padding: 10px;
-			-webkit-tap-highlight-color: transparent;
-			user-select: none;
-			touch-action: manipulation;
-		}
-		canvas{
-			background: var(--felt);
-			border: 10px solid var(--wood);
-			border-radius: 12px;
-			max-width: 100%;
-			height: auto;
-			cursor: pointer;
-		}
-		.panel{
-			display: flex;
-			width: 100%;
-			max-width: 660px;
-			flex-wrap: wrap;
-			justify-content: center;
-			align-items: center;
-			background: #252525;
-			padding: 15px;
-			border-radius: 12px;
-			margin-top: 10px;
-			box-sizing: border-box;
-			gap: 10px;
-		}
-		#dice-ui{
-			font-size: 2em;
-			min-width: 50px;
-			text-align: center;
-		}
-		.btn{
-			padding: 12px;
-			font-size: 0.9em;
-			cursor: pointer;
-			background: #c0392b;
-			border: none;
-			color: white;
-			border-radius: 6px;
-			font-weight: bold;
-			flex: 1;
-			min-width: 80px;
-		}
-		.btn-undo{
-			background: #2980b9;
-		}
-		.btn:disabled{
-			opacity: 0.3;
-		}
-		.score-container{
-			width: 100%;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			margin-top: 5px;
-			border-top: 1px solid #444;
-			padding-top: 10px;
-		}
-		.btn-lang{
-			background: #444;
-			border: 1px solid #666;
-			padding: 5px;
-			border-radius: 6px;
-			cursor: pointer;
-			transition: 0.3s;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			width: 50px;
-			height: 35px;
-		}
-		.btn-lang:hover{
-			background: #555;
-		}
-		.flag-svg{
-			width: 32px;
-			height: 22px;
-			pointer-events: none;
-		}
-		@media (min-width: 850px){
-			#game-container{
+		<style>
+			:root{
+				--wood: #3e2723;
+				--felt: #1b5e20;
+				--accent: #f1c40f;
+			}
+			body{
+				background: #121212;
+				font-family: sans-serif;
 				display: flex;
-				flex-direction: row;
-				align-items: flex-start;
-				gap: 20px;
-			}
-			.panel{
-				flex-direction: column;
-				width: 180px;
-				flex-wrap: nowrap;
-				margin-top: 0;
-				height: 540px;
-				justify-content: flex-start;
-			}
-			.btn{
-				width: 100%;
-				flex: 0 0 auto;
-				margin-bottom: 5px;
-			}
-			#dice-ui{
-				margin-bottom: 20px;
-				font-size: 3em;
-			}
-			.score-container{
 				flex-direction: column;
 				align-items: center;
-				gap: 15px;
-				margin-top: auto;
-				border-top: none;
+				color: white;
+				margin: 0;
+				padding: 10px;
+				-webkit-tap-highlight-color: transparent;
+				user-select: none;
+				touch-action: manipulation;
 			}
-		}
-	</style>
+			canvas{
+				background: var(--felt);
+				border: 10px solid var(--wood);
+				border-radius: 12px;
+				max-width: 100%;
+				height: auto;
+				cursor: pointer;
+			}
+			.panel{
+				display: flex;
+				width: 100%;
+				max-width: 660px;
+				flex-wrap: wrap;
+				justify-content: center;
+				align-items: center;
+				background: #252525;
+				padding: 15px;
+				border-radius: 12px;
+				margin-top: 10px;
+				box-sizing: border-box;
+				gap: 10px;
+			}
+			#dice-ui{
+				font-size: 2em;
+				min-width: 50px;
+				text-align: center;
+			}
+			.btn{
+				padding: 12px;
+				font-size: 0.9em;
+				cursor: pointer;
+				background: #c0392b;
+				border: none;
+				color: white;
+				border-radius: 6px;
+				font-weight: bold;
+				flex: 1;
+				min-width: 80px;
+			}
+			.btn-undo{
+				background: #2980b9;
+			}
+			.btn:disabled{
+				opacity: 0.3;
+			}
+			.score-container{
+				width: 100%;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-top: 5px;
+				border-top: 1px solid #444;
+				padding-top: 10px;
+			}
+			.btn-lang{
+				background: #444;
+				border: 1px solid #666;
+				padding: 5px;
+				border-radius: 6px;
+				cursor: pointer;
+				transition: 0.3s;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				width: 50px;
+				height: 35px;
+			}
+			.btn-lang:hover{
+				background: #555;
+			}
+			.flag-svg{
+				width: 32px;
+				height: 22px;
+				pointer-events: none;
+			}
+			@media (min-width: 850px){
+				#game-container{
+					display: flex;
+					flex-direction: row;
+					align-items: flex-start;
+					gap: 20px;
+				}
+				.panel{
+					flex-direction: column;
+					width: 180px;
+					flex-wrap: nowrap;
+					margin-top: 0;
+					height: 540px;
+					justify-content: flex-start;
+				}
+				.btn{
+					width: 100%;
+					flex: 0 0 auto;
+					margin-bottom: 5px;
+				}
+				#dice-ui{
+					margin-bottom: 20px;
+					font-size: 3em;
+				}
+				.score-container{
+					flex-direction: column;
+					align-items: center;
+					gap: 15px;
+					margin-top: auto;
+					border-top: none;
+				}
+			}
+		</style>
 	</head>
 	<body>
 		<div id="status" style="margin-bottom:10px">Roll the dice to play</div>
@@ -7048,7 +7180,6 @@
 				<div id="dice-ui" style="font-size:3em; margin-bottom:10px">🎲</div>
 				<button id="roll-btn" class="btn">ROLL THE DICE</button>
 				<button id="undo-btn" class="btn btn-undo" disabled>UNDO</button>
-				
 				<div class="score-container">
 					<div id="score-text" style="text-align:left; font-size: 0.9em;">
 						⚪ <span id="txt-you">YOU</span>: <span id="w-off">0</span>/15<br/>
@@ -7058,7 +7189,6 @@
 				</div>
 			</div>
 		</div>
-
 		<script>
 			const FLAGS_SVG = [
 				'<svg class="flag-svg" viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#s)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>', // UK
@@ -7164,20 +7294,27 @@
 				document.getElementById('w-off').innerText = game.off[1];
 				document.getElementById('b-off').innerText = game.off[-1];
 			}
-
-			ROLL_BTN.onclick = () => {
+			function rollTheDice(){
 				if(game.turn === 1 && game.moves.length === 0){
 					history = [];
 					rollDice();
 				}
+			}
+
+			ROLL_BTN.onclick = () => {
+				rollTheDice();
 			};
 
-			UNDO_BTN.onclick = () => {
+			function undo(){
 				if(history.length > 0){
 					game = JSON.parse(history.pop());
 					UNDO_BTN.disabled = history.length === 0;
 					draw();
 				}
+			}
+
+			UNDO_BTN.onclick = () => {
+				undo();
 			};
 
 			function rollDice(){
@@ -7302,6 +7439,16 @@
 					draw();
 				}
 			}
+
+			document.addEventListener("keydown", e => {
+				if(e.key.toLowerCase() === "r"){
+					rollTheDice();
+				}else if(e.key.toLowerCase() === "u"){
+					undo();
+				}else if(e.key.toLowerCase() === "l"){
+					nextLang();
+				}
+			});
 
 			updateUI();
 			draw();
@@ -8227,7 +8374,7 @@
 			}
 
 			function nextLang(){
-				currentLangIndex = (currentLangIndex + 1) % LANG_KEYS.length;
+				currentLangIndex = (currentLangIndex + 1)%LANG_KEYS.length;
 				document.getElementById('btn-lang').innerHTML = FLAGS_SVG[currentLangIndex];
 				applyLang();
 				if(!gameOver && !aiThinking){
@@ -8657,7 +8804,7 @@
 				canvas.dispatchEvent(new MouseEvent('click', { clientX: t.clientX, clientY: t.clientY }));
 			}, { passive: false });
 
-			document.getElementById('btn-pass').addEventListener('click', () => {
+			function pass(){
 				if(gameOver || aiThinking || currentPlayer !== BLACK){
 					return;
 				}
@@ -8671,19 +8818,31 @@
 				updateUI();
 				drawBoard();
 				scheduleAI();
+			}
+
+			document.getElementById('btn-pass').addEventListener('click', () => {
+				pass();
 			});
 
-			document.getElementById('btn-resign').addEventListener('click', () => {
+			function resign(){
 				if(gameOver){
 					return;
 				}
 				gameOver = true;
 				showModal(t('resigned'), t('resignMsg'));
+			}
+
+			document.getElementById('btn-resign').addEventListener('click', () => {
+				resign();
 			});
 
-			document.getElementById('btn-new').addEventListener('click', () => {
+			function newGame(){
 				hideModal();
 				initBoard(N);
+			}
+
+			document.getElementById('btn-new').addEventListener('click', () => {
+				newGame();
 			});
 
 			document.getElementById('modal-ok').addEventListener('click', () => {
@@ -8706,6 +8865,19 @@
 
 			document.getElementById('btn-lang').innerHTML = FLAGS_SVG[0];
 			document.getElementById('btn-lang').addEventListener('click', nextLang);
+
+			document.addEventListener("keydown", e => {
+				if(e.key.toLowerCase() === "p"){
+					pass();
+				}else if(e.key.toLowerCase() === "r"){
+					resign();
+				}else if(e.key.toLowerCase() === "n"){
+					newGame();
+				}else if(e.key.toLowerCase() === "l"){
+					nextLang();
+				}
+			});
+
 			initBoard(9);
 		<\/script>
 	</body>

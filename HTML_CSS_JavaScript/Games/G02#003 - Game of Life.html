@@ -319,6 +319,18 @@
 				if(goOnAlone) live();
 				drawUniverse();
 			}
+
+			document.addEventListener("keydown", e => {
+				if(e.key.toLowerCase() === "r"){
+					refreshPage();
+				}else if(e.key.toLowerCase() === "n"){
+					nextGeneration();
+				}else if(e.key.toLowerCase() === "s"){
+					live();
+				}else if(e.key.toLowerCase() === "l"){
+					nextLang();
+				}
+			});
 		</script>
 	</body>
 </html>
