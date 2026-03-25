@@ -98,6 +98,13 @@
 				margin: 5px 0;
 				color: #444;
 			}
+			#btnLang .flag-svg{
+				width: 28px;
+				height: 19px;
+				display: block;
+				margin: 0 auto;
+				pointer-events: none;
+			}
 			*{
 				-webkit-tap-highlight-color: transparent;
 			}
@@ -114,6 +121,7 @@
 			<div class="button-group">
 				<button type="button" onclick="bigger()">Size (+)</button>
 				<button type="button" onclick="smaller()">Size (-)</button>
+				<button type="button" id="btnLang" onclick="nextLang()"></button>
 				<button type="button" id="queensNumber" onclick="changeTheMaxNumberOfTheQueens()">Queens: 0/64</button>
 			</div>
 			<button type="button" id="btnShowSolutions" onclick="toggleSolutions()" style="display:none;">Show solutions</button>
@@ -138,7 +146,6 @@
 			let numberOfQueens = 0;
 			let maxNumberOfTheQueens = 64;
 			let grid = [];
-
 			const solutions = [
 				["04752613","06471352","25317460","31625740","46152037","52460317","71306425","73025164"],
 				["05726314","06357142","24175360","36415027","41362750","53602417","71420635","72051463"],
@@ -153,6 +160,215 @@
 				["24730615","25713064","26174035","31746025","46031752","51603742","52064713","53047162"],
 				["25147063","25704613","31640752","36074152","41703625","46137025","52073164","52630714"]
 			];
+			const FLAGS_SVG = [
+				'<svg class="flag-svg" viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#s)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>', // UK
+				//'<svg class="flag-svg" viewBox="0 0 7410 3900"><rect width="7410" height="3900" fill="#b22234"/><path d="M0 300h7410M0 900h7410M0 1500h7410M0 2100h7410M0 2700h7410M0 3300h7410" stroke="#fff" stroke-width="300"/><rect width="2964" height="2100" fill="#3c3b6e"/><path d="M247 175l247 759-646-469h798l-646 469z" fill="#fff" transform="scale(.2)"/></svg>', // US
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>', // IT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg>', // FR
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#c60b1e"/><rect width="3" height="1" y="0.5" fill="#ffc400"/></svg>', // ES
+				'<svg class="flag-svg" viewBox="0 0 5 3"><rect width="5" height="3"/><rect width="5" height="2" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg>', // DE
+				'<svg class="flag-svg" viewBox="0 0 600 400"><rect width="240" height="400" fill="#006600"/><rect x="240" width="360" height="400" fill="#ff0000"/></svg>', // PT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002b7f"/><rect width="1" height="2" x="1" fill="#fcd116"/><rect width="1" height="2" x="2" fill="#ce1126"/></svg>', // RO
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>', // UA
+				'<svg class="flag-svg" viewBox="0 0 27 18"><rect width="27" height="18" fill="#005bae"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#005bae"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>', // GR
+				//'<svg class="flag-svg" viewBox="0 0 1 1"><rect width="0.5" height="1" fill="#ffe000"/><rect x="0.5" width="0.5" height="1" fill="#fff"/></svg>', // VA
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#800000"/><path d="M0.5,0.5 L2.5,0.5 L2.5,1.5 L0.5,1.5 Z" fill="none" stroke="#FFD700" stroke-width="0.1"/><text x="1.5" y="1.15" font-family="serif" font-weight="bold" font-size="0.4" fill="#FFD700" text-anchor="middle">SPQR</text></svg>', // ROMA
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#de2110"/><path d="M.5 1.1l.3-.9.3.9-1-.6h1z" fill="#ffde00" transform="matrix(.4 0 0 .4 .1 .1)"/></svg>', // CN
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>' // JP
+			];
+			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
+			const TRANSLATIONS = {
+				en: {
+					semaphoreOn: "🟢",
+					noSemaphore: "⚫",
+					hard: "Hard",
+					easy: "Easy",
+					reset: "Reset",
+					sizeP: "🔍+",
+					sizeM: "🔍−",
+					queens: "👑",
+					showSolutions: "Show solutions",
+					hideSolutions: "Hide solutions",
+					youWin: "You win!"
+				},
+				it: {
+					semaphoreOn: "🟢",
+					noSemaphore: "⚫",
+					hard: "Difficile",
+					easy: "Facile",
+					reset: "Reset",
+					sizeP: "🔍+",
+					sizeM: "🔍−",
+					queens: "👑",
+					showSolutions: "Mostra soluzioni",
+					hideSolutions: "Nascondi soluzioni",
+					youWin: "Hai vinto!"
+				},
+				fr: {
+					semaphoreOn: "🟢",
+					noSemaphore: "⚫",
+					hard: "Difficile",
+					easy: "Facile",
+					reset: "Réinitialiser",
+					sizeP: "🔍+",
+					sizeM: "🔍−",
+					queens: "👑",
+					showSolutions: "Voir solutions",
+					hideSolutions: "Cacher solutions",
+					youWin: "Vous gagnez !"
+				},
+				es: {
+					semaphoreOn: "🟢",
+					noSemaphore: "⚫",
+					hard: "Difícil",
+					easy: "Fácil",
+					reset: "Reiniciar",
+					sizeP: "🔍+",
+					sizeM: "🔍−",
+					queens: "👑",
+					showSolutions: "Ver soluciones",
+					hideSolutions: "Ocultar soluciones",
+					youWin: "¡Ganaste!"
+				},
+				de: {
+					semaphoreOn: "🟢",
+					noSemaphore: "⚫",
+					hard: "Schwer",
+					easy: "Leicht",
+					reset: "Zurücksetzen",
+					sizeP: "🔍+",
+					sizeM: "🔍−",
+					queens: "👑",
+					showSolutions: "Lösungen zeigen",
+					hideSolutions: "Lösungen ausblenden",
+					youWin: "Du gewinnst!"
+				},
+				pt: {
+					semaphoreOn: "🟢",
+					noSemaphore: "⚫",
+					hard: "Difícil",
+					easy: "Fácil",
+					reset: "Reiniciar",
+					sizeP: "🔍+",
+					sizeM: "🔍−",
+					queens: "👑",
+					showSolutions: "Ver soluções",
+					hideSolutions: "Ocultar soluções",
+					youWin: "Você ganhou!"
+				},
+				ro: {
+					semaphoreOn: "🟢",
+					noSemaphore: "⚫",
+					hard: "Greu",
+					easy: "Ușor",
+					reset: "Resetare",
+					sizeP: "🔍+",
+					sizeM: "🔍−",
+					queens: "👑",
+					showSolutions: "Arată soluții",
+					hideSolutions: "Ascunde soluții",
+					youWin: "Ai câștigat!"
+				},
+				uk: {
+					semaphoreOn: "🟢",
+					noSemaphore: "⚫",
+					hard: "Важко",
+					easy: "Легко",
+					reset: "Скинути",
+					sizeP: "🔍+",
+					sizeM: "🔍−",
+					queens: "👑",
+					showSolutions: "Показати рішення",
+					hideSolutions: "Сховати рішення",
+					youWin: "Ти виграв!"
+				},
+				el: {
+					semaphoreOn: "🟢",
+					noSemaphore: "⚫",
+					hard: "Δύσκολο",
+					easy: "Εύκολο",
+					reset: "Επαναφορά",
+					sizeP: "🔍+",
+					sizeM: "🔍−",
+					queens: "👑",
+					showSolutions: "Εμφάνιση λύσεων",
+					hideSolutions: "Απόκρυψη λύσεων",
+					youWin: "Κέρδισες!"
+				},
+				la: {
+					semaphoreOn: "🟢",
+					noSemaphore: "⚫",
+					hard: "Difficile",
+					easy: "Facile",
+					reset: "Renovare",
+					sizeP: "🔍+",
+					sizeM: "🔍−",
+					queens: "👑",
+					showSolutions: "Ostende solutiones",
+					hideSolutions: "Absconde solutiones",
+					youWin: "Vincis!"
+				},
+				zh: {
+					semaphoreOn: "🟢",
+					noSemaphore: "⚫",
+					hard: "困难",
+					easy: "简单",
+					reset: "重置",
+					sizeP: "🔍+",
+					sizeM: "🔍−",
+					queens: "👑",
+					showSolutions: "显示解法",
+					hideSolutions: "隐藏解法",
+					youWin: "你赢了！"
+				},
+				ja: {
+					semaphoreOn: "🟢",
+					noSemaphore: "⚫",
+					hard: "難しい",
+					easy: "簡単",
+					reset: "リセット",
+					sizeP: "🔍+",
+					sizeM: "🔍−",
+					queens: "👑",
+					showSolutions: "解を表示",
+					hideSolutions: "解を非表示",
+					youWin: "あなたの勝ちです！"
+				}
+			};
+
+			let currentLangIndex = 0;
+
+			function t(key){
+				return TRANSLATIONS[LANG_KEYS[currentLangIndex]][key];
+			}
+
+			const SEMAPHORE_ON_SVG = `<svg width="66" height="18" viewBox="0 0 66 18" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto;pointer-events:none"><rect x="0" y="0" width="66" height="18" rx="3" fill="#111"/><circle cx="9" cy="9" r="6" fill="#880000"/><circle cx="9" cy="9" r="4" fill="#ff2200"/><circle cx="9" cy="9" r="2" fill="#ff8888" opacity="0.6"/><circle cx="21" cy="9" r="6" fill="#880000"/><circle cx="21" cy="9" r="4" fill="#ff2200"/><circle cx="21" cy="9" r="2" fill="#ff8888" opacity="0.6"/><circle cx="33" cy="9" r="6" fill="#880000"/><circle cx="33" cy="9" r="4" fill="#ff2200"/><circle cx="33" cy="9" r="2" fill="#ff8888" opacity="0.6"/><circle cx="45" cy="9" r="6" fill="#880000"/><circle cx="45" cy="9" r="4" fill="#ff2200"/><circle cx="45" cy="9" r="2" fill="#ff8888" opacity="0.6"/><circle cx="57" cy="9" r="6" fill="#880000"/><circle cx="57" cy="9" r="4" fill="#ff2200"/><circle cx="57" cy="9" r="2" fill="#ff8888" opacity="0.6"/></svg>`;
+			const SEMAPHORE_OFF_SVG = `<svg width="66" height="18" viewBox="0 0 66 18" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto;pointer-events:none"><rect x="0" y="0" width="66" height="18" rx="3" fill="#111"/><circle cx="9" cy="9" r="6" fill="#2a2a2a"/><circle cx="21" cy="9" r="6" fill="#2a2a2a"/><circle cx="33" cy="9" r="6" fill="#2a2a2a"/><circle cx="45" cy="9" r="6" fill="#2a2a2a"/><circle cx="57" cy="9" r="6" fill="#2a2a2a"/></svg>`;
+			const SIZE_PLUS_SVG = `<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto;pointer-events:none"><rect x="8" y="2" width="4" height="16" rx="2" fill="currentColor"/><rect x="2" y="8" width="16" height="4" rx="2" fill="currentColor"/></svg>`;
+			const SIZE_MINUS_SVG = `<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto;pointer-events:none"><rect x="2" y="8" width="16" height="4" rx="2" fill="currentColor"/></svg>`;
+
+			function updateUI(){
+				const lang = LANG_KEYS[currentLangIndex];
+				document.getElementById("semaphore").innerHTML = semaphoreFlag ? SEMAPHORE_ON_SVG : SEMAPHORE_OFF_SVG;
+				document.getElementById("btnDifficulty").textContent = easy ? t("easy") : t("hard");
+				document.getElementById("refreshBtn").textContent = t("reset");
+				document.querySelectorAll(".button-group button")[3].innerHTML = SIZE_PLUS_SVG;
+				document.querySelectorAll(".button-group button")[4].innerHTML = SIZE_MINUS_SVG;
+				setQueensLimitButtonLabel();
+				const showBtn = document.getElementById("btnShowSolutions");
+				if(showBtn.textContent !== ""){
+					const isHiding = showBtn.textContent.includes("Hide") ||
+						showBtn.textContent === TRANSLATIONS[lang]["hideSolutions"] ||
+						document.getElementById("solutionsContainer").innerHTML !== "";
+					showBtn.textContent = isHiding ? t("hideSolutions") : t("showSolutions");
+				}
+				document.getElementById("btnLang").innerHTML = FLAGS_SVG[currentLangIndex];
+			}
+
+			function nextLang(){
+				currentLangIndex = (currentLangIndex + 1) % LANG_KEYS.length;
+				updateUI();
+			}
 
 			window.onload = init;
 			window.onresize = () => { side = getScreenSize()/order; drawAll(); };
@@ -161,6 +377,9 @@
 				const canvas = document.getElementById("chessboard");
 				canvas.addEventListener('mousedown', handleInput);
 				canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleInput(e.touches[0]); });
+				document.getElementById("btnLang").innerHTML = FLAGS_SVG[0];
+				document.querySelectorAll(".button-group button")[3].innerHTML = SIZE_PLUS_SVG;
+				document.querySelectorAll(".button-group button")[4].innerHTML = SIZE_MINUS_SVG;
 				drawChessboard();
 			}
 
@@ -255,7 +474,7 @@
 				if(safe && numberOfQueens === order){
 					document.body.style.background = BACKGROUND_WIN_COLOR;
 					hasWon = true;
-					setTimeout(() => alert("You win!"), 100);
+					setTimeout(() => alert(t("youWin")), 100);
 				}
 			}
 
@@ -263,7 +482,7 @@
 				const container = document.getElementById("solutionsContainer");
 				if(container.innerHTML !== ""){
 					container.innerHTML = "";
-					document.getElementById("btnShowSolutions").textContent = "Show solutions";
+					document.getElementById("btnShowSolutions").textContent = t("showSolutions");
 					return;
 				}
 				solutions.forEach((fam, idx) => {
@@ -285,7 +504,7 @@
 					container.appendChild(block);
 				});
 				container.scrollIntoView({behavior: "smooth"});
-				document.getElementById("btnShowSolutions").textContent = "Hide solutions";
+				document.getElementById("btnShowSolutions").textContent = t("hideSolutions");
 			}
 
 			function drawMini(canvas, sol){
@@ -330,21 +549,22 @@
 				}
 				drawAll();
 				setQueensLimitButtonLabel();
+				updateUI();
 			}
 
 			function setQueensLimitButtonLabel(){
-				document.getElementById("queensNumber").textContent = `Queens: ${numberOfQueens}/${maxNumberOfTheQueens}`;
+				document.getElementById("queensNumber").textContent = `${t("queens")} ${numberOfQueens}/${maxNumberOfTheQueens}`;
 			}
 
 			function changeDifficulty(){
 				easy = !easy;
-				document.getElementById("btnDifficulty").textContent = (easy ? "Easy" : "Hard");
+				document.getElementById("btnDifficulty").textContent = easy ? t("easy") : t("hard");
 				drawAll();
 			}
 
 			function changeFlagValue(){
 				semaphoreFlag = !semaphoreFlag;
-				document.getElementById("semaphore").textContent = (semaphoreFlag ? "Semaphore on" : "No semaphore");
+				document.getElementById("semaphore").innerHTML = semaphoreFlag ? SEMAPHORE_ON_SVG : SEMAPHORE_OFF_SVG;
 				checkWin();
 			}
 

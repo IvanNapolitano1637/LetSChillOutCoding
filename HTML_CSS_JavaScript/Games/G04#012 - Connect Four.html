@@ -346,7 +346,7 @@
 					return;
 				}
 				const rect = canvas.getBoundingClientRect();
-				const scaleX = canvas.width/rect.width; 
+				const scaleX = canvas.width/rect.width;
 				const x = (e.clientX - rect.left)*scaleX;
 				const column = Math.floor(x/(DIAMETER + GRID_THICKNESS));
 				if(column < 0 || column >= COLUMN_NUMBER){

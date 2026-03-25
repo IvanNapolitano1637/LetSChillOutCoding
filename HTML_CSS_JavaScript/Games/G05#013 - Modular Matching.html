@@ -38,6 +38,7 @@
 				gap: 10px;
 				justify-content: center;
 				flex-wrap: wrap;
+				padding: 0 10px;
 			}
 			.p-input-group{
 				margin-right: 5px;
@@ -53,12 +54,14 @@
 				font-weight: bold;
 			}
 			button{
-				padding: 8px 15px;
+				padding: 8px 12px;
 				cursor: pointer;
 				border-radius: 5px;
 				border: 1px solid #ccc;
 				background: white;
 				transition: all 0.3s;
+				font-size: 0.95em;
+				hyphens: auto;
 			}
 			button:hover{
 				background: #f5f5f5;
@@ -75,6 +78,15 @@
 			}
 			.btn-primary:hover{
 				background-color: #1976d2;
+			}
+			@media (max-width: 480px){
+				button {
+					font-size: 0.8em;
+					padding: 6px 10px;
+				}
+				.controls {
+					gap: 5px;
+				}
 			}
 			.grid{
 				display: grid;
@@ -112,9 +124,11 @@
 			.matched{
 				background-color: var(--match-color) !important;
 				color: white;
-				font-size: 0.8em;
+				font-size: 0.85em;
+				line-height: 1;
 				border-color: #689f38;
 				cursor: default;
+				white-space: nowrap;
 			}
 			.revealed{
 				background-color: var(--reveal-color);
@@ -136,43 +150,95 @@
 					transform: translateX(5px);
 				}
 			}
-			.cell.matched{
-				background-color: var(--match-color) !important;
-				color: white;
-				font-size: 0.85em;
-				line-height: 1;
-				border-color: #689f38;
-				cursor: default;
-				white-space: nowrap;
-			}
-			.cell.matched sup{
-				font-size: 0.7em;
-				vertical-align: super;
+			#btnLang .flag-svg{
+				width: 28px;
+				height: 19px;
+				display: block;
+				margin: 0 auto;
+				pointer-events: none;
 			}
 			*{
 				-webkit-tap-highlight-color: transparent;
 			}
 		</style>
 	</head>
-	<body>
+	<body lang="en">
 		<div class="header">
 			<div>
-				<b>Errors: <span id="errors" style="color: var(--error-color);">0</span>/<span id="maxErrors">5</span></b>
+				<b><span id="txt-errors">Errors</span>: <span id="errors" style="color: var(--error-color);">0</span>/<span id="maxErrors">5</span></b>
 			</div>
 			<div class="controls">
 				<div class="p-input-group">
-					<label for="pVal">P = </label>
+					<label for="pVal" id="labelP">P = </label>
 					<input type="number" id="pVal" value="37" min="3" max="101">
 					<button id="btnUpdateP" class="btn-primary">Update P</button>
+					<button id="btnLang" onclick="nextLang()"></button>
 				</div>
-				<div style="width: 100%; display: flex; justify-content: center; gap: 10px; margin-top: 10px;">
-					<button id="btnDouble">Highlight doubles (2n)</button>
-					<button id="btnOpposite">Highlight opposites (-n)</button>
+				<div style="width: 100%; display: flex; justify-content: center; gap: 8px; margin-top: 10px;">
+					<button id="btnDouble">Highlight doubles</button>
+					<button id="btnOpposite">Highlight opposites</button>
 				</div>
 			</div>
 		</div>
 		<div class="grid" id="gameGrid"></div>
 		<script>
+			const FLAGS_SVG = [
+				'<svg class="flag-svg" viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#s)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>', // UK
+				//'<svg class="flag-svg" viewBox="0 0 7410 3900"><rect width="7410" height="3900" fill="#b22234"/><path d="M0 300h7410M0 900h7410M0 1500h7410M0 2100h7410M0 2700h7410M0 3300h7410" stroke="#fff" stroke-width="300"/><rect width="2964" height="2100" fill="#3c3b6e"/><path d="M247 175l247 759-646-469h798l-646 469z" fill="#fff" transform="scale(.2)"/></svg>', // US
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>', // IT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg>', // FR
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#c60b1e"/><rect width="3" height="1" y="0.5" fill="#ffc400"/></svg>', // ES
+				'<svg class="flag-svg" viewBox="0 0 5 3"><rect width="5" height="3"/><rect width="5" height="2" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg>', // DE
+				'<svg class="flag-svg" viewBox="0 0 600 400"><rect width="240" height="400" fill="#006600"/><rect x="240" width="360" height="400" fill="#ff0000"/></svg>', // PT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002b7f"/><rect width="1" height="2" x="1" fill="#fcd116"/><rect width="1" height="2" x="2" fill="#ce1126"/></svg>', // RO
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>', // UA
+				'<svg class="flag-svg" viewBox="0 0 27 18"><rect width="27" height="18" fill="#005bae"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#005bae"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>', // GR
+				//'<svg class="flag-svg" viewBox="0 0 1 1"><rect width="0.5" height="1" fill="#ffe000"/><rect x="0.5" width="0.5" height="1" fill="#fff"/></svg>', // VA
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#800000"/><path d="M0.5,0.5 L2.5,0.5 L2.5,1.5 L0.5,1.5 Z" fill="none" stroke="#FFD700" stroke-width="0.1"/><text x="1.5" y="1.15" font-family="serif" font-weight="bold" font-size="0.4" fill="#FFD700" text-anchor="middle">SPQR</text></svg>', // ROMA
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#de2110"/><path d="M.5 1.1l.3-.9.3.9-1-.6h1z" fill="#ffde00" transform="matrix(.4 0 0 .4 .1 .1)"/></svg>', // CN
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>' // JP
+			];
+			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
+			const TRANSLATIONS = {
+				en: { errors: "Errors", updateP: "Update P", hlDoubles: "Highlight doubles (2x)", hlOpposites: "Highlight opposites (-x)", notPrime: " is not prime. Some numbers may lack an inverse. Continue?", warnPrime: " is not prime. Some numbers could not have a reverse.", maxErrors: "Max errors!", win: "Win! :-D", varP: "P", varX: "x" },
+				it: { errors: "Errori", updateP: "Aggiorna P", hlDoubles: "Evidenzia doppi (2x)", hlOpposites: "Evidenzia opposti (-x)", notPrime: " non è primo. Alcuni numeri potrebbero non avere un inverso. Continuare?", warnPrime: " non è primo. Alcuni numeri potrebbero non avere un inverso.", maxErrors: "Max errori!", win: "Vinto! :-D", varP: "P", varX: "x" },
+				fr: { errors: "Erreurs", updateP: "MàJ P", hlDoubles: "Surligner doubles (2x)", hlOpposites: "Surligner opposés (-x)", notPrime: " n'est pas premier. Certains nombres peuvent manquer d'inverse. Continuer?", warnPrime: " n'est pas premier. Certains nombres pourraient ne pas avoir d'inverse.", maxErrors: "Max erreurs!", win: "Gagné! :-D", varP: "P", varX: "x" },
+				es: { errors: "Errores", updateP: "Actualizar P", hlDoubles: "Resaltar dobles (2x)", hlOpposites: "Resaltar opuestos (-x)", notPrime: " no es primo. Algunos números podrían no tener inverso. ¿Continuar?", warnPrime: " no es primo. Algunos números podrían no tener inverso.", maxErrors: "¡Max errori!", win: "¡Ganaste! :-D", varP: "P", varX: "x" },
+				de: { errors: "Fehler", updateP: "P akt.", hlDoubles: "Doppelte hervorheben (2x)", hlOpposites: "Gegenteile hervorheben (-x)", notPrime: " ist keine Primzahl. Einige Zahlen haben eventuell keinen Kehrwert. Fortfahren?", warnPrime: " ist keine Primzahl. Einige Zahlen könnten keinen Kehrwert haben.", maxErrors: "Fehlerlimit!", win: "Sieg! :-D", varP: "P", varX: "x" },
+				pt: { errors: "Erros", updateP: "Atualizar P", hlDoubles: "Destacar dobros (2x)", hlOpposites: "Destacar opostos (-x)", notPrime: " não è primo. Alguns números podem não ter inverso. Continuar?", warnPrime: " não è primo. Alguns números podem não ter inverso.", maxErrors: "Erro max!", win: "Ganhou! :-D", varP: "P", varX: "x" },
+				ro: { errors: "Erori", updateP: "Actualizează P", hlDoubles: "Evidențiază dubluri (2x)", hlOpposites: "Evidențiază opuse (-x)", notPrime: " nu este prim. Unele numere ar putea să nu aibă invers. Continuați?", warnPrime: " nu este prim. Unele numere ar putea să nu aibă invers.", maxErrors: "Erori max!", win: "Victorie! :-D", varP: "P", varX: "x" },
+				uk: { errors: "Помилки", updateP: "Оновити П", hlDoubles: "Виділити подвійні (2n)", hlOpposites: "Виділити протилежні (-n)", notPrime: " не є простим. Деякі числа можуть не мати оберненого. Продовжити?", warnPrime: " не є простим. Деякі числа можуть не мати оберненого.", maxErrors: "Помилки!", win: "Перемога! :-D", varP: "П", varX: "n" },
+				el: { errors: "Σφάλματα", updateP: "Ενημέρωση Π", hlDoubles: "Επισήμανση διπλών (2x)", hlOpposites: "Επισήμανση αντίθετων (-x)", notPrime: " δεν είναι πρώτος. Ορισμένοι αριθμοί μπορεί να μην έχουν αντίστροφο. Συνέχεια;", warnPrime: " δεν είναι πρώτος. Ορισμένοι αριθμοί μπορεί να μην έχουν αντίστροφο.", maxErrors: "Σφάλματα!", win: "Νίκη! :-D", varP: "Π", varX: "x" },
+				la: { errors: "Errores", updateP: "Renova P", hlDoubles: "Ostende duplices (2x)", hlOpposites: "Ostende oppositos (-x)", notPrime: " non est primus. Aliqui numeri inversum non habere possunt. Pergere?", warnPrime: " non est primus. Aliqui numeri inversum non habere possunt.", maxErrors: "Errores!", win: "Vicisti! :-D", varP: "P", varX: "x" },
+				zh: { errors: "错误", updateP: "更新 模", hlDoubles: "高亮双倍 (2n)", hlOpposites: "高亮相反数 (-n)", notPrime: " 不是质数。某些数字可能没有逆元。继续？", warnPrime: " 不是质数。某些数字可能没有逆元。", maxErrors: "错误过多!", win: "赢了! :-D", varP: "模", varX: "n" },
+				ja: { errors: "エラー", updateP: "P 更新", hlDoubles: "2倍を強調 (2n)", hlOpposites: "逆数を強調 (-n)", notPrime: " は素数ではありません。一部の数値には逆数がない場合があります。続行？", warnPrime: " は素数ではありません。一部の数値には逆数がない場合があります。", maxErrors: "リトライ!", win: "勝ち! :-D", varP: "P", varX: "n" }
+			};
+			let currentLangIndex = 0;
+
+			function t(key){
+				return TRANSLATIONS[LANG_KEYS[currentLangIndex]][key];
+			}
+
+			function updateUI(){
+				document.getElementById('txt-errors').textContent = t("errors");
+				document.getElementById('labelP').textContent = t("varP") + " = ";
+				document.getElementById('btnUpdateP').textContent = t("updateP");
+				document.getElementById('btnDouble').textContent = t("hlDoubles");
+				document.getElementById('btnOpposite').textContent = t("hlOpposites");
+				document.getElementById('btnLang').innerHTML = FLAGS_SVG[currentLangIndex];
+				document.body.setAttribute('lang', LANG_KEYS[currentLangIndex]);
+			}
+
+			function nextLang(){
+				currentLangIndex = (currentLangIndex + 1) % LANG_KEYS.length;
+				updateUI();
+				document.querySelectorAll('.cell.matched').forEach(cell => {
+					const n1 = cell.dataset.number;
+					const n2 = cell.dataset.inverse;
+					cell.innerHTML = (n1 === n2) ? `${n1} = ${n1}⁻¹` : `${n1} = ${n2}⁻¹`;
+				});
+			}
+
 			document.addEventListener('DOMContentLoaded',() => {
 				let P = 37;
 				const GRID = document.getElementById('gameGrid');
@@ -200,7 +266,7 @@
 					}
 					P = pInput;
 					if(!isPrime(P)){
-						console.warn(P + " is not prime. Some numbers could not have a reverse.");
+						console.warn(P + t("warnPrime"));
 					}
 					GRID.innerHTML = '';
 					currentErrors = 0;
@@ -266,10 +332,7 @@
 							cell2.classList.remove('revealed', 'error-flash');
 						}, 400);
 						if(currentErrors >= MAX_NUMBER_OF_ERRORS){
-							setTimeout(() => {
-								alert('Maximum number of errors reached. Try again!');
-								initGame();
-							}, 100);
+							setTimeout(() => { alert(t("maxErrors")); initGame(); }, 100);
 						}
 					}
 					selectedCells = [];
@@ -278,22 +341,22 @@
 				function setAsMatched(cell, n1, n2){
 					cell.classList.add('matched');
 					cell.classList.remove('revealed');
+					cell.dataset.inverse = n2;
 					cell.innerHTML = (n1 === n2) ? `${n1} = ${n1}⁻¹` : `${n1} = ${n2}⁻¹`;
 					matchedNumbersCount++;
 					updateHighlights();
 				}
 
 				function checkWin(){
-					const target = isPrime(P) ? P - 1 : matchedNumbersCount;
 					if(matchedNumbersCount === P - 1){
-						setTimeout(() => alert('Congratulations! :-D You win! :-D'), 200);
+						setTimeout(() => alert(t("win")), 200);
 					}
 				}
 
 				function updateHighlights(){
 					const cells = Array.from(document.querySelectorAll('.cell'));
 					const matchedNumbers = cells.filter(c => c.classList.contains('matched')).map(c => parseInt(c.dataset.number));
-						cells.forEach(cell => {
+					cells.forEach(cell => {
 						cell.classList.remove('highlight-double', 'highlight-opposite', 'highlight-both');
 						if(cell.classList.contains('matched')){
 							return;
@@ -314,7 +377,7 @@
 				document.getElementById('btnUpdateP').addEventListener('click',() => {
 					const pVal = parseInt(document.getElementById('pVal').value);
 					if(!isPrime(pVal)){
-						if(!confirm(pVal + " is not prime. Do you want to continue anyway?")){
+						if(!confirm(pVal + t("notPrime"))){
 							return;
 						}
 					}
@@ -334,6 +397,7 @@
 				});
 
 				initGame();
+				updateUI();
 			});
 		</script>
 	</body>

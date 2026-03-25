@@ -77,6 +77,18 @@
 				background: var(--wood-mid);
 				color: #fff8ee;
 			}
+			#btn-lang{
+				padding: 4px 8px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			#btn-lang .flag-svg{
+				width: 36px;
+				height: 24px;
+				display: block;
+				pointer-events: none;
+			}
 			.info-bar{
 				display: flex;
 				gap: 6px;
@@ -253,12 +265,13 @@
 			<button class="size-btn active" data-size="9">9 × 9</button>
 			<button class="size-btn" data-size="13">13 × 13</button>
 			<button class="size-btn" data-size="19">19 × 19</button>
+			<button class="size-btn" id="btn-lang"></button>
 		</div>
 		<div class="info-bar">
 			<div class="player-card active-turn" id="card-black">
 				<div class="stone-preview black"></div>
 				<div class="player-info">
-					<span class="player-name">YOU · BLACK</span>
+					<span class="player-name" id="name-black">YOU · BLACK</span>
 					<span class="player-captures" id="cap-black">Captures: 0</span>
 				</div>
 			</div>
@@ -270,7 +283,7 @@
 			<div class="player-card" id="card-white">
 				<div class="stone-preview white"></div>
 				<div class="player-info">
-					<span class="player-name">AI · WHITE</span>
+					<span class="player-name" id="name-white">AI · WHITE</span>
 					<span class="player-captures" id="cap-white">Captures: 0</span>
 				</div>
 			</div>
@@ -293,10 +306,68 @@
 		<script>
 			const EMPTY = 0, BLACK = 1, WHITE = 2;
 			const KOMI = 6.5;
+			const FLAGS_SVG = [
+				'<svg class="flag-svg" viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#s)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>', // UK
+				//'<svg class="flag-svg" viewBox="0 0 7410 3900"><rect width="7410" height="3900" fill="#b22234"/><path d="M0 300h7410M0 900h7410M0 1500h7410M0 2100h7410M0 2700h7410M0 3300h7410" stroke="#fff" stroke-width="300"/><rect width="2964" height="2100" fill="#3c3b6e"/><path d="M247 175l247 759-646-469h798l-646 469z" fill="#fff" transform="scale(.2)"/></svg>', // US
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>', // IT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg>', // FR
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#c60b1e"/><rect width="3" height="1" y="0.5" fill="#ffc400"/></svg>', // ES
+				'<svg class="flag-svg" viewBox="0 0 5 3"><rect width="5" height="3"/><rect width="5" height="2" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg>', // DE
+				'<svg class="flag-svg" viewBox="0 0 600 400"><rect width="240" height="400" fill="#006600"/><rect x="240" width="360" height="400" fill="#ff0000"/></svg>', // PT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002b7f"/><rect width="1" height="2" x="1" fill="#fcd116"/><rect width="1" height="2" x="2" fill="#ce1126"/></svg>', // RO
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>', // UA
+				'<svg class="flag-svg" viewBox="0 0 27 18"><rect width="27" height="18" fill="#005bae"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#005bae"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>', // GR
+				//'<svg class="flag-svg" viewBox="0 0 1 1"><rect width="0.5" height="1" fill="#ffe000"/><rect x="0.5" width="0.5" height="1" fill="#fff"/></svg>', // VA
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#800000"/><path d="M0.5,0.5 L2.5,0.5 L2.5,1.5 L0.5,1.5 Z" fill="none" stroke="#FFD700" stroke-width="0.1"/><text x="1.5" y="1.15" font-family="serif" font-weight="bold" font-size="0.4" fill="#FFD700" text-anchor="middle">SPQR</text></svg>', // ROMA
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#de2110"/><path d="M.5 1.1l.3-.9.3.9-1-.6h1z" fill="#ffde00" transform="matrix(.4 0 0 .4 .1 .1)"/></svg>', // CN
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>' // JP
+			];
+			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
+			const TRANSLATIONS = {
+				en: { yourTurn:'Your turn — place a black stone', aiThinking:'AI is thinking…', aiPassed:'AI passed — your turn', invalidMove:'Invalid move!', captures:'Captures', youBlack:'YOU · BLACK', aiWhite:'AI · WHITE', pass:'Pass', resign:'Resign', newGame:'New', gameOver:'Game Over', resigned:'You Resigned', resignMsg:'White (AI) wins by resignation.', blackPts:'Black', whitePts:'White', komiNote:'komi', wins:'wins by', points:'points', newGameBtn:'New Game', subtitle:'GAME OF GO · MCTS AI' },
+				it: { yourTurn:'Tuo turno — piazza una pietra nera', aiThinking:'IA sta pensando…', aiPassed:'IA ha passato — tocca a te', invalidMove:'Mossa non valida!', captures:'Catture', youBlack:'TU · NERO', aiWhite:'IA · BIANCO', pass:'Passa', resign:'Abbandona', newGame:'Nuova', gameOver:'Partita Finita', resigned:'Hai Abbandonato', resignMsg:'Il Bianco (IA) vince per abbandono.', blackPts:'Nero', whitePts:'Bianco', komiNote:'komi', wins:'vince di', points:'punti', newGameBtn:'Nuova Partita', subtitle:'GIOCO DEL GO · IA MCTS' },
+				fr: { yourTurn:'Votre tour — placez une pierre noire', aiThinking:'L\'IA réfléchit…', aiPassed:'L\'IA a passé — votre tour', invalidMove:'Coup invalide !', captures:'Captures', youBlack:'VOUS · NOIR', aiWhite:'IA · BLANC', pass:'Passer', resign:'Abandonner', newGame:'Nouveau', gameOver:'Partie Terminée', resigned:'Vous Avez Abandonné', resignMsg:'Les Blancs (IA) gagnent par abandon.', blackPts:'Noir', whitePts:'Blanc', komiNote:'komi', wins:'gagne de', points:'points', newGameBtn:'Nouvelle Partie', subtitle:'JEU DE GO · IA MCTS' },
+				es: { yourTurn:'Tu turno — coloca una piedra negra', aiThinking:'La IA está pensando…', aiPassed:'La IA pasó — tu turno', invalidMove:'¡Movimiento inválido!', captures:'Capturas', youBlack:'TÚ · NEGRO', aiWhite:'IA · BLANCO', pass:'Pasar', resign:'Rendirse', newGame:'Nueva', gameOver:'Fin de Partida', resigned:'Te Has Rendido', resignMsg:'Las Blancas (IA) ganan por abandono.', blackPts:'Negro', whitePts:'Blanco', komiNote:'komi', wins:'gana por', points:'puntos', newGameBtn:'Nueva Partida', subtitle:'JUEGO DE GO · IA MCTS' },
+				de: { yourTurn:'Dein Zug — setze einen schwarzen Stein', aiThinking:'KI denkt nach…', aiPassed:'KI hat gepasst — dein Zug', invalidMove:'Ungültiger Zug!', captures:'Gefangen', youBlack:'DU · SCHWARZ', aiWhite:'KI · WEISS', pass:'Passen', resign:'Aufgeben', newGame:'Neu', gameOver:'Spiel Beendet', resigned:'Du Hast Aufgegeben', resignMsg:'Weiß (KI) gewinnt durch Aufgabe.', blackPts:'Schwarz', whitePts:'Weiß', komiNote:'Komi', wins:'gewinnt mit', points:'Punkten', newGameBtn:'Neues Spiel', subtitle:'GO-SPIEL · MCTS KI' },
+				pt: { yourTurn:'Sua vez — coloque uma pedra preta', aiThinking:'IA está pensando…', aiPassed:'IA passou — sua vez', invalidMove:'Jogada inválida!', captures:'Capturas', youBlack:'VOCÊ · PRETO', aiWhite:'IA · BRANCO', pass:'Passar', resign:'Desistir', newGame:'Nova', gameOver:'Fim de Jogo', resigned:'Você Desistiu', resignMsg:'As Brancas (IA) vencem por desistência.', blackPts:'Preto', whitePts:'Branco', komiNote:'komi', wins:'vence por', points:'pontos', newGameBtn:'Nova Partida', subtitle:'JOGO DE GO · IA MCTS' },
+				ro: { yourTurn:'Rândul tău — plasează o piatră neagră', aiThinking:'IA se gândește…', aiPassed:'IA a pasat — rândul tău', invalidMove:'Mutare invalidă!', captures:'Capturi', youBlack:'TU · NEGRU', aiWhite:'IA · ALB', pass:'Pasează', resign:'Abandonează', newGame:'Nou', gameOver:'Joc Terminat', resigned:'Ai Abandonat', resignMsg:'Albul (IA) câștigă prin abandon.', blackPts:'Negru', whitePts:'Alb', komiNote:'komi', wins:'câștigă cu', points:'puncte', newGameBtn:'Joc Nou', subtitle:'JOC DE GO · IA MCTS' },
+				uk: { yourTurn:'Ваш хід — поставте чорний камінь', aiThinking:'ШІ думає…', aiPassed:'ШІ пасує — ваш хід', invalidMove:'Недійсний хід!', captures:'Захоплення', youBlack:'ВИ · ЧОРНІ', aiWhite:'ШІ · БІЛІ', pass:'Пас', resign:'Здатися', newGame:'Нова', gameOver:'Гра Завершена', resigned:'Ви Здалися', resignMsg:'Білі (ШІ) перемагають через здачу.', blackPts:'Чорні', whitePts:'Білі', komiNote:'комі', wins:'виграє на', points:'очок', newGameBtn:'Нова Гра', subtitle:'ГРА ГО · MCTS ШІ' },
+				el: { yourTurn:'Σειρά σου — τοποθέτησε μαύρη πέτρα', aiThinking:'Η ΤΝ σκέφτεται…', aiPassed:'ΤΝ πέρασε — σειρά σου', invalidMove:'Άκυρη κίνηση!', captures:'Συλλήψεις', youBlack:'ΕΣΥ · ΜΑΥΡΟ', aiWhite:'ΤΝ · ΛΕΥΚΟ', pass:'Πάσο', resign:'Παραίτηση', newGame:'Νέο', gameOver:'Τέλος Παιχνιδιού', resigned:'Παραιτηθήκατε', resignMsg:'Τα Λευκά (ΤΝ) κερδίζουν με παραίτηση.', blackPts:'Μαύρο', whitePts:'Λευκό', komiNote:'κόμι', wins:'κερδίζει με', points:'πόντους', newGameBtn:'Νέο Παιχνίδι', subtitle:'ΠΑΙΧΝΊΔΙ GO · MCTS ΤΝ' },
+				la: { yourTurn:'Vices tuae — lapidem nigrum pone', aiThinking:'IA cogitat…', aiPassed:'IA transiit — vices tuae', invalidMove:'Motus invalidus!', captures:'Capti', youBlack:'TU · NIGER', aiWhite:'IA · ALBUS', pass:'Transi', resign:'Cede', newGame:'Novum', gameOver:'Ludus Finitus', resigned:'Cessisti', resignMsg:'Albi (IA) victoria per cessionem.', blackPts:'Niger', whitePts:'Albus', komiNote:'komi', wins:'vincit per', points:'puncta', newGameBtn:'Ludus Novus', subtitle:'LUDUS GO · MCTS IA' },
+				zh: { yourTurn:'您的回合 — 放置黑棋', aiThinking:'AI 正在思考…', aiPassed:'AI 已跳过 — 您的回合', invalidMove:'无效落子！', captures:'提子', youBlack:'你 · 黑棋', aiWhite:'AI · 白棋', pass:'跳过', resign:'认输', newGame:'新局', gameOver:'游戏结束', resigned:'你已认输', resignMsg:'白棋（AI）以认输获胜。', blackPts:'黑棋', whitePts:'白棋', komiNote:'贴目', wins:'胜', points:'目', newGameBtn:'新游戏', subtitle:'围棋 · MCTS AI' },
+				ja: { yourTurn:'あなたの番 — 黒石を置いてください', aiThinking:'AIが考えています…', aiPassed:'AIがパス — あなたの番', invalidMove:'無効な手！', captures:'取り子', youBlack:'あなた · 黒', aiWhite:'AI · 白', pass:'パス', resign:'投了', newGame:'新局', gameOver:'ゲーム終了', resigned:'投了しました', resignMsg:'白（AI）が投了により勝ちました。', blackPts:'黒', whitePts:'白', komiNote:'コミ', wins:'の勝ち', points:'目', newGameBtn:'新しいゲーム', subtitle:'囲碁 · MCTS AI' }
+			};
+			let currentLangIndex = 0;
 			let N = 9;
 			let board, koPoint, captures, currentPlayer, gameOver, consecutivePasses, lastPlaced, aiThinking;
 			const canvas = document.getElementById('goban');
 			const ctx = canvas.getContext('2d');
+
+			function t(key){
+				return TRANSLATIONS[LANG_KEYS[currentLangIndex]][key] || TRANSLATIONS.en[key] || key;
+			}
+
+			function applyLang(){
+				document.querySelector('.subtitle').textContent = t('subtitle');
+				document.getElementById('btn-pass').textContent = t('pass');
+				document.getElementById('btn-resign').textContent = t('resign');
+				document.getElementById('btn-new').textContent = t('newGame');
+				document.getElementById('name-black').textContent = t('youBlack');
+				document.getElementById('name-white').textContent = t('aiWhite');
+				document.getElementById('cap-black').textContent = t('captures') + ': ' + (captures ? captures[BLACK] : 0);
+				document.getElementById('cap-white').textContent = t('captures') + ': ' + (captures ? captures[WHITE] : 0);
+				document.getElementById('modal-ok').textContent = t('newGameBtn');
+				document.querySelector('.thinking-label').textContent = t('aiThinking');
+			}
+
+			function nextLang(){
+				currentLangIndex = (currentLangIndex + 1) % LANG_KEYS.length;
+				document.getElementById('btn-lang').innerHTML = FLAGS_SVG[currentLangIndex];
+				applyLang();
+				if(!gameOver && !aiThinking){
+					setStatus(currentPlayer === BLACK ? t('yourTurn') : t('aiThinking'));
+				}
+			}
 
 			function initBoard(size){
 				N = size;
@@ -308,10 +379,10 @@
 				consecutivePasses = 0;
 				aiThinking = false;
 				lastPlaced = -1;
-				updateUI();
+				applyLang();
 				resizeCanvas();
 				drawBoard();
-				setStatus('Your turn — place a black stone');
+				setStatus(t('yourTurn'));
 			}
 
 			const idx = (r, c) => r*N + c;
@@ -393,7 +464,7 @@
 				}
 				const result = tryPlace(pos, BLACK, board, koPoint);
 				if(!result){
-					flashStatus('Invalid move!');
+					flashStatus(t('invalidMove'));
 					return;
 				}
 				applyMove(result, pos, BLACK);
@@ -412,7 +483,7 @@
 			}
 
 			function scheduleAI(){
-				setStatus('AI is thinking…');
+				setStatus(t('aiThinking'));
 				document.getElementById('thinking-overlay').classList.add('show');
 				setTimeout(() => {
 					const move = heuristicChoose(board, WHITE, koPoint);
@@ -426,7 +497,7 @@
 						}
 						updateUI();
 						drawBoard();
-						setStatus('AI passed — your turn');
+						setStatus(t('aiPassed'));
 						return;
 					}
 					const result = tryPlace(move, WHITE, board, koPoint);
@@ -435,7 +506,7 @@
 						currentPlayer = BLACK;
 						updateUI();
 						drawBoard();
-						setStatus('AI passed — your turn');
+						setStatus(t('aiPassed'));
 						return;
 					}
 					applyMove(result, move, WHITE);
@@ -443,7 +514,7 @@
 					currentPlayer = BLACK;
 					updateUI();
 					drawBoard();
-					setStatus('Your turn — black stone');
+					setStatus(t('yourTurn'));
 				}, 30);
 			}
 
@@ -558,9 +629,9 @@
 			function endGame(){
 				gameOver = true;
 				const s = computeScore();
-				const winner = s.black > s.white ? 'Black (You)' : 'White (AI)';
+				const winner = s.black > s.white ? t('blackPts') + ' (You)' : t('whitePts') + ' (AI)';
 				const diff = Math.abs(s.black - s.white).toFixed(1);
-				showModal('Game Over', `Black: ${s.black.toFixed(1)} points\nWhite: ${s.white.toFixed(1)} points (komi ${KOMI})\n\n${winner} wins by ${diff} points!`);
+				showModal(t('gameOver'), `${t('blackPts')}: ${s.black.toFixed(1)} ${t('points')}\n${t('whitePts')}: ${s.white.toFixed(1)} ${t('points')} (${t('komiNote')} ${KOMI})\n\n${winner} ${t('wins')} ${diff} ${t('points')}!`);
 			}
 
 			function resizeCanvas(){
@@ -671,8 +742,8 @@
 			}
 
 			function updateUI(){
-				document.getElementById('cap-black').textContent = `Captures: ${captures[BLACK]}`;
-				document.getElementById('cap-white').textContent = `Captures: ${captures[WHITE]}`;
+				document.getElementById('cap-black').textContent = t('captures') + ': ' + captures[BLACK];
+				document.getElementById('cap-white').textContent = t('captures') + ': ' + captures[WHITE];
 				document.getElementById('card-black').classList.toggle('active-turn', currentPlayer === BLACK && !gameOver);
 				document.getElementById('card-white').classList.toggle('active-turn', currentPlayer === WHITE && !gameOver);
 			}
@@ -686,7 +757,7 @@
 			function flashStatus(msg){
 				setStatus(msg);
 				clearTimeout(flashTimer);
-				flashTimer = setTimeout(() => setStatus('Your turn — black stone'), 1500);
+				flashTimer = setTimeout(() => setStatus(t('yourTurn')), 1500);
 			}
 
 			function showModal(title, body){
@@ -741,7 +812,7 @@
 					return;
 				}
 				gameOver = true;
-				showModal('You Resigned', 'White (AI) wins by resignation.');
+				showModal(t('resigned'), t('resignMsg'));
 			});
 
 			document.getElementById('btn-new').addEventListener('click', () => {
@@ -754,9 +825,9 @@
 				initBoard(N);
 			});
 
-			document.querySelectorAll('.size-btn').forEach(btn => {
+			document.querySelectorAll('.size-btn[data-size]').forEach(btn => {
 				btn.addEventListener('click', () => {
-					document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+					document.querySelectorAll('.size-btn[data-size]').forEach(b => b.classList.remove('active'));
 					btn.classList.add('active');
 					initBoard(parseInt(btn.dataset.size));
 				});
@@ -767,6 +838,8 @@
 				drawBoard();
 			});
 
+			document.getElementById('btn-lang').innerHTML = FLAGS_SVG[0];
+			document.getElementById('btn-lang').addEventListener('click', nextLang);
 			initBoard(9);
 		</script>
 	</body>
