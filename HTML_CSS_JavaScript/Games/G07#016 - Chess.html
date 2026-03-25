@@ -1036,6 +1036,20 @@
 				location.reload();
 			}
 
+			document.addEventListener("keydown", e => {
+				if(e.key.toLowerCase() === "d"){
+					cycleDifficulty();
+				}else if(e.key.toLowerCase() === "l"){
+					nextLang();
+				}else if(e.key.toLowerCase() === "t"){
+					toggleLog();
+				}else if(e.key.toLowerCase() === "u"){
+					undoMove();
+				}else if(e.key.toLowerCase() === "r"){
+					resetGame();
+				}
+			});
+
 			document.getElementById('btnLang').innerHTML = FLAGS_SVG[0];
 			document.getElementById('diffBtn').textContent = t('level') + ': ' + levelName(currentDiffIdx);
 			document.getElementById('toggleLogBtn').textContent = t('showLog');
