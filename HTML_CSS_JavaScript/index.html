@@ -6374,7 +6374,7 @@
 				font-weight: bold;
 				font-size: 1em;
 				transition: 0.3s;
-				flex: 1;
+				flex: 3;
 			}
 			.btn-start{
 				background: var(--accent);
@@ -6393,6 +6393,7 @@
 				align-items: center;
 				justify-content: center;
 				min-width: 70px;
+				flex: 1;
 			}
 			.btn-lang:hover{
 				background: #555;
@@ -10156,6 +10157,14 @@
 				});
 			});
 
+			document.addEventListener("keydown", e => {
+				if(e.key.toLowerCase() === "l"){
+					nextLanguage();
+				}else if(e.key.toLowerCase() === "r"){
+					clearAll();
+				}
+			});
+
 			fillSelectOption();
 			drawPolygon();
 			applyTranslation(currentLangIndex);
@@ -11317,11 +11326,7 @@
 						playVoice(btn.id, FREQ_MAP[btn.id]);
 					}
 				}else if(key === "l"){
-					if(sirenIsOn){
-						sirenOff();
-					}else{
-						sirenOn();
-					}
+					sirenOnOff();
 				}
 			});
 
@@ -12042,6 +12047,24 @@
 					getDaysOfDifference(true);
 				}
 			}
+
+			document.addEventListener("keydown", e => {
+				if(e.key.toLowerCase() === "s"){
+					handleAction('getFullTodayDate');
+				}else if(e.key.toLowerCase() === "c"){
+					clearFields();
+				}else if(e.key.toLowerCase() === "r"){
+					window.parent.postMessage('RELOAD_REQUEST','*');
+				}else if(e.key.toLowerCase() === "l"){
+					const langKeys = Object.keys(TRANSLATIONS);
+					const currentIndex = langKeys.indexOf(currentLang);
+					const nextIndex = (currentIndex + 1)%(langKeys.length);
+					const nextLang = langKeys[nextIndex];
+					const currentFlagDiv = document.getElementById("currentFlag");
+					currentFlagDiv.innerHTML = FLAGS_SVG[nextIndex];
+					changeLanguage(nextLang);
+				}
+			});
 
 			window.onload = init;
 		<\/script>
@@ -14111,6 +14134,23 @@
 					bar.appendChild(btn);
 				});
 			}
+
+			document.addEventListener("keydown", e => {
+				if(document.activeElement.tagName === "INPUT"){
+					return;
+				}
+				if(e.key.toLowerCase() === "s"){
+					handleAction('getFullTodayDate');
+				}else if(e.key.toLowerCase() === "t"){
+					toggleTheme();
+				}else if(e.key.toLowerCase() === "r"){
+					window.parent.postMessage('RELOAD_REQUEST','*');
+				}else if(e.key.toLowerCase() === "l"){
+					const currentIndex = LANG_KEYS.findIndex((_, i) => document.querySelectorAll('.flag-btn')[i]?.classList.contains('active'));
+					const nextIndex = (currentIndex + 1)%(LANG_KEYS.length);
+					applyTranslation(LANG_KEYS[nextIndex]);
+				}
+			});
 
 			resetAndRecalculate();
 			initLangBar();

@@ -668,6 +668,24 @@
 				}
 			}
 
+			document.addEventListener("keydown", e => {
+				if(e.key.toLowerCase() === "s"){
+					handleAction('getFullTodayDate');
+				}else if(e.key.toLowerCase() === "c"){
+					clearFields();
+				}else if(e.key.toLowerCase() === "r"){
+					window.location.reload();
+				}else if(e.key.toLowerCase() === "l"){
+					const langKeys = Object.keys(TRANSLATIONS);
+					const currentIndex = langKeys.indexOf(currentLang);
+					const nextIndex = (currentIndex + 1)%(langKeys.length);
+					const nextLang = langKeys[nextIndex];
+					const currentFlagDiv = document.getElementById("currentFlag");
+					currentFlagDiv.innerHTML = FLAGS_SVG[nextIndex];
+					changeLanguage(nextLang);
+				}
+			});
+
 			window.onload = init;
 		</script>
 	</body>

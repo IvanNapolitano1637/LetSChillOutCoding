@@ -856,6 +856,14 @@
 				});
 			});
 
+			document.addEventListener("keydown", e => {
+				if(e.key.toLowerCase() === "l"){
+					nextLanguage();
+				}else if(e.key.toLowerCase() === "r"){
+					clearAll();
+				}
+			});
+
 			fillSelectOption();
 			drawPolygon();
 			applyTranslation(currentLangIndex);

@@ -508,6 +508,23 @@
 				});
 			}
 
+			document.addEventListener("keydown", e => {
+				if(document.activeElement.tagName === "INPUT"){
+					return;
+				}
+				if(e.key.toLowerCase() === "s"){
+					handleAction('getFullTodayDate');
+				}else if(e.key.toLowerCase() === "t"){
+					toggleTheme();
+				}else if(e.key.toLowerCase() === "r"){
+					window.location.reload();
+				}else if(e.key.toLowerCase() === "l"){
+					const currentIndex = LANG_KEYS.findIndex((_, i) => document.querySelectorAll('.flag-btn')[i]?.classList.contains('active'));
+					const nextIndex = (currentIndex + 1)%(LANG_KEYS.length);
+					applyTranslation(LANG_KEYS[nextIndex]);
+				}
+			});
+
 			resetAndRecalculate();
 			initLangBar();
 		</script>

@@ -1151,11 +1151,7 @@
 						playVoice(btn.id, FREQ_MAP[btn.id]);
 					}
 				}else if(key === "l"){
-					if(sirenIsOn){
-						sirenOff();
-					}else{
-						sirenOn();
-					}
+					sirenOnOff();
 				}
 			});
 
