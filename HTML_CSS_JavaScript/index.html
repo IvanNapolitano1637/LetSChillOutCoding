@@ -1408,7 +1408,9 @@
 			}
 			.hour-btn{
 				font-family: 'Space Mono', monospace;
-				min-width: 40px;
+				width: 56px;
+				flex-shrink: 0;
+				text-align: center;
 			}
 			.result-count{
 				text-align: center;
@@ -5402,7 +5404,7 @@
 			}
 			.row-1{
 				display: grid;
-				grid-template-columns: 1fr 1fr 1fr;
+				grid-template-columns: 2fr 1.5fr 0.8fr;
 				gap: 10px;
 			}
 			.row-1 button, .row-2 button{
@@ -6380,6 +6382,10 @@
 				margin: 0;
 				padding: 20px;
 			}
+			#setup-menu h1{
+				font-size: clamp(1.3rem, 6vw, 2rem);
+				white-space: nowrap;
+			}
 			#setup-menu{
 				background: var(--panel);
 				padding: 30px;
@@ -7106,7 +7112,7 @@
 			}
 			.btn{
 				padding: 12px;
-				font-size: 0.9em;
+				font-size: clamp(0.6em, 2.5vw, 0.9em);
 				cursor: pointer;
 				background: #c0392b;
 				border: none;
