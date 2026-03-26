@@ -356,7 +356,7 @@
 			function t(key, vars={}){
 				let s = TRANSLATIONS[LANG_KEYS[currentLangIndex]][key] || TRANSLATIONS.en[key] || key;
 				for(const [k,v] of Object.entries(vars)){
-					s = s.replace('{'+k+'}', v);
+					s = s.replace('{' + k + '}', v);
 				}
 				return s;
 			}
@@ -402,11 +402,11 @@
 					if(saved){
 						const data = JSON.parse(saved);
 						btn.style.background = 'var(--save-full)';
-						btn.innerHTML = t('slot') + ' ' + (i+1) + '<br><span class="slot-date">' + data.timestamp + '</span>';
+						btn.innerHTML = t('slot') + ' ' + (i + 1) + '<br><span class="slot-date">' + data.timestamp + '</span>';
 						del.style.display = 'flex';
 					}else{
 						btn.style.background = 'var(--save-empty)';
-						btn.innerHTML = t('slot') + ' ' + (i+1) + '<br><span class="slot-date">' + t('empty') + '</span>';
+						btn.innerHTML = t('slot') + ' ' + (i + 1) + '<br><span class="slot-date">' + t('empty') + '</span>';
 						del.style.display = 'none';
 					}
 				}
@@ -417,7 +417,7 @@
 				if(!saved){
 					saveToSlot(i);
 				}else{
-					if(confirm(t('confirmLoad', {n: i+1}))){
+					if(confirm(t('confirmLoad', {n: i + 1}))){
 						loadFromSlot(i);
 					}else{
 						if(confirm(t('confirmReplace'))){
@@ -428,7 +428,7 @@
 			}
 
 			function deleteSlot(i){
-				if(confirm(t('confirmDelete', {n: i+1}))){
+				if(confirm(t('confirmDelete', {n: i + 1}))){
 					localStorage.removeItem(`chess_slot_${i}`);
 					updateSaveUI();
 				}
@@ -1050,7 +1050,7 @@
 				}
 			});
 
-			document.getElementById('btnLang').innerHTML = FLAGS_SVG[0];
+			document.getElementById('btnLang').innerHTML = FLAGS_SVG[currentLangIndex];
 			document.getElementById('diffBtn').textContent = t('level') + ': ' + levelName(currentDiffIdx);
 			document.getElementById('toggleLogBtn').textContent = t('showLog');
 			document.getElementById('undoBtn').textContent = t('undo');

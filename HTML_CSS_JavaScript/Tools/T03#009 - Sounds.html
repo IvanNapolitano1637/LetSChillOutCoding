@@ -1151,7 +1151,43 @@
 						playVoice(btn.id, FREQ_MAP[btn.id]);
 					}
 				}else if(key === "l"){
+					nextLanguage();
+				}else if(key === "r"){
+					window.location.reload();
+				}else if(key === "i"){
+					multiplyFREQUENCY_VALUE(0.5);
+				}else if(key === "o"){
+					multiplyFREQUENCY_VALUE(2);
+				}else if(key === "p"){
+					play_and_stop();
+				}else if(key === "q"){
 					sirenOnOff();
+				}else if(key === "v"){
+					toggleShowing();
+				}else if(key === "b"){
+					const oscRadios = document.getElementsByName("oscillatorType");
+					for(let i = 0; i < oscRadios.length; i++){
+						if(oscRadios[i].checked){
+							oscRadios[(i + 1)%(oscRadios.length)].click();
+							break;
+						}
+					}
+				}else if(key === "n"){
+					const sirenRadios = document.getElementsByName("sirenType");
+					for(let i = 0; i < sirenRadios.length; i++){
+						if(sirenRadios[i].checked){
+							sirenRadios[(i + 1)%(sirenRadios.length)].click();
+							break;
+						}
+					}
+				}else if(key === "m"){
+					const waveRadios = document.getElementsByName("sirenWave");
+					for(let i = 0; i < waveRadios.length; i++){
+						if(waveRadios[i].checked){
+							waveRadios[(i + 1)%(waveRadios.length)].click();
+							break;
+						}
+					}
 				}
 			});
 
