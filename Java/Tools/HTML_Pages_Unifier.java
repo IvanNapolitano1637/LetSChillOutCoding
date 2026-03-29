@@ -217,6 +217,8 @@ public class HTML_Pages_Unifier {
 		transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 		-webkit-backdrop-filter: blur(5px);
 		backdrop-filter: blur(5px);
+		-webkit-user-select: none;
+		user-select: none;
 	}
 
 	.card:hover{ 
