@@ -158,7 +158,7 @@ public class HTML_Pages_Unifier {
 		-webkit-background-clip: text;
 		background-clip: text; 
 		-webkit-text-fill-color: transparent;
-		user-select: none;
+		-webkit-tap-highlight-color: transparent;
 	}
 
 	h2{ 
@@ -177,7 +177,7 @@ public class HTML_Pages_Unifier {
 		display: flex;
 		align-items: center;
 		justify-content: space-between; 
-		user-select: none;
+		-webkit-tap-highlight-color: transparent;
 		transition: 0.3s;
 	}
 
@@ -214,7 +214,8 @@ public class HTML_Pages_Unifier {
 		align-items: center;
 		justify-content: center;
 		text-align: center;
-		transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); 
+		transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+		-webkit-backdrop-filter: blur(5px);
 		backdrop-filter: blur(5px);
 	}
 
@@ -238,7 +239,8 @@ public class HTML_Pages_Unifier {
 		height: 100%;
 		background: var(--viewer-bg);
 		z-index: 2000;
-		flex-direction: column; 
+		flex-direction: column;
+		-webkit-backdrop-filter: blur(5px);
 		backdrop-filter: blur(20px);
 		transition: opacity 0.3s ease;
 	}
