@@ -7,66 +7,65 @@
 <title>Toolbox & Playground</title>
 <style>
 	:root{
-		--bg-gradient: linear-gradient(135deg, #1e2a38 0%, #11151c 100%);
+		--bg-gradient: linear-gradient(-45deg, #1e2a38, #11151c, #1a222c, #0f1218);
 		--card-bg: rgba(255, 255, 255, 0.05);
 		--card-border: rgba(255, 255, 255, 0.1);
 		--text-main: #ffffff;
-		--text-sec: #a0a0b0;
 		--accent: #4a90e2;
 		--accent-hover: #357abd;
-		--viewer-bg: rgba(20, 20, 25, 0.95);
+		--viewer-bg: rgba(20, 20, 25, 0.98);
 	}
 
 	*{
 		box-sizing: border-box;
-	}
-
-	body{
-		font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-		margin: 0;
-		background: var(--bg-gradient);
-		color: var(--text-main);
-		min-height: 100vh;
-		overflow-x: hidden;
 		-webkit-tap-highlight-color: transparent;
 	}
 
-	::-webkit-scrollbar {
-		width: 8px;
+	*:focus{
+		outline: none !important;
+		box-shadow: none !important;
 	}
 
-	::-webkit-scrollbar-track{
-		background: #111;
+	body{
+		font-family: 'Segoe UI', Roboto, sans-serif;
+		margin: 0;
+		background: var(--bg-gradient);
+		background-size: 400% 400%;
+		animation: gradientBG 15s ease infinite;
+		color: var(--text-main);
+		min-height: 100vh;
+		overflow-x: hidden;
 	}
 
-	::-webkit-scrollbar-thumb{
-		background: #444;
-		border-radius: 4px;
-	}
-
-	::-webkit-scrollbar-thumb:hover{
-		background: var(--accent);
+	@keyframes gradientBG {
+		0% {
+			background-position: 0% 50%;
+			}
+		50% {
+			background-position: 100% 50%;
+			}
+		100% {
+			background-position: 0% 50%;
+			}
 	}
 
 	#dashboard{
 		padding: 40px 20px;
 		max-width: 1000px;
 		margin: 0 auto;
-		animation: fadeIn 0.8s ease-out;
+		animation: fadeIn 1s ease-out;
 	}
 
 	h1{
 		text-align: center;
 		font-weight: 200;
 		font-size: 2.5rem;
-		letter-spacing: 2px;
+		letter-spacing: 3px;
 		margin-bottom: 50px;
-		background: linear-gradient(to right, #fff, #aaa);
+		background: linear-gradient(to right, #fff, #888);
 		-webkit-background-clip: text;
 		background-clip: text;
 		-webkit-text-fill-color: transparent;
-		-webkit-user-select: none;
-		-ms-user-select: none;
 		user-select: none;
 	}
 
@@ -74,14 +73,11 @@
 		border-bottom: 1px solid var(--card-border);
 		padding-bottom: 10px;
 		margin-top: 50px;
-		margin-bottom: 20px;
 		color: var(--accent);
 		font-size: 0.9rem;
 		text-transform: uppercase;
 		letter-spacing: 1.5px;
-		-webkit-user-select: none;
-		-ms-user-select: none;
-		user-select: none;
+		transition: color 0.3s;
 	}
 
 	.section-header{
@@ -89,42 +85,29 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		transition: color 0.2s;
+		user-select: none;
+		transition: 0.3s;
 	}
 
 	.section-header:hover{
-		color: var(--accent-hover);
+		color: var(--text-main);
 	}
 
 	.section-header .arrow{
 		font-size: 0.7rem;
-		transition: transform 0.3s ease;
-		display: inline-block;
+		transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 	}
 
 	.section-header.open .arrow{
 		transform: rotate(90deg);
-	}
-
-	.grid{
-		animation: expandGrid 0.3s ease-out;
-	}
-
-	@keyframes expandGrid{
-		from{
-			opacity: 0;
-			transform: translateY(-8px);
-		}to{
-			opacity: 1;
-			transform: translateY(0);
-		}
+		color: var(--accent);
 	}
 
 	.grid{
 		display: none;
 		grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
 		gap: 20px;
-		padding-top: 8px;
+		padding-top: 15px;
 	}
 
 	.card{
@@ -132,7 +115,6 @@
 		border: 1px solid var(--card-border);
 		border-radius: 12px;
 		padding: 20px;
-		font-size: 1rem;
 		color: var(--text-main);
 		cursor: pointer;
 		min-height: 100px;
@@ -140,27 +122,19 @@
 		align-items: center;
 		justify-content: center;
 		text-align: center;
-		transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-		-webkit-backdrop-filter: blur(5px);
+		transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 		backdrop-filter: blur(5px);
-		box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-		-webkit-user-select: none;
-		-ms-user-select: none;
-		user-select: none;
 	}
 
 	.card:hover{
-		transform: translateY(-5px) scale(1.02);
-		-webkit-backdrop-filter: blur(5px);
-		backdrop-filter: blur(5px);
-		box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-		-webkit-user-select: none;
-		-ms-user-select: none;
-		user-select: none;
+		transform: translateY(-8px) scale(1.03);
+		background: rgba(255, 255, 255, 0.08);
+		border-color: var(--accent);
+		box-shadow: 0 10px 25px rgba(74, 144, 226, 0.25);
 	}
 
 	.card:active{
-		transform: scale(0.95);
+		transform: translateY(-2px) scale(0.98);
 	}
 
 	#viewer{
@@ -173,19 +147,74 @@
 		background: var(--viewer-bg);
 		z-index: 2000;
 		flex-direction: column;
-		-webkit-backdrop-filter: blur(15px);
-		backdrop-filter: blur(15px);
-		animation: slideUp 0.3s ease-out;
+		backdrop-filter: blur(20px);
+		transition: opacity 0.3s ease;
+	}
+
+	.viewer-show{
+		animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 	}
 
 	@keyframes slideUp{
 		from{
-			transform: translateY(100%);
+			transform: translateY(30px);
 			opacity: 0;
-		}to{
+		}
+		to{
 			transform: translateY(0);
 			opacity: 1;
 		}
+	}
+
+	#app-header{
+		height: 60px;
+		background: rgba(0,0,0,0.4);
+		border-bottom: 1px solid var(--card-border);
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 25px;
+		flex-shrink: 0;
+	}
+
+	#app-title{
+		font-weight: 300;
+		letter-spacing: 1px;
+		font-size: 1.1rem;
+		color: var(--accent);
+	}
+
+	#close-btn{
+		background: rgba(255,255,255,0.05);
+		color: #fff;
+		border: 1px solid rgba(255,255,255,0.2);
+		border-radius: 30px;
+		padding: 8px 20px;
+		cursor: pointer;
+		transition: 0.3s;
+		text-transform: uppercase;
+		font-size: 0.75rem;
+		font-weight: bold;
+		letter-spacing: 1px;
+	}
+
+	#close-btn:hover{
+		background: #e74c3c;
+		border-color: #e74c3c;
+		box-shadow: 0 0 15px rgba(231, 76, 60, 0.4);
+	}
+
+	#iframe-container{
+		flex-grow: 1;
+		background: #fff;
+		overflow: hidden;
+	}
+
+	iframe{
+		width: 100%;
+		height: 100%;
+		border: none;
+		display: block;
 	}
 
 	@keyframes fadeIn{
@@ -195,62 +224,12 @@
 			opacity: 1;
 		}
 	}
-
-	#app-header{
-		height: 50px;
-		background: rgba(0,0,0,0.3);
-		border-bottom: 1px solid var(--card-border);
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 0 20px;
-		flex-shrink: 0;
-	}
-
-	#app-title{
-		font-weight: 500;
-		letter-spacing: 0.5px;
-		font-size: 0.95rem;
-		color: #fff;
-	}
-
-	#close-btn{
-		background: transparent;
-		color: #fff;
-		border: 1px solid rgba(255,255,255,0.3);
-		border-radius: 20px;
-		padding: 6px 16px;
-		font-size: 0.8rem;
-		cursor: pointer;
-		transition: 0.2s;
-		text-transform: uppercase;
-		font-weight: bold;
-	}
-
-	#close-btn:hover{
-		background: #e74c3c;
-		border-color: #e74c3c;
-	}
-
-	#iframe-container{
-		flex-grow: 1;
-		width: 100%;
-		position: relative;
-		background: #fff;
-	}
-
-	iframe{
-		width: 100%;
-		height: 100%;
-		border: none;
-		display: block;
-	}
 </style>
 </head>
 <body>
 <div id="dashboard">
 	<h1>Toolbox & Playground</h1>
-	<div class='section'><h2 class='section-header' onclick="toggleSection('grid-clocks')"><span>🕰️ Clocks</span><span class='arrow'>&#9654;</span></h2><div class='grid' id='grid-clocks'><button class='card' onclick="openPage('Clocks_Binary Clock.html')">Binary Clock</button><button class='card' onclick="openPage('Clocks_24h Clock.html')">24h Clock</button><button class='card' onclick="openPage('Clocks_Orbit Clock.html')">Orbit Clock</button><button class='card' onclick="openPage('Clocks_Strange Clock.html')">Strange Clock</button><button class='card' onclick="openPage('Clocks_World Time Zones.html')">World Time Zones</button><button class='card' onclick="openPage('Clocks_Digital Clock.html')">Digital Clock</button><button class='card' onclick="openPage('Clocks_Analog Clock.html')">Analog Clock</button><button class='card' onclick="openPage('Clocks_Seven-Segment Digital Clock.html')">Seven-Segment Digital Clock</button></div></div><div class='section'><h2 class='section-header' onclick="toggleSection('grid-games')"><span>🎮 Games</span><span class='arrow'>&#9654;</span></h2><div class='grid' id='grid-games'><button class='card' onclick="openPage('Games_Eight Queens.html')">Eight Queens</button><button class='card' onclick="openPage('Games_Game of Life.html')">Game of Life</button><button class='card' onclick="openPage('Games_Tower of Hanoi.html')">Tower of Hanoi</button><button class='card' onclick="openPage('Games_Connect Four.html')">Connect Four</button><button class='card' onclick="openPage('Games_Modular Matching.html')">Modular Matching</button><button class='card' onclick="openPage('Games_Fifteen.html')">Fifteen</button><button class='card' onclick="openPage('Games_Chess.html')">Chess</button><button class='card' onclick="openPage('Games_Checkers.html')">Checkers</button><button class='card' onclick="openPage('Games_Backgammon.html')">Backgammon</button><button class='card' onclick="openPage('Games_Solitario carte napoletane.html')">Solitario carte napoletane</button><button class='card' onclick="openPage('Games_Go.html')">Go</button></div></div><div class='section'><h2 class='section-header' onclick="toggleSection('grid-tools')"><span>🛠️ Tools</span><span class='arrow'>&#9654;</span></h2><div class='grid' id='grid-tools'><button class='card' onclick="openPage('Tools_Colors Pro.html')">Colors Pro</button><button class='card' onclick="openPage('Tools_Some Maths.html')">Some Maths</button><button class='card' onclick="openPage('Tools_Sounds.html')">Sounds</button><button class='card' onclick="openPage('Tools_Days.html')">Days</button><button class='card' onclick="openPage('Tools_SuperEnalotto.html')">SuperEnalotto</button><button class='card' onclick="openPage('Tools_Colors Hub.html')">Colors Hub</button><button class='card' onclick="openPage('Tools_Alpha-Numeric Converter.html')">Alpha-Numeric Converter</button><button class='card' onclick="openPage('Tools_Sintetizzatore Fonetico Vocali Italiane.html')">Sintetizzatore Fonetico Vocali Italiane</button></div></div>
+	<div class='section'><h2 class='section-header' tabindex='0' onclick="toggleSection('grid-clocks')"><span>🕰️ Clocks</span><span class='arrow'>&#9654;</span></h2><div class='grid' id='grid-clocks'><button class='card' onclick="openPage('Clocks_C01_001___Binary_Clock_html')">Binary Clock</button><button class='card' onclick="openPage('Clocks_C02_004___24h_Clock_html')">24h Clock</button><button class='card' onclick="openPage('Clocks_C03_008___Orbit_Clock_html')">Orbit Clock</button><button class='card' onclick="openPage('Clocks_C04_015___Strange_Clock_html')">Strange Clock</button><button class='card' onclick="openPage('Clocks_C05_021___World_Time_Zones_html')">World Time Zones</button><button class='card' onclick="openPage('Clocks_C06_022___Digital_Clock_html')">Digital Clock</button><button class='card' onclick="openPage('Clocks_C07_023___Analog_Clock_html')">Analog Clock</button><button class='card' onclick="openPage('Clocks_C08_024___Seven_Segment_Digital_Clock_html')">Seven-Segment Digital Clock</button></div></div><div class='section'><h2 class='section-header' tabindex='0' onclick="toggleSection('grid-games')"><span>🎮 Games</span><span class='arrow'>&#9654;</span></h2><div class='grid' id='grid-games'><button class='card' onclick="openPage('Games_G01_002___Eight_Queens_html')">Eight Queens</button><button class='card' onclick="openPage('Games_G02_003___Game_of_Life_html')">Game of Life</button><button class='card' onclick="openPage('Games_G03_007___Tower_of_Hanoi_html')">Tower of Hanoi</button><button class='card' onclick="openPage('Games_G04_012___Connect_Four_html')">Connect Four</button><button class='card' onclick="openPage('Games_G05_013___Modular_Matching_html')">Modular Matching</button><button class='card' onclick="openPage('Games_G06_014___Fifteen_html')">Fifteen</button><button class='card' onclick="openPage('Games_G07_016___Chess_html')">Chess</button><button class='card' onclick="openPage('Games_G08_017___Checkers_html')">Checkers</button><button class='card' onclick="openPage('Games_G0__01____Backgammon_html')">Backgammon</button><button class='card' onclick="openPage('Games_G10_020___Solitario_carte_napoletane_html')">Solitario carte napoletane</button><button class='card' onclick="openPage('Games_G11_027___Go_html')">Go</button></div></div><div class='section'><h2 class='section-header' tabindex='0' onclick="toggleSection('grid-tools')"><span>🛠️ Tools</span><span class='arrow'>&#9654;</span></h2><div class='grid' id='grid-tools'><button class='card' onclick="openPage('Tools_T01_005___Colors_Pro_html')">Colors Pro</button><button class='card' onclick="openPage('Tools_T02_006___Some_Maths_html')">Some Maths</button><button class='card' onclick="openPage('Tools_T03_00____Sounds_html')">Sounds</button><button class='card' onclick="openPage('Tools_T04_010___Days_html')">Days</button><button class='card' onclick="openPage('Tools_T05_011___SuperEnalotto_html')">SuperEnalotto</button><button class='card' onclick="openPage('Tools_T06_018___Colors_Hub_html')">Colors Hub</button><button class='card' onclick="openPage('Tools_T07_025___Alpha_Numeric_Converter_html')">Alpha-Numeric Converter</button><button class='card' onclick="openPage('Tools_T08_026___Sintetizzatore_Fonetico_Vocali_Italiane_html')">Sintetizzatore Fonetico Vocali Italiane</button></div></div>
 </div>
 <div id="viewer">
 	<div id="app-header">
@@ -258,15 +237,14 @@
 		<button id="close-btn" onclick="closePage()">Close</button>
 	</div>
 	<div id="iframe-container">
-		<iframe id="app-frame"></iframe>
+		<iframe id="app-frame" name="app-frame" tabindex="0"></iframe>
 	</div>
 </div>
 
 <script>
-	const pages = {
-		
+	const pages = { 
 	// --- Binary Clock ---
-	'Clocks_Binary Clock.html': { name: `Binary Clock`, content: `<!DOCTYPE html>
+	'Clocks_C01_001___Binary_Clock_html': { name: `Binary Clock`, content: `<!DOCTYPE html>
 <html lang="en"><!--C01#001 - Lucia - Binary Clock-->
 	<head>
 		<meta charset="UTF-8">
@@ -515,7 +493,7 @@
 </html>` },
 
 	// --- 24h Clock ---
-	'Clocks_24h Clock.html': { name: `24h Clock`, content: `<!DOCTYPE html>
+	'Clocks_C02_004___24h_Clock_html': { name: `24h Clock`, content: `<!DOCTYPE html>
 <html lang="en"><!--C02#004 - Giovanna - 24h Clock-->
 	<head>
 		<meta charset="UTF-8">
@@ -903,7 +881,7 @@
 </html>` },
 
 	// --- Orbit Clock ---
-	'Clocks_Orbit Clock.html': { name: `Orbit Clock`, content: `<!doctype html>
+	'Clocks_C03_008___Orbit_Clock_html': { name: `Orbit Clock`, content: `<!doctype html>
 <html lang="en"><!--C03#008 - Nicola - Orbit Clock-->
 	<head>
 		<meta charset="utf-8">
@@ -1143,7 +1121,7 @@
 </html>` },
 
 	// --- Strange Clock ---
-	'Clocks_Strange Clock.html': { name: `Strange Clock`, content: `<!DOCTYPE html>
+	'Clocks_C04_015___Strange_Clock_html': { name: `Strange Clock`, content: `<!DOCTYPE html>
 <html lang="en"><!--C04#015 - Paolo - Strange Clock-->
 	<head>
 		<meta charset="UTF-8">
@@ -1238,7 +1216,7 @@
 </html>` },
 
 	// --- World Time Zones ---
-	'Clocks_World Time Zones.html': { name: `World Time Zones`, content: `<!DOCTYPE html>
+	'Clocks_C05_021___World_Time_Zones_html': { name: `World Time Zones`, content: `<!DOCTYPE html>
 <html lang="en"><!--C05#021 - Angela - World Time Zones-->
 	<head>
 		<meta charset="UTF-8">
@@ -1973,7 +1951,7 @@
 </html>` },
 
 	// --- Digital Clock ---
-	'Clocks_Digital Clock.html': { name: `Digital Clock`, content: `<!DOCTYPE html>
+	'Clocks_C06_022___Digital_Clock_html': { name: `Digital Clock`, content: `<!DOCTYPE html>
 <html lang="en"><!--C06#022 - Giorgio - Digital Clock-->
 	<head>
 		<meta charset="UTF-8" />
@@ -2035,7 +2013,7 @@
 </html>` },
 
 	// --- Analog Clock ---
-	'Clocks_Analog Clock.html': { name: `Analog Clock`, content: `<!DOCTYPE html>
+	'Clocks_C07_023___Analog_Clock_html': { name: `Analog Clock`, content: `<!DOCTYPE html>
 <html lang="en"><!--C07#023 - Simone - Analog Clock-->
 	<head>
 		<meta charset="UTF-8">
@@ -2256,7 +2234,7 @@
 </html>` },
 
 	// --- Seven-Segment Digital Clock ---
-	'Clocks_Seven-Segment Digital Clock.html': { name: `Seven-Segment Digital Clock`, content: `<!DOCTYPE html>
+	'Clocks_C08_024___Seven_Segment_Digital_Clock_html': { name: `Seven-Segment Digital Clock`, content: `<!DOCTYPE html>
 	<html lang="en"><!--C08#024 - Eduardo - Seven-Segment Digital Clock-->
 	<head>
 		<meta charset="UTF-8" />
@@ -2489,7 +2467,7 @@
 </html>` },
 
 	// --- Eight Queens ---
-	'Games_Eight Queens.html': { name: `Eight Queens`, content: `<!DOCTYPE HTML>
+	'Games_G01_002___Eight_Queens_html': { name: `Eight Queens`, content: `<!DOCTYPE HTML>
 <html lang="en"><!--G01#002 - Brigida - Eight Queens-->
 	<head>
 		<title>Eight Queens</title>
@@ -3115,7 +3093,7 @@
 </html>` },
 
 	// --- Game of Life ---
-	'Games_Game of Life.html': { name: `Game of Life`, content: `<!DOCTYPE HTML>
+	'Games_G02_003___Game_of_Life_html': { name: `Game of Life`, content: `<!DOCTYPE HTML>
 <html lang="en"><!--G02#003 - Marco - Game of Life-->
 	<head>
 		<meta charset="UTF-8">
@@ -3453,7 +3431,7 @@
 </html>` },
 
 	// --- Tower of Hanoi ---
-	'Games_Tower of Hanoi.html': { name: `Tower of Hanoi`, content: `<!DOCTYPE HTML>
+	'Games_G03_007___Tower_of_Hanoi_html': { name: `Tower of Hanoi`, content: `<!DOCTYPE HTML>
 <html lang="en"><!--G03#007 - Luca - Tower of Hanoi-->
 	<head>
 		<meta charset="UTF-8">
@@ -3911,7 +3889,7 @@
 </html>` },
 
 	// --- Connect Four ---
-	'Games_Connect Four.html': { name: `Connect Four`, content: `<!DOCTYPE HTML>
+	'Games_G04_012___Connect_Four_html': { name: `Connect Four`, content: `<!DOCTYPE HTML>
 <html lang="en"><!--G04#012 - Carmela - Connect Four-->
 	<head>
 		<meta charset="UTF-8">
@@ -4394,7 +4372,7 @@
 </html>` },
 
 	// --- Modular Matching ---
-	'Games_Modular Matching.html': { name: `Modular Matching`, content: `<!DOCTYPE html>
+	'Games_G05_013___Modular_Matching_html': { name: `Modular Matching`, content: `<!DOCTYPE html>
 <html lang="en"><!--G05#013 - Federico - Modular Matching-->
 	<head>
 		<meta charset="UTF-8">
@@ -4821,7 +4799,7 @@
 </html>` },
 
 	// --- Fifteen ---
-	'Games_Fifteen.html': { name: `Fifteen`, content: `<!DOCTYPE HTML>
+	'Games_G06_014___Fifteen_html': { name: `Fifteen`, content: `<!DOCTYPE HTML>
 <html lang="en"><!--G06#014 - Serena - Fifteen-->
 	<head>
 		<title>Fifteen Puzzle</title>
@@ -5295,7 +5273,7 @@
 </html>` },
 
 	// --- Chess ---
-	'Games_Chess.html': { name: `Chess`, content: `<!DOCTYPE html>
+	'Games_G07_016___Chess_html': { name: `Chess`, content: `<!DOCTYPE html>
 <html lang="en"><!--G07#016 - Filippo - Chess-->
 	<head>
 		<meta charset="UTF-8">
@@ -6728,7 +6706,7 @@
 </html>` },
 
 	// --- Checkers ---
-	'Games_Checkers.html': { name: `Checkers`, content: `<!DOCTYPE html>
+	'Games_G08_017___Checkers_html': { name: `Checkers`, content: `<!DOCTYPE html>
 <html lang="en"><!--G08#017 - Mara - Checkers-->
 	<head>
 		<meta charset="UTF-8">
@@ -7427,7 +7405,7 @@
 </html>` },
 
 	// --- Backgammon ---
-	'Games_Backgammon.html': { name: `Backgammon`, content: `<!DOCTYPE html>
+	'Games_G0__01____Backgammon_html': { name: `Backgammon`, content: `<!DOCTYPE html>
 <html lang="en"><!--G09#019 - Samuele - Backgammon-->
 	<head>
 		<meta charset="UTF-8">
@@ -7846,7 +7824,7 @@
 </html>` },
 
 	// --- Solitario carte napoletane ---
-	'Games_Solitario carte napoletane.html': { name: `Solitario carte napoletane`, content: `<!DOCTYPE html>
+	'Games_G10_020___Solitario_carte_napoletane_html': { name: `Solitario carte napoletane`, content: `<!DOCTYPE html>
 <html lang="it"><!--G10#020 - Armando - Solitario carte napoletane-->
 	<head>
 		<meta charset="UTF-8">
@@ -8400,7 +8378,7 @@
 </html>` },
 
 	// --- Go ---
-	'Games_Go.html': { name: `Go`, content: `<!DOCTYPE html>
+	'Games_G11_027___Go_html': { name: `Go`, content: `<!DOCTYPE html>
 <html lang="en"><!--G11#027 - Michele - Go-->
 	<head>
 		<meta charset="UTF-8">
@@ -9273,7 +9251,7 @@
 </html>` },
 
 	// --- Colors Pro ---
-	'Tools_Colors Pro.html': { name: `Colors Pro`, content: `<!DOCTYPE html>
+	'Tools_T01_005___Colors_Pro_html': { name: `Colors Pro`, content: `<!DOCTYPE html>
 <html lang="en"><!--T01#005 - Irene - Colors Pro-->
 	<head>
 		<meta charset="UTF-8">
@@ -9860,7 +9838,7 @@
 </html>` },
 
 	// --- Some Maths ---
-	'Tools_Some Maths.html': { name: `Some Maths`, content: `<!DOCTYPE html>
+	'Tools_T02_006___Some_Maths_html': { name: `Some Maths`, content: `<!DOCTYPE html>
 <html lang="en"><!--T02#006 - Claudia - Some Maths-->
 	<head>
 		<meta charset="UTF-8">
@@ -10903,7 +10881,7 @@
 </html>` },
 
 	// --- Sounds ---
-	'Tools_Sounds.html': { name: `Sounds`, content: `<!DOCTYPE html>
+	'Tools_T03_00____Sounds_html': { name: `Sounds`, content: `<!DOCTYPE html>
 <html lang="en"><!--T03#009 - Fabio - Sounds-->
 	<head>
 		<meta charset="UTF-8">
@@ -12144,7 +12122,7 @@
 </html>` },
 
 	// --- Days ---
-	'Tools_Days.html': { name: `Days`, content: `<!DOCTYPE html>
+	'Tools_T04_010___Days_html': { name: `Days`, content: `<!DOCTYPE html>
 <html lang="en"><!--T04#010 - Roberto - Days-->
 	<head>
 		<meta charset="UTF-8">
@@ -12838,7 +12816,7 @@
 </html>` },
 
 	// --- SuperEnalotto ---
-	'Tools_SuperEnalotto.html': { name: `SuperEnalotto`, content: `<!DOCTYPE html>
+	'Tools_T05_011___SuperEnalotto_html': { name: `SuperEnalotto`, content: `<!DOCTYPE html>
 <html lang="it"><!--T05#011 - Gennaro - SuperEnalotto-->
 	<head>
 		<meta charset="UTF-8">
@@ -13088,7 +13066,7 @@
 </html>` },
 
 	// --- Colors Hub ---
-	'Tools_Colors Hub.html': { name: `Colors Hub`, content: `<!DOCTYPE html>
+	'Tools_T06_018___Colors_Hub_html': { name: `Colors Hub`, content: `<!DOCTYPE html>
 <html lang="en"><!--T06#018 - Giada - Colors Hub-->
 	<head>
 		<meta charset="UTF-8">
@@ -14391,7 +14369,7 @@
 </html>` },
 
 	// --- Alpha-Numeric Converter ---
-	'Tools_Alpha-Numeric Converter.html': { name: `Alpha-Numeric Converter`, content: `<!DOCTYPE html>
+	'Tools_T07_025___Alpha_Numeric_Converter_html': { name: `Alpha-Numeric Converter`, content: `<!DOCTYPE html>
 <html lang="en"><!--T07#025 - Sophia - Alpha-Numeric Converter-->
 	<head>
 		<meta charset="UTF-8">
@@ -14925,7 +14903,7 @@
 </html>` },
 
 	// --- Sintetizzatore Fonetico Vocali Italiane ---
-	'Tools_Sintetizzatore Fonetico Vocali Italiane.html': { name: `Sintetizzatore Fonetico Vocali Italiane`, content: `<!DOCTYPE html>
+	'Tools_T08_026___Sintetizzatore_Fonetico_Vocali_Italiane_html': { name: `Sintetizzatore Fonetico Vocali Italiane`, content: `<!DOCTYPE html>
 <html lang="it"><!--T08#026 - Valeria - Sintetizzatore Fonetico Vocali Italiane-->
 	<head>
 		<meta charset="UTF-8">
@@ -16410,10 +16388,8 @@
 			});
 		<\/script>
 	</body>
-</html>` }
-	};
-
-	let currentUrl = null;
+</html>` },
+ };
 	let currentKey = null;
 
 	function toggleSection(gridId){
@@ -16431,59 +16407,50 @@
 		}
 		currentKey = key;
 		document.getElementById('app-title').innerText = data.name;
-		const blob = new Blob([data.content], { type: 'text/html' });
-		if(currentUrl){
-			URL.revokeObjectURL(currentUrl);
-		}
-		currentUrl = URL.createObjectURL(blob);
 		const viewer = document.getElementById('viewer');
+		const frame = document.getElementById('app-frame');
 		viewer.style.display = 'flex';
+		viewer.classList.add('viewer-show');
 		document.body.style.overflow = 'hidden';
-		document.getElementById('app-frame').src = currentUrl;
+		frame.srcdoc = data.content;
+		frame.onload = function() {
+			frame.focus();
+		};
 	}
 
 	window.addEventListener('message', function(event){
-		if(event.data === 'RELOAD_REQUEST'){
-			if(currentKey){
-				openPage(currentKey);
-			}
+		if(event.data === 'RELOAD_REQUEST' && currentKey){
+			openPage(currentKey);
 		}
 	});
 
 	function closePage(){
 		const viewer = document.getElementById('viewer');
-		viewer.style.display = 'none';
-		document.body.style.overflow = '';
-		document.getElementById('app-frame').src = 'about:blank';
+		viewer.style.opacity = '0';
+		setTimeout(() => {
+			viewer.style.display = 'none';
+			viewer.style.opacity = '1';
+			viewer.classList.remove('viewer-show');
+			document.body.style.overflow = '';
+			document.getElementById('app-frame').srcdoc = '';
+		}, 300);
 		currentKey = null;
 	}
 
-	window.history.pushState(null, null, window.location.href);
-
-	window.onpopstate = function(){
-		if(document.getElementById('viewer').style.display === 'flex'){
-			window.history.pushState(null, null, window.location.href);
+	document.addEventListener('keydown', function(e){
+		if(e.key === 'Escape'){
 			closePage();
 		}
-	};
-
-	document.addEventListener('keydown', function(e){
-		if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA'){
-			return;
-		}
-		switch(e.key.toLowerCase()){
-			case 'c':
-				toggleSection("grid-clocks");
-				break;
-			case 'g':
-				toggleSection("grid-games");
-				break;
-			case 't':
-				toggleSection("grid-tools");
-				break;
-			case 'escape':
-				closePage();
-				break;
+		if(document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA'){
+			if(e.key.toLowerCase() === 'c'){
+				toggleSection('grid-clocks');
+			}
+			if(e.key.toLowerCase() === 'g'){
+				toggleSection('grid-games');
+			}
+			if(e.key.toLowerCase() === 't'){
+				toggleSection('grid-tools');
+			}
 		}
 	});
 </script>
