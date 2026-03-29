@@ -118,15 +118,18 @@ public class HTML_Pages_Unifier {
 		box-shadow: none !important;
 	}
 
-	body{ 
-		font-family: 'Segoe UI', Roboto, sans-serif; 
-		margin: 0; 
-		background: var(--bg-gradient); 
+	body{
+		font-family: 'Segoe UI', Roboto, sans-serif;
+		margin: 0;
+		background: var(--bg-gradient);
 		background-size: 400% 400%;
 		animation: gradientBG 15s ease infinite;
-		color: var(--text-main); 
-		min-height: 100vh; 
-		overflow-x: hidden; 
+		color: var(--text-main);
+		min-height: 100vh;
+		overflow-x: hidden;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
 	}
 	
 	@keyframes gradientBG {
@@ -148,35 +151,35 @@ public class HTML_Pages_Unifier {
 		animation: fadeIn 1s ease-out;
 	}
 	
-	h1{ 
+	h1{
 		text-align: center;
 		font-weight: 200;
 		font-size: 2.5rem;
 		letter-spacing: 3px;
-		margin-bottom: 50px; 
+		margin-bottom: 50px;
 		background: linear-gradient(to right, #fff, #888);
 		-webkit-background-clip: text;
-		background-clip: text; 
+		background-clip: text;
 		-webkit-text-fill-color: transparent;
 		-webkit-tap-highlight-color: transparent;
 	}
 
-	h2{ 
+	h2{
 		border-bottom: 1px solid var(--card-border);
 		padding-bottom: 10px;
-		margin-top: 50px; 
+		margin-top: 50px;
 		color: var(--accent);
 		font-size: 0.9rem;
 		text-transform: uppercase;
-		letter-spacing: 1.5px; 
+		letter-spacing: 1.5px;
 		transition: color 0.3s;
 	}
 
-	.section-header{ 
+	.section-header{
 		cursor: pointer;
 		display: flex;
 		align-items: center;
-		justify-content: space-between; 
+		justify-content: space-between;
 		-webkit-tap-highlight-color: transparent;
 		transition: 0.3s;
 	}
@@ -221,8 +224,8 @@ public class HTML_Pages_Unifier {
 		user-select: none;
 	}
 
-	.card:hover{ 
-		transform: translateY(-8px) scale(1.03); 
+	.card:hover{
+		transform: translateY(-8px) scale(1.03);
 		background: rgba(255, 255, 255, 0.08);
 		border-color: var(--accent);
 		box-shadow: 0 10px 25px rgba(74, 144, 226, 0.25);
@@ -262,7 +265,7 @@ public class HTML_Pages_Unifier {
 		}
 	}
 
-	#app-header{ 
+	#app-header{
 		height: 60px;
 		background: rgba(0,0,0,0.4);
 		border-bottom: 1px solid var(--card-border); 
@@ -270,7 +273,7 @@ public class HTML_Pages_Unifier {
 		align-items: center;
 		justify-content: space-between;
 		padding: 0 25px;
-		flex-shrink: 0; 
+		flex-shrink: 0;
 	}
 	
 	#app-title{
@@ -280,14 +283,14 @@ public class HTML_Pages_Unifier {
 		color: var(--accent);
 	}
 
-	#close-btn{ 
+	#close-btn{
 		background: rgba(255,255,255,0.05);
 		color: #fff;
-		border: 1px solid rgba(255,255,255,0.2); 
+		border: 1px solid rgba(255,255,255,0.2);
 		border-radius: 30px;
 		padding: 8px 20px;
 		cursor: pointer;
-		transition: 0.3s; 
+		transition: 0.3s;
 		text-transform: uppercase;
 		font-size: 0.75rem;
 		font-weight: bold;
