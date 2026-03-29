@@ -22,6 +22,23 @@ public class HTML_Pages_Unifier {
 		EMOJIS = Collections.unmodifiableMap(tempMap);
 	}
 
+	private static String injectEscHandler(String content) {
+		String escScript = """
+			<script>
+			document.addEventListener('keydown', function(e) {
+				if(e.key === 'Escape'){
+					window.parent.postMessage('CLOSE_REQUEST', '*');
+				}
+			});
+			</script>
+			""";
+		if(content.contains("</body>")){
+			return content.replace("</body>", escScript + "</body>");
+		}else{
+			return content + escScript;
+		}
+	}
+
 	public static void main(String[] args) {
 		StringBuilder jsDataBuilder = new StringBuilder();
 		StringBuilder htmlMenuBuilder = new StringBuilder();
@@ -37,6 +54,7 @@ public class HTML_Pages_Unifier {
 						try{
 							String content = Files.readString(file.toPath(), StandardCharsets.UTF_8);
 							content = replaceReloadCalls(content);
+							content = injectEscHandler(content);
 							content = content.replace("\\", "\\\\").replace("`", "\\`").replace("${", "\\${").replace("</script>", "<\\/script>");
 							String fileName = file.getName();
 							String displayName = fileName.replace(".html", "").replace("_", " ");
@@ -348,6 +366,9 @@ public class HTML_Pages_Unifier {
 	window.addEventListener('message', function(event){
 		if(event.data === 'RELOAD_REQUEST' && currentKey){
 			openPage(currentKey);
+		}
+		if(event.data === 'CLOSE_REQUEST'){
+			closePage();
 		}
 	});
 
