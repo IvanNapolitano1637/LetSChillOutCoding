@@ -160,6 +160,71 @@
 			*{
 				-webkit-tap-highlight-color: transparent;
 			}
+			#helpOverlay{
+				display: none;
+				position: fixed;
+				inset: 0;
+				background: rgba(0,0,0,0.55);
+				z-index: 1000;
+				justify-content: center;
+				align-items: center;
+			}
+			#helpOverlay.visible{
+				display: flex;
+			}
+			#helpBox{
+				background: #fff;
+				border-radius: 12px;
+				box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+				padding: 28px 32px 24px;
+				max-width: 480px;
+				width: 90%;
+				max-height: 85vh;
+				overflow-y: auto;
+				position: relative;
+				text-align: left;
+			}
+			#helpBox h2{
+				margin: 0 0 18px;
+				font-size: 1.3em;
+				text-align: center;
+				color: #2196f3;
+			}
+			#helpBox table{
+				width: 100%;
+				border-collapse: collapse;
+			}
+			#helpBox td{
+				padding: 7px 10px;
+				vertical-align: top;
+			}
+			#helpBox tr:nth-child(even) td{
+				background: #f4f4f4;
+				border-radius: 4px;
+			}
+			#helpBox .key{
+				font-family: monospace;
+				font-weight: bold;
+				font-size: 1.05em;
+				color: #f44336;
+				white-space: nowrap;
+				width: 1%;
+			}
+			#helpCloseBtn{
+				position: absolute;
+				top: 12px;
+				right: 16px;
+				background: none;
+				border: none;
+				font-size: 1.5em;
+				cursor: pointer;
+				color: #555;
+				padding: 2px 6px;
+				line-height: 1;
+			}
+			#helpCloseBtn:hover{
+				color: #000;
+			}
 		</style>
 	</head>
 	<body lang="en">
@@ -178,6 +243,13 @@
 					<button id="btnDouble">Highlight doubles</button>
 					<button id="btnOpposite">Highlight opposites</button>
 				</div>
+			</div>
+		</div>
+		<div id="helpOverlay" role="dialog" aria-modal="true" onclick="if(event.target===this){closeHelp();}">
+			<div id="helpBox">
+				<button id="helpCloseBtn" onclick="closeHelp()" aria-label="Close">✕</button>
+				<h2 id="helpTitle">Keyboard Shortcuts</h2>
+				<table id="helpTable"></table>
 			</div>
 		</div>
 		<div class="grid" id="gameGrid"></div>
@@ -213,6 +285,27 @@
 				zh: { errors: "错误", updateP: "更新 模", hlDoubles: "高亮双倍 (2n)", hlOpposites: "高亮相反数 (-n)", notPrime: " 不是质数。某些数字可能没有逆元。继续？", warnPrime: " 不是质数。某些数字可能没有逆元。", maxErrors: "错误过多!", win: "赢了! :-D", varP: "模", varX: "n" },
 				ja: { errors: "エラー", updateP: "P 更新", hlDoubles: "2倍を強調 (2n)", hlOpposites: "逆数を強調 (-n)", notPrime: " は素数ではありません。一部の数値には逆数がない場合があります。続行？", warnPrime: " は素数ではありません。一部の数値には逆数がない場合があります。", maxErrors: "リトライ!", win: "勝ち! :-D", varP: "P", varX: "n" }
 			};
+			const HELP_TITLE = {
+				en: "Keyboard Shortcuts", it: "Tasti di scelta rapida", fr: "Raccourcis clavier",
+				es: "Atajos de teclado", de: "Tastenkürzel", pt: "Atalhos de teclado",
+				ro: "Scurtături de tastatură", uk: "Клавіші швидкого доступу",
+				el: "Συντομεύσεις πληκτρολογίου", la: "Clavium compendia",
+				zh: "键盘快捷键", ja: "キーボードショートカット"
+			};
+			const HELP_SHORTCUTS = {
+				en: [["D","Toggle highlight doubles (2x)"],["O","Toggle highlight opposites (-x)"],["L","Switch language"],["Z","Reset error counter"],["?","Show / hide this help"]],
+				it: [["D","Attiva/disattiva evidenziazione doppi (2x)"],["O","Attiva/disattiva evidenziazione opposti (-x)"],["L","Cambia lingua"],["Z","Azzera contatore errori"],["?","Mostra / nascondi questo aiuto"]],
+				fr: [["D","Activer/désactiver surlignage doubles (2x)"],["O","Activer/désactiver surlignage opposés (-x)"],["L","Changer de langue"],["Z","Réinitialiser le compteur d'erreurs"],["?","Afficher / masquer cette aide"]],
+				es: [["D","Activar/desactivar resaltado dobles (2x)"],["O","Activar/desactivar resaltado opuestos (-x)"],["L","Cambiar idioma"],["Z","Reiniciar contador de errores"],["?","Mostrar / ocultar esta ayuda"]],
+				de: [["D","Doppelte hervorheben ein/aus (2x)"],["O","Gegenteile hervorheben ein/aus (-x)"],["L","Sprache wechseln"],["Z","Fehlerzähler zurücksetzen"],["?","Hilfe anzeigen / ausblenden"]],
+				pt: [["D","Ativar/desativar destaque dobros (2x)"],["O","Ativar/desativar destaque opostos (-x)"],["L","Mudar idioma"],["Z","Redefinir contador de erros"],["?","Mostrar / ocultar esta ajuda"]],
+				ro: [["D","Activează/dezactivează evidențiere dubluri (2x)"],["O","Activează/dezactivează evidențiere opuse (-x)"],["L","Schimbă limba"],["Z","Resetează contorul de erori"],["?","Afișează / ascunde această ajutor"]],
+				uk: [["D","Увімк./вимк. виділення подвійних (2n)"],["O","Увімк./вимк. виділення протилежних (-n)"],["L","Змінити мову"],["Z","Скинути лічильник помилок"],["?","Показати / приховати цю довідку"]],
+				el: [["D","Ενεργοπ./Απενεργοπ. επισήμανση διπλών (2x)"],["O","Ενεργοπ./Απενεργοπ. επισήμανση αντίθετων (-x)"],["L","Αλλαγή γλώσσας"],["Z","Μηδενισμός μετρητή σφαλμάτων"],["?","Εμφάνιση / απόκρυψη βοήθειας"]],
+				la: [["D","Ostende/absconde duplices (2x)"],["O","Ostende/absconde oppositos (-x)"],["L","Linguam muta"],["Z","Errores tolle"],["?","Auxilium ostende / absconde"]],
+				zh: [["D","切换双倍高亮 (2n)"],["O","切换相反数高亮 (-n)"],["L","切换语言"],["Z","重置错误计数器"],["?","显示 / 隐藏帮助"]],
+				ja: [["D","2倍の強調表示 オン/オフ (2n)"],["O","逆数の強調表示 オン/オフ (-n)"],["L","言語を切替"],["Z","エラーカウンターをリセット"],["?","ヘルプを表示 / 非表示"]]
+			};
 			let currentLangIndex = 0;
 
 			function t(key){
@@ -229,9 +322,29 @@
 				document.body.setAttribute('lang', LANG_KEYS[currentLangIndex]);
 			}
 
+			function openHelp(){
+				updateHelpContent();
+				document.getElementById("helpOverlay").classList.add("visible");
+			}
+
+			function closeHelp(){
+				document.getElementById("helpOverlay").classList.remove("visible");
+			}
+
+			function updateHelpContent(){
+				const lang = LANG_KEYS[currentLangIndex];
+				document.getElementById("helpTitle").textContent = HELP_TITLE[lang];
+				const rows = HELP_SHORTCUTS[lang];
+				document.getElementById("helpTable").innerHTML = rows.map(([k,d]) =>
+					`<tr><td class="key">${k}</td><td>${d}</td></tr>`
+				).join("");
+			}
 			function nextLang(){
 				currentLangIndex = (currentLangIndex + 1)%(LANG_KEYS.length);
 				updateUI();
+				if(document.getElementById('helpOverlay').classList.contains('visible')){
+					updateHelpContent();
+				}
 				document.querySelectorAll('.cell.matched').forEach(cell => {
 					const n1 = cell.dataset.number;
 					const n2 = cell.dataset.inverse;
@@ -414,6 +527,13 @@
 					}else if(e.key.toLowerCase() === "z"){
 						currentErrors = 0;
 						document.getElementById('errors').textContent = currentErrors;
+					}else if(e.key === "?"){
+						const ov = document.getElementById("helpOverlay");
+						if(ov.classList.contains("visible")){
+							closeHelp();
+						}else{
+							openHelp();
+						}
 					}
 				});
 

@@ -108,6 +108,105 @@
 			*{
 				-webkit-tap-highlight-color: transparent;
 			}
+			.help-overlay{
+				display: none;
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: rgba(0,0,0,0.45);
+				z-index: 1000;
+				align-items: center;
+				justify-content: center;
+			}
+			.help-overlay.show{
+				display: flex;
+			}
+			.help-modal{
+				background: #fffde8;
+				border-radius: 14px;
+				box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+				padding: 24px 28px 20px 28px;
+				max-width: 400px;
+				width: 92%;
+				position: relative;
+				animation: fadeIn 0.18s ease;
+			}
+			@keyframes fadeIn{
+				from{
+					opacity:0;
+					transform:scale(0.95);
+				}
+				to{
+					opacity:1;
+					transform:scale(1);
+				}
+			}
+			.help-modal h4{
+				color: #856404;
+				margin: 0 0 16px 0;
+				font-size: 1.1em;
+				text-align: center;
+				letter-spacing: 0.5px;
+			}
+			.help-close{
+				position: absolute;
+				top: 12px;
+				right: 14px;
+				background: none;
+				border: none;
+				font-size: 1.3em;
+				color: #999;
+				cursor: pointer;
+				padding: 2px 6px;
+				line-height: 1;
+				border-radius: 4px;
+				font-weight: bold;
+			}
+			.help-close:hover{
+				background: #f5f0c0;
+				color: #856404;
+			}
+			.help-table{
+				width: 100%;
+				border-collapse: collapse;
+				font-size: 0.92em;
+			}
+			.help-table tr{
+				border-bottom: 1px solid #e8e0a0;
+			}
+			.help-table tr:last-child{
+				border-bottom: none;
+			}
+			.help-table td{
+				padding: 8px 6px;
+				vertical-align: top;
+			}
+			.help-key{
+				font-family: monospace;
+				background: #fff8cc;
+				border: 1px solid #d4a017;
+				border-radius: 4px;
+				padding: 2px 8px;
+				font-size: 1em;
+				font-weight: bold;
+				color: #333;
+				white-space: nowrap;
+				display: inline-block;
+				min-width: 28px;
+				text-align: center;
+			}
+			.help-desc{
+				color: #555;
+				padding-left: 8px;
+			}
+			.help-hint{
+				text-align: center;
+				margin-top: 14px;
+				font-size: 0.78em;
+				color: #aaa;
+			}
 		</style>
 	</head>
 	<body>
@@ -127,6 +226,14 @@
 			<button type="button" id="btnShowSolutions" onclick="toggleSolutions()" style="display:none;">Show solutions</button>
 		</form>
 		<div id="solutionsContainer"></div>
+		<div class="help-overlay" id="helpOverlay" onclick="closeHelp(event)">
+			<div class="help-modal">
+				<button class="help-close" onclick="toggleHelp()">✕</button>
+				<h4 id="helpTitle">Keyboard Shortcuts</h4>
+				<table class="help-table" id="helpTable"></table>
+				<div class="help-hint" id="helpHint">Press ? to close</div>
+			</div>
+		</div>
 		<script>
 			let order = 8;
 			const getScreenSize = () => Math.min(window.innerWidth*0.95, 600);
@@ -179,160 +286,76 @@
 			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
 			const TRANSLATIONS = {
 				en: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "Hard",
-					easy: "Easy",
-					reset: "Reset",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "Show solutions",
-					hideSolutions: "Hide solutions",
-					youWin: "You win!"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "Hard", easy: "Easy", reset: "Reset", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "Show solutions", hideSolutions: "Hide solutions", youWin: "You win!",
+					helpTitle: "Keyboard Shortcuts", helpHint: "Press ? to close",
+					helpShortcuts: [["S","Toggle semaphore (conflict highlight)"],["D","Toggle Easy / Hard mode"],["R","Reset the board"],["Q","Toggle queen limit"],["L","Switch to next language"],["+","Increase board size"],["-","Decrease board size"],["?","Show / hide this help"]]
 				},
 				it: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "Difficile",
-					easy: "Facile",
-					reset: "Reset",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "Mostra soluzioni",
-					hideSolutions: "Nascondi soluzioni",
-					youWin: "Hai vinto!"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "Difficile", easy: "Facile", reset: "Reset", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "Mostra soluzioni", hideSolutions: "Nascondi soluzioni", youWin: "Hai vinto!",
+					helpTitle: "Scorciatoie da Tastiera", helpHint: "Premi ? per chiudere",
+					helpShortcuts: [["S","Attiva/disattiva semaforo (conflitti)"],["D","Modalità Facile / Difficile"],["R","Reimposta la scacchiera"],["Q","Limite regine on/off"],["L","Passa alla lingua successiva"],["+","Aumenta dimensione scacchiera"],["-","Riduci dimensione scacchiera"],["?","Mostra / nascondi questa guida"]]
 				},
 				fr: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "Difficile",
-					easy: "Facile",
-					reset: "Réinitialiser",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "Voir solutions",
-					hideSolutions: "Cacher solutions",
-					youWin: "Vous gagnez !"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "Difficile", easy: "Facile", reset: "Réinitialiser", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "Voir solutions", hideSolutions: "Cacher solutions", youWin: "Vous gagnez !",
+					helpTitle: "Raccourcis Clavier", helpHint: "Appuyez sur ? pour fermer",
+					helpShortcuts: [["S","Activer/désactiver le sémaphore"],["D","Mode Facile / Difficile"],["R","Réinitialiser l'échiquier"],["Q","Limite de reines on/off"],["L","Langue suivante"],["+","Agrandir l'échiquier"],["-","Réduire l'échiquier"],["?","Afficher / masquer cette aide"]]
 				},
 				es: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "Difícil",
-					easy: "Fácil",
-					reset: "Reiniciar",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "Ver soluciones",
-					hideSolutions: "Ocultar soluciones",
-					youWin: "¡Ganaste!"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "Difícil", easy: "Fácil", reset: "Reiniciar", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "Ver soluciones", hideSolutions: "Ocultar soluciones", youWin: "¡Ganaste!",
+					helpTitle: "Atajos de Teclado", helpHint: "Pulsa ? para cerrar",
+					helpShortcuts: [["S","Activar/desactivar semáforo"],["D","Modo Fácil / Difícil"],["R","Reiniciar el tablero"],["Q","Límite de reinas on/off"],["L","Siguiente idioma"],["+","Aumentar tamaño del tablero"],["-","Reducir tamaño del tablero"],["?","Mostrar / ocultar esta ayuda"]]
 				},
 				de: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "Schwer",
-					easy: "Leicht",
-					reset: "Zurücksetzen",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "Lösungen zeigen",
-					hideSolutions: "Lösungen ausblenden",
-					youWin: "Du gewinnst!"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "Schwer", easy: "Leicht", reset: "Zurücksetzen", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "Lösungen zeigen", hideSolutions: "Lösungen ausblenden", youWin: "Du gewinnst!",
+					helpTitle: "Tastaturkürzel", helpHint: "? drücken zum Schließen",
+					helpShortcuts: [["S","Semaphor ein-/ausschalten"],["D","Leicht / Schwer Modus"],["R","Brett zurücksetzen"],["Q","Königinnenlimit umschalten"],["L","Nächste Sprache"],["+","Brett vergrößern"],["-","Brett verkleinern"],["?","Hilfe ein-/ausblenden"]]
 				},
 				pt: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "Difícil",
-					easy: "Fácil",
-					reset: "Reiniciar",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "Ver soluções",
-					hideSolutions: "Ocultar soluções",
-					youWin: "Você ganhou!"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "Difícil", easy: "Fácil", reset: "Reiniciar", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "Ver soluções", hideSolutions: "Ocultar soluções", youWin: "Você ganhou!",
+					helpTitle: "Atalhos de Teclado", helpHint: "Prima ? para fechar",
+					helpShortcuts: [["S","Ativar/desativar semáforo"],["D","Modo Fácil / Difícil"],["R","Reiniciar o tabuleiro"],["Q","Limite de rainhas on/off"],["L","Próximo idioma"],["+","Aumentar tabuleiro"],["-","Reduzir tabuleiro"],["?","Mostrar / ocultar esta ajuda"]]
 				},
 				ro: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "Greu",
-					easy: "Ușor",
-					reset: "Resetare",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "Arată soluții",
-					hideSolutions: "Ascunde soluții",
-					youWin: "Ai câștigat!"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "Greu", easy: "Ușor", reset: "Resetare", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "Arată soluții", hideSolutions: "Ascunde soluții", youWin: "Ai câștigat!",
+					helpTitle: "Comenzi Rapide", helpHint: "Apăsați ? pentru a închide",
+					helpShortcuts: [["S","Activare/dezactivare semafor"],["D","Mod Ușor / Greu"],["R","Resetează tabla"],["Q","Limită regine on/off"],["L","Limba următoare"],["+","Mărește tabla"],["-","Micșorează tabla"],["?","Arată / ascunde ajutorul"]]
 				},
 				uk: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "Важко",
-					easy: "Легко",
-					reset: "Скинути",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "Показати рішення",
-					hideSolutions: "Сховати рішення",
-					youWin: "Ти виграв!"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "Важко", easy: "Легко", reset: "Скинути", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "Показати рішення", hideSolutions: "Сховати рішення", youWin: "Ти виграв!",
+					helpTitle: "Клавіатурні Скорочення", helpHint: "Натисніть ? щоб закрити",
+					helpShortcuts: [["S","Семафор вкл/викл"],["D","Легкий / Важкий режим"],["R","Скинути дошку"],["Q","Ліміт ферзів вкл/викл"],["L","Наступна мова"],["+","Збільшити дошку"],["-","Зменшити дошку"],["?","Показати / приховати довідку"]]
 				},
 				el: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "Δύσκολο",
-					easy: "Εύκολο",
-					reset: "Επαναφορά",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "Εμφάνιση λύσεων",
-					hideSolutions: "Απόκρυψη λύσεων",
-					youWin: "Κέρδισες!"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "Δύσκολο", easy: "Εύκολο", reset: "Επαναφορά", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "Εμφάνιση λύσεων", hideSolutions: "Απόκρυψη λύσεων", youWin: "Κέρδισες!",
+					helpTitle: "Συντομεύσεις Πληκτρολογίου", helpHint: "Πατήστε ? για κλείσιμο",
+					helpShortcuts: [["S","Εναλλαγή σηματοδότη"],["D","Εύκολο / Δύσκολο"],["R","Επαναφορά σκακιέρας"],["Q","Όριο βασιλισσών on/off"],["L","Επόμενη γλώσσα"],["+","Μεγαλύτερη σκακιέρα"],["-","Μικρότερη σκακιέρα"],["?","Εμφάνιση / απόκρυψη βοήθειας"]]
 				},
 				la: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "Difficile",
-					easy: "Facile",
-					reset: "Renovare",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "Ostende solutiones",
-					hideSolutions: "Absconde solutiones",
-					youWin: "Vincis!"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "Difficile", easy: "Facile", reset: "Renovare", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "Ostende solutiones", hideSolutions: "Absconde solutiones", youWin: "Vincis!",
+					helpTitle: "Claves Auxiliares", helpHint: "Preme ? ad claudendum",
+					helpShortcuts: [["S","Semaphorum commuta"],["D","Facile / Difficile"],["R","Renoua tabulam"],["Q","Limitem reginarum commuta"],["L","Muta ad linguam proximam"],["+","Augesce tabulam"],["-","Minue tabulam"],["?","Ostende / absconde auxilium"]]
 				},
 				zh: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "困难",
-					easy: "简单",
-					reset: "重置",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "显示解法",
-					hideSolutions: "隐藏解法",
-					youWin: "你赢了！"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "困难", easy: "简单", reset: "重置", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "显示解法", hideSolutions: "隐藏解法", youWin: "你赢了！",
+					helpTitle: "键盘快捷键", helpHint: "按 ? 关闭",
+					helpShortcuts: [["S","切换信号灯（冲突高亮）"],["D","简单 / 困难 模式"],["R","重置棋盘"],["Q","切换皇后数量限制"],["L","切换下一种语言"],["+","放大棋盘"],["-","缩小棋盘"],["?","显示 / 隐藏此帮助"]]
 				},
 				ja: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "難しい",
-					easy: "簡単",
-					reset: "リセット",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "解を表示",
-					hideSolutions: "解を非表示",
-					youWin: "あなたの勝ちです！"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "難しい", easy: "簡単", reset: "リセット", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "解を表示", hideSolutions: "解を非表示", youWin: "あなたの勝ちです！",
+					helpTitle: "キーボードショートカット", helpHint: "? を押して閉じる",
+					helpShortcuts: [["S","セマフォ（衝突強調）切替"],["D","簡単 / 難しい モード"],["R","ボードをリセット"],["Q","クイーン数制限の切替"],["L","次の言語に切り替え"],["+","ボードを拡大"],["-","ボードを縮小"],["?","このヘルプを表示 / 非表示"]]
 				}
 			};
 
@@ -349,6 +372,7 @@
 
 			function updateUI(){
 				const lang = LANG_KEYS[currentLangIndex];
+				const tr = TRANSLATIONS[lang];
 				document.getElementById("semaphore").innerHTML = semaphoreFlag ? SEMAPHORE_ON_SVG : SEMAPHORE_OFF_SVG;
 				document.getElementById("btnDifficulty").textContent = easy ? t("easy") : t("hard");
 				document.getElementById("refreshBtn").textContent = t("reset");
@@ -363,6 +387,15 @@
 					showBtn.textContent = isHiding ? t("hideSolutions") : t("showSolutions");
 				}
 				document.getElementById("btnLang").innerHTML = FLAGS_SVG[currentLangIndex];
+				document.getElementById("helpTitle").textContent = tr.helpTitle;
+				document.getElementById("helpHint").textContent = tr.helpHint;
+				const table = document.getElementById("helpTable");
+				table.innerHTML = "";
+				tr.helpShortcuts.forEach(([key, desc]) => {
+					const row = document.createElement("tr");
+					row.innerHTML = `<td><span class="help-key">${key}</span></td><td class="help-desc">${desc}</td>`;
+					table.appendChild(row);
+				});
 			}
 
 			function nextLang(){
@@ -371,7 +404,10 @@
 			}
 
 			window.onload = init;
-			window.onresize = () => { side = getScreenSize()/order; drawAll(); };
+			window.onresize = () => {
+				side = getScreenSize()/order;
+				drawAll();
+			};
 
 			function init(){
 				const canvas = document.getElementById("chessboard");
@@ -602,8 +638,20 @@
 				}
 			}
 
+			function toggleHelp(){
+				document.getElementById("helpOverlay").classList.toggle("show");
+			}
+
+			function closeHelp(e){
+				if(e.target === document.getElementById("helpOverlay")){
+					document.getElementById("helpOverlay").classList.remove("show");
+				}
+			}
+
 			document.addEventListener("keydown", e => {
-				if(e.key.toLowerCase() === "s"){
+				if(e.key === "?"){
+					toggleHelp();
+				}else if(e.key.toLowerCase() === "s"){
 					changeFlagValue();
 				}else if(e.key.toLowerCase() === "d"){
 					changeDifficulty();

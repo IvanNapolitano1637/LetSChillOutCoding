@@ -82,6 +82,106 @@
 				border: 1px solid #aaa;
 				border-radius: 2px;
 			}
+			.help-overlay{
+				display: none;
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: rgba(0,0,0,0.5);
+				z-index: 1000;
+				align-items: center;
+				justify-content: center;
+			}
+			.help-overlay.show{
+				display: flex;
+			}
+			.help-modal{
+				background: rgba(198,252,255,0.98);
+				border: 3px solid var(--border-color);
+				border-radius: 16px;
+				box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+				padding: 24px 28px 20px 28px;
+				max-width: 400px;
+				width: 92%;
+				position: relative;
+				animation: helpFadeIn 0.18s ease;
+				font-family: 'Segoe UI', Arial, sans-serif;
+			}
+			@keyframes helpFadeIn{
+				from{
+					opacity:0;
+					transform:scale(0.95);
+				}
+				to{
+					opacity:1;
+					transform:scale(1);
+				}
+			}
+			.help-modal h4{
+				color: #7b00c2;
+				margin: 0 0 16px 0;
+				font-size: 1.1em;
+				text-align: center;
+				letter-spacing: 0.5px;
+			}
+			.help-close{
+				position: absolute;
+				top: 12px; right: 14px;
+				background: none;
+				border: none;
+				font-size: 1.3em;
+				color: #999;
+				cursor: pointer;
+				padding: 2px 6px;
+				line-height: 1;
+				border-radius: 4px;
+				font-weight: bold;
+			}
+			.help-close:hover{
+				background: var(--border-color);
+				color: #fff;
+			}
+			.help-table{
+				width: 100%;
+				border-collapse: collapse;
+				font-size: 0.92em;
+			}
+			.help-table tr{
+				border-bottom: 1px solid rgba(0,0,0,0.1);
+			}
+			.help-table tr:last-child{
+				border-bottom: none;
+			}
+			.help-table td{
+				padding: 7px 6px;
+				vertical-align: middle;
+			}
+			.help-key{
+				font-family: monospace;
+				background: #fff;
+				border: 1px solid var(--border-color);
+				border-radius: 4px;
+				padding: 2px 8px;
+				font-size: 0.95em;
+				font-weight: bold;
+				color: #333;
+				white-space: nowrap;
+				display: inline-block;
+				min-width: 28px;
+				text-align: center;
+			}
+			.help-desc{
+				color: #333;
+				padding-left: 8px;
+			}
+			.help-hint{
+				text-align: center;
+				margin-top: 14px;
+				font-size: 0.78em;
+				color: #888;
+			}
 		</style>
 	</head>
 	<body id="body">
@@ -89,6 +189,14 @@
 			<canvas id="board">
 				Upgrade Browser
 			</canvas>
+		</div>
+		<div class="help-overlay" id="helpOverlay" onclick="closeHelp(event)">
+			<div class="help-modal">
+				<button class="help-close" onclick="toggleHelp()">✕</button>
+				<h4 id="helpTitle">Keyboard Shortcuts</h4>
+				<table class="help-table" id="helpTable"></table>
+				<div class="help-hint" id="helpHint">Press ? to close</div>
+			</div>
 		</div>
 		<script>
 			const COLOR_1 = "#a7ffa7";
@@ -128,18 +236,42 @@
 			];
 			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
 			const TRANSLATIONS = {
-				en: { shuffle: "Shuffle", solve: "Solve", wait: "Wait...", solved: "Solved in ", moves: " moves!", tooComplex: "Too complex..." },
-				it: { shuffle: "Mescola", solve: "Risolvi", wait: "Aspetta...", solved: "Risolto in ", moves: " mosse!", tooComplex: "Troppo complesso..." },
-				fr: { shuffle: "Mélanger", solve: "Résoudre", wait: "Patientez...", solved: "Résolu en ", moves: " coups!", tooComplex: "Trop complexe..." },
-				es: { shuffle: "Mezclar", solve: "Resolver", wait: "Espera...", solved: "Resuelto en ", moves: " movimientos!", tooComplex: "Demasiado complejo..." },
-				de: { shuffle: "Mischen", solve: "Lösen", wait: "Warte...", solved: "Gelöst in ", moves: " Zügen!", tooComplex: "Zu komplex..." },
-				pt: { shuffle: "Embaralhar", solve: "Resolver", wait: "Aguarde...", solved: "Resolvido em ", moves: " movimentos!", tooComplex: "Complexo demais..." },
-				ro: { shuffle: "Amestecă", solve: "Rezolvă", wait: "Așteaptă...", solved: "Rezolvat în ", moves: " mutări!", tooComplex: "Prea complex..." },
-				uk: { shuffle: "Перемішати", solve: "Вирішити", wait: "Зачекайте...", solved: "Вирішено за ", moves: " ходів!", tooComplex: "Занадто складно..." },
-				el: { shuffle: "Ανακάτεμα", solve: "Επίλυση", wait: "Περιμένετε...", solved: "Λύθηκε σε ", moves: " κινήσεις!", tooComplex: "Πολύ πολύπλοκο..." },
-				la: { shuffle: "Misce", solve: "Solve", wait: "Expecta...", solved: "Solutum in ", moves: " motibus!", tooComplex: "Nimis complexum..." },
-				zh: { shuffle: "打乱", solve: "求解", wait: "请稍候...", solved: "用 ", moves: " 步解决！", tooComplex: "太复杂了..." },
-				ja: { shuffle: "シャッフル", solve: "解く", wait: "お待ちください...", solved: "", moves: " 手で解けた！", tooComplex: "複雑すぎます..." }
+				en: { shuffle:"Shuffle", solve:"Solve", wait:"Wait...", solved:"Solved in ", moves:" moves!", tooComplex:"Too complex...",
+					helpTitle:"Keyboard Shortcuts", helpHint:"Press ? to close",
+					helpShortcuts:[["↑","Move tile down (into blank)"],["↓","Move tile up (into blank)"],["←","Move tile right (into blank)"],["→","Move tile left (into blank)"],["R","Shuffle / restart"],["S","Auto-solve"],["L","Next language"],["?","Show / hide this help"]] },
+				it: { shuffle:"Mescola", solve:"Risolvi", wait:"Aspetta...", solved:"Risolto in ", moves:" mosse!", tooComplex:"Troppo complesso...",
+					helpTitle:"Scorciatoie da Tastiera", helpHint:"Premi ? per chiudere",
+					helpShortcuts:[["↑","Sposta il tassello in basso"],["↓","Sposta il tassello in alto"],["←","Sposta il tassello a destra"],["→","Sposta il tassello a sinistra"],["R","Mescola / ricomincia"],["S","Risoluzione automatica"],["L","Lingua successiva"],["?","Mostra / nascondi questa guida"]] },
+				fr: { shuffle:"Mélanger", solve:"Résoudre", wait:"Patientez...", solved:"Résolu en ", moves:" coups!", tooComplex:"Trop complexe...",
+					helpTitle:"Raccourcis Clavier", helpHint:"Appuyez sur ? pour fermer",
+					helpShortcuts:[["↑","Déplacer la tuile vers le bas"],["↓","Déplacer la tuile vers le haut"],["←","Déplacer la tuile vers la droite"],["→","Déplacer la tuile vers la gauche"],["R","Mélanger / recommencer"],["S","Résolution automatique"],["L","Langue suivante"],["?","Afficher / masquer cette aide"]] },
+				es: { shuffle:"Mezclar", solve:"Resolver", wait:"Espera...", solved:"Resuelto en ", moves:" movimientos!", tooComplex:"Demasiado complejo...",
+					helpTitle:"Atajos de Teclado", helpHint:"Pulsa ? para cerrar",
+					helpShortcuts:[["↑","Mover ficha hacia abajo"],["↓","Mover ficha hacia arriba"],["←","Mover ficha hacia la derecha"],["→","Mover ficha hacia la izquierda"],["R","Mezclar / reiniciar"],["S","Resolución automática"],["L","Siguiente idioma"],["?","Mostrar / ocultar esta ayuda"]] },
+				de: { shuffle:"Mischen", solve:"Lösen", wait:"Warte...", solved:"Gelöst in ", moves:" Zügen!", tooComplex:"Zu komplex...",
+					helpTitle:"Tastaturkürzel", helpHint:"? drücken zum Schließen",
+					helpShortcuts:[["↑","Stein nach unten schieben"],["↓","Stein nach oben schieben"],["←","Stein nach rechts schieben"],["→","Stein nach links schieben"],["R","Mischen / neu starten"],["S","Automatisch lösen"],["L","Nächste Sprache"],["?","Hilfe ein-/ausblenden"]] },
+				pt: { shuffle:"Embaralhar", solve:"Resolver", wait:"Aguarde...", solved:"Resolvido em ", moves:" movimentos!", tooComplex:"Complexo demais...",
+					helpTitle:"Atalhos de Teclado", helpHint:"Prima ? para fechar",
+					helpShortcuts:[["↑","Mover peça para baixo"],["↓","Mover peça para cima"],["←","Mover peça para a direita"],["→","Mover peça para a esquerda"],["R","Embaralhar / reiniciar"],["S","Resolução automática"],["L","Próximo idioma"],["?","Mostrar / ocultar esta ajuda"]] },
+				ro: { shuffle:"Amestecă", solve:"Rezolvă", wait:"Așteaptă...", solved:"Rezolvat în ", moves:" mutări!", tooComplex:"Prea complex...",
+					helpTitle:"Comenzi Rapide", helpHint:"Apăsați ? pentru a închide",
+					helpShortcuts:[["↑","Mută piesa în jos"],["↓","Mută piesa în sus"],["←","Mută piesa la dreapta"],["→","Mută piesa la stânga"],["R","Amestecă / repornește"],["S","Rezolvare automată"],["L","Limba următoare"],["?","Arată / ascunde ajutorul"]] },
+				uk: { shuffle:"Перемішати", solve:"Вирішити", wait:"Зачекайте...", solved:"Вирішено за ", moves:" ходів!", tooComplex:"Занадто складно...",
+					helpTitle:"Клавіатурні Скорочення", helpHint:"Натисніть ? щоб закрити",
+					helpShortcuts:[["↑","Зсунути плитку вниз"],["↓","Зсунути плитку вгору"],["←","Зсунути плитку вправо"],["→","Зсунути плитку вліво"],["R","Перемішати / перезапустити"],["S","Автовирішення"],["L","Наступна мова"],["?","Показати / приховати довідку"]] },
+				el: { shuffle:"Ανακάτεμα", solve:"Επίλυση", wait:"Περιμένετε...", solved:"Λύθηκε σε ", moves:" κινήσεις!", tooComplex:"Πολύ πολύπλοκο...",
+					helpTitle:"Συντομεύσεις Πληκτρολογίου", helpHint:"Πατήστε ? για κλείσιμο",
+					helpShortcuts:[["↑","Μετακίνηση πλακιδίου κάτω"],["↓","Μετακίνηση πλακιδίου πάνω"],["←","Μετακίνηση πλακιδίου δεξιά"],["→","Μετακίνηση πλακιδίου αριστερά"],["R","Ανακάτεμα / επανεκκίνηση"],["S","Αυτόματη επίλυση"],["L","Επόμενη γλώσσα"],["?","Εμφάνιση / απόκρυψη βοήθειας"]] },
+				la: { shuffle:"Misce", solve:"Solve", wait:"Expecta...", solved:"Solutum in ", moves:" motibus!", tooComplex:"Nimis complexum...",
+					helpTitle:"Claves Auxiliares", helpHint:"Preme ? ad claudendum",
+					helpShortcuts:[["↑","Move tesseram deorsum"],["↓","Move tesseram sursum"],["←","Move tesseram dextrorsum"],["→","Move tesseram sinistrorsum"],["R","Misce / renoua"],["S","Solve automatice"],["L","Muta linguam"],["?","Ostende / absconde auxilium"]] },
+				zh: { shuffle:"打乱", solve:"求解", wait:"请稍候...", solved:"用 ", moves:" 步解决！", tooComplex:"太复杂了...",
+					helpTitle:"键盘快捷键", helpHint:"按 ? 关闭",
+					helpShortcuts:[["↑","向下移动方块"],["↓","向上移动方块"],["←","向右移动方块"],["→","向左移动方块"],["R","打乱 / 重新开始"],["S","自动求解"],["L","切换语言"],["?","显示 / 隐藏帮助"]] },
+				ja: { shuffle:"シャッフル", solve:"解く", wait:"お待ちください...", solved:"", moves:" 手で解けた！", tooComplex:"複雑すぎます...",
+					helpTitle:"キーボードショートカット", helpHint:"? を押して閉じる",
+					helpShortcuts:[["↑","タイルを下に移動"],["↓","タイルを上に移動"],["←","タイルを右に移動"],["→","タイルを左に移動"],["R","シャッフル / リスタート"],["S","自動解決"],["L","次の言語"],["?","このヘルプを表示 / 非表示"]] }
 			};
 			let currentLangIndex = 0;
 
@@ -158,12 +290,73 @@
 				if(!solveBtn.disabled){
 					solveBtn.innerHTML = t("solve");
 				}
+				buildHelpModal();
 			}
 
-			drawBoard();
+			function buildHelpModal(){
+				const tr = TRANSLATIONS[LANG_KEYS[currentLangIndex]];
+				document.getElementById("helpTitle").textContent = tr.helpTitle;
+				document.getElementById("helpHint").textContent = tr.helpHint;
+				const table = document.getElementById("helpTable");
+				table.innerHTML = "";
+				tr.helpShortcuts.forEach(([key, desc]) => {
+					const row = document.createElement("tr");
+					row.innerHTML = `<td><span class="help-key">${key}</span></td><td class="help-desc">${desc}</td>`;
+					table.appendChild(row);
+				});
+			}
+
+			function toggleHelp(){
+				document.getElementById("helpOverlay").classList.toggle("show");
+			}
+
+			function closeHelp(e){
+				if(e.target === document.getElementById("helpOverlay")){
+					document.getElementById("helpOverlay").classList.remove("show");
+				}
+			}
+
+			document.addEventListener("keydown", e => {
+				if(e.key === "?"){
+					toggleHelp();
+				}else if(e.key.toLowerCase() === "r"){
+					shuffleTiles();
+				}else if(e.key.toLowerCase() === "l"){
+					nextLanguage();
+				}else if(e.key.toLowerCase() === "s"){
+					solve();
+				}else if(e.key === "ArrowUp"){
+					e.preventDefault();
+					if(r1 < 3){
+						cursorX = (c1*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+						cursorY = ((r1 + 1)*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+						select();
+					}
+				}else if(e.key === "ArrowDown"){
+					e.preventDefault();
+					if(r1 > 0){
+						cursorX = (c1*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+						cursorY = ((r1 - 1)*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+						select();
+					}
+				}else if(e.key === "ArrowLeft"){
+					e.preventDefault();
+					if(c1 < 3){
+						cursorX = ((c1 + 1)*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+						cursorY = (r1*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+						select();
+					}
+				}else if(e.key === "ArrowRight"){
+					e.preventDefault();
+					if(c1 > 0){
+						cursorX = ((c1 - 1)*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+						cursorY = (r1*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+						select();
+					}
+				}
+			});
 
 			function drawBoard(){
-				document.body.style.background = BACKGROUND_COLOR;
 				const container = document.getElementById("Fifteen");
 				for(let i = 0; i < 16; i++){
 					const div = document.createElement("div");
@@ -467,6 +660,8 @@
 					}
 				}
 			});
+			drawBoard();
+			buildHelpModal();
 		</script>
 	</body>
 </html>

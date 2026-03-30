@@ -98,9 +98,114 @@
 				outline: none !important;
 				-webkit-tap-highlight-color: transparent;
 			}
+			#helpOverlay{
+				display:none;
+				position:fixed;
+				top:0;left:0;width:100%;height:100%;
+				background:rgba(0,0,0,0.55);
+				z-index:9999;
+				justify-content:center;
+				align-items:center;
+			}
+			#helpOverlay.open{
+				display:flex;
+			}
+			#helpBox{
+				background:#FFFFF0;
+				border:2px solid #888;
+				border-radius:10px;
+				padding:24px 28px;
+				max-width:580px;
+				width:92%;
+				max-height:88vh;
+				overflow-y:auto;
+				position:relative;
+				box-shadow:0 8px 32px rgba(0,0,0,0.35);
+				font-family:sans-serif;
+			}
+			#helpBox h2{
+				margin:0 0 14px 0;
+				font-size:1.1em;
+				color:#222;
+				border-bottom:1px solid #bbb;
+				padding-bottom:8px;
+			}
+			#helpBox table{
+				width:100%;
+				border-collapse:collapse;
+				font-size:0.91em;
+			}
+			#helpBox th{
+				text-align:left;
+				color:#555;
+				padding:4px 8px;
+				border-bottom:1px solid #ccc;
+			}
+			#helpBox td{
+				padding:5px 8px;
+				border-bottom:1px solid #eee;
+				vertical-align:top;
+			}
+			#helpBox td:first-child{
+				font-family:monospace;
+				font-weight:bold;
+				background:#FFFF7F;
+				border-radius:3px;
+				white-space:nowrap;
+				width:1%;
+			}
+			#helpCloseX{
+				position:absolute;
+				top:10px;right:14px;
+				background:none;
+				border:none;
+				font-size:1.4em;
+				cursor:pointer;
+				color:#666;
+				padding:0;
+				line-height:1;
+			}
+			#helpCloseX:hover{
+				color:#000;
+			}
 		</style>
 	</head>
 	<body>
+		<div id="helpOverlay" onclick="if(event.target===this){helpClose();}">
+			<div id="helpBox">
+				<button id="helpCloseX" onclick="helpClose()">&#x2715;</button>
+				<h2>&#9000; Keyboard Shortcuts</h2>
+				<table>
+					<thead>
+						<tr>
+							<th>Key</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr><td>1</td><td>Switch to version I — go to full RGB sliders view (white)</td></tr>
+						<tr><td>2</td><td>Switch to version II — go to radio buttons view (white)</td></tr>
+						<tr><td>3</td><td>Switch to version III — go to hex radio grid view (white)</td></tr>
+						<tr><td>4</td><td>Switch to version IV — go to 5-level buttons view (white)</td></tr>
+						<tr><td>W</td><td>Set color to <b>White</b> (#FFFFFF) in all versions</td></tr>
+						<tr><td>K</td><td>Set color to <b>Black</b> (#000000) in all versions</td></tr>
+						<tr><td>R</td><td>Set color to <b>Red</b> (#FF0000) in all versions</td></tr>
+						<tr><td>G</td><td>Set color to <b>Green</b> (#00FF00) in all versions</td></tr>
+						<tr><td>B</td><td>Set color to <b>Blue</b> (#0000FF) in all versions</td></tr>
+						<tr><td>C</td><td>Set color to <b>Cyan</b> (#00FFFF) in all versions</td></tr>
+						<tr><td>M</td><td>Set color to <b>Magenta</b> (#FF00FF) in all versions</td></tr>
+						<tr><td>Y</td><td>Set color to <b>Yellow</b> (#FFFF00) in all versions</td></tr>
+						<tr><td>A</td><td>Set a <b>random</b> color in all versions</td></tr>
+						<tr><td>&#x2192; Arrow Right</td><td><b>Brighter</b> — increase brightness in the current version</td></tr>
+						<tr><td>&#x2190; Arrow Left</td><td><b>Darker</b> — decrease brightness in the current version</td></tr>
+						<tr><td>&#x2191; Arrow Up</td><td><b>More controls</b> — expand view in version I</td></tr>
+						<tr><td>&#x2193; Arrow Down</td><td><b>Fewer controls</b> — collapse view in version I</td></tr>
+						<tr><td>Esc</td><td>Reload the page (back to version selector)</td></tr>
+						<tr><td>?</td><td>Show / hide this help window</td></tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
 		<div id="selector-screen">
 			<div class="grid">
 				<div class="card" onclick="showVersion('v1')">I</div>
@@ -1169,6 +1274,14 @@
 			</script>
 		</div>
 		<script>
+			function helpOpen(){
+				document.getElementById('helpOverlay').classList.add('open');
+			}
+
+			function helpClose(){
+				document.getElementById('helpOverlay').classList.remove('open');
+			}
+
 			function showVersion(id){
 				document.getElementById('selector-screen').style.display = 'none';
 				document.getElementById(id).style.display = 'block';
@@ -1294,6 +1407,19 @@
 						v3_darkerAll();
 						v4_darker();
 						break;
+					case '?':
+						var ov = document.getElementById('helpOverlay');
+						if(ov.classList.contains('open')){
+							helpClose();
+						}else{
+							helpOpen();
+						}
+						e.preventDefault();
+						break;
+				}
+				if(e.key === 'Escape' && document.getElementById('helpOverlay').classList.contains('open')){
+					helpClose();
+					e.stopPropagation();
 				}
 			});
 		</script>

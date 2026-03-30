@@ -93,9 +93,81 @@
 			*{
 				-webkit-tap-highlight-color: transparent;
 			}
+			#helpOverlay{
+				display: none;
+				position: fixed;
+				inset: 0;
+				background: rgba(0,0,0,0.55);
+				z-index: 1000;
+				justify-content: center;
+				align-items: center;
+			}
+			#helpOverlay.visible{
+				display: flex;
+			}
+			#helpBox{
+				background: #fff;
+				border-radius: 12px;
+				box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+				padding: 28px 32px 24px;
+				max-width: 480px;
+				width: 90%;
+				max-height: 85vh;
+				overflow-y: auto;
+				position: relative;
+				text-align: left;
+			}
+			#helpBox h2{
+				margin: 0 0 18px;
+				font-size: 1.3em;
+				text-align: center;
+				color: #0000ff;
+			}
+			#helpBox table{
+				width: 100%;
+				border-collapse: collapse;
+			}
+			#helpBox td{
+				padding: 7px 10px;
+				vertical-align: top;
+			}
+			#helpBox tr:nth-child(even) td{
+				background: #f4f4f4;
+				border-radius: 4px;
+			}
+			#helpBox .key{
+				font-family: monospace;
+				font-weight: bold;
+				font-size: 1.05em;
+				color: #cc0000;
+				white-space: nowrap;
+				width: 1%;
+			}
+			#helpCloseBtn{
+				position: absolute;
+				top: 12px;
+				right: 16px;
+				background: none;
+				border: none;
+				font-size: 1.5em;
+				cursor: pointer;
+				color: #555;
+				padding: 2px 6px;
+				line-height: 1;
+			}
+			#helpCloseBtn:hover{
+				color: #000;
+			}
 		</style>
 	</head>
 	<body>
+		<div id="helpOverlay" role="dialog" aria-modal="true" onclick="if(event.target===this)closeHelp()">
+			<div id="helpBox">
+				<button id="helpCloseBtn" onclick="closeHelp()" aria-label="Close">✕</button>
+				<h2 id="helpTitle">Keyboard Shortcuts</h2>
+				<table id="helpTable"></table>
+			</div>
+		</div>
 		<canvas id="universe">Aggiorna il browser</canvas>
 		<div class="controls">
 			<div class="control-row">
@@ -153,6 +225,27 @@
 				zh: { reset: "重置", next: "下一步", start: "开始", stop: "停止", load: "-- 加载预设 --", glider: "滑翔者", exploder: "爆炸者", row: "10格行", slow: "慢", fast: "快" },
 				ja: { reset: "リセット", next: "次へ", start: "開始", stop: "停止", load: "-- パターン --", glider: "グライダー", exploder: "エクスプローダー", row: "10セル行", slow: "遅い", fast: "速い" }
 			};
+			const HELP_TITLE = {
+				en:"Keyboard Shortcuts", it:"Tasti di scelta rapida", fr:"Raccourcis clavier",
+				es:"Atajos de teclado", de:"Tastenkürzel", pt:"Atalhos de teclado",
+				ro:"Scurtături de tastatură", uk:"Клавіші швидкого доступу",
+				el:"Συντομεύσεις πληκτρολογίου", la:"Clavium compendia",
+				zh:"键盘快捷键", ja:"キーボードショートカット"
+			};
+			const HELP_SHORTCUTS = {
+				en:[["R","Reset the grid"],["N","Advance one generation"],["S","Start / Stop the simulation"],["L","Switch language"],["?","Show / hide this help"]],
+				it:[["R","Azzera la griglia"],["N","Avanza di una generazione"],["S","Avvia / Ferma la simulazione"],["L","Cambia lingua"],["?","Mostra / nascondi questo aiuto"]],
+				fr:[["R","Réinitialiser la grille"],["N","Avancer d'une génération"],["S","Démarrer / Arrêter la simulation"],["L","Changer de langue"],["?","Afficher / masquer cette aide"]],
+				es:[["R","Reiniciar la cuadrícula"],["N","Avanzar una generación"],["S","Iniciar / Detener la simulación"],["L","Cambiar idioma"],["?","Mostrar / ocultar esta ayuda"]],
+				de:[["R","Gitter zurücksetzen"],["N","Eine Generation weiter"],["S","Simulation starten / stoppen"],["L","Sprache wechseln"],["?","Hilfe anzeigen / ausblenden"]],
+				pt:[["R","Reiniciar a grelha"],["N","Avançar uma geração"],["S","Iniciar / Parar a simulação"],["L","Mudar idioma"],["?","Mostrar / ocultar esta ajuda"]],
+				ro:[["R","Resetează grila"],["N","Avansează o generație"],["S","Pornește / Oprește simularea"],["L","Schimbă limba"],["?","Afișează / ascunde această ajutor"]],
+				uk:[["R","Скинути сітку"],["N","Перейти до наступного покоління"],["S","Запустити / Зупинити симуляцію"],["L","Змінити мову"],["?","Показати / приховати цю довідку"]],
+				el:[["R","Επαναφορά πλέγματος"],["N","Επόμενη γενιά"],["S","Έναρξη / Διακοπή προσομοίωσης"],["L","Αλλαγή γλώσσας"],["?","Εμφάνιση / απόκρυψη βοήθειας"]],
+				la:[["R","Reticulum redintegra"],["N","Ad proximam generationem progredere"],["S","Simulationem incipe / siste"],["L","Linguam muta"],["?","Auxilium ostende / absconde"]],
+				zh:[["R","重置网格"],["N","前进一代"],["S","开始 / 停止模拟"],["L","切换语言"],["?","显示 / 隐藏帮助"]],
+				ja:[["R","グリッドをリセット"],["N","1世代進める"],["S","シミュレーション 開始 / 停止"],["L","言語を切替"],["?","ヘルプを表示 / 非表示"]]
+			};
 			let currentLangIndex = 0;
 
 			function updateUI(){
@@ -169,9 +262,26 @@
 				document.getElementById('btnLang').innerHTML = FLAGS_SVG[currentLangIndex];
 			}
 
+			function openHelp(){
+				updateHelpContent();
+				document.getElementById("helpOverlay").classList.add("visible");
+			}
+
+			function closeHelp(){
+				document.getElementById("helpOverlay").classList.remove("visible");
+			}
+
+			function updateHelpContent(){
+				const lang = LANG_KEYS[currentLangIndex];
+				document.getElementById("helpTitle").textContent = HELP_TITLE[lang];
+				document.getElementById("helpTable").innerHTML = HELP_SHORTCUTS[lang].map(([k,d]) => `<tr><td class="key">${k}</td><td>${d}</td></tr>`).join("");
+			}
 			function nextLang(){
-				currentLangIndex = (currentLangIndex + 1)%LANG_KEYS.length;
+				currentLangIndex = (currentLangIndex + 1)%(LANG_KEYS.length);
 				updateUI();
+				if(document.getElementById('helpOverlay').classList.contains('visible')){
+					updateHelpContent();
+				}
 			}
 
 			const SIDE = 15;
@@ -329,6 +439,13 @@
 					live();
 				}else if(e.key.toLowerCase() === "l"){
 					nextLang();
+				}else if(e.key === "?"){
+					const ov = document.getElementById("helpOverlay");
+					if(ov.classList.contains("visible")){
+						closeHelp();
+					}else{
+						openHelp();
+					}
 				}
 			});
 		</script>

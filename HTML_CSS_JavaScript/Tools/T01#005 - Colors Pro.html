@@ -187,6 +187,107 @@
 				outline: none !important;
 				box-shadow: none !important;
 			}
+			.help-overlay{
+				display: none;
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: rgba(0,0,0,0.45);
+				z-index: 1000;
+				align-items: center;
+				justify-content: center;
+			}
+			.help-overlay.show{
+				display: flex;
+			}
+			.help-modal{
+				background: rgba(255,255,255,0.97);
+				border-radius: 16px;
+				box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+				padding: 24px 28px 20px 28px;
+				max-width: 420px;
+				width: 92%;
+				position: relative;
+				animation: helpFadeIn 0.18s ease;
+			}
+			@keyframes helpFadeIn{
+				from{
+					opacity:0;
+					transform:scale(0.95);
+				}
+				to{
+					opacity:1;
+					transform:scale(1);
+				}
+			}
+			.help-modal h4{
+				color: #0075FF;
+				margin: 0 0 16px 0;
+				font-size: 1.1em;
+				text-align: center;
+				letter-spacing: 0.5px;
+				font-family: sans-serif;
+			}
+			.help-close{
+				position: absolute;
+				top: 12px; right: 14px;
+				background: none;
+				border: none;
+				font-size: 1.3em;
+				color: #999;
+				cursor: pointer;
+				padding: 2px 6px;
+				line-height: 1;
+				border-radius: 4px;
+				font-weight: bold;
+			}
+			.help-close:hover{
+				background: #f0f4ff;
+				color: #0075FF;
+			}
+			.help-table{
+				width: 100%;
+				border-collapse: collapse;
+				font-size: 0.92em;
+				font-family: sans-serif;
+			}
+			.help-table tr{
+				border-bottom: 1px solid #eee;
+			}
+			.help-table tr:last-child{
+				border-bottom: none;
+			}
+			.help-table td{
+				padding: 7px 6px;
+				vertical-align: middle;
+			}
+			.help-key{
+				font-family: monospace;
+				background: #f4f4f4;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				padding: 2px 8px;
+				font-size: 0.95em;
+				font-weight: bold;
+				color: #333;
+				white-space: nowrap;
+				display: inline-block;
+				min-width: 28px;
+				text-align: center;
+			}
+			.help-desc{
+				color: #444;
+				padding-left: 8px;
+			}
+			.help-hint{
+				text-align: center;
+				margin-top: 14px;
+				font-size: 0.78em;
+				color: #aaa;
+				font-family: sans-serif;
+			}
 		</style>
 	</head>
 	<body>
@@ -267,6 +368,31 @@
 					<button class="grayButtons step" onclick="changeGray(10)">+10</button>
 					<button class="grayButtons step" onclick="changeGray(20)">+20</button>
 				</div>
+			</div>
+		</div>
+		<div class="help-overlay" id="helpOverlay" onclick="closeHelp(event)">
+			<div class="help-modal">
+				<button class="help-close" onclick="toggleHelp()">✕</button>
+				<h4>Keyboard Shortcuts</h4>
+				<table class="help-table">
+					<tr><td><span class="help-key">A</span></td><td class="help-desc">Random color</td></tr>
+					<tr><td><span class="help-key">⇄</span></td><td class="help-desc">— (use button) Invert color</td></tr>
+					<tr><td><span class="help-key">K</span></td><td class="help-desc">Set Black (0, 0, 0)</td></tr>
+					<tr><td><span class="help-key">W</span></td><td class="help-desc">Set White (255, 255, 255)</td></tr>
+					<tr><td><span class="help-key">R</span></td><td class="help-desc">Set Red</td></tr>
+					<tr><td><span class="help-key">G</span></td><td class="help-desc">Set Green</td></tr>
+					<tr><td><span class="help-key">B</span></td><td class="help-desc">Set Blue</td></tr>
+					<tr><td><span class="help-key">C</span></td><td class="help-desc">Set Cyan</td></tr>
+					<tr><td><span class="help-key">M</span></td><td class="help-desc">Set Magenta</td></tr>
+					<tr><td><span class="help-key">Y</span></td><td class="help-desc">Set Yellow</td></tr>
+					<tr><td><span class="help-key">→</span></td><td class="help-desc">Brighten (+1 gray)</td></tr>
+					<tr><td><span class="help-key">←</span></td><td class="help-desc">Darken (−1 gray)</td></tr>
+					<tr><td><span class="help-key">↑</span></td><td class="help-desc">Show more controls</td></tr>
+					<tr><td><span class="help-key">↓</span></td><td class="help-desc">Show fewer controls</td></tr>
+					<tr><td><span class="help-key">Esc</span></td><td class="help-desc">Reload page</td></tr>
+					<tr><td><span class="help-key">?</span></td><td class="help-desc">Show / hide this help</td></tr>
+				</table>
+				<div class="help-hint">Press ? to close</div>
 			</div>
 		</div>
 		<script>
@@ -526,56 +652,53 @@
 				changeSetting(-1);
 			}
 
+			function toggleHelp(){
+				document.getElementById("helpOverlay").classList.toggle("show");
+			}
+
+			function closeHelp(e){
+				if(e.target === document.getElementById("helpOverlay")){
+					document.getElementById("helpOverlay").classList.remove("show");
+				}
+			}
+
 			document.addEventListener('keydown', function(e){
 				if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA'){
 					return;
 				}
-				switch(e.key.toLowerCase()){
-					case 'arrowup':
+				switch(e.key){
+					case '?':
+						toggleHelp();
+						break;
+					case 'ArrowUp':
 						e.preventDefault();
 						showMore();
 						break;
-					case 'arrowdown':
+					case 'ArrowDown':
 						e.preventDefault();
 						showLess();
 						break;
-					case 'escape':
-					case 'esc':
+					case 'Escape':
 						location.reload();
 						break;
-					case 'a':
-						random();
-						break;
-					case 'k':
-						setColor(0, 0, 0);
-						break;
-					case 'r':
-						setColor(255, 0, 0);
-						break;
-					case 'g':
-						setColor(0, 255, 0);
-						break;
-					case 'b':
-						setColor(0, 0, 255);
-						break;
-					case 'c':
-						setColor(0, 255, 255);
-						break;
-					case 'm':
-						setColor(255, 0, 255);
-						break;
-					case 'y':
-						setColor(255, 255, 0);
-						break;
-					case 'w':
-						setColor(255, 255, 255);
-						break;
-					case 'arrowright':
+					case 'ArrowRight':
 						changeGray(1);
 						break;
-					case 'arrowleft':
+					case 'ArrowLeft':
 						changeGray(-1);
 						break;
+					default:
+						switch(e.key.toLowerCase()){
+							case 'a': random(); break;
+							case 'k': setColor(0, 0, 0); break;
+							case 'r': setColor(255, 0, 0); break;
+							case 'g': setColor(0, 255, 0); break;
+							case 'b': setColor(0, 0, 255); break;
+							case 'c': setColor(0, 255, 255); break;
+							case 'm': setColor(255, 0, 255); break;
+							case 'y': setColor(255, 255, 0); break;
+							case 'w': setColor(255, 255, 255); break;
+						}
 				}
 			});
 

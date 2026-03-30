@@ -2640,6 +2640,105 @@ document.addEventListener('keydown', function(e) {
 			*{
 				-webkit-tap-highlight-color: transparent;
 			}
+			.help-overlay{
+				display: none;
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: rgba(0,0,0,0.45);
+				z-index: 1000;
+				align-items: center;
+				justify-content: center;
+			}
+			.help-overlay.show{
+				display: flex;
+			}
+			.help-modal{
+				background: #fffde8;
+				border-radius: 14px;
+				box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+				padding: 24px 28px 20px 28px;
+				max-width: 400px;
+				width: 92%;
+				position: relative;
+				animation: fadeIn 0.18s ease;
+			}
+			@keyframes fadeIn{
+				from{
+					opacity:0;
+					transform:scale(0.95);
+				}
+				to{
+					opacity:1;
+					transform:scale(1);
+				}
+			}
+			.help-modal h4{
+				color: #856404;
+				margin: 0 0 16px 0;
+				font-size: 1.1em;
+				text-align: center;
+				letter-spacing: 0.5px;
+			}
+			.help-close{
+				position: absolute;
+				top: 12px;
+				right: 14px;
+				background: none;
+				border: none;
+				font-size: 1.3em;
+				color: #999;
+				cursor: pointer;
+				padding: 2px 6px;
+				line-height: 1;
+				border-radius: 4px;
+				font-weight: bold;
+			}
+			.help-close:hover{
+				background: #f5f0c0;
+				color: #856404;
+			}
+			.help-table{
+				width: 100%;
+				border-collapse: collapse;
+				font-size: 0.92em;
+			}
+			.help-table tr{
+				border-bottom: 1px solid #e8e0a0;
+			}
+			.help-table tr:last-child{
+				border-bottom: none;
+			}
+			.help-table td{
+				padding: 8px 6px;
+				vertical-align: top;
+			}
+			.help-key{
+				font-family: monospace;
+				background: #fff8cc;
+				border: 1px solid #d4a017;
+				border-radius: 4px;
+				padding: 2px 8px;
+				font-size: 1em;
+				font-weight: bold;
+				color: #333;
+				white-space: nowrap;
+				display: inline-block;
+				min-width: 28px;
+				text-align: center;
+			}
+			.help-desc{
+				color: #555;
+				padding-left: 8px;
+			}
+			.help-hint{
+				text-align: center;
+				margin-top: 14px;
+				font-size: 0.78em;
+				color: #aaa;
+			}
 		</style>
 	</head>
 	<body>
@@ -2659,6 +2758,14 @@ document.addEventListener('keydown', function(e) {
 			<button type="button" id="btnShowSolutions" onclick="toggleSolutions()" style="display:none;">Show solutions</button>
 		</form>
 		<div id="solutionsContainer"></div>
+		<div class="help-overlay" id="helpOverlay" onclick="closeHelp(event)">
+			<div class="help-modal">
+				<button class="help-close" onclick="toggleHelp()">✕</button>
+				<h4 id="helpTitle">Keyboard Shortcuts</h4>
+				<table class="help-table" id="helpTable"></table>
+				<div class="help-hint" id="helpHint">Press ? to close</div>
+			</div>
+		</div>
 		<script>
 			let order = 8;
 			const getScreenSize = () => Math.min(window.innerWidth*0.95, 600);
@@ -2711,160 +2818,76 @@ document.addEventListener('keydown', function(e) {
 			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
 			const TRANSLATIONS = {
 				en: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "Hard",
-					easy: "Easy",
-					reset: "Reset",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "Show solutions",
-					hideSolutions: "Hide solutions",
-					youWin: "You win!"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "Hard", easy: "Easy", reset: "Reset", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "Show solutions", hideSolutions: "Hide solutions", youWin: "You win!",
+					helpTitle: "Keyboard Shortcuts", helpHint: "Press ? to close",
+					helpShortcuts: [["S","Toggle semaphore (conflict highlight)"],["D","Toggle Easy / Hard mode"],["R","Reset the board"],["Q","Toggle queen limit"],["L","Switch to next language"],["+","Increase board size"],["-","Decrease board size"],["?","Show / hide this help"]]
 				},
 				it: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "Difficile",
-					easy: "Facile",
-					reset: "Reset",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "Mostra soluzioni",
-					hideSolutions: "Nascondi soluzioni",
-					youWin: "Hai vinto!"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "Difficile", easy: "Facile", reset: "Reset", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "Mostra soluzioni", hideSolutions: "Nascondi soluzioni", youWin: "Hai vinto!",
+					helpTitle: "Scorciatoie da Tastiera", helpHint: "Premi ? per chiudere",
+					helpShortcuts: [["S","Attiva/disattiva semaforo (conflitti)"],["D","Modalità Facile / Difficile"],["R","Reimposta la scacchiera"],["Q","Limite regine on/off"],["L","Passa alla lingua successiva"],["+","Aumenta dimensione scacchiera"],["-","Riduci dimensione scacchiera"],["?","Mostra / nascondi questa guida"]]
 				},
 				fr: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "Difficile",
-					easy: "Facile",
-					reset: "Réinitialiser",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "Voir solutions",
-					hideSolutions: "Cacher solutions",
-					youWin: "Vous gagnez !"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "Difficile", easy: "Facile", reset: "Réinitialiser", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "Voir solutions", hideSolutions: "Cacher solutions", youWin: "Vous gagnez !",
+					helpTitle: "Raccourcis Clavier", helpHint: "Appuyez sur ? pour fermer",
+					helpShortcuts: [["S","Activer/désactiver le sémaphore"],["D","Mode Facile / Difficile"],["R","Réinitialiser l'échiquier"],["Q","Limite de reines on/off"],["L","Langue suivante"],["+","Agrandir l'échiquier"],["-","Réduire l'échiquier"],["?","Afficher / masquer cette aide"]]
 				},
 				es: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "Difícil",
-					easy: "Fácil",
-					reset: "Reiniciar",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "Ver soluciones",
-					hideSolutions: "Ocultar soluciones",
-					youWin: "¡Ganaste!"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "Difícil", easy: "Fácil", reset: "Reiniciar", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "Ver soluciones", hideSolutions: "Ocultar soluciones", youWin: "¡Ganaste!",
+					helpTitle: "Atajos de Teclado", helpHint: "Pulsa ? para cerrar",
+					helpShortcuts: [["S","Activar/desactivar semáforo"],["D","Modo Fácil / Difícil"],["R","Reiniciar el tablero"],["Q","Límite de reinas on/off"],["L","Siguiente idioma"],["+","Aumentar tamaño del tablero"],["-","Reducir tamaño del tablero"],["?","Mostrar / ocultar esta ayuda"]]
 				},
 				de: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "Schwer",
-					easy: "Leicht",
-					reset: "Zurücksetzen",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "Lösungen zeigen",
-					hideSolutions: "Lösungen ausblenden",
-					youWin: "Du gewinnst!"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "Schwer", easy: "Leicht", reset: "Zurücksetzen", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "Lösungen zeigen", hideSolutions: "Lösungen ausblenden", youWin: "Du gewinnst!",
+					helpTitle: "Tastaturkürzel", helpHint: "? drücken zum Schließen",
+					helpShortcuts: [["S","Semaphor ein-/ausschalten"],["D","Leicht / Schwer Modus"],["R","Brett zurücksetzen"],["Q","Königinnenlimit umschalten"],["L","Nächste Sprache"],["+","Brett vergrößern"],["-","Brett verkleinern"],["?","Hilfe ein-/ausblenden"]]
 				},
 				pt: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "Difícil",
-					easy: "Fácil",
-					reset: "Reiniciar",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "Ver soluções",
-					hideSolutions: "Ocultar soluções",
-					youWin: "Você ganhou!"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "Difícil", easy: "Fácil", reset: "Reiniciar", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "Ver soluções", hideSolutions: "Ocultar soluções", youWin: "Você ganhou!",
+					helpTitle: "Atalhos de Teclado", helpHint: "Prima ? para fechar",
+					helpShortcuts: [["S","Ativar/desativar semáforo"],["D","Modo Fácil / Difícil"],["R","Reiniciar o tabuleiro"],["Q","Limite de rainhas on/off"],["L","Próximo idioma"],["+","Aumentar tabuleiro"],["-","Reduzir tabuleiro"],["?","Mostrar / ocultar esta ajuda"]]
 				},
 				ro: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "Greu",
-					easy: "Ușor",
-					reset: "Resetare",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "Arată soluții",
-					hideSolutions: "Ascunde soluții",
-					youWin: "Ai câștigat!"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "Greu", easy: "Ușor", reset: "Resetare", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "Arată soluții", hideSolutions: "Ascunde soluții", youWin: "Ai câștigat!",
+					helpTitle: "Comenzi Rapide", helpHint: "Apăsați ? pentru a închide",
+					helpShortcuts: [["S","Activare/dezactivare semafor"],["D","Mod Ușor / Greu"],["R","Resetează tabla"],["Q","Limită regine on/off"],["L","Limba următoare"],["+","Mărește tabla"],["-","Micșorează tabla"],["?","Arată / ascunde ajutorul"]]
 				},
 				uk: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "Важко",
-					easy: "Легко",
-					reset: "Скинути",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "Показати рішення",
-					hideSolutions: "Сховати рішення",
-					youWin: "Ти виграв!"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "Важко", easy: "Легко", reset: "Скинути", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "Показати рішення", hideSolutions: "Сховати рішення", youWin: "Ти виграв!",
+					helpTitle: "Клавіатурні Скорочення", helpHint: "Натисніть ? щоб закрити",
+					helpShortcuts: [["S","Семафор вкл/викл"],["D","Легкий / Важкий режим"],["R","Скинути дошку"],["Q","Ліміт ферзів вкл/викл"],["L","Наступна мова"],["+","Збільшити дошку"],["-","Зменшити дошку"],["?","Показати / приховати довідку"]]
 				},
 				el: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "Δύσκολο",
-					easy: "Εύκολο",
-					reset: "Επαναφορά",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "Εμφάνιση λύσεων",
-					hideSolutions: "Απόκρυψη λύσεων",
-					youWin: "Κέρδισες!"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "Δύσκολο", easy: "Εύκολο", reset: "Επαναφορά", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "Εμφάνιση λύσεων", hideSolutions: "Απόκρυψη λύσεων", youWin: "Κέρδισες!",
+					helpTitle: "Συντομεύσεις Πληκτρολογίου", helpHint: "Πατήστε ? για κλείσιμο",
+					helpShortcuts: [["S","Εναλλαγή σηματοδότη"],["D","Εύκολο / Δύσκολο"],["R","Επαναφορά σκακιέρας"],["Q","Όριο βασιλισσών on/off"],["L","Επόμενη γλώσσα"],["+","Μεγαλύτερη σκακιέρα"],["-","Μικρότερη σκακιέρα"],["?","Εμφάνιση / απόκρυψη βοήθειας"]]
 				},
 				la: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "Difficile",
-					easy: "Facile",
-					reset: "Renovare",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "Ostende solutiones",
-					hideSolutions: "Absconde solutiones",
-					youWin: "Vincis!"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "Difficile", easy: "Facile", reset: "Renovare", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "Ostende solutiones", hideSolutions: "Absconde solutiones", youWin: "Vincis!",
+					helpTitle: "Claves Auxiliares", helpHint: "Preme ? ad claudendum",
+					helpShortcuts: [["S","Semaphorum commuta"],["D","Facile / Difficile"],["R","Renoua tabulam"],["Q","Limitem reginarum commuta"],["L","Muta ad linguam proximam"],["+","Augesce tabulam"],["-","Minue tabulam"],["?","Ostende / absconde auxilium"]]
 				},
 				zh: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "困难",
-					easy: "简单",
-					reset: "重置",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "显示解法",
-					hideSolutions: "隐藏解法",
-					youWin: "你赢了！"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "困难", easy: "简单", reset: "重置", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "显示解法", hideSolutions: "隐藏解法", youWin: "你赢了！",
+					helpTitle: "键盘快捷键", helpHint: "按 ? 关闭",
+					helpShortcuts: [["S","切换信号灯（冲突高亮）"],["D","简单 / 困难 模式"],["R","重置棋盘"],["Q","切换皇后数量限制"],["L","切换下一种语言"],["+","放大棋盘"],["-","缩小棋盘"],["?","显示 / 隐藏此帮助"]]
 				},
 				ja: {
-					semaphoreOn: "🟢",
-					noSemaphore: "⚫",
-					hard: "難しい",
-					easy: "簡単",
-					reset: "リセット",
-					sizeP: "🔍+",
-					sizeM: "🔍−",
-					queens: "👑",
-					showSolutions: "解を表示",
-					hideSolutions: "解を非表示",
-					youWin: "あなたの勝ちです！"
+					semaphoreOn: "🟢", noSemaphore: "⚫", hard: "難しい", easy: "簡単", reset: "リセット", sizeP: "🔍+", sizeM: "🔍−", queens: "👑",
+					showSolutions: "解を表示", hideSolutions: "解を非表示", youWin: "あなたの勝ちです！",
+					helpTitle: "キーボードショートカット", helpHint: "? を押して閉じる",
+					helpShortcuts: [["S","セマフォ（衝突強調）切替"],["D","簡単 / 難しい モード"],["R","ボードをリセット"],["Q","クイーン数制限の切替"],["L","次の言語に切り替え"],["+","ボードを拡大"],["-","ボードを縮小"],["?","このヘルプを表示 / 非表示"]]
 				}
 			};
 
@@ -2881,6 +2904,7 @@ document.addEventListener('keydown', function(e) {
 
 			function updateUI(){
 				const lang = LANG_KEYS[currentLangIndex];
+				const tr = TRANSLATIONS[lang];
 				document.getElementById("semaphore").innerHTML = semaphoreFlag ? SEMAPHORE_ON_SVG : SEMAPHORE_OFF_SVG;
 				document.getElementById("btnDifficulty").textContent = easy ? t("easy") : t("hard");
 				document.getElementById("refreshBtn").textContent = t("reset");
@@ -2895,6 +2919,15 @@ document.addEventListener('keydown', function(e) {
 					showBtn.textContent = isHiding ? t("hideSolutions") : t("showSolutions");
 				}
 				document.getElementById("btnLang").innerHTML = FLAGS_SVG[currentLangIndex];
+				document.getElementById("helpTitle").textContent = tr.helpTitle;
+				document.getElementById("helpHint").textContent = tr.helpHint;
+				const table = document.getElementById("helpTable");
+				table.innerHTML = "";
+				tr.helpShortcuts.forEach(([key, desc]) => {
+					const row = document.createElement("tr");
+					row.innerHTML = \`<td><span class="help-key">\${key}</span></td><td class="help-desc">\${desc}</td>\`;
+					table.appendChild(row);
+				});
 			}
 
 			function nextLang(){
@@ -2903,7 +2936,10 @@ document.addEventListener('keydown', function(e) {
 			}
 
 			window.onload = init;
-			window.onresize = () => { side = getScreenSize()/order; drawAll(); };
+			window.onresize = () => {
+				side = getScreenSize()/order;
+				drawAll();
+			};
 
 			function init(){
 				const canvas = document.getElementById("chessboard");
@@ -3134,8 +3170,20 @@ document.addEventListener('keydown', function(e) {
 				}
 			}
 
+			function toggleHelp(){
+				document.getElementById("helpOverlay").classList.toggle("show");
+			}
+
+			function closeHelp(e){
+				if(e.target === document.getElementById("helpOverlay")){
+					document.getElementById("helpOverlay").classList.remove("show");
+				}
+			}
+
 			document.addEventListener("keydown", e => {
-				if(e.key.toLowerCase() === "s"){
+				if(e.key === "?"){
+					toggleHelp();
+				}else if(e.key.toLowerCase() === "s"){
 					changeFlagValue();
 				}else if(e.key.toLowerCase() === "d"){
 					changeDifficulty();
@@ -3258,9 +3306,81 @@ document.addEventListener('keydown', function(e) {
 			*{
 				-webkit-tap-highlight-color: transparent;
 			}
+			#helpOverlay{
+				display: none;
+				position: fixed;
+				inset: 0;
+				background: rgba(0,0,0,0.55);
+				z-index: 1000;
+				justify-content: center;
+				align-items: center;
+			}
+			#helpOverlay.visible{
+				display: flex;
+			}
+			#helpBox{
+				background: #fff;
+				border-radius: 12px;
+				box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+				padding: 28px 32px 24px;
+				max-width: 480px;
+				width: 90%;
+				max-height: 85vh;
+				overflow-y: auto;
+				position: relative;
+				text-align: left;
+			}
+			#helpBox h2{
+				margin: 0 0 18px;
+				font-size: 1.3em;
+				text-align: center;
+				color: #0000ff;
+			}
+			#helpBox table{
+				width: 100%;
+				border-collapse: collapse;
+			}
+			#helpBox td{
+				padding: 7px 10px;
+				vertical-align: top;
+			}
+			#helpBox tr:nth-child(even) td{
+				background: #f4f4f4;
+				border-radius: 4px;
+			}
+			#helpBox .key{
+				font-family: monospace;
+				font-weight: bold;
+				font-size: 1.05em;
+				color: #cc0000;
+				white-space: nowrap;
+				width: 1%;
+			}
+			#helpCloseBtn{
+				position: absolute;
+				top: 12px;
+				right: 16px;
+				background: none;
+				border: none;
+				font-size: 1.5em;
+				cursor: pointer;
+				color: #555;
+				padding: 2px 6px;
+				line-height: 1;
+			}
+			#helpCloseBtn:hover{
+				color: #000;
+			}
 		</style>
 	</head>
 	<body>
+		<div id="helpOverlay" role="dialog" aria-modal="true" onclick="if(event.target===this)closeHelp()">
+			<div id="helpBox">
+				<button id="helpCloseBtn" onclick="closeHelp()" aria-label="Close">✕</button>
+				<h2 id="helpTitle">Keyboard Shortcuts</h2>
+				<table id="helpTable"></table>
+			</div>
+		</div>
 		<canvas id="universe">Aggiorna il browser</canvas>
 		<div class="controls">
 			<div class="control-row">
@@ -3318,6 +3438,27 @@ document.addEventListener('keydown', function(e) {
 				zh: { reset: "重置", next: "下一步", start: "开始", stop: "停止", load: "-- 加载预设 --", glider: "滑翔者", exploder: "爆炸者", row: "10格行", slow: "慢", fast: "快" },
 				ja: { reset: "リセット", next: "次へ", start: "開始", stop: "停止", load: "-- パターン --", glider: "グライダー", exploder: "エクスプローダー", row: "10セル行", slow: "遅い", fast: "速い" }
 			};
+			const HELP_TITLE = {
+				en:"Keyboard Shortcuts", it:"Tasti di scelta rapida", fr:"Raccourcis clavier",
+				es:"Atajos de teclado", de:"Tastenkürzel", pt:"Atalhos de teclado",
+				ro:"Scurtături de tastatură", uk:"Клавіші швидкого доступу",
+				el:"Συντομεύσεις πληκτρολογίου", la:"Clavium compendia",
+				zh:"键盘快捷键", ja:"キーボードショートカット"
+			};
+			const HELP_SHORTCUTS = {
+				en:[["R","Reset the grid"],["N","Advance one generation"],["S","Start / Stop the simulation"],["L","Switch language"],["?","Show / hide this help"]],
+				it:[["R","Azzera la griglia"],["N","Avanza di una generazione"],["S","Avvia / Ferma la simulazione"],["L","Cambia lingua"],["?","Mostra / nascondi questo aiuto"]],
+				fr:[["R","Réinitialiser la grille"],["N","Avancer d'une génération"],["S","Démarrer / Arrêter la simulation"],["L","Changer de langue"],["?","Afficher / masquer cette aide"]],
+				es:[["R","Reiniciar la cuadrícula"],["N","Avanzar una generación"],["S","Iniciar / Detener la simulación"],["L","Cambiar idioma"],["?","Mostrar / ocultar esta ayuda"]],
+				de:[["R","Gitter zurücksetzen"],["N","Eine Generation weiter"],["S","Simulation starten / stoppen"],["L","Sprache wechseln"],["?","Hilfe anzeigen / ausblenden"]],
+				pt:[["R","Reiniciar a grelha"],["N","Avançar uma geração"],["S","Iniciar / Parar a simulação"],["L","Mudar idioma"],["?","Mostrar / ocultar esta ajuda"]],
+				ro:[["R","Resetează grila"],["N","Avansează o generație"],["S","Pornește / Oprește simularea"],["L","Schimbă limba"],["?","Afișează / ascunde această ajutor"]],
+				uk:[["R","Скинути сітку"],["N","Перейти до наступного покоління"],["S","Запустити / Зупинити симуляцію"],["L","Змінити мову"],["?","Показати / приховати цю довідку"]],
+				el:[["R","Επαναφορά πλέγματος"],["N","Επόμενη γενιά"],["S","Έναρξη / Διακοπή προσομοίωσης"],["L","Αλλαγή γλώσσας"],["?","Εμφάνιση / απόκρυψη βοήθειας"]],
+				la:[["R","Reticulum redintegra"],["N","Ad proximam generationem progredere"],["S","Simulationem incipe / siste"],["L","Linguam muta"],["?","Auxilium ostende / absconde"]],
+				zh:[["R","重置网格"],["N","前进一代"],["S","开始 / 停止模拟"],["L","切换语言"],["?","显示 / 隐藏帮助"]],
+				ja:[["R","グリッドをリセット"],["N","1世代進める"],["S","シミュレーション 開始 / 停止"],["L","言語を切替"],["?","ヘルプを表示 / 非表示"]]
+			};
 			let currentLangIndex = 0;
 
 			function updateUI(){
@@ -3334,9 +3475,26 @@ document.addEventListener('keydown', function(e) {
 				document.getElementById('btnLang').innerHTML = FLAGS_SVG[currentLangIndex];
 			}
 
+			function openHelp(){
+				updateHelpContent();
+				document.getElementById("helpOverlay").classList.add("visible");
+			}
+
+			function closeHelp(){
+				document.getElementById("helpOverlay").classList.remove("visible");
+			}
+
+			function updateHelpContent(){
+				const lang = LANG_KEYS[currentLangIndex];
+				document.getElementById("helpTitle").textContent = HELP_TITLE[lang];
+				document.getElementById("helpTable").innerHTML = HELP_SHORTCUTS[lang].map(([k,d]) => \`<tr><td class="key">\${k}</td><td>\${d}</td></tr>\`).join("");
+			}
 			function nextLang(){
-				currentLangIndex = (currentLangIndex + 1)%LANG_KEYS.length;
+				currentLangIndex = (currentLangIndex + 1)%(LANG_KEYS.length);
 				updateUI();
+				if(document.getElementById('helpOverlay').classList.contains('visible')){
+					updateHelpContent();
+				}
 			}
 
 			const SIDE = 15;
@@ -3494,6 +3652,13 @@ document.addEventListener('keydown', function(e) {
 					live();
 				}else if(e.key.toLowerCase() === "l"){
 					nextLang();
+				}else if(e.key === "?"){
+					const ov = document.getElementById("helpOverlay");
+					if(ov.classList.contains("visible")){
+						closeHelp();
+					}else{
+						openHelp();
+					}
 				}
 			});
 		<\/script>
@@ -3620,12 +3785,84 @@ document.addEventListener('keydown', function(e) {
 					width: 90%;
 				}
 			}
+			#helpOverlay{
+				display: none;
+				position: fixed;
+				inset: 0;
+				background: rgba(0,0,0,0.55);
+				z-index: 1000;
+				justify-content: center;
+				align-items: center;
+			}
+			#helpOverlay.visible{
+				display: flex;
+			}
+			#helpBox{
+				background: #fff;
+				border-radius: 12px;
+				box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+				padding: 28px 32px 24px;
+				max-width: 480px;
+				width: 90%;
+				max-height: 85vh;
+				overflow-y: auto;
+				position: relative;
+				text-align: left;
+			}
+			#helpBox h2{
+				margin: 0 0 18px;
+				font-size: 1.3em;
+				text-align: center;
+				color: #4a90e2;
+			}
+			#helpBox table{
+				width: 100%;
+				border-collapse: collapse;
+			}
+			#helpBox td{
+				padding: 7px 10px;
+				vertical-align: top;
+			}
+			#helpBox tr:nth-child(even) td{
+				background: #f4f4f4;
+				border-radius: 4px;
+			}
+			#helpBox .key{
+				font-family: monospace;
+				font-weight: bold;
+				font-size: 1.05em;
+				color: #e2574a;
+				white-space: nowrap;
+				width: 1%;
+			}
+			#helpCloseBtn{
+				position: absolute;
+				top: 12px;
+				right: 16px;
+				background: none;
+				border: none;
+				font-size: 1.5em;
+				cursor: pointer;
+				color: #555;
+				padding: 2px 6px;
+				line-height: 1;
+			}
+			#helpCloseBtn:hover{
+				color: #000;
+			}
 		</style>
 	</head>
 	<body>
 		<div class="top-bar">
 			<select id="disksNumber" onchange="changeDiskCount()"></select>
 			<div class="stats"><span id="movesLabel">Moves:</span> <span id="moveCounter">0</span></div>
+		</div>
+		<div id="helpOverlay" role="dialog" aria-modal="true" onclick="if(event.target===this){closeHelp();}">
+			<div id="helpBox">
+				<button id="helpCloseBtn" onclick="closeHelp()" aria-label="Close">✕</button>
+				<h2 id="helpTitle">Keyboard Shortcuts</h2>
+				<table id="helpTable"></table>
+			</div>
 		</div>
 		<canvas id="universe"></canvas>
 		<div class="controls">
@@ -3665,6 +3902,27 @@ document.addEventListener('keydown', function(e) {
 				zh: { restart:"重新开始", demo:"求解", level:"等级", moves:"步数", win:"太棒了！:-D 你用 ", move:"步", moves_pl:"步" },
 				ja: { restart:"リスタート", demo:"解く", level:"レベル", moves:"手数", win:"素晴らしい！:-D ", move:"手で勝利！", moves_pl:"手で勝利！" }
 			};
+			const HELP_TITLE = {
+				en:"Keyboard Shortcuts", it:"Tasti di scelta rapida", fr:"Raccourcis clavier",
+				es:"Atajos de teclado", de:"Tastenkürzel", pt:"Atalhos de teclado",
+				ro:"Scurtături de tastatură", uk:"Клавіші швидкого доступу",
+				el:"Συντομεύσεις πληκτρολογίου", la:"Clavium compendia",
+				zh:"键盘快捷键", ja:"キーボードショートカット"
+			};
+			const HELP_SHORTCUTS = {
+				en:[["R","Restart the game"],["S","Watch the automatic solution"],["L","Switch language"],["?","Show / hide this help"]],
+				it:[["R","Ricomincia la partita"],["S","Guarda la soluzione automatica"],["L","Cambia lingua"],["?","Mostra / nascondi questo aiuto"]],
+				fr:[["R","Recommencer la partie"],["S","Voir la solution automatique"],["L","Changer de langue"],["?","Afficher / masquer cette aide"]],
+				es:[["R","Reiniciar la partida"],["S","Ver la solución automática"],["L","Cambiar idioma"],["?","Mostrar / ocultar esta ayuda"]],
+				de:[["R","Spiel neu starten"],["S","Automatische Lösung ansehen"],["L","Sprache wechseln"],["?","Hilfe anzeigen / ausblenden"]],
+				pt:[["R","Reiniciar o jogo"],["S","Ver a solução automática"],["L","Mudar idioma"],["?","Mostrar / ocultar esta ajuda"]],
+				ro:[["R","Repornește jocul"],["S","Urmărește soluția automată"],["L","Schimbă limba"],["?","Afișează / ascunde această ajutor"]],
+				uk:[["R","Перезапустити гру"],["S","Переглянути автоматичне рішення"],["L","Змінити мову"],["?","Показати / приховати цю довідку"]],
+				el:[["R","Επανεκκίνηση παιχνιδιού"],["S","Δείτε την αυτόματη λύση"],["L","Αλλαγή γλώσσας"],["?","Εμφάνιση / απόκρυψη βοήθειας"]],
+				la:[["R","Ludum restitue"],["S","Solutionem automaticam vide"],["L","Linguam muta"],["?","Auxilium ostende / absconde"]],
+				zh:[["R","重新开始游戏"],["S","观看自动解法"],["L","切换语言"],["?","显示 / 隐藏帮助"]],
+				ja:[["R","ゲームを再スタート"],["S","自動解法を見る"],["L","言語を切替"],["?","ヘルプを表示 / 非表示"]]
+			};
 			let currentLangIndex = 0;
 
 			function tr(key){
@@ -3674,6 +3932,24 @@ document.addEventListener('keydown', function(e) {
 			function nextLanguage(){
 				currentLangIndex = (currentLangIndex + 1)%LANG_KEYS.length;
 				applyTranslation();
+				if(document.getElementById('helpOverlay').classList.contains('visible')){
+					updateHelpContent();
+				}
+			}
+
+			function openHelp(){
+				updateHelpContent();
+				document.getElementById("helpOverlay").classList.add("visible");
+			}
+
+			function closeHelp(){
+				document.getElementById("helpOverlay").classList.remove("visible");
+			}
+
+			function updateHelpContent(){
+				const lang = LANG_KEYS[currentLangIndex];
+				document.getElementById("helpTitle").textContent = HELP_TITLE[lang];
+				document.getElementById("helpTable").innerHTML = HELP_SHORTCUTS[lang].map(([k,d]) => \`<tr><td class="key">\${k}</td><td>\${d}</td></tr>\`).join("");
 			}
 
 			function applyTranslation(){
@@ -3959,6 +4235,13 @@ document.addEventListener('keydown', function(e) {
 					animatedSolving();
 				}else if(e.key.toLowerCase() === "l"){
 					nextLanguage();
+				}else if(e.key === "?"){
+					const ov = document.getElementById("helpOverlay");
+					if(ov.classList.contains("visible")){
+						closeHelp();
+					}else{
+						openHelp();
+					}
 				}
 			});
 		<\/script>
@@ -4037,13 +4320,85 @@ document.addEventListener('keydown', function(e) {
 				display: inline-block;
 			}
 			@media (max-width: 600px){
-				.controls button {
+				.controls button{
 					flex: 0 1 45%;
 				}
+			}
+			#helpOverlay{
+				display: none;
+				position: fixed;
+				inset: 0;
+				background: rgba(0,0,0,0.55);
+				z-index: 1000;
+				justify-content: center;
+				align-items: center;
+			}
+			#helpOverlay.visible{
+				display: flex;
+			}
+			#helpBox{
+				background: #fff;
+				border-radius: 12px;
+				box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+				padding: 28px 32px 24px;
+				max-width: 480px;
+				width: 90%;
+				max-height: 85vh;
+				overflow-y: auto;
+				position: relative;
+				text-align: left;
+			}
+			#helpBox h2{
+				margin: 0 0 18px;
+				font-size: 1.3em;
+				text-align: center;
+				color: #0033FF;
+			}
+			#helpBox table{
+				width: 100%;
+				border-collapse: collapse;
+			}
+			#helpBox td{
+				padding: 7px 10px;
+				vertical-align: top;
+			}
+			#helpBox tr:nth-child(even) td{
+				background: #f4f4f4;
+				border-radius: 4px;
+			}
+			#helpBox .key{
+				font-family: monospace;
+				font-weight: bold;
+				font-size: 1.05em;
+				color: #c60b1e;
+				white-space: nowrap;
+				width: 1%;
+			}
+			#helpCloseBtn{
+				position: absolute;
+				top: 12px;
+				right: 16px;
+				background: none;
+				border: none;
+				font-size: 1.5em;
+				cursor: pointer;
+				color: #555;
+				padding: 2px 6px;
+				line-height: 1;
+			}
+			#helpCloseBtn:hover{
+				color: #000;
 			}
 		</style>
 	</head>
 	<body>
+		<div id="helpOverlay" role="dialog" aria-modal="true" onclick="if(event.target===this){closeHelp();}">
+			<div id="helpBox">
+				<button id="helpCloseBtn" onclick="closeHelp()" aria-label="Close">✕</button>
+				<h2 id="helpTitle">Keyboard Shortcuts</h2>
+				<table id="helpTable"></table>
+			</div>
+		</div>
 		<canvas id="board">Upgrade Browser</canvas>
 		<div class="controls">
 			<button type="button" id="undoButton" onclick="undoLastMove()">Undo</button>
@@ -4100,6 +4455,21 @@ document.addEventListener('keydown', function(e) {
 			const MEDIUM_LABELS = ["Medium", "Medio", "Moyen", "Medio", "Mittel", "Médio", "Mediu", "Середній", "Μέτριο", "Medium", "中等", "中級"];
 			const HARD_LABELS = ["Hard", "Difficile", "Difficile", "Difícil", "Schwer", "Difícil", "Greu", "Важко", "Δύσκολο", "Difficilis", "困难", "上級"];
 			//const HINT_LABELS = ["Hint", "Suggerimento", "Conseil", "Sugerencia", "Hinweis", "Sugestão", "Sugestie", "Підказка", "Υπόδειξη", "Consilium", "提示", "ヒント"];
+			const HELP_TITLE = ["Keyboard Shortcuts","Tasti di scelta rapida","Raccourcis clavier","Atajos de teclado","Tastenkürzel","Atalhos de teclado","Scurtături de tastatură","Клавіші швидкого доступу","Συντομεύσεις πληκτρολογίου","Clavium compendia","键盘快捷键","キーボードショートカット"];
+			const HELP_SHORTCUTS = [
+				[["1 – 7","Drop a disc in column 1 to 7"],["U","Undo last move"],["D","Cycle difficulty (Easy / Medium / Hard)"],["R","Restart the game"],["L","Switch language"],["?","Show / hide this help"]],
+				[["1 – 7","Inserisci un disco nella colonna da 1 a 7"],["U","Annulla l'ultima mossa"],["D","Cambia difficoltà (Facile / Medio / Difficile)"],["R","Ricomincia la partita"],["L","Cambia lingua"],["?","Mostra / nascondi questo aiuto"]],
+				[["1 – 7","Placer un jeton dans la colonne 1 à 7"],["U","Annuler le dernier coup"],["D","Changer la difficulté (Facile / Moyen / Difficile)"],["R","Recommencer la partie"],["L","Changer de langue"],["?","Afficher / masquer cette aide"]],
+				[["1 – 7","Coloca una ficha en la columna 1 a 7"],["U","Deshacer el último movimiento"],["D","Cambiar dificultad (Fácil / Medio / Difícil)"],["R","Reiniciar la partida"],["L","Cambiar idioma"],["?","Mostrar / ocultar esta ayuda"]],
+				[["1 – 7","Stein in Spalte 1 bis 7 einwerfen"],["U","Letzten Zug rückgängig machen"],["D","Schwierigkeit wechseln (Einfach / Mittel / Schwer)"],["R","Spiel neu starten"],["L","Sprache wechseln"],["?","Hilfe anzeigen / ausblenden"]],
+				[["1 – 7","Soltar peça na coluna 1 a 7"],["U","Desfazer o último movimento"],["D","Alterar dificuldade (Fácil / Médio / Difícil)"],["R","Reiniciar o jogo"],["L","Mudar idioma"],["?","Mostrar / ocultar esta ajuda"]],
+				[["1 – 7","Plasează o piesă în coloana 1 până la 7"],["U","Anulează ultima mutare"],["D","Schimbă dificultatea (Ușor / Mediu / Greu)"],["R","Repornește jocul"],["L","Schimbă limba"],["?","Afișează / ascunde această ajutor"]],
+				[["1 – 7","Кинути фішку в колонку від 1 до 7"],["U","Скасувати останній хід"],["D","Змінити складність (Легко / Середній / Важко)"],["R","Почати заново"],["L","Змінити мову"],["?","Показати / приховати цю довідку"]],
+				[["1 – 7","Ρίξε πιόνι στη στήλη 1 έως 7"],["U","Αναίρεση τελευταίας κίνησης"],["D","Αλλαγή δυσκολίας (Εύκολο / Μέτριο / Δύσκολο)"],["R","Επανεκκίνηση παιχνιδιού"],["L","Αλλαγή γλώσσας"],["?","Εμφάνιση / απόκρυψη αυτής της βοήθειας"]],
+				[["1 – 7","Calculum in columnam 1 ad 7 mitte"],["U","Ultimum motum annula"],["D","Difficultatem muta (Facilis / Medium / Difficilis)"],["R","Ludum iterum incipe"],["L","Linguam muta"],["?","Auxilium ostende / absconde"]],
+				[["1 – 7","将棋子投入第1至7列"],["U","撤销上一步"],["D","切换难度（简单 / 中等 / 困难）"],["R","重新开始游戏"],["L","切换语言"],["?","显示 / 隐藏本帮助"]],
+				[["1 – 7","列1〜7にコマを置く"],["U","直前の手を元に戻す"],["D","難易度を切替（簡単 / 中級 / 上級）"],["R","ゲームを再スタート"],["L","言語を切替"],["?","このヘルプを表示 / 非表示"]]
+			];
 			let difficultyIndex = 1;
 			let grid = [];
 			let moves = [];
@@ -4406,6 +4776,9 @@ document.addEventListener('keydown', function(e) {
 				document.getElementById("changeLanguageButton").innerHTML = FLAGS_SVG[languageIndex] + " " + LANGUAGES_LABELS[languageIndex];
 				const diffTexts = [EASY_LABELS, MEDIUM_LABELS, HARD_LABELS];
 				document.getElementById("difficultyButton").textContent = diffTexts[difficultyIndex][languageIndex];
+				if(document.getElementById("helpOverlay").classList.contains("visible")){
+					updateHelpContent();
+				}
 			}
 
 			function undoLastMove(){
@@ -4426,6 +4799,23 @@ document.addEventListener('keydown', function(e) {
 
 			function refresh(){
 				drawUniverse();
+			}
+
+			function openHelp(){
+				updateHelpContent();
+				document.getElementById("helpOverlay").classList.add("visible");
+			}
+
+			function closeHelp(){
+				document.getElementById("helpOverlay").classList.remove("visible");
+			}
+
+			function updateHelpContent(){
+				document.getElementById("helpTitle").textContent = HELP_TITLE[languageIndex];
+				const rows = HELP_SHORTCUTS[languageIndex];
+				document.getElementById("helpTable").innerHTML = rows.map(([k,d]) =>
+					\`<tr><td class="key">\${k}</td><td>\${d}</td></tr>\`
+				).join("");
 			}
 
 			function dropInColumn(column){
@@ -4449,6 +4839,13 @@ document.addEventListener('keydown', function(e) {
 					refresh();
 				}else if(e.key.toLowerCase() === "l"){
 					cycleLanguage();
+				}else if(e.key === "?"){
+					const ov = document.getElementById("helpOverlay");
+					if(ov.classList.contains("visible")){
+						closeHelp();
+					}else{
+						openHelp();
+					}
 				}
 			});
 		<\/script>
@@ -4625,6 +5022,71 @@ document.addEventListener('keydown', function(e) {
 			*{
 				-webkit-tap-highlight-color: transparent;
 			}
+			#helpOverlay{
+				display: none;
+				position: fixed;
+				inset: 0;
+				background: rgba(0,0,0,0.55);
+				z-index: 1000;
+				justify-content: center;
+				align-items: center;
+			}
+			#helpOverlay.visible{
+				display: flex;
+			}
+			#helpBox{
+				background: #fff;
+				border-radius: 12px;
+				box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+				padding: 28px 32px 24px;
+				max-width: 480px;
+				width: 90%;
+				max-height: 85vh;
+				overflow-y: auto;
+				position: relative;
+				text-align: left;
+			}
+			#helpBox h2{
+				margin: 0 0 18px;
+				font-size: 1.3em;
+				text-align: center;
+				color: #2196f3;
+			}
+			#helpBox table{
+				width: 100%;
+				border-collapse: collapse;
+			}
+			#helpBox td{
+				padding: 7px 10px;
+				vertical-align: top;
+			}
+			#helpBox tr:nth-child(even) td{
+				background: #f4f4f4;
+				border-radius: 4px;
+			}
+			#helpBox .key{
+				font-family: monospace;
+				font-weight: bold;
+				font-size: 1.05em;
+				color: #f44336;
+				white-space: nowrap;
+				width: 1%;
+			}
+			#helpCloseBtn{
+				position: absolute;
+				top: 12px;
+				right: 16px;
+				background: none;
+				border: none;
+				font-size: 1.5em;
+				cursor: pointer;
+				color: #555;
+				padding: 2px 6px;
+				line-height: 1;
+			}
+			#helpCloseBtn:hover{
+				color: #000;
+			}
 		</style>
 	</head>
 	<body lang="en">
@@ -4643,6 +5105,13 @@ document.addEventListener('keydown', function(e) {
 					<button id="btnDouble">Highlight doubles</button>
 					<button id="btnOpposite">Highlight opposites</button>
 				</div>
+			</div>
+		</div>
+		<div id="helpOverlay" role="dialog" aria-modal="true" onclick="if(event.target===this){closeHelp();}">
+			<div id="helpBox">
+				<button id="helpCloseBtn" onclick="closeHelp()" aria-label="Close">✕</button>
+				<h2 id="helpTitle">Keyboard Shortcuts</h2>
+				<table id="helpTable"></table>
 			</div>
 		</div>
 		<div class="grid" id="gameGrid"></div>
@@ -4678,6 +5147,27 @@ document.addEventListener('keydown', function(e) {
 				zh: { errors: "错误", updateP: "更新 模", hlDoubles: "高亮双倍 (2n)", hlOpposites: "高亮相反数 (-n)", notPrime: " 不是质数。某些数字可能没有逆元。继续？", warnPrime: " 不是质数。某些数字可能没有逆元。", maxErrors: "错误过多!", win: "赢了! :-D", varP: "模", varX: "n" },
 				ja: { errors: "エラー", updateP: "P 更新", hlDoubles: "2倍を強調 (2n)", hlOpposites: "逆数を強調 (-n)", notPrime: " は素数ではありません。一部の数値には逆数がない場合があります。続行？", warnPrime: " は素数ではありません。一部の数値には逆数がない場合があります。", maxErrors: "リトライ!", win: "勝ち! :-D", varP: "P", varX: "n" }
 			};
+			const HELP_TITLE = {
+				en: "Keyboard Shortcuts", it: "Tasti di scelta rapida", fr: "Raccourcis clavier",
+				es: "Atajos de teclado", de: "Tastenkürzel", pt: "Atalhos de teclado",
+				ro: "Scurtături de tastatură", uk: "Клавіші швидкого доступу",
+				el: "Συντομεύσεις πληκτρολογίου", la: "Clavium compendia",
+				zh: "键盘快捷键", ja: "キーボードショートカット"
+			};
+			const HELP_SHORTCUTS = {
+				en: [["D","Toggle highlight doubles (2x)"],["O","Toggle highlight opposites (-x)"],["L","Switch language"],["Z","Reset error counter"],["?","Show / hide this help"]],
+				it: [["D","Attiva/disattiva evidenziazione doppi (2x)"],["O","Attiva/disattiva evidenziazione opposti (-x)"],["L","Cambia lingua"],["Z","Azzera contatore errori"],["?","Mostra / nascondi questo aiuto"]],
+				fr: [["D","Activer/désactiver surlignage doubles (2x)"],["O","Activer/désactiver surlignage opposés (-x)"],["L","Changer de langue"],["Z","Réinitialiser le compteur d'erreurs"],["?","Afficher / masquer cette aide"]],
+				es: [["D","Activar/desactivar resaltado dobles (2x)"],["O","Activar/desactivar resaltado opuestos (-x)"],["L","Cambiar idioma"],["Z","Reiniciar contador de errores"],["?","Mostrar / ocultar esta ayuda"]],
+				de: [["D","Doppelte hervorheben ein/aus (2x)"],["O","Gegenteile hervorheben ein/aus (-x)"],["L","Sprache wechseln"],["Z","Fehlerzähler zurücksetzen"],["?","Hilfe anzeigen / ausblenden"]],
+				pt: [["D","Ativar/desativar destaque dobros (2x)"],["O","Ativar/desativar destaque opostos (-x)"],["L","Mudar idioma"],["Z","Redefinir contador de erros"],["?","Mostrar / ocultar esta ajuda"]],
+				ro: [["D","Activează/dezactivează evidențiere dubluri (2x)"],["O","Activează/dezactivează evidențiere opuse (-x)"],["L","Schimbă limba"],["Z","Resetează contorul de erori"],["?","Afișează / ascunde această ajutor"]],
+				uk: [["D","Увімк./вимк. виділення подвійних (2n)"],["O","Увімк./вимк. виділення протилежних (-n)"],["L","Змінити мову"],["Z","Скинути лічильник помилок"],["?","Показати / приховати цю довідку"]],
+				el: [["D","Ενεργοπ./Απενεργοπ. επισήμανση διπλών (2x)"],["O","Ενεργοπ./Απενεργοπ. επισήμανση αντίθετων (-x)"],["L","Αλλαγή γλώσσας"],["Z","Μηδενισμός μετρητή σφαλμάτων"],["?","Εμφάνιση / απόκρυψη βοήθειας"]],
+				la: [["D","Ostende/absconde duplices (2x)"],["O","Ostende/absconde oppositos (-x)"],["L","Linguam muta"],["Z","Errores tolle"],["?","Auxilium ostende / absconde"]],
+				zh: [["D","切换双倍高亮 (2n)"],["O","切换相反数高亮 (-n)"],["L","切换语言"],["Z","重置错误计数器"],["?","显示 / 隐藏帮助"]],
+				ja: [["D","2倍の強調表示 オン/オフ (2n)"],["O","逆数の強調表示 オン/オフ (-n)"],["L","言語を切替"],["Z","エラーカウンターをリセット"],["?","ヘルプを表示 / 非表示"]]
+			};
 			let currentLangIndex = 0;
 
 			function t(key){
@@ -4694,9 +5184,29 @@ document.addEventListener('keydown', function(e) {
 				document.body.setAttribute('lang', LANG_KEYS[currentLangIndex]);
 			}
 
+			function openHelp(){
+				updateHelpContent();
+				document.getElementById("helpOverlay").classList.add("visible");
+			}
+
+			function closeHelp(){
+				document.getElementById("helpOverlay").classList.remove("visible");
+			}
+
+			function updateHelpContent(){
+				const lang = LANG_KEYS[currentLangIndex];
+				document.getElementById("helpTitle").textContent = HELP_TITLE[lang];
+				const rows = HELP_SHORTCUTS[lang];
+				document.getElementById("helpTable").innerHTML = rows.map(([k,d]) =>
+					\`<tr><td class="key">\${k}</td><td>\${d}</td></tr>\`
+				).join("");
+			}
 			function nextLang(){
 				currentLangIndex = (currentLangIndex + 1)%(LANG_KEYS.length);
 				updateUI();
+				if(document.getElementById('helpOverlay').classList.contains('visible')){
+					updateHelpContent();
+				}
 				document.querySelectorAll('.cell.matched').forEach(cell => {
 					const n1 = cell.dataset.number;
 					const n2 = cell.dataset.inverse;
@@ -4879,6 +5389,13 @@ document.addEventListener('keydown', function(e) {
 					}else if(e.key.toLowerCase() === "z"){
 						currentErrors = 0;
 						document.getElementById('errors').textContent = currentErrors;
+					}else if(e.key === "?"){
+						const ov = document.getElementById("helpOverlay");
+						if(ov.classList.contains("visible")){
+							closeHelp();
+						}else{
+							openHelp();
+						}
 					}
 				});
 
@@ -4981,6 +5498,106 @@ document.addEventListener('keydown', function(e) {
 				border: 1px solid #aaa;
 				border-radius: 2px;
 			}
+			.help-overlay{
+				display: none;
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: rgba(0,0,0,0.5);
+				z-index: 1000;
+				align-items: center;
+				justify-content: center;
+			}
+			.help-overlay.show{
+				display: flex;
+			}
+			.help-modal{
+				background: rgba(198,252,255,0.98);
+				border: 3px solid var(--border-color);
+				border-radius: 16px;
+				box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+				padding: 24px 28px 20px 28px;
+				max-width: 400px;
+				width: 92%;
+				position: relative;
+				animation: helpFadeIn 0.18s ease;
+				font-family: 'Segoe UI', Arial, sans-serif;
+			}
+			@keyframes helpFadeIn{
+				from{
+					opacity:0;
+					transform:scale(0.95);
+				}
+				to{
+					opacity:1;
+					transform:scale(1);
+				}
+			}
+			.help-modal h4{
+				color: #7b00c2;
+				margin: 0 0 16px 0;
+				font-size: 1.1em;
+				text-align: center;
+				letter-spacing: 0.5px;
+			}
+			.help-close{
+				position: absolute;
+				top: 12px; right: 14px;
+				background: none;
+				border: none;
+				font-size: 1.3em;
+				color: #999;
+				cursor: pointer;
+				padding: 2px 6px;
+				line-height: 1;
+				border-radius: 4px;
+				font-weight: bold;
+			}
+			.help-close:hover{
+				background: var(--border-color);
+				color: #fff;
+			}
+			.help-table{
+				width: 100%;
+				border-collapse: collapse;
+				font-size: 0.92em;
+			}
+			.help-table tr{
+				border-bottom: 1px solid rgba(0,0,0,0.1);
+			}
+			.help-table tr:last-child{
+				border-bottom: none;
+			}
+			.help-table td{
+				padding: 7px 6px;
+				vertical-align: middle;
+			}
+			.help-key{
+				font-family: monospace;
+				background: #fff;
+				border: 1px solid var(--border-color);
+				border-radius: 4px;
+				padding: 2px 8px;
+				font-size: 0.95em;
+				font-weight: bold;
+				color: #333;
+				white-space: nowrap;
+				display: inline-block;
+				min-width: 28px;
+				text-align: center;
+			}
+			.help-desc{
+				color: #333;
+				padding-left: 8px;
+			}
+			.help-hint{
+				text-align: center;
+				margin-top: 14px;
+				font-size: 0.78em;
+				color: #888;
+			}
 		</style>
 	</head>
 	<body id="body">
@@ -4988,6 +5605,14 @@ document.addEventListener('keydown', function(e) {
 			<canvas id="board">
 				Upgrade Browser
 			</canvas>
+		</div>
+		<div class="help-overlay" id="helpOverlay" onclick="closeHelp(event)">
+			<div class="help-modal">
+				<button class="help-close" onclick="toggleHelp()">✕</button>
+				<h4 id="helpTitle">Keyboard Shortcuts</h4>
+				<table class="help-table" id="helpTable"></table>
+				<div class="help-hint" id="helpHint">Press ? to close</div>
+			</div>
 		</div>
 		<script>
 			const COLOR_1 = "#a7ffa7";
@@ -5027,18 +5652,42 @@ document.addEventListener('keydown', function(e) {
 			];
 			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
 			const TRANSLATIONS = {
-				en: { shuffle: "Shuffle", solve: "Solve", wait: "Wait...", solved: "Solved in ", moves: " moves!", tooComplex: "Too complex..." },
-				it: { shuffle: "Mescola", solve: "Risolvi", wait: "Aspetta...", solved: "Risolto in ", moves: " mosse!", tooComplex: "Troppo complesso..." },
-				fr: { shuffle: "Mélanger", solve: "Résoudre", wait: "Patientez...", solved: "Résolu en ", moves: " coups!", tooComplex: "Trop complexe..." },
-				es: { shuffle: "Mezclar", solve: "Resolver", wait: "Espera...", solved: "Resuelto en ", moves: " movimientos!", tooComplex: "Demasiado complejo..." },
-				de: { shuffle: "Mischen", solve: "Lösen", wait: "Warte...", solved: "Gelöst in ", moves: " Zügen!", tooComplex: "Zu komplex..." },
-				pt: { shuffle: "Embaralhar", solve: "Resolver", wait: "Aguarde...", solved: "Resolvido em ", moves: " movimentos!", tooComplex: "Complexo demais..." },
-				ro: { shuffle: "Amestecă", solve: "Rezolvă", wait: "Așteaptă...", solved: "Rezolvat în ", moves: " mutări!", tooComplex: "Prea complex..." },
-				uk: { shuffle: "Перемішати", solve: "Вирішити", wait: "Зачекайте...", solved: "Вирішено за ", moves: " ходів!", tooComplex: "Занадто складно..." },
-				el: { shuffle: "Ανακάτεμα", solve: "Επίλυση", wait: "Περιμένετε...", solved: "Λύθηκε σε ", moves: " κινήσεις!", tooComplex: "Πολύ πολύπλοκο..." },
-				la: { shuffle: "Misce", solve: "Solve", wait: "Expecta...", solved: "Solutum in ", moves: " motibus!", tooComplex: "Nimis complexum..." },
-				zh: { shuffle: "打乱", solve: "求解", wait: "请稍候...", solved: "用 ", moves: " 步解决！", tooComplex: "太复杂了..." },
-				ja: { shuffle: "シャッフル", solve: "解く", wait: "お待ちください...", solved: "", moves: " 手で解けた！", tooComplex: "複雑すぎます..." }
+				en: { shuffle:"Shuffle", solve:"Solve", wait:"Wait...", solved:"Solved in ", moves:" moves!", tooComplex:"Too complex...",
+					helpTitle:"Keyboard Shortcuts", helpHint:"Press ? to close",
+					helpShortcuts:[["↑","Move tile down (into blank)"],["↓","Move tile up (into blank)"],["←","Move tile right (into blank)"],["→","Move tile left (into blank)"],["R","Shuffle / restart"],["S","Auto-solve"],["L","Next language"],["?","Show / hide this help"]] },
+				it: { shuffle:"Mescola", solve:"Risolvi", wait:"Aspetta...", solved:"Risolto in ", moves:" mosse!", tooComplex:"Troppo complesso...",
+					helpTitle:"Scorciatoie da Tastiera", helpHint:"Premi ? per chiudere",
+					helpShortcuts:[["↑","Sposta il tassello in basso"],["↓","Sposta il tassello in alto"],["←","Sposta il tassello a destra"],["→","Sposta il tassello a sinistra"],["R","Mescola / ricomincia"],["S","Risoluzione automatica"],["L","Lingua successiva"],["?","Mostra / nascondi questa guida"]] },
+				fr: { shuffle:"Mélanger", solve:"Résoudre", wait:"Patientez...", solved:"Résolu en ", moves:" coups!", tooComplex:"Trop complexe...",
+					helpTitle:"Raccourcis Clavier", helpHint:"Appuyez sur ? pour fermer",
+					helpShortcuts:[["↑","Déplacer la tuile vers le bas"],["↓","Déplacer la tuile vers le haut"],["←","Déplacer la tuile vers la droite"],["→","Déplacer la tuile vers la gauche"],["R","Mélanger / recommencer"],["S","Résolution automatique"],["L","Langue suivante"],["?","Afficher / masquer cette aide"]] },
+				es: { shuffle:"Mezclar", solve:"Resolver", wait:"Espera...", solved:"Resuelto en ", moves:" movimientos!", tooComplex:"Demasiado complejo...",
+					helpTitle:"Atajos de Teclado", helpHint:"Pulsa ? para cerrar",
+					helpShortcuts:[["↑","Mover ficha hacia abajo"],["↓","Mover ficha hacia arriba"],["←","Mover ficha hacia la derecha"],["→","Mover ficha hacia la izquierda"],["R","Mezclar / reiniciar"],["S","Resolución automática"],["L","Siguiente idioma"],["?","Mostrar / ocultar esta ayuda"]] },
+				de: { shuffle:"Mischen", solve:"Lösen", wait:"Warte...", solved:"Gelöst in ", moves:" Zügen!", tooComplex:"Zu komplex...",
+					helpTitle:"Tastaturkürzel", helpHint:"? drücken zum Schließen",
+					helpShortcuts:[["↑","Stein nach unten schieben"],["↓","Stein nach oben schieben"],["←","Stein nach rechts schieben"],["→","Stein nach links schieben"],["R","Mischen / neu starten"],["S","Automatisch lösen"],["L","Nächste Sprache"],["?","Hilfe ein-/ausblenden"]] },
+				pt: { shuffle:"Embaralhar", solve:"Resolver", wait:"Aguarde...", solved:"Resolvido em ", moves:" movimentos!", tooComplex:"Complexo demais...",
+					helpTitle:"Atalhos de Teclado", helpHint:"Prima ? para fechar",
+					helpShortcuts:[["↑","Mover peça para baixo"],["↓","Mover peça para cima"],["←","Mover peça para a direita"],["→","Mover peça para a esquerda"],["R","Embaralhar / reiniciar"],["S","Resolução automática"],["L","Próximo idioma"],["?","Mostrar / ocultar esta ajuda"]] },
+				ro: { shuffle:"Amestecă", solve:"Rezolvă", wait:"Așteaptă...", solved:"Rezolvat în ", moves:" mutări!", tooComplex:"Prea complex...",
+					helpTitle:"Comenzi Rapide", helpHint:"Apăsați ? pentru a închide",
+					helpShortcuts:[["↑","Mută piesa în jos"],["↓","Mută piesa în sus"],["←","Mută piesa la dreapta"],["→","Mută piesa la stânga"],["R","Amestecă / repornește"],["S","Rezolvare automată"],["L","Limba următoare"],["?","Arată / ascunde ajutorul"]] },
+				uk: { shuffle:"Перемішати", solve:"Вирішити", wait:"Зачекайте...", solved:"Вирішено за ", moves:" ходів!", tooComplex:"Занадто складно...",
+					helpTitle:"Клавіатурні Скорочення", helpHint:"Натисніть ? щоб закрити",
+					helpShortcuts:[["↑","Зсунути плитку вниз"],["↓","Зсунути плитку вгору"],["←","Зсунути плитку вправо"],["→","Зсунути плитку вліво"],["R","Перемішати / перезапустити"],["S","Автовирішення"],["L","Наступна мова"],["?","Показати / приховати довідку"]] },
+				el: { shuffle:"Ανακάτεμα", solve:"Επίλυση", wait:"Περιμένετε...", solved:"Λύθηκε σε ", moves:" κινήσεις!", tooComplex:"Πολύ πολύπλοκο...",
+					helpTitle:"Συντομεύσεις Πληκτρολογίου", helpHint:"Πατήστε ? για κλείσιμο",
+					helpShortcuts:[["↑","Μετακίνηση πλακιδίου κάτω"],["↓","Μετακίνηση πλακιδίου πάνω"],["←","Μετακίνηση πλακιδίου δεξιά"],["→","Μετακίνηση πλακιδίου αριστερά"],["R","Ανακάτεμα / επανεκκίνηση"],["S","Αυτόματη επίλυση"],["L","Επόμενη γλώσσα"],["?","Εμφάνιση / απόκρυψη βοήθειας"]] },
+				la: { shuffle:"Misce", solve:"Solve", wait:"Expecta...", solved:"Solutum in ", moves:" motibus!", tooComplex:"Nimis complexum...",
+					helpTitle:"Claves Auxiliares", helpHint:"Preme ? ad claudendum",
+					helpShortcuts:[["↑","Move tesseram deorsum"],["↓","Move tesseram sursum"],["←","Move tesseram dextrorsum"],["→","Move tesseram sinistrorsum"],["R","Misce / renoua"],["S","Solve automatice"],["L","Muta linguam"],["?","Ostende / absconde auxilium"]] },
+				zh: { shuffle:"打乱", solve:"求解", wait:"请稍候...", solved:"用 ", moves:" 步解决！", tooComplex:"太复杂了...",
+					helpTitle:"键盘快捷键", helpHint:"按 ? 关闭",
+					helpShortcuts:[["↑","向下移动方块"],["↓","向上移动方块"],["←","向右移动方块"],["→","向左移动方块"],["R","打乱 / 重新开始"],["S","自动求解"],["L","切换语言"],["?","显示 / 隐藏帮助"]] },
+				ja: { shuffle:"シャッフル", solve:"解く", wait:"お待ちください...", solved:"", moves:" 手で解けた！", tooComplex:"複雑すぎます...",
+					helpTitle:"キーボードショートカット", helpHint:"? を押して閉じる",
+					helpShortcuts:[["↑","タイルを下に移動"],["↓","タイルを上に移動"],["←","タイルを右に移動"],["→","タイルを左に移動"],["R","シャッフル / リスタート"],["S","自動解決"],["L","次の言語"],["?","このヘルプを表示 / 非表示"]] }
 			};
 			let currentLangIndex = 0;
 
@@ -5057,12 +5706,73 @@ document.addEventListener('keydown', function(e) {
 				if(!solveBtn.disabled){
 					solveBtn.innerHTML = t("solve");
 				}
+				buildHelpModal();
 			}
 
-			drawBoard();
+			function buildHelpModal(){
+				const tr = TRANSLATIONS[LANG_KEYS[currentLangIndex]];
+				document.getElementById("helpTitle").textContent = tr.helpTitle;
+				document.getElementById("helpHint").textContent = tr.helpHint;
+				const table = document.getElementById("helpTable");
+				table.innerHTML = "";
+				tr.helpShortcuts.forEach(([key, desc]) => {
+					const row = document.createElement("tr");
+					row.innerHTML = \`<td><span class="help-key">\${key}</span></td><td class="help-desc">\${desc}</td>\`;
+					table.appendChild(row);
+				});
+			}
+
+			function toggleHelp(){
+				document.getElementById("helpOverlay").classList.toggle("show");
+			}
+
+			function closeHelp(e){
+				if(e.target === document.getElementById("helpOverlay")){
+					document.getElementById("helpOverlay").classList.remove("show");
+				}
+			}
+
+			document.addEventListener("keydown", e => {
+				if(e.key === "?"){
+					toggleHelp();
+				}else if(e.key.toLowerCase() === "r"){
+					shuffleTiles();
+				}else if(e.key.toLowerCase() === "l"){
+					nextLanguage();
+				}else if(e.key.toLowerCase() === "s"){
+					solve();
+				}else if(e.key === "ArrowUp"){
+					e.preventDefault();
+					if(r1 < 3){
+						cursorX = (c1*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+						cursorY = ((r1 + 1)*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+						select();
+					}
+				}else if(e.key === "ArrowDown"){
+					e.preventDefault();
+					if(r1 > 0){
+						cursorX = (c1*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+						cursorY = ((r1 - 1)*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+						select();
+					}
+				}else if(e.key === "ArrowLeft"){
+					e.preventDefault();
+					if(c1 < 3){
+						cursorX = ((c1 + 1)*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+						cursorY = (r1*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+						select();
+					}
+				}else if(e.key === "ArrowRight"){
+					e.preventDefault();
+					if(c1 > 0){
+						cursorX = ((c1 - 1)*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+						cursorY = (r1*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
+						select();
+					}
+				}
+			});
 
 			function drawBoard(){
-				document.body.style.background = BACKGROUND_COLOR;
 				const container = document.getElementById("Fifteen");
 				for(let i = 0; i < 16; i++){
 					const div = document.createElement("div");
@@ -5366,6 +6076,8 @@ document.addEventListener('keydown', function(e) {
 					}
 				}
 			});
+			drawBoard();
+			buildHelpModal();
 		<\/script>
 	<script>
 document.addEventListener('keydown', function(e) {
@@ -5617,9 +6329,103 @@ document.addEventListener('keydown', function(e) {
 			*{
 				-webkit-tap-highlight-color: transparent;
 			}
+			#help-modal-overlay{
+				display: none;
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: rgba(0,0,0,0.65);
+				z-index: 99999;
+				justify-content: center;
+				align-items: center;
+			}
+			#help-modal-overlay.open{
+				display: flex;
+			}
+			#help-modal{
+				background: #1e2d3d;
+				border: 2px solid #3d5166;
+				border-radius: 14px;
+				padding: 28px 32px 24px;
+				max-width: 480px;
+				width: 92%;
+				box-shadow: 0 16px 48px rgba(0,0,0,0.7);
+				position: relative;
+				max-height: 90vh;
+				overflow-y: auto;
+			}
+			#help-modal h2{
+				margin: 0 0 18px;
+				color: var(--status-color);
+				font-size: 1.15rem;
+				text-align: center;
+				letter-spacing: 2px;
+				text-transform: uppercase;
+			}
+			.help-section-title{
+				color: #8ab4c8;
+				font-size: 0.7rem;
+				font-weight: bold;
+				letter-spacing: 1.5px;
+				text-transform: uppercase;
+				border-bottom: 1px solid #3d5166;
+				padding-bottom: 4px;
+				margin: 14px 0 8px;
+			}
+			.help-row{
+				display: flex;
+				align-items: flex-start;
+				gap: 12px;
+				margin-bottom: 8px;
+			}
+			.help-key{
+				background: #34495e;
+				border: 2px solid #5d7a96;
+				border-bottom-width: 4px;
+				border-radius: 6px;
+				color: #f0e0a0;
+				font-family: monospace;
+				font-weight: bold;
+				font-size: 0.85rem;
+				min-width: 38px;
+				height: 32px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				padding: 0 6px;
+				flex-shrink: 0;
+				box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+				white-space: nowrap;
+			}
+			.help-desc{
+				color: #d0e0ec;
+				font-size: 0.82rem;
+				line-height: 1.45;
+				padding-top: 6px;
+			}
+			#help-close-btn{
+				position: absolute;
+				top: 12px;
+				right: 14px;
+				background: none;
+				border: none;
+				color: #7f8c8d;
+				font-size: 1.4rem;
+				cursor: pointer;
+				line-height: 1;
+				padding: 0;
+			}
+			#help-close-btn:hover{
+				color: white;
+			}
 			#color-select-overlay{
 				position: fixed;
-				top: 0; left: 0; width: 100%; height: 100%;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
 				background: #1a2535;
 				z-index: 9999;
 				display: flex;
@@ -5792,50 +6598,40 @@ document.addEventListener('keydown', function(e) {
 					justify-content: flex-start;
 					overflow-y: auto;
 				}
-
 				#color-select-overlay h2{
 					font-size: 1.2rem;
 					margin-bottom: 5px;
 				}
-
 				.color-choices{
 					gap: 15px;
 				}
-
 				.color-choice-btn{
 					width: 100px;
 					height: 110px;
 					gap: 5px;
 				}
-
 				.color-choice-btn .piece-icon{
 					font-size: 2.5rem;
 				}
-
 				.overlay-section{
 					gap: 8px;
 				}
-
 				.overlay-divider{
 					width: 80%;
 					margin: 5px 0;
 				}
-
 				.diff-choice-btn{
 					width: 65px;
 					height: 38px;
 				}
-
 				.flag-grid{
 					max-width: 280px;
 					gap: 6px;
 				}
-
 				.flag-grid-btn{
 					width: 40px;
 					height: 28px;
 				}
-
 				#startBtn{
 					padding: 10px 40px;
 					font-size: 0.9rem;
@@ -5845,6 +6641,13 @@ document.addEventListener('keydown', function(e) {
 		</style>
 	</head>
 	<body>
+		<div id="help-modal-overlay">
+			<div id="help-modal">
+				<button id="help-close-btn" onclick="closeHelp()">✕</button>
+				<h2 id="help-title">⌨ Keyboard Shortcuts</h2>
+				<div id="help-body"></div>
+			</div>
+		</div>
 		<div id="color-select-overlay">
 			<h2 id="colorOverlayTitle">♟ Choose Your Color ♟</h2>
 			<div class="overlay-section">
@@ -5961,18 +6764,114 @@ document.addEventListener('keydown', function(e) {
 			];
 			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
 			const TRANSLATIONS = {
-				en: { chooseColor:"♟ Choose Your Color ♟", language:"Language", start:"START", whiteMove:"White to move.", blackMove:"Black to move.", check:" (+)", checkmate:"CHECKMATE! {w} wins!", stalemate:"STALEMATE! It's a draw.", draw:"DRAW! Insufficient material.", level:"Level", easy:"Easy", medium:"Medium", hard:"Hard", expert:"Expert", showLog:"Show Log", hideLog:"Hide Log", undo:"Undo", reset:"Reset", logTitle:"LOG MOVES", saveInfo:"You have up to three slots to save your game.<br/>Once a slot is occupied, you can load, overwrite, or delete its data. Choose wisely.", slot:"Slot", empty:"Empty", confirmLoad:"Slot {n}: Do you want to load the saved game?", confirmReplace:"Do you want to replace the previous save?", confirmDelete:"Are you sure you want to permanently delete the Slot {n} save?", white:"White", black:"Black", pawn:"Pawn", rook:"Rook", knight:"Knight", bishop:"Bishop", queen:"Queen", king:"King" },
-				it: { chooseColor:"♟ Scegli il tuo Colore ♟", language:"Lingua", start:"INIZIA", whiteMove:"Muove il Bianco.", blackMove:"Muove il Nero.", check:" (+)", checkmate:"SCACCO MATTO! Vince il {w}!", stalemate:"STALLO! È un pari.", draw:"PARI! Materiale insufficiente.", level:"Livello", easy:"Facile", medium:"Medio", hard:"Difficile", expert:"Esperto", showLog:"Mostra Log", hideLog:"Nascondi Log", undo:"Annulla", reset:"Reset", logTitle:"LOG MOSSE", saveInfo:"Hai fino a tre slot per salvare la partita.<br/>Se uno slot è occupato puoi caricare, sovrascrivere o eliminare. Scegli con cura.", slot:"Slot", empty:"Vuoto", confirmLoad:"Slot {n}: Vuoi caricare la partita salvata?", confirmReplace:"Vuoi sostituire il salvataggio precedente?", confirmDelete:"Sei sicuro di voler eliminare definitivamente il salvataggio nello Slot {n}?", white:"Bianco", black:"Nero", pawn:"Pedone", rook:"Torre", knight:"Cavallo", bishop:"Alfiere", queen:"Regina", king:"Re" },
-				fr: { chooseColor:"♟ Choisissez votre Couleur ♟", language:"Langue", start:"DÉMARRER", whiteMove:"Au tour des Blancs.", blackMove:"Au tour des Noirs.", check:" (+)", checkmate:"ÉCHEC ET MAT ! Les {w} gagnent !", stalemate:"PAT ! Match nul.", draw:"NUL ! Matériel insuffisant.", level:"Niveau", easy:"Facile", medium:"Moyen", hard:"Difficile", expert:"Expert", showLog:"Voir Log", hideLog:"Cacher Log", undo:"Annuler", reset:"Réinit.", logTitle:"LOG COUPS", saveInfo:"Vous avez jusqu'à trois emplacements pour sauvegarder.<br/>Un emplacement occupé peut être chargé, écrasé ou supprimé. Choisissez bien.", slot:"Slot", empty:"Vide", confirmLoad:"Slot {n} : Voulez-vous charger la partie sauvegardée ?", confirmReplace:"Voulez-vous remplacer la sauvegarde précédente ?", confirmDelete:"Voulez-vous vraiment supprimer définitivement la sauvegarde du Slot {n} ?", white:"Blancs", black:"Noirs", pawn:"Pion", rook:"Tour", knight:"Cavalier", bishop:"Fou", queen:"Dame", king:"Roi" },
-				es: { chooseColor:"♟ Elige tu Color ♟", language:"Idioma", start:"EMPEZAR", whiteMove:"Mueven las Blancas.", blackMove:"Mueven las Negras.", check:" (+)", checkmate:"¡JAQUE MATE! ¡Ganan las {w}!", stalemate:"¡AHOGADO! Es un empate.", draw:"¡EMPATE! Material insuficiente.", level:"Nivel", easy:"Fácil", medium:"Medio", hard:"Difícil", expert:"Experto", showLog:"Ver Log", hideLog:"Ocultar Log", undo:"Deshacer", reset:"Reiniciar", logTitle:"LOG MOVS", saveInfo:"Tienes hasta tres ranuras para guardar tu partida.<br/>Una ranura ocupada se puede cargar, sobrescribir o eliminar. Elige bien.", slot:"Ranura", empty:"Vacío", confirmLoad:"Ranura {n}: ¿Deseas cargar la partida guardada?", confirmReplace:"¿Deseas reemplazar el guardado anterior?", confirmDelete:"¿Seguro que quieres eliminar permanentemente el guardado de la Ranura {n}?", white:"Blancas", black:"Negras", pawn:"Peón", rook:"Torre", knight:"Caballo", bishop:"Alfil", queen:"Reina", king:"Rey" },
-				de: { chooseColor:"♟ Wähle deine Farbe ♟", language:"Sprache", start:"STARTEN", whiteMove:"Weiß ist am Zug.", blackMove:"Schwarz ist am Zug.", check:" (+)", checkmate:"SCHACHMATT! {w} gewinnt!", stalemate:"PATT! Unentschieden.", draw:"REMIS! Unzureichendes Material.", level:"Stufe", easy:"Leicht", medium:"Mittel", hard:"Schwer", expert:"Experte", showLog:"Log zeigen", hideLog:"Log ausblenden", undo:"Rückgängig", reset:"Neustart", logTitle:"ZUG-LOG", saveInfo:"Sie haben bis zu drei Slots zum Speichern.<br/>Ein belegter Slot kann geladen, überschrieben oder gelöscht werden. Wählen Sie weise.", slot:"Slot", empty:"Leer", confirmLoad:"Slot {n}: Möchten Sie das gespeicherte Spiel laden?", confirmReplace:"Möchten Sie den vorherigen Speicherstand ersetzen?", confirmDelete:"Sind Sie sicher, dass Sie Slot {n} dauerhaft löschen möchten?", white:"Weiß", black:"Schwarz", pawn:"Bauer", rook:"Turm", knight:"Springer", bishop:"Läufer", queen:"Dame", king:"König" },
-				pt: { chooseColor:"♟ Escolha a sua Cor ♟", language:"Idioma", start:"COMEÇAR", whiteMove:"Brancas jogam.", blackMove:"Negras jogam.", check:" (+)", checkmate:"XEQUE-MATE! As {w} vencem!", stalemate:"AFOGAMENTO! Empate.", draw:"EMPATE! Material insuficiente.", level:"Nível", easy:"Fácil", medium:"Médio", hard:"Difícil", expert:"Especialista", showLog:"Ver Log", hideLog:"Ocultar Log", undo:"Desfazer", reset:"Reiniciar", logTitle:"LOG LANÇ", saveInfo:"Você tem até três slots para salvar sua partida.<br/>Um slot ocupado pode ser carregado, substituído ou excluído. Escolha com cuidado.", slot:"Slot", empty:"Vazio", confirmLoad:"Slot {n}: Deseja carregar o jogo salvo?", confirmReplace:"Deseja substituir o salvamento anterior?", confirmDelete:"Tem certeza de que deseja excluir permanentemente o Slot {n}?", white:"Brancas", black:"Negras", pawn:"Peão", rook:"Torre", knight:"Cavalo", bishop:"Bispo", queen:"Rainha", king:"Rei" },
-				ro: { chooseColor:"♟ Alege Culoarea ta ♟", language:"Limbă", start:"ÎNCEPE", whiteMove:"Albul mută.", blackMove:"Negrul mută.", check:" (+)", checkmate:"ȘAH MAT! Câștigă {w}!", stalemate:"PAT! Remiză.", draw:"REMIZĂ! Material insuficient.", level:"Nivel", easy:"Ușor", medium:"Mediu", hard:"Greu", expert:"Expert", showLog:"Arată Log", hideLog:"Ascunde Log", undo:"Anulează", reset:"Resetare", logTitle:"LOG MUTĂRI", saveInfo:"Ai până la trei sloturi pentru a salva jocul.<br/>Un slot ocupat poate fi încărcat, suprascris sau șters. Alege cu înțelepciune.", slot:"Slot", empty:"Gol", confirmLoad:"Slot {n}: Vrei să încarci jocul salvat?", confirmReplace:"Vrei să înlocuiești salvarea anterioară?", confirmDelete:"Ești sigur că vrei să ștergi permanent Slot {n}?", white:"Alb", black:"Negru", pawn:"Pion", rook:"Turn", knight:"Cal", bishop:"Nebun", queen:"Regină", king:"Rege" },
-				uk: { chooseColor:"♟ Оберіть свій Колір ♟", language:"Мова", start:"ПОЧАТИ", whiteMove:"Ходять білі.", blackMove:"Ходять чорні.", check:" (+)", checkmate:"ШАХ І МАТ! Перемагають {w}!", stalemate:"ПАТ! Нічия.", draw:"НІЧИЯ! Недостатньо матеріалу.", level:"Рівень", easy:"Легко", medium:"Середній", hard:"Важко", expert:"Експерт", showLog:"Показати лог", hideLog:"Сховати лог", undo:"Скасувати", reset:"Скинути", logTitle:"ЛОГ ХОДІВ", saveInfo:"У вас є до трьох слотів для збереження гри.<br/>Заповнений слот можна завантажити, перезаписати або видалити.", slot:"Слот", empty:"Порожньо", confirmLoad:"Слот {n}: Завантажити збережену гру?", confirmReplace:"Замінити попереднє збереження?", confirmDelete:"Ви впевнені, що хочете видалити Слот {n}?", white:"Білі", black:"Чорні", pawn:"Пішак", rook:"Тура", knight:"Кінь", bishop:"Слон", queen:"Ферзь", king:"Король" },
-				el: { chooseColor:"♟ Διάλεξε το Χρώμα σου ♟", language:"Γλώσσα", start:"ΕΝΑΡΞΗ", whiteMove:"Κινούνται τα Λευκά.", blackMove:"Κινούνται τα Μαύρα.", check:" (+)", checkmate:"ΣΑΧΜΑΤ! Κερδίζουν τα {w}!", stalemate:"ΠΑΤ! Ισοπαλία.", draw:"ΙΣΟΠΑΛΙΑ! Ανεπαρκές υλικό.", level:"Επίπεδο", easy:"Εύκολο", medium:"Μέτριο", hard:"Δύσκολο", expert:"Ειδικός", showLog:"Εμφ. Log", hideLog:"Απόκρ. Log", undo:"Αναίρεση", reset:"Επαναφορά", logTitle:"LOG ΚΙΝΉΣΕΩΝ", saveInfo:"Έχετε έως τρεις θέσεις αποθήκευσης.<br/>Μια κατεχόμενη θέση μπορεί να φορτωθεί, αντικατασταθεί ή διαγραφεί.", slot:"Θέση", empty:"Κενό", confirmLoad:"Θέση {n}: Να φορτωθεί η αποθηκευμένη παρτίδα;", confirmReplace:"Να αντικατασταθεί η προηγούμενη αποθήκευση;", confirmDelete:"Σίγουρα διαγραφή Θέση {n};", white:"Λευκά", black:"Μαύρα", pawn:"Πιόνι", rook:"Πύργος", knight:"Ίππος", bishop:"Αξιωματικός", queen:"Βασίλισσα", king:"Βασιλιάς" },
-				la: { chooseColor:"♟ Elige Colorem tuum ♟", language:"Lingua", start:"INCIPE", whiteMove:"Albi moventur.", blackMove:"Nigri moventur.", check:" (+)", checkmate:"SCACUS MATUS! {w} vincunt!", stalemate:"IMPASSE! Par est.", draw:"PAR! Materia insufficiens.", level:"Gradus", easy:"Facile", medium:"Medium", hard:"Difficile", expert:"Peritus", showLog:"Monstra Log", hideLog:"Absconde Log", undo:"Rescinde", reset:"Renovare", logTitle:"LOG MOTUUM", saveInfo:"Tres locos habes ad ludum servandum.<br/>Locus occupatus onerari, deleri, mutarive potest.", slot:"Locus", empty:"Vacuus", confirmLoad:"Locus {n}: Ludum servatum onerare vis?", confirmReplace:"Conservationem priorem substituere vis?", confirmDelete:"Locum {n} delere vis?", white:"Albi", black:"Nigri", pawn:"Pedes", rook:"Turris", knight:"Eques", bishop:"Episcopus", queen:"Regina", king:"Rex" },
-				zh: { chooseColor:"♟ 选择你的颜色 ♟", language:"语言", start:"开始", whiteMove:"白方走棋。", blackMove:"黑方走棋。", check:" (+)", checkmate:"将死！{w}获胜！", stalemate:"僵局！平局。", draw:"平局！子力不足。", level:"难度", easy:"简单", medium:"中等", hard:"困难", expert:"专家", showLog:"显示日志", hideLog:"隐藏日志", undo:"撤销", reset:"重置", logTitle:"走棋日志", saveInfo:"您最多可使用三个存档槽。<br/>已占用的槽可以加载、覆盖或删除。请慎重选择。", slot:"槽", empty:"空", confirmLoad:"槽 {n}：是否加载已保存的游戏？", confirmReplace:"是否替换之前的存档？", confirmDelete:"确定要永久删除槽 {n} 的存档吗？", white:"白方", black:"黑方", pawn:"兵", rook:"车", knight:"马", bishop:"象", queen:"后", king:"王" },
-				ja: { chooseColor:"♟ 色を選んでください ♟", language:"言語", start:"スタート", whiteMove:"白の手番。", blackMove:"黒の手番。", check:" (+)", checkmate:"チェックメイト！{w}の勝ち！", stalemate:"ステイルメイト！引き分け。", draw:"引き分け！駒不足。", level:"レベル", easy:"簡単", medium:"普通", hard:"難しい", expert:"エキスパート", showLog:"ログ表示", hideLog:"ログ非表示", undo:"元に戻す", reset:"リセット", logTitle:"手順ログ", saveInfo:"ゲームを保存するスロットが3つあります。<br/>使用済みスロットは読込・上書き・削除が可能です。", slot:"スロット", empty:"空", confirmLoad:"スロット{n}：保存済みゲームを読み込みますか？", confirmReplace:"前の保存データを上書きしますか？", confirmDelete:"スロット{n}を完全に削除しますか？", white:"白", black:"黒", pawn:"ポーン", rook:"ルーク", knight:"ナイト", bishop:"ビショップ", queen:"クイーン", king:"キング" }
+				en: { chooseColor:"♟ Choose Your Color ♟", language:"Language", start:"START", whiteMove:"White to move.", blackMove:"Black to move.", check:" (+)", checkmate:"CHECKMATE! {w} wins!", stalemate:"STALEMATE! It's a draw.", draw:"DRAW! Insufficient material.", level:"Level", easy:"Easy", medium:"Medium", hard:"Hard", expert:"Expert", showLog:"Show Log", hideLog:"Hide Log", undo:"Undo", reset:"Reset", logTitle:"LOG MOVES", saveInfo:"You have up to three slots to save your game.<br/>Once a slot is occupied, you can load, overwrite, or delete its data. Choose wisely.", slot:"Slot", empty:"Empty", confirmLoad:"Slot {n}: Do you want to load the saved game?", confirmReplace:"Do you want to replace the previous save?", confirmDelete:"Are you sure you want to permanently delete the Slot {n} save?", white:"White", black:"Black", pawn:"Pawn", rook:"Rook", knight:"Knight", bishop:"Bishop", queen:"Queen", king:"King",
+				helpTitle:"⌨ Keyboard Shortcuts",
+				helpSectionGame:"During the Game", helpSectionSetup:"Setup Screen",
+				helpW:"Choose White pieces", helpB:"Choose Black pieces",
+				helpD_setup:"Cycle difficulty level", helpL_setup:"Cycle language",
+				helpEnter:"Start the game",
+				helpD_game:"Cycle difficulty level", helpL_game:"Cycle language",
+				helpT:"Show / Hide move log", helpU:"Undo last move",
+				helpR:"Reset game (reload)", helpQuestion:"Show this help" },
+				it: { chooseColor:"♟ Scegli il tuo Colore ♟", language:"Lingua", start:"INIZIA", whiteMove:"Muove il Bianco.", blackMove:"Muove il Nero.", check:" (+)", checkmate:"SCACCO MATTO! Vince il {w}!", stalemate:"STALLO! È un pari.", draw:"PARI! Materiale insufficiente.", level:"Livello", easy:"Facile", medium:"Medio", hard:"Difficile", expert:"Esperto", showLog:"Mostra Log", hideLog:"Nascondi Log", undo:"Annulla", reset:"Reset", logTitle:"LOG MOSSE", saveInfo:"Hai fino a tre slot per salvare la partita.<br/>Se uno slot è occupato puoi caricare, sovrascrivere o eliminare. Scegli con cura.", slot:"Slot", empty:"Vuoto", confirmLoad:"Slot {n}: Vuoi caricare la partita salvata?", confirmReplace:"Vuoi sostituire il salvataggio precedente?", confirmDelete:"Sei sicuro di voler eliminare definitivamente il salvataggio nello Slot {n}?", white:"Bianco", black:"Nero", pawn:"Pedone", rook:"Torre", knight:"Cavallo", bishop:"Alfiere", queen:"Regina", king:"Re",
+				helpTitle:"⌨ Tasti di Scelta Rapida",
+				helpSectionGame:"Durante la Partita", helpSectionSetup:"Schermata di Setup",
+				helpW:"Scegli i pezzi Bianchi", helpB:"Scegli i pezzi Neri",
+				helpD_setup:"Cambia livello di difficoltà", helpL_setup:"Cambia lingua",
+				helpEnter:"Avvia la partita",
+				helpD_game:"Cambia livello di difficoltà", helpL_game:"Cambia lingua",
+				helpT:"Mostra / Nascondi log mosse", helpU:"Annulla ultima mossa",
+				helpR:"Ricomincia la partita (ricarica)", helpQuestion:"Mostra questa guida" },
+				fr: { chooseColor:"♟ Choisissez votre Couleur ♟", language:"Langue", start:"DÉMARRER", whiteMove:"Au tour des Blancs.", blackMove:"Au tour des Noirs.", check:" (+)", checkmate:"ÉCHEC ET MAT ! Les {w} gagnent !", stalemate:"PAT ! Match nul.", draw:"NUL ! Matériel insuffisant.", level:"Niveau", easy:"Facile", medium:"Moyen", hard:"Difficile", expert:"Expert", showLog:"Voir Log", hideLog:"Cacher Log", undo:"Annuler", reset:"Réinit.", logTitle:"LOG COUPS", saveInfo:"Vous avez jusqu'à trois emplacements pour sauvegarder.<br/>Un emplacement occupé peut être chargé, écrasé ou supprimé. Choisissez bien.", slot:"Slot", empty:"Vide", confirmLoad:"Slot {n} : Voulez-vous charger la partie sauvegardée ?", confirmReplace:"Voulez-vous remplacer la sauvegarde précédente ?", confirmDelete:"Voulez-vous vraiment supprimer définitivement la sauvegarde du Slot {n} ?", white:"Blancs", black:"Noirs", pawn:"Pion", rook:"Tour", knight:"Cavalier", bishop:"Fou", queen:"Dame", king:"Roi",
+				helpTitle:"⌨ Raccourcis Clavier",
+				helpSectionGame:"Pendant la Partie", helpSectionSetup:"Écran de Configuration",
+				helpW:"Choisir les pièces Blanches", helpB:"Choisir les pièces Noires",
+				helpD_setup:"Changer la difficulté", helpL_setup:"Changer la langue",
+				helpEnter:"Démarrer la partie",
+				helpD_game:"Changer la difficulté", helpL_game:"Changer la langue",
+				helpT:"Afficher / Masquer le log", helpU:"Annuler le dernier coup",
+				helpR:"Recommencer la partie (recharger)", helpQuestion:"Afficher cette aide" },
+				es: { chooseColor:"♟ Elige tu Color ♟", language:"Idioma", start:"EMPEZAR", whiteMove:"Mueven las Blancas.", blackMove:"Mueven las Negras.", check:" (+)", checkmate:"¡JAQUE MATE! ¡Ganan las {w}!", stalemate:"¡AHOGADO! Es un empate.", draw:"¡EMPATE! Material insuficiente.", level:"Nivel", easy:"Fácil", medium:"Medio", hard:"Difícil", expert:"Experto", showLog:"Ver Log", hideLog:"Ocultar Log", undo:"Deshacer", reset:"Reiniciar", logTitle:"LOG MOVS", saveInfo:"Tienes hasta tres ranuras para guardar tu partida.<br/>Una ranura ocupada se puede cargar, sobrescribir o eliminar. Elige bien.", slot:"Ranura", empty:"Vacío", confirmLoad:"Ranura {n}: ¿Deseas cargar la partida guardada?", confirmReplace:"¿Deseas reemplazar el guardado anterior?", confirmDelete:"¿Seguro que quieres eliminar permanentemente el guardado de la Ranura {n}?", white:"Blancas", black:"Negras", pawn:"Peón", rook:"Torre", knight:"Caballo", bishop:"Alfil", queen:"Reina", king:"Rey",
+				helpTitle:"⌨ Atajos de Teclado",
+				helpSectionGame:"Durante la Partida", helpSectionSetup:"Pantalla de Configuración",
+				helpW:"Elegir piezas Blancas", helpB:"Elegir piezas Negras",
+				helpD_setup:"Cambiar dificultad", helpL_setup:"Cambiar idioma",
+				helpEnter:"Iniciar la partida",
+				helpD_game:"Cambiar dificultad", helpL_game:"Cambiar idioma",
+				helpT:"Mostrar / Ocultar log", helpU:"Deshacer último movimiento",
+				helpR:"Reiniciar partida (recargar)", helpQuestion:"Mostrar esta ayuda" },
+				de: { chooseColor:"♟ Wähle deine Farbe ♟", language:"Sprache", start:"STARTEN", whiteMove:"Weiß ist am Zug.", blackMove:"Schwarz ist am Zug.", check:" (+)", checkmate:"SCHACHMATT! {w} gewinnt!", stalemate:"PATT! Unentschieden.", draw:"REMIS! Unzureichendes Material.", level:"Stufe", easy:"Leicht", medium:"Mittel", hard:"Schwer", expert:"Experte", showLog:"Log zeigen", hideLog:"Log ausblenden", undo:"Rückgängig", reset:"Neustart", logTitle:"ZUG-LOG", saveInfo:"Sie haben bis zu drei Slots zum Speichern.<br/>Ein belegter Slot kann geladen, überschrieben oder gelöscht werden. Wählen Sie weise.", slot:"Slot", empty:"Leer", confirmLoad:"Slot {n}: Möchten Sie das gespeicherte Spiel laden?", confirmReplace:"Möchten Sie den vorherigen Speicherstand ersetzen?", confirmDelete:"Sind Sie sicher, dass Sie Slot {n} dauerhaft löschen möchten?", white:"Weiß", black:"Schwarz", pawn:"Bauer", rook:"Turm", knight:"Springer", bishop:"Läufer", queen:"Dame", king:"König",
+				helpTitle:"⌨ Tastaturkürzel",
+				helpSectionGame:"Während des Spiels", helpSectionSetup:"Einrichtungsbildschirm",
+				helpW:"Weiße Figuren wählen", helpB:"Schwarze Figuren wählen",
+				helpD_setup:"Schwierigkeitsgrad wechseln", helpL_setup:"Sprache wechseln",
+				helpEnter:"Spiel starten",
+				helpD_game:"Schwierigkeitsgrad wechseln", helpL_game:"Sprache wechseln",
+				helpT:"Zugprotokoll ein-/ausblenden", helpU:"Letzten Zug rückgängig machen",
+				helpR:"Spiel neu starten (neu laden)", helpQuestion:"Diese Hilfe anzeigen" },
+				pt: { chooseColor:"♟ Escolha a sua Cor ♟", language:"Idioma", start:"COMEÇAR", whiteMove:"Brancas jogam.", blackMove:"Negras jogam.", check:" (+)", checkmate:"XEQUE-MATE! As {w} vencem!", stalemate:"AFOGAMENTO! Empate.", draw:"EMPATE! Material insuficiente.", level:"Nível", easy:"Fácil", medium:"Médio", hard:"Difícil", expert:"Especialista", showLog:"Ver Log", hideLog:"Ocultar Log", undo:"Desfazer", reset:"Reiniciar", logTitle:"LOG LANÇ", saveInfo:"Você tem até três slots para salvar sua partida.<br/>Um slot ocupado pode ser carregado, substituído ou excluído. Escolha com cuidado.", slot:"Slot", empty:"Vazio", confirmLoad:"Slot {n}: Deseja carregar o jogo salvo?", confirmReplace:"Deseja substituir o salvamento anterior?", confirmDelete:"Tem certeza de que deseja excluir permanentemente o Slot {n}?", white:"Brancas", black:"Negras", pawn:"Peão", rook:"Torre", knight:"Cavalo", bishop:"Bispo", queen:"Rainha", king:"Rei",
+				helpTitle:"⌨ Atalhos de Teclado",
+				helpSectionGame:"Durante a Partida", helpSectionSetup:"Tela de Configuração",
+				helpW:"Escolher peças Brancas", helpB:"Escolher peças Negras",
+				helpD_setup:"Mudar nível de dificuldade", helpL_setup:"Mudar idioma",
+				helpEnter:"Iniciar a partida",
+				helpD_game:"Mudar nível de dificuldade", helpL_game:"Mudar idioma",
+				helpT:"Mostrar / Ocultar log de lances", helpU:"Desfazer último lance",
+				helpR:"Reiniciar partida (recarregar)", helpQuestion:"Mostrar esta ajuda" },
+				ro: { chooseColor:"♟ Alege Culoarea ta ♟", language:"Limbă", start:"ÎNCEPE", whiteMove:"Albul mută.", blackMove:"Negrul mută.", check:" (+)", checkmate:"ȘAH MAT! Câștigă {w}!", stalemate:"PAT! Remiză.", draw:"REMIZĂ! Material insuficient.", level:"Nivel", easy:"Ușor", medium:"Mediu", hard:"Greu", expert:"Expert", showLog:"Arată Log", hideLog:"Ascunde Log", undo:"Anulează", reset:"Resetare", logTitle:"LOG MUTĂRI", saveInfo:"Ai până la trei sloturi pentru a salva jocul.<br/>Un slot ocupat poate fi încărcat, suprascris sau șters. Alege cu înțelepciune.", slot:"Slot", empty:"Gol", confirmLoad:"Slot {n}: Vrei să încarci jocul salvat?", confirmReplace:"Vrei să înlocuiești salvarea anterioară?", confirmDelete:"Ești sigur că vrei să ștergi permanent Slot {n}?", white:"Alb", black:"Negru", pawn:"Pion", rook:"Turn", knight:"Cal", bishop:"Nebun", queen:"Regină", king:"Rege",
+				helpTitle:"⌨ Comenzi Rapide Tastatură",
+				helpSectionGame:"În Timpul Jocului", helpSectionSetup:"Ecran de Configurare",
+				helpW:"Alege piesele Albe", helpB:"Alege piesele Negre",
+				helpD_setup:"Schimbă dificultatea", helpL_setup:"Schimbă limba",
+				helpEnter:"Pornește jocul",
+				helpD_game:"Schimbă dificultatea", helpL_game:"Schimbă limba",
+				helpT:"Arată / Ascunde jurnalul", helpU:"Anulează ultima mutare",
+				helpR:"Resetează jocul (reîncarcă)", helpQuestion:"Arată acest ajutor" },
+				uk: { chooseColor:"♟ Оберіть свій Колір ♟", language:"Мова", start:"ПОЧАТИ", whiteMove:"Ходять білі.", blackMove:"Ходять чорні.", check:" (+)", checkmate:"ШАХ І МАТ! Перемагають {w}!", stalemate:"ПАТ! Нічия.", draw:"НІЧИЯ! Недостатньо матеріалу.", level:"Рівень", easy:"Легко", medium:"Середній", hard:"Важко", expert:"Експерт", showLog:"Показати лог", hideLog:"Сховати лог", undo:"Скасувати", reset:"Скинути", logTitle:"ЛОГ ХОДІВ", saveInfo:"У вас є до трьох слотів для збереження гри.<br/>Заповнений слот можна завантажити, перезаписати або видалити.", slot:"Слот", empty:"Порожньо", confirmLoad:"Слот {n}: Завантажити збережену гру?", confirmReplace:"Замінити попереднє збереження?", confirmDelete:"Ви впевнені, що хочете видалити Слот {n}?", white:"Білі", black:"Чорні", pawn:"Пішак", rook:"Тура", knight:"Кінь", bishop:"Слон", queen:"Ферзь", king:"Король",
+				helpTitle:"⌨ Гарячі Клавіші",
+				helpSectionGame:"Під Час Гри", helpSectionSetup:"Екран Налаштувань",
+				helpW:"Вибрати Білі фігури", helpB:"Вибрати Чорні фігури",
+				helpD_setup:"Змінити рівень складності", helpL_setup:"Змінити мову",
+				helpEnter:"Почати гру",
+				helpD_game:"Змінити рівень складності", helpL_game:"Змінити мову",
+				helpT:"Показати / Сховати журнал ходів", helpU:"Скасувати останній хід",
+				helpR:"Перезапустити гру (перезавантажити)", helpQuestion:"Показати цю довідку" },
+				el: { chooseColor:"♟ Διάλεξε το Χρώμα σου ♟", language:"Γλώσσα", start:"ΕΝΑΡΞΗ", whiteMove:"Κινούνται τα Λευκά.", blackMove:"Κινούνται τα Μαύρα.", check:" (+)", checkmate:"ΣΑΧΜΑΤ! Κερδίζουν τα {w}!", stalemate:"ΠΑΤ! Ισοπαλία.", draw:"ΙΣΟΠΑΛΙΑ! Ανεπαρκές υλικό.", level:"Επίπεδο", easy:"Εύκολο", medium:"Μέτριο", hard:"Δύσκολο", expert:"Ειδικός", showLog:"Εμφ. Log", hideLog:"Απόκρ. Log", undo:"Αναίρεση", reset:"Επαναφορά", logTitle:"LOG ΚΙΝΉΣΕΩΝ", saveInfo:"Έχετε έως τρεις θέσεις αποθήκευσης.<br/>Μια κατεχόμενη θέση μπορεί να φορτωθεί, αντικατασταθεί ή διαγραφεί.", slot:"Θέση", empty:"Κενό", confirmLoad:"Θέση {n}: Να φορτωθεί η αποθηκευμένη παρτίδα;", confirmReplace:"Να αντικατασταθεί η προηγούμενη αποθήκευση;", confirmDelete:"Σίγουρα διαγραφή Θέση {n};", white:"Λευκά", black:"Μαύρα", pawn:"Πιόνι", rook:"Πύργος", knight:"Ίππος", bishop:"Αξιωματικός", queen:"Βασίλισσα", king:"Βασιλιάς",
+				helpTitle:"⌨ Συντομεύσεις Πληκτρολογίου",
+				helpSectionGame:"Κατά τη Διάρκεια του Παιχνιδιού", helpSectionSetup:"Οθόνη Ρύθμισης",
+				helpW:"Επιλογή Λευκών κομματιών", helpB:"Επιλογή Μαύρων κομματιών",
+				helpD_setup:"Αλλαγή δυσκολίας", helpL_setup:"Αλλαγή γλώσσας",
+				helpEnter:"Έναρξη παιχνιδιού",
+				helpD_game:"Αλλαγή δυσκολίας", helpL_game:"Αλλαγή γλώσσας",
+				helpT:"Εμφάνιση / Απόκρυψη καταγραφής", helpU:"Αναίρεση τελευταίας κίνησης",
+				helpR:"Επαναφορά παιχνιδιού (επαναφόρτωση)", helpQuestion:"Εμφάνιση αυτής της βοήθειας" },
+				la: { chooseColor:"♟ Elige Colorem tuum ♟", language:"Lingua", start:"INCIPE", whiteMove:"Albi moventur.", blackMove:"Nigri moventur.", check:" (+)", checkmate:"SCACUS MATUS! {w} vincunt!", stalemate:"IMPASSE! Par est.", draw:"PAR! Materia insufficiens.", level:"Gradus", easy:"Facile", medium:"Medium", hard:"Difficile", expert:"Peritus", showLog:"Monstra Log", hideLog:"Absconde Log", undo:"Rescinde", reset:"Renovare", logTitle:"LOG MOTUUM", saveInfo:"Tres locos habes ad ludum servandum.<br/>Locus occupatus onerari, deleri, mutarive potest.", slot:"Locus", empty:"Vacuus", confirmLoad:"Locus {n}: Ludum servatum onerare vis?", confirmReplace:"Conservationem priorem substituere vis?", confirmDelete:"Locum {n} delere vis?", white:"Albi", black:"Nigri", pawn:"Pedes", rook:"Turris", knight:"Eques", bishop:"Episcopus", queen:"Regina", king:"Rex",
+				helpTitle:"⌨ Compendia Claviaturae",
+				helpSectionGame:"In Ludo", helpSectionSetup:"Tabella Praeparationis",
+				helpW:"Albos eligere", helpB:"Nigros eligere",
+				helpD_setup:"Gradum mutare", helpL_setup:"Linguam mutare",
+				helpEnter:"Ludum incipere",
+				helpD_game:"Gradum mutare", helpL_game:"Linguam mutare",
+				helpT:"Log ostendere / abscondere", helpU:"Motum ultimum rescindere",
+				helpR:"Ludum renovare (recarricare)", helpQuestion:"Hoc auxilium ostendere" },
+				zh: { chooseColor:"♟ 选择你的颜色 ♟", language:"语言", start:"开始", whiteMove:"白方走棋。", blackMove:"黑方走棋。", check:" (+)", checkmate:"将死！{w}获胜！", stalemate:"僵局！平局。", draw:"平局！子力不足。", level:"难度", easy:"简单", medium:"中等", hard:"困难", expert:"专家", showLog:"显示日志", hideLog:"隐藏日志", undo:"撤销", reset:"重置", logTitle:"走棋日志", saveInfo:"您最多可使用三个存档槽。<br/>已占用的槽可以加载、覆盖或删除。请慎重选择。", slot:"槽", empty:"空", confirmLoad:"槽 {n}：是否加载已保存的游戏？", confirmReplace:"是否替换之前的存档？", confirmDelete:"确定要永久删除槽 {n} 的存档吗？", white:"白方", black:"黑方", pawn:"兵", rook:"车", knight:"马", bishop:"象", queen:"后", king:"王",
+				helpTitle:"⌨ 键盘快捷键",
+				helpSectionGame:"游戏中", helpSectionSetup:"设置界面",
+				helpW:"选择白方棋子", helpB:"选择黑方棋子",
+				helpD_setup:"切换难度", helpL_setup:"切换语言",
+				helpEnter:"开始游戏",
+				helpD_game:"切换难度", helpL_game:"切换语言",
+				helpT:"显示 / 隐藏走棋记录", helpU:"撤销上一步",
+				helpR:"重新开始游戏（重新加载）", helpQuestion:"显示此帮助" },
+				ja: { chooseColor:"♟ 色を選んでください ♟", language:"言語", start:"スタート", whiteMove:"白の手番。", blackMove:"黒の手番。", check:" (+)", checkmate:"チェックメイト！{w}の勝ち！", stalemate:"ステイルメイト！引き分け。", draw:"引き分け！駒不足。", level:"レベル", easy:"簡単", medium:"普通", hard:"難しい", expert:"エキスパート", showLog:"ログ表示", hideLog:"ログ非表示", undo:"元に戻す", reset:"リセット", logTitle:"手順ログ", saveInfo:"ゲームを保存するスロットが3つあります。<br/>使用済みスロットは読込・上書き・削除が可能です。", slot:"スロット", empty:"空", confirmLoad:"スロット{n}：保存済みゲームを読み込みますか？", confirmReplace:"前の保存データを上書きしますか？", confirmDelete:"スロット{n}を完全に削除しますか？", white:"白", black:"黒", pawn:"ポーン", rook:"ルーク", knight:"ナイト", bishop:"ビショップ", queen:"クイーン", king:"キング",
+				helpTitle:"⌨ キーボードショートカット",
+				helpSectionGame:"ゲーム中", helpSectionSetup:"設定画面",
+				helpW:"白の駒を選択", helpB:"黒の駒を選択",
+				helpD_setup:"難易度を切り替え", helpL_setup:"言語を切り替え",
+				helpEnter:"ゲームを開始",
+				helpD_game:"難易度を切り替え", helpL_game:"言語を切り替え",
+				helpT:"手順ログの表示 / 非表示", helpU:"最後の手を元に戻す",
+				helpR:"ゲームをリセット（再読み込み）", helpQuestion:"このヘルプを表示" }
 			};
 			const LEVELS = [{name: 'Easy', val: 1, color: '#27ae60'}, {name: 'Medium', val: 2, color: '#2980b9'}, {name: 'Hard', val: 3, color: '#c0392b'}, {name: 'Expert', val: 4, color: '#8e44ad'}];
 			const LEVEL_KEYS = ['easy','medium','hard','expert'];
@@ -6023,6 +6922,9 @@ document.addEventListener('keydown', function(e) {
 				updateSaveUI();
 				if(typeof updateColorOverlayLabels === 'function'){
 					updateColorOverlayLabels();
+				}
+				if(document.getElementById('help-modal-overlay').classList.contains('open')){
+					renderHelpModal();
 				}
 			}
 
@@ -6720,9 +7622,65 @@ document.addEventListener('keydown', function(e) {
 				window.parent.postMessage('RELOAD_REQUEST','*');
 			}
 
+			function openHelp(){
+				renderHelpModal();
+				document.getElementById('help-modal-overlay').classList.add('open');
+			}
+
+			function closeHelp(){
+				document.getElementById('help-modal-overlay').classList.remove('open');
+			}
+
+			function renderHelpModal(){
+				document.getElementById('help-title').textContent = t('helpTitle');
+				const overlayOpen = document.getElementById('color-select-overlay').style.display !== 'none';
+				let html = '';
+				if(overlayOpen){
+					html += \`<div class="help-section-title">\${t('helpSectionSetup')}</div>\`;
+					html += row('W', t('helpW'));
+					html += row('B', t('helpB'));
+					html += row('D', t('helpD_setup'));
+					html += row('L', t('helpL_setup'));
+					html += row('Enter', t('helpEnter'));
+				}else{
+					html += \`<div class="help-section-title">\${t('helpSectionGame')}</div>\`;
+					html += row('D', t('helpD_game'));
+					html += row('L', t('helpL_game'));
+					html += row('T', t('helpT'));
+					html += row('U', t('helpU'));
+					html += row('R', t('helpR'));
+				}
+				html += \`<div class="help-section-title" style="margin-top:16px">─</div>\`;
+				html += row('?', t('helpQuestion'));
+				document.getElementById('help-body').innerHTML = html;
+			}
+
+			function row(key, desc){
+				return \`<div class="help-row"><span class="help-key">\${key}</span><span class="help-desc">\${desc}</span></div>\`;
+			}
+
+			document.getElementById('help-modal-overlay').addEventListener('click', function(e){
+				if(e.target === this){
+					closeHelp();
+				}
+			});
+
 			document.addEventListener("keydown", e => {
 				const overlayOpen = document.getElementById('color-select-overlay').style.display !== 'none';
 				const key = e.key.toLowerCase();
+				if(key === 'escape'){
+					closeHelp();
+					return;
+				}
+				if(e.key === '?'){
+					const helpOpen = document.getElementById('help-modal-overlay').classList.contains('open');
+					if(helpOpen){
+						closeHelp();
+					}else{
+						openHelp();
+					}
+					return;
+				}
 				if(overlayOpen){
 					if(key === 'w'){
 						selectColor('W');
@@ -7015,9 +7973,107 @@ document.addEventListener('keydown', function(e) {
 			*{
 				-webkit-tap-highlight-color: transparent;
 			}
+			#help-modal-overlay{
+				display: none;
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: rgba(0,0,0,0.65);
+				z-index: 99999;
+				justify-content: center;
+				align-items: center;
+			}
+			#help-modal-overlay.open{
+				display: flex;
+			}
+			#help-modal{
+				background: #1e2a1e;
+				border: 2px solid #3a5a3a;
+				border-radius: 14px;
+				padding: 28px 32px 24px;
+				max-width: 460px;
+				width: 92%;
+				box-shadow: 0 16px 48px rgba(0,0,0,0.8);
+				position: relative;
+				max-height: 90vh;
+				overflow-y: auto;
+			}
+			#help-modal h2{
+				margin: 0 0 18px;
+				color: var(--accent);
+				font-size: 1.1rem;
+				text-align: center;
+				letter-spacing: 2px;
+				text-transform: uppercase;
+			}
+			.help-section-title{
+				color: #7abf7a;
+				font-size: 0.7rem;
+				font-weight: bold;
+				letter-spacing: 1.5px;
+				text-transform: uppercase;
+				border-bottom: 1px solid #3a5a3a;
+				padding-bottom: 4px;
+				margin: 14px 0 8px;
+			}
+			.help-row{
+				display: flex;
+				align-items: flex-start;
+				gap: 12px;
+				margin-bottom: 8px;
+			}
+			.help-key{
+				background: #2e4a2e;
+				border: 2px solid #5a8a5a;
+				border-bottom-width: 4px;
+				border-radius: 6px;
+				color: #c8f0a0;
+				font-family: monospace;
+				font-weight: bold;
+				font-size: 0.85rem;
+				min-width: 38px;
+				height: 32px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				padding: 0 6px;
+				flex-shrink: 0;
+				box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+				white-space: nowrap;
+			}
+			.help-desc{
+				color: #d0ecd0;
+				font-size: 0.82rem;
+				line-height: 1.45;
+				padding-top: 6px;
+			}
+			#help-close-btn{
+				position: absolute;
+				top: 12px;
+				right: 14px;
+				background: none;
+				border: none;
+				color: #7a9a7a;
+				font-size: 1.4rem;
+				cursor: pointer;
+				line-height: 1;
+				padding: 0;
+			}
+			#help-close-btn:hover{
+				color: white;
+			}
 		</style>
 	</head>
 	<body>
+		<div id="help-modal-overlay">
+			<div id="help-modal">
+				<button id="help-close-btn" onclick="closeHelp()">✕</button>
+				<h2 id="help-title">⌨ Keyboard Shortcuts</h2>
+				<div id="help-body"></div>
+			</div>
+		</div>
 		<div id="setup-menu">
 			<h1 style="margin-top:0" id="titleText">Checkers Elite</h1>
 			<p style="color: #aaa" id="subtitleText">Select a Rule Set</p>
@@ -7075,7 +8131,15 @@ document.addEventListener('keydown', function(e) {
 					youWin: "You Win! CPU is blocked.",
 					blackWins: "GAME OVER! Black Wins.",
 					victory: "VICTORY! You defeated the CPU.",
-					variants: {int:"International",it:"Italian",en:"English/USA",br:"Brazilian",ru:"Russian",es:"Spanish",pool:"Pool",ca:"Canadian",tu:"Turkish"}
+					variants: {int:"International",it:"Italian",en:"English/USA",br:"Brazilian",ru:"Russian",es:"Spanish",pool:"Pool",ca:"Canadian",tu:"Turkish"},
+					helpTitle: "⌨ Keyboard Shortcuts",
+					helpSectionMenu: "Main Menu",
+					helpSectionGame: "During the Game",
+					helpL_menu: "Cycle language",
+					helpEnter_menu: "Start game",
+					helpL_game: "Cycle language",
+					helpE: "Exit to menu (reload)",
+					helpQuestion: "Show this help"
 				},
 				it: {
 					title: "Dama Elite",
@@ -7088,7 +8152,15 @@ document.addEventListener('keydown', function(e) {
 					youWin: "Hai vinto! La CPU è bloccata.",
 					blackWins: "GAME OVER! Vince il nero.",
 					victory: "VITTORIA! Hai sconfitto la CPU.",
-					variants: {int:"Internazionale",it:"Italiana",en:"Inglese/USA",br:"Brasiliana",ru:"Russa",es:"Spagnola",pool:"Pool",ca:"Canadese",tu:"Turca"}
+					variants: {int:"Internazionale",it:"Italiana",en:"Inglese/USA",br:"Brasiliana",ru:"Russa",es:"Spagnola",pool:"Pool",ca:"Canadese",tu:"Turca"},
+					helpTitle: "⌨ Tasti di Scelta Rapida",
+					helpSectionMenu: "Menu Principale",
+					helpSectionGame: "Durante la Partita",
+					helpL_menu: "Cambia lingua",
+					helpEnter_menu: "Avvia la partita",
+					helpL_game: "Cambia lingua",
+					helpE: "Esci al menu (ricarica)",
+					helpQuestion: "Mostra questa guida"
 				},
 				fr: {
 					title: "Dames Élite",
@@ -7101,7 +8173,15 @@ document.addEventListener('keydown', function(e) {
 					youWin: "Vous gagnez ! La CPU est bloquée.",
 					blackWins: "GAME OVER ! Les noirs gagnent.",
 					victory: "VICTOIRE ! Vous avez battu la CPU.",
-					variants: {int:"International",it:"Italien",en:"Anglais/USA",br:"Brésilien",ru:"Russe",es:"Espagnol",pool:"Pool",ca:"Canadien",tu:"Turc"}
+					variants: {int:"International",it:"Italien",en:"Anglais/USA",br:"Brésilien",ru:"Russe",es:"Espagnol",pool:"Pool",ca:"Canadien",tu:"Turc"},
+					helpTitle: "⌨ Raccourcis Clavier",
+					helpSectionMenu: "Menu Principal",
+					helpSectionGame: "Pendant la Partie",
+					helpL_menu: "Changer la langue",
+					helpEnter_menu: "Démarrer la partie",
+					helpL_game: "Changer la langue",
+					helpE: "Retour au menu (recharger)",
+					helpQuestion: "Afficher cette aide"
 				},
 				es: {
 					title: "Damas Élite",
@@ -7114,7 +8194,15 @@ document.addEventListener('keydown', function(e) {
 					youWin: "¡Ganaste! La CPU está bloqueada.",
 					blackWins: "¡GAME OVER! Ganan las negras.",
 					victory: "¡VICTORIA! Derrotaste a la CPU.",
-					variants: {int:"Internacional",it:"Italiano",en:"Inglés/USA",br:"Brasileño",ru:"Ruso",es:"Español",pool:"Pool",ca:"Canadiense",tu:"Turco"}
+					variants: {int:"Internacional",it:"Italiano",en:"Inglés/USA",br:"Brasileño",ru:"Ruso",es:"Español",pool:"Pool",ca:"Canadiense",tu:"Turco"},
+					helpTitle: "⌨ Atajos de Teclado",
+					helpSectionMenu: "Menú Principal",
+					helpSectionGame: "Durante la Partida",
+					helpL_menu: "Cambiar idioma",
+					helpEnter_menu: "Iniciar la partida",
+					helpL_game: "Cambiar idioma",
+					helpE: "Volver al menú (recargar)",
+					helpQuestion: "Mostrar esta ayuda"
 				},
 				de: {
 					title: "Dame Elite",
@@ -7127,7 +8215,15 @@ document.addEventListener('keydown', function(e) {
 					youWin: "Du gewinnst! Die CPU ist blockiert.",
 					blackWins: "GAME OVER! Schwarz gewinnt.",
 					victory: "SIEG! Du hast die CPU besiegt.",
-					variants: {int:"International",it:"Italienisch",en:"Englisch/USA",br:"Brasilianisch",ru:"Russisch",es:"Spanisch",pool:"Pool",ca:"Kanadisch",tu:"Türkisch"}
+					variants: {int:"International",it:"Italienisch",en:"Englisch/USA",br:"Brasilianisch",ru:"Russisch",es:"Spanisch",pool:"Pool",ca:"Kanadisch",tu:"Türkisch"},
+					helpTitle: "⌨ Tastaturkürzel",
+					helpSectionMenu: "Hauptmenü",
+					helpSectionGame: "Während des Spiels",
+					helpL_menu: "Sprache wechseln",
+					helpEnter_menu: "Spiel starten",
+					helpL_game: "Sprache wechseln",
+					helpE: "Zurück zum Menü (neu laden)",
+					helpQuestion: "Diese Hilfe anzeigen"
 				},
 				pt: {
 					title: "Damas Elite",
@@ -7140,7 +8236,15 @@ document.addEventListener('keydown', function(e) {
 					youWin: "Você ganhou! A CPU está bloqueada.",
 					blackWins: "GAME OVER! As pretas vencem.",
 					victory: "VITÓRIA! Você derrotou a CPU.",
-					variants: {int:"Internacional",it:"Italiana",en:"Inglesa/EUA",br:"Brasileira",ru:"Russa",es:"Espanhola",pool:"Pool",ca:"Canadense",tu:"Turca"}
+					variants: {int:"Internacional",it:"Italiana",en:"Inglesa/EUA",br:"Brasileira",ru:"Russa",es:"Espanhola",pool:"Pool",ca:"Canadense",tu:"Turca"},
+					helpTitle: "⌨ Atalhos de Teclado",
+					helpSectionMenu: "Menu Principal",
+					helpSectionGame: "Durante a Partida",
+					helpL_menu: "Mudar idioma",
+					helpEnter_menu: "Iniciar a partida",
+					helpL_game: "Mudar idioma",
+					helpE: "Voltar ao menu (recarregar)",
+					helpQuestion: "Mostrar esta ajuda"
 				},
 				ro: {
 					title: "Dame Elită",
@@ -7153,7 +8257,15 @@ document.addEventListener('keydown', function(e) {
 					youWin: "Ai câștigat! CPU este blocată.",
 					blackWins: "GAME OVER! Negrele câștigă.",
 					victory: "VICTORIE! Ai învins CPU.",
-					variants: {int:"Internațional",it:"Italian",en:"Englezesc/SUA",br:"Brazilian",ru:"Rusesc",es:"Spaniol",pool:"Pool",ca:"Canadian",tu:"Turcesc"}
+					variants: {int:"Internațional",it:"Italian",en:"Englezesc/SUA",br:"Brazilian",ru:"Rusesc",es:"Spaniol",pool:"Pool",ca:"Canadian",tu:"Turcesc"},
+					helpTitle: "⌨ Comenzi Rapide Tastatură",
+					helpSectionMenu: "Meniu Principal",
+					helpSectionGame: "În Timpul Jocului",
+					helpL_menu: "Schimbă limba",
+					helpEnter_menu: "Pornește jocul",
+					helpL_game: "Schimbă limba",
+					helpE: "Înapoi la meniu (reîncarcă)",
+					helpQuestion: "Arată acest ajutor"
 				},
 				uk: {
 					title: "Шашки Еліт",
@@ -7166,7 +8278,15 @@ document.addEventListener('keydown', function(e) {
 					youWin: "Ти виграв! CPU заблокована.",
 					blackWins: "GAME OVER! Чорні виграють.",
 					victory: "ПЕРЕМОГА! Ти переміг CPU.",
-					variants: {int:"Міжнародні",it:"Італійські",en:"Англійські/США",br:"Бразильські",ru:"Російські",es:"Іспанські",pool:"Пул",ca:"Канадські",tu:"Турецькі"}
+					variants: {int:"Міжнародні",it:"Італійські",en:"Англійські/США",br:"Бразильські",ru:"Російські",es:"Іспанські",pool:"Пул",ca:"Канадські",tu:"Турецькі"},
+					helpTitle: "⌨ Гарячі Клавіші",
+					helpSectionMenu: "Головне Меню",
+					helpSectionGame: "Під Час Гри",
+					helpL_menu: "Змінити мову",
+					helpEnter_menu: "Почати гру",
+					helpL_game: "Змінити мову",
+					helpE: "Вийти в меню (перезавантажити)",
+					helpQuestion: "Показати цю довідку"
 				},
 				el: {
 					title: "Ντάμα Ελίτ",
@@ -7179,7 +8299,15 @@ document.addEventListener('keydown', function(e) {
 					youWin: "Κερδίσατε! Η CPU μπλοκαρίστηκε.",
 					blackWins: "GAME OVER! Νικούν τα μαύρα.",
 					victory: "ΝΙΚΗ! Νικήσατε την CPU.",
-					variants: {int:"Διεθνές",it:"Ιταλικό",en:"Αγγλικό/ΗΠΑ",br:"Βραζιλιάνικο",ru:"Ρωσικό",es:"Ισπανικό",pool:"Pool",ca:"Καναδικό",tu:"Τουρκικό"}
+					variants: {int:"Διεθνές",it:"Ιταλικό",en:"Αγγλικό/ΗΠΑ",br:"Βραζιλιάνικο",ru:"Ρωσικό",es:"Ισπανικό",pool:"Pool",ca:"Καναδικό",tu:"Τουρκικό"},
+					helpTitle: "⌨ Συντομεύσεις Πληκτρολογίου",
+					helpSectionMenu: "Κύριο Μενού",
+					helpSectionGame: "Κατά τη Διάρκεια του Παιχνιδιού",
+					helpL_menu: "Αλλαγή γλώσσας",
+					helpEnter_menu: "Έναρξη παιχνιδιού",
+					helpL_game: "Αλλαγή γλώσσας",
+					helpE: "Επιστροφή στο μενού (επαναφόρτωση)",
+					helpQuestion: "Εμφάνιση αυτής της βοήθειας"
 				},
 				la: {
 					title: "Latrunculorum Elitae",
@@ -7192,7 +8320,15 @@ document.addEventListener('keydown', function(e) {
 					youWin: "Vincis! CPU impedita est.",
 					blackWins: "FINIS LUDI! Nigri vincunt.",
 					victory: "VICTORIA! CPU vicisti.",
-					variants: {int:"Internationalis",it:"Italica",en:"Anglica/USA",br:"Brasiliensis",ru:"Russica",es:"Hispanica",pool:"Pool",ca:"Canadensis",tu:"Turcica"}
+					variants: {int:"Internationalis",it:"Italica",en:"Anglica/USA",br:"Brasiliensis",ru:"Russica",es:"Hispanica",pool:"Pool",ca:"Canadensis",tu:"Turcica"},
+					helpTitle: "⌨ Compendia Claviaturae",
+					helpSectionMenu: "Tabella Principalis",
+					helpSectionGame: "In Ludo",
+					helpL_menu: "Linguam mutare",
+					helpEnter_menu: "Ludum incipere",
+					helpL_game: "Linguam mutare",
+					helpE: "Revertere ad electionem (recarricare)",
+					helpQuestion: "Hoc auxilium ostendere"
 				},
 				zh: {
 					title: "精英跳棋",
@@ -7205,7 +8341,15 @@ document.addEventListener('keydown', function(e) {
 					youWin: "你赢了！CPU被封堵。",
 					blackWins: "游戏结束！黑方获勝。",
 					victory: "胜利！你击败了CPU。",
-					variants: {int:"国际",it:"意大利",en:"英式/美式",br:"巴西",ru:"俄罗斯",es:"西班牙",pool:"池式",ca:"加拿大",tu:"土耳其"}
+					variants: {int:"国际",it:"意大利",en:"英式/美式",br:"巴西",ru:"俄罗斯",es:"西班牙",pool:"池式",ca:"加拿大",tu:"土耳其"},
+					helpTitle: "⌨ 键盘快捷键",
+					helpSectionMenu: "主菜单",
+					helpSectionGame: "游戏中",
+					helpL_menu: "切换语言",
+					helpEnter_menu: "开始游戏",
+					helpL_game: "切换语言",
+					helpE: "返回菜单（重新加载）",
+					helpQuestion: "显示此帮助"
 				},
 				ja: {
 					title: "エリートチェッカーズ",
@@ -7218,7 +8362,15 @@ document.addEventListener('keydown', function(e) {
 					youWin: "あなたの勝ちです！CPUはブロックされました。",
 					blackWins: "ゲームオーバー！黒の勝ちです。",
 					victory: "勝利！CPUを倒しました。",
-					variants: {int:"国際",it:"イタリア",en:"英国/米国",br:"ブラジル",ru:"ロシア",es:"スペイン",pool:"プール",ca:"カナダ",tu:"トルコ"}
+					variants: {int:"国際",it:"イタリア",en:"英国/米国",br:"ブラジル",ru:"ロシア",es:"スペイン",pool:"プール",ca:"カナダ",tu:"トルコ"},
+					helpTitle: "⌨ キーボードショートカット",
+					helpSectionMenu: "メインメニュー",
+					helpSectionGame: "ゲーム中",
+					helpL_menu: "言語を切り替え",
+					helpEnter_menu: "ゲームを開始",
+					helpL_game: "言語を切り替え",
+					helpE: "メニューへ戻る（再読み込み）",
+					helpQuestion: "このヘルプを表示"
 				}
 			};
 
@@ -7247,9 +8399,12 @@ document.addEventListener('keydown', function(e) {
 				if(statusEl){
 					if(statusEl.textContent.includes('White') || statusEl.textContent.includes(TRANSLATIONS[LANG_KEYS[currentLangIndex]].whiteMove)){
 						statusEl.textContent = t('whiteMove');
-					} else {
+					}else{
 						statusEl.textContent = t('blackMove');
 					}
+				}
+				if(document.getElementById('help-modal-overlay').classList.contains('open')){
+					renderHelpModal();
 				}
 			}
 
@@ -7505,7 +8660,58 @@ document.addEventListener('keydown', function(e) {
 				selected = null;
 			}
 
+			function openHelp(){
+				renderHelpModal();
+				document.getElementById('help-modal-overlay').classList.add('open');
+			}
+
+			function closeHelp(){
+				document.getElementById('help-modal-overlay').classList.remove('open');
+			}
+
+			function renderHelpModal(){
+				const lang = TRANSLATIONS[LANG_KEYS[currentLangIndex]];
+				document.getElementById('help-title').textContent = lang.helpTitle;
+				const inGame = document.getElementById('game-container').style.display === 'flex';
+				let html = '';
+				if(inGame){
+					html += \`<div class="help-section-title">\${lang.helpSectionGame}</div>\`;
+					html += row('L', lang.helpL_game);
+					html += row('E', lang.helpE);
+				}else{
+					html += \`<div class="help-section-title">\${lang.helpSectionMenu}</div>\`;
+					html += row('L', lang.helpL_menu);
+					html += row('Enter', lang.helpEnter_menu);
+				}
+				html += \`<div class="help-section-title" style="margin-top:16px">─</div>\`;
+				html += row('?', lang.helpQuestion);
+				document.getElementById('help-body').innerHTML = html;
+			}
+
+			function row(key, desc){
+				return \`<div class="help-row"><span class="help-key">\${key}</span><span class="help-desc">\${desc}</span></div>\`;
+			}
+
+			document.getElementById('help-modal-overlay').addEventListener('click', function(e){
+				if(e.target === this){
+					closeHelp();
+				}
+			});
+
 			document.addEventListener("keydown", e => {
+				if(e.key === 'Escape'){
+					closeHelp();
+					return;
+				}
+				if(e.key === '?'){
+					const helpOpen = document.getElementById('help-modal-overlay').classList.contains('open');
+					if(helpOpen){
+						closeHelp();
+					}else{
+						openHelp();
+					}
+					return;
+				}
 				if(e.key.toLowerCase() === "e"){
 					window.parent.postMessage('RELOAD_REQUEST','*');
 				}else if(e.key.toLowerCase() === "l"){
@@ -7656,6 +8862,73 @@ document.addEventListener('keydown', function(e) {
 					border-top: none;
 				}
 			}
+			#helpOverlay{
+				display: none;
+				position: fixed;
+				inset: 0;
+				background: rgba(0,0,0,0.65);
+				z-index: 1000;
+				justify-content: center;
+				align-items: center;
+			}
+			#helpOverlay.visible{
+				display: flex;
+			}
+			#helpBox{
+				background: #1e1e1e;
+				color: #eee;
+				border-radius: 12px;
+				box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+				padding: 28px 32px 24px;
+				max-width: 480px;
+				width: 90%;
+				max-height: 85vh;
+				overflow-y: auto;
+				position: relative;
+				text-align: left;
+				border: 1px solid #444;
+			}
+			#helpBox h2{
+				margin: 0 0 18px;
+				font-size: 1.3em;
+				text-align: center;
+				color: #f1c40f;
+			}
+			#helpBox table{
+				width: 100%;
+				border-collapse: collapse;
+			}
+			#helpBox td{
+				padding: 7px 10px;
+				vertical-align: top;
+			}
+			#helpBox tr:nth-child(even) td{
+				background: #2a2a2a;
+				border-radius: 4px;
+			}
+			#helpBox .key{
+				font-family: monospace;
+				font-weight: bold;
+				font-size: 1.05em;
+				color: #c0392b;
+				white-space: nowrap;
+				width: 1%;
+			}
+			#helpCloseBtn{
+				position: absolute;
+				top: 12px;
+				right: 16px;
+				background: none;
+				border: none;
+				font-size: 1.5em;
+				cursor: pointer;
+				color: #aaa;
+				padding: 2px 6px;
+				line-height: 1;
+			}
+			#helpCloseBtn:hover{
+				color: #fff;
+			}
 		</style>
 	</head>
 	<body>
@@ -7673,6 +8946,13 @@ document.addEventListener('keydown', function(e) {
 					</div>
 					<button class="btn-lang" id="btnLang" onclick="nextLang()"></button>
 				</div>
+			</div>
+		</div>
+		<div id="helpOverlay" role="dialog" aria-modal="true" onclick="if(event.target===this){closeHelp();}">
+			<div id="helpBox">
+				<button id="helpCloseBtn" onclick="closeHelp()" aria-label="Close">✕</button>
+				<h2 id="helpTitle">Keyboard Shortcuts</h2>
+				<table id="helpTable"></table>
 			</div>
 		</div>
 		<script>
@@ -7707,6 +8987,27 @@ document.addEventListener('keydown', function(e) {
 				zh: { roll: "掷骰子", undo: "撤销", you: "你", ai: "人工智能", start: "掷骰子开始", move: "轮到你了！", aiMove: "AI正在行动..." },
 				ja: { roll: "サイコロを振る", undo: "戻す", you: "あなた", ai: "AI", start: "サイコロを振ってください", move: "あなたの番です！", aiMove: "AIが考えています..." }
 			};
+			const HELP_TITLE = {
+				en:"Keyboard Shortcuts", it:"Tasti di scelta rapida", fr:"Raccourcis clavier",
+				es:"Atajos de teclado", de:"Tastenkürzel", pt:"Atalhos de teclado",
+				ro:"Scurtături de tastatură", uk:"Клавіші швидкого доступу",
+				el:"Συντομεύσεις πληκτρολογίου", la:"Clavium compendia",
+				zh:"键盘快捷键", ja:"キーボードショートカット"
+			};
+			const HELP_SHORTCUTS = {
+				en:[["R","Roll the dice"],["U","Undo last move"],["L","Switch language"],["?","Show / hide this help"]],
+				it:[["R","Tira i dadi"],["U","Annulla l'ultima mossa"],["L","Cambia lingua"],["?","Mostra / nascondi questo aiuto"]],
+				fr:[["R","Lancer les dés"],["U","Annuler le dernier coup"],["L","Changer de langue"],["?","Afficher / masquer cette aide"]],
+				es:[["R","Tirar los dados"],["U","Deshacer el último movimiento"],["L","Cambiar idioma"],["?","Mostrar / ocultar esta ayuda"]],
+				de:[["R","Würfeln"],["U","Letzten Zug rückgängig machen"],["L","Sprache wechseln"],["?","Hilfe anzeigen / ausblenden"]],
+				pt:[["R","Lançar os dados"],["U","Desfazer o último movimento"],["L","Mudar idioma"],["?","Mostrar / ocultar esta ajuda"]],
+				ro:[["R","Aruncă zarurile"],["U","Anulează ultima mutare"],["L","Schimbă limba"],["?","Afișează / ascunde această ajutor"]],
+				uk:[["R","Кинути кубики"],["U","Скасувати останній хід"],["L","Змінити мову"],["?","Показати / приховати цю довідку"]],
+				el:[["R","Ρίξε τα ζάρια"],["U","Αναίρεση τελευταίας κίνησης"],["L","Αλλαγή γλώσσας"],["?","Εμφάνιση / απόκρυψη βοήθειας"]],
+				la:[["R","Aleam iace"],["U","Ultimum motum revertere"],["L","Linguam muta"],["?","Auxilium ostende / absconde"]],
+				zh:[["R","掷骰子"],["U","撤销上一步"],["L","切换语言"],["?","显示 / 隐藏帮助"]],
+				ja:[["R","サイコロを振る"],["U","直前の手を元に戻す"],["L","言語を切替"],["?","ヘルプを表示 / 非表示"]]
+			};
 			let currentLangIndex = 0;
 
 			function updateUI() {
@@ -7729,6 +9030,22 @@ document.addEventListener('keydown', function(e) {
 			function nextLang() {
 				currentLangIndex = (currentLangIndex + 1)%LANG_KEYS.length;
 				updateUI();
+				if(document.getElementById('helpOverlay').classList.contains('visible')){ updateHelpContent(); }
+			}
+
+			function openHelp(){
+				updateHelpContent();
+				document.getElementById("helpOverlay").classList.add("visible");
+			}
+
+			function closeHelp(){
+				document.getElementById("helpOverlay").classList.remove("visible");
+			}
+
+			function updateHelpContent(){
+				const lang = LANG_KEYS[currentLangIndex];
+				document.getElementById("helpTitle").textContent = HELP_TITLE[lang];
+				document.getElementById("helpTable").innerHTML = HELP_SHORTCUTS[lang].map(([k,d]) => \`<tr><td class="key">\${k}</td><td>\${d}</td></tr>\`).join("");
 			}
 
 			const CANVAS = document.getElementById('board');
@@ -7933,6 +9250,13 @@ document.addEventListener('keydown', function(e) {
 					undo();
 				}else if(e.key.toLowerCase() === "l"){
 					nextLang();
+				}else if(e.key === "?"){
+					const ov = document.getElementById("helpOverlay");
+					if(ov.classList.contains("visible")){
+						closeHelp();
+					}else{
+						openHelp();
+					}
 				}
 			});
 
@@ -8769,9 +10093,94 @@ document.addEventListener('keydown', function(e) {
 			.modal-btn:hover{
 				background: var(--wood-mid);
 			}
+			#helpOverlay{
+				display:none;
+				position:fixed;
+				inset:0;
+				background:rgba(0,0,0,0.72);
+				z-index:200;
+				justify-content:center;
+				align-items:center;
+			}
+			#helpOverlay.open{
+				display:flex;
+			}
+			#helpBox{
+				background:#2e1c08;
+				border:2px solid var(--wood-mid);
+				border-radius:8px;
+				padding:24px 28px;
+				max-width:520px;
+				width:92%;
+				max-height:88vh;
+				overflow-y:auto;
+				position:relative;
+				box-shadow:0 12px 60px rgba(0,0,0,0.8);
+				font-family:'Noto Serif JP',serif;
+				color:var(--paper);
+			}
+			#helpBox h2{
+				font-family:'Cinzel',serif;
+				margin:0 0 14px 0;
+				font-size:1em;
+				color:var(--wood-light);
+				border-bottom:1px solid var(--wood-dark);
+				padding-bottom:8px;
+				letter-spacing:.08em;
+			}
+			#helpBox table{
+				width:100%;
+				border-collapse:collapse;
+				font-size:0.88em;
+			}
+			#helpBox th{
+				text-align:left;
+				color:var(--wood-grain);
+				padding:4px 8px;
+				border-bottom:1px solid var(--wood-dark);
+			}
+			#helpBox td{
+				padding:5px 8px;
+				border-bottom:1px solid rgba(122,82,24,0.3);
+				vertical-align:top;
+			}
+			#helpBox td:first-child{
+				font-family:monospace;
+				font-weight:bold;
+				background:var(--wood-grain);
+				color:#1a0f00;
+				border-radius:3px;
+				white-space:nowrap;
+				width:1%;
+			}
+			#helpCloseX{
+				position:absolute;
+				top:10px;right:14px;
+				background:none;border:none;
+				font-size:1.4em;cursor:pointer;
+				color:var(--wood-grain);padding:0;line-height:1;
+			}
+			#helpCloseX:hover{
+				color:var(--wood-light);
+			}
 		</style>
 	</head>
 	<body>
+		<div id="helpOverlay" onclick="if(event.target===this){helpClose();}">
+			<div id="helpBox">
+				<button id="helpCloseX" onclick="helpClose()">&#x2715;</button>
+				<h2 id="helpH2">⌨ Keyboard Shortcuts</h2>
+				<table>
+					<thead>
+						<tr>
+							<th id="helpTh1">Key</th>
+							<th id="helpTh2">Action</th>
+						</tr>
+					</thead>
+					<tbody id="helpTbody"></tbody>
+				</table>
+			</div>
+		</div>
 		<h1>囲碁 · GO</h1>
 		<p class="subtitle">GAME OF GO · MCTS AI</p>
 		<div class="size-bar">
@@ -8855,6 +10264,114 @@ document.addEventListener('keydown', function(e) {
 			let board, koPoint, captures, currentPlayer, gameOver, consecutivePasses, lastPlaced, aiThinking;
 			const canvas = document.getElementById('goban');
 			const ctx = canvas.getContext('2d');
+			const HELP_DATA = {
+				en: { title:"⌨ Keyboard Shortcuts", k:"Key", a:"Action", rows:[
+					["P","Pass your turn"],
+					["R","Resign the game"],
+					["N","Start a new game"],
+					["L","Switch to the next language"],
+					["?","Show / hide this help window"]
+				]},
+				it: { title:"⌨ Scorciatoie da tastiera", k:"Tasto", a:"Azione", rows:[
+					["P","Passa il turno"],
+					["R","Abbandona la partita"],
+					["N","Inizia una nuova partita"],
+					["L","Passa alla lingua successiva"],
+					["?","Mostra / nascondi questa finestra di aiuto"]
+				]},
+				fr: { title:"⌨ Raccourcis clavier", k:"Touche", a:"Action", rows:[
+					["P","Passer votre tour"],
+					["R","Abandonner la partie"],
+					["N","Commencer une nouvelle partie"],
+					["L","Passer à la langue suivante"],
+					["?","Afficher / masquer cette fenêtre d'aide"]
+				]},
+				es: { title:"⌨ Atajos de teclado", k:"Tecla", a:"Acción", rows:[
+					["P","Pasar turno"],
+					["R","Rendirse"],
+					["N","Iniciar nueva partida"],
+					["L","Cambiar al idioma siguiente"],
+					["?","Mostrar / ocultar esta ventana de ayuda"]
+				]},
+				de: { title:"⌨ Tastaturkürzel", k:"Taste", a:"Aktion", rows:[
+					["P","Zug passen"],
+					["R","Spiel aufgeben"],
+					["N","Neues Spiel starten"],
+					["L","Zur nächsten Sprache wechseln"],
+					["?","Hilfefenster anzeigen / ausblenden"]
+				]},
+				pt: { title:"⌨ Atalhos de teclado", k:"Tecla", a:"Ação", rows:[
+					["P","Passar a vez"],
+					["R","Desistir da partida"],
+					["N","Iniciar nova partida"],
+					["L","Mudar para o próximo idioma"],
+					["?","Mostrar / ocultar esta janela de ajuda"]
+				]},
+				ro: { title:"⌨ Comenzi rapide de tastatură", k:"Tastă", a:"Acțiune", rows:[
+					["P","Pasează rândul"],
+					["R","Abandonează jocul"],
+					["N","Începe un joc nou"],
+					["L","Trece la limba următoare"],
+					["?","Arată / ascunde fereastra de ajutor"]
+				]},
+				uk: { title:"⌨ Гарячі клавіші", k:"Клавіша", a:"Дія", rows:[
+					["P","Пропустити хід"],
+					["R","Здатися"],
+					["N","Почати нову гру"],
+					["L","Перейти до наступної мови"],
+					["?","Показати / приховати вікно довідки"]
+				]},
+				el: { title:"⌨ Συντομεύσεις πληκτρολογίου", k:"Πλήκτρο", a:"Ενέργεια", rows:[
+					["P","Πάσο"],
+					["R","Παραίτηση"],
+					["N","Νέο παιχνίδι"],
+					["L","Επόμενη γλώσσα"],
+					["?","Εμφάνιση / απόκρυψη βοήθειας"]
+				]},
+				la: { title:"⌨ Compendium Clavium", k:"Clavis", a:"Effectus", rows:[
+					["P","Vicem tuam transi"],
+					["R","Ludo cede"],
+					["N","Ludum novum incipe"],
+					["L","Ad linguam proximam transi"],
+					["?","Hanc fenestram monstra / absconde"]
+				]},
+				zh: { title:"⌨ 键盘快捷键", k:"按键", a:"功能", rows:[
+					["P","跳过本轮"],
+					["R","认输"],
+					["N","开始新局"],
+					["L","切换到下一种语言"],
+					["?","显示 / 隐藏帮助窗口"]
+				]},
+				ja: { title:"⌨ キーボードショートカット", k:"キー", a:"操作", rows:[
+					["P","パス"],
+					["R","投了"],
+					["N","新しいゲームを開始"],
+					["L","次の言語に切り替える"],
+					["?","このヘルプを表示 / 非表示"]
+				]}
+			};
+
+			function helpOpen(){
+				var lang = LANG_KEYS[currentLangIndex];
+				var d = HELP_DATA[lang] || HELP_DATA['en'];
+				document.getElementById('helpH2').textContent = d.title;
+				document.getElementById('helpTh1').textContent = d.k;
+				document.getElementById('helpTh2').textContent = d.a;
+				var tb = document.getElementById('helpTbody');
+				tb.innerHTML = '';
+				d.rows.forEach(function(r){
+					var tr = document.createElement('tr');
+					var td1 = document.createElement('td'); td1.textContent = r[0];
+					var td2 = document.createElement('td'); td2.textContent = r[1];
+					tr.appendChild(td1); tr.appendChild(td2);
+					tb.appendChild(tr);
+				});
+				document.getElementById('helpOverlay').classList.add('open');
+			}
+
+			function helpClose(){
+				document.getElementById('helpOverlay').classList.remove('open');
+			}
 
 			function t(key){
 				return TRANSLATIONS[LANG_KEYS[currentLangIndex]][key] || TRANSLATIONS.en[key] || key;
@@ -8874,11 +10391,14 @@ document.addEventListener('keydown', function(e) {
 			}
 
 			function nextLang(){
-				currentLangIndex = (currentLangIndex + 1)%LANG_KEYS.length;
+				currentLangIndex = (currentLangIndex + 1)%(LANG_KEYS.length);
 				document.getElementById('btn-lang').innerHTML = FLAGS_SVG[currentLangIndex];
 				applyLang();
 				if(!gameOver && !aiThinking){
 					setStatus(currentPlayer === BLACK ? t('yourTurn') : t('aiThinking'));
+				}
+				if(document.getElementById('helpOverlay').classList.contains('open')){
+					helpOpen();
 				}
 			}
 
@@ -9375,6 +10895,12 @@ document.addEventListener('keydown', function(e) {
 					newGame();
 				}else if(e.key.toLowerCase() === "l"){
 					nextLang();
+				}else if(e.key === "?" || (e.shiftKey && e.code === "Slash")){
+					var ov = document.getElementById('helpOverlay');
+					if(ov.classList.contains('open')){ helpClose(); }else{ helpOpen(); }
+					e.preventDefault();
+				}else if(e.key === "Escape"){
+					helpClose();
 				}
 			});
 
@@ -9580,6 +11106,107 @@ document.addEventListener('keydown', function(e) {
 				outline: none !important;
 				box-shadow: none !important;
 			}
+			.help-overlay{
+				display: none;
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: rgba(0,0,0,0.45);
+				z-index: 1000;
+				align-items: center;
+				justify-content: center;
+			}
+			.help-overlay.show{
+				display: flex;
+			}
+			.help-modal{
+				background: rgba(255,255,255,0.97);
+				border-radius: 16px;
+				box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+				padding: 24px 28px 20px 28px;
+				max-width: 420px;
+				width: 92%;
+				position: relative;
+				animation: helpFadeIn 0.18s ease;
+			}
+			@keyframes helpFadeIn{
+				from{
+					opacity:0;
+					transform:scale(0.95);
+				}
+				to{
+					opacity:1;
+					transform:scale(1);
+				}
+			}
+			.help-modal h4{
+				color: #0075FF;
+				margin: 0 0 16px 0;
+				font-size: 1.1em;
+				text-align: center;
+				letter-spacing: 0.5px;
+				font-family: sans-serif;
+			}
+			.help-close{
+				position: absolute;
+				top: 12px; right: 14px;
+				background: none;
+				border: none;
+				font-size: 1.3em;
+				color: #999;
+				cursor: pointer;
+				padding: 2px 6px;
+				line-height: 1;
+				border-radius: 4px;
+				font-weight: bold;
+			}
+			.help-close:hover{
+				background: #f0f4ff;
+				color: #0075FF;
+			}
+			.help-table{
+				width: 100%;
+				border-collapse: collapse;
+				font-size: 0.92em;
+				font-family: sans-serif;
+			}
+			.help-table tr{
+				border-bottom: 1px solid #eee;
+			}
+			.help-table tr:last-child{
+				border-bottom: none;
+			}
+			.help-table td{
+				padding: 7px 6px;
+				vertical-align: middle;
+			}
+			.help-key{
+				font-family: monospace;
+				background: #f4f4f4;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				padding: 2px 8px;
+				font-size: 0.95em;
+				font-weight: bold;
+				color: #333;
+				white-space: nowrap;
+				display: inline-block;
+				min-width: 28px;
+				text-align: center;
+			}
+			.help-desc{
+				color: #444;
+				padding-left: 8px;
+			}
+			.help-hint{
+				text-align: center;
+				margin-top: 14px;
+				font-size: 0.78em;
+				color: #aaa;
+				font-family: sans-serif;
+			}
 		</style>
 	</head>
 	<body>
@@ -9660,6 +11287,31 @@ document.addEventListener('keydown', function(e) {
 					<button class="grayButtons step" onclick="changeGray(10)">+10</button>
 					<button class="grayButtons step" onclick="changeGray(20)">+20</button>
 				</div>
+			</div>
+		</div>
+		<div class="help-overlay" id="helpOverlay" onclick="closeHelp(event)">
+			<div class="help-modal">
+				<button class="help-close" onclick="toggleHelp()">✕</button>
+				<h4>Keyboard Shortcuts</h4>
+				<table class="help-table">
+					<tr><td><span class="help-key">A</span></td><td class="help-desc">Random color</td></tr>
+					<tr><td><span class="help-key">⇄</span></td><td class="help-desc">— (use button) Invert color</td></tr>
+					<tr><td><span class="help-key">K</span></td><td class="help-desc">Set Black (0, 0, 0)</td></tr>
+					<tr><td><span class="help-key">W</span></td><td class="help-desc">Set White (255, 255, 255)</td></tr>
+					<tr><td><span class="help-key">R</span></td><td class="help-desc">Set Red</td></tr>
+					<tr><td><span class="help-key">G</span></td><td class="help-desc">Set Green</td></tr>
+					<tr><td><span class="help-key">B</span></td><td class="help-desc">Set Blue</td></tr>
+					<tr><td><span class="help-key">C</span></td><td class="help-desc">Set Cyan</td></tr>
+					<tr><td><span class="help-key">M</span></td><td class="help-desc">Set Magenta</td></tr>
+					<tr><td><span class="help-key">Y</span></td><td class="help-desc">Set Yellow</td></tr>
+					<tr><td><span class="help-key">→</span></td><td class="help-desc">Brighten (+1 gray)</td></tr>
+					<tr><td><span class="help-key">←</span></td><td class="help-desc">Darken (−1 gray)</td></tr>
+					<tr><td><span class="help-key">↑</span></td><td class="help-desc">Show more controls</td></tr>
+					<tr><td><span class="help-key">↓</span></td><td class="help-desc">Show fewer controls</td></tr>
+					<tr><td><span class="help-key">Esc</span></td><td class="help-desc">Reload page</td></tr>
+					<tr><td><span class="help-key">?</span></td><td class="help-desc">Show / hide this help</td></tr>
+				</table>
+				<div class="help-hint">Press ? to close</div>
 			</div>
 		</div>
 		<script>
@@ -9919,56 +11571,53 @@ document.addEventListener('keydown', function(e) {
 				changeSetting(-1);
 			}
 
+			function toggleHelp(){
+				document.getElementById("helpOverlay").classList.toggle("show");
+			}
+
+			function closeHelp(e){
+				if(e.target === document.getElementById("helpOverlay")){
+					document.getElementById("helpOverlay").classList.remove("show");
+				}
+			}
+
 			document.addEventListener('keydown', function(e){
 				if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA'){
 					return;
 				}
-				switch(e.key.toLowerCase()){
-					case 'arrowup':
+				switch(e.key){
+					case '?':
+						toggleHelp();
+						break;
+					case 'ArrowUp':
 						e.preventDefault();
 						showMore();
 						break;
-					case 'arrowdown':
+					case 'ArrowDown':
 						e.preventDefault();
 						showLess();
 						break;
-					case 'escape':
-					case 'esc':
+					case 'Escape':
 						window.parent.postMessage('RELOAD_REQUEST','*');
 						break;
-					case 'a':
-						random();
-						break;
-					case 'k':
-						setColor(0, 0, 0);
-						break;
-					case 'r':
-						setColor(255, 0, 0);
-						break;
-					case 'g':
-						setColor(0, 255, 0);
-						break;
-					case 'b':
-						setColor(0, 0, 255);
-						break;
-					case 'c':
-						setColor(0, 255, 255);
-						break;
-					case 'm':
-						setColor(255, 0, 255);
-						break;
-					case 'y':
-						setColor(255, 255, 0);
-						break;
-					case 'w':
-						setColor(255, 255, 255);
-						break;
-					case 'arrowright':
+					case 'ArrowRight':
 						changeGray(1);
 						break;
-					case 'arrowleft':
+					case 'ArrowLeft':
 						changeGray(-1);
 						break;
+					default:
+						switch(e.key.toLowerCase()){
+							case 'a': random(); break;
+							case 'k': setColor(0, 0, 0); break;
+							case 'r': setColor(255, 0, 0); break;
+							case 'g': setColor(0, 255, 0); break;
+							case 'b': setColor(0, 0, 255); break;
+							case 'c': setColor(0, 255, 255); break;
+							case 'm': setColor(255, 0, 255); break;
+							case 'y': setColor(255, 255, 0); break;
+							case 'w': setColor(255, 255, 255); break;
+						}
 				}
 			});
 
@@ -11256,9 +12905,89 @@ document.addEventListener('keydown', function(e) {
 				margin: 0 10px;
 				cursor: pointer;
 			}
+			#helpOverlay{
+				display:none;
+				position:fixed;
+				top:0;left:0;width:100%;height:100%;
+				background:rgba(0,0,0,0.55);
+				z-index:9999;
+				justify-content:center;
+				align-items:center;
+			}
+			#helpOverlay.open{
+				display:flex;
+			}
+			#helpBox{
+				background:#FFFFF0;
+				border:2px solid #888;
+				border-radius:10px;
+				padding:24px 28px;
+				max-width:560px;
+				width:90%;
+				max-height:85vh;
+				overflow-y:auto;
+				position:relative;
+				box-shadow:0 8px 32px rgba(0,0,0,0.35);
+			}
+			#helpBox h2{
+				margin:0 0 14px 0;
+				font-size:1.1em;
+				color:#222;
+				border-bottom:1px solid #bbb;
+				padding-bottom:8px;
+			}
+			#helpBox table{
+				width:100%;
+				border-collapse:collapse;
+				font-size:0.91em;
+			}
+			#helpBox th{
+				text-align:left;
+				color:#555;
+				padding:4px 8px;
+				border-bottom:1px solid #ccc;
+			}
+			#helpBox td{
+				padding:5px 8px;
+				border-bottom:1px solid #eee;
+				vertical-align:top;
+			}
+			#helpBox td:first-child{
+				font-family:monospace;
+				font-weight:bold;
+				background:#FFFF7F;
+				border-radius:3px;
+				white-space:nowrap;
+				width:1%;
+			}
+			#helpCloseX{
+				position:absolute;
+				top:10px;right:14px;
+				background:none;border:none;
+				font-size:1.4em;cursor:pointer;
+				color:#666;padding:0;line-height:1;
+			}
+			#helpCloseX:hover{
+				color:#000;
+			}
 		</style>
 	</head>
 	<body>
+		<div id="helpOverlay" onclick="if(event.target===this){helpClose();}">
+			<div id="helpBox">
+				<button id="helpCloseX" onclick="helpClose()">&#x2715;</button>
+				<h2 id="helpH2"></h2>
+				<table>
+					<thead>
+						<tr>
+							<th id="helpTh1"></th>
+							<th id="helpTh2"></th>
+						</tr>
+					</thead>
+					<tbody id="helpTbody"></tbody>
+				</table>
+			</div>
+		</div>
 		<canvas id="scope"></canvas>
 		<div class="section-title" data-i18n="section_osc">OSCILLATOR &amp; ADDITIVE SYNTHESIS</div>
 			<div class="flex-column">
@@ -11300,7 +13029,7 @@ document.addEventListener('keydown', function(e) {
 			<button onclick="multiplyFREQUENCY_VALUE(0.5)">f/2</button>
 			<button onclick="multiplyFREQUENCY_VALUE(2)">f×2</button>
 			<button id="showingButton" onclick="toggleShowing()" data-i18n="btn_pro">Pro</button>
-			<button onclick="window.parent.postMessage('RELOAD_REQUEST','*');" data-i18n="btn_page">⟳ Page</button>
+			<button onclick="window.parent.postMessage('RELOAD_REQUEST','*');" data-i18n="btn_page">&#x27F3; Page</button>
 			<button id="translateBtn" onclick="nextLanguage()"><span id="flagIcon"></span></button>
 		</div>
 		<div class="flex-row" style="align-items: flex-start;">
@@ -11836,6 +13565,202 @@ document.addEventListener('keydown', function(e) {
 
 			let currentLangIndex = 0;
 
+			const HELP_DATA = {
+				en: { title:"Keyboard Shortcuts", k:"Key", a:"Action", rows:[
+					["A W S E D F T G Y H U J K","Play piano notes C4–C5 (white and black keys)"],
+					["P","Play / Stop the main oscillator"],
+					["I","Halve the current frequency (÷2)"],
+					["O","Double the current frequency (×2)"],
+					["L","Switch to the next language"],
+					["R","Reload the page"],
+					["Q","Toggle siren On / Off"],
+					["V","Toggle Basic / Pro view"],
+					["B","Cycle to next oscillator waveform"],
+					["N","Cycle to next siren type"],
+					["M","Cycle to next siren waveform"],
+					["?","Show / hide this help window"]
+				]},
+				it: { title:"Scorciatoie da tastiera", k:"Tasto", a:"Azione", rows:[
+					["A W S E D F T G Y H U J K","Suona le note del pianoforte da C4 a C5"],
+					["P","Avvia / Ferma l'oscillatore principale"],
+					["I","Dimezza la frequenza corrente (÷2)"],
+					["O","Raddoppia la frequenza corrente (×2)"],
+					["L","Passa alla lingua successiva"],
+					["R","Ricarica la pagina"],
+					["Q","Attiva / disattiva la sirena"],
+					["V","Alterna tra vista Base e Pro"],
+					["B","Passa alla forma d'onda successiva dell'oscillatore"],
+					["N","Passa al tipo di sirena successivo"],
+					["M","Passa alla forma d'onda sirena successiva"],
+					["?","Mostra / nascondi questa finestra di aiuto"]
+				]},
+				fr: { title:"Raccourcis clavier", k:"Touche", a:"Action", rows:[
+					["A W S E D F T G Y H U J K","Jouer les notes du piano C4–C5"],
+					["P","Lancer / Arrêter l'oscillateur principal"],
+					["I","Diviser la fréquence par 2 (÷2)"],
+					["O","Doubler la fréquence (×2)"],
+					["L","Passer à la langue suivante"],
+					["R","Recharger la page"],
+					["Q","Activer / désactiver la sirène"],
+					["V","Basculer entre vue Basique et Pro"],
+					["B","Passer à la prochaine forme d'onde"],
+					["N","Passer au prochain type de sirène"],
+					["M","Passer à la prochaine onde de sirène"],
+					["?","Afficher / masquer cette fenêtre d'aide"]
+				]},
+				es: { title:"Atajos de teclado", k:"Tecla", a:"Acción", rows:[
+					["A W S E D F T G Y H U J K","Tocar notas del piano C4–C5"],
+					["P","Iniciar / Detener el oscilador principal"],
+					["I","Dividir la frecuencia por 2 (÷2)"],
+					["O","Duplicar la frecuencia (×2)"],
+					["L","Cambiar al idioma siguiente"],
+					["R","Recargar la página"],
+					["Q","Activar / desactivar la sirena"],
+					["V","Alternar entre vista Básica y Pro"],
+					["B","Cambiar a la siguiente forma de onda"],
+					["N","Cambiar al siguiente tipo de sirena"],
+					["M","Cambiar a la siguiente onda de sirena"],
+					["?","Mostrar / ocultar esta ventana de ayuda"]
+				]},
+				de: { title:"Tastaturkürzel", k:"Taste", a:"Aktion", rows:[
+					["A W S E D F T G Y H U J K","Klaviertöne C4–C5 spielen"],
+					["P","Oszillator starten / stoppen"],
+					["I","Frequenz halbieren (÷2)"],
+					["O","Frequenz verdoppeln (×2)"],
+					["L","Zur nächsten Sprache wechseln"],
+					["R","Seite neu laden"],
+					["Q","Sirene ein- / ausschalten"],
+					["V","Zwischen Basis- und Pro-Ansicht wechseln"],
+					["B","Nächste Oszillator-Wellenform"],
+					["N","Nächster Sirenentyp"],
+					["M","Nächste Sirenen-Wellenform"],
+					["?","Hilfefenster anzeigen / ausblenden"]
+				]},
+				pt: { title:"Atalhos de teclado", k:"Tecla", a:"Ação", rows:[
+					["A W S E D F T G Y H U J K","Tocar notas do piano C4–C5"],
+					["P","Iniciar / Parar o oscilador principal"],
+					["I","Dividir a frequência por 2 (÷2)"],
+					["O","Dobrar a frequência (×2)"],
+					["L","Mudar para o próximo idioma"],
+					["R","Recarregar a página"],
+					["Q","Ativar / desativar a sirene"],
+					["V","Alternar entre vista Básica e Pro"],
+					["B","Próxima forma de onda do oscilador"],
+					["N","Próximo tipo de sirene"],
+					["M","Próxima forma de onda da sirene"],
+					["?","Mostrar / ocultar esta janela de ajuda"]
+				]},
+				ro: { title:"Comenzi rapide de tastatură", k:"Tastă", a:"Acțiune", rows:[
+					["A W S E D F T G Y H U J K","Cântă note de pian C4–C5"],
+					["P","Pornește / Oprește oscilatorul"],
+					["I","Înjumătățește frecvența (÷2)"],
+					["O","Dublează frecvența (×2)"],
+					["L","Trece la limba următoare"],
+					["R","Reîncarcă pagina"],
+					["Q","Activează / dezactivează sirena"],
+					["V","Comută între vizualizarea De bază și Pro"],
+					["B","Următoarea formă de undă"],
+					["N","Următorul tip de sirenă"],
+					["M","Următoarea undă de sirenă"],
+					["?","Arată / ascunde fereastra de ajutor"]
+				]},
+				uk: { title:"Гарячі клавіші", k:"Клавіша", a:"Дія", rows:[
+					["A W S E D F T G Y H U J K","Грати ноти піаніно C4–C5"],
+					["P","Запустити / Зупинити осцилятор"],
+					["I","Зменшити частоту вдвічі (÷2)"],
+					["O","Збільшити частоту вдвічі (×2)"],
+					["L","Перейти до наступної мови"],
+					["R","Перезавантажити сторінку"],
+					["Q","Увімкнути / вимкнути сирену"],
+					["V","Перемикати між базовим і Pro"],
+					["B","Наступна форма хвилі осцилятора"],
+					["N","Наступний тип сирени"],
+					["M","Наступна форма хвилі сирени"],
+					["?","Показати / приховати вікно довідки"]
+				]},
+				el: { title:"Συντομεύσεις πληκτρολογίου", k:"Πλήκτρο", a:"Ενέργεια", rows:[
+					["A W S E D F T G Y H U J K","Παίξε νότες πιάνου C4–C5"],
+					["P","Έναρξη / Διακοπή ταλαντωτή"],
+					["I","Μείωση συχνότητας κατά μισό (÷2)"],
+					["O","Διπλασιασμός συχνότητας (×2)"],
+					["L","Επόμενη γλώσσα"],
+					["R","Ανανέωση σελίδας"],
+					["Q","Ενεργοποίηση / απενεργοποίηση σειρήνας"],
+					["V","Εναλλαγή Βασικής / Pro προβολής"],
+					["B","Επόμενη μορφή κύματος"],
+					["N","Επόμενος τύπος σειρήνας"],
+					["M","Επόμενη μορφή κύματος σειρήνας"],
+					["?","Εμφάνιση / απόκρυψη βοήθειας"]
+				]},
+				la: { title:"Compendium Clavium", k:"Clavis", a:"Effectus", rows:[
+					["A W S E D F T G Y H U J K","Sona notas clavicordii C4–C5"],
+					["P","Incipe / Siste oscillatorem"],
+					["I","Frequentiam dimidio minue (÷2)"],
+					["O","Frequentiam duplica (×2)"],
+					["L","Ad linguam proximam transi"],
+					["R","Paginam renoua"],
+					["Q","Sirenam accende / extingue"],
+					["V","Inter aspectum Simplicem et Pro commuta"],
+					["B","Ad formam undae proximam transi"],
+					["N","Ad genus sirenae proximum transi"],
+					["M","Ad undae sirenae formam proximam transi"],
+					["?","Hanc fenestram monstra / absconde"]
+				]},
+				zh: { title:"键盘快捷键", k:"按键", a:"功能", rows:[
+					["A W S E D F T G Y H U J K","弹奏钢琴音符 C4–C5"],
+					["P","启动 / 停止振荡器"],
+					["I","将频率减半（÷2）"],
+					["O","将频率翻倍（×2）"],
+					["L","切换到下一种语言"],
+					["R","刷新页面"],
+					["Q","开启 / 关闭警报"],
+					["V","切换基础 / 专业视图"],
+					["B","切换到下一种振荡器波形"],
+					["N","切换到下一种警报类型"],
+					["M","切换到下一种警报波形"],
+					["?","显示 / 隐藏帮助窗口"]
+				]},
+				ja: { title:"キーボードショートカット", k:"キー", a:"操作", rows:[
+					["A W S E D F T G Y H U J K","ピアノの音符 C4–C5 を演奏する"],
+					["P","オシレーターを再生 / 停止"],
+					["I","周波数を半分にする（÷2）"],
+					["O","周波数を2倍にする（×2）"],
+					["L","次の言語に切り替える"],
+					["R","ページをリロード"],
+					["Q","サイレンをオン / オフ"],
+					["V","基本 / プロ表示を切り替える"],
+					["B","次のオシレーター波形"],
+					["N","次のサイレンタイプ"],
+					["M","次のサイレン波形"],
+					["?","このヘルプを表示 / 非表示"]
+				]}
+			};
+
+			function helpOpen(){
+				var lang = LANG_KEYS[currentLangIndex];
+				var d = HELP_DATA[lang] || HELP_DATA['en'];
+				document.getElementById('helpH2').textContent = d.title;
+				document.getElementById('helpTh1').textContent = d.k;
+				document.getElementById('helpTh2').textContent = d.a;
+				var tb = document.getElementById('helpTbody');
+				tb.innerHTML = '';
+				d.rows.forEach(function(r){
+					var tr = document.createElement('tr');
+					var td1 = document.createElement('td');
+					td1.textContent = r[0];
+					var td2 = document.createElement('td');
+					td2.textContent = r[1];
+					tr.appendChild(td1);
+					tr.appendChild(td2);
+					tb.appendChild(tr);
+				});
+				document.getElementById('helpOverlay').classList.add('open');
+			}
+
+			function helpClose(){
+				document.getElementById('helpOverlay').classList.remove('open');
+			}
+
 			function applyTranslation(langIndex){
 				const langKey = LANG_KEYS[langIndex];
 				const t = TRANSLATIONS[langKey];
@@ -11854,6 +13779,9 @@ document.addEventListener('keydown', function(e) {
 				sirenBtn.textContent = sirenIsOn ? t['btn_siren_off'] : t['btn_siren_on'];
 				const showBtn = document.getElementById('showingButton');
 				showBtn.textContent = basic ? t['btn_pro'] : t['btn_basic'];
+				if(document.getElementById('helpOverlay').classList.contains('open')){
+					helpOpen();
+				}
 			}
 
 			function nextLanguage(){
@@ -12225,6 +14153,18 @@ document.addEventListener('keydown', function(e) {
 							break;
 						}
 					}
+				}else if(e.key === "?" || (e.shiftKey && e.code === "Slash") || e.key === "Escape"){
+					if(e.key === "Escape"){
+						helpClose();
+					}else{
+						var ov = document.getElementById('helpOverlay');
+						if(ov.classList.contains('open')){
+							helpClose();
+						}else{
+							helpOpen();
+						}
+					}
+					e.preventDefault();
 				}
 			});
 
@@ -12471,6 +14411,105 @@ document.addEventListener('keydown', function(e) {
 			.blink{
 				animation: blink-effect 0.4s ease-in-out 2;
 			}
+			.help-overlay{
+				display: none;
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: rgba(0,0,0,0.45);
+				z-index: 1000;
+				align-items: center;
+				justify-content: center;
+			}
+			.help-overlay.show{
+				display: flex;
+			}
+			.help-modal{
+				background: white;
+				border-radius: 14px;
+				box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+				padding: 24px 28px 20px 28px;
+				max-width: 420px;
+				width: 92%;
+				position: relative;
+				animation: fadeIn 0.18s ease;
+			}
+			@keyframes fadeIn{
+				from{
+					opacity:0;
+					transform:scale(0.95);
+				}
+				to{
+					opacity:1;
+					transform:scale(1);
+				}
+			}
+			.help-modal h4{
+				color: #5c5cff;
+				margin: 0 0 16px 0;
+				font-size: 1.1em;
+				text-align: center;
+				letter-spacing: 0.5px;
+			}
+			.help-close{
+				position: absolute;
+				top: 12px;
+				right: 14px;
+				background: none;
+				border: none;
+				font-size: 1.3em;
+				color: #999;
+				cursor: pointer;
+				padding: 2px 6px;
+				line-height: 1;
+				border-radius: 4px;
+				font-weight: bold;
+			}
+			.help-close:hover{
+				background: #f0f0ff;
+				color: #5c5cff;
+			}
+			.help-table{
+				width: 100%;
+				border-collapse: collapse;
+				font-size: 0.92em;
+			}
+			.help-table tr{
+				border-bottom: 1px solid #eee;
+			}
+			.help-table tr:last-child{
+				border-bottom: none;
+			}
+			.help-table td{
+				padding: 8px 6px;
+				vertical-align: top;
+			}
+			.help-key{
+				font-family: monospace;
+				background: #f0f0f0;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				padding: 2px 8px;
+				font-size: 1em;
+				font-weight: bold;
+				color: #333;
+				white-space: nowrap;
+				display: inline-block;
+				min-width: 28px;
+				text-align: center;
+			}
+			.help-desc{
+				color: #444;
+				padding-left: 8px;
+			}
+			.help-hint{
+				text-align: center;
+				margin-top: 14px;
+				font-size: 0.78em;
+				color: #aaa;
+			}
 			@media (max-width: 400px){
 				.row-group{
 					gap: 5px;
@@ -12540,6 +14579,14 @@ document.addEventListener('keydown', function(e) {
 			</div>
 			<button type="button" class="btn-clear" onclick="clearFields()" data-key="clear">Clear Fields</button>
 		</div>
+		<div class="help-overlay" id="helpOverlay" onclick="closeHelp(event)">
+			<div class="help-modal" id="helpModal">
+				<button class="help-close" onclick="toggleHelp()" title="Close">✕</button>
+				<h4 data-key="helpTitle">Keyboard Shortcuts</h4>
+				<table class="help-table" id="helpTable"></table>
+				<div class="help-hint" data-key="helpHint">Press ? to close</div>
+			</div>
+		</div>
 		<script>
 			const TRANSLATIONS = {
 				English: {
@@ -12556,7 +14603,16 @@ document.addEventListener('keydown', function(e) {
 					error: "Error",
 					phDate: "dd/mm/yyyy",
 					phResult: "Result",
-					phExtended: "Extended date"
+					phExtended: "Extended date",
+					helpTitle: "Keyboard Shortcuts",
+					helpHint: "Press ? to close",
+					helpShortcuts: [
+						["S", "Show today's full date"],
+						["C", "Clear all fields"],
+						["R", "Reload the page"],
+						["L", "Switch to next language"],
+						["?", "Show / hide this help"]
+					]
 				},
 				Italiano: {
 					days: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
@@ -12572,7 +14628,16 @@ document.addEventListener('keydown', function(e) {
 					error: "Errore",
 					phDate: "gg/mm/aaaa",
 					phResult: "Risultato",
-					phExtended: "Data estesa"
+					phExtended: "Data estesa",
+					helpTitle: "Scorciatoie da Tastiera",
+					helpHint: "Premi ? per chiudere",
+					helpShortcuts: [
+						["S", "Mostra la data odierna completa"],
+						["C", "Cancella tutti i campi"],
+						["R", "Ricarica la pagina"],
+						["L", "Passa alla lingua successiva"],
+						["?", "Mostra / nascondi questa guida"]
+					]
 				},
 				Français: {
 					days: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
@@ -12588,7 +14653,16 @@ document.addEventListener('keydown', function(e) {
 					error: "Erreur",
 					phDate: "jj/mm/aaaa",
 					phResult: "Résultat",
-					phExtended: "Date étendue"
+					phExtended: "Date étendue",
+					helpTitle: "Raccourcis Clavier",
+					helpHint: "Appuyez sur ? pour fermer",
+					helpShortcuts: [
+						["S", "Afficher la date complète d'aujourd'hui"],
+						["C", "Effacer tous les champs"],
+						["R", "Recharger la page"],
+						["L", "Passer à la langue suivante"],
+						["?", "Afficher / masquer cette aide"]
+					]
 				},
 				Español: {
 					days: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
@@ -12604,7 +14678,16 @@ document.addEventListener('keydown', function(e) {
 					error: "Error",
 					phDate: "dd/mm/aaaa",
 					phResult: "Resultado",
-					phExtended: "Fecha extendida"
+					phExtended: "Fecha extendida",
+					helpTitle: "Atajos de Teclado",
+					helpHint: "Pulsa ? para cerrar",
+					helpShortcuts: [
+						["S", "Mostrar la fecha completa de hoy"],
+						["C", "Borrar todos los campos"],
+						["R", "Recargar la página"],
+						["L", "Cambiar al siguiente idioma"],
+						["?", "Mostrar / ocultar esta ayuda"]
+					]
 				},
 				Deutsch: {
 					days: ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
@@ -12620,7 +14703,16 @@ document.addEventListener('keydown', function(e) {
 					error: "Fehler",
 					phDate: "TT/MM/JJJJ",
 					phResult: "Ergebnis",
-					phExtended: "Erweitertes Datum"
+					phExtended: "Erweitertes Datum",
+					helpTitle: "Tastaturkürzel",
+					helpHint: "? drücken zum Schließen",
+					helpShortcuts: [
+						["S", "Heutiges vollständiges Datum anzeigen"],
+						["C", "Alle Felder leeren"],
+						["R", "Seite neu laden"],
+						["L", "Zur nächsten Sprache wechseln"],
+						["?", "Diese Hilfe ein- / ausblenden"]
+					]
 				},
 				Português: {
 					days: ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
@@ -12636,7 +14728,16 @@ document.addEventListener('keydown', function(e) {
 					error: "Erro",
 					phDate: "dd/mm/aaaa",
 					phResult: "Resultado",
-					phExtended: "Data estendida"
+					phExtended: "Data estendida",
+					helpTitle: "Atalhos de Teclado",
+					helpHint: "Prima ? para fechar",
+					helpShortcuts: [
+						["S", "Mostrar a data completa de hoje"],
+						["C", "Limpar todos os campos"],
+						["R", "Recarregar a página"],
+						["L", "Mudar para o próximo idioma"],
+						["?", "Mostrar / ocultar esta ajuda"]
+					]
 				},
 				Română: {
 					days: ["Duminică", "Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă"],
@@ -12652,7 +14753,16 @@ document.addEventListener('keydown', function(e) {
 					error: "Eroare",
 					phDate: "zz/ll/aaaa",
 					phResult: "Rezultat",
-					phExtended: "Data extinsă"
+					phExtended: "Data extinsă",
+					helpTitle: "Comenzi Rapide",
+					helpHint: "Apăsați ? pentru a închide",
+					helpShortcuts: [
+						["S", "Afișează data completă de azi"],
+						["C", "Șterge toate câmpurile"],
+						["R", "Reîncarcă pagina"],
+						["L", "Treci la limba următoare"],
+						["?", "Arată / ascunde acest ajutor"]
+					]
 				},
 				Українська: {
 					days: ["Неділя", "Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота"],
@@ -12668,7 +14778,16 @@ document.addEventListener('keydown', function(e) {
 					error: "Помилка",
 					phDate: "дд/мм/рррр",
 					phResult: "Результат",
-					phExtended: "Розширена дата"
+					phExtended: "Розширена дата",
+					helpTitle: "Клавіатурні Скорочення",
+					helpHint: "Натисніть ? щоб закрити",
+					helpShortcuts: [
+						["S", "Показати повну дату сьогодні"],
+						["C", "Очистити всі поля"],
+						["R", "Перезавантажити сторінку"],
+						["L", "Перейти до наступної мови"],
+						["?", "Показати / приховати цю довідку"]
+					]
 				},
 				Ελληνικά: {
 					days: ["Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο"],
@@ -12684,7 +14803,16 @@ document.addEventListener('keydown', function(e) {
 					error: "Σφάλμα",
 					phDate: "ηη/μμ/εεεε",
 					phResult: "Αποτέλεσμα",
-					phExtended: "Πλήρης ημερομηνία"
+					phExtended: "Πλήρης ημερομηνία",
+					helpTitle: "Συντομεύσεις Πληκτρολογίου",
+					helpHint: "Πατήστε ? για κλείσιμο",
+					helpShortcuts: [
+						["S", "Εμφάνιση πλήρους σημερινής ημερομηνίας"],
+						["C", "Καθαρισμός όλων των πεδίων"],
+						["R", "Επαναφόρτωση της σελίδας"],
+						["L", "Αλλαγή στην επόμενη γλώσσα"],
+						["?", "Εμφάνιση / απόκρυψη αυτής της βοήθειας"]
+					]
 				},
 				Latine: {
 					days: ["Dies Solis", "Dies Lunae", "Dies Martis", "Dies Mercurii", "Dies Iovis", "Dies Veneris", "Dies Saturni"],
@@ -12700,7 +14828,16 @@ document.addEventListener('keydown', function(e) {
 					error: "Error",
 					phDate: "dd/mm/aaaa",
 					phResult: "Exitus",
-					phExtended: "Data extensa"
+					phExtended: "Data extensa",
+					helpTitle: "Claves Auxiliares",
+					helpHint: "Preme ? ad claudendum",
+					helpShortcuts: [
+						["S", "Ostende datam hodiernam plenam"],
+						["C", "Dele omnia campia"],
+						["R", "Renoua paginam"],
+						["L", "Muta ad linguam proximam"],
+						["?", "Ostende / absconde hoc auxilium"]
+					]
 				},
 				中文: {
 					days: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"],
@@ -12716,7 +14853,16 @@ document.addEventListener('keydown', function(e) {
 					error: "错误",
 					phDate: "日/月/年",
 					phResult: "结果",
-					phExtended: "完整日期"
+					phExtended: "完整日期",
+					helpTitle: "键盘快捷键",
+					helpHint: "按 ? 关闭",
+					helpShortcuts: [
+						["S", "显示今天的完整日期"],
+						["C", "清除所有字段"],
+						["R", "重新加载页面"],
+						["L", "切换到下一种语言"],
+						["?", "显示 / 隐藏此帮助"]
+					]
 				},
 				日本語: {
 					days: ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"],
@@ -12732,7 +14878,16 @@ document.addEventListener('keydown', function(e) {
 					error: "エラー",
 					phDate: "日/月/年",
 					phResult: "結果",
-					phExtended: "詳細日付"
+					phExtended: "詳細日付",
+					helpTitle: "キーボードショートカット",
+					helpHint: "? を押して閉じる",
+					helpShortcuts: [
+						["S", "今日の完全な日付を表示"],
+						["C", "すべてのフィールドをクリア"],
+						["R", "ページを再読み込み"],
+						["L", "次の言語に切り替え"],
+						["?", "このヘルプを表示 / 非表示"]
+					]
 				}
 			};
 			const FLAGS_SVG = [
@@ -12798,6 +14953,7 @@ document.addEventListener('keydown', function(e) {
 					getFullTodayDate();
 				}
 				getDaysOfDifference(false);
+				buildHelpTable(lang);
 			}
 
 			function clearFields(){
@@ -12953,8 +15109,32 @@ document.addEventListener('keydown', function(e) {
 				}
 			}
 
+			function buildHelpTable(lang){
+				const t = TRANSLATIONS[lang];
+				const table = document.getElementById("helpTable");
+				table.innerHTML = "";
+				t.helpShortcuts.forEach(([key, desc]) => {
+					const tr = document.createElement("tr");
+					tr.innerHTML = \`<td><span class="help-key">\${key}</span></td><td class="help-desc">\${desc}</td>\`;
+					table.appendChild(tr);
+				});
+			}
+
+			function toggleHelp(){
+				const overlay = document.getElementById("helpOverlay");
+				overlay.classList.toggle("show");
+			}
+
+			function closeHelp(e){
+				if(e.target === document.getElementById("helpOverlay")){
+					document.getElementById("helpOverlay").classList.remove("show");
+				}
+			}
+
 			document.addEventListener("keydown", e => {
-				if(e.key.toLowerCase() === "s"){
+				if(e.key === "?"){
+					toggleHelp();
+				}else if(e.key.toLowerCase() === "s"){
 					handleAction('getFullTodayDate');
 				}else if(e.key.toLowerCase() === "c"){
 					clearFields();
@@ -13341,9 +15521,114 @@ document.addEventListener('keydown', function(e) {
 				outline: none !important;
 				-webkit-tap-highlight-color: transparent;
 			}
+			#helpOverlay{
+				display:none;
+				position:fixed;
+				top:0;left:0;width:100%;height:100%;
+				background:rgba(0,0,0,0.55);
+				z-index:9999;
+				justify-content:center;
+				align-items:center;
+			}
+			#helpOverlay.open{
+				display:flex;
+			}
+			#helpBox{
+				background:#FFFFF0;
+				border:2px solid #888;
+				border-radius:10px;
+				padding:24px 28px;
+				max-width:580px;
+				width:92%;
+				max-height:88vh;
+				overflow-y:auto;
+				position:relative;
+				box-shadow:0 8px 32px rgba(0,0,0,0.35);
+				font-family:sans-serif;
+			}
+			#helpBox h2{
+				margin:0 0 14px 0;
+				font-size:1.1em;
+				color:#222;
+				border-bottom:1px solid #bbb;
+				padding-bottom:8px;
+			}
+			#helpBox table{
+				width:100%;
+				border-collapse:collapse;
+				font-size:0.91em;
+			}
+			#helpBox th{
+				text-align:left;
+				color:#555;
+				padding:4px 8px;
+				border-bottom:1px solid #ccc;
+			}
+			#helpBox td{
+				padding:5px 8px;
+				border-bottom:1px solid #eee;
+				vertical-align:top;
+			}
+			#helpBox td:first-child{
+				font-family:monospace;
+				font-weight:bold;
+				background:#FFFF7F;
+				border-radius:3px;
+				white-space:nowrap;
+				width:1%;
+			}
+			#helpCloseX{
+				position:absolute;
+				top:10px;right:14px;
+				background:none;
+				border:none;
+				font-size:1.4em;
+				cursor:pointer;
+				color:#666;
+				padding:0;
+				line-height:1;
+			}
+			#helpCloseX:hover{
+				color:#000;
+			}
 		</style>
 	</head>
 	<body>
+		<div id="helpOverlay" onclick="if(event.target===this){helpClose();}">
+			<div id="helpBox">
+				<button id="helpCloseX" onclick="helpClose()">&#x2715;</button>
+				<h2>&#9000; Keyboard Shortcuts</h2>
+				<table>
+					<thead>
+						<tr>
+							<th>Key</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr><td>1</td><td>Switch to version I — go to full RGB sliders view (white)</td></tr>
+						<tr><td>2</td><td>Switch to version II — go to radio buttons view (white)</td></tr>
+						<tr><td>3</td><td>Switch to version III — go to hex radio grid view (white)</td></tr>
+						<tr><td>4</td><td>Switch to version IV — go to 5-level buttons view (white)</td></tr>
+						<tr><td>W</td><td>Set color to <b>White</b> (#FFFFFF) in all versions</td></tr>
+						<tr><td>K</td><td>Set color to <b>Black</b> (#000000) in all versions</td></tr>
+						<tr><td>R</td><td>Set color to <b>Red</b> (#FF0000) in all versions</td></tr>
+						<tr><td>G</td><td>Set color to <b>Green</b> (#00FF00) in all versions</td></tr>
+						<tr><td>B</td><td>Set color to <b>Blue</b> (#0000FF) in all versions</td></tr>
+						<tr><td>C</td><td>Set color to <b>Cyan</b> (#00FFFF) in all versions</td></tr>
+						<tr><td>M</td><td>Set color to <b>Magenta</b> (#FF00FF) in all versions</td></tr>
+						<tr><td>Y</td><td>Set color to <b>Yellow</b> (#FFFF00) in all versions</td></tr>
+						<tr><td>A</td><td>Set a <b>random</b> color in all versions</td></tr>
+						<tr><td>&#x2192; Arrow Right</td><td><b>Brighter</b> — increase brightness in the current version</td></tr>
+						<tr><td>&#x2190; Arrow Left</td><td><b>Darker</b> — decrease brightness in the current version</td></tr>
+						<tr><td>&#x2191; Arrow Up</td><td><b>More controls</b> — expand view in version I</td></tr>
+						<tr><td>&#x2193; Arrow Down</td><td><b>Fewer controls</b> — collapse view in version I</td></tr>
+						<tr><td>Esc</td><td>Reload the page (back to version selector)</td></tr>
+						<tr><td>?</td><td>Show / hide this help window</td></tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
 		<div id="selector-screen">
 			<div class="grid">
 				<div class="card" onclick="showVersion('v1')">I</div>
@@ -14412,6 +16697,14 @@ document.addEventListener('keydown', function(e) {
 			<\/script>
 		</div>
 		<script>
+			function helpOpen(){
+				document.getElementById('helpOverlay').classList.add('open');
+			}
+
+			function helpClose(){
+				document.getElementById('helpOverlay').classList.remove('open');
+			}
+
 			function showVersion(id){
 				document.getElementById('selector-screen').style.display = 'none';
 				document.getElementById(id).style.display = 'block';
@@ -14537,6 +16830,19 @@ document.addEventListener('keydown', function(e) {
 						v3_darkerAll();
 						v4_darker();
 						break;
+					case '?':
+						var ov = document.getElementById('helpOverlay');
+						if(ov.classList.contains('open')){
+							helpClose();
+						}else{
+							helpOpen();
+						}
+						e.preventDefault();
+						break;
+				}
+				if(e.key === 'Escape' && document.getElementById('helpOverlay').classList.contains('open')){
+					helpClose();
+					e.stopPropagation();
 				}
 			});
 		<\/script>
@@ -14763,6 +17069,106 @@ document.addEventListener('keydown', function(e) {
 			*{
 				-webkit-tap-highlight-color: transparent;
 			}
+			.help-overlay{
+				display: none;
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: rgba(0,0,0,0.45);
+				z-index: 1000;
+				align-items: center;
+				justify-content: center;
+			}
+			.help-overlay.show{
+				display: flex;
+			}
+			.help-modal{
+				background: var(--bg-container);
+				border-radius: 14px;
+				box-shadow: 0 8px 32px var(--shadow);
+				padding: 24px 28px 20px 28px;
+				max-width: 420px;
+				width: 92%;
+				position: relative;
+				animation: fadeIn 0.18s ease;
+				transition: background-color 0.4s ease;
+			}
+			@keyframes fadeIn{
+				from{
+					opacity:0;
+					transform:scale(0.95);
+				}
+				to{
+					opacity:1;
+					transform:scale(1);
+				}
+			}
+			.help-modal h4{
+				color: var(--accent-color);
+				margin: 0 0 16px 0;
+				font-size: 1.1em;
+				text-align: center;
+				letter-spacing: 0.5px;
+			}
+			.help-close{
+				position: absolute;
+				top: 12px;
+				right: 14px;
+				background: none;
+				border: none;
+				font-size: 1.3em;
+				color: var(--text-secondary);
+				cursor: pointer;
+				padding: 2px 6px;
+				line-height: 1;
+				border-radius: 4px;
+				font-weight: bold;
+			}
+			.help-close:hover{
+				background: var(--btn-hover);
+				color: var(--accent-color);
+			}
+			.help-table{
+				width: 100%;
+				border-collapse: collapse;
+				font-size: 0.92em;
+			}
+			.help-table tr{
+				border-bottom: 1px solid var(--border-color);
+			}
+			.help-table tr:last-child{
+				border-bottom: none;
+			}
+			.help-table td{
+				padding: 8px 6px;
+				vertical-align: top;
+			}
+			.help-key{
+				font-family: monospace;
+				background: var(--btn-bg);
+				border: 1px solid var(--border-color);
+				border-radius: 4px;
+				padding: 2px 8px;
+				font-size: 1em;
+				font-weight: bold;
+				color: var(--text-main);
+				white-space: nowrap;
+				display: inline-block;
+				min-width: 28px;
+				text-align: center;
+			}
+			.help-desc{
+				color: var(--text-secondary);
+				padding-left: 8px;
+			}
+			.help-hint{
+				text-align: center;
+				margin-top: 14px;
+				font-size: 0.78em;
+				color: #aaa;
+			}
 		</style>
 	</head>
 	<body>
@@ -14821,6 +17227,14 @@ document.addEventListener('keydown', function(e) {
 				<span class="highlight">A B C D E F G H I J K L M N O P Q R S T U V W X Y Z</span>
 			</div>
 			<div class="lang-bar" id="langBar"></div>
+		</div>
+		<div class="help-overlay" id="helpOverlay" onclick="closeHelp(event)">
+			<div class="help-modal" id="helpModal">
+				<button class="help-close" onclick="toggleHelp()" title="Close">✕</button>
+				<h4 id="helpTitle">Keyboard Shortcuts</h4>
+				<table class="help-table" id="helpTable"></table>
+				<div class="help-hint" id="helpHint">Press ? to close</div>
+			</div>
 		</div>
 		<script>
 			let isAltTheme = false;
@@ -15012,18 +17426,42 @@ document.addEventListener('keydown', function(e) {
 			];
 			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
 			const TRANSLATIONS = {
-				en: { title:"Alpha-Numeric Converter", keep:"Keep", string:"String", number:"Number", letters:"Letters", alphaLabel:"Alphabetic String", shift:"Shift", decimalLabel:"Decimal", binaryLabel:"Binary", hexLabel:"Hexadecimal", encBtn:"Enc +", decBtn:"Dec -", copyBtn:"Copy", factorBtn:"Factorize", prime:"Prime number! :-D" },
-				it: { title:"Convertitore Alfa-Numerico", keep:"Mantieni", string:"Stringa", number:"Numero", letters:"Lettere", alphaLabel:"Stringa Alfabetica", shift:"Turno", decimalLabel:"Decimale", binaryLabel:"Binario", hexLabel:"Esadecimale", encBtn:"Cif +", decBtn:"Dec -", copyBtn:"Copia", factorBtn:"Fattorizza", prime:"Numero primo! :-D" },
-				fr: { title:"Convertisseur Alpha-Numérique", keep:"Garder", string:"Chaîne", number:"Nombre", letters:"Lettres", alphaLabel:"Chaîne Alphabétique", shift:"Décalage", decimalLabel:"Décimal", binaryLabel:"Binaire", hexLabel:"Hexadécimal", encBtn:"Chif +", decBtn:"Déch -", copyBtn:"Copier", factorBtn:"Factoriser", prime:"Nombre premier! :-D" },
-				es: { title:"Convertidor Alfa-Numérico", keep:"Mantener", string:"Cadena", number:"Número", letters:"Letras", alphaLabel:"Cadena Alfabética", shift:"Desplaz.", decimalLabel:"Decimal", binaryLabel:"Binario", hexLabel:"Hexadecimal", encBtn:"Cifr +", decBtn:"Desc -", copyBtn:"Copiar", factorBtn:"Factorizar", prime:"¡Número primo! :-D" },
-				de: { title:"Alpha-Numerischer Konverter", keep:"Behalten", string:"Text", number:"Zahl", letters:"Buchst.", alphaLabel:"Alphabetische Zeichenf.", shift:"Versch.", decimalLabel:"Dezimal", binaryLabel:"Binär", hexLabel:"Hexadezimal", encBtn:"Versch +", decBtn:"Entsch -", copyBtn:"Kopieren", factorBtn:"Faktorisieren", prime:"Primzahl! :-D" },
-				pt: { title:"Conversor Alfa-Numérico", keep:"Manter", string:"Texto", number:"Número", letters:"Letras", alphaLabel:"String Alfabética", shift:"Desloc.", decimalLabel:"Decimal", binaryLabel:"Binário", hexLabel:"Hexadecimal", encBtn:"Cifr +", decBtn:"Decifr -", copyBtn:"Copiar", factorBtn:"Fatorar", prime:"Número primo! :-D" },
-				ro: { title:"Convertor Alfa-Numeric", keep:"Păstrează", string:"Șir", number:"Număr", letters:"Litere", alphaLabel:"Șir Alfabetic", shift:"Schimb", decimalLabel:"Decimal", binaryLabel:"Binar", hexLabel:"Hexazecimal", encBtn:"Cifr +", decBtn:"Decifr -", copyBtn:"Copiază", factorBtn:"Factorizează", prime:"Număr prim! :-D" },
-				uk: { title:"Альфа-цифровий конвертер", keep:"Зберегти", string:"Рядок", number:"Число", letters:"Літери", alphaLabel:"Алфавітний рядок", shift:"Зсув", decimalLabel:"Десяткове", binaryLabel:"Binary", hexLabel:"Hex", encBtn:"Зашифр +", decBtn:"Розшифр -", copyBtn:"Копіювати", factorBtn:"Фактор", prime:"Просте число! :-D" },
-				el: { title:"Μετατροπέας Αλφαριθμητικών", keep:"Κράτα", string:"Συμβ.", number:"Αριθμός", letters:"Γράμματα", alphaLabel:"Αλφαβητικό", shift:"Μετατ.", decimalLabel:"Δεκαδικό", binaryLabel:"Δυαδικό", hexLabel:"Δεκαεξαδικό", encBtn:"Κρυπτ +", decBtn:"Αποκρ -", copyBtn:"Αντιγραφή", factorBtn:"Παραγοντ", prime:"Πρώτος αριθμός! :-D" },
-				la: { title:"Conversor Alpha-Numericus", keep:"Serva", string:"Series", number:"Numerus", letters:"Litterae", alphaLabel:"Series Alphabetica", shift:"Ambitus", decimalLabel:"Decimalis", binaryLabel:"Binarius", hexLabel:"Hexadecimalis", encBtn:"Enc +", decBtn:"Dec -", copyBtn:"Copy", factorBtn:"Factor", prime:"Numerus primus! :-D" },
-				zh: { title:"字母数字转换器", keep:"保持", string:"字符串", number:"数字", letters:"字母", alphaLabel:"字母字符串", shift:"位移", decimalLabel:"十进制", binaryLabel:"二进制", hexLabel:"十六进制", encBtn:"加密 +", decBtn:"解密 -", copyBtn:"复制", factorBtn:"因数分解", prime:"质数! :-D" },
-				ja: { title:"英数字コンバーター", keep:"保持", string:"文字列", number:"数値", letters:"文字数", alphaLabel:"アルファベット文字列", shift:"シフト", decimalLabel:"10進数", binaryLabel:"2進数", hexLabel:"16進数", encBtn:"暗号化 +", decBtn:"復号化 -", copyBtn:"コピー", factorBtn:"因数分解", prime:"素数です! :-D" }
+				en: { title:"Alpha-Numeric Converter", keep:"Keep", string:"String", number:"Number", letters:"Letters", alphaLabel:"Alphabetic String", shift:"Shift", decimalLabel:"Decimal", binaryLabel:"Binary", hexLabel:"Hexadecimal", encBtn:"Enc +", decBtn:"Dec -", copyBtn:"Copy", factorBtn:"Factorize", prime:"Prime number! :-D",
+					helpTitle:"Keyboard Shortcuts", helpHint:"Press ? to close",
+					helpShortcuts:[["T","Toggle light/dark theme"],["L","Switch to next language"],["R","Reload the page"],["?","Show / hide this help"]] },
+				it: { title:"Convertitore Alfa-Numerico", keep:"Mantieni", string:"Stringa", number:"Numero", letters:"Lettere", alphaLabel:"Stringa Alfabetica", shift:"Turno", decimalLabel:"Decimale", binaryLabel:"Binario", hexLabel:"Esadecimale", encBtn:"Cif +", decBtn:"Dec -", copyBtn:"Copia", factorBtn:"Fattorizza", prime:"Numero primo! :-D",
+					helpTitle:"Scorciatoie da Tastiera", helpHint:"Premi ? per chiudere",
+					helpShortcuts:[["T","Alterna tema chiaro/scuro"],["L","Passa alla lingua successiva"],["R","Ricarica la pagina"],["?","Mostra / nascondi questa guida"]] },
+				fr: { title:"Convertisseur Alpha-Numérique", keep:"Garder", string:"Chaîne", number:"Nombre", letters:"Lettres", alphaLabel:"Chaîne Alphabétique", shift:"Décalage", decimalLabel:"Décimal", binaryLabel:"Binaire", hexLabel:"Hexadécimal", encBtn:"Chif +", decBtn:"Déch -", copyBtn:"Copier", factorBtn:"Factoriser", prime:"Nombre premier! :-D",
+					helpTitle:"Raccourcis Clavier", helpHint:"Appuyez sur ? pour fermer",
+					helpShortcuts:[["T","Basculer thème clair/sombre"],["L","Passer à la langue suivante"],["R","Recharger la page"],["?","Afficher / masquer cette aide"]] },
+				es: { title:"Convertidor Alfa-Numérico", keep:"Mantener", string:"Cadena", number:"Número", letters:"Letras", alphaLabel:"Cadena Alfabética", shift:"Desplaz.", decimalLabel:"Decimal", binaryLabel:"Binario", hexLabel:"Hexadecimal", encBtn:"Cifr +", decBtn:"Desc -", copyBtn:"Copiar", factorBtn:"Factorizar", prime:"¡Número primo! :-D",
+					helpTitle:"Atajos de Teclado", helpHint:"Pulsa ? para cerrar",
+					helpShortcuts:[["T","Cambiar tema claro/oscuro"],["L","Cambiar al siguiente idioma"],["R","Recargar la página"],["?","Mostrar / ocultar esta ayuda"]] },
+				de: { title:"Alpha-Numerischer Konverter", keep:"Behalten", string:"Text", number:"Zahl", letters:"Buchst.", alphaLabel:"Alphabetische Zeichenf.", shift:"Versch.", decimalLabel:"Dezimal", binaryLabel:"Binär", hexLabel:"Hexadezimal", encBtn:"Versch +", decBtn:"Entsch -", copyBtn:"Kopieren", factorBtn:"Faktorisieren", prime:"Primzahl! :-D",
+					helpTitle:"Tastaturkürzel", helpHint:"? drücken zum Schließen",
+					helpShortcuts:[["T","Hell/Dunkel-Thema wechseln"],["L","Zur nächsten Sprache wechseln"],["R","Seite neu laden"],["?","Diese Hilfe ein- / ausblenden"]] },
+				pt: { title:"Conversor Alfa-Numérico", keep:"Manter", string:"Texto", number:"Número", letters:"Letras", alphaLabel:"String Alfabética", shift:"Desloc.", decimalLabel:"Decimal", binaryLabel:"Binário", hexLabel:"Hexadecimal", encBtn:"Cifr +", decBtn:"Decifr -", copyBtn:"Copiar", factorBtn:"Fatorar", prime:"Número primo! :-D",
+					helpTitle:"Atalhos de Teclado", helpHint:"Prima ? para fechar",
+					helpShortcuts:[["T","Alternar tema claro/escuro"],["L","Mudar para o próximo idioma"],["R","Recarregar a página"],["?","Mostrar / ocultar esta ajuda"]] },
+				ro: { title:"Convertor Alfa-Numeric", keep:"Păstrează", string:"Șir", number:"Număr", letters:"Litere", alphaLabel:"Șir Alfabetic", shift:"Schimb", decimalLabel:"Decimal", binaryLabel:"Binar", hexLabel:"Hexazecimal", encBtn:"Cifr +", decBtn:"Decifr -", copyBtn:"Copiază", factorBtn:"Factorizează", prime:"Număr prim! :-D",
+					helpTitle:"Comenzi Rapide", helpHint:"Apăsați ? pentru a închide",
+					helpShortcuts:[["T","Comutare temă deschisă/închisă"],["L","Treci la limba următoare"],["R","Reîncarcă pagina"],["?","Arată / ascunde acest ajutor"]] },
+				uk: { title:"Альфа-цифровий конвертер", keep:"Зберегти", string:"Рядок", number:"Число", letters:"Літери", alphaLabel:"Алфавітний рядок", shift:"Зсув", decimalLabel:"Десяткове", binaryLabel:"Binary", hexLabel:"Hex", encBtn:"Зашифр +", decBtn:"Розшифр -", copyBtn:"Копіювати", factorBtn:"Фактор", prime:"Просте число! :-D",
+					helpTitle:"Клавіатурні Скорочення", helpHint:"Натисніть ? щоб закрити",
+					helpShortcuts:[["T","Перемкнути світлу/темну тему"],["L","Перейти до наступної мови"],["R","Перезавантажити сторінку"],["?","Показати / приховати довідку"]] },
+				el: { title:"Μετατροπέας Αλφαριθμητικών", keep:"Κράτα", string:"Συμβ.", number:"Αριθμός", letters:"Γράμματα", alphaLabel:"Αλφαβητικό", shift:"Μετατ.", decimalLabel:"Δεκαδικό", binaryLabel:"Δυαδικό", hexLabel:"Δεκαεξαδικό", encBtn:"Κρυπτ +", decBtn:"Αποκρ -", copyBtn:"Αντιγραφή", factorBtn:"Παραγοντ", prime:"Πρώτος αριθμός! :-D",
+					helpTitle:"Συντομεύσεις Πληκτρολογίου", helpHint:"Πατήστε ? για κλείσιμο",
+					helpShortcuts:[["T","Εναλλαγή φωτεινού/σκοτεινού θέματος"],["L","Αλλαγή στην επόμενη γλώσσα"],["R","Επαναφόρτωση σελίδας"],["?","Εμφάνιση / απόκρυψη αυτής της βοήθειας"]] },
+				la: { title:"Conversor Alpha-Numericus", keep:"Serva", string:"Series", number:"Numerus", letters:"Litterae", alphaLabel:"Series Alphabetica", shift:"Ambitus", decimalLabel:"Decimalis", binaryLabel:"Binarius", hexLabel:"Hexadecimalis", encBtn:"Enc +", decBtn:"Dec -", copyBtn:"Copy", factorBtn:"Factor", prime:"Numerus primus! :-D",
+					helpTitle:"Claves Auxiliares", helpHint:"Preme ? ad claudendum",
+					helpShortcuts:[["T","Muta inter lucidum et obscurum"],["L","Muta ad linguam proximam"],["R","Renoua paginam"],["?","Ostende / absconde hoc auxilium"]] },
+				zh: { title:"字母数字转换器", keep:"保持", string:"字符串", number:"数字", letters:"字母", alphaLabel:"字母字符串", shift:"位移", decimalLabel:"十进制", binaryLabel:"二进制", hexLabel:"十六进制", encBtn:"加密 +", decBtn:"解密 -", copyBtn:"复制", factorBtn:"因数分解", prime:"质数! :-D",
+					helpTitle:"键盘快捷键", helpHint:"按 ? 关闭",
+					helpShortcuts:[["T","切换亮色/暗色主题"],["L","切换到下一种语言"],["R","重新加载页面"],["?","显示 / 隐藏此帮助"]] },
+				ja: { title:"英数字コンバーター", keep:"保持", string:"文字列", number:"数値", letters:"文字数", alphaLabel:"アルファベット文字列", shift:"シフト", decimalLabel:"10進数", binaryLabel:"2進数", hexLabel:"16進数", encBtn:"暗号化 +", decBtn:"復号化 -", copyBtn:"コピー", factorBtn:"因数分解", prime:"素数です! :-D",
+					helpTitle:"キーボードショートカット", helpHint:"? を押して閉じる",
+					helpShortcuts:[["T","明るい/暗いテーマを切り替え"],["L","次の言語に切り替え"],["R","ページを再読み込み"],["?","このヘルプを表示 / 非表示"]] }
 			};
 
 			let currentPrimeLabel = TRANSLATIONS['en'].prime;
@@ -15047,6 +17485,15 @@ document.addEventListener('keydown', function(e) {
 				document.getElementById('btnFactorize').textContent = t.factorBtn;
 				currentPrimeLabel = t.prime;
 				document.querySelectorAll('.flag-btn').forEach((b,i) => b.classList.toggle('active', LANG_KEYS[i] === lang));
+				document.getElementById('helpTitle').textContent = t.helpTitle;
+				document.getElementById('helpHint').textContent = t.helpHint;
+				const table = document.getElementById('helpTable');
+				table.innerHTML = '';
+				t.helpShortcuts.forEach(([key, desc]) => {
+					const tr = document.createElement('tr');
+					tr.innerHTML = \`<td><span class="help-key">\${key}</span></td><td class="help-desc">\${desc}</td>\`;
+					table.appendChild(tr);
+				});
 			}
 
 			function initLangBar(){
@@ -15061,12 +17508,22 @@ document.addEventListener('keydown', function(e) {
 				});
 			}
 
+			function toggleHelp(){
+				document.getElementById('helpOverlay').classList.toggle('show');
+			}
+
+			function closeHelp(e){
+				if(e.target === document.getElementById('helpOverlay')){
+					document.getElementById('helpOverlay').classList.remove('show');
+				}
+			}
+
 			document.addEventListener("keydown", e => {
 				if(document.activeElement.tagName === "INPUT"){
 					return;
 				}
-				if(e.key.toLowerCase() === "s"){
-					handleAction('getFullTodayDate');
+				if(e.key === "?"){
+					toggleHelp();
 				}else if(e.key.toLowerCase() === "t"){
 					toggleTheme();
 				}else if(e.key.toLowerCase() === "r"){
@@ -15080,6 +17537,7 @@ document.addEventListener('keydown', function(e) {
 
 			resetAndRecalculate();
 			initLangBar();
+			applyTranslation('en');
 		<\/script>
 	<script>
 document.addEventListener('keydown', function(e) {

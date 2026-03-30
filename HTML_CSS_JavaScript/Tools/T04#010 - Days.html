@@ -186,6 +186,105 @@
 			.blink{
 				animation: blink-effect 0.4s ease-in-out 2;
 			}
+			.help-overlay{
+				display: none;
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: rgba(0,0,0,0.45);
+				z-index: 1000;
+				align-items: center;
+				justify-content: center;
+			}
+			.help-overlay.show{
+				display: flex;
+			}
+			.help-modal{
+				background: white;
+				border-radius: 14px;
+				box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+				padding: 24px 28px 20px 28px;
+				max-width: 420px;
+				width: 92%;
+				position: relative;
+				animation: fadeIn 0.18s ease;
+			}
+			@keyframes fadeIn{
+				from{
+					opacity:0;
+					transform:scale(0.95);
+				}
+				to{
+					opacity:1;
+					transform:scale(1);
+				}
+			}
+			.help-modal h4{
+				color: #5c5cff;
+				margin: 0 0 16px 0;
+				font-size: 1.1em;
+				text-align: center;
+				letter-spacing: 0.5px;
+			}
+			.help-close{
+				position: absolute;
+				top: 12px;
+				right: 14px;
+				background: none;
+				border: none;
+				font-size: 1.3em;
+				color: #999;
+				cursor: pointer;
+				padding: 2px 6px;
+				line-height: 1;
+				border-radius: 4px;
+				font-weight: bold;
+			}
+			.help-close:hover{
+				background: #f0f0ff;
+				color: #5c5cff;
+			}
+			.help-table{
+				width: 100%;
+				border-collapse: collapse;
+				font-size: 0.92em;
+			}
+			.help-table tr{
+				border-bottom: 1px solid #eee;
+			}
+			.help-table tr:last-child{
+				border-bottom: none;
+			}
+			.help-table td{
+				padding: 8px 6px;
+				vertical-align: top;
+			}
+			.help-key{
+				font-family: monospace;
+				background: #f0f0f0;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				padding: 2px 8px;
+				font-size: 1em;
+				font-weight: bold;
+				color: #333;
+				white-space: nowrap;
+				display: inline-block;
+				min-width: 28px;
+				text-align: center;
+			}
+			.help-desc{
+				color: #444;
+				padding-left: 8px;
+			}
+			.help-hint{
+				text-align: center;
+				margin-top: 14px;
+				font-size: 0.78em;
+				color: #aaa;
+			}
 			@media (max-width: 400px){
 				.row-group{
 					gap: 5px;
@@ -255,6 +354,14 @@
 			</div>
 			<button type="button" class="btn-clear" onclick="clearFields()" data-key="clear">Clear Fields</button>
 		</div>
+		<div class="help-overlay" id="helpOverlay" onclick="closeHelp(event)">
+			<div class="help-modal" id="helpModal">
+				<button class="help-close" onclick="toggleHelp()" title="Close">✕</button>
+				<h4 data-key="helpTitle">Keyboard Shortcuts</h4>
+				<table class="help-table" id="helpTable"></table>
+				<div class="help-hint" data-key="helpHint">Press ? to close</div>
+			</div>
+		</div>
 		<script>
 			const TRANSLATIONS = {
 				English: {
@@ -271,7 +378,16 @@
 					error: "Error",
 					phDate: "dd/mm/yyyy",
 					phResult: "Result",
-					phExtended: "Extended date"
+					phExtended: "Extended date",
+					helpTitle: "Keyboard Shortcuts",
+					helpHint: "Press ? to close",
+					helpShortcuts: [
+						["S", "Show today's full date"],
+						["C", "Clear all fields"],
+						["R", "Reload the page"],
+						["L", "Switch to next language"],
+						["?", "Show / hide this help"]
+					]
 				},
 				Italiano: {
 					days: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
@@ -287,7 +403,16 @@
 					error: "Errore",
 					phDate: "gg/mm/aaaa",
 					phResult: "Risultato",
-					phExtended: "Data estesa"
+					phExtended: "Data estesa",
+					helpTitle: "Scorciatoie da Tastiera",
+					helpHint: "Premi ? per chiudere",
+					helpShortcuts: [
+						["S", "Mostra la data odierna completa"],
+						["C", "Cancella tutti i campi"],
+						["R", "Ricarica la pagina"],
+						["L", "Passa alla lingua successiva"],
+						["?", "Mostra / nascondi questa guida"]
+					]
 				},
 				Français: {
 					days: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
@@ -303,7 +428,16 @@
 					error: "Erreur",
 					phDate: "jj/mm/aaaa",
 					phResult: "Résultat",
-					phExtended: "Date étendue"
+					phExtended: "Date étendue",
+					helpTitle: "Raccourcis Clavier",
+					helpHint: "Appuyez sur ? pour fermer",
+					helpShortcuts: [
+						["S", "Afficher la date complète d'aujourd'hui"],
+						["C", "Effacer tous les champs"],
+						["R", "Recharger la page"],
+						["L", "Passer à la langue suivante"],
+						["?", "Afficher / masquer cette aide"]
+					]
 				},
 				Español: {
 					days: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
@@ -319,7 +453,16 @@
 					error: "Error",
 					phDate: "dd/mm/aaaa",
 					phResult: "Resultado",
-					phExtended: "Fecha extendida"
+					phExtended: "Fecha extendida",
+					helpTitle: "Atajos de Teclado",
+					helpHint: "Pulsa ? para cerrar",
+					helpShortcuts: [
+						["S", "Mostrar la fecha completa de hoy"],
+						["C", "Borrar todos los campos"],
+						["R", "Recargar la página"],
+						["L", "Cambiar al siguiente idioma"],
+						["?", "Mostrar / ocultar esta ayuda"]
+					]
 				},
 				Deutsch: {
 					days: ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
@@ -335,7 +478,16 @@
 					error: "Fehler",
 					phDate: "TT/MM/JJJJ",
 					phResult: "Ergebnis",
-					phExtended: "Erweitertes Datum"
+					phExtended: "Erweitertes Datum",
+					helpTitle: "Tastaturkürzel",
+					helpHint: "? drücken zum Schließen",
+					helpShortcuts: [
+						["S", "Heutiges vollständiges Datum anzeigen"],
+						["C", "Alle Felder leeren"],
+						["R", "Seite neu laden"],
+						["L", "Zur nächsten Sprache wechseln"],
+						["?", "Diese Hilfe ein- / ausblenden"]
+					]
 				},
 				Português: {
 					days: ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
@@ -351,7 +503,16 @@
 					error: "Erro",
 					phDate: "dd/mm/aaaa",
 					phResult: "Resultado",
-					phExtended: "Data estendida"
+					phExtended: "Data estendida",
+					helpTitle: "Atalhos de Teclado",
+					helpHint: "Prima ? para fechar",
+					helpShortcuts: [
+						["S", "Mostrar a data completa de hoje"],
+						["C", "Limpar todos os campos"],
+						["R", "Recarregar a página"],
+						["L", "Mudar para o próximo idioma"],
+						["?", "Mostrar / ocultar esta ajuda"]
+					]
 				},
 				Română: {
 					days: ["Duminică", "Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă"],
@@ -367,7 +528,16 @@
 					error: "Eroare",
 					phDate: "zz/ll/aaaa",
 					phResult: "Rezultat",
-					phExtended: "Data extinsă"
+					phExtended: "Data extinsă",
+					helpTitle: "Comenzi Rapide",
+					helpHint: "Apăsați ? pentru a închide",
+					helpShortcuts: [
+						["S", "Afișează data completă de azi"],
+						["C", "Șterge toate câmpurile"],
+						["R", "Reîncarcă pagina"],
+						["L", "Treci la limba următoare"],
+						["?", "Arată / ascunde acest ajutor"]
+					]
 				},
 				Українська: {
 					days: ["Неділя", "Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота"],
@@ -383,7 +553,16 @@
 					error: "Помилка",
 					phDate: "дд/мм/рррр",
 					phResult: "Результат",
-					phExtended: "Розширена дата"
+					phExtended: "Розширена дата",
+					helpTitle: "Клавіатурні Скорочення",
+					helpHint: "Натисніть ? щоб закрити",
+					helpShortcuts: [
+						["S", "Показати повну дату сьогодні"],
+						["C", "Очистити всі поля"],
+						["R", "Перезавантажити сторінку"],
+						["L", "Перейти до наступної мови"],
+						["?", "Показати / приховати цю довідку"]
+					]
 				},
 				Ελληνικά: {
 					days: ["Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο"],
@@ -399,7 +578,16 @@
 					error: "Σφάλμα",
 					phDate: "ηη/μμ/εεεε",
 					phResult: "Αποτέλεσμα",
-					phExtended: "Πλήρης ημερομηνία"
+					phExtended: "Πλήρης ημερομηνία",
+					helpTitle: "Συντομεύσεις Πληκτρολογίου",
+					helpHint: "Πατήστε ? για κλείσιμο",
+					helpShortcuts: [
+						["S", "Εμφάνιση πλήρους σημερινής ημερομηνίας"],
+						["C", "Καθαρισμός όλων των πεδίων"],
+						["R", "Επαναφόρτωση της σελίδας"],
+						["L", "Αλλαγή στην επόμενη γλώσσα"],
+						["?", "Εμφάνιση / απόκρυψη αυτής της βοήθειας"]
+					]
 				},
 				Latine: {
 					days: ["Dies Solis", "Dies Lunae", "Dies Martis", "Dies Mercurii", "Dies Iovis", "Dies Veneris", "Dies Saturni"],
@@ -415,7 +603,16 @@
 					error: "Error",
 					phDate: "dd/mm/aaaa",
 					phResult: "Exitus",
-					phExtended: "Data extensa"
+					phExtended: "Data extensa",
+					helpTitle: "Claves Auxiliares",
+					helpHint: "Preme ? ad claudendum",
+					helpShortcuts: [
+						["S", "Ostende datam hodiernam plenam"],
+						["C", "Dele omnia campia"],
+						["R", "Renoua paginam"],
+						["L", "Muta ad linguam proximam"],
+						["?", "Ostende / absconde hoc auxilium"]
+					]
 				},
 				中文: {
 					days: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"],
@@ -431,7 +628,16 @@
 					error: "错误",
 					phDate: "日/月/年",
 					phResult: "结果",
-					phExtended: "完整日期"
+					phExtended: "完整日期",
+					helpTitle: "键盘快捷键",
+					helpHint: "按 ? 关闭",
+					helpShortcuts: [
+						["S", "显示今天的完整日期"],
+						["C", "清除所有字段"],
+						["R", "重新加载页面"],
+						["L", "切换到下一种语言"],
+						["?", "显示 / 隐藏此帮助"]
+					]
 				},
 				日本語: {
 					days: ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"],
@@ -447,7 +653,16 @@
 					error: "エラー",
 					phDate: "日/月/年",
 					phResult: "結果",
-					phExtended: "詳細日付"
+					phExtended: "詳細日付",
+					helpTitle: "キーボードショートカット",
+					helpHint: "? を押して閉じる",
+					helpShortcuts: [
+						["S", "今日の完全な日付を表示"],
+						["C", "すべてのフィールドをクリア"],
+						["R", "ページを再読み込み"],
+						["L", "次の言語に切り替え"],
+						["?", "このヘルプを表示 / 非表示"]
+					]
 				}
 			};
 			const FLAGS_SVG = [
@@ -513,6 +728,7 @@
 					getFullTodayDate();
 				}
 				getDaysOfDifference(false);
+				buildHelpTable(lang);
 			}
 
 			function clearFields(){
@@ -668,8 +884,32 @@
 				}
 			}
 
+			function buildHelpTable(lang){
+				const t = TRANSLATIONS[lang];
+				const table = document.getElementById("helpTable");
+				table.innerHTML = "";
+				t.helpShortcuts.forEach(([key, desc]) => {
+					const tr = document.createElement("tr");
+					tr.innerHTML = `<td><span class="help-key">${key}</span></td><td class="help-desc">${desc}</td>`;
+					table.appendChild(tr);
+				});
+			}
+
+			function toggleHelp(){
+				const overlay = document.getElementById("helpOverlay");
+				overlay.classList.toggle("show");
+			}
+
+			function closeHelp(e){
+				if(e.target === document.getElementById("helpOverlay")){
+					document.getElementById("helpOverlay").classList.remove("show");
+				}
+			}
+
 			document.addEventListener("keydown", e => {
-				if(e.key.toLowerCase() === "s"){
+				if(e.key === "?"){
+					toggleHelp();
+				}else if(e.key.toLowerCase() === "s"){
 					handleAction('getFullTodayDate');
 				}else if(e.key.toLowerCase() === "c"){
 					clearFields();

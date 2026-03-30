@@ -110,12 +110,84 @@
 					width: 90%;
 				}
 			}
+			#helpOverlay{
+				display: none;
+				position: fixed;
+				inset: 0;
+				background: rgba(0,0,0,0.55);
+				z-index: 1000;
+				justify-content: center;
+				align-items: center;
+			}
+			#helpOverlay.visible{
+				display: flex;
+			}
+			#helpBox{
+				background: #fff;
+				border-radius: 12px;
+				box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+				padding: 28px 32px 24px;
+				max-width: 480px;
+				width: 90%;
+				max-height: 85vh;
+				overflow-y: auto;
+				position: relative;
+				text-align: left;
+			}
+			#helpBox h2{
+				margin: 0 0 18px;
+				font-size: 1.3em;
+				text-align: center;
+				color: #4a90e2;
+			}
+			#helpBox table{
+				width: 100%;
+				border-collapse: collapse;
+			}
+			#helpBox td{
+				padding: 7px 10px;
+				vertical-align: top;
+			}
+			#helpBox tr:nth-child(even) td{
+				background: #f4f4f4;
+				border-radius: 4px;
+			}
+			#helpBox .key{
+				font-family: monospace;
+				font-weight: bold;
+				font-size: 1.05em;
+				color: #e2574a;
+				white-space: nowrap;
+				width: 1%;
+			}
+			#helpCloseBtn{
+				position: absolute;
+				top: 12px;
+				right: 16px;
+				background: none;
+				border: none;
+				font-size: 1.5em;
+				cursor: pointer;
+				color: #555;
+				padding: 2px 6px;
+				line-height: 1;
+			}
+			#helpCloseBtn:hover{
+				color: #000;
+			}
 		</style>
 	</head>
 	<body>
 		<div class="top-bar">
 			<select id="disksNumber" onchange="changeDiskCount()"></select>
 			<div class="stats"><span id="movesLabel">Moves:</span> <span id="moveCounter">0</span></div>
+		</div>
+		<div id="helpOverlay" role="dialog" aria-modal="true" onclick="if(event.target===this){closeHelp();}">
+			<div id="helpBox">
+				<button id="helpCloseBtn" onclick="closeHelp()" aria-label="Close">✕</button>
+				<h2 id="helpTitle">Keyboard Shortcuts</h2>
+				<table id="helpTable"></table>
+			</div>
 		</div>
 		<canvas id="universe"></canvas>
 		<div class="controls">
@@ -155,6 +227,27 @@
 				zh: { restart:"重新开始", demo:"求解", level:"等级", moves:"步数", win:"太棒了！:-D 你用 ", move:"步", moves_pl:"步" },
 				ja: { restart:"リスタート", demo:"解く", level:"レベル", moves:"手数", win:"素晴らしい！:-D ", move:"手で勝利！", moves_pl:"手で勝利！" }
 			};
+			const HELP_TITLE = {
+				en:"Keyboard Shortcuts", it:"Tasti di scelta rapida", fr:"Raccourcis clavier",
+				es:"Atajos de teclado", de:"Tastenkürzel", pt:"Atalhos de teclado",
+				ro:"Scurtături de tastatură", uk:"Клавіші швидкого доступу",
+				el:"Συντομεύσεις πληκτρολογίου", la:"Clavium compendia",
+				zh:"键盘快捷键", ja:"キーボードショートカット"
+			};
+			const HELP_SHORTCUTS = {
+				en:[["R","Restart the game"],["S","Watch the automatic solution"],["L","Switch language"],["?","Show / hide this help"]],
+				it:[["R","Ricomincia la partita"],["S","Guarda la soluzione automatica"],["L","Cambia lingua"],["?","Mostra / nascondi questo aiuto"]],
+				fr:[["R","Recommencer la partie"],["S","Voir la solution automatique"],["L","Changer de langue"],["?","Afficher / masquer cette aide"]],
+				es:[["R","Reiniciar la partida"],["S","Ver la solución automática"],["L","Cambiar idioma"],["?","Mostrar / ocultar esta ayuda"]],
+				de:[["R","Spiel neu starten"],["S","Automatische Lösung ansehen"],["L","Sprache wechseln"],["?","Hilfe anzeigen / ausblenden"]],
+				pt:[["R","Reiniciar o jogo"],["S","Ver a solução automática"],["L","Mudar idioma"],["?","Mostrar / ocultar esta ajuda"]],
+				ro:[["R","Repornește jocul"],["S","Urmărește soluția automată"],["L","Schimbă limba"],["?","Afișează / ascunde această ajutor"]],
+				uk:[["R","Перезапустити гру"],["S","Переглянути автоматичне рішення"],["L","Змінити мову"],["?","Показати / приховати цю довідку"]],
+				el:[["R","Επανεκκίνηση παιχνιδιού"],["S","Δείτε την αυτόματη λύση"],["L","Αλλαγή γλώσσας"],["?","Εμφάνιση / απόκρυψη βοήθειας"]],
+				la:[["R","Ludum restitue"],["S","Solutionem automaticam vide"],["L","Linguam muta"],["?","Auxilium ostende / absconde"]],
+				zh:[["R","重新开始游戏"],["S","观看自动解法"],["L","切换语言"],["?","显示 / 隐藏帮助"]],
+				ja:[["R","ゲームを再スタート"],["S","自動解法を見る"],["L","言語を切替"],["?","ヘルプを表示 / 非表示"]]
+			};
 			let currentLangIndex = 0;
 
 			function tr(key){
@@ -164,6 +257,24 @@
 			function nextLanguage(){
 				currentLangIndex = (currentLangIndex + 1)%LANG_KEYS.length;
 				applyTranslation();
+				if(document.getElementById('helpOverlay').classList.contains('visible')){
+					updateHelpContent();
+				}
+			}
+
+			function openHelp(){
+				updateHelpContent();
+				document.getElementById("helpOverlay").classList.add("visible");
+			}
+
+			function closeHelp(){
+				document.getElementById("helpOverlay").classList.remove("visible");
+			}
+
+			function updateHelpContent(){
+				const lang = LANG_KEYS[currentLangIndex];
+				document.getElementById("helpTitle").textContent = HELP_TITLE[lang];
+				document.getElementById("helpTable").innerHTML = HELP_SHORTCUTS[lang].map(([k,d]) => `<tr><td class="key">${k}</td><td>${d}</td></tr>`).join("");
 			}
 
 			function applyTranslation(){
@@ -449,6 +560,13 @@
 					animatedSolving();
 				}else if(e.key.toLowerCase() === "l"){
 					nextLanguage();
+				}else if(e.key === "?"){
+					const ov = document.getElementById("helpOverlay");
+					if(ov.classList.contains("visible")){
+						closeHelp();
+					}else{
+						openHelp();
+					}
 				}
 			});
 		</script>

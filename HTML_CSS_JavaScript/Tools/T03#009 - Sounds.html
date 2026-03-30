@@ -219,9 +219,89 @@
 				margin: 0 10px;
 				cursor: pointer;
 			}
+			#helpOverlay{
+				display:none;
+				position:fixed;
+				top:0;left:0;width:100%;height:100%;
+				background:rgba(0,0,0,0.55);
+				z-index:9999;
+				justify-content:center;
+				align-items:center;
+			}
+			#helpOverlay.open{
+				display:flex;
+			}
+			#helpBox{
+				background:#FFFFF0;
+				border:2px solid #888;
+				border-radius:10px;
+				padding:24px 28px;
+				max-width:560px;
+				width:90%;
+				max-height:85vh;
+				overflow-y:auto;
+				position:relative;
+				box-shadow:0 8px 32px rgba(0,0,0,0.35);
+			}
+			#helpBox h2{
+				margin:0 0 14px 0;
+				font-size:1.1em;
+				color:#222;
+				border-bottom:1px solid #bbb;
+				padding-bottom:8px;
+			}
+			#helpBox table{
+				width:100%;
+				border-collapse:collapse;
+				font-size:0.91em;
+			}
+			#helpBox th{
+				text-align:left;
+				color:#555;
+				padding:4px 8px;
+				border-bottom:1px solid #ccc;
+			}
+			#helpBox td{
+				padding:5px 8px;
+				border-bottom:1px solid #eee;
+				vertical-align:top;
+			}
+			#helpBox td:first-child{
+				font-family:monospace;
+				font-weight:bold;
+				background:#FFFF7F;
+				border-radius:3px;
+				white-space:nowrap;
+				width:1%;
+			}
+			#helpCloseX{
+				position:absolute;
+				top:10px;right:14px;
+				background:none;border:none;
+				font-size:1.4em;cursor:pointer;
+				color:#666;padding:0;line-height:1;
+			}
+			#helpCloseX:hover{
+				color:#000;
+			}
 		</style>
 	</head>
 	<body>
+		<div id="helpOverlay" onclick="if(event.target===this){helpClose();}">
+			<div id="helpBox">
+				<button id="helpCloseX" onclick="helpClose()">&#x2715;</button>
+				<h2 id="helpH2"></h2>
+				<table>
+					<thead>
+						<tr>
+							<th id="helpTh1"></th>
+							<th id="helpTh2"></th>
+						</tr>
+					</thead>
+					<tbody id="helpTbody"></tbody>
+				</table>
+			</div>
+		</div>
 		<canvas id="scope"></canvas>
 		<div class="section-title" data-i18n="section_osc">OSCILLATOR &amp; ADDITIVE SYNTHESIS</div>
 			<div class="flex-column">
@@ -263,7 +343,7 @@
 			<button onclick="multiplyFREQUENCY_VALUE(0.5)">f/2</button>
 			<button onclick="multiplyFREQUENCY_VALUE(2)">f×2</button>
 			<button id="showingButton" onclick="toggleShowing()" data-i18n="btn_pro">Pro</button>
-			<button onclick="window.location.reload();" data-i18n="btn_page">⟳ Page</button>
+			<button onclick="window.location.reload();" data-i18n="btn_page">&#x27F3; Page</button>
 			<button id="translateBtn" onclick="nextLanguage()"><span id="flagIcon"></span></button>
 		</div>
 		<div class="flex-row" style="align-items: flex-start;">
@@ -799,6 +879,202 @@
 
 			let currentLangIndex = 0;
 
+			const HELP_DATA = {
+				en: { title:"Keyboard Shortcuts", k:"Key", a:"Action", rows:[
+					["A W S E D F T G Y H U J K","Play piano notes C4–C5 (white and black keys)"],
+					["P","Play / Stop the main oscillator"],
+					["I","Halve the current frequency (÷2)"],
+					["O","Double the current frequency (×2)"],
+					["L","Switch to the next language"],
+					["R","Reload the page"],
+					["Q","Toggle siren On / Off"],
+					["V","Toggle Basic / Pro view"],
+					["B","Cycle to next oscillator waveform"],
+					["N","Cycle to next siren type"],
+					["M","Cycle to next siren waveform"],
+					["?","Show / hide this help window"]
+				]},
+				it: { title:"Scorciatoie da tastiera", k:"Tasto", a:"Azione", rows:[
+					["A W S E D F T G Y H U J K","Suona le note del pianoforte da C4 a C5"],
+					["P","Avvia / Ferma l'oscillatore principale"],
+					["I","Dimezza la frequenza corrente (÷2)"],
+					["O","Raddoppia la frequenza corrente (×2)"],
+					["L","Passa alla lingua successiva"],
+					["R","Ricarica la pagina"],
+					["Q","Attiva / disattiva la sirena"],
+					["V","Alterna tra vista Base e Pro"],
+					["B","Passa alla forma d'onda successiva dell'oscillatore"],
+					["N","Passa al tipo di sirena successivo"],
+					["M","Passa alla forma d'onda sirena successiva"],
+					["?","Mostra / nascondi questa finestra di aiuto"]
+				]},
+				fr: { title:"Raccourcis clavier", k:"Touche", a:"Action", rows:[
+					["A W S E D F T G Y H U J K","Jouer les notes du piano C4–C5"],
+					["P","Lancer / Arrêter l'oscillateur principal"],
+					["I","Diviser la fréquence par 2 (÷2)"],
+					["O","Doubler la fréquence (×2)"],
+					["L","Passer à la langue suivante"],
+					["R","Recharger la page"],
+					["Q","Activer / désactiver la sirène"],
+					["V","Basculer entre vue Basique et Pro"],
+					["B","Passer à la prochaine forme d'onde"],
+					["N","Passer au prochain type de sirène"],
+					["M","Passer à la prochaine onde de sirène"],
+					["?","Afficher / masquer cette fenêtre d'aide"]
+				]},
+				es: { title:"Atajos de teclado", k:"Tecla", a:"Acción", rows:[
+					["A W S E D F T G Y H U J K","Tocar notas del piano C4–C5"],
+					["P","Iniciar / Detener el oscilador principal"],
+					["I","Dividir la frecuencia por 2 (÷2)"],
+					["O","Duplicar la frecuencia (×2)"],
+					["L","Cambiar al idioma siguiente"],
+					["R","Recargar la página"],
+					["Q","Activar / desactivar la sirena"],
+					["V","Alternar entre vista Básica y Pro"],
+					["B","Cambiar a la siguiente forma de onda"],
+					["N","Cambiar al siguiente tipo de sirena"],
+					["M","Cambiar a la siguiente onda de sirena"],
+					["?","Mostrar / ocultar esta ventana de ayuda"]
+				]},
+				de: { title:"Tastaturkürzel", k:"Taste", a:"Aktion", rows:[
+					["A W S E D F T G Y H U J K","Klaviertöne C4–C5 spielen"],
+					["P","Oszillator starten / stoppen"],
+					["I","Frequenz halbieren (÷2)"],
+					["O","Frequenz verdoppeln (×2)"],
+					["L","Zur nächsten Sprache wechseln"],
+					["R","Seite neu laden"],
+					["Q","Sirene ein- / ausschalten"],
+					["V","Zwischen Basis- und Pro-Ansicht wechseln"],
+					["B","Nächste Oszillator-Wellenform"],
+					["N","Nächster Sirenentyp"],
+					["M","Nächste Sirenen-Wellenform"],
+					["?","Hilfefenster anzeigen / ausblenden"]
+				]},
+				pt: { title:"Atalhos de teclado", k:"Tecla", a:"Ação", rows:[
+					["A W S E D F T G Y H U J K","Tocar notas do piano C4–C5"],
+					["P","Iniciar / Parar o oscilador principal"],
+					["I","Dividir a frequência por 2 (÷2)"],
+					["O","Dobrar a frequência (×2)"],
+					["L","Mudar para o próximo idioma"],
+					["R","Recarregar a página"],
+					["Q","Ativar / desativar a sirene"],
+					["V","Alternar entre vista Básica e Pro"],
+					["B","Próxima forma de onda do oscilador"],
+					["N","Próximo tipo de sirene"],
+					["M","Próxima forma de onda da sirene"],
+					["?","Mostrar / ocultar esta janela de ajuda"]
+				]},
+				ro: { title:"Comenzi rapide de tastatură", k:"Tastă", a:"Acțiune", rows:[
+					["A W S E D F T G Y H U J K","Cântă note de pian C4–C5"],
+					["P","Pornește / Oprește oscilatorul"],
+					["I","Înjumătățește frecvența (÷2)"],
+					["O","Dublează frecvența (×2)"],
+					["L","Trece la limba următoare"],
+					["R","Reîncarcă pagina"],
+					["Q","Activează / dezactivează sirena"],
+					["V","Comută între vizualizarea De bază și Pro"],
+					["B","Următoarea formă de undă"],
+					["N","Următorul tip de sirenă"],
+					["M","Următoarea undă de sirenă"],
+					["?","Arată / ascunde fereastra de ajutor"]
+				]},
+				uk: { title:"Гарячі клавіші", k:"Клавіша", a:"Дія", rows:[
+					["A W S E D F T G Y H U J K","Грати ноти піаніно C4–C5"],
+					["P","Запустити / Зупинити осцилятор"],
+					["I","Зменшити частоту вдвічі (÷2)"],
+					["O","Збільшити частоту вдвічі (×2)"],
+					["L","Перейти до наступної мови"],
+					["R","Перезавантажити сторінку"],
+					["Q","Увімкнути / вимкнути сирену"],
+					["V","Перемикати між базовим і Pro"],
+					["B","Наступна форма хвилі осцилятора"],
+					["N","Наступний тип сирени"],
+					["M","Наступна форма хвилі сирени"],
+					["?","Показати / приховати вікно довідки"]
+				]},
+				el: { title:"Συντομεύσεις πληκτρολογίου", k:"Πλήκτρο", a:"Ενέργεια", rows:[
+					["A W S E D F T G Y H U J K","Παίξε νότες πιάνου C4–C5"],
+					["P","Έναρξη / Διακοπή ταλαντωτή"],
+					["I","Μείωση συχνότητας κατά μισό (÷2)"],
+					["O","Διπλασιασμός συχνότητας (×2)"],
+					["L","Επόμενη γλώσσα"],
+					["R","Ανανέωση σελίδας"],
+					["Q","Ενεργοποίηση / απενεργοποίηση σειρήνας"],
+					["V","Εναλλαγή Βασικής / Pro προβολής"],
+					["B","Επόμενη μορφή κύματος"],
+					["N","Επόμενος τύπος σειρήνας"],
+					["M","Επόμενη μορφή κύματος σειρήνας"],
+					["?","Εμφάνιση / απόκρυψη βοήθειας"]
+				]},
+				la: { title:"Compendium Clavium", k:"Clavis", a:"Effectus", rows:[
+					["A W S E D F T G Y H U J K","Sona notas clavicordii C4–C5"],
+					["P","Incipe / Siste oscillatorem"],
+					["I","Frequentiam dimidio minue (÷2)"],
+					["O","Frequentiam duplica (×2)"],
+					["L","Ad linguam proximam transi"],
+					["R","Paginam renoua"],
+					["Q","Sirenam accende / extingue"],
+					["V","Inter aspectum Simplicem et Pro commuta"],
+					["B","Ad formam undae proximam transi"],
+					["N","Ad genus sirenae proximum transi"],
+					["M","Ad undae sirenae formam proximam transi"],
+					["?","Hanc fenestram monstra / absconde"]
+				]},
+				zh: { title:"键盘快捷键", k:"按键", a:"功能", rows:[
+					["A W S E D F T G Y H U J K","弹奏钢琴音符 C4–C5"],
+					["P","启动 / 停止振荡器"],
+					["I","将频率减半（÷2）"],
+					["O","将频率翻倍（×2）"],
+					["L","切换到下一种语言"],
+					["R","刷新页面"],
+					["Q","开启 / 关闭警报"],
+					["V","切换基础 / 专业视图"],
+					["B","切换到下一种振荡器波形"],
+					["N","切换到下一种警报类型"],
+					["M","切换到下一种警报波形"],
+					["?","显示 / 隐藏帮助窗口"]
+				]},
+				ja: { title:"キーボードショートカット", k:"キー", a:"操作", rows:[
+					["A W S E D F T G Y H U J K","ピアノの音符 C4–C5 を演奏する"],
+					["P","オシレーターを再生 / 停止"],
+					["I","周波数を半分にする（÷2）"],
+					["O","周波数を2倍にする（×2）"],
+					["L","次の言語に切り替える"],
+					["R","ページをリロード"],
+					["Q","サイレンをオン / オフ"],
+					["V","基本 / プロ表示を切り替える"],
+					["B","次のオシレーター波形"],
+					["N","次のサイレンタイプ"],
+					["M","次のサイレン波形"],
+					["?","このヘルプを表示 / 非表示"]
+				]}
+			};
+
+			function helpOpen(){
+				var lang = LANG_KEYS[currentLangIndex];
+				var d = HELP_DATA[lang] || HELP_DATA['en'];
+				document.getElementById('helpH2').textContent = d.title;
+				document.getElementById('helpTh1').textContent = d.k;
+				document.getElementById('helpTh2').textContent = d.a;
+				var tb = document.getElementById('helpTbody');
+				tb.innerHTML = '';
+				d.rows.forEach(function(r){
+					var tr = document.createElement('tr');
+					var td1 = document.createElement('td');
+					td1.textContent = r[0];
+					var td2 = document.createElement('td');
+					td2.textContent = r[1];
+					tr.appendChild(td1);
+					tr.appendChild(td2);
+					tb.appendChild(tr);
+				});
+				document.getElementById('helpOverlay').classList.add('open');
+			}
+
+			function helpClose(){
+				document.getElementById('helpOverlay').classList.remove('open');
+			}
+
 			function applyTranslation(langIndex){
 				const langKey = LANG_KEYS[langIndex];
 				const t = TRANSLATIONS[langKey];
@@ -817,6 +1093,9 @@
 				sirenBtn.textContent = sirenIsOn ? t['btn_siren_off'] : t['btn_siren_on'];
 				const showBtn = document.getElementById('showingButton');
 				showBtn.textContent = basic ? t['btn_pro'] : t['btn_basic'];
+				if(document.getElementById('helpOverlay').classList.contains('open')){
+					helpOpen();
+				}
 			}
 
 			function nextLanguage(){
@@ -1188,6 +1467,18 @@
 							break;
 						}
 					}
+				}else if(e.key === "?" || (e.shiftKey && e.code === "Slash") || e.key === "Escape"){
+					if(e.key === "Escape"){
+						helpClose();
+					}else{
+						var ov = document.getElementById('helpOverlay');
+						if(ov.classList.contains('open')){
+							helpClose();
+						}else{
+							helpOpen();
+						}
+					}
+					e.preventDefault();
 				}
 			});
 

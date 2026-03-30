@@ -256,9 +256,94 @@
 			.modal-btn:hover{
 				background: var(--wood-mid);
 			}
+			#helpOverlay{
+				display:none;
+				position:fixed;
+				inset:0;
+				background:rgba(0,0,0,0.72);
+				z-index:200;
+				justify-content:center;
+				align-items:center;
+			}
+			#helpOverlay.open{
+				display:flex;
+			}
+			#helpBox{
+				background:#2e1c08;
+				border:2px solid var(--wood-mid);
+				border-radius:8px;
+				padding:24px 28px;
+				max-width:520px;
+				width:92%;
+				max-height:88vh;
+				overflow-y:auto;
+				position:relative;
+				box-shadow:0 12px 60px rgba(0,0,0,0.8);
+				font-family:'Noto Serif JP',serif;
+				color:var(--paper);
+			}
+			#helpBox h2{
+				font-family:'Cinzel',serif;
+				margin:0 0 14px 0;
+				font-size:1em;
+				color:var(--wood-light);
+				border-bottom:1px solid var(--wood-dark);
+				padding-bottom:8px;
+				letter-spacing:.08em;
+			}
+			#helpBox table{
+				width:100%;
+				border-collapse:collapse;
+				font-size:0.88em;
+			}
+			#helpBox th{
+				text-align:left;
+				color:var(--wood-grain);
+				padding:4px 8px;
+				border-bottom:1px solid var(--wood-dark);
+			}
+			#helpBox td{
+				padding:5px 8px;
+				border-bottom:1px solid rgba(122,82,24,0.3);
+				vertical-align:top;
+			}
+			#helpBox td:first-child{
+				font-family:monospace;
+				font-weight:bold;
+				background:var(--wood-grain);
+				color:#1a0f00;
+				border-radius:3px;
+				white-space:nowrap;
+				width:1%;
+			}
+			#helpCloseX{
+				position:absolute;
+				top:10px;right:14px;
+				background:none;border:none;
+				font-size:1.4em;cursor:pointer;
+				color:var(--wood-grain);padding:0;line-height:1;
+			}
+			#helpCloseX:hover{
+				color:var(--wood-light);
+			}
 		</style>
 	</head>
 	<body>
+		<div id="helpOverlay" onclick="if(event.target===this){helpClose();}">
+			<div id="helpBox">
+				<button id="helpCloseX" onclick="helpClose()">&#x2715;</button>
+				<h2 id="helpH2">⌨ Keyboard Shortcuts</h2>
+				<table>
+					<thead>
+						<tr>
+							<th id="helpTh1">Key</th>
+							<th id="helpTh2">Action</th>
+						</tr>
+					</thead>
+					<tbody id="helpTbody"></tbody>
+				</table>
+			</div>
+		</div>
 		<h1>囲碁 · GO</h1>
 		<p class="subtitle">GAME OF GO · MCTS AI</p>
 		<div class="size-bar">
@@ -342,6 +427,114 @@
 			let board, koPoint, captures, currentPlayer, gameOver, consecutivePasses, lastPlaced, aiThinking;
 			const canvas = document.getElementById('goban');
 			const ctx = canvas.getContext('2d');
+			const HELP_DATA = {
+				en: { title:"⌨ Keyboard Shortcuts", k:"Key", a:"Action", rows:[
+					["P","Pass your turn"],
+					["R","Resign the game"],
+					["N","Start a new game"],
+					["L","Switch to the next language"],
+					["?","Show / hide this help window"]
+				]},
+				it: { title:"⌨ Scorciatoie da tastiera", k:"Tasto", a:"Azione", rows:[
+					["P","Passa il turno"],
+					["R","Abbandona la partita"],
+					["N","Inizia una nuova partita"],
+					["L","Passa alla lingua successiva"],
+					["?","Mostra / nascondi questa finestra di aiuto"]
+				]},
+				fr: { title:"⌨ Raccourcis clavier", k:"Touche", a:"Action", rows:[
+					["P","Passer votre tour"],
+					["R","Abandonner la partie"],
+					["N","Commencer une nouvelle partie"],
+					["L","Passer à la langue suivante"],
+					["?","Afficher / masquer cette fenêtre d'aide"]
+				]},
+				es: { title:"⌨ Atajos de teclado", k:"Tecla", a:"Acción", rows:[
+					["P","Pasar turno"],
+					["R","Rendirse"],
+					["N","Iniciar nueva partida"],
+					["L","Cambiar al idioma siguiente"],
+					["?","Mostrar / ocultar esta ventana de ayuda"]
+				]},
+				de: { title:"⌨ Tastaturkürzel", k:"Taste", a:"Aktion", rows:[
+					["P","Zug passen"],
+					["R","Spiel aufgeben"],
+					["N","Neues Spiel starten"],
+					["L","Zur nächsten Sprache wechseln"],
+					["?","Hilfefenster anzeigen / ausblenden"]
+				]},
+				pt: { title:"⌨ Atalhos de teclado", k:"Tecla", a:"Ação", rows:[
+					["P","Passar a vez"],
+					["R","Desistir da partida"],
+					["N","Iniciar nova partida"],
+					["L","Mudar para o próximo idioma"],
+					["?","Mostrar / ocultar esta janela de ajuda"]
+				]},
+				ro: { title:"⌨ Comenzi rapide de tastatură", k:"Tastă", a:"Acțiune", rows:[
+					["P","Pasează rândul"],
+					["R","Abandonează jocul"],
+					["N","Începe un joc nou"],
+					["L","Trece la limba următoare"],
+					["?","Arată / ascunde fereastra de ajutor"]
+				]},
+				uk: { title:"⌨ Гарячі клавіші", k:"Клавіша", a:"Дія", rows:[
+					["P","Пропустити хід"],
+					["R","Здатися"],
+					["N","Почати нову гру"],
+					["L","Перейти до наступної мови"],
+					["?","Показати / приховати вікно довідки"]
+				]},
+				el: { title:"⌨ Συντομεύσεις πληκτρολογίου", k:"Πλήκτρο", a:"Ενέργεια", rows:[
+					["P","Πάσο"],
+					["R","Παραίτηση"],
+					["N","Νέο παιχνίδι"],
+					["L","Επόμενη γλώσσα"],
+					["?","Εμφάνιση / απόκρυψη βοήθειας"]
+				]},
+				la: { title:"⌨ Compendium Clavium", k:"Clavis", a:"Effectus", rows:[
+					["P","Vicem tuam transi"],
+					["R","Ludo cede"],
+					["N","Ludum novum incipe"],
+					["L","Ad linguam proximam transi"],
+					["?","Hanc fenestram monstra / absconde"]
+				]},
+				zh: { title:"⌨ 键盘快捷键", k:"按键", a:"功能", rows:[
+					["P","跳过本轮"],
+					["R","认输"],
+					["N","开始新局"],
+					["L","切换到下一种语言"],
+					["?","显示 / 隐藏帮助窗口"]
+				]},
+				ja: { title:"⌨ キーボードショートカット", k:"キー", a:"操作", rows:[
+					["P","パス"],
+					["R","投了"],
+					["N","新しいゲームを開始"],
+					["L","次の言語に切り替える"],
+					["?","このヘルプを表示 / 非表示"]
+				]}
+			};
+
+			function helpOpen(){
+				var lang = LANG_KEYS[currentLangIndex];
+				var d = HELP_DATA[lang] || HELP_DATA['en'];
+				document.getElementById('helpH2').textContent = d.title;
+				document.getElementById('helpTh1').textContent = d.k;
+				document.getElementById('helpTh2').textContent = d.a;
+				var tb = document.getElementById('helpTbody');
+				tb.innerHTML = '';
+				d.rows.forEach(function(r){
+					var tr = document.createElement('tr');
+					var td1 = document.createElement('td'); td1.textContent = r[0];
+					var td2 = document.createElement('td'); td2.textContent = r[1];
+					tr.appendChild(td1); tr.appendChild(td2);
+					tb.appendChild(tr);
+				});
+				document.getElementById('helpOverlay').classList.add('open');
+			}
+
+			function helpClose(){
+				document.getElementById('helpOverlay').classList.remove('open');
+			}
 
 			function t(key){
 				return TRANSLATIONS[LANG_KEYS[currentLangIndex]][key] || TRANSLATIONS.en[key] || key;
@@ -361,11 +554,14 @@
 			}
 
 			function nextLang(){
-				currentLangIndex = (currentLangIndex + 1)%LANG_KEYS.length;
+				currentLangIndex = (currentLangIndex + 1)%(LANG_KEYS.length);
 				document.getElementById('btn-lang').innerHTML = FLAGS_SVG[currentLangIndex];
 				applyLang();
 				if(!gameOver && !aiThinking){
 					setStatus(currentPlayer === BLACK ? t('yourTurn') : t('aiThinking'));
+				}
+				if(document.getElementById('helpOverlay').classList.contains('open')){
+					helpOpen();
 				}
 			}
 
@@ -862,6 +1058,12 @@
 					newGame();
 				}else if(e.key.toLowerCase() === "l"){
 					nextLang();
+				}else if(e.key === "?" || (e.shiftKey && e.code === "Slash")){
+					var ov = document.getElementById('helpOverlay');
+					if(ov.classList.contains('open')){ helpClose(); }else{ helpOpen(); }
+					e.preventDefault();
+				}else if(e.key === "Escape"){
+					helpClose();
 				}
 			});
 

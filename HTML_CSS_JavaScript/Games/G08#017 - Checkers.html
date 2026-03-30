@@ -195,9 +195,107 @@
 			*{
 				-webkit-tap-highlight-color: transparent;
 			}
+			#help-modal-overlay{
+				display: none;
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: rgba(0,0,0,0.65);
+				z-index: 99999;
+				justify-content: center;
+				align-items: center;
+			}
+			#help-modal-overlay.open{
+				display: flex;
+			}
+			#help-modal{
+				background: #1e2a1e;
+				border: 2px solid #3a5a3a;
+				border-radius: 14px;
+				padding: 28px 32px 24px;
+				max-width: 460px;
+				width: 92%;
+				box-shadow: 0 16px 48px rgba(0,0,0,0.8);
+				position: relative;
+				max-height: 90vh;
+				overflow-y: auto;
+			}
+			#help-modal h2{
+				margin: 0 0 18px;
+				color: var(--accent);
+				font-size: 1.1rem;
+				text-align: center;
+				letter-spacing: 2px;
+				text-transform: uppercase;
+			}
+			.help-section-title{
+				color: #7abf7a;
+				font-size: 0.7rem;
+				font-weight: bold;
+				letter-spacing: 1.5px;
+				text-transform: uppercase;
+				border-bottom: 1px solid #3a5a3a;
+				padding-bottom: 4px;
+				margin: 14px 0 8px;
+			}
+			.help-row{
+				display: flex;
+				align-items: flex-start;
+				gap: 12px;
+				margin-bottom: 8px;
+			}
+			.help-key{
+				background: #2e4a2e;
+				border: 2px solid #5a8a5a;
+				border-bottom-width: 4px;
+				border-radius: 6px;
+				color: #c8f0a0;
+				font-family: monospace;
+				font-weight: bold;
+				font-size: 0.85rem;
+				min-width: 38px;
+				height: 32px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				padding: 0 6px;
+				flex-shrink: 0;
+				box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+				white-space: nowrap;
+			}
+			.help-desc{
+				color: #d0ecd0;
+				font-size: 0.82rem;
+				line-height: 1.45;
+				padding-top: 6px;
+			}
+			#help-close-btn{
+				position: absolute;
+				top: 12px;
+				right: 14px;
+				background: none;
+				border: none;
+				color: #7a9a7a;
+				font-size: 1.4rem;
+				cursor: pointer;
+				line-height: 1;
+				padding: 0;
+			}
+			#help-close-btn:hover{
+				color: white;
+			}
 		</style>
 	</head>
 	<body>
+		<div id="help-modal-overlay">
+			<div id="help-modal">
+				<button id="help-close-btn" onclick="closeHelp()">✕</button>
+				<h2 id="help-title">⌨ Keyboard Shortcuts</h2>
+				<div id="help-body"></div>
+			</div>
+		</div>
 		<div id="setup-menu">
 			<h1 style="margin-top:0" id="titleText">Checkers Elite</h1>
 			<p style="color: #aaa" id="subtitleText">Select a Rule Set</p>
@@ -255,7 +353,15 @@
 					youWin: "You Win! CPU is blocked.",
 					blackWins: "GAME OVER! Black Wins.",
 					victory: "VICTORY! You defeated the CPU.",
-					variants: {int:"International",it:"Italian",en:"English/USA",br:"Brazilian",ru:"Russian",es:"Spanish",pool:"Pool",ca:"Canadian",tu:"Turkish"}
+					variants: {int:"International",it:"Italian",en:"English/USA",br:"Brazilian",ru:"Russian",es:"Spanish",pool:"Pool",ca:"Canadian",tu:"Turkish"},
+					helpTitle: "⌨ Keyboard Shortcuts",
+					helpSectionMenu: "Main Menu",
+					helpSectionGame: "During the Game",
+					helpL_menu: "Cycle language",
+					helpEnter_menu: "Start game",
+					helpL_game: "Cycle language",
+					helpE: "Exit to menu (reload)",
+					helpQuestion: "Show this help"
 				},
 				it: {
 					title: "Dama Elite",
@@ -268,7 +374,15 @@
 					youWin: "Hai vinto! La CPU è bloccata.",
 					blackWins: "GAME OVER! Vince il nero.",
 					victory: "VITTORIA! Hai sconfitto la CPU.",
-					variants: {int:"Internazionale",it:"Italiana",en:"Inglese/USA",br:"Brasiliana",ru:"Russa",es:"Spagnola",pool:"Pool",ca:"Canadese",tu:"Turca"}
+					variants: {int:"Internazionale",it:"Italiana",en:"Inglese/USA",br:"Brasiliana",ru:"Russa",es:"Spagnola",pool:"Pool",ca:"Canadese",tu:"Turca"},
+					helpTitle: "⌨ Tasti di Scelta Rapida",
+					helpSectionMenu: "Menu Principale",
+					helpSectionGame: "Durante la Partita",
+					helpL_menu: "Cambia lingua",
+					helpEnter_menu: "Avvia la partita",
+					helpL_game: "Cambia lingua",
+					helpE: "Esci al menu (ricarica)",
+					helpQuestion: "Mostra questa guida"
 				},
 				fr: {
 					title: "Dames Élite",
@@ -281,7 +395,15 @@
 					youWin: "Vous gagnez ! La CPU est bloquée.",
 					blackWins: "GAME OVER ! Les noirs gagnent.",
 					victory: "VICTOIRE ! Vous avez battu la CPU.",
-					variants: {int:"International",it:"Italien",en:"Anglais/USA",br:"Brésilien",ru:"Russe",es:"Espagnol",pool:"Pool",ca:"Canadien",tu:"Turc"}
+					variants: {int:"International",it:"Italien",en:"Anglais/USA",br:"Brésilien",ru:"Russe",es:"Espagnol",pool:"Pool",ca:"Canadien",tu:"Turc"},
+					helpTitle: "⌨ Raccourcis Clavier",
+					helpSectionMenu: "Menu Principal",
+					helpSectionGame: "Pendant la Partie",
+					helpL_menu: "Changer la langue",
+					helpEnter_menu: "Démarrer la partie",
+					helpL_game: "Changer la langue",
+					helpE: "Retour au menu (recharger)",
+					helpQuestion: "Afficher cette aide"
 				},
 				es: {
 					title: "Damas Élite",
@@ -294,7 +416,15 @@
 					youWin: "¡Ganaste! La CPU está bloqueada.",
 					blackWins: "¡GAME OVER! Ganan las negras.",
 					victory: "¡VICTORIA! Derrotaste a la CPU.",
-					variants: {int:"Internacional",it:"Italiano",en:"Inglés/USA",br:"Brasileño",ru:"Ruso",es:"Español",pool:"Pool",ca:"Canadiense",tu:"Turco"}
+					variants: {int:"Internacional",it:"Italiano",en:"Inglés/USA",br:"Brasileño",ru:"Ruso",es:"Español",pool:"Pool",ca:"Canadiense",tu:"Turco"},
+					helpTitle: "⌨ Atajos de Teclado",
+					helpSectionMenu: "Menú Principal",
+					helpSectionGame: "Durante la Partida",
+					helpL_menu: "Cambiar idioma",
+					helpEnter_menu: "Iniciar la partida",
+					helpL_game: "Cambiar idioma",
+					helpE: "Volver al menú (recargar)",
+					helpQuestion: "Mostrar esta ayuda"
 				},
 				de: {
 					title: "Dame Elite",
@@ -307,7 +437,15 @@
 					youWin: "Du gewinnst! Die CPU ist blockiert.",
 					blackWins: "GAME OVER! Schwarz gewinnt.",
 					victory: "SIEG! Du hast die CPU besiegt.",
-					variants: {int:"International",it:"Italienisch",en:"Englisch/USA",br:"Brasilianisch",ru:"Russisch",es:"Spanisch",pool:"Pool",ca:"Kanadisch",tu:"Türkisch"}
+					variants: {int:"International",it:"Italienisch",en:"Englisch/USA",br:"Brasilianisch",ru:"Russisch",es:"Spanisch",pool:"Pool",ca:"Kanadisch",tu:"Türkisch"},
+					helpTitle: "⌨ Tastaturkürzel",
+					helpSectionMenu: "Hauptmenü",
+					helpSectionGame: "Während des Spiels",
+					helpL_menu: "Sprache wechseln",
+					helpEnter_menu: "Spiel starten",
+					helpL_game: "Sprache wechseln",
+					helpE: "Zurück zum Menü (neu laden)",
+					helpQuestion: "Diese Hilfe anzeigen"
 				},
 				pt: {
 					title: "Damas Elite",
@@ -320,7 +458,15 @@
 					youWin: "Você ganhou! A CPU está bloqueada.",
 					blackWins: "GAME OVER! As pretas vencem.",
 					victory: "VITÓRIA! Você derrotou a CPU.",
-					variants: {int:"Internacional",it:"Italiana",en:"Inglesa/EUA",br:"Brasileira",ru:"Russa",es:"Espanhola",pool:"Pool",ca:"Canadense",tu:"Turca"}
+					variants: {int:"Internacional",it:"Italiana",en:"Inglesa/EUA",br:"Brasileira",ru:"Russa",es:"Espanhola",pool:"Pool",ca:"Canadense",tu:"Turca"},
+					helpTitle: "⌨ Atalhos de Teclado",
+					helpSectionMenu: "Menu Principal",
+					helpSectionGame: "Durante a Partida",
+					helpL_menu: "Mudar idioma",
+					helpEnter_menu: "Iniciar a partida",
+					helpL_game: "Mudar idioma",
+					helpE: "Voltar ao menu (recarregar)",
+					helpQuestion: "Mostrar esta ajuda"
 				},
 				ro: {
 					title: "Dame Elită",
@@ -333,7 +479,15 @@
 					youWin: "Ai câștigat! CPU este blocată.",
 					blackWins: "GAME OVER! Negrele câștigă.",
 					victory: "VICTORIE! Ai învins CPU.",
-					variants: {int:"Internațional",it:"Italian",en:"Englezesc/SUA",br:"Brazilian",ru:"Rusesc",es:"Spaniol",pool:"Pool",ca:"Canadian",tu:"Turcesc"}
+					variants: {int:"Internațional",it:"Italian",en:"Englezesc/SUA",br:"Brazilian",ru:"Rusesc",es:"Spaniol",pool:"Pool",ca:"Canadian",tu:"Turcesc"},
+					helpTitle: "⌨ Comenzi Rapide Tastatură",
+					helpSectionMenu: "Meniu Principal",
+					helpSectionGame: "În Timpul Jocului",
+					helpL_menu: "Schimbă limba",
+					helpEnter_menu: "Pornește jocul",
+					helpL_game: "Schimbă limba",
+					helpE: "Înapoi la meniu (reîncarcă)",
+					helpQuestion: "Arată acest ajutor"
 				},
 				uk: {
 					title: "Шашки Еліт",
@@ -346,7 +500,15 @@
 					youWin: "Ти виграв! CPU заблокована.",
 					blackWins: "GAME OVER! Чорні виграють.",
 					victory: "ПЕРЕМОГА! Ти переміг CPU.",
-					variants: {int:"Міжнародні",it:"Італійські",en:"Англійські/США",br:"Бразильські",ru:"Російські",es:"Іспанські",pool:"Пул",ca:"Канадські",tu:"Турецькі"}
+					variants: {int:"Міжнародні",it:"Італійські",en:"Англійські/США",br:"Бразильські",ru:"Російські",es:"Іспанські",pool:"Пул",ca:"Канадські",tu:"Турецькі"},
+					helpTitle: "⌨ Гарячі Клавіші",
+					helpSectionMenu: "Головне Меню",
+					helpSectionGame: "Під Час Гри",
+					helpL_menu: "Змінити мову",
+					helpEnter_menu: "Почати гру",
+					helpL_game: "Змінити мову",
+					helpE: "Вийти в меню (перезавантажити)",
+					helpQuestion: "Показати цю довідку"
 				},
 				el: {
 					title: "Ντάμα Ελίτ",
@@ -359,7 +521,15 @@
 					youWin: "Κερδίσατε! Η CPU μπλοκαρίστηκε.",
 					blackWins: "GAME OVER! Νικούν τα μαύρα.",
 					victory: "ΝΙΚΗ! Νικήσατε την CPU.",
-					variants: {int:"Διεθνές",it:"Ιταλικό",en:"Αγγλικό/ΗΠΑ",br:"Βραζιλιάνικο",ru:"Ρωσικό",es:"Ισπανικό",pool:"Pool",ca:"Καναδικό",tu:"Τουρκικό"}
+					variants: {int:"Διεθνές",it:"Ιταλικό",en:"Αγγλικό/ΗΠΑ",br:"Βραζιλιάνικο",ru:"Ρωσικό",es:"Ισπανικό",pool:"Pool",ca:"Καναδικό",tu:"Τουρκικό"},
+					helpTitle: "⌨ Συντομεύσεις Πληκτρολογίου",
+					helpSectionMenu: "Κύριο Μενού",
+					helpSectionGame: "Κατά τη Διάρκεια του Παιχνιδιού",
+					helpL_menu: "Αλλαγή γλώσσας",
+					helpEnter_menu: "Έναρξη παιχνιδιού",
+					helpL_game: "Αλλαγή γλώσσας",
+					helpE: "Επιστροφή στο μενού (επαναφόρτωση)",
+					helpQuestion: "Εμφάνιση αυτής της βοήθειας"
 				},
 				la: {
 					title: "Latrunculorum Elitae",
@@ -372,7 +542,15 @@
 					youWin: "Vincis! CPU impedita est.",
 					blackWins: "FINIS LUDI! Nigri vincunt.",
 					victory: "VICTORIA! CPU vicisti.",
-					variants: {int:"Internationalis",it:"Italica",en:"Anglica/USA",br:"Brasiliensis",ru:"Russica",es:"Hispanica",pool:"Pool",ca:"Canadensis",tu:"Turcica"}
+					variants: {int:"Internationalis",it:"Italica",en:"Anglica/USA",br:"Brasiliensis",ru:"Russica",es:"Hispanica",pool:"Pool",ca:"Canadensis",tu:"Turcica"},
+					helpTitle: "⌨ Compendia Claviaturae",
+					helpSectionMenu: "Tabella Principalis",
+					helpSectionGame: "In Ludo",
+					helpL_menu: "Linguam mutare",
+					helpEnter_menu: "Ludum incipere",
+					helpL_game: "Linguam mutare",
+					helpE: "Revertere ad electionem (recarricare)",
+					helpQuestion: "Hoc auxilium ostendere"
 				},
 				zh: {
 					title: "精英跳棋",
@@ -385,7 +563,15 @@
 					youWin: "你赢了！CPU被封堵。",
 					blackWins: "游戏结束！黑方获勝。",
 					victory: "胜利！你击败了CPU。",
-					variants: {int:"国际",it:"意大利",en:"英式/美式",br:"巴西",ru:"俄罗斯",es:"西班牙",pool:"池式",ca:"加拿大",tu:"土耳其"}
+					variants: {int:"国际",it:"意大利",en:"英式/美式",br:"巴西",ru:"俄罗斯",es:"西班牙",pool:"池式",ca:"加拿大",tu:"土耳其"},
+					helpTitle: "⌨ 键盘快捷键",
+					helpSectionMenu: "主菜单",
+					helpSectionGame: "游戏中",
+					helpL_menu: "切换语言",
+					helpEnter_menu: "开始游戏",
+					helpL_game: "切换语言",
+					helpE: "返回菜单（重新加载）",
+					helpQuestion: "显示此帮助"
 				},
 				ja: {
 					title: "エリートチェッカーズ",
@@ -398,7 +584,15 @@
 					youWin: "あなたの勝ちです！CPUはブロックされました。",
 					blackWins: "ゲームオーバー！黒の勝ちです。",
 					victory: "勝利！CPUを倒しました。",
-					variants: {int:"国際",it:"イタリア",en:"英国/米国",br:"ブラジル",ru:"ロシア",es:"スペイン",pool:"プール",ca:"カナダ",tu:"トルコ"}
+					variants: {int:"国際",it:"イタリア",en:"英国/米国",br:"ブラジル",ru:"ロシア",es:"スペイン",pool:"プール",ca:"カナダ",tu:"トルコ"},
+					helpTitle: "⌨ キーボードショートカット",
+					helpSectionMenu: "メインメニュー",
+					helpSectionGame: "ゲーム中",
+					helpL_menu: "言語を切り替え",
+					helpEnter_menu: "ゲームを開始",
+					helpL_game: "言語を切り替え",
+					helpE: "メニューへ戻る（再読み込み）",
+					helpQuestion: "このヘルプを表示"
 				}
 			};
 
@@ -427,9 +621,12 @@
 				if(statusEl){
 					if(statusEl.textContent.includes('White') || statusEl.textContent.includes(TRANSLATIONS[LANG_KEYS[currentLangIndex]].whiteMove)){
 						statusEl.textContent = t('whiteMove');
-					} else {
+					}else{
 						statusEl.textContent = t('blackMove');
 					}
+				}
+				if(document.getElementById('help-modal-overlay').classList.contains('open')){
+					renderHelpModal();
 				}
 			}
 
@@ -685,7 +882,58 @@
 				selected = null;
 			}
 
+			function openHelp(){
+				renderHelpModal();
+				document.getElementById('help-modal-overlay').classList.add('open');
+			}
+
+			function closeHelp(){
+				document.getElementById('help-modal-overlay').classList.remove('open');
+			}
+
+			function renderHelpModal(){
+				const lang = TRANSLATIONS[LANG_KEYS[currentLangIndex]];
+				document.getElementById('help-title').textContent = lang.helpTitle;
+				const inGame = document.getElementById('game-container').style.display === 'flex';
+				let html = '';
+				if(inGame){
+					html += `<div class="help-section-title">${lang.helpSectionGame}</div>`;
+					html += row('L', lang.helpL_game);
+					html += row('E', lang.helpE);
+				}else{
+					html += `<div class="help-section-title">${lang.helpSectionMenu}</div>`;
+					html += row('L', lang.helpL_menu);
+					html += row('Enter', lang.helpEnter_menu);
+				}
+				html += `<div class="help-section-title" style="margin-top:16px">─</div>`;
+				html += row('?', lang.helpQuestion);
+				document.getElementById('help-body').innerHTML = html;
+			}
+
+			function row(key, desc){
+				return `<div class="help-row"><span class="help-key">${key}</span><span class="help-desc">${desc}</span></div>`;
+			}
+
+			document.getElementById('help-modal-overlay').addEventListener('click', function(e){
+				if(e.target === this){
+					closeHelp();
+				}
+			});
+
 			document.addEventListener("keydown", e => {
+				if(e.key === 'Escape'){
+					closeHelp();
+					return;
+				}
+				if(e.key === '?'){
+					const helpOpen = document.getElementById('help-modal-overlay').classList.contains('open');
+					if(helpOpen){
+						closeHelp();
+					}else{
+						openHelp();
+					}
+					return;
+				}
 				if(e.key.toLowerCase() === "e"){
 					location.reload();
 				}else if(e.key.toLowerCase() === "l"){

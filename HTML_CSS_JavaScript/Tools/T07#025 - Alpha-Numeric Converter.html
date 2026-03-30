@@ -210,6 +210,106 @@
 			*{
 				-webkit-tap-highlight-color: transparent;
 			}
+			.help-overlay{
+				display: none;
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: rgba(0,0,0,0.45);
+				z-index: 1000;
+				align-items: center;
+				justify-content: center;
+			}
+			.help-overlay.show{
+				display: flex;
+			}
+			.help-modal{
+				background: var(--bg-container);
+				border-radius: 14px;
+				box-shadow: 0 8px 32px var(--shadow);
+				padding: 24px 28px 20px 28px;
+				max-width: 420px;
+				width: 92%;
+				position: relative;
+				animation: fadeIn 0.18s ease;
+				transition: background-color 0.4s ease;
+			}
+			@keyframes fadeIn{
+				from{
+					opacity:0;
+					transform:scale(0.95);
+				}
+				to{
+					opacity:1;
+					transform:scale(1);
+				}
+			}
+			.help-modal h4{
+				color: var(--accent-color);
+				margin: 0 0 16px 0;
+				font-size: 1.1em;
+				text-align: center;
+				letter-spacing: 0.5px;
+			}
+			.help-close{
+				position: absolute;
+				top: 12px;
+				right: 14px;
+				background: none;
+				border: none;
+				font-size: 1.3em;
+				color: var(--text-secondary);
+				cursor: pointer;
+				padding: 2px 6px;
+				line-height: 1;
+				border-radius: 4px;
+				font-weight: bold;
+			}
+			.help-close:hover{
+				background: var(--btn-hover);
+				color: var(--accent-color);
+			}
+			.help-table{
+				width: 100%;
+				border-collapse: collapse;
+				font-size: 0.92em;
+			}
+			.help-table tr{
+				border-bottom: 1px solid var(--border-color);
+			}
+			.help-table tr:last-child{
+				border-bottom: none;
+			}
+			.help-table td{
+				padding: 8px 6px;
+				vertical-align: top;
+			}
+			.help-key{
+				font-family: monospace;
+				background: var(--btn-bg);
+				border: 1px solid var(--border-color);
+				border-radius: 4px;
+				padding: 2px 8px;
+				font-size: 1em;
+				font-weight: bold;
+				color: var(--text-main);
+				white-space: nowrap;
+				display: inline-block;
+				min-width: 28px;
+				text-align: center;
+			}
+			.help-desc{
+				color: var(--text-secondary);
+				padding-left: 8px;
+			}
+			.help-hint{
+				text-align: center;
+				margin-top: 14px;
+				font-size: 0.78em;
+				color: #aaa;
+			}
 		</style>
 	</head>
 	<body>
@@ -268,6 +368,14 @@
 				<span class="highlight">A B C D E F G H I J K L M N O P Q R S T U V W X Y Z</span>
 			</div>
 			<div class="lang-bar" id="langBar"></div>
+		</div>
+		<div class="help-overlay" id="helpOverlay" onclick="closeHelp(event)">
+			<div class="help-modal" id="helpModal">
+				<button class="help-close" onclick="toggleHelp()" title="Close">✕</button>
+				<h4 id="helpTitle">Keyboard Shortcuts</h4>
+				<table class="help-table" id="helpTable"></table>
+				<div class="help-hint" id="helpHint">Press ? to close</div>
+			</div>
 		</div>
 		<script>
 			let isAltTheme = false;
@@ -459,18 +567,42 @@
 			];
 			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
 			const TRANSLATIONS = {
-				en: { title:"Alpha-Numeric Converter", keep:"Keep", string:"String", number:"Number", letters:"Letters", alphaLabel:"Alphabetic String", shift:"Shift", decimalLabel:"Decimal", binaryLabel:"Binary", hexLabel:"Hexadecimal", encBtn:"Enc +", decBtn:"Dec -", copyBtn:"Copy", factorBtn:"Factorize", prime:"Prime number! :-D" },
-				it: { title:"Convertitore Alfa-Numerico", keep:"Mantieni", string:"Stringa", number:"Numero", letters:"Lettere", alphaLabel:"Stringa Alfabetica", shift:"Turno", decimalLabel:"Decimale", binaryLabel:"Binario", hexLabel:"Esadecimale", encBtn:"Cif +", decBtn:"Dec -", copyBtn:"Copia", factorBtn:"Fattorizza", prime:"Numero primo! :-D" },
-				fr: { title:"Convertisseur Alpha-Numérique", keep:"Garder", string:"Chaîne", number:"Nombre", letters:"Lettres", alphaLabel:"Chaîne Alphabétique", shift:"Décalage", decimalLabel:"Décimal", binaryLabel:"Binaire", hexLabel:"Hexadécimal", encBtn:"Chif +", decBtn:"Déch -", copyBtn:"Copier", factorBtn:"Factoriser", prime:"Nombre premier! :-D" },
-				es: { title:"Convertidor Alfa-Numérico", keep:"Mantener", string:"Cadena", number:"Número", letters:"Letras", alphaLabel:"Cadena Alfabética", shift:"Desplaz.", decimalLabel:"Decimal", binaryLabel:"Binario", hexLabel:"Hexadecimal", encBtn:"Cifr +", decBtn:"Desc -", copyBtn:"Copiar", factorBtn:"Factorizar", prime:"¡Número primo! :-D" },
-				de: { title:"Alpha-Numerischer Konverter", keep:"Behalten", string:"Text", number:"Zahl", letters:"Buchst.", alphaLabel:"Alphabetische Zeichenf.", shift:"Versch.", decimalLabel:"Dezimal", binaryLabel:"Binär", hexLabel:"Hexadezimal", encBtn:"Versch +", decBtn:"Entsch -", copyBtn:"Kopieren", factorBtn:"Faktorisieren", prime:"Primzahl! :-D" },
-				pt: { title:"Conversor Alfa-Numérico", keep:"Manter", string:"Texto", number:"Número", letters:"Letras", alphaLabel:"String Alfabética", shift:"Desloc.", decimalLabel:"Decimal", binaryLabel:"Binário", hexLabel:"Hexadecimal", encBtn:"Cifr +", decBtn:"Decifr -", copyBtn:"Copiar", factorBtn:"Fatorar", prime:"Número primo! :-D" },
-				ro: { title:"Convertor Alfa-Numeric", keep:"Păstrează", string:"Șir", number:"Număr", letters:"Litere", alphaLabel:"Șir Alfabetic", shift:"Schimb", decimalLabel:"Decimal", binaryLabel:"Binar", hexLabel:"Hexazecimal", encBtn:"Cifr +", decBtn:"Decifr -", copyBtn:"Copiază", factorBtn:"Factorizează", prime:"Număr prim! :-D" },
-				uk: { title:"Альфа-цифровий конвертер", keep:"Зберегти", string:"Рядок", number:"Число", letters:"Літери", alphaLabel:"Алфавітний рядок", shift:"Зсув", decimalLabel:"Десяткове", binaryLabel:"Binary", hexLabel:"Hex", encBtn:"Зашифр +", decBtn:"Розшифр -", copyBtn:"Копіювати", factorBtn:"Фактор", prime:"Просте число! :-D" },
-				el: { title:"Μετατροπέας Αλφαριθμητικών", keep:"Κράτα", string:"Συμβ.", number:"Αριθμός", letters:"Γράμματα", alphaLabel:"Αλφαβητικό", shift:"Μετατ.", decimalLabel:"Δεκαδικό", binaryLabel:"Δυαδικό", hexLabel:"Δεκαεξαδικό", encBtn:"Κρυπτ +", decBtn:"Αποκρ -", copyBtn:"Αντιγραφή", factorBtn:"Παραγοντ", prime:"Πρώτος αριθμός! :-D" },
-				la: { title:"Conversor Alpha-Numericus", keep:"Serva", string:"Series", number:"Numerus", letters:"Litterae", alphaLabel:"Series Alphabetica", shift:"Ambitus", decimalLabel:"Decimalis", binaryLabel:"Binarius", hexLabel:"Hexadecimalis", encBtn:"Enc +", decBtn:"Dec -", copyBtn:"Copy", factorBtn:"Factor", prime:"Numerus primus! :-D" },
-				zh: { title:"字母数字转换器", keep:"保持", string:"字符串", number:"数字", letters:"字母", alphaLabel:"字母字符串", shift:"位移", decimalLabel:"十进制", binaryLabel:"二进制", hexLabel:"十六进制", encBtn:"加密 +", decBtn:"解密 -", copyBtn:"复制", factorBtn:"因数分解", prime:"质数! :-D" },
-				ja: { title:"英数字コンバーター", keep:"保持", string:"文字列", number:"数値", letters:"文字数", alphaLabel:"アルファベット文字列", shift:"シフト", decimalLabel:"10進数", binaryLabel:"2進数", hexLabel:"16進数", encBtn:"暗号化 +", decBtn:"復号化 -", copyBtn:"コピー", factorBtn:"因数分解", prime:"素数です! :-D" }
+				en: { title:"Alpha-Numeric Converter", keep:"Keep", string:"String", number:"Number", letters:"Letters", alphaLabel:"Alphabetic String", shift:"Shift", decimalLabel:"Decimal", binaryLabel:"Binary", hexLabel:"Hexadecimal", encBtn:"Enc +", decBtn:"Dec -", copyBtn:"Copy", factorBtn:"Factorize", prime:"Prime number! :-D",
+					helpTitle:"Keyboard Shortcuts", helpHint:"Press ? to close",
+					helpShortcuts:[["T","Toggle light/dark theme"],["L","Switch to next language"],["R","Reload the page"],["?","Show / hide this help"]] },
+				it: { title:"Convertitore Alfa-Numerico", keep:"Mantieni", string:"Stringa", number:"Numero", letters:"Lettere", alphaLabel:"Stringa Alfabetica", shift:"Turno", decimalLabel:"Decimale", binaryLabel:"Binario", hexLabel:"Esadecimale", encBtn:"Cif +", decBtn:"Dec -", copyBtn:"Copia", factorBtn:"Fattorizza", prime:"Numero primo! :-D",
+					helpTitle:"Scorciatoie da Tastiera", helpHint:"Premi ? per chiudere",
+					helpShortcuts:[["T","Alterna tema chiaro/scuro"],["L","Passa alla lingua successiva"],["R","Ricarica la pagina"],["?","Mostra / nascondi questa guida"]] },
+				fr: { title:"Convertisseur Alpha-Numérique", keep:"Garder", string:"Chaîne", number:"Nombre", letters:"Lettres", alphaLabel:"Chaîne Alphabétique", shift:"Décalage", decimalLabel:"Décimal", binaryLabel:"Binaire", hexLabel:"Hexadécimal", encBtn:"Chif +", decBtn:"Déch -", copyBtn:"Copier", factorBtn:"Factoriser", prime:"Nombre premier! :-D",
+					helpTitle:"Raccourcis Clavier", helpHint:"Appuyez sur ? pour fermer",
+					helpShortcuts:[["T","Basculer thème clair/sombre"],["L","Passer à la langue suivante"],["R","Recharger la page"],["?","Afficher / masquer cette aide"]] },
+				es: { title:"Convertidor Alfa-Numérico", keep:"Mantener", string:"Cadena", number:"Número", letters:"Letras", alphaLabel:"Cadena Alfabética", shift:"Desplaz.", decimalLabel:"Decimal", binaryLabel:"Binario", hexLabel:"Hexadecimal", encBtn:"Cifr +", decBtn:"Desc -", copyBtn:"Copiar", factorBtn:"Factorizar", prime:"¡Número primo! :-D",
+					helpTitle:"Atajos de Teclado", helpHint:"Pulsa ? para cerrar",
+					helpShortcuts:[["T","Cambiar tema claro/oscuro"],["L","Cambiar al siguiente idioma"],["R","Recargar la página"],["?","Mostrar / ocultar esta ayuda"]] },
+				de: { title:"Alpha-Numerischer Konverter", keep:"Behalten", string:"Text", number:"Zahl", letters:"Buchst.", alphaLabel:"Alphabetische Zeichenf.", shift:"Versch.", decimalLabel:"Dezimal", binaryLabel:"Binär", hexLabel:"Hexadezimal", encBtn:"Versch +", decBtn:"Entsch -", copyBtn:"Kopieren", factorBtn:"Faktorisieren", prime:"Primzahl! :-D",
+					helpTitle:"Tastaturkürzel", helpHint:"? drücken zum Schließen",
+					helpShortcuts:[["T","Hell/Dunkel-Thema wechseln"],["L","Zur nächsten Sprache wechseln"],["R","Seite neu laden"],["?","Diese Hilfe ein- / ausblenden"]] },
+				pt: { title:"Conversor Alfa-Numérico", keep:"Manter", string:"Texto", number:"Número", letters:"Letras", alphaLabel:"String Alfabética", shift:"Desloc.", decimalLabel:"Decimal", binaryLabel:"Binário", hexLabel:"Hexadecimal", encBtn:"Cifr +", decBtn:"Decifr -", copyBtn:"Copiar", factorBtn:"Fatorar", prime:"Número primo! :-D",
+					helpTitle:"Atalhos de Teclado", helpHint:"Prima ? para fechar",
+					helpShortcuts:[["T","Alternar tema claro/escuro"],["L","Mudar para o próximo idioma"],["R","Recarregar a página"],["?","Mostrar / ocultar esta ajuda"]] },
+				ro: { title:"Convertor Alfa-Numeric", keep:"Păstrează", string:"Șir", number:"Număr", letters:"Litere", alphaLabel:"Șir Alfabetic", shift:"Schimb", decimalLabel:"Decimal", binaryLabel:"Binar", hexLabel:"Hexazecimal", encBtn:"Cifr +", decBtn:"Decifr -", copyBtn:"Copiază", factorBtn:"Factorizează", prime:"Număr prim! :-D",
+					helpTitle:"Comenzi Rapide", helpHint:"Apăsați ? pentru a închide",
+					helpShortcuts:[["T","Comutare temă deschisă/închisă"],["L","Treci la limba următoare"],["R","Reîncarcă pagina"],["?","Arată / ascunde acest ajutor"]] },
+				uk: { title:"Альфа-цифровий конвертер", keep:"Зберегти", string:"Рядок", number:"Число", letters:"Літери", alphaLabel:"Алфавітний рядок", shift:"Зсув", decimalLabel:"Десяткове", binaryLabel:"Binary", hexLabel:"Hex", encBtn:"Зашифр +", decBtn:"Розшифр -", copyBtn:"Копіювати", factorBtn:"Фактор", prime:"Просте число! :-D",
+					helpTitle:"Клавіатурні Скорочення", helpHint:"Натисніть ? щоб закрити",
+					helpShortcuts:[["T","Перемкнути світлу/темну тему"],["L","Перейти до наступної мови"],["R","Перезавантажити сторінку"],["?","Показати / приховати довідку"]] },
+				el: { title:"Μετατροπέας Αλφαριθμητικών", keep:"Κράτα", string:"Συμβ.", number:"Αριθμός", letters:"Γράμματα", alphaLabel:"Αλφαβητικό", shift:"Μετατ.", decimalLabel:"Δεκαδικό", binaryLabel:"Δυαδικό", hexLabel:"Δεκαεξαδικό", encBtn:"Κρυπτ +", decBtn:"Αποκρ -", copyBtn:"Αντιγραφή", factorBtn:"Παραγοντ", prime:"Πρώτος αριθμός! :-D",
+					helpTitle:"Συντομεύσεις Πληκτρολογίου", helpHint:"Πατήστε ? για κλείσιμο",
+					helpShortcuts:[["T","Εναλλαγή φωτεινού/σκοτεινού θέματος"],["L","Αλλαγή στην επόμενη γλώσσα"],["R","Επαναφόρτωση σελίδας"],["?","Εμφάνιση / απόκρυψη αυτής της βοήθειας"]] },
+				la: { title:"Conversor Alpha-Numericus", keep:"Serva", string:"Series", number:"Numerus", letters:"Litterae", alphaLabel:"Series Alphabetica", shift:"Ambitus", decimalLabel:"Decimalis", binaryLabel:"Binarius", hexLabel:"Hexadecimalis", encBtn:"Enc +", decBtn:"Dec -", copyBtn:"Copy", factorBtn:"Factor", prime:"Numerus primus! :-D",
+					helpTitle:"Claves Auxiliares", helpHint:"Preme ? ad claudendum",
+					helpShortcuts:[["T","Muta inter lucidum et obscurum"],["L","Muta ad linguam proximam"],["R","Renoua paginam"],["?","Ostende / absconde hoc auxilium"]] },
+				zh: { title:"字母数字转换器", keep:"保持", string:"字符串", number:"数字", letters:"字母", alphaLabel:"字母字符串", shift:"位移", decimalLabel:"十进制", binaryLabel:"二进制", hexLabel:"十六进制", encBtn:"加密 +", decBtn:"解密 -", copyBtn:"复制", factorBtn:"因数分解", prime:"质数! :-D",
+					helpTitle:"键盘快捷键", helpHint:"按 ? 关闭",
+					helpShortcuts:[["T","切换亮色/暗色主题"],["L","切换到下一种语言"],["R","重新加载页面"],["?","显示 / 隐藏此帮助"]] },
+				ja: { title:"英数字コンバーター", keep:"保持", string:"文字列", number:"数値", letters:"文字数", alphaLabel:"アルファベット文字列", shift:"シフト", decimalLabel:"10進数", binaryLabel:"2進数", hexLabel:"16進数", encBtn:"暗号化 +", decBtn:"復号化 -", copyBtn:"コピー", factorBtn:"因数分解", prime:"素数です! :-D",
+					helpTitle:"キーボードショートカット", helpHint:"? を押して閉じる",
+					helpShortcuts:[["T","明るい/暗いテーマを切り替え"],["L","次の言語に切り替え"],["R","ページを再読み込み"],["?","このヘルプを表示 / 非表示"]] }
 			};
 
 			let currentPrimeLabel = TRANSLATIONS['en'].prime;
@@ -494,6 +626,15 @@
 				document.getElementById('btnFactorize').textContent = t.factorBtn;
 				currentPrimeLabel = t.prime;
 				document.querySelectorAll('.flag-btn').forEach((b,i) => b.classList.toggle('active', LANG_KEYS[i] === lang));
+				document.getElementById('helpTitle').textContent = t.helpTitle;
+				document.getElementById('helpHint').textContent = t.helpHint;
+				const table = document.getElementById('helpTable');
+				table.innerHTML = '';
+				t.helpShortcuts.forEach(([key, desc]) => {
+					const tr = document.createElement('tr');
+					tr.innerHTML = `<td><span class="help-key">${key}</span></td><td class="help-desc">${desc}</td>`;
+					table.appendChild(tr);
+				});
 			}
 
 			function initLangBar(){
@@ -508,12 +649,22 @@
 				});
 			}
 
+			function toggleHelp(){
+				document.getElementById('helpOverlay').classList.toggle('show');
+			}
+
+			function closeHelp(e){
+				if(e.target === document.getElementById('helpOverlay')){
+					document.getElementById('helpOverlay').classList.remove('show');
+				}
+			}
+
 			document.addEventListener("keydown", e => {
 				if(document.activeElement.tagName === "INPUT"){
 					return;
 				}
-				if(e.key.toLowerCase() === "s"){
-					handleAction('getFullTodayDate');
+				if(e.key === "?"){
+					toggleHelp();
 				}else if(e.key.toLowerCase() === "t"){
 					toggleTheme();
 				}else if(e.key.toLowerCase() === "r"){
@@ -527,6 +678,7 @@
 
 			resetAndRecalculate();
 			initLangBar();
+			applyTranslation('en');
 		</script>
 	</body>
 </html>

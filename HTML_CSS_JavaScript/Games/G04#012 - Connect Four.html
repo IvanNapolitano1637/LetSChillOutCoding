@@ -62,13 +62,85 @@
 				display: inline-block;
 			}
 			@media (max-width: 600px){
-				.controls button {
+				.controls button{
 					flex: 0 1 45%;
 				}
+			}
+			#helpOverlay{
+				display: none;
+				position: fixed;
+				inset: 0;
+				background: rgba(0,0,0,0.55);
+				z-index: 1000;
+				justify-content: center;
+				align-items: center;
+			}
+			#helpOverlay.visible{
+				display: flex;
+			}
+			#helpBox{
+				background: #fff;
+				border-radius: 12px;
+				box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+				padding: 28px 32px 24px;
+				max-width: 480px;
+				width: 90%;
+				max-height: 85vh;
+				overflow-y: auto;
+				position: relative;
+				text-align: left;
+			}
+			#helpBox h2{
+				margin: 0 0 18px;
+				font-size: 1.3em;
+				text-align: center;
+				color: #0033FF;
+			}
+			#helpBox table{
+				width: 100%;
+				border-collapse: collapse;
+			}
+			#helpBox td{
+				padding: 7px 10px;
+				vertical-align: top;
+			}
+			#helpBox tr:nth-child(even) td{
+				background: #f4f4f4;
+				border-radius: 4px;
+			}
+			#helpBox .key{
+				font-family: monospace;
+				font-weight: bold;
+				font-size: 1.05em;
+				color: #c60b1e;
+				white-space: nowrap;
+				width: 1%;
+			}
+			#helpCloseBtn{
+				position: absolute;
+				top: 12px;
+				right: 16px;
+				background: none;
+				border: none;
+				font-size: 1.5em;
+				cursor: pointer;
+				color: #555;
+				padding: 2px 6px;
+				line-height: 1;
+			}
+			#helpCloseBtn:hover{
+				color: #000;
 			}
 		</style>
 	</head>
 	<body>
+		<div id="helpOverlay" role="dialog" aria-modal="true" onclick="if(event.target===this){closeHelp();}">
+			<div id="helpBox">
+				<button id="helpCloseBtn" onclick="closeHelp()" aria-label="Close">✕</button>
+				<h2 id="helpTitle">Keyboard Shortcuts</h2>
+				<table id="helpTable"></table>
+			</div>
+		</div>
 		<canvas id="board">Upgrade Browser</canvas>
 		<div class="controls">
 			<button type="button" id="undoButton" onclick="undoLastMove()">Undo</button>
@@ -125,6 +197,21 @@
 			const MEDIUM_LABELS = ["Medium", "Medio", "Moyen", "Medio", "Mittel", "Médio", "Mediu", "Середній", "Μέτριο", "Medium", "中等", "中級"];
 			const HARD_LABELS = ["Hard", "Difficile", "Difficile", "Difícil", "Schwer", "Difícil", "Greu", "Важко", "Δύσκολο", "Difficilis", "困难", "上級"];
 			//const HINT_LABELS = ["Hint", "Suggerimento", "Conseil", "Sugerencia", "Hinweis", "Sugestão", "Sugestie", "Підказка", "Υπόδειξη", "Consilium", "提示", "ヒント"];
+			const HELP_TITLE = ["Keyboard Shortcuts","Tasti di scelta rapida","Raccourcis clavier","Atajos de teclado","Tastenkürzel","Atalhos de teclado","Scurtături de tastatură","Клавіші швидкого доступу","Συντομεύσεις πληκτρολογίου","Clavium compendia","键盘快捷键","キーボードショートカット"];
+			const HELP_SHORTCUTS = [
+				[["1 – 7","Drop a disc in column 1 to 7"],["U","Undo last move"],["D","Cycle difficulty (Easy / Medium / Hard)"],["R","Restart the game"],["L","Switch language"],["?","Show / hide this help"]],
+				[["1 – 7","Inserisci un disco nella colonna da 1 a 7"],["U","Annulla l'ultima mossa"],["D","Cambia difficoltà (Facile / Medio / Difficile)"],["R","Ricomincia la partita"],["L","Cambia lingua"],["?","Mostra / nascondi questo aiuto"]],
+				[["1 – 7","Placer un jeton dans la colonne 1 à 7"],["U","Annuler le dernier coup"],["D","Changer la difficulté (Facile / Moyen / Difficile)"],["R","Recommencer la partie"],["L","Changer de langue"],["?","Afficher / masquer cette aide"]],
+				[["1 – 7","Coloca una ficha en la columna 1 a 7"],["U","Deshacer el último movimiento"],["D","Cambiar dificultad (Fácil / Medio / Difícil)"],["R","Reiniciar la partida"],["L","Cambiar idioma"],["?","Mostrar / ocultar esta ayuda"]],
+				[["1 – 7","Stein in Spalte 1 bis 7 einwerfen"],["U","Letzten Zug rückgängig machen"],["D","Schwierigkeit wechseln (Einfach / Mittel / Schwer)"],["R","Spiel neu starten"],["L","Sprache wechseln"],["?","Hilfe anzeigen / ausblenden"]],
+				[["1 – 7","Soltar peça na coluna 1 a 7"],["U","Desfazer o último movimento"],["D","Alterar dificuldade (Fácil / Médio / Difícil)"],["R","Reiniciar o jogo"],["L","Mudar idioma"],["?","Mostrar / ocultar esta ajuda"]],
+				[["1 – 7","Plasează o piesă în coloana 1 până la 7"],["U","Anulează ultima mutare"],["D","Schimbă dificultatea (Ușor / Mediu / Greu)"],["R","Repornește jocul"],["L","Schimbă limba"],["?","Afișează / ascunde această ajutor"]],
+				[["1 – 7","Кинути фішку в колонку від 1 до 7"],["U","Скасувати останній хід"],["D","Змінити складність (Легко / Середній / Важко)"],["R","Почати заново"],["L","Змінити мову"],["?","Показати / приховати цю довідку"]],
+				[["1 – 7","Ρίξε πιόνι στη στήλη 1 έως 7"],["U","Αναίρεση τελευταίας κίνησης"],["D","Αλλαγή δυσκολίας (Εύκολο / Μέτριο / Δύσκολο)"],["R","Επανεκκίνηση παιχνιδιού"],["L","Αλλαγή γλώσσας"],["?","Εμφάνιση / απόκρυψη αυτής της βοήθειας"]],
+				[["1 – 7","Calculum in columnam 1 ad 7 mitte"],["U","Ultimum motum annula"],["D","Difficultatem muta (Facilis / Medium / Difficilis)"],["R","Ludum iterum incipe"],["L","Linguam muta"],["?","Auxilium ostende / absconde"]],
+				[["1 – 7","将棋子投入第1至7列"],["U","撤销上一步"],["D","切换难度（简单 / 中等 / 困难）"],["R","重新开始游戏"],["L","切换语言"],["?","显示 / 隐藏本帮助"]],
+				[["1 – 7","列1〜7にコマを置く"],["U","直前の手を元に戻す"],["D","難易度を切替（簡単 / 中級 / 上級）"],["R","ゲームを再スタート"],["L","言語を切替"],["?","このヘルプを表示 / 非表示"]]
+			];
 			let difficultyIndex = 1;
 			let grid = [];
 			let moves = [];
@@ -431,6 +518,9 @@
 				document.getElementById("changeLanguageButton").innerHTML = FLAGS_SVG[languageIndex] + " " + LANGUAGES_LABELS[languageIndex];
 				const diffTexts = [EASY_LABELS, MEDIUM_LABELS, HARD_LABELS];
 				document.getElementById("difficultyButton").textContent = diffTexts[difficultyIndex][languageIndex];
+				if(document.getElementById("helpOverlay").classList.contains("visible")){
+					updateHelpContent();
+				}
 			}
 
 			function undoLastMove(){
@@ -451,6 +541,23 @@
 
 			function refresh(){
 				drawUniverse();
+			}
+
+			function openHelp(){
+				updateHelpContent();
+				document.getElementById("helpOverlay").classList.add("visible");
+			}
+
+			function closeHelp(){
+				document.getElementById("helpOverlay").classList.remove("visible");
+			}
+
+			function updateHelpContent(){
+				document.getElementById("helpTitle").textContent = HELP_TITLE[languageIndex];
+				const rows = HELP_SHORTCUTS[languageIndex];
+				document.getElementById("helpTable").innerHTML = rows.map(([k,d]) =>
+					`<tr><td class="key">${k}</td><td>${d}</td></tr>`
+				).join("");
 			}
 
 			function dropInColumn(column){
@@ -474,6 +581,13 @@
 					refresh();
 				}else if(e.key.toLowerCase() === "l"){
 					cycleLanguage();
+				}else if(e.key === "?"){
+					const ov = document.getElementById("helpOverlay");
+					if(ov.classList.contains("visible")){
+						closeHelp();
+					}else{
+						openHelp();
+					}
 				}
 			});
 		</script>
