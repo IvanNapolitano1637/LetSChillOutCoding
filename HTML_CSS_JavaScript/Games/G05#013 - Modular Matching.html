@@ -445,7 +445,10 @@
 							cell2.classList.remove('revealed', 'error-flash');
 						}, 400);
 						if(currentErrors >= MAX_NUMBER_OF_ERRORS){
-							setTimeout(() => { alert(t("maxErrors")); initGame(); }, 100);
+							setTimeout(() => {
+								alert(t("maxErrors"));
+								initGame();
+							}, 100);
 						}
 					}
 					selectedCells = [];

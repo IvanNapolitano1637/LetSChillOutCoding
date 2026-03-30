@@ -399,11 +399,12 @@
 			}
 
 			function nextLang(){
-				currentLangIndex = (currentLangIndex + 1)%LANG_KEYS.length;
+				currentLangIndex = (currentLangIndex + 1)%(LANG_KEYS.length);
 				updateUI();
 			}
 
 			window.onload = init;
+
 			window.onresize = () => {
 				side = getScreenSize()/order;
 				drawAll();
@@ -412,7 +413,10 @@
 			function init(){
 				const canvas = document.getElementById("chessboard");
 				canvas.addEventListener('mousedown', handleInput);
-				canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleInput(e.touches[0]); });
+				canvas.addEventListener('touchstart', (e) => {
+					e.preventDefault();
+					handleInput(e.touches[0]);
+				});
 				document.getElementById("btnLang").innerHTML = FLAGS_SVG[0];
 				document.querySelectorAll(".button-group button")[3].innerHTML = SIZE_PLUS_SVG;
 				document.querySelectorAll(".button-group button")[4].innerHTML = SIZE_MINUS_SVG;
@@ -528,7 +532,8 @@
 					gridDiv.className = "solutions-grid";
 					fam.forEach(sol => {
 						let mini = document.createElement("canvas");
-						mini.className = "mini-board"; mini.width = mini.height = 64;
+						mini.className = "mini-board";
+						mini.width = mini.height = 64;
 						drawMini(mini, sol);
 						mini.onclick = () => {
 							loadSolution(sol);

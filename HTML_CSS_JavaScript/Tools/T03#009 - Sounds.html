@@ -222,7 +222,10 @@
 			#helpOverlay{
 				display:none;
 				position:fixed;
-				top:0;left:0;width:100%;height:100%;
+				top:0;
+				left:0;
+				width:100%;
+				height:100%;
 				background:rgba(0,0,0,0.55);
 				z-index:9999;
 				justify-content:center;
@@ -276,10 +279,15 @@
 			}
 			#helpCloseX{
 				position:absolute;
-				top:10px;right:14px;
-				background:none;border:none;
-				font-size:1.4em;cursor:pointer;
-				color:#666;padding:0;line-height:1;
+				top:10px;
+				right:14px;
+				background:none;
+				border:none;
+				font-size:1.4em;
+				cursor:pointer;
+				color:#666;
+				padding:0;
+				line-height:1;
 			}
 			#helpCloseX:hover{
 				color:#000;
@@ -1099,7 +1107,7 @@
 			}
 
 			function nextLanguage(){
-				currentLangIndex = (currentLangIndex + 1)%LANG_KEYS.length;
+				currentLangIndex = (currentLangIndex + 1)%(LANG_KEYS.length);
 				applyTranslation(currentLangIndex);
 			}
 
@@ -1258,7 +1266,8 @@
 					const sliceWidth = canvas.width/bufferLength;
 					let x = 0;
 					for(let i = 0; i < bufferLength; i++){
-						const v = dataArray[i]/128.0; const y = v*canvas.height/2;
+						const v = dataArray[i]/128.0;
+						const y = v*canvas.height/2;
 						if(i === 0){
 							ctx.moveTo(x, y);
 						}else{
@@ -1310,7 +1319,8 @@
 						document.getElementById("FREQUENCY_MAX_VALUE").textContent = MAX_FREQUENCY_VALUE[i] + " Hz";
 						if(frequencyHz > MAX_FREQUENCY_VALUE[i]){
 							frequencyHz = MAX_FREQUENCY_VALUE[i];
-							document.getElementById("frequencyRange").value = frequencyHz; setFrequency();
+							document.getElementById("frequencyRange").value = frequencyHz;
+							setFrequency();
 						}
 					}
 				}

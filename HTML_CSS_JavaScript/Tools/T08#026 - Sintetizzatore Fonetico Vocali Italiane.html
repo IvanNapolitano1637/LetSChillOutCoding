@@ -1150,7 +1150,12 @@
 			}
 
 			function stopAll(){
-				activeNodes.forEach(n => { try { n.stop && n.stop(); n.disconnect && n.disconnect(); } catch(e){} });
+				activeNodes.forEach(n => {
+					try {
+						n.stop && n.stop();
+						n.disconnect && n.disconnect();
+					} catch(e){}
+				});
 				activeNodes = [];
 			}
 
@@ -1230,7 +1235,11 @@
 				fg2.gain.value = 0.7;
 				const fg3 = audioCtx.createGain();
 				fg3.gain.value = 0.4;
-				[osc, noiseGain].forEach(src => { src.connect(filt1); src.connect(filt2); src.connect(filt3); });
+				[osc, noiseGain].forEach(src => {
+					src.connect(filt1);
+					src.connect(filt2);
+					src.connect(filt3);
+				});
 				filt1.connect(fg1);
 				fg1.connect(masterGain);
 				filt2.connect(fg2);
@@ -1256,8 +1265,12 @@
 				ensureCtx();
 				stopAll();
 				Object.values(loopNodes).forEach(n => {
-					try { n.stop && n.stop(0); } catch(e) {}
-					try { n.disconnect && n.disconnect(); } catch(e) {}
+					try {
+						n.stop && n.stop(0);
+					} catch(e) {}
+					try {
+						n.disconnect && n.disconnect();
+					} catch(e) {}
 				});
 				loopNodes = {};
 				isLooping = false;
@@ -1303,7 +1316,11 @@
 				fg2.gain.value = 0.7;
 				const fg3 = audioCtx.createGain();
 				fg3.gain.value = 0.4;
-				[osc, noiseGain].forEach(src => { src.connect(filt1); src.connect(filt2); src.connect(filt3); });
+				[osc, noiseGain].forEach(src => {
+					src.connect(filt1);
+					src.connect(filt2);
+					src.connect(filt3);
+				});
 				filt1.connect(fg1);
 				fg1.connect(masterGain);
 				filt2.connect(fg2);
@@ -1329,7 +1346,10 @@
 					} catch(e) {}
 					setTimeout(() => {
 						Object.values(loopNodes).forEach(n => {
-							try { n.stop && n.stop(); n.disconnect && n.disconnect(); } catch(e) {}
+							try {
+								n.stop && n.stop();
+								n.disconnect && n.disconnect();
+							} catch(e) {}
 						});
 					}, 100);
 				}

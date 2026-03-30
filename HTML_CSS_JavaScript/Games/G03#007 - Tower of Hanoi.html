@@ -255,7 +255,7 @@
 			}
 
 			function nextLanguage(){
-				currentLangIndex = (currentLangIndex + 1)%LANG_KEYS.length;
+				currentLangIndex = (currentLangIndex + 1)%(LANG_KEYS.length);
 				applyTranslation();
 				if(document.getElementById('helpOverlay').classList.contains('visible')){
 					updateHelpContent();

@@ -567,7 +567,7 @@
 
 			LANG_TOGGLE.addEventListener('click', () => {
 				const idx = LANG_ORDER.indexOf(currentLang);
-				currentLang = LANG_ORDER[(idx + 1)%LANG_ORDER.length];
+				currentLang = LANG_ORDER[(idx + 1)%(LANG_ORDER.length)];
 				LANG_TOGGLE.textContent = TRANSLATIONS[currentLang].label;
 				updateLanguage();
 			});

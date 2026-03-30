@@ -323,7 +323,10 @@
 							grid[r][c] = 1;
 							let score = minimax(grid, DEPTH, false, -Infinity, Infinity);
 							grid[r][c] = -1;
-							if(score > bestScore){ bestScore = score; chosenColumn = c; }
+							if(score > bestScore){
+								bestScore = score;
+								chosenColumn = c;
+							}
 						}
 					}
 				}
@@ -498,7 +501,7 @@
 			}
 
 			function cycleLanguage(){
-				languageIndex = (languageIndex + 1)%TITLES.length;
+				languageIndex = (languageIndex + 1)%(TITLES.length);
 				updateLabels();
 			}
 

@@ -232,7 +232,8 @@
 			}
 			.help-close{
 				position: absolute;
-				top: 12px; right: 14px;
+				top: 12px;
+				right: 14px;
 				background: none;
 				border: none;
 				font-size: 1.3em;
@@ -440,7 +441,9 @@
 					navigator.clipboard.writeText(this.textContent);
 					const oldText = this.textContent;
 					this.textContent = "📋";
-					setTimeout(() => { this.textContent = oldText; }, 800);
+					setTimeout(() => {
+						this.textContent = oldText;
+					}, 800);
 				};
 			}
 
@@ -689,15 +692,24 @@
 						break;
 					default:
 						switch(e.key.toLowerCase()){
-							case 'a': random(); break;
-							case 'k': setColor(0, 0, 0); break;
-							case 'r': setColor(255, 0, 0); break;
-							case 'g': setColor(0, 255, 0); break;
-							case 'b': setColor(0, 0, 255); break;
-							case 'c': setColor(0, 255, 255); break;
-							case 'm': setColor(255, 0, 255); break;
-							case 'y': setColor(255, 255, 0); break;
-							case 'w': setColor(255, 255, 255); break;
+							case 'a': random();
+							break;
+							case 'k': setColor(0, 0, 0);
+							break;
+							case 'r': setColor(255, 0, 0);
+							break;
+							case 'g': setColor(0, 255, 0);
+							break;
+							case 'b': setColor(0, 0, 255);
+							break;
+							case 'c': setColor(0, 255, 255);
+							break;
+							case 'm': setColor(255, 0, 255);
+							break;
+							case 'y': setColor(255, 255, 0);
+							break;
+							case 'w': setColor(255, 255, 255);
+							break;
 						}
 				}
 			});

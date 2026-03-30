@@ -540,7 +540,7 @@
 						temp /= i;
 					}
 					if(count > 0){
-						result.push(i + getExp(count));
+						result.push(i + "" + (count == 1 ? "" : getExp(count)));
 					}
 				}
 				if(temp > 1){

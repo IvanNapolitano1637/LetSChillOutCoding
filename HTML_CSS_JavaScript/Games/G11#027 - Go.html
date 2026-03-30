@@ -100,7 +100,9 @@
 				max-width: 600px;
 			}
 			.player-card{
-				display:flex; align-items:center; gap:6px;
+				display:flex;
+				align-items:center;
+				gap:6px;
 				background: rgba(0,0,0,0.35);
 				border: 1px solid var(--wood-dark);
 				border-radius: 4px;
@@ -114,7 +116,9 @@
 				box-shadow: 0 0 8px rgba(212,168,83,0.4);
 			}
 			.stone-preview{
-				width: 16px; height: 16px; border-radius: 50%;
+				width: 16px;
+				height: 16px;
+				border-radius: 50%;
 				flex-shrink: 0;
 			}
 			.stone-preview.black{
@@ -131,7 +135,8 @@
 				min-width:0;
 			}
 			.player-name{
-				font-size: .65rem; color: var(--wood-grain);
+				font-size: .65rem;
+				color: var(--wood-grain);
 				letter-spacing:.02em;
 				white-space:nowrap;
 				overflow:hidden;
@@ -190,7 +195,8 @@
 				display: flex;
 			}
 			.spinner{
-				width: 36px; height: 36px;
+				width: 36px;
+				height: 36px;
 				border: 3px solid rgba(212,168,83,0.25);
 				border-top-color: var(--wood-light);
 				border-radius: 50%;
@@ -318,10 +324,15 @@
 			}
 			#helpCloseX{
 				position:absolute;
-				top:10px;right:14px;
-				background:none;border:none;
-				font-size:1.4em;cursor:pointer;
-				color:var(--wood-grain);padding:0;line-height:1;
+				top:10px;
+				right:14px;
+				background:none;
+				border:none;
+				font-size:1.4em;
+				cursor:pointer;
+				color:var(--wood-grain);
+				padding:0;
+				line-height:1;
 			}
 			#helpCloseX:hover{
 				color:var(--wood-light);
@@ -524,9 +535,12 @@
 				tb.innerHTML = '';
 				d.rows.forEach(function(r){
 					var tr = document.createElement('tr');
-					var td1 = document.createElement('td'); td1.textContent = r[0];
-					var td2 = document.createElement('td'); td2.textContent = r[1];
-					tr.appendChild(td1); tr.appendChild(td2);
+					var td1 = document.createElement('td');
+					td1.textContent = r[0];
+					var td2 = document.createElement('td');
+					td2.textContent = r[1];
+					tr.appendChild(td1);
+					tr.appendChild(td2);
 					tb.appendChild(tr);
 				});
 				document.getElementById('helpOverlay').classList.add('open');
@@ -1060,7 +1074,11 @@
 					nextLang();
 				}else if(e.key === "?" || (e.shiftKey && e.code === "Slash")){
 					var ov = document.getElementById('helpOverlay');
-					if(ov.classList.contains('open')){ helpClose(); }else{ helpOpen(); }
+					if(ov.classList.contains('open')){
+						helpClose();
+					}else{
+						helpOpen();
+					}
 					e.preventDefault();
 				}else if(e.key === "Escape"){
 					helpClose();

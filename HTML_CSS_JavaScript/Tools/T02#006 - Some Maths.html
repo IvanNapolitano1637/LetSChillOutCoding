@@ -679,7 +679,7 @@
 			}
 
 			function nextLanguage(){
-				currentLangIndex = (currentLangIndex + 1)%LANG_KEYS.length;
+				currentLangIndex = (currentLangIndex + 1)%(LANG_KEYS.length);
 				applyTranslation(currentLangIndex);
 				retranslateOutputs();
 			}
