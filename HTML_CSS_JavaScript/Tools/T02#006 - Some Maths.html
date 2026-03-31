@@ -59,7 +59,7 @@
 				margin-top: 0;
 				color: #27ae60;
 			}
-			.action-btn {
+			.action-btn{
 				color: white;
 				border: none;
 				padding: 12px 30px;
@@ -71,13 +71,13 @@
 				align-items: center;
 				gap: 8px;
 			}
-			.btn-reset {
+			.btn-reset{
 				background-color: #e66465;
 			}
-			.btn-translate {
+			.btn-translate{
 				background-color: #4a90d9;
 			}
-			.flag-svg {
+			.flag-svg{
 				width: 32px;
 				height: 20px;
 				display: inline-block;
@@ -88,6 +88,80 @@
 			}
 			*{
 				-webkit-tap-highlight-color: transparent;
+			}
+			#kbdModal{
+				display: none;
+				position: fixed;
+				inset: 0;
+				z-index: 9999;
+				background: rgba(0,0,0,0.45);
+				justify-content: center;
+				align-items: center;
+			}
+			#kbdModal.open{
+				display: flex;
+			}
+			#kbdModalBox{
+				background: #fff;
+				border-radius: 12px;
+				padding: 28px 32px 24px 32px;
+				max-width: 480px;
+				width: 92vw;
+				box-shadow: 0 8px 40px rgba(0,0,0,0.22);
+				position: relative;
+			}
+			#kbdModalBox h2{
+				margin: 0 0 18px 0;
+				color: #27ae60;
+				font-size: 1.2rem;
+				display: flex;
+				align-items: center;
+				gap: 10px;
+			}
+			#kbdModalBox table{
+				width: 100%;
+				border-collapse: collapse;
+			}
+			#kbdModalBox td{
+				padding: 7px 6px;
+				vertical-align: middle;
+				border-bottom: 1px solid #eee;
+				font-size: 0.97rem;
+				color: #2c3e50;
+			}
+			#kbdModalBox tr:last-child td{
+				border-bottom: none;
+			}
+			#kbdModalBox td:first-child{
+				width: 44%;
+				font-weight: bold;
+			}
+			kbd{
+				display: inline-block;
+				background: #f0f0f0;
+				border: 1px solid #bbb;
+				border-radius: 5px;
+				padding: 2px 9px;
+				font-family: monospace;
+				font-size: 0.95rem;
+				color: #333;
+				box-shadow: 0 2px 0 #aaa;
+				margin-right: 2px;
+			}
+			#kbdCloseBtn{
+				position: absolute;
+				top: 12px;
+				right: 16px;
+				background: none;
+				border: none;
+				font-size: 1.5rem;
+				cursor: pointer;
+				color: #888;
+				line-height: 1;
+				padding: 0 4px;
+			}
+			#kbdCloseBtn:hover{
+				color: #e66465;
 			}
 		</style>
 	</head>
@@ -153,6 +227,21 @@
 				<canvas id="canvas" width="600" height="600"></canvas>
 			</form>
 		</div>
+		<div id="kbdModal" role="dialog" aria-modal="true" aria-labelledby="kbdModalTitle">
+			<div id="kbdModalBox">
+				<button id="kbdCloseBtn" onclick="closeKbdModal()" aria-label="Close">✕</button>
+				<h2>⌨️ <span id="kbdModalTitle" data-i18n="kbd_title">Keyboard shortcuts</span></h2>
+				<table>
+					<tbody id="kbdShortcutTable">
+						<tr><td><kbd>?</kbd></td><td data-i18n="kbd_open_help">Open / close this help</td></tr>
+						<tr><td><kbd>L</kbd></td><td data-i18n="kbd_next_lang">Switch to next language</td></tr>
+						<tr><td><kbd>R</kbd></td><td data-i18n="kbd_reset">Reset the page</td></tr>
+						<tr><td><kbd>Enter</kbd></td><td data-i18n="kbd_enter">Confirm input in focused field</td></tr>
+						<tr><td><kbd>Esc</kbd></td><td data-i18n="kbd_close_modal">Close this window</td></tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
 		<script>
 			const FLAGS_SVG = [
 				'<svg class="flag-svg" viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#s)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>', // UK
@@ -209,7 +298,13 @@
 					out_composite_even: "Composite (even).",
 					out_neither_prime_composite: "Neither prime nor composite...",
 					out_area: "Area: {area}",
-					out_no_solution: "No solution."
+					out_no_solution: "No solution.",
+					kbd_title: "Keyboard shortcuts",
+					kbd_open_help: "Open / close this help",
+					kbd_next_lang: "Switch to next language",
+					kbd_reset: "Reset the page",
+					kbd_enter: "Confirm input in focused field",
+					kbd_close_modal: "Close this window"
 				},
 				it: {
 					title_number_theory: "Teoria dei Numeri",
@@ -248,7 +343,13 @@
 					out_composite_even: "Composto (pari).",
 					out_neither_prime_composite: "Né primo né composto...",
 					out_area: "Area: {area}",
-					out_no_solution: "Nessuna soluzione."
+					out_no_solution: "Nessuna soluzione.",
+					kbd_title: "Scorciatoie da tastiera",
+					kbd_open_help: "Apri / chiudi questa guida",
+					kbd_next_lang: "Passa alla lingua successiva",
+					kbd_reset: "Reimposta la pagina",
+					kbd_enter: "Conferma il valore nel campo attivo",
+					kbd_close_modal: "Chiudi questa finestra"
 				},
 				fr: {
 					title_number_theory: "Théorie des Nombres",
@@ -287,7 +388,13 @@
 					out_composite_even: "Composé (pair).",
 					out_neither_prime_composite: "Ni premier ni composé...",
 					out_area: "Aire : {area}",
-					out_no_solution: "Aucune solution."
+					out_no_solution: "Aucune solution.",
+					kbd_title: "Raccourcis clavier",
+					kbd_open_help: "Ouvrir / fermer cette aide",
+					kbd_next_lang: "Passer à la langue suivante",
+					kbd_reset: "Réinitialiser la page",
+					kbd_enter: "Valider la saisie dans le champ actif",
+					kbd_close_modal: "Fermer cette fenêtre"
 				},
 				es: {
 					title_number_theory: "Teoría de Números",
@@ -326,7 +433,13 @@
 					out_composite_even: "Compuesto (par).",
 					out_neither_prime_composite: "Ni primo ni compuesto...",
 					out_area: "Área: {area}",
-					out_no_solution: "Sin solución."
+					out_no_solution: "Sin solución.",
+					kbd_title: "Atajos de teclado",
+					kbd_open_help: "Abrir / cerrar esta ayuda",
+					kbd_next_lang: "Cambiar al siguiente idioma",
+					kbd_reset: "Restablecer la página",
+					kbd_enter: "Confirmar entrada en el campo activo",
+					kbd_close_modal: "Cerrar esta ventana"
 				},
 				de: {
 					title_number_theory: "Zahlentheorie",
@@ -365,7 +478,13 @@
 					out_composite_even: "Zusammengesetzt (gerade).",
 					out_neither_prime_composite: "Weder prim noch zusammengesetzt...",
 					out_area: "Fläche: {area}",
-					out_no_solution: "Keine Lösung."
+					out_no_solution: "Keine Lösung.",
+					kbd_title: "Tastaturkürzel",
+					kbd_open_help: "Diese Hilfe öffnen / schließen",
+					kbd_next_lang: "Zur nächsten Sprache wechseln",
+					kbd_reset: "Seite zurücksetzen",
+					kbd_enter: "Eingabe im aktiven Feld bestätigen",
+					kbd_close_modal: "Dieses Fenster schließen"
 				},
 				pt: {
 					title_number_theory: "Teoria dos Números",
@@ -404,7 +523,13 @@
 					out_composite_even: "Composto (par).",
 					out_neither_prime_composite: "Nem primo nem composto...",
 					out_area: "Área: {area}",
-					out_no_solution: "Nenhuma solução."
+					out_no_solution: "Nenhuma solução.",
+					kbd_title: "Atalhos de teclado",
+					kbd_open_help: "Abrir / fechar esta ajuda",
+					kbd_next_lang: "Mudar para o próximo idioma",
+					kbd_reset: "Redefinir a página",
+					kbd_enter: "Confirmar entrada no campo ativo",
+					kbd_close_modal: "Fechar esta janela"
 				},
 				ro: {
 					title_number_theory: "Teoria Numerelor",
@@ -443,7 +568,13 @@
 					out_composite_even: "Compus (par).",
 					out_neither_prime_composite: "Nici prim nici compus...",
 					out_area: "Arie: {area}",
-					out_no_solution: "Nicio soluție."
+					out_no_solution: "Nicio soluție.",
+					kbd_title: "Scurtături de tastatură",
+					kbd_open_help: "Deschide / închide acest ajutor",
+					kbd_next_lang: "Treci la următoarea limbă",
+					kbd_reset: "Resetează pagina",
+					kbd_enter: "Confirmă valoarea în câmpul activ",
+					kbd_close_modal: "Închide această fereastră"
 				},
 				uk: {
 					title_number_theory: "Теорія чисел",
@@ -482,7 +613,13 @@
 					out_composite_even: "Складене (парне).",
 					out_neither_prime_composite: "Ні просте, ні складене...",
 					out_area: "Площа: {area}",
-					out_no_solution: "Немає рішення."
+					out_no_solution: "Немає рішення.",
+					kbd_title: "Гарячі клавіші",
+					kbd_open_help: "Відкрити / закрити цю довідку",
+					kbd_next_lang: "Перейти до наступної мови",
+					kbd_reset: "Скинути сторінку",
+					kbd_enter: "Підтвердити значення в активному полі",
+					kbd_close_modal: "Закрити це вікно"
 				},
 				el: {
 					title_number_theory: "Θεωρία Αριθμών",
@@ -521,7 +658,13 @@
 					out_composite_even: "Σύνθετος (άρτιος).",
 					out_neither_prime_composite: "Ούτε πρώτος ούτε σύνθετος...",
 					out_area: "Εμβαδόν: {area}",
-					out_no_solution: "Δεν υπάρχει λύση."
+					out_no_solution: "Δεν υπάρχει λύση.",
+					kbd_title: "Συντομεύσεις πληκτρολογίου",
+					kbd_open_help: "Άνοιγμα / κλείσιμο αυτής της βοήθειας",
+					kbd_next_lang: "Μετάβαση στην επόμενη γλώσσα",
+					kbd_reset: "Επαναφορά σελίδας",
+					kbd_enter: "Επιβεβαίωση εισόδου στο ενεργό πεδίο",
+					kbd_close_modal: "Κλείσιμο αυτού του παραθύρου"
 				},
 				la: {
 					title_number_theory: "Theoria Numerorum",
@@ -560,7 +703,13 @@
 					out_composite_even: "Compositus (par).",
 					out_neither_prime_composite: "Nec primus nec compositus...",
 					out_area: "Area: {area}",
-					out_no_solution: "Nulla solutio."
+					out_no_solution: "Nulla solutio.",
+					kbd_title: "Compendia clavium",
+					kbd_open_help: "Aperi / claude hanc auxilium",
+					kbd_next_lang: "Ad linguam sequentem transi",
+					kbd_reset: "Paginam restitue",
+					kbd_enter: "Valorem in campo activo confirma",
+					kbd_close_modal: "Claude hanc fenestram"
 				},
 				zh: {
 					title_number_theory: "数论",
@@ -599,7 +748,13 @@
 					out_composite_even: "合数（偶数）。",
 					out_neither_prime_composite: "既不是质数也不是合数...",
 					out_area: "面积：{area}",
-					out_no_solution: "无解。"
+					out_no_solution: "无解。",
+					kbd_title: "键盘快捷键",
+					kbd_open_help: "打开 / 关闭此帮助",
+					kbd_next_lang: "切换到下一种语言",
+					kbd_reset: "重置页面",
+					kbd_enter: "确认当前字段的输入",
+					kbd_close_modal: "关闭此窗口"
 				},
 				ja: {
 					title_number_theory: "数論",
@@ -638,7 +793,13 @@
 					out_composite_even: "合成数（偶数）。",
 					out_neither_prime_composite: "素数でも合成数でもない...",
 					out_area: "面積：{area}",
-					out_no_solution: "解なし。"
+					out_no_solution: "解なし。",
+					kbd_title: "キーボードショートカット",
+					kbd_open_help: "このヘルプを開く / 閉じる",
+					kbd_next_lang: "次の言語に切り替える",
+					kbd_reset: "ページをリセット",
+					kbd_enter: "アクティブフィールドの入力を確認",
+					kbd_close_modal: "このウィンドウを閉じる"
 				}
 			};
 
@@ -1013,6 +1174,7 @@
 			}
 
 			document.getElementById('numberOfSides').addEventListener('change', drawPolygon);
+
 			document.querySelectorAll('input').forEach(input => {
 				input.addEventListener('keypress',(e) => {
 					if(e.key === 'Enter'){
@@ -1026,10 +1188,43 @@
 			});
 
 			document.addEventListener("keydown", e => {
-				if(e.key.toLowerCase() === "l"){
+				if(e.key === "?"){
+					if(document.activeElement && document.activeElement.tagName === "INPUT"){
+						return;
+					}
+					e.preventDefault();
+					toggleKbdModal();
+				}else if(e.key === "Escape"){
+					closeKbdModal();
+				}else if(e.key.toLowerCase() === "l"){
+					if(document.activeElement && document.activeElement.tagName === "INPUT"){
+						return;
+					}
 					nextLanguage();
 				}else if(e.key.toLowerCase() === "r"){
+					if(document.activeElement && document.activeElement.tagName === "INPUT"){
+						return;
+					}
 					clearAll();
+				}
+			});
+
+			function toggleKbdModal(){
+				const modal = document.getElementById("kbdModal");
+				if(modal.classList.contains("open")){
+					closeKbdModal();
+				}else{
+					modal.classList.add("open");
+				}
+			}
+
+			function closeKbdModal(){
+				document.getElementById("kbdModal").classList.remove("open");
+			}
+
+			document.getElementById("kbdModal").addEventListener("click", function(e){
+				if(e.target === this){
+					closeKbdModal();
 				}
 			});
 
