@@ -298,6 +298,7 @@
 					<tr><td><span class="kbd">O</span></td><td>Seleziona / deseleziona zona assi 3</td></tr>
 					<tr><td><span class="kbd">P</span></td><td>Seleziona / deseleziona zona assi 4</td></tr>
 					<tr><td><span class="kbd">Q</span></td><td>Nuova carta dal mazzo</td></tr>
+					<tr><td><span class="kbd">W</span></td><td>Seleziona la carta pescata (scarto)</td></tr>
 					<tr><td><span class="kbd">R</span></td><td>Nuova partita</td></tr>
 					<tr><td><span class="kbd">?</span></td><td>Apri / chiudi questa guida</td></tr>
 				</table>
@@ -642,6 +643,7 @@
 				'o': () => triggerFoundation(2),
 				'p': () => triggerFoundation(3),
 				'q': () => handleDeckClick(),
+				'w': () => triggerWaste(),
 				'r': () => initGame(),
 				'?': () => toggleHelp()
 			};
@@ -699,6 +701,14 @@
 					if(cards.length > 0){
 						handleCardClick(cards[cards.length - 1]);
 					}
+				}
+			}
+
+			function triggerWaste(){
+				const waste = document.getElementById('waste');
+				const lastCard = waste.lastElementChild;
+				if(lastCard && lastCard.classList.contains('card')){
+					handleCardClick(lastCard);
 				}
 			}
 
