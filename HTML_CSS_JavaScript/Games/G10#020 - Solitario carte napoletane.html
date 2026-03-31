@@ -218,9 +218,92 @@
 					justify-content: center;
 				}
 			}
+			.help-overlay{
+				display: none;
+				position: fixed;
+				inset: 0;
+				background: rgba(0,0,0,0.65);
+				z-index: 9999;
+				justify-content: center;
+				align-items: center;
+			}
+			.help-overlay.open{
+				display: flex;
+			}
+			.help-box{
+				background: #1b5e20;
+				border: 2px solid rgba(255,255,255,0.35);
+				border-radius: 14px;
+				padding: 28px 32px;
+				max-width: 420px;
+				width: 90%;
+				box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+				color: white;
+			}
+			.help-box h2{
+				margin: 0 0 18px;
+				font-size: 18px;
+				font-weight: 600;
+				letter-spacing: 0.5px;
+				text-align: center;
+			}
+			.help-table{
+				width: 100%;
+				border-collapse: collapse;
+				font-size: 14px;
+			}
+			.help-table tr:not(:last-child) td{
+				padding-bottom: 10px;
+			}
+			.help-table td:first-child{
+				width: 42px;
+			}
+			.kbd{
+				display: inline-block;
+				background: rgba(255,255,255,0.15);
+				border: 1px solid rgba(255,255,255,0.4);
+				border-radius: 5px;
+				padding: 2px 8px;
+				font-family: monospace;
+				font-size: 13px;
+				font-weight: bold;
+				letter-spacing: 0.5px;
+			}
+			.help-close{
+				display: block;
+				margin: 20px auto 0;
+				padding: 8px 28px;
+			}
+			/* Keyboard hint bar */
+			.kb-hint{
+				font-size: 11px;
+				color: rgba(255,255,255,0.45);
+				margin-bottom: 10px;
+				letter-spacing: 0.3px;
+			}
 		</style>
 	</head>
 	<body>
+		<div class="help-overlay" id="help-overlay" onclick="closeHelp(event)">
+			<div class="help-box">
+				<h2>⌨️ Scorciatoie da tastiera</h2>
+				<table class="help-table">
+					<tr><td><span class="kbd">C</span></td><td>Seleziona / deseleziona colonna 1</td></tr>
+					<tr><td><span class="kbd">V</span></td><td>Seleziona / deseleziona colonna 2</td></tr>
+					<tr><td><span class="kbd">B</span></td><td>Seleziona / deseleziona colonna 3</td></tr>
+					<tr><td><span class="kbd">N</span></td><td>Seleziona / deseleziona colonna 4</td></tr>
+					<tr><td><span class="kbd">M</span></td><td>Seleziona / deseleziona colonna 5</td></tr>
+					<tr><td><span class="kbd">U</span></td><td>Seleziona / deseleziona zona assi 1</td></tr>
+					<tr><td><span class="kbd">I</span></td><td>Seleziona / deseleziona zona assi 2</td></tr>
+					<tr><td><span class="kbd">O</span></td><td>Seleziona / deseleziona zona assi 3</td></tr>
+					<tr><td><span class="kbd">P</span></td><td>Seleziona / deseleziona zona assi 4</td></tr>
+					<tr><td><span class="kbd">Q</span></td><td>Nuova carta dal mazzo</td></tr>
+					<tr><td><span class="kbd">R</span></td><td>Nuova partita</td></tr>
+					<tr><td><span class="kbd">?</span></td><td>Apri / chiudi questa guida</td></tr>
+				</table>
+				<button class="help-close" onclick="toggleHelp()">Chiudi</button>
+			</div>
+		</div>
 		<h1>Solitario carte napoletane</h1>
 		<button onclick="initGame()">Nuova Partita</button>
 		<div class="top-row">
@@ -547,6 +630,88 @@
 			}
 
 			initGame();
+
+			const KEY_MAP = {
+				'c': () => triggerColumn(0),
+				'v': () => triggerColumn(1),
+				'b': () => triggerColumn(2),
+				'n': () => triggerColumn(3),
+				'm': () => triggerColumn(4),
+				'u': () => triggerFoundation(0),
+				'i': () => triggerFoundation(1),
+				'o': () => triggerFoundation(2),
+				'p': () => triggerFoundation(3),
+				'q': () => handleDeckClick(),
+				'r': () => initGame(),
+				'?': () => toggleHelp()
+			};
+
+			document.addEventListener('keydown', function(e){
+				if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA'){
+					return;
+				}
+				const key = e.key.toLowerCase();
+				if(key === '?' || key === '/'){
+					e.preventDefault();
+					toggleHelp();
+					return;
+				}
+				const action = KEY_MAP[key];
+				if(action){
+					e.preventDefault();
+					action();
+				}
+			});
+
+			function triggerColumn(idx){
+				const col = document.getElementById(`col-${idx}`);
+				if(!col){
+					return;
+				}
+				if(selection){
+					if(col.children.length === 0){
+						moveSelectionToColumn(col);
+					}else{
+						const lastCard = col.lastElementChild;
+						if(lastCard && (parseInt(lastCard.dataset.value) === selection.value + 1) && (lastCard.dataset.suit !== selection.suit)){
+							moveSelectionToColumn(col);
+						}else{
+							clearSelection();
+						}
+					}
+				}else{
+					const lastCard = col.lastElementChild;
+					if(lastCard && lastCard.classList.contains('card')){
+						handleCardClick(lastCard);
+					}
+				}
+			}
+
+			function triggerFoundation(fslotIdx){
+				if(selection){
+					handleFoundationSlotClick(fslotIdx);
+				}else{
+					const slot = document.querySelector(`.foundation-slot[data-fslot="${fslotIdx}"]`);
+					if(!slot){
+						return;
+					}
+					const cards = slot.querySelectorAll('.card');
+					if(cards.length > 0){
+						handleCardClick(cards[cards.length - 1]);
+					}
+				}
+			}
+
+			function toggleHelp(){
+				const overlay = document.getElementById('help-overlay');
+				overlay.classList.toggle('open');
+			}
+
+			function closeHelp(e){
+				if(e.target === document.getElementById('help-overlay')){
+					document.getElementById('help-overlay').classList.remove('open');
+				}
+			}
 		</script>
 	</body>
 </html>
