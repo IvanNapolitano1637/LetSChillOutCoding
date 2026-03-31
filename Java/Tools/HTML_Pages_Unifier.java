@@ -480,8 +480,13 @@ public class HTML_Pages_Unifier {
 </div>
 
 <script>
+	const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
 	const pages = { {{JS_CONTENT}} };
 	let currentKey = null;
+
+	function manageKeyboardButtonVisibility(){
+		document.getElementById('kb-hint-btn').style.display = DESKTOP ? 'block' : 'none';
+	}
 
 	function toggleSection(gridId){
 		const grid = document.getElementById(gridId);
@@ -533,6 +538,7 @@ public class HTML_Pages_Unifier {
 
 	const kbMessages = [
 		{ lang: 'EN', flag: '<svg viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#s)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>', msg: 'Press <kbd>?</kbd> inside an app to open a pop-up with all available keyboard shortcuts for that page.' },
+		//{ lang: 'EN', flag: '<svg class="flag-svg" viewBox="0 0 7410 3900"><rect width="7410" height="3900" fill="#b22234"/><path d="M0 300h7410M0 900h7410M0 1500h7410M0 2100h7410M0 2700h7410M0 3300h7410" stroke="#fff" stroke-width="300"/><rect width="2964" height="2100" fill="#3c3b6e"/><path d="M247 175l247 759-646-469h798l-646 469z" fill="#fff" transform="scale(.2)"/></svg>',
 		{ lang: 'IT', flag: '<svg viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>', msg: 'Premi <kbd>?</kbd> in un\u2019app per aprire un pop-up con tutte le scorciatoie da tastiera disponibili per quella pagina.' },
 		{ lang: 'FR', flag: '<svg viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg>', msg: 'Appuyez sur <kbd>?</kbd> dans une app pour ouvrir un pop-up avec tous les raccourcis clavier disponibles pour cette page.' },
 		{ lang: 'ES', flag: '<svg viewBox="0 0 3 2"><rect width="3" height="2" fill="#c60b1e"/><rect width="3" height="1" y="0.5" fill="#ffc400"/></svg>', msg: 'Pulsa <kbd>?</kbd> dentro de una app para abrir un pop-up con todos los atajos de teclado disponibles en esa página.' },
@@ -541,6 +547,7 @@ public class HTML_Pages_Unifier {
 		{ lang: 'RO', flag: '<svg viewBox="0 0 3 2"><rect width="1" height="2" fill="#002b7f"/><rect width="1" height="2" x="1" fill="#fcd116"/><rect width="1" height="2" x="2" fill="#ce1126"/></svg>', msg: 'Apasă <kbd>?</kbd> în interiorul unei aplicații pentru a deschide un pop-up cu toate comenzile rapide de tastatură disponibile.' },
 		{ lang: 'UA', flag: '<svg viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>', msg: 'Натисніть <kbd>?</kbd> всередині програми, щоб відкрити спливаюче вікно з усіма доступними комбінаціями клавіш.' },
 		{ lang: 'GR', flag: '<svg viewBox="0 0 27 18"><rect width="27" height="18" fill="#005bae"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#005bae"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>', msg: 'Πατήστε <kbd>?</kbd> μέσα σε μια εφαρμογή για να ανοίξετε ένα pop-up με όλες τις διαθέσιμες συντομεύσεις πληκτρολογίου.' },
+		//{ lang: 'LA', flag '<svg class="flag-svg" viewBox="0 0 1 1"><rect width="0.5" height="1" fill="#ffe000"/><rect x="0.5" width="0.5" height="1" fill="#fff"/></svg>',
 		{ lang: 'LA', flag: '<svg viewBox="0 0 3 2"><rect width="3" height="2" fill="#800000"/><path d="M0.5,0.5 L2.5,0.5 L2.5,1.5 L0.5,1.5 Z" fill="none" stroke="#FFD700" stroke-width="0.1"/><text x="1.5" y="1.15" font-family="serif" font-weight="bold" font-size="0.4" fill="#FFD700" text-anchor="middle">SPQR</text></svg>', msg: 'Preme <kbd>?</kbd> intra applicationem ut fenestram cum omnibus compendiis claviaturarum aperias.' },
 		{ lang: 'CN', flag: '<svg viewBox="0 0 3 2"><rect width="3" height="2" fill="#de2110"/><path d="M.5 1.1l.3-.9.3.9-1-.6h1z" fill="#ffde00" transform="matrix(.4 0 0 .4 .1 .1)"/></svg>', msg: '在应用内按 <kbd>?</kbd> 可打开一个弹窗，显示该页面所有可用的键盘快捷键。' },
 		{ lang: 'JP', flag: '<svg viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>', msg: 'アプリ内で <kbd>?</kbd> を押すと、そのページで使用可能なすべてのキーボードショートカットを表示するポップアップが開きます。' }
@@ -605,11 +612,13 @@ public class HTML_Pages_Unifier {
 			}
 		}
 	});
+
+	window.onload = manageKeyboardButtonVisibility();
 </script>
 </body>
 </html>
 """;
-		String finalHtml = template.replace("{{MENU_CONTENT}}", menuHtml).replace("{{JS_CONTENT}}", jsObjectContent);
+		String finalHtml = template.replace("{{MENU_CONTENT}}", menuHtml).replace("{{JS_CONTENT}}", jsObjectContent).stripTrailing();
 		try{
 			Files.writeString(Paths.get("index.html"), finalHtml);
 		}catch(IOException e){
