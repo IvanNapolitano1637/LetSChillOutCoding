@@ -624,43 +624,6 @@
 				document.getElementById("solveBtn").disabled = false;
 			}
 
-			document.addEventListener("keydown", e => {
-				if(e.key.toLowerCase() === "r"){
-					shuffleTiles();
-				}else if(e.key.toLowerCase() === "l"){
-					nextLanguage();
-				}else if(e.key.toLowerCase() === "s"){
-					solve();
-				}else if(e.key === "ArrowUp"){
-					e.preventDefault();
-					if(r1 < 3){
-						cursorX = (c1*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
-						cursorY = ((r1 + 1)*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
-						select();
-					}
-				}else if(e.key === "ArrowDown"){
-					e.preventDefault();
-					if(r1 > 0){
-						cursorX = (c1*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
-						cursorY = ((r1 - 1)*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
-						select();
-					}
-				}else if(e.key === "ArrowLeft"){
-					e.preventDefault();
-					if(c1 < 3){
-							cursorX = ((c1 + 1)*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
-							cursorY = (r1*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
-							select();
-						}
-				}else if(e.key === "ArrowRight"){
-					e.preventDefault();
-					if(c1 > 0){
-						cursorX = ((c1 - 1)*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
-						cursorY = (r1*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
-						select();
-					}
-				}
-			});
 			drawBoard();
 			buildHelpModal();
 		</script>
