@@ -10,7 +10,7 @@ import java.util.*;
 //Da mettere nella cartella in cui ci sono: "Clocks", "Games" e "Tools".
 //Da compilare e lanciare lì da terminale.
 
-public class HTML_Pages_Unifier {
+public class HTML_Pages_Unifier{
 
 	private static final String[] FOLDERS = {"Clocks", "Games", "Tools"};
 	private static final Map<String, String> EMOJIS;
