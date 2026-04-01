@@ -6888,6 +6888,7 @@ document.addEventListener('keydown', function(e) {
 			const PIECE_KEYS = {'P':'pawn','R':'rook','N':'knight','B':'bishop','Q':'queen','K':'king','p':'pawn','r':'rook','n':'knight','b':'bishop','q':'queen','k':'king'};
 			const PIECES = {'p':'♟', 'r':'♜', 'n':'♞', 'b':'♝', 'q':'♛', 'k':'♚', 'P':'♙', 'R':'♖', 'N':'♘', 'B':'♗', 'Q':'♕', 'K':'♔'};
 			let selected = null, legalMoves = [], turn = 'W', lastMove = null;
+			let positionHistory = [];
 			let playerColor = 'W';
 			const AUDIO_CXT = new (window.AudioContext || window.webkitAudioContext)();
 			let currentDiffIdx = 2;
@@ -7519,6 +7520,8 @@ document.addEventListener('keydown', function(e) {
 				selected = null;
 				legalMoves = [];
 				turn = (turn === 'W') ? 'B' : 'W';
+				positionHistory.push(board.map(row => row.join('')).join('|'));
+				if(positionHistory.length > 12) positionHistory.shift();
 				checkGameState();
 				drawBoard();
 				if(turn !== playerColor){
@@ -7683,7 +7686,8 @@ document.addEventListener('keydown', function(e) {
 				if(allMoves.length === 0){
 					return;
 				}
-				let bestMove = null, bestValue = -Infinity, bestPromo = pcColor === 'B' ? 'q' : 'Q';
+				let bestValue = -Infinity, bestPromo = pcColor === 'B' ? 'q' : 'Q';
+				let bestMoves = [];
 				for(const m of allMoves){
 					const isPromo = (pcColor === 'B') ? (board[m.fR][m.fC] === 'p' && m.tR === 7) : (board[m.fR][m.fC] === 'P' && m.tR === 0);
 					const promoChoices = isPromo ? (pcColor === 'B' ? ['q', 'n', 'r', 'b'] : ['Q', 'N', 'R', 'B']) : [null];
@@ -7696,17 +7700,25 @@ document.addEventListener('keydown', function(e) {
 						if(pcColor === 'W'){
 							v = -v;
 						}
+						const posKey = tmp.map(row => row.join('')).join('|');
+						const repetitions = positionHistory.filter(h => h === posKey).length;
+						if(repetitions >= 1){
+							v -= 30 * repetitions;
+						}
 						if(v > bestValue){
 							bestValue = v;
-							bestMove = m;
-							if(isPromo){
-								bestPromo = choice;
-							}
+							bestMoves = [{move: m, promo: choice}];
+						}else if(v === bestValue){
+							bestMoves.push({move: m, promo: choice});
 						}
 					}
 				}
-				if(bestMove){
-					executeMove(bestMove.fR, bestMove.fC, bestMove.tR, bestMove.tC, bestMove.special, bestPromo);
+				const chosen = bestMoves[Math.floor(Math.random()*(bestMoves.length))];
+				if(chosen){
+					if(chosen.promo){
+						bestPromo = chosen.promo;
+					}
+					executeMove(chosen.move.fR, chosen.move.fC, chosen.move.tR, chosen.move.tC, chosen.move.special, bestPromo);
 				}
 			}
 
