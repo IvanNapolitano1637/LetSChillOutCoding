@@ -107,7 +107,7 @@
 			}
 			.row-1{
 				display: grid;
-				grid-template-columns: 2fr 1.5fr 0.8fr;
+				grid-template-columns: 3fr 0.85fr 0.65fr;
 				gap: 10px;
 			}
 			.row-1 button, .row-2 button{
@@ -124,7 +124,7 @@
 			}
 			.row-2{
 				display: grid;
-				grid-template-columns: 1fr 1fr 1fr;
+				grid-template-columns: 1fr 1fr 1fr 36px;
 				gap: 10px;
 			}
 			.save-section{
@@ -613,7 +613,8 @@
 			<div class="row-2">
 				<button id="toggleLogBtn" onclick="toggleLog()" style="background: #3498db;">Show Log</button>
 				<button id="undoBtn" onclick="undoMove()" style="background: #95a5a6;">Undo</button>
-				<button id="resetBtn" onclick="resetGame()" style="background: #e67e22;">Reset</button>
+				<button id="resetBtn" onclick="restartSame()" style="background: #e67e22;">Restart</button>
+				<button id="restartBtn" onclick="resetGame()" style="background: #f1c40f; color: #1a2535; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; line-height: 1;">⟳</button>
 			</div>
 			<div class="save-section">
 				<div style="text-align: center; font-size: 0.7rem; font-weight: bold; margin-bottom: 5px; color: #bdc3c7;">
@@ -673,7 +674,7 @@
 			];
 			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
 			const TRANSLATIONS = {
-				en: { chooseColor:"♟ Choose Your Color ♟", language:"Language", start:"START", whiteMove:"White to move.", blackMove:"Black to move.", check:" (+)", checkmate:"CHECKMATE! {w} wins!", stalemate:"STALEMATE! It's a draw.", draw:"DRAW! Insufficient material.", level:"Level", easy:"Easy", medium:"Medium", hard:"Hard", expert:"Expert", showLog:"Show Log", hideLog:"Hide Log", undo:"Undo", reset:"Reset", logTitle:"LOG MOVES", saveInfo:"You have up to three slots to save your game.<br/>Once a slot is occupied, you can load, overwrite, or delete its data. Choose wisely.", slot:"Slot", empty:"Empty", confirmLoad:"Slot {n}: Do you want to load the saved game?", confirmReplace:"Do you want to replace the previous save?", confirmDelete:"Are you sure you want to permanently delete the Slot {n} save?", white:"White", black:"Black", pawn:"Pawn", rook:"Rook", knight:"Knight", bishop:"Bishop", queen:"Queen", king:"King",
+				en: { chooseColor:"♟ Choose Your Color ♟", language:"Language", start:"START", whiteMove:"White to move.", blackMove:"Black to move.", check:" (+)", checkmate:"CHECKMATE! {w} wins!", stalemate:"STALEMATE! It's a draw.", draw:"DRAW! Insufficient material.", level:"Level", easy:"Easy", medium:"Medium", hard:"Hard", expert:"Expert", showLog:"Show Log", hideLog:"Hide Log", undo:"Undo", reset:"Restart", logTitle:"LOG MOVES", saveInfo:"You have up to three slots to save your game.<br/>Once a slot is occupied, you can load, overwrite, or delete its data. Choose wisely.", slot:"Slot", empty:"Empty", confirmLoad:"Slot {n}: Do you want to load the saved game?", confirmReplace:"Do you want to replace the previous save?", confirmDelete:"Are you sure you want to permanently delete the Slot {n} save?", white:"White", black:"Black", pawn:"Pawn", rook:"Rook", knight:"Knight", bishop:"Bishop", queen:"Queen", king:"King",
 				helpTitle:"⌨ Keyboard Shortcuts",
 				helpSectionGame:"During the Game", helpSectionSetup:"Setup Screen",
 				helpW:"Choose White pieces", helpB:"Choose Black pieces",
@@ -682,7 +683,7 @@
 				helpD_game:"Cycle difficulty level", helpL_game:"Cycle language",
 				helpT:"Show / Hide move log", helpU:"Undo last move",
 				helpR:"Reset game (reload)", helpQuestion:"Show this help" },
-				it: { chooseColor:"♟ Scegli il tuo Colore ♟", language:"Lingua", start:"INIZIA", whiteMove:"Muove il Bianco.", blackMove:"Muove il Nero.", check:" (+)", checkmate:"SCACCO MATTO! Vince il {w}!", stalemate:"STALLO! È un pari.", draw:"PARI! Materiale insufficiente.", level:"Livello", easy:"Facile", medium:"Medio", hard:"Difficile", expert:"Esperto", showLog:"Mostra Log", hideLog:"Nascondi Log", undo:"Annulla", reset:"Reset", logTitle:"LOG MOSSE", saveInfo:"Hai fino a tre slot per salvare la partita.<br/>Se uno slot è occupato puoi caricare, sovrascrivere o eliminare. Scegli con cura.", slot:"Slot", empty:"Vuoto", confirmLoad:"Slot {n}: Vuoi caricare la partita salvata?", confirmReplace:"Vuoi sostituire il salvataggio precedente?", confirmDelete:"Sei sicuro di voler eliminare definitivamente il salvataggio nello Slot {n}?", white:"Bianco", black:"Nero", pawn:"Pedone", rook:"Torre", knight:"Cavallo", bishop:"Alfiere", queen:"Regina", king:"Re",
+				it: { chooseColor:"♟ Scegli il tuo Colore ♟", language:"Lingua", start:"INIZIA", whiteMove:"Muove il Bianco.", blackMove:"Muove il Nero.", check:" (+)", checkmate:"SCACCO MATTO! Vince il {w}!", stalemate:"STALLO! È un pari.", draw:"PARI! Materiale insufficiente.", level:"Livello", easy:"Facile", medium:"Medio", hard:"Difficile", expert:"Esperto", showLog:"Mostra Log", hideLog:"Nascondi Log", undo:"Annulla", reset:"Ricomincia", logTitle:"LOG MOSSE", saveInfo:"Hai fino a tre slot per salvare la partita.<br/>Se uno slot è occupato puoi caricare, sovrascrivere o eliminare. Scegli con cura.", slot:"Slot", empty:"Vuoto", confirmLoad:"Slot {n}: Vuoi caricare la partita salvata?", confirmReplace:"Vuoi sostituire il salvataggio precedente?", confirmDelete:"Sei sicuro di voler eliminare definitivamente il salvataggio nello Slot {n}?", white:"Bianco", black:"Nero", pawn:"Pedone", rook:"Torre", knight:"Cavallo", bishop:"Alfiere", queen:"Regina", king:"Re",
 				helpTitle:"⌨ Tasti di Scelta Rapida",
 				helpSectionGame:"Durante la Partita", helpSectionSetup:"Schermata di Setup",
 				helpW:"Scegli i pezzi Bianchi", helpB:"Scegli i pezzi Neri",
@@ -691,7 +692,7 @@
 				helpD_game:"Cambia livello di difficoltà", helpL_game:"Cambia lingua",
 				helpT:"Mostra / Nascondi log mosse", helpU:"Annulla ultima mossa",
 				helpR:"Ricomincia la partita (ricarica)", helpQuestion:"Mostra questa guida" },
-				fr: { chooseColor:"♟ Choisissez votre Couleur ♟", language:"Langue", start:"DÉMARRER", whiteMove:"Au tour des Blancs.", blackMove:"Au tour des Noirs.", check:" (+)", checkmate:"ÉCHEC ET MAT ! Les {w} gagnent !", stalemate:"PAT ! Match nul.", draw:"NUL ! Matériel insuffisant.", level:"Niveau", easy:"Facile", medium:"Moyen", hard:"Difficile", expert:"Expert", showLog:"Voir Log", hideLog:"Cacher Log", undo:"Annuler", reset:"Réinit.", logTitle:"LOG COUPS", saveInfo:"Vous avez jusqu'à trois emplacements pour sauvegarder.<br/>Un emplacement occupé peut être chargé, écrasé ou supprimé. Choisissez bien.", slot:"Slot", empty:"Vide", confirmLoad:"Slot {n} : Voulez-vous charger la partie sauvegardée ?", confirmReplace:"Voulez-vous remplacer la sauvegarde précédente ?", confirmDelete:"Voulez-vous vraiment supprimer définitivement la sauvegarde du Slot {n} ?", white:"Blancs", black:"Noirs", pawn:"Pion", rook:"Tour", knight:"Cavalier", bishop:"Fou", queen:"Dame", king:"Roi",
+				fr: { chooseColor:"♟ Choisissez votre Couleur ♟", language:"Langue", start:"DÉMARRER", whiteMove:"Au tour des Blancs.", blackMove:"Au tour des Noirs.", check:" (+)", checkmate:"ÉCHEC ET MAT ! Les {w} gagnent !", stalemate:"PAT ! Match nul.", draw:"NUL ! Matériel insuffisant.", level:"Niveau", easy:"Facile", medium:"Moyen", hard:"Difficile", expert:"Expert", showLog:"Voir Log", hideLog:"Cacher Log", undo:"Annuler", reset:"Rejouer", logTitle:"LOG COUPS", saveInfo:"Vous avez jusqu'à trois emplacements pour sauvegarder.<br/>Un emplacement occupé peut être chargé, écrasé ou supprimé. Choisissez bien.", slot:"Slot", empty:"Vide", confirmLoad:"Slot {n} : Voulez-vous charger la partie sauvegardée ?", confirmReplace:"Voulez-vous remplacer la sauvegarde précédente ?", confirmDelete:"Voulez-vous vraiment supprimer définitivement la sauvegarde du Slot {n} ?", white:"Blancs", black:"Noirs", pawn:"Pion", rook:"Tour", knight:"Cavalier", bishop:"Fou", queen:"Dame", king:"Roi",
 				helpTitle:"⌨ Raccourcis Clavier",
 				helpSectionGame:"Pendant la Partie", helpSectionSetup:"Écran de Configuration",
 				helpW:"Choisir les pièces Blanches", helpB:"Choisir les pièces Noires",
@@ -700,7 +701,7 @@
 				helpD_game:"Changer la difficulté", helpL_game:"Changer la langue",
 				helpT:"Afficher / Masquer le log", helpU:"Annuler le dernier coup",
 				helpR:"Recommencer la partie (recharger)", helpQuestion:"Afficher cette aide" },
-				es: { chooseColor:"♟ Elige tu Color ♟", language:"Idioma", start:"EMPEZAR", whiteMove:"Mueven las Blancas.", blackMove:"Mueven las Negras.", check:" (+)", checkmate:"¡JAQUE MATE! ¡Ganan las {w}!", stalemate:"¡AHOGADO! Es un empate.", draw:"¡EMPATE! Material insuficiente.", level:"Nivel", easy:"Fácil", medium:"Medio", hard:"Difícil", expert:"Experto", showLog:"Ver Log", hideLog:"Ocultar Log", undo:"Deshacer", reset:"Reiniciar", logTitle:"LOG MOVS", saveInfo:"Tienes hasta tres ranuras para guardar tu partida.<br/>Una ranura ocupada se puede cargar, sobrescribir o eliminar. Elige bien.", slot:"Ranura", empty:"Vacío", confirmLoad:"Ranura {n}: ¿Deseas cargar la partida guardada?", confirmReplace:"¿Deseas reemplazar el guardado anterior?", confirmDelete:"¿Seguro que quieres eliminar permanentemente el guardado de la Ranura {n}?", white:"Blancas", black:"Negras", pawn:"Peón", rook:"Torre", knight:"Caballo", bishop:"Alfil", queen:"Reina", king:"Rey",
+				es: { chooseColor:"♟ Elige tu Color ♟", language:"Idioma", start:"EMPEZAR", whiteMove:"Mueven las Blancas.", blackMove:"Mueven las Negras.", check:" (+)", checkmate:"¡JAQUE MATE! ¡Ganan las {w}!", stalemate:"¡AHOGADO! Es un empate.", draw:"¡EMPATE! Material insuficiente.", level:"Nivel", easy:"Fácil", medium:"Medio", hard:"Difícil", expert:"Experto", showLog:"Ver Log", hideLog:"Ocultar Log", undo:"Deshacer", reset:"Reanudar", logTitle:"LOG MOVS", saveInfo:"Tienes hasta tres ranuras para guardar tu partida.<br/>Una ranura ocupada se puede cargar, sobrescribir o eliminar. Elige bien.", slot:"Ranura", empty:"Vacío", confirmLoad:"Ranura {n}: ¿Deseas cargar la partida guardada?", confirmReplace:"¿Deseas reemplazar el guardado anterior?", confirmDelete:"¿Seguro que quieres eliminar permanentemente el guardado de la Ranura {n}?", white:"Blancas", black:"Negras", pawn:"Peón", rook:"Torre", knight:"Caballo", bishop:"Alfil", queen:"Reina", king:"Rey",
 				helpTitle:"⌨ Atajos de Teclado",
 				helpSectionGame:"Durante la Partida", helpSectionSetup:"Pantalla de Configuración",
 				helpW:"Elegir piezas Blancas", helpB:"Elegir piezas Negras",
@@ -709,7 +710,7 @@
 				helpD_game:"Cambiar dificultad", helpL_game:"Cambiar idioma",
 				helpT:"Mostrar / Ocultar log", helpU:"Deshacer último movimiento",
 				helpR:"Reiniciar partida (recargar)", helpQuestion:"Mostrar esta ayuda" },
-				de: { chooseColor:"♟ Wähle deine Farbe ♟", language:"Sprache", start:"STARTEN", whiteMove:"Weiß ist am Zug.", blackMove:"Schwarz ist am Zug.", check:" (+)", checkmate:"SCHACHMATT! {w} gewinnt!", stalemate:"PATT! Unentschieden.", draw:"REMIS! Unzureichendes Material.", level:"Stufe", easy:"Leicht", medium:"Mittel", hard:"Schwer", expert:"Experte", showLog:"Log zeigen", hideLog:"Log ausblenden", undo:"Rückgängig", reset:"Neustart", logTitle:"ZUG-LOG", saveInfo:"Sie haben bis zu drei Slots zum Speichern.<br/>Ein belegter Slot kann geladen, überschrieben oder gelöscht werden. Wählen Sie weise.", slot:"Slot", empty:"Leer", confirmLoad:"Slot {n}: Möchten Sie das gespeicherte Spiel laden?", confirmReplace:"Möchten Sie den vorherigen Speicherstand ersetzen?", confirmDelete:"Sind Sie sicher, dass Sie Slot {n} dauerhaft löschen möchten?", white:"Weiß", black:"Schwarz", pawn:"Bauer", rook:"Turm", knight:"Springer", bishop:"Läufer", queen:"Dame", king:"König",
+				de: { chooseColor:"♟ Wähle deine Farbe ♟", language:"Sprache", start:"STARTEN", whiteMove:"Weiß ist am Zug.", blackMove:"Schwarz ist am Zug.", check:" (+)", checkmate:"SCHACHMATT! {w} gewinnt!", stalemate:"PATT! Unentschieden.", draw:"REMIS! Unzureichendes Material.", level:"Stufe", easy:"Leicht", medium:"Mittel", hard:"Schwer", expert:"Experte", showLog:"Log zeigen", hideLog:"Log ausblenden", undo:"Rückgängig", reset:"Neu starten", logTitle:"ZUG-LOG", saveInfo:"Sie haben bis zu drei Slots zum Speichern.<br/>Ein belegter Slot kann geladen, überschrieben oder gelöscht werden. Wählen Sie weise.", slot:"Slot", empty:"Leer", confirmLoad:"Slot {n}: Möchten Sie das gespeicherte Spiel laden?", confirmReplace:"Möchten Sie den vorherigen Speicherstand ersetzen?", confirmDelete:"Sind Sie sicher, dass Sie Slot {n} dauerhaft löschen möchten?", white:"Weiß", black:"Schwarz", pawn:"Bauer", rook:"Turm", knight:"Springer", bishop:"Läufer", queen:"Dame", king:"König",
 				helpTitle:"⌨ Tastaturkürzel",
 				helpSectionGame:"Während des Spiels", helpSectionSetup:"Einrichtungsbildschirm",
 				helpW:"Weiße Figuren wählen", helpB:"Schwarze Figuren wählen",
@@ -718,7 +719,7 @@
 				helpD_game:"Schwierigkeitsgrad wechseln", helpL_game:"Sprache wechseln",
 				helpT:"Zugprotokoll ein-/ausblenden", helpU:"Letzten Zug rückgängig machen",
 				helpR:"Spiel neu starten (neu laden)", helpQuestion:"Diese Hilfe anzeigen" },
-				pt: { chooseColor:"♟ Escolha a sua Cor ♟", language:"Idioma", start:"COMEÇAR", whiteMove:"Brancas jogam.", blackMove:"Negras jogam.", check:" (+)", checkmate:"XEQUE-MATE! As {w} vencem!", stalemate:"AFOGAMENTO! Empate.", draw:"EMPATE! Material insuficiente.", level:"Nível", easy:"Fácil", medium:"Médio", hard:"Difícil", expert:"Especialista", showLog:"Ver Log", hideLog:"Ocultar Log", undo:"Desfazer", reset:"Reiniciar", logTitle:"LOG LANÇ", saveInfo:"Você tem até três slots para salvar sua partida.<br/>Um slot ocupado pode ser carregado, substituído ou excluído. Escolha com cuidado.", slot:"Slot", empty:"Vazio", confirmLoad:"Slot {n}: Deseja carregar o jogo salvo?", confirmReplace:"Deseja substituir o salvamento anterior?", confirmDelete:"Tem certeza de que deseja excluir permanentemente o Slot {n}?", white:"Brancas", black:"Negras", pawn:"Peão", rook:"Torre", knight:"Cavalo", bishop:"Bispo", queen:"Rainha", king:"Rei",
+				pt: { chooseColor:"♟ Escolha a sua Cor ♟", language:"Idioma", start:"COMEÇAR", whiteMove:"Brancas jogam.", blackMove:"Negras jogam.", check:" (+)", checkmate:"XEQUE-MATE! As {w} vencem!", stalemate:"AFOGAMENTO! Empate.", draw:"EMPATE! Material insuficiente.", level:"Nível", easy:"Fácil", medium:"Médio", hard:"Difícil", expert:"Especialista", showLog:"Ver Log", hideLog:"Ocultar Log", undo:"Desfazer", reset:"Recomeçar", logTitle:"LOG LANÇ", saveInfo:"Você tem até três slots para salvar sua partida.<br/>Um slot ocupado pode ser carregado, substituído ou excluído. Escolha com cuidado.", slot:"Slot", empty:"Vazio", confirmLoad:"Slot {n}: Deseja carregar o jogo salvo?", confirmReplace:"Deseja substituir o salvamento anterior?", confirmDelete:"Tem certeza de que deseja excluir permanentemente o Slot {n}?", white:"Brancas", black:"Negras", pawn:"Peão", rook:"Torre", knight:"Cavalo", bishop:"Bispo", queen:"Rainha", king:"Rei",
 				helpTitle:"⌨ Atalhos de Teclado",
 				helpSectionGame:"Durante a Partida", helpSectionSetup:"Tela de Configuração",
 				helpW:"Escolher peças Brancas", helpB:"Escolher peças Negras",
@@ -727,7 +728,7 @@
 				helpD_game:"Mudar nível de dificuldade", helpL_game:"Mudar idioma",
 				helpT:"Mostrar / Ocultar log de lances", helpU:"Desfazer último lance",
 				helpR:"Reiniciar partida (recarregar)", helpQuestion:"Mostrar esta ajuda" },
-				ro: { chooseColor:"♟ Alege Culoarea ta ♟", language:"Limbă", start:"ÎNCEPE", whiteMove:"Albul mută.", blackMove:"Negrul mută.", check:" (+)", checkmate:"ȘAH MAT! Câștigă {w}!", stalemate:"PAT! Remiză.", draw:"REMIZĂ! Material insuficient.", level:"Nivel", easy:"Ușor", medium:"Mediu", hard:"Greu", expert:"Expert", showLog:"Arată Log", hideLog:"Ascunde Log", undo:"Anulează", reset:"Resetare", logTitle:"LOG MUTĂRI", saveInfo:"Ai până la trei sloturi pentru a salva jocul.<br/>Un slot ocupat poate fi încărcat, suprascris sau șters. Alege cu înțelepciune.", slot:"Slot", empty:"Gol", confirmLoad:"Slot {n}: Vrei să încarci jocul salvat?", confirmReplace:"Vrei să înlocuiești salvarea anterioară?", confirmDelete:"Ești sigur că vrei să ștergi permanent Slot {n}?", white:"Alb", black:"Negru", pawn:"Pion", rook:"Turn", knight:"Cal", bishop:"Nebun", queen:"Regină", king:"Rege",
+				ro: { chooseColor:"♟ Alege Culoarea ta ♟", language:"Limbă", start:"ÎNCEPE", whiteMove:"Albul mută.", blackMove:"Negrul mută.", check:" (+)", checkmate:"ȘAH MAT! Câștigă {w}!", stalemate:"PAT! Remiză.", draw:"REMIZĂ! Material insuficient.", level:"Nivel", easy:"Ușor", medium:"Mediu", hard:"Greu", expert:"Expert", showLog:"Arată Log", hideLog:"Ascunde Log", undo:"Anulează", reset:"Reîncepere", logTitle:"LOG MUTĂRI", saveInfo:"Ai până la trei sloturi pentru a salva jocul.<br/>Un slot ocupat poate fi încărcat, suprascris sau șters. Alege cu înțelepciune.", slot:"Slot", empty:"Gol", confirmLoad:"Slot {n}: Vrei să încarci jocul salvat?", confirmReplace:"Vrei să înlocuiești salvarea anterioară?", confirmDelete:"Ești sigur că vrei să ștergi permanent Slot {n}?", white:"Alb", black:"Negru", pawn:"Pion", rook:"Turn", knight:"Cal", bishop:"Nebun", queen:"Regină", king:"Rege",
 				helpTitle:"⌨ Comenzi Rapide Tastatură",
 				helpSectionGame:"În Timpul Jocului", helpSectionSetup:"Ecran de Configurare",
 				helpW:"Alege piesele Albe", helpB:"Alege piesele Negre",
@@ -736,7 +737,7 @@
 				helpD_game:"Schimbă dificultatea", helpL_game:"Schimbă limba",
 				helpT:"Arată / Ascunde jurnalul", helpU:"Anulează ultima mutare",
 				helpR:"Resetează jocul (reîncarcă)", helpQuestion:"Arată acest ajutor" },
-				uk: { chooseColor:"♟ Оберіть свій Колір ♟", language:"Мова", start:"ПОЧАТИ", whiteMove:"Ходять білі.", blackMove:"Ходять чорні.", check:" (+)", checkmate:"ШАХ І МАТ! Перемагають {w}!", stalemate:"ПАТ! Нічия.", draw:"НІЧИЯ! Недостатньо матеріалу.", level:"Рівень", easy:"Легко", medium:"Середній", hard:"Важко", expert:"Експерт", showLog:"Показати лог", hideLog:"Сховати лог", undo:"Скасувати", reset:"Скинути", logTitle:"ЛОГ ХОДІВ", saveInfo:"У вас є до трьох слотів для збереження гри.<br/>Заповнений слот можна завантажити, перезаписати або видалити.", slot:"Слот", empty:"Порожньо", confirmLoad:"Слот {n}: Завантажити збережену гру?", confirmReplace:"Замінити попереднє збереження?", confirmDelete:"Ви впевнені, що хочете видалити Слот {n}?", white:"Білі", black:"Чорні", pawn:"Пішак", rook:"Тура", knight:"Кінь", bishop:"Слон", queen:"Ферзь", king:"Король",
+				uk: { chooseColor:"♟ Оберіть свій Колір ♟", language:"Мова", start:"ПОЧАТИ", whiteMove:"Ходять білі.", blackMove:"Ходять чорні.", check:" (+)", checkmate:"ШАХ І МАТ! Перемагають {w}!", stalemate:"ПАТ! Нічия.", draw:"НІЧИЯ! Недостатньо матеріалу.", level:"Рівень", easy:"Легко", medium:"Середній", hard:"Важко", expert:"Експерт", showLog:"Показати лог", hideLog:"Сховати лог", undo:"Скасувати", reset:"Перезапуск", logTitle:"ЛОГ ХОДІВ", saveInfo:"У вас є до трьох слотів для збереження гри.<br/>Заповнений слот можна завантажити, перезаписати або видалити.", slot:"Слот", empty:"Порожньо", confirmLoad:"Слот {n}: Завантажити збережену гру?", confirmReplace:"Замінити попереднє збереження?", confirmDelete:"Ви впевнені, що хочете видалити Слот {n}?", white:"Білі", black:"Чорні", pawn:"Пішак", rook:"Тура", knight:"Кінь", bishop:"Слон", queen:"Ферзь", king:"Король",
 				helpTitle:"⌨ Гарячі Клавіші",
 				helpSectionGame:"Під Час Гри", helpSectionSetup:"Екран Налаштувань",
 				helpW:"Вибрати Білі фігури", helpB:"Вибрати Чорні фігури",
@@ -745,7 +746,7 @@
 				helpD_game:"Змінити рівень складності", helpL_game:"Змінити мову",
 				helpT:"Показати / Сховати журнал ходів", helpU:"Скасувати останній хід",
 				helpR:"Перезапустити гру (перезавантажити)", helpQuestion:"Показати цю довідку" },
-				el: { chooseColor:"♟ Διάλεξε το Χρώμα σου ♟", language:"Γλώσσα", start:"ΕΝΑΡΞΗ", whiteMove:"Κινούνται τα Λευκά.", blackMove:"Κινούνται τα Μαύρα.", check:" (+)", checkmate:"ΣΑΧΜΑΤ! Κερδίζουν τα {w}!", stalemate:"ΠΑΤ! Ισοπαλία.", draw:"ΙΣΟΠΑΛΙΑ! Ανεπαρκές υλικό.", level:"Επίπεδο", easy:"Εύκολο", medium:"Μέτριο", hard:"Δύσκολο", expert:"Ειδικός", showLog:"Εμφ. Log", hideLog:"Απόκρ. Log", undo:"Αναίρεση", reset:"Επαναφορά", logTitle:"LOG ΚΙΝΉΣΕΩΝ", saveInfo:"Έχετε έως τρεις θέσεις αποθήκευσης.<br/>Μια κατεχόμενη θέση μπορεί να φορτωθεί, αντικατασταθεί ή διαγραφεί.", slot:"Θέση", empty:"Κενό", confirmLoad:"Θέση {n}: Να φορτωθεί η αποθηκευμένη παρτίδα;", confirmReplace:"Να αντικατασταθεί η προηγούμενη αποθήκευση;", confirmDelete:"Σίγουρα διαγραφή Θέση {n};", white:"Λευκά", black:"Μαύρα", pawn:"Πιόνι", rook:"Πύργος", knight:"Ίππος", bishop:"Αξιωματικός", queen:"Βασίλισσα", king:"Βασιλιάς",
+				el: { chooseColor:"♟ Διάλεξε το Χρώμα σου ♟", language:"Γλώσσα", start:"ΕΝΑΡΞΗ", whiteMove:"Κινούνται τα Λευκά.", blackMove:"Κινούνται τα Μαύρα.", check:" (+)", checkmate:"ΣΑΧΜΑΤ! Κερδίζουν τα {w}!", stalemate:"ΠΑΤ! Ισοπαλία.", draw:"ΙΣΟΠΑΛΙΑ! Ανεπαρκές υλικό.", level:"Επίπεδο", easy:"Εύκολο", medium:"Μέτριο", hard:"Δύσκολο", expert:"Ειδικός", showLog:"Εμφ. Log", hideLog:"Απόκρ. Log", undo:"Αναίρεση", reset:"Επανεκκίν.", logTitle:"LOG ΚΙΝΉΣΕΩΝ", saveInfo:"Έχετε έως τρεις θέσεις αποθήκευσης.<br/>Μια κατεχόμενη θέση μπορεί να φορτωθεί, αντικατασταθεί ή διαγραφεί.", slot:"Θέση", empty:"Κενό", confirmLoad:"Θέση {n}: Να φορτωθεί η αποθηκευμένη παρτίδα;", confirmReplace:"Να αντικατασταθεί η προηγούμενη αποθήκευση;", confirmDelete:"Σίγουρα διαγραφή Θέση {n};", white:"Λευκά", black:"Μαύρα", pawn:"Πιόνι", rook:"Πύργος", knight:"Ίππος", bishop:"Αξιωματικός", queen:"Βασίλισσα", king:"Βασιλιάς",
 				helpTitle:"⌨ Συντομεύσεις Πληκτρολογίου",
 				helpSectionGame:"Κατά τη Διάρκεια του Παιχνιδιού", helpSectionSetup:"Οθόνη Ρύθμισης",
 				helpW:"Επιλογή Λευκών κομματιών", helpB:"Επιλογή Μαύρων κομματιών",
@@ -754,7 +755,7 @@
 				helpD_game:"Αλλαγή δυσκολίας", helpL_game:"Αλλαγή γλώσσας",
 				helpT:"Εμφάνιση / Απόκρυψη καταγραφής", helpU:"Αναίρεση τελευταίας κίνησης",
 				helpR:"Επαναφορά παιχνιδιού (επαναφόρτωση)", helpQuestion:"Εμφάνιση αυτής της βοήθειας" },
-				la: { chooseColor:"♟ Elige Colorem tuum ♟", language:"Lingua", start:"INCIPE", whiteMove:"Albi moventur.", blackMove:"Nigri moventur.", check:" (+)", checkmate:"SCACUS MATUS! {w} vincunt!", stalemate:"IMPASSE! Par est.", draw:"PAR! Materia insufficiens.", level:"Gradus", easy:"Facile", medium:"Medium", hard:"Difficile", expert:"Peritus", showLog:"Monstra Log", hideLog:"Absconde Log", undo:"Rescinde", reset:"Renovare", logTitle:"LOG MOTUUM", saveInfo:"Tres locos habes ad ludum servandum.<br/>Locus occupatus onerari, deleri, mutarive potest.", slot:"Locus", empty:"Vacuus", confirmLoad:"Locus {n}: Ludum servatum onerare vis?", confirmReplace:"Conservationem priorem substituere vis?", confirmDelete:"Locum {n} delere vis?", white:"Albi", black:"Nigri", pawn:"Pedes", rook:"Turris", knight:"Eques", bishop:"Episcopus", queen:"Regina", king:"Rex",
+				la: { chooseColor:"♟ Elige Colorem tuum ♟", language:"Lingua", start:"INCIPE", whiteMove:"Albi moventur.", blackMove:"Nigri moventur.", check:" (+)", checkmate:"SCACUS MATUS! {w} vincunt!", stalemate:"IMPASSE! Par est.", draw:"PAR! Materia insufficiens.", level:"Gradus", easy:"Facile", medium:"Medium", hard:"Difficile", expert:"Peritus", showLog:"Monstra Log", hideLog:"Absconde Log", undo:"Rescinde", reset:"Reinitiare", logTitle:"LOG MOTUUM", saveInfo:"Tres locos habes ad ludum servandum.<br/>Locus occupatus onerari, deleri, mutarive potest.", slot:"Locus", empty:"Vacuus", confirmLoad:"Locus {n}: Ludum servatum onerare vis?", confirmReplace:"Conservationem priorem substituere vis?", confirmDelete:"Locum {n} delere vis?", white:"Albi", black:"Nigri", pawn:"Pedes", rook:"Turris", knight:"Eques", bishop:"Episcopus", queen:"Regina", king:"Rex",
 				helpTitle:"⌨ Compendia Claviaturae",
 				helpSectionGame:"In Ludo", helpSectionSetup:"Tabella Praeparationis",
 				helpW:"Albos eligere", helpB:"Nigros eligere",
@@ -763,7 +764,7 @@
 				helpD_game:"Gradum mutare", helpL_game:"Linguam mutare",
 				helpT:"Log ostendere / abscondere", helpU:"Motum ultimum rescindere",
 				helpR:"Ludum renovare (recarricare)", helpQuestion:"Hoc auxilium ostendere" },
-				zh: { chooseColor:"♟ 选择你的颜色 ♟", language:"语言", start:"开始", whiteMove:"白方走棋。", blackMove:"黑方走棋。", check:" (+)", checkmate:"将死！{w}获胜！", stalemate:"僵局！平局。", draw:"平局！子力不足。", level:"难度", easy:"简单", medium:"中等", hard:"困难", expert:"专家", showLog:"显示日志", hideLog:"隐藏日志", undo:"撤销", reset:"重置", logTitle:"走棋日志", saveInfo:"您最多可使用三个存档槽。<br/>已占用的槽可以加载、覆盖或删除。请慎重选择。", slot:"槽", empty:"空", confirmLoad:"槽 {n}：是否加载已保存的游戏？", confirmReplace:"是否替换之前的存档？", confirmDelete:"确定要永久删除槽 {n} 的存档吗？", white:"白方", black:"黑方", pawn:"兵", rook:"车", knight:"马", bishop:"象", queen:"后", king:"王",
+				zh: { chooseColor:"♟ 选择你的颜色 ♟", language:"语言", start:"开始", whiteMove:"白方走棋。", blackMove:"黑方走棋。", check:" (+)", checkmate:"将死！{w}获胜！", stalemate:"僵局！平局。", draw:"平局！子力不足。", level:"难度", easy:"简单", medium:"中等", hard:"困难", expert:"专家", showLog:"显示日志", hideLog:"隐藏日志", undo:"撤销", reset:"重新开始", logTitle:"走棋日志", saveInfo:"您最多可使用三个存档槽。<br/>已占用的槽可以加载、覆盖或删除。请慎重选择。", slot:"槽", empty:"空", confirmLoad:"槽 {n}：是否加载已保存的游戏？", confirmReplace:"是否替换之前的存档？", confirmDelete:"确定要永久删除槽 {n} 的存档吗？", white:"白方", black:"黑方", pawn:"兵", rook:"车", knight:"马", bishop:"象", queen:"后", king:"王",
 				helpTitle:"⌨ 键盘快捷键",
 				helpSectionGame:"游戏中", helpSectionSetup:"设置界面",
 				helpW:"选择白方棋子", helpB:"选择黑方棋子",
@@ -772,7 +773,7 @@
 				helpD_game:"切换难度", helpL_game:"切换语言",
 				helpT:"显示 / 隐藏走棋记录", helpU:"撤销上一步",
 				helpR:"重新开始游戏（重新加载）", helpQuestion:"显示此帮助" },
-				ja: { chooseColor:"♟ 色を選んでください ♟", language:"言語", start:"スタート", whiteMove:"白の手番。", blackMove:"黒の手番。", check:" (+)", checkmate:"チェックメイト！{w}の勝ち！", stalemate:"ステイルメイト！引き分け。", draw:"引き分け！駒不足。", level:"レベル", easy:"簡単", medium:"普通", hard:"難しい", expert:"エキスパート", showLog:"ログ表示", hideLog:"ログ非表示", undo:"元に戻す", reset:"リセット", logTitle:"手順ログ", saveInfo:"ゲームを保存するスロットが3つあります。<br/>使用済みスロットは読込・上書き・削除が可能です。", slot:"スロット", empty:"空", confirmLoad:"スロット{n}：保存済みゲームを読み込みますか？", confirmReplace:"前の保存データを上書きしますか？", confirmDelete:"スロット{n}を完全に削除しますか？", white:"白", black:"黒", pawn:"ポーン", rook:"ルーク", knight:"ナイト", bishop:"ビショップ", queen:"クイーン", king:"キング",
+				ja: { chooseColor:"♟ 色を選んでください ♟", language:"言語", start:"スタート", whiteMove:"白の手番。", blackMove:"黒の手番。", check:" (+)", checkmate:"チェックメイト！{w}の勝ち！", stalemate:"ステイルメイト！引き分け。", draw:"引き分け！駒不足。", level:"レベル", easy:"簡単", medium:"普通", hard:"難しい", expert:"エキスパート", showLog:"ログ表示", hideLog:"ログ非表示", undo:"元に戻す", reset:"再スタート", logTitle:"手順ログ", saveInfo:"ゲームを保存するスロットが3つあります。<br/>使用済みスロットは読込・上書き・削除が可能です。", slot:"スロット", empty:"空", confirmLoad:"スロット{n}：保存済みゲームを読み込みますか？", confirmReplace:"前の保存データを上書きしますか？", confirmDelete:"スロット{n}を完全に削除しますか？", white:"白", black:"黒", pawn:"ポーン", rook:"ルーク", knight:"ナイト", bishop:"ビショップ", queen:"クイーン", king:"キング",
 				helpTitle:"⌨ キーボードショートカット",
 				helpSectionGame:"ゲーム中", helpSectionSetup:"設定画面",
 				helpW:"白の駒を選択", helpB:"黒の駒を選択",
@@ -819,7 +820,7 @@
 				document.getElementById('btnLang').innerHTML = FLAGS_SVG[currentLangIndex];
 				refreshStatusText();
 				const diffBtn = document.getElementById('diffBtn');
-				diffBtn.textContent = t('level') + ': ' + levelName(currentDiffIdx);
+				diffBtn.textContent = levelName(currentDiffIdx);
 				const logContainer = document.getElementById('logContainer');
 				const toggleBtn = document.getElementById('toggleLogBtn');
 				toggleBtn.textContent = logContainer.style.display === 'block' ? t('hideLog') : t('showLog');
@@ -904,7 +905,7 @@
 				lastMove = gs.lastMove;
 				document.getElementById('moveLog').innerHTML = gs.logHtml;
 				const btn = document.getElementById('diffBtn');
-				btn.textContent = t('level') + ': ' + levelName(currentDiffIdx);
+				btn.textContent = levelName(currentDiffIdx);
 				btn.style.background = LEVELS[currentDiffIdx].color;
 				selected = null;
 				legalMoves = [];
@@ -966,7 +967,7 @@
 			function cycleDifficulty(){
 				currentDiffIdx = (currentDiffIdx + 1)%(LEVELS.length);
 				const btn = document.getElementById('diffBtn');
-				btn.textContent = t('level') + ': ' + levelName(currentDiffIdx);
+				btn.textContent = levelName(currentDiffIdx);
 				btn.style.background = LEVELS[currentDiffIdx].color;
 			}
 
@@ -1542,6 +1543,30 @@
 				location.reload();
 			}
 
+			function restartSame(){
+				board = [['r','n','b','q','k','b','n','r'],['p','p','p','p','p','p','p','p'],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['P','P','P','P','P','P','P','P'],['R','N','B','Q','K','B','N','R']];
+				moved = {'K': false, 'k': false, 'R_7_0': false, 'R_7_7': false, 'r_0_0': false, 'r_0_7': false};
+				enPassantTarget = null;
+				history = [];
+				positionHistory = [];
+				selected = null;
+				legalMoves = [];
+				lastMove = null;
+				pendingPromotion = null;
+				turn = 'W';
+				document.getElementById('moveLog').innerHTML = '';
+				const logContainer = document.getElementById('logContainer');
+				if(logContainer.style.display === 'block'){
+					logContainer.style.display = 'none';
+					document.getElementById('toggleLogBtn').textContent = t('showLog');
+				}
+				checkGameState();
+				drawBoard();
+				if(playerColor === 'B'){
+					setTimeout(pcMove, 600);
+				}
+			}
+
 			function openHelp(){
 				renderHelpModal();
 				document.getElementById('help-modal-overlay').classList.add('open');
@@ -1623,13 +1648,13 @@
 					}else if(key === "u"){
 						undoMove();
 					}else if(key === "r"){
-						resetGame();
+						restartSame();
 					}
 				}
 			});
 
 			document.getElementById('btnLang').innerHTML = FLAGS_SVG[currentLangIndex];
-			document.getElementById('diffBtn').textContent = t('level') + ': ' + levelName(currentDiffIdx);
+			document.getElementById('diffBtn').textContent = levelName(currentDiffIdx);
 			document.getElementById('toggleLogBtn').textContent = t('showLog');
 			document.getElementById('undoBtn').textContent = t('undo');
 			document.getElementById('resetBtn').textContent = t('reset');
@@ -1661,7 +1686,7 @@
 					document.getElementById('odiff-' + i).classList.toggle('selected-diff', i === idx);
 				}
 				const btn = document.getElementById('diffBtn');
-				btn.textContent = t('level') + ': ' + levelName(currentDiffIdx);
+				btn.textContent = levelName(currentDiffIdx);
 				btn.style.background = LEVELS[currentDiffIdx].color;
 			}
 
@@ -1672,6 +1697,7 @@
 				document.getElementById('lbl-difficulty').textContent = t('level');
 				document.getElementById('lbl-language').textContent = t('language');
 				document.getElementById('startBtn').textContent = t('start');
+				document.getElementById('statusBtn').textContent = t('whiteMove');
 				for(let i = 0; i < 4; i++){
 					document.getElementById('odiff-' + i).textContent = levelName(i);
 					document.getElementById('odiff-' + i).classList.toggle('selected-diff', i === currentDiffIdx);
