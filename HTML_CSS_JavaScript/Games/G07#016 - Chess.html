@@ -577,7 +577,7 @@
 					<button class="diff-choice-btn" id="odiff-0" style="background:#27ae60;" onclick="selectOverlayDiff(0)"></button>
 					<button class="diff-choice-btn" id="odiff-1" style="background:#2980b9;" onclick="selectOverlayDiff(1)"></button>
 					<button class="diff-choice-btn" id="odiff-2" style="background:#c0392b;" onclick="selectOverlayDiff(2)"></button>
-					<button class="diff-choice-btn" id="odiff-3" style="background:#8e44ad;" onclick="selectOverlayDiff(3)"></button>
+					<button class="diff-choice-btn" id="odiff-3" style="background:#4a235a;" onclick="selectOverlayDiff(3)"></button>
 				</div>
 			</div>
 			<hr class="overlay-divider">
@@ -611,10 +611,10 @@
 				<button id="btnLang" onclick="nextLang()" style="background: #555;"></button>
 			</div>
 			<div class="row-2">
-				<button id="toggleLogBtn" onclick="toggleLog()" style="background: #3498db;">Show Log</button>
+				<button id="toggleLogBtn" onclick="toggleLog()" style="background: #e67e22;">Show Log</button>
 				<button id="undoBtn" onclick="undoMove()" style="background: #95a5a6;">Undo</button>
-				<button id="resetBtn" onclick="restartSame()" style="background: #e67e22;">Restart</button>
-				<button id="restartBtn" onclick="resetGame()" style="background: #f1c40f; color: #1a2535; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; line-height: 1;">⟳</button>
+				<button id="resetBtn" onclick="restartSame()" style="background: #8e44ad;">Restart</button>
+				<button id="restartBtn" onclick="resetGame()" style="background: #636e72; color: white; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; line-height: 1;">⟳</button>
 			</div>
 			<div class="save-section">
 				<div style="text-align: center; font-size: 0.7rem; font-weight: bold; margin-bottom: 5px; color: #bdc3c7;">
@@ -783,7 +783,7 @@
 				helpT:"手順ログの表示 / 非表示", helpU:"最後の手を元に戻す",
 				helpR:"ゲームをリセット（再読み込み）", helpQuestion:"このヘルプを表示" }
 			};
-			const LEVELS = [{name: 'Easy', val: 1, color: '#27ae60'}, {name: 'Medium', val: 2, color: '#2980b9'}, {name: 'Hard', val: 3, color: '#c0392b'}, {name: 'Expert', val: 4, color: '#8e44ad'}];
+			const LEVELS = [{name: 'Easy', val: 1, color: '#27ae60'}, {name: 'Medium', val: 2, color: '#2980b9'}, {name: 'Hard', val: 3, color: '#c0392b'}, {name: 'Expert', val: 4, color: '#4a235a'}];
 			const LEVEL_KEYS = ['easy','medium','hard','expert'];
 			let currentLangIndex = 0;
 
@@ -1385,9 +1385,9 @@
 							const tmp = b.map(row => [...row]);
 							tmp[move.tR][move.tC] = isPromo ? choice : tmp[move.fR][move.fC];
 							tmp[move.fR][move.fC] = '';
-							const eval = minimax(tmp, depth - 1, alpha, beta, false);
-							maxEval = Math.max(maxEval, eval);
-							alpha = Math.max(alpha, eval);
+							const evevaluational = minimax(tmp, depth - 1, alpha, beta, false);
+							maxEval = Math.max(maxEval, evaluation);
+							alpha = Math.max(alpha, evaluation);
 							if(beta <= alpha){
 								break;
 							}
@@ -1406,9 +1406,9 @@
 							const tmp = b.map(row => [...row]);
 							tmp[move.tR][move.tC] = isPromo ? choice : tmp[move.fR][move.fC];
 							tmp[move.fR][move.fC] = '';
-							const eval = minimax(tmp, depth - 1, alpha, beta, true);
-							minEval = Math.min(minEval, eval);
-							beta = Math.min(beta, eval);
+							const evaluation = minimax(tmp, depth - 1, alpha, beta, true);
+							minEval = Math.min(minEval, evaluation);
+							beta = Math.min(beta, evaluation);
 							if(beta <= alpha){
 								break;
 							}
