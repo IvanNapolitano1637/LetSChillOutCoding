@@ -17987,7 +17987,7 @@ document.addEventListener('keydown', function(e) {
 					temp /= 2;
 				}
 				if(count > 0){
-					result.push("2" + getExp(count));
+					result.push("2" + (count == 1 ? "" : getExp(count)));
 				}
 				for(let i = 3; i*i <= temp; i += 2){
 					count = 0;
