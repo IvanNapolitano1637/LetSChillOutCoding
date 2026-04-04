@@ -7590,7 +7590,7 @@ document.addEventListener('keydown', function(e) {
 							const tmp = b.map(row => [...row]);
 							tmp[move.tR][move.tC] = isPromo ? choice : tmp[move.fR][move.fC];
 							tmp[move.fR][move.fC] = '';
-							const evevaluational = minimax(tmp, depth - 1, alpha, beta, false);
+							const evaluation = minimax(tmp, depth - 1, alpha, beta, false);
 							maxEval = Math.max(maxEval, evaluation);
 							alpha = Math.max(alpha, evaluation);
 							if(beta <= alpha){
