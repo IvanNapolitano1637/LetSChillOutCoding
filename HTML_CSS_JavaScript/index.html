@@ -23068,6 +23068,12 @@ document.addEventListener('keydown', function(e) {
 			toggle.onclick = function (){
 				container.classList.toggle('active');
 			}
+			let menuLinks = document.querySelectorAll('.menu li a');
+			menuLinks.forEach(link => {
+				link.onclick = function(e) {
+					e.preventDefault();
+				}
+			});
 		<\/script>
 	<script>
 document.addEventListener('keydown', function(e) {
