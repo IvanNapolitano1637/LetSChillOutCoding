@@ -1,0 +1,3097 @@
+<!DOCTYPE html>
+<html lang="en"><!--G12#033 - Lucio - Puzzle-->
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Puzzle Game</title>
+		<style>
+			:root{
+				--bg-dark: #1a1108;
+				--bg-mid: #2b1f14;
+				--border: #5a3e22;
+				--gold: #c8a96e;
+				--gold-light: #e0c080;
+				--text: #f0e8d8;
+				--btn-h: 36px;
+			}
+			*{
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+				-webkit-user-select: none;
+				user-select: none;
+				-webkit-tap-highlight-color: transparent;
+			}
+			body{
+				font-family: 'Georgia', serif;
+				background: var(--bg-mid);
+				color: var(--text);
+				height: 100dvh;
+				overflow: hidden;
+				display: flex;
+				flex-direction: column;
+			}
+			#toolbar{
+				display: flex;
+				align-items: center;
+				gap: 6px;
+				padding: 6px 10px;
+				background: var(--bg-dark);
+				border-bottom: 1px solid var(--border);
+				flex-shrink: 0;
+				flex-wrap: nowrap;
+				overflow-x: auto;
+				overflow-y: hidden;
+				-ms-overflow-style: none;
+			}
+			#toolbar::-webkit-scrollbar{
+				display: none;
+				width: 0 !important;
+				height: 0 !important;
+			}
+			.tb-sep{
+				width: 1px;
+				height: 22px;
+				background: var(--border);
+				flex-shrink: 0;
+			}
+			#toolbar h1{
+				font-size: .85rem;
+				font-weight: 400;
+				letter-spacing: .12em;
+				color: var(--gold);
+				white-space: nowrap;
+				flex-shrink: 0;
+			}
+			select,
+			button,
+			label.btn{
+				font-family: inherit;
+				font-size: 12px;
+				height: var(--btn-h);
+				padding: 0 10px;
+				border: 1px solid var(--border);
+				border-radius: 6px;
+				background: #3a2a18;
+				color: var(--text);
+				cursor: pointer;
+				display: inline-flex;
+				align-items: center;
+				gap: 5px;
+				white-space: nowrap;
+				flex-shrink: 0;
+				transition: background .15s, border-color .15s;
+				-webkit-appearance: none;
+				appearance: none;
+			}
+			select{
+				background: var(--bg-mid);
+				padding-right: 6px;
+			}
+			#sel-size{
+				text-align: center;
+			}
+			#sel-size-m{
+				text-align: center;
+			}
+			button:hover,
+			label.btn:hover{
+				background: #5a3e22;
+				border-color: var(--gold);
+			}
+			.btn-icon{
+				width: var(--btn-h);
+				padding: 0;
+				justify-content: center;
+			}
+			#file-input{
+				display: none;
+			}
+			#thumb{
+				width: 28px;
+				height: 28px;
+				border-radius: 4px;
+				object-fit: cover;
+				border: 1px solid var(--border);
+				display: none;
+				cursor: pointer;
+				flex-shrink: 0;
+			}
+			#stats{
+				margin-left: auto;
+				font-size: 11px;
+				color: var(--gold);
+				display: flex;
+				gap: 10px;
+				align-items: center;
+				white-space: nowrap;
+				flex-shrink: 0;
+				padding-left: 8px;
+			}
+			#stats b{
+				color: var(--text);
+			}
+			#btn-rotate-mode.active,
+			#btn-rotate-single.active{
+				background: var(--gold);
+				color: var(--bg-dark);
+				border-color: var(--gold);
+			}
+			@media (max-width: 600px){
+				:root{
+					--btn-h: 40px;
+				}
+				#toolbar{
+					flex-wrap: nowrap;
+					padding: 6px 10px;
+					gap: 8px;
+				}
+				#toolbar>*:not(#toolbar-left):not(#stats):not(#btn-menu){
+					display: none !important;
+				}
+				#mobile-bar{
+					display: flex;
+					align-items: center;
+					gap: 0;
+					background: var(--bg-dark);
+					border-top: 1px solid var(--border);
+					flex-shrink: 0;
+				}
+				#mobile-bar button,
+				#mobile-bar select{
+					flex: 1;
+					height: 48px;
+					border-radius: 0;
+					border: none;
+					border-right: 1px solid var(--border);
+					font-size: 11px;
+					padding: 0 4px;
+					flex-direction: column;
+					gap: 2px;
+					background: var(--bg-dark);
+					justify-content: center;
+				}
+				#mobile-bar button:last-child,
+				#mobile-bar select:last-child{
+					border-right: none;
+				}
+				#mobile-bar .mb-icon{
+					font-size: 17px;
+					line-height: 1;
+				}
+				#mobile-bar .mb-label{
+					font-size: 9px;
+					color: var(--gold);
+					line-height: 1;
+				}
+				#mobile-drawer{
+					display: none;
+					position: fixed;
+					inset: 0;
+					z-index: 500;
+					background: rgba(26, 17, 8, .92);
+					flex-direction: column;
+					align-items: center;
+					justify-content: flex-end;
+				}
+				#mobile-drawer.show{
+					display: flex;
+				}
+				#drawer-box{
+					background: var(--bg-dark);
+					border: 1px solid var(--border);
+					border-radius: 16px 16px 0 0;
+					padding: 16px 16px 32px;
+					width: 100%;
+					max-width: 480px;
+					display: flex;
+					flex-direction: column;
+					gap: 10px;
+				}
+				#drawer-box h3{
+					font-size: .85rem;
+					color: var(--gold);
+					letter-spacing: .1em;
+					margin-bottom: 4px;
+					text-align: center;
+				}
+				.drawer-row{
+					display: flex;
+					gap: 8px;
+				}
+				.drawer-row select,
+				.drawer-row button{
+					flex: 1;
+					height: 44px;
+					border-radius: 8px;
+					font-size: 13px;
+					justify-content: center;
+				}
+				#drawer-close{
+					height: 44px;
+					border-radius: 8px;
+					width: 100%;
+					margin-top: 4px;
+					background: var(--bg-mid);
+					border-color: var(--border);
+					justify-content: center;
+					font-size: 13px;
+				}
+			}
+			@media (min-width: 601px){
+				#mobile-bar{
+					display: none;
+				}
+				#mobile-drawer{
+					display: none !important;
+				}
+				#btn-menu{
+					display: none !important;
+				}
+				#toolbar-left{
+					display: contents;
+				}
+			}
+			#canvas-wrap{
+				flex: 1;
+				overflow: hidden;
+				position: relative;
+				background: radial-gradient(ellipse at center, #3d2b18 0%, #1a1108 100%);
+				cursor: grab;
+			}
+			#canvas-wrap:active{
+				cursor: grabbing;
+			}
+			canvas{
+				position: absolute;
+				top: 0;
+				left: 0;
+				display: block;
+			}
+			#preview-panel{
+				position: absolute;
+				bottom: 14px;
+				right: 14px;
+				background: #1a1108dd;
+				border: 1px solid #5a3e22;
+				border-radius: 6px;
+				padding: 6px;
+				display: none;
+				flex-direction: column;
+				align-items: center;
+				gap: 4px;
+				z-index: 50;
+				-webkit-backdrop-filter: blur(4px);
+				backdrop-filter: blur(4px);
+			}
+			#preview-panel canvas{
+				position: static;
+				border-radius: 3px;
+			}
+			#preview-panel span{
+				font-size: 9px;
+				color: #c8a96e;
+			}
+			#drop-overlay{
+				display: none;
+				position: absolute;
+				inset: 0;
+				z-index: 300;
+				background: rgba(26, 17, 8, .85);
+				align-items: center;
+				justify-content: center;
+				flex-direction: column;
+				gap: 12px;
+				border: 3px dashed #c8a96e;
+				pointer-events: none;
+			}
+			#drop-overlay.show{
+				display: flex;
+			}
+			#drop-overlay p{
+				font-size: 1.3rem;
+				color: #c8a96e;
+			}
+			#win-overlay{
+				display: none;
+				position: absolute;
+				bottom: 20px;
+				left: 50%;
+				transform: translateX(-50%);
+				z-index: 200;
+				pointer-events: none;
+			}
+			#win-overlay.show{
+				display: flex;
+			}
+			#win-box{
+				pointer-events: all;
+				background: #1a1108cc;
+				border: 2px solid #c8a96e;
+				border-radius: 12px;
+				padding: 0.8rem 1.8rem;
+				text-align: center;
+				-webkit-backdrop-filter: blur(4px);
+				backdrop-filter: blur(4px);
+			}
+			#win-box h2{
+				font-size: 1.3rem;
+				color: #c8a96e;
+			}
+			#win-box p{
+				color: #f0e8d8;
+				font-size: .85rem;
+				margin: 5px 0;
+			}
+			#win-box .win-btns{
+				display: flex;
+				gap: 8px;
+				margin-top: 6px;
+			}
+			#win-box button{
+				padding: 4px 12px;
+				font-size: 12px;
+			}
+			#rotate-hint{
+				position: absolute;
+				bottom: 12px;
+				left: 12px;
+				background: #1a1108cc;
+				border: 1px solid #5a3e22;
+				border-radius: 6px;
+				padding: 4px 8px;
+				font-size: 10px;
+				color: #c8a96e;
+				display: none;
+				z-index: 50;
+				pointer-events: none;
+			}
+			#rotate-hint.show{
+				display: block;
+			}
+			.selected-piece-indicator{
+				position: absolute;
+				pointer-events: none;
+				z-index: 100;
+			}
+			#help-overlay{
+				display: none;
+				position: fixed;
+				inset: 0;
+				z-index: 400;
+				background: rgba(26, 17, 8, .88);
+				align-items: center;
+				justify-content: center;
+			}
+			#help-overlay.show{
+				display: flex;
+			}
+			#help-box{
+				background: #1a1108;
+				border: 2px solid #c8a96e;
+				border-radius: 12px;
+				padding: 1.4rem 2rem;
+				max-width: 460px;
+				width: 92%;
+				-webkit-backdrop-filter: blur(4px);
+				backdrop-filter: blur(6px);
+			}
+			#help-box h2{
+				font-size: 1.1rem;
+				color: #c8a96e;
+				margin-bottom: .9rem;
+				letter-spacing: .08em;
+			}
+			#help-box table{
+				width: 100%;
+				border-collapse: collapse;
+				font-size: .82rem;
+			}
+			#help-box tr+tr td{
+				border-top: 1px solid #3a2910;
+			}
+			#help-box td{
+				padding: .32rem .4rem;
+				color: #f0e8d8;
+			}
+			#help-box td:first-child{
+				font-family: monospace;
+				font-size: .85rem;
+				color: #c8a96e;
+				white-space: nowrap;
+				padding-right: .8rem;
+			}
+			#help-box .help-section{
+				font-size: .7rem;
+				letter-spacing: .1em;
+				color: #7a6040;
+				text-transform: uppercase;
+				padding-top: .7rem;
+			}
+			#btn-help{
+				font-size: 15px;
+				font-weight: bold;
+			}
+			#help-close{
+				margin-top: 1rem;
+				width: 100%;
+			}
+			#btn-lang .flag-svg{
+				width: 22px;
+				height: 15px;
+				display: block;
+				border: 1px solid #7a6040;
+				border-radius: 2px;
+			}
+			.flag-svg{
+				width: 22px;
+				height: 15px;
+				display: block;
+				border: 1px solid #7a6040;
+				border-radius: 2px;
+			}
+			#slots-overlay{
+				display: none;
+				position: fixed;
+				inset: 0;
+				z-index: 400;
+				background: rgba(26, 17, 8, .88);
+				align-items: center;
+				justify-content: center;
+			}
+			#slots-overlay.show{
+				display: flex;
+			}
+			#slots-box{
+				background: #1a1108;
+				border: 2px solid #c8a96e;
+				border-radius: 12px;
+				padding: 1.4rem 2rem;
+				width: 92%;
+				max-width: 420px;
+				-webkit-backdrop-filter: blur(4px);
+				backdrop-filter: blur(6px);
+			}
+			#slots-box h2{
+				font-size: 1.1rem;
+				color: #c8a96e;
+				margin-bottom: 1rem;
+				letter-spacing: .08em;
+			}
+			#slots-list{
+				display: flex;
+				flex-direction: column;
+				gap: 8px;
+				margin-bottom: 1rem;
+			}
+			.slot{
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				background: #2b1f14;
+				border: 1px solid #5a3e22;
+				border-radius: 7px;
+				padding: 8px 12px;
+				gap: 10px;
+			}
+			.slot-info{
+				display: flex;
+				flex-direction: column;
+				gap: 2px;
+				flex: 1;
+				min-width: 0;
+			}
+			.slot-name{
+				font-size: .85rem;
+				color: #c8a96e;
+			}
+			.slot-desc{
+				font-size: .72rem;
+				color: #9a8060;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+			.slot-btns{
+				display: flex;
+				gap: 5px;
+				flex-shrink: 0;
+			}
+			.slot-btns button{
+				font-family: inherit;
+				font-size: 13px;
+				padding: 4px 9px;
+				border: 1px solid #5a3e22;
+				border-radius: 4px;
+				background: #5a3e22;
+				color: #f0e8d8;
+				cursor: pointer;
+			}
+			.slot-btns button:hover:not(:disabled){
+				background: #7a5530;
+			}
+			.slot-btns button:disabled{
+				opacity: .35;
+				cursor: default;
+			}
+			.slot-btns .slot-del:hover:not(:disabled){
+				background: #7a2020;
+				border-color: #a03030;
+			}
+			.slot.has-data{
+				border-color: #7a6040;
+			}
+			.slot.has-data .slot-name{
+				color: #e0c080;
+			}
+			#slots-close{
+				width: 100%;
+				font-family: inherit;
+				font-size: 12px;
+				padding: 5px 8px;
+				border: 1px solid #5a3e22;
+				border-radius: 4px;
+				background: #5a3e22;
+				color: #f0e8d8;
+				cursor: pointer;
+			}
+			#slots-close:hover{
+				background: #7a5530;
+			}
+			.toolbar-btn-reset#btn-lang-m{
+				background: transparent !important;
+				border: none !important;
+				padding: 4px !important;
+				display: flex;
+				align-items: center;
+			}
+			.mobile-gold-title#mobile-title{
+				color: #c8a96e !important;
+				font-size: 0.85rem !important;
+				letter-spacing: 0.12em !important;
+				font-weight: 400 !important;
+				margin: 0;
+				white-space: nowrap;
+			}
+			#stats-mobile{
+				display: flex;
+				align-items: center;
+			}
+			#mobile-topbar{
+				display: none;
+				align-items: center;
+				gap: 8px;
+				padding: 6px 10px;
+				background: var(--bg-dark);
+				border-bottom: 1px solid var(--border);
+				flex-shrink: 0;
+			}
+			@media (max-width: 600px){
+				#toolbar{
+					display: none !important;
+				}
+				#mobile-topbar{
+					display: flex;
+				}
+				#mobile-bar{
+					order: 99;
+					display: flex;
+				}
+				#stats-canvas{
+					position: absolute;
+					top: 8px;
+					left: 50%;
+					transform: translateX(-50%);
+					background: rgba(26, 17, 8, .75);
+					border: 1px solid var(--border);
+					border-radius: 20px;
+					padding: 3px 12px;
+					font-size: 10px;
+					color: var(--gold);
+					display: flex;
+					gap: 10px;
+					z-index: 50;
+					pointer-events: none;
+					white-space: nowrap;
+					-webkit-backdrop-filter: blur(4px);
+					backdrop-filter: blur(4px);
+				}
+				#stats-canvas b{
+					color: var(--text);
+				}
+			}
+			@media (min-width: 601px){
+				#mobile-topbar{
+					display: none !important;
+				}
+				#mobile-bar{
+					display: none !important;
+				}
+				#stats-canvas{
+					display: none !important;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div id="toolbar">
+			<button id="btn-lang" class="btn-icon" title="Change language [T]"></button>
+			<h1>✦ PUZZLE</h1>
+			<div class="tb-sep"></div>
+			<select title="image" id="sel-img">
+				<option value="tramonto">🌅 Sunset</option>
+				<option value="mare">🌊 Sea</option>
+				<option value="foresta">🌲 Forest</option>
+				<option value="astratto">🎨 Abstract</option>
+				<option value="citta">🌃 City Night</option>
+				<option value="montagna">🏔️ Mountains</option>
+				<option value="giardino">🌸 Garden</option>
+				<option value="galassia">🌌 Galaxy</option>
+				<option value="custom" id="opt-custom">📷 Your image</option>
+			</select>
+			<input type="file" id="file-input" accept="image/*" />
+			<img id="thumb" title="Preview" />
+			<select title="size" id="sel-size">
+				<option value="3">3×3</option>
+				<option value="4">4×4</option>
+				<option value="5">5×5</option>
+				<option value="6" selected>6×6</option>
+				<option value="8">8×8</option>
+				<option value="10">10×10</option>
+				<option value="12">12×12</option>
+				<option value="15">15×15</option>
+				<option value="20">20×20</option>
+			</select>
+			<div class="tb-sep"></div>
+			<button id="btn-new" title="New game [N]">🔄 New</button>
+			<button id="btn-slots" title="Save / Load slots [S]">💾 Slots</button>
+			<div class="tb-sep"></div>
+			<button id="btn-rotate-mode" title="Enable random initial rotation [X]">↻ Mix rotations</button>
+			<button id="btn-rotate-single" title="Rotate selected piece [R]">⟳ Rotate piece</button>
+			<div class="tb-sep"></div>
+			<button id="btn-preview" class="btn-icon" title="Toggle image preview [P]">🔍</button>
+			<button id="btn-help" class="btn-icon" title="Keyboard shortcuts [?]">?</button>
+			<div id="stats">
+				<span>Moves: <b id="s-moves">0</b></span>
+				<span>Groups: <b id="s-groups">—</b></span>
+				<span>Time: <b id="s-time">0:00</b></span>
+			</div>
+		</div>
+		<div id="mobile-bar">
+			<button id="mb-new"><span class="mb-icon">🔄</span><span class="mb-label">New</span></button>
+			<button id="mb-slots"><span class="mb-icon">💾</span><span class="mb-label">Slots</span></button>
+			<button id="mb-rotate"><span class="mb-icon">⟳</span><span class="mb-label">Rotate</span></button>
+			<button id="mb-preview"><span class="mb-icon">🔍</span><span class="mb-label">Preview</span></button>
+			<button id="mb-settings"><span class="mb-icon">⚙️</span><span class="mb-label">Settings</span></button>
+		</div>
+		<div id="mobile-topbar">
+			<button id="btn-lang-m" class="btn-icon toolbar-btn-reset"></button>
+			<h1 id="mobile-title" class="mobile-gold-title">✦ PUZZLE</h1>
+			<div id="stats-mobile"></div>
+			<span><b id="sm-moves">0</b> mv</span>
+			<span><b id="sm-time">0:00</b></span>
+		</div>
+		</div>
+		<div id="mobile-drawer">
+			<div id="drawer-box">
+				<h3>⚙ Settings</h3>
+				<div class="drawer-row">
+					<select id="sel-img-m" title="Choose a background image">
+						<option value="tramonto">🌅 Sunset</option>
+						<option value="mare">🌊 Sea</option>
+						<option value="foresta">🌲 Forest</option>
+						<option value="astratto">🎨 Abstract</option>
+						<option value="citta">🌃 City Night</option>
+						<option value="montagna">🏔️ Mountains</option>
+						<option value="giardino">🌸 Garden</option>
+						<option value="galassia">🌌 Galaxy</option>
+						<option value="custom" id="opt-custom-m">📷 Your image</option>
+					</select>
+					<select id="sel-size-m" title="Choose grid size">
+						<option value="3">3×3</option>
+						<option value="4">4×4</option>
+						<option value="5">5×5</option>
+						<option value="6" selected>6×6</option>
+						<option value="8">8×8</option>
+						<option value="10">10×10</option>
+						<option value="12">12×12</option>
+						<option value="15">15×15</option>
+						<option value="20">20×20</option>
+					</select>
+				</div>
+				<div class="drawer-row">
+					<button id="dm-rotate-mode">↻ Mix rotations</button>
+					<button id="dm-lang" title="Change language"></button>
+				</div>
+				<button id="drawer-close">✕ Close</button>
+			</div>
+		</div>
+		<div id="canvas-wrap">
+			<canvas id="main-canvas"></canvas>
+			<div id="stats-canvas">
+				<span>Moves: <b id="sc-moves">0</b></span>
+				<span>Groups: <b id="sc-groups">—</b></span>
+				<span>Time: <b id="sc-time">0:00</b></span>
+			</div>
+			<div id="preview-panel">
+				<canvas id="prev-cvs" width="150" height="150"></canvas>
+				<span>full image</span>
+			</div>
+			<div id="drop-overlay">
+				<p>📷 Drop image here</p>
+			</div>
+			<div id="rotate-hint">🔁 Select a piece → press R or use the ⟳ button</div>
+		</div>
+		<div id="help-overlay">
+			<div id="help-box">
+				<h2>⌨ Keyboard shortcuts</h2>
+				<table>
+					<tr><td class="help-section" colspan="2">Pieces</td></tr>
+					<tr><td>R</td><td>Rotate selected piece / group</td></tr>
+					<tr><td>Click</td><td>Select a piece</td></tr>
+					<tr><td>Drag</td><td>Move selected piece / group</td></tr>
+					<tr><td class="help-section" colspan="2">Game</td></tr>
+					<tr><td>N</td><td>New game</td></tr>
+					<tr><td>P</td><td>Toggle image preview</td></tr>
+					<tr><td>X</td><td>Toggle random rotation mode</td></tr>
+					<tr><td>L</td><td>Load your own image</td></tr>
+					<tr><td class="help-section" colspan="2">Navigation</td></tr>
+					<tr><td>Drag background</td><td>Pan the board</td></tr>
+					<tr><td>Esc</td><td>Deselect piece</td></tr>
+					<tr><td>?</td><td>Show / hide this help</td></tr>
+				</table>
+				<button id="help-close">Close [Esc]</button>
+			</div>
+		</div>
+		<div id="win-overlay">
+			<div id="win-box">
+				<h2>✦ Completed! ✦</h2>
+				<p id="win-txt"></p>
+				<div class="win-btns">
+					<button id="btn-close-win">✕ Close</button>
+					<button id="win-new-game">↺ New game [N]</button>
+				</div>
+			</div>
+		</div>
+		<div id="slots-overlay">
+			<div id="slots-box">
+				<h2>💾 <span id="slots-title">Save slots</span></h2>
+				<div id="slots-list">
+					<div class="slot" data-slot="0">
+						<div class="slot-info"><span class="slot-name">Slot 1</span><span class="slot-desc">—</span></div>
+						<div class="slot-btns">
+							<button class="slot-save">💾</button>
+							<button class="slot-load" disabled>▶</button>
+							<button class="slot-del" disabled>🗑</button>
+						</div>
+					</div>
+					<div class="slot" data-slot="1">
+						<div class="slot-info"><span class="slot-name">Slot 2</span><span class="slot-desc">—</span></div>
+						<div class="slot-btns">
+							<button class="slot-save">💾</button>
+							<button class="slot-load" disabled>▶</button>
+							<button class="slot-del" disabled>🗑</button>
+						</div>
+					</div>
+					<div class="slot" data-slot="2">
+						<div class="slot-info"><span class="slot-name">Slot 3</span><span class="slot-desc">—</span></div>
+						<div class="slot-btns">
+							<button class="slot-save">💾</button>
+							<button class="slot-load" disabled>▶</button>
+							<button class="slot-del" disabled>🗑</button>
+						</div>
+					</div>
+				</div>
+				<button id="slots-close">Close [Esc]</button>
+			</div>
+		</div>
+		<script>
+			const LANGUAGES = [
+				{ code: 'en', flagIdx: 0 }, // UK
+				{ code: 'it', flagIdx: 1 }, // IT
+				{ code: 'fr', flagIdx: 2 }, // FR
+				{ code: 'es', flagIdx: 3 }, // ES
+				{ code: 'de', flagIdx: 4 }, // DE
+				{ code: 'pt', flagIdx: 5 }, // PT
+				{ code: 'ro', flagIdx: 6 }, // RO
+				{ code: 'uk', flagIdx: 7 }, // UA
+				{ code: 'el', flagIdx: 8 }, // GR
+				{ code: 'la', flagIdx: 9 }, // ROMA (Latin)
+				{ code: 'zh', flagIdx: 10 }, // CN
+				{ code: 'ja', flagIdx: 11 }, // JP
+			];
+			const TRANSLATIONS = {
+				en: {
+					title: '✦ PUZZLE',
+					optSunset: '🌅 Sunset', optSea: '🌊 Sea', optForest: '🌲 Forest', optAbstract: '🎨 Abstract', optCity: '🌃 City Night', optMountain: '🏔️ Mountains', optGarden: '🌸 Garden', optGalaxy: '🌌 Galaxy', optCustom: '📷 Your image',
+					btnLoad: '📷 Load', thumbTitle: 'Preview',
+					btnNew: '🔄 New', btnNew_title: 'New game [N]',
+					btnSave: '💾 Save', btnSave_title: 'Save game [S]',
+					btnLoad2: '📂 Load', btnLoad2_title: 'Load saved game',
+					btnSlots: '💾 Slots', btnSlots_title: 'Save / Load slots [S]',
+					slotsTitle: 'Save slots',
+					slotName: 'Slot {n}',
+					slotsClose: 'Close [Esc]',
+					btnRotMode: '↻ Mix rotations', btnRotMode_title: 'Enable random initial rotation [X]',
+					btnRotSingle: '⟳ Rotate piece', btnRotSingle_title: 'Rotate selected piece [R]',
+					btnPreview: '🔍 Preview', btnPreview_title: 'Toggle image preview [P]',
+					statMoves: 'Moves:', statGroups: 'Groups:', statTime: 'Time:',
+					dropMsg: '📷 Drop image here',
+					rotHint: '🔁 Select a piece → press R or use the ⟳ button',
+					previewLabel: 'full image',
+					helpTitle: '⌨ Keyboard shortcuts',
+					helpSec1: 'Pieces', helpSec2: 'Game', helpSec3: 'Navigation',
+					helpR: 'Rotate selected piece / group',
+					helpClick: 'Select a piece',
+					helpDrag: 'Move selected piece / group',
+					helpN: 'New game',
+					helpS: 'Open save slots',
+					helpP: 'Toggle image preview',
+					helpX: 'Toggle random rotation mode',
+					helpL: 'Load your own image',
+					helpT: 'Change language',
+					helpDragBg: 'Pan the board',
+					helpEsc: 'Deselect piece',
+					keyClick: 'Click', keyDrag: 'Drag', keyDragBg: 'Drag bg', keyEsc: 'Esc',
+					helpQ: 'Show / hide this help',
+					helpClose: 'Close [Esc]',
+					winTitle: '✦ Completed! ✦',
+					winClose: '✕ Close',
+					winNew: '↺ New game [N]',
+					winTxt: (moves, time) => `🎉 Completed! 🎉<br>${moves} moves · ${time}`,
+					langTitle: 'Change language [T]',
+					settingsTitle: 'Settings',
+				},
+				it: {
+					title: '✦ PUZZLE',
+					optSunset: '🌅 Tramonto', optSea: '🌊 Mare', optForest: '🌲 Foresta', optAbstract: '🎨 Astratto', optCity: '🌃 Città di notte', optMountain: '🏔️ Montagne', optGarden: '🌸 Giardino', optGalaxy: '🌌 Galassia', optCustom: '📷 Tua immagine',
+					btnLoad: '📷 Carica', thumbTitle: 'Anteprima',
+					btnNew: '🔄 Nuova', btnNew_title: 'Nuova partita [N]',
+					btnSave: '💾 Salva', btnSave_title: 'Salva partita [S]',
+					btnLoad2: '📂 Carica', btnLoad2_title: 'Carica partita salvata',
+					btnSlots: '💾 Slot', btnSlots_title: 'Salva / Carica slot [S]',
+					slotsTitle: 'Slot di salvataggio',
+					slotName: 'Slot {n}',
+					slotsClose: 'Chiudi [Esc]',
+					btnRotMode: '↻ Mescola rotazioni', btnRotMode_title: 'Attiva rotazione iniziale casuale [X]',
+					btnRotSingle: '⟳ Ruota pezzo', btnRotSingle_title: 'Ruota pezzo selezionato [R]',
+					btnPreview: '🔍 Anteprima', btnPreview_title: 'Mostra/nascondi anteprima [P]',
+					statMoves: 'Mosse:', statGroups: 'Gruppi:', statTime: 'Tempo:',
+					dropMsg: '📷 Trascina immagine qui',
+					rotHint: '🔁 Seleziona un pezzo → premi R o usa il pulsante ⟳',
+					previewLabel: 'immagine intera',
+					helpTitle: '⌨ Scorciatoie da tastiera',
+					helpSec1: 'Pezzi', helpSec2: 'Gioco', helpSec3: 'Navigazione',
+					helpR: 'Ruota pezzo / gruppo selezionato',
+					helpClick: 'Seleziona un pezzo',
+					helpDrag: 'Sposta pezzo / gruppo selezionato',
+					helpN: 'Nuova partita',
+					helpS: 'Apri slot di salvataggio',
+					helpP: 'Mostra/nascondi anteprima',
+					helpX: 'Attiva/disattiva modalità rotazione casuale',
+					helpL: 'Carica una tua immagine',
+					helpT: 'Cambia lingua',
+					helpDragBg: 'Trascina lo sfondo per navigare',
+					helpEsc: 'Deseleziona pezzo',
+					keyClick: 'Tocca', keyDrag: 'Trascina', keyDragBg: 'Trascina sfondo', keyEsc: 'Esc',
+					helpQ: 'Mostra/nascondi questo aiuto',
+					helpClose: 'Chiudi [Esc]',
+					winTitle: '✦ Completato! ✦',
+					winClose: '✕ Chiudi',
+					winNew: '↺ Nuova partita [N]',
+					winTxt: (moves, time) => `🎉 Completato! 🎉<br>${moves} mosse · ${time}`,
+					langTitle: 'Cambia lingua [T]',
+					settingsTitle: 'Impostazioni',
+				},
+				fr: {
+					title: '✦ PUZZLE',
+					optSunset: '🌅 Coucher de soleil', optSea: '🌊 Mer', optForest: '🌲 Forêt', optAbstract: '🎨 Abstrait', optCity: '🌃 Nuit en ville', optMountain: '🏔️ Montagnes', optGarden: '🌸 Jardin', optGalaxy: '🌌 Galaxie', optCustom: '📷 Votre image',
+					btnLoad: '📷 Charger', thumbTitle: 'Aperçu',
+					btnNew: '🔄 Nouveau', btnNew_title: 'Nouvelle partie [N]',
+					btnSave: '💾 Sauver', btnSave_title: 'Sauvegarder la partie [S]',
+					btnLoad2: '📂 Charger', btnLoad2_title: 'Charger une partie sauvegardée',
+					btnSlots: '💾 Slots', btnSlots_title: 'Sauvegarder / Charger [S]',
+					slotsTitle: 'Emplacements de sauvegarde',
+					slotName: 'Slot {n}',
+					slotsClose: 'Fermer [Esc]',
+					btnRotMode: '↻ Mélanger rotations', btnRotMode_title: 'Activer rotation aléatoire initiale [X]',
+					btnRotSingle: '⟳ Tourner pièce', btnRotSingle_title: 'Tourner la pièce sélectionnée [R]',
+					btnPreview: '🔍 Aperçu', btnPreview_title: 'Afficher/masquer aperçu [P]',
+					statMoves: 'Coups:', statGroups: 'Groupes:', statTime: 'Temps:',
+					dropMsg: '📷 Déposez une image ici',
+					rotHint: '🔁 Sélectionnez une pièce → appuyez R ou utilisez le bouton ⟳',
+					previewLabel: 'image entière',
+					helpTitle: '⌨ Raccourcis clavier',
+					helpSec1: 'Pièces', helpSec2: 'Jeu', helpSec3: 'Navigation',
+					helpR: 'Tourner pièce / groupe sélectionné',
+					helpClick: 'Sélectionner une pièce',
+					helpDrag: 'Déplacer pièce / groupe sélectionné',
+					helpN: 'Nouvelle partie',
+					helpS: 'Ouvrir les emplacements',
+					helpP: 'Afficher/masquer aperçu',
+					helpX: 'Basculer mode rotation aléatoire',
+					helpL: 'Charger votre image',
+					helpT: 'Changer de langue',
+					helpDragBg: 'Faire glisser le fond pour naviguer',
+					helpEsc: 'Désélectionner la pièce',
+					keyClick: 'Clic', keyDrag: 'Glisser', keyDragBg: 'Glisser fond', keyEsc: 'Échap',
+					helpQ: 'Afficher/masquer cette aide',
+					helpClose: 'Fermer [Esc]',
+					winTitle: '✦ Complété ! ✦',
+					winClose: '✕ Fermer',
+					winNew: '↺ Nouvelle partie [N]',
+					winTxt: (moves, time) => `🎉 Complété ! 🎉<br>${moves} coups · ${time}`,
+					settingsTitle: 'Paramètres',
+					langTitle: 'Changer de langue [T]',
+				},
+				es: {
+					title: '✦ PUZZLE',
+					optSunset: '🌅 Atardecer', optSea: '🌊 Mar', optForest: '🌲 Bosque', optAbstract: '🎨 Abstracto', optCity: '🌃 Noche en la ciudad', optMountain: '🏔️ Montañas', optGarden: '🌸 Jardín', optGalaxy: '🌌 Galaxia', optCustom: '📷 Tu imagen',
+					btnLoad: '📷 Cargar', thumbTitle: 'Vista previa',
+					btnNew: '🔄 Nuevo', btnNew_title: 'Nueva partida [N]',
+					btnSave: '💾 Guardar', btnSave_title: 'Guardar partida [S]',
+					btnLoad2: '📂 Cargar', btnLoad2_title: 'Cargar partida guardada',
+					btnSlots: '💾 Ranuras', btnSlots_title: 'Guardar / Cargar ranuras [S]',
+					slotsTitle: 'Ranuras de guardado',
+					slotName: 'Ranura {n}',
+					slotsClose: 'Cerrar [Esc]',
+					btnRotMode: '↻ Mezclar rotaciones', btnRotMode_title: 'Activar rotación inicial aleatoria [X]',
+					btnRotSingle: '⟳ Rotar pieza', btnRotSingle_title: 'Rotar pieza seleccionada [R]',
+					btnPreview: '🔍 Vista previa', btnPreview_title: 'Mostrar/ocultar vista previa [P]',
+					statMoves: 'Movs:', statGroups: 'Grupos:', statTime: 'Tiempo:',
+					dropMsg: '📷 Suelta imagen aquí',
+					rotHint: '🔁 Selecciona una pieza → pulsa R o usa el botón ⟳',
+					previewLabel: 'imagen completa',
+					helpTitle: '⌨ Atajos de teclado',
+					helpSec1: 'Piezas', helpSec2: 'Juego', helpSec3: 'Navegación',
+					helpR: 'Rotar pieza / grupo seleccionado',
+					helpClick: 'Seleccionar una pieza',
+					helpDrag: 'Mover pieza / grupo seleccionado',
+					helpN: 'Nueva partida',
+					helpS: 'Abrir ranuras de guardado',
+					helpP: 'Mostrar/ocultar vista previa',
+					helpX: 'Alternar modo rotación aleatoria',
+					helpL: 'Cargar tu imagen',
+					helpT: 'Cambiar idioma',
+					helpDragBg: 'Arrastrar el fondo para navegar',
+					helpEsc: 'Deseleccionar pieza',
+					keyClick: 'Clic', keyDrag: 'Arrastrar', keyDragBg: 'Arrastrar fondo', keyEsc: 'Esc',
+					helpQ: 'Mostrar/ocultar esta ayuda',
+					helpClose: 'Cerrar [Esc]',
+					winTitle: '✦ ¡Completado! ✦',
+					winClose: '✕ Cerrar',
+					winNew: '↺ Nueva partida [N]',
+					winTxt: (moves, time) => `🎉 ¡Completado! 🎉<br>${moves} movimientos · ${time}`,
+					settingsTitle: 'Ajustes',
+					langTitle: 'Cambiar idioma [T]',
+				},
+				de: {
+					title: '✦ PUZZLE',
+					optSunset: '🌅 Sonnenuntergang', optSea: '🌊 Meer', optForest: '🌲 Wald', optAbstract: '🎨 Abstrakt', optCity: '🌃 Nacht in der Stadt', optMountain: '🏔️ Berge', optGarden: '🌸 Garten', optGalaxy: '🌌 Galaxie', optCustom: '📷 Dein Bild',
+					btnLoad: '📷 Laden', thumbTitle: 'Vorschau',
+					btnNew: '🔄 Neu', btnNew_title: 'Neues Spiel [N]',
+					btnSave: '💾 Speichern', btnSave_title: 'Spiel speichern [S]',
+					btnLoad2: '📂 Laden', btnLoad2_title: 'Gespeichertes Spiel laden',
+					btnSlots: '💾 Slots', btnSlots_title: 'Speichern / Laden Slots [S]',
+					slotsTitle: 'Speicherplätze',
+					slotName: 'Slot {n}',
+					slotsClose: 'Schließen [Esc]',
+					btnRotMode: '↻ Rotationen mischen', btnRotMode_title: 'Zufällige Anfangsrotation aktivieren [X]',
+					btnRotSingle: '⟳ Stück drehen', btnRotSingle_title: 'Ausgewähltes Stück drehen [R]',
+					btnPreview: '🔍 Vorschau', btnPreview_title: 'Vorschau ein/ausblenden [P]',
+					statMoves: 'Züge:', statGroups: 'Gruppen:', statTime: 'Zeit:',
+					dropMsg: '📷 Bild hier ablegen',
+					rotHint: '🔁 Stück auswählen → R drücken oder ⟳ Taste verwenden',
+					previewLabel: 'Gesamtbild',
+					helpTitle: '⌨ Tastenkürzel',
+					helpSec1: 'Stücke', helpSec2: 'Spiel', helpSec3: 'Navigation',
+					helpR: 'Ausgewähltes Stück / Gruppe drehen',
+					helpClick: 'Stück auswählen',
+					helpDrag: 'Ausgewähltes Stück / Gruppe verschieben',
+					helpN: 'Neues Spiel',
+					helpS: 'Speicherplätze öffnen',
+					helpP: 'Vorschau ein/ausblenden',
+					helpX: 'Zufälligen Rotationsmodus umschalten',
+					helpL: 'Eigenes Bild laden',
+					helpT: 'Sprache wechseln',
+					helpDragBg: 'Hintergrund ziehen zum Navigieren',
+					helpEsc: 'Stück abwählen',
+					keyClick: 'Klick', keyDrag: 'Ziehen', keyDragBg: 'Hintergrund ziehen', keyEsc: 'Esc',
+					helpQ: 'Diese Hilfe anzeigen/ausblenden',
+					helpClose: 'Schließen [Esc]',
+					winTitle: '✦ Abgeschlossen! ✦',
+					winClose: '✕ Schließen',
+					winNew: '↺ Neues Spiel [N]',
+					winTxt: (moves, time) => `🎉 Abgeschlossen! 🎉<br>${moves} Züge · ${time}`,
+					settingsTitle: 'Einstellungen',
+					langTitle: 'Sprache wechseln [T]',
+				},
+				pt: {
+					title: '✦ PUZZLE',
+					optSunset: '🌅 Pôr do sol', optSea: '🌊 Mar', optForest: '🌲 Floresta', optAbstract: '🎨 Abstrato', optCity: '🌃 Noite na cidade', optMountain: '🏔️ Montanhas', optGarden: '🌸 Jardim', optGalaxy: '🌌 Galáxia', optCustom: '📷 Sua imagem',
+					btnLoad: '📷 Carregar', thumbTitle: 'Pré-visualização',
+					btnNew: '🔄 Novo', btnNew_title: 'Novo jogo [N]',
+					btnSave: '💾 Salvar', btnSave_title: 'Salvar jogo [S]',
+					btnLoad2: '📂 Carregar', btnLoad2_title: 'Carregar jogo salvo',
+					btnSlots: '💾 Slots', btnSlots_title: 'Salvar / Carregar slots [S]',
+					slotsTitle: 'Slots de salvamento',
+					slotName: 'Slot {n}',
+					slotsClose: 'Fechar [Esc]',
+					btnRotMode: '↻ Misturar rotações', btnRotMode_title: 'Ativar rotação inicial aleatória [X]',
+					btnRotSingle: '⟳ Rodar peça', btnRotSingle_title: 'Rodar peça selecionada [R]',
+					btnPreview: '🔍 Pré-ver', btnPreview_title: 'Mostrar/ocultar pré-visualização [P]',
+					statMoves: 'Jogadas:', statGroups: 'Grupos:', statTime: 'Tempo:',
+					dropMsg: '📷 Largue imagem aqui',
+					rotHint: '🔁 Selecione uma peça → pressione R ou use o botão ⟳',
+					previewLabel: 'imagem completa',
+					helpTitle: '⌨ Atalhos de teclado',
+					helpSec1: 'Peças', helpSec2: 'Jogo', helpSec3: 'Navegação',
+					helpR: 'Rodar peça / grupo selecionado',
+					helpClick: 'Selecionar uma peça',
+					helpDrag: 'Mover peça / grupo selecionado',
+					helpN: 'Novo jogo',
+					helpS: 'Abrir slots de salvamento',
+					helpP: 'Mostrar/ocultar pré-visualização',
+					helpX: 'Alternar modo rotação aleatória',
+					helpL: 'Carregar sua imagem',
+					helpT: 'Mudar idioma',
+					helpDragBg: 'Arrastar fundo para navegar',
+					helpEsc: 'Desselecionar peça',
+					keyClick: 'Clique', keyDrag: 'Arrastar', keyDragBg: 'Arrastar fundo', keyEsc: 'Esc',
+					helpQ: 'Mostrar/ocultar esta ajuda',
+					helpClose: 'Fechar [Esc]',
+					winTitle: '✦ Concluído! ✦',
+					winClose: '✕ Fechar',
+					winNew: '↺ Novo jogo [N]',
+					winTxt: (moves, time) => `🎉 Concluído! 🎉<br>${moves} jogadas · ${time}`,
+					settingsTitle: 'Configurações',
+					langTitle: 'Mudar idioma [T]',
+				},
+				ro: {
+					title: '✦ PUZZLE',
+					optSunset: '🌅 Apus', optSea: '🌊 Mare', optForest: '🌲 Pădure', optAbstract: '🎨 Abstract', optCity: '🌃 Noapte în oraș', optMountain: '🏔️ Munți', optGarden: '🌸 Grădină', optGalaxy: '🌌 Galaxie', optCustom: '📷 Imaginea ta',
+					btnLoad: '📷 Încarcă', thumbTitle: 'Previzualizare',
+					btnNew: '🔄 Nou', btnNew_title: 'Joc nou [N]',
+					btnSave: '💾 Salvează', btnSave_title: 'Salvează jocul [S]',
+					btnLoad2: '📂 Încarcă', btnLoad2_title: 'Încarcă joc salvat',
+					btnSlots: '💾 Sloturi', btnSlots_title: 'Salvează / Încarcă sloturi [S]',
+					slotsTitle: 'Sloturi de salvare',
+					slotName: 'Slot {n}',
+					slotsClose: 'Închide [Esc]',
+					btnRotMode: '↻ Amestecă rotații', btnRotMode_title: 'Activează rotație inițială aleatorie [X]',
+					btnRotSingle: '⟳ Rotește piesă', btnRotSingle_title: 'Rotește piesa selectată [R]',
+					btnPreview: '🔍 Previzualizare', btnPreview_title: 'Arată/ascunde previzualizare [P]',
+					statMoves: 'Mutări:', statGroups: 'Grupuri:', statTime: 'Timp:',
+					dropMsg: '📷 Trageți imaginea aici',
+					rotHint: '🔁 Selectați o piesă → apăsați R sau folosiți butonul ⟳',
+					previewLabel: 'imagine completă',
+					helpTitle: '⌨ Scurtături tastatură',
+					helpSec1: 'Piese', helpSec2: 'Joc', helpSec3: 'Navigare',
+					helpR: 'Rotește piesa / grupul selectat',
+					helpClick: 'Selectează o piesă',
+					helpDrag: 'Mută piesa / grupul selectat',
+					helpN: 'Joc nou',
+					helpS: 'Deschide sloturi de salvare',
+					helpP: 'Arată/ascunde previzualizare',
+					helpX: 'Comută modul rotație aleatorie',
+					helpL: 'Încarcă imaginea ta',
+					helpT: 'Schimbă limba',
+					helpDragBg: 'Trage fundalul pentru navigare',
+					helpEsc: 'Deselectează piesa',
+					keyClick: 'Clic', keyDrag: 'Trage', keyDragBg: 'Trage fundal', keyEsc: 'Esc',
+					helpQ: 'Arată/ascunde acest ajutor',
+					helpClose: 'Închide [Esc]',
+					winTitle: '✦ Finalizat! ✦',
+					winClose: '✕ Închide',
+					winNew: '↺ Joc nou [N]',
+					winTxt: (moves, time) => `🎉 Finalizat! 🎉<br>${moves} mutări · ${time}`,
+					settingsTitle: 'Setări',
+					langTitle: 'Schimbă limba [T]',
+				},
+				uk: {
+					title: '✦ ПАЗЛ',
+					optSunset: '🌅 Захід сонця', optSea: '🌊 Море', optForest: '🌲 Ліс', optAbstract: '🎨 Абстракція', optCity: '🌃 Нічне місто', optMountain: '🏔️ Гори', optGarden: '🌸 Сад', optGalaxy: '🌌 Галактика', optCustom: '📷 Ваше зображення',
+					btnLoad: '📷 Завантажити', thumbTitle: 'Попередній перегляд',
+					btnNew: '🔄 Новий', btnNew_title: 'Нова гра [N]',
+					btnSave: '💾 Зберегти', btnSave_title: 'Зберегти гру [S]',
+					btnLoad2: '📂 Завантажити', btnLoad2_title: 'Завантажити збережену гру',
+					btnSlots: '💾 Слоти', btnSlots_title: 'Зберегти / Завантажити слоти [S]',
+					slotsTitle: 'Слоти збереження',
+					slotName: 'Слот {n}',
+					slotsClose: 'Закрити [Esc]',
+					btnRotMode: '↻ Змішати обертання', btnRotMode_title: 'Увімкнути випадкове початкове обертання [X]',
+					btnRotSingle: '⟳ Повернути частину', btnRotSingle_title: 'Повернути вибрану частину [R]',
+					btnPreview: '🔍 Перегляд', btnPreview_title: 'Показати/приховати перегляд [P]',
+					statMoves: 'Ходи:', statGroups: 'Групи:', statTime: 'Час:',
+					dropMsg: '📷 Перетягніть зображення сюди',
+					rotHint: '🔁 Виберіть частину → натисніть R або кнопку ⟳',
+					previewLabel: 'повне зображення',
+					helpTitle: '⌨ Гарячі клавіші',
+					helpSec1: 'Частини', helpSec2: 'Гра', helpSec3: 'Навігація',
+					helpR: 'Повернути вибрану частину / групу',
+					helpClick: 'Вибрати частину',
+					helpDrag: 'Перемістити частину / групу',
+					helpN: 'Нова гра',
+					helpS: 'Відкрити слоти збереження',
+					helpP: 'Показати/приховати перегляд',
+					helpX: 'Перемкнути випадковий режим обертання',
+					helpL: 'Завантажити своє зображення',
+					helpT: 'Змінити мову',
+					helpDragBg: 'Перетягнути фон для навігації',
+					helpEsc: 'Скасувати вибір частини',
+					keyClick: 'Клік', keyDrag: 'Тягнути', keyDragBg: 'Тягнути фон', keyEsc: 'Esc',
+					helpQ: 'Показати/приховати цю довідку',
+					helpClose: 'Закрити [Esc]',
+					winTitle: '✦ Завершено! ✦',
+					winClose: '✕ Закрити',
+					winNew: '↺ Нова гра [N]',
+					winTxt: (moves, time) => `🎉 Завершено! 🎉<br>${moves} ходів · ${time}`,
+					settingsTitle: 'Налаштування',
+					langTitle: 'Змінити мову [T]',
+				},
+				el: {
+					title: '✦ ΠΑΖΛ',
+					optSunset: '🌅 Ηλιοβασίλεμα', optSea: '🌊 Θάλασσα', optForest: '🌲 Δάσος', optAbstract: '🎨 Αφηρημένο', optCity: '🌃 Νύχτα στην πόλη', optMountain: '🏔️ Βουνά', optGarden: '🌸 Κήπος', optGalaxy: '🌌 Γαλαξίας', optCustom: '📷 Η εικόνα σας',
+					btnLoad: '📷 Φόρτωση', thumbTitle: 'Προεπισκόπηση',
+					btnNew: '🔄 Νέο', btnNew_title: 'Νέο παιχνίδι [N]',
+					btnSave: '💾 Αποθήκευση', btnSave_title: 'Αποθήκευση παιχνιδιού [S]',
+					btnLoad2: '📂 Φόρτωση', btnLoad2_title: 'Φόρτωση αποθηκευμένου παιχνιδιού',
+					btnSlots: '💾 Θέσεις', btnSlots_title: 'Αποθήκευση / Φόρτωση θέσεων [S]',
+					slotsTitle: 'Θέσεις αποθήκευσης',
+					slotName: 'Θέση {n}',
+					slotsClose: 'Κλείσιμο [Esc]',
+					btnRotMode: '↻ Ανάμειξη περιστροφών', btnRotMode_title: 'Ενεργοποίηση τυχαίας αρχικής περιστροφής [X]',
+					btnRotSingle: '⟳ Περιστροφή κομματιού', btnRotSingle_title: 'Περιστροφή επιλεγμένου κομματιού [R]',
+					btnPreview: '🔍 Προεπισκόπηση', btnPreview_title: 'Εμφάνιση/απόκρυψη προεπισκόπησης [P]',
+					statMoves: 'Κινήσεις:', statGroups: 'Ομάδες:', statTime: 'Χρόνος:',
+					dropMsg: '📷 Αποθέστε εδώ εικόνα',
+					rotHint: '🔁 Επιλέξτε κομμάτι → πατήστε R ή χρησιμοποιήστε το ⟳',
+					previewLabel: 'πλήρης εικόνα',
+					helpTitle: '⌨ Συντομεύσεις πληκτρολογίου',
+					helpSec1: 'Κομμάτια', helpSec2: 'Παιχνίδι', helpSec3: 'Πλοήγηση',
+					helpR: 'Περιστροφή επιλεγμένου κομματιού / ομάδας',
+					helpClick: 'Επιλογή κομματιού',
+					helpDrag: 'Μετακίνηση κομματιού / ομάδας',
+					helpN: 'Νέο παιχνίδι',
+					helpS: 'Άνοιγμα θέσεων αποθήκευσης',
+					helpP: 'Εμφάνιση/απόκρυψη προεπισκόπησης',
+					helpX: 'Εναλλαγή τυχαίου τρόπου περιστροφής',
+					helpL: 'Φόρτωση δικής σας εικόνας',
+					helpT: 'Αλλαγή γλώσσας',
+					helpDragBg: 'Σύρσιμο φόντου για πλοήγηση',
+					helpEsc: 'Αναίρεση επιλογής κομματιού',
+					keyClick: 'Κλικ', keyDrag: 'Σύρσιμο', keyDragBg: 'Σύρσιμο φόντου', keyEsc: 'Esc',
+					helpQ: 'Εμφάνιση/απόκρυψη αυτής της βοήθειας',
+					helpClose: 'Κλείσιμο [Esc]',
+					winTitle: '✦ Ολοκληρώθηκε! ✦',
+					winClose: '✕ Κλείσιμο',
+					winNew: '↺ Νέο παιχνίδι [N]',
+					winTxt: (moves, time) => `🎉 Ολοκληρώθηκε! 🎉<br>${moves} κινήσεις · ${time}`,
+					settingsTitle: 'Ρυθμίσεις',
+					langTitle: 'Αλλαγή γλώσσας [T]',
+				},
+				la: {
+					title: '✦ TESSERA',
+					optSunset: '🌅 Solis Occasus', optSea: '🌊 Mare', optForest: '🌲 Silva', optAbstract: '🎨 Abstractum', optCity: '🌃 Urbs Nocturna', optMountain: '🏔️ Montes', optGarden: '🌸 Hortus', optGalaxy: '🌌 Galaxias', optCustom: '📷 Imago tua',
+					btnLoad: '📷 Aperi', thumbTitle: 'Prospectus',
+					btnNew: '🔄 Novum', btnNew_title: 'Ludus novus [N]',
+					btnSave: '💾 Serva', btnSave_title: 'Serva ludum [S]',
+					btnLoad2: '📂 Aperi', btnLoad2_title: 'Aperi ludum servatum',
+					btnSlots: '💾 Loci', btnSlots_title: 'Serva / Ape locos [S]',
+					slotsTitle: 'Loci servationis',
+					slotName: 'Locus {n}',
+					slotsClose: 'Claudi [Esc]',
+					btnRotMode: '↻ Misce versiones', btnRotMode_title: 'Conversionem fortuitam incipe [X]',
+					btnRotSingle: '⟳ Verte tesseram', btnRotSingle_title: 'Verte tesseram electam [R]',
+					btnPreview: '🔍 Prospectus', btnPreview_title: 'Prospectum monstra/absconde [P]',
+					statMoves: 'Motus:', statGroups: 'Greges:', statTime: 'Tempus:',
+					dropMsg: '📷 Imaginem huc trahe',
+					rotHint: '🔁 Elige tesseram → preme R vel utere ⟳',
+					previewLabel: 'imago plena',
+					helpTitle: '⌨ Compendia clavium',
+					helpSec1: 'Tesserae', helpSec2: 'Ludus', helpSec3: 'Navigatio',
+					helpR: 'Verte tesseram / gregem electum',
+					helpClick: 'Elige tesseram',
+					helpDrag: 'Move tesseram / gregem electum',
+					helpN: 'Ludus novus',
+					helpS: 'Ape locos servationis',
+					helpP: 'Prospectum monstra/absconde',
+					helpX: 'Modum conversionis fortuitae commuta',
+					helpL: 'Imaginem tuam aperi',
+					helpT: 'Linguam muta',
+					helpDragBg: 'Trahe fundum ad navigandum',
+					helpEsc: 'Tesseram deselige',
+					keyClick: 'Preme', keyDrag: 'Trahe', keyDragBg: 'Trahe fundum', keyEsc: 'Esc',
+					helpQ: 'Auxilium monstra/absconde',
+					helpClose: 'Claudi [Esc]',
+					winTitle: '✦ Absolutum! ✦',
+					winClose: '✕ Claudi',
+					winNew: '↺ Ludus novus [N]',
+					winTxt: (moves, time) => `🎉 Absolutum! 🎉<br>${moves} motus · ${time}`,
+					settingsTitle: 'Optiones',
+					langTitle: 'Linguam muta [T]',
+				},
+				zh: {
+					title: '✦ 拼图',
+					optSunset: '🌅 日落', optSea: '🌊 大海', optForest: '🌲 森林', optAbstract: '🎨 抽象', optCity: '🌃 城市夜景', optMountain: '🏔️ 山脉', optGarden: '🌸 花园', optGalaxy: '🌌 星系', optCustom: '📷 你的图片',
+					btnLoad: '📷 加载', thumbTitle: '预览',
+					btnNew: '🔄 新游戏', btnNew_title: '新游戏 [N]',
+					btnSave: '💾 保存', btnSave_title: '保存游戏 [S]',
+					btnLoad2: '📂 加载', btnLoad2_title: '加载已保存的游戏',
+					btnSlots: '💾 存档', btnSlots_title: '保存/加载存档 [S]',
+					slotsTitle: '存档槽',
+					slotName: '存档 {n}',
+					slotsClose: '关闭 [Esc]',
+					btnRotMode: '↻ 随机旋转', btnRotMode_title: '启用初始随机旋转 [X]',
+					btnRotSingle: '⟳ 旋转棋子', btnRotSingle_title: '旋转选中的棋子 [R]',
+					btnPreview: '🔍 预览', btnPreview_title: '显示/隐藏预览 [P]',
+					statMoves: '步数:', statGroups: '组数:', statTime: '时间:',
+					dropMsg: '📷 将图片拖放到此处',
+					rotHint: '🔁 选择一块 → 按 R 或使用 ⟳ 按钮',
+					previewLabel: '完整图片',
+					helpTitle: '⌨ 键盘快捷键',
+					helpSec1: '棋子', helpSec2: '游戏', helpSec3: '导航',
+					helpR: '旋转选中的棋子/组',
+					helpClick: '选择棋子',
+					helpDrag: '移动选中的棋子/组',
+					helpN: '新游戏',
+					helpS: '打开存档槽',
+					helpP: '显示/隐藏预览',
+					helpX: '切换随机旋转模式',
+					helpL: '加载你的图片',
+					helpT: '切换语言',
+					helpDragBg: '拖动背景进行导航',
+					helpEsc: '取消选择棋子',
+					keyClick: '点击', keyDrag: '拖动', keyDragBg: '拖动背景', keyEsc: 'Esc',
+					helpQ: '显示/隐藏帮助',
+					helpClose: '关闭 [Esc]',
+					winTitle: '✦ 完成！✦',
+					winClose: '✕ 关闭',
+					winNew: '↺ 新游戏 [N]',
+					winTxt: (moves, time) => `🎉 完成！🎉<br>${moves} 步 · ${time}`,
+					settingsTitle: '设置',
+					langTitle: '切换语言 [T]',
+				},
+				ja: {
+					title: '✦ パズル',
+					optSunset: '🌅 夕焼け', optSea: '🌊 海', optForest: '🌲 森', optAbstract: '🎨 抽象', optCity: '🌃 夜の街', optMountain: '🏔️ 山々', optGarden: '🌸 庭園', optGalaxy: '🌌 銀河', optCustom: '📷 あなたの画像',
+					btnLoad: '📷 読込', thumbTitle: 'プレビュー',
+					btnNew: '🔄 新規', btnNew_title: '新しいゲーム [N]',
+					btnSave: '💾 保存', btnSave_title: 'ゲームを保存 [S]',
+					btnLoad2: '📂 読込', btnLoad2_title: '保存したゲームを読み込む',
+					btnSlots: '💾 スロット', btnSlots_title: '保存/読込スロット [S]',
+					slotsTitle: 'セーブスロット',
+					slotName: 'スロット {n}',
+					slotsClose: '閉じる [Esc]',
+					btnRotMode: '↻ 回転をシャッフル', btnRotMode_title: 'ランダム初期回転を有効にする [X]',
+					btnRotSingle: '⟳ ピースを回転', btnRotSingle_title: '選択したピースを回転 [R]',
+					btnPreview: '🔍 プレビュー', btnPreview_title: 'プレビューの表示/非表示 [P]',
+					statMoves: '手数:', statGroups: 'グループ:', statTime: '時間:',
+					dropMsg: '📷 画像をここにドロップ',
+					rotHint: '🔁 ピースを選択 → R を押すか ⟳ ボタンを使用',
+					previewLabel: '全体画像',
+					helpTitle: '⌨ キーボードショートカット',
+					helpSec1: 'ピース', helpSec2: 'ゲーム', helpSec3: 'ナビゲーション',
+					helpR: '選択したピース/グループを回転',
+					helpClick: 'ピースを選択',
+					helpDrag: '選択したピース/グループを移動',
+					helpN: '新しいゲーム',
+					helpS: 'セーブスロットを開く',
+					helpP: 'プレビューの表示/非表示',
+					helpX: 'ランダム回転モードの切替',
+					helpL: '自分の画像を読み込む',
+					helpT: '言語を切り替える',
+					helpDragBg: '背景をドラッグしてナビゲート',
+					helpEsc: 'ピースの選択を解除',
+					keyClick: 'タップ', keyDrag: 'ドラッグ', keyDragBg: '背景ドラッグ', keyEsc: 'Esc',
+					helpQ: 'このヘルプを表示/非表示',
+					helpClose: '閉じる [Esc]',
+					winTitle: '✦ 完成！✦',
+					winClose: '✕ 閉じる',
+					winNew: '↺ 新しいゲーム [N]',
+					winTxt: (moves, time) => `🎉 完成！🎉<br>${moves} 手 · ${time}`,
+					settingsTitle: '設定',
+					langTitle: '言語を切り替える [T]',
+				},
+			};
+
+			let currentLangIdx = (() => {
+				const saved = localStorage.getItem('puzzle_lang');
+				if(saved){
+					const idx = LANGUAGES.findIndex(l => l.code === saved);
+					if(idx >= 0){
+						return idx;
+					}
+				}
+				return 0;
+			})();
+
+			function t(key){
+				const lang = LANGUAGES[currentLangIdx].code;
+				return (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) || TRANSLATIONS['en'][key] || key;
+			}
+
+			function applyLanguage(){
+				const lang = LANGUAGES[currentLangIdx].code;
+				const tr = TRANSLATIONS[lang];
+				document.documentElement.lang = lang;
+				document.querySelector('#toolbar h1').textContent = tr.title;
+				document.querySelector('#sel-img option[value="tramonto"]').textContent = tr.optSunset || '🌅 Sunset';
+				document.querySelector('#sel-img option[value="mare"]').textContent = tr.optSea || '🌊 Sea';
+				document.querySelector('#sel-img option[value="foresta"]').textContent = tr.optForest || '🌲 Forest';
+				document.querySelector('#sel-img option[value="astratto"]').textContent = tr.optAbstract || '🎨 Abstract';
+				document.querySelector('#sel-img option[value="citta"]').textContent = tr.optCity || '🌃 City Night';
+				document.querySelector('#sel-img option[value="montagna"]').textContent = tr.optMountain || '🏔️ Mountains';
+				document.querySelector('#sel-img option[value="giardino"]').textContent = tr.optGarden || '🌸 Garden';
+				document.querySelector('#sel-img option[value="galassia"]').textContent = tr.optGalaxy || '🌌 Galaxy';
+				const optCustom = document.querySelector('#opt-custom');
+				optCustom.textContent = tr.optCustom;
+				document.getElementById('thumb').title = tr.thumbTitle;
+				document.getElementById('btn-new').textContent = tr.btnNew;
+				document.getElementById('btn-new').title = tr.btnNew_title;
+				document.getElementById('btn-slots').textContent = tr.btnSlots || '💾 Slots';
+				document.getElementById('btn-slots').title = tr.btnSlots_title || 'Save / Load slots [S]';
+				document.getElementById('slots-title').textContent = tr.slotsTitle || 'Save slots';
+				document.getElementById('slots-close').textContent = tr.slotsClose || 'Close [Esc]';
+				document.querySelectorAll('.slot-name').forEach((el, i) => {
+					el.textContent = (tr.slotName || 'Slot {n}').replace('{n}', i + 1);
+				});
+				document.getElementById('btn-rotate-mode').textContent = tr.btnRotMode;
+				document.getElementById('btn-rotate-mode').title = tr.btnRotMode_title;
+				document.getElementById('btn-rotate-single').textContent = tr.btnRotSingle;
+				document.getElementById('btn-rotate-single').title = tr.btnRotSingle_title;
+				document.getElementById('btn-preview').title = tr.btnPreview_title;
+				const statsSpans = document.querySelectorAll('#stats span');
+				statsSpans[0].innerHTML = tr.statMoves + ' <b id="s-moves">' + document.getElementById('s-moves').textContent + '</b>';
+				statsSpans[1].innerHTML = tr.statGroups + ' <b id="s-groups">' + document.getElementById('s-groups').textContent + '</b>';
+				statsSpans[2].innerHTML = tr.statTime + ' <b id="s-time">' + document.getElementById('s-time').textContent + '</b>';
+				const scSpans = document.querySelectorAll('#stats-canvas span');
+				if(scSpans[0]){
+					scSpans[0].innerHTML = tr.statMoves + ' <b id="sc-moves">' + (document.getElementById('sc-moves')?.textContent || '0') + '</b>';
+				}
+				if(scSpans[1]){
+					scSpans[1].innerHTML = tr.statGroups + ' <b id="sc-groups">' + (document.getElementById('sc-groups')?.textContent || '—') + '</b>';
+				}
+				if(scSpans[2]){
+					scSpans[2].innerHTML = tr.statTime + ' <b id="sc-time">' + (document.getElementById('sc-time')?.textContent || '0:00') + '</b>';
+				}
+				document.querySelector('#drop-overlay p').textContent = tr.dropMsg;
+				document.getElementById('rotate-hint').textContent = tr.rotHint;
+				const prevSpan = document.querySelector('#preview-panel span');
+				if(prevSpan){
+					prevSpan.textContent = tr.previewLabel;
+				}
+				document.querySelector('#help-box h2').textContent = tr.helpTitle;
+				const helpRows = document.querySelectorAll('#help-box tr td.help-section');
+				if(helpRows[0]){
+					helpRows[0].textContent = tr.helpSec1;
+				}
+				if(helpRows[1]){
+					helpRows[1].textContent = tr.helpSec2;
+				}
+				if(helpRows[2]){
+					helpRows[2].textContent = tr.helpSec3;
+				}
+				const trs = document.querySelectorAll('#help-box tr:not(.help-section)');
+				const helpData = [
+					['R', tr.helpR], ['Click', tr.helpClick], ['Drag', tr.helpDrag],
+					['N', tr.helpN], ['P', tr.helpP], ['X', tr.helpX], ['L', tr.helpL], ['T', tr.helpT],
+					['Drag background', tr.helpDragBg], ['Esc', tr.helpEsc], ['?', tr.helpQ]
+				];
+				const tbody = document.querySelector('#help-box table');
+				tbody.innerHTML = `
+			<tr><td class="help-section" colspan="2">${tr.helpSec1}</td></tr>
+			<tr><td>R</td><td>${tr.helpR}</td></tr>
+			<tr><td>${tr.keyClick || 'Click'}</td><td>${tr.helpClick}</td></tr>
+			<tr><td>${tr.keyDrag || 'Drag'}</td><td>${tr.helpDrag}</td></tr>
+			<tr><td class="help-section" colspan="2">${tr.helpSec2}</td></tr>
+			<tr><td>N</td><td>${tr.helpN}</td></tr>
+			<tr><td>S</td><td>${tr.helpS || 'Open save slots'}</td></tr>
+			<tr><td>P</td><td>${tr.helpP}</td></tr>
+			<tr><td>X</td><td>${tr.helpX}</td></tr>
+			<tr><td>L</td><td>${tr.helpL}</td></tr>
+			<tr><td>T</td><td>${tr.helpT}</td></tr>
+			<tr><td class="help-section" colspan="2">${tr.helpSec3}</td></tr>
+			<tr><td>${tr.keyDragBg || 'Drag bg'}</td><td>${tr.helpDragBg}</td></tr>
+			<tr><td>${tr.keyEsc || 'Esc'}</td><td>${tr.helpEsc}</td></tr>
+			<tr><td>?</td><td>${tr.helpQ}</td></tr>
+		`;
+				document.getElementById('help-close').textContent = tr.helpClose;
+				document.querySelector('#win-box h2').textContent = tr.winTitle;
+				document.getElementById('btn-close-win').textContent = tr.winClose;
+				document.getElementById('win-new-game').textContent = tr.winNew;
+				if(document.getElementById('win-overlay').classList.contains('show') && typeof _winMoves !== 'undefined'){
+					document.getElementById('win-txt').innerHTML = tr.winTxt(_winMoves, _winTime);
+				}
+				updateLangButton();
+				const btnLangM = document.getElementById('btn-lang-m');
+				if(btnLangM){
+					btnLangM.innerHTML = FLAGS_SVG[LANGUAGES[currentLangIdx].flagIdx];
+					btnLangM.title = t('langTitle');
+				}
+				const selImgM = document.getElementById('sel-img-m');
+				const selSizeM = document.getElementById('sel-size-m');
+				const optCustomM = document.getElementById('opt-custom-m');
+				if(selImgM && tr.optCustom){
+					['tramonto', 'mare', 'foresta', 'astratto', 'citta', 'montagna', 'giardino', 'galassia'].forEach((v, i) => {
+						const keys = ['optSunset', 'optSea', 'optForest', 'optAbstract', 'optCity', 'optMountain', 'optGarden', 'optGalaxy'];
+						const opt = selImgM.querySelector(`option[value="${v}"]`);
+						if(opt){
+							opt.textContent = tr[keys[i]] || opt.textContent;
+						}
+					});
+					if(optCustomM){
+						optCustomM.textContent = tr.optCustom;
+					}
+				}
+				const drawerH3 = document.querySelector('#drawer-box h3');
+				if(drawerH3){
+					drawerH3.textContent = '⚙ ' + (tr.settingsTitle || 'Settings');
+				}
+				const drawerClose = document.getElementById('drawer-close');
+				if(drawerClose){
+					drawerClose.textContent = '✕ ' + (tr.helpClose ? tr.helpClose.replace(' [Esc]', '') : 'Close');
+				}
+				const dmRotMode = document.getElementById('dm-rotate-mode');
+				if(dmRotMode){
+					dmRotMode.textContent = tr.btnRotMode || '↻ Mix rotations';
+				}
+				const dmLang = document.getElementById('dm-lang');
+				if(dmLang){
+					dmLang.innerHTML = FLAGS_SVG[LANGUAGES[currentLangIdx].flagIdx];
+					dmLang.title = t('langTitle');
+				}
+				const mbLabels = { 'mb-new': tr.btnNew || '🔄 New', 'mb-slots': tr.btnSlots || '💾 Slots', 'mb-preview': tr.btnPreview || '🔍 Preview', 'mb-rotate': tr.btnRotSingle || '⟳ Rotate piece', 'mb-settings': '⚙️ ' + (tr.settingsTitle || 'Settings') };
+				Object.entries(mbLabels).forEach(([id, txt]) => {
+					const el = document.getElementById(id);
+					if(el){
+						const lbl = el.querySelector('.mb-label');
+						if(lbl){
+							lbl.textContent = txt.replace(/^[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}]\s*/u, '').trim() || txt;
+						}
+					}
+				});
+				const mTitle = document.getElementById('mobile-title');
+				if(mTitle){
+					mTitle.textContent = tr.title || '✦ PUZZLE';
+				}
+			}
+
+			function updateLangButton(){
+				const btn = document.getElementById('btn-lang');
+				const flagSvg = FLAGS_SVG[LANGUAGES[currentLangIdx].flagIdx];
+				btn.innerHTML = flagSvg;
+				btn.title = t('langTitle');
+			}
+
+			function cycleLanguage(){
+				currentLangIdx = (currentLangIdx + 1)%(LANGUAGES.length);
+				localStorage.setItem('puzzle_lang', LANGUAGES[currentLangIdx].code);
+				applyLanguage();
+			}
+
+			const FLAGS_SVG = [
+				'<svg class="flag-svg" viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#s)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>', // UK
+				//'<svg class="flag-svg" viewBox="0 0 7410 3900"><rect width="7410" height="3900" fill="#b22234"/><path d="M0 300h7410M0 900h7410M0 1500h7410M0 2100h7410M0 2700h7410M0 3300h7410" stroke="#fff" stroke-width="300"/><rect width="2964" height="2100" fill="#3c3b6e"/><path d="M247 175l247 759-646-469h798l-646 469z" fill="#fff" transform="scale(.2)"/></svg>', // US
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>', // IT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg>', // FR
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#c60b1e"/><rect width="3" height="1" y="0.5" fill="#ffc400"/></svg>', // ES
+				'<svg class="flag-svg" viewBox="0 0 5 3"><rect width="5" height="3"/><rect width="5" height="2" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg>', // DE
+				'<svg class="flag-svg" viewBox="0 0 600 400"><rect width="240" height="400" fill="#006600"/><rect x="240" width="360" height="400" fill="#ff0000"/></svg>', // PT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002b7f"/><rect width="1" height="2" x="1" fill="#fcd116"/><rect width="1" height="2" x="2" fill="#ce1126"/></svg>', // RO
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>', // UA
+				'<svg class="flag-svg" viewBox="0 0 27 18"><rect width="27" height="18" fill="#005bae"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#005bae"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>', // GR
+				//'<svg class="flag-svg" viewBox="0 0 1 1"><rect width="0.5" height="1" fill="#ffe000"/><rect x="0.5" width="0.5" height="1" fill="#fff"/></svg>', // VA
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#800000"/><path d="M0.5,0.5 L2.5,0.5 L2.5,1.5 L0.5,1.5 Z" fill="none" stroke="#FFD700" stroke-width="0.1"/><text x="1.5" y="1.15" font-family="serif" font-weight="bold" font-size="0.4" fill="#FFD700" text-anchor="middle">SPQR</text></svg>', // ROMA
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#de2110"/><path d="M.5 1.1l.3-.9.3.9-1-.6h1z" fill="#ffde00" transform="matrix(.4 0 0 .4 .1 .1)"/></svg>', // CN
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>' // JP
+			];
+
+			function drawScene(ctx, name, W, H){
+				ctx.clearRect(0, 0, W, H);
+				if(name === 'tramonto'){
+					let g = ctx.createLinearGradient(0, 0, 0, H*.65);
+					g.addColorStop(0, '#1a1040');
+					g.addColorStop(.4, '#c0392b');
+					g.addColorStop(.7, '#e67e22');
+					g.addColorStop(1, '#f1c40f');
+					ctx.fillStyle = g;
+					ctx.fillRect(0, 0, W, H*.65);
+					ctx.beginPath();
+					ctx.arc(W/2, H*.37, W*.1, 0, Math.PI*2);
+					ctx.fillStyle = '#ffeaa7';
+					ctx.fill();
+					g = ctx.createLinearGradient(0, H*.65, 0, H);
+					g.addColorStop(0, '#e67e22');
+					g.addColorStop(1, '#1a1040');
+					ctx.fillStyle = g;
+					ctx.fillRect(0, H*.65, W, H*.35);
+					for(let i = 0; i < 8; i++){
+						ctx.beginPath();
+						ctx.moveTo(0, H*.68 + i*H*.04);
+						for(let x = 0; x < W; x += W*.12){
+							ctx.quadraticCurveTo(x + W*.06, H*.68 + i*H*.04 - H*.018, x + W*.12, H*.68 + i*H*.04);
+						}
+						ctx.strokeStyle = 'rgba(255,200,80,0.22)';
+						ctx.lineWidth = 2;
+						ctx.stroke();
+					}
+					ctx.beginPath();
+					ctx.moveTo(0, H*.65);
+					ctx.lineTo(W*.16, H*.42);
+					ctx.lineTo(W*.36, H*.65);
+					ctx.lineTo(W*.55, H*.34);
+					ctx.lineTo(W*.77, H*.65);
+					ctx.lineTo(W*.91, H*.47);
+					ctx.lineTo(W, H*.65);
+					ctx.closePath();
+					ctx.fillStyle = '#2c1f0e';
+					ctx.fill();
+				}else if(name === 'mare'){
+					let g = ctx.createLinearGradient(0, 0, 0, H*.45);
+					g.addColorStop(0, '#0a3d62');
+					g.addColorStop(1, '#74b9ff');
+					ctx.fillStyle = g;
+					ctx.fillRect(0, 0, W, H*.45);
+					[[W*.22, H*.16], [W*.55, H*.11], [W*.82, H*.18]].forEach(([x, y]) => {
+						ctx.beginPath();
+						ctx.arc(x, y, W*.08, 0, Math.PI*2);
+						ctx.arc(x + W*.07, y - H*.02, W*.06, 0, Math.PI*2);
+						ctx.arc(x + W*.14, y, W*.07, 0, Math.PI*2);
+						ctx.fillStyle = 'rgba(255,255,255,0.82)';
+						ctx.fill();
+					});
+					g = ctx.createLinearGradient(0, H*.45, 0, H);
+					g.addColorStop(0, '#0984e3');
+					g.addColorStop(1, '#023e8a');
+					ctx.fillStyle = g;
+					ctx.fillRect(0, H*.45, W, H*.55);
+					for(let i = 0; i < 10; i++){
+						ctx.beginPath();
+						ctx.moveTo(0, H*.47 + i*H*.054);
+						for(let x = 0; x < W; x += W*.11){
+							ctx.quadraticCurveTo(x + W*.055, H*.47 + i*H*.054 - H*.02, x + W*.11, H*.47 + i*H*.054);
+						}
+						ctx.strokeStyle = `rgba(255,255,255,${.1 + i*.028})`;
+						ctx.lineWidth = 1.5;
+						ctx.stroke();
+					}
+					ctx.beginPath();
+					ctx.moveTo(W*.43, H*.55);
+					ctx.lineTo(W*.57, H*.55);
+					ctx.lineTo(W*.54, H*.61);
+					ctx.lineTo(W*.46, H*.61);
+					ctx.closePath();
+					ctx.fillStyle = '#d63031';
+					ctx.fill();
+					ctx.beginPath();
+					ctx.moveTo(W*.5, H*.55);
+					ctx.lineTo(W*.5, H*.38);
+					ctx.lineTo(W*.57, H*.48);
+					ctx.closePath();
+					ctx.fillStyle = '#fdcb6e';
+					ctx.fill();
+				}else if(name === 'foresta'){
+					let g = ctx.createLinearGradient(0, 0, 0, H*.3);
+					g.addColorStop(0, '#b2dfdb');
+					g.addColorStop(1, '#e8f5e9');
+					ctx.fillStyle = g;
+					ctx.fillRect(0, 0, W, H);
+					ctx.fillStyle = '#4a2c0a';
+					ctx.fillRect(0, H*.82, W, H*.18);
+					g = ctx.createLinearGradient(0, H*.75, 0, H*.86);
+					g.addColorStop(0, '#27ae60');
+					g.addColorStop(1, '#1e8449');
+					ctx.fillStyle = g;
+					ctx.fillRect(0, H*.75, W, H*.12);
+					[[W*.08, H*.72, W*.15, '#1a5e34'], [W*.25, H*.8, W*.17, '#1e8449'],
+					[W*.44, H*.83, W*.18, '#145a32'], [W*.63, H*.78, W*.16, '#27ae60'],
+					[W*.82, H*.81, W*.17, '#1a5e34'], [0, H*.65, W*.13, '#0d3b22'],
+					[W*.87, H*.69, W*.13, '#0d3b22']].forEach(([x, h, w, c]) => {
+						ctx.fillStyle = '#5d3a1a';
+						ctx.fillRect(x + w/2 - w*.09, H*.75, w*.18, H*.1);
+						ctx.beginPath();
+						ctx.moveTo(x + w/2, H*.75 - h);
+						ctx.lineTo(x, H*.75);
+						ctx.lineTo(x + w, H*.75);
+						ctx.closePath();
+						ctx.fillStyle = c;
+						ctx.fill();
+					});
+					for(let i = 0; i < 5; i++){
+						ctx.beginPath();
+						ctx.moveTo(W*.5 - W*.06 + i*W*.04, 0);
+						ctx.lineTo(W*.5 - W*.17 + i*W*.08, H*.8);
+						ctx.strokeStyle = 'rgba(255,255,200,0.07)';
+						ctx.lineWidth = 22;
+						ctx.stroke();
+					}
+				}else if(name === 'citta'){
+					let g = ctx.createLinearGradient(0, 0, 0, H*.55);
+					g.addColorStop(0, '#0a0a1a');
+					g.addColorStop(.5, '#0d1a3a');
+					g.addColorStop(1, '#1a2040');
+					ctx.fillStyle = g;
+					ctx.fillRect(0, 0, W, H);
+					for(let i = 0; i < 120; i++){
+						const sx = (i*97 + 7)%W, sy = (i*53 + 3)%(H*.45);
+						ctx.beginPath();
+						ctx.arc(sx, sy, 0.8 + (i%3)*0.4, 0, Math.PI*2);
+						ctx.fillStyle = `rgba(255,255,255,${0.4 + (i%5)*0.12})`;
+						ctx.fill();
+					}
+					ctx.beginPath();
+					ctx.arc(W*.78, H*.12, W*.06, 0, Math.PI*2);
+					ctx.fillStyle = '#fffde7';
+					ctx.fill();
+					ctx.beginPath();
+					ctx.arc(W*.81, H*.10, W*.055, 0, Math.PI*2);
+					ctx.fillStyle = '#0d1a3a';
+					ctx.fill();
+					const bldgs = [[0, .55, .10, .45], [.09, .45, .07, .55], [.15, .38, .08, .62], [.22, .50, .06, .50], [.27, .35, .09, .65], [.35, .52, .07, .48], [.41, .30, .10, .70], [.50, .48, .06, .52], [.55, .40, .08, .60], [.62, .55, .09, .45], [.70, .32, .11, .68], [.80, .50, .08, .50], [.87, .42, .07, .58], [.93, .58, .07, .42]];
+					bldgs.forEach(([x, yTop, w, h]) => {
+						ctx.fillStyle = '#0d0d1e';
+						ctx.fillRect(x*W, yTop*H, w*W, h*H);
+						const cols = Math.max(1, Math.floor(w*W/10));
+						const rows = Math.max(1, Math.floor((1 - yTop)*H/12));
+						for(let r = 0; r < rows; r++){
+							for(let c = 0; c < cols; c++){
+								if((r*cols + c + Math.floor(x*17))%3 === 0){
+									continue;
+								}
+								const wx = x*W + c*(w*W/cols) + 2;
+								const wy = yTop*H + r*12 + 4;
+								ctx.fillStyle = Math.random() < 0.7 ? '#ffe082' : '#80deea';
+								ctx.fillRect(wx, wy, (w*W/cols) - 4, 6);
+							}
+						}
+					});
+					g = ctx.createLinearGradient(0, H*.82, 0, H);
+					g.addColorStop(0, '#1a1a2e');
+					g.addColorStop(1, '#0a0a12');
+					ctx.fillStyle = g;
+					ctx.fillRect(0, H*.82, W, H*.18);
+					for(let i = 0; i < 6; i++){
+						ctx.beginPath();
+						ctx.moveTo(0, H*(.84 + i*.025));
+						ctx.lineTo(W, H*(.84 + i*.025));
+						ctx.strokeStyle = `rgba(255,220,80,${0.06 + i*0.01})`;
+						ctx.lineWidth = 1;
+						ctx.stroke();
+					}
+				}else if(name === 'montagna'){
+					let g = ctx.createLinearGradient(0, 0, 0, H*.6);
+					g.addColorStop(0, '#b3e5fc');
+					g.addColorStop(.5, '#e1f5fe');
+					g.addColorStop(1, '#90caf9');
+					ctx.fillStyle = g;
+					ctx.fillRect(0, 0, W, H);
+					const drawMtn = (pts, col) => {
+						ctx.beginPath();
+						ctx.moveTo(0, H);
+						pts.forEach(([x, y]) => ctx.lineTo(x*W, y*H));
+						ctx.lineTo(W, H);
+						ctx.closePath();
+						ctx.fillStyle = col;
+						ctx.fill();
+					};
+					drawMtn([[0, .7], [.15, .45], [.3, .55], [.5, .3], [.65, .5], [.8, .38], [1, .65]], '#78909c');
+					drawMtn([[0, .75], [.1, .55], [.25, .65], [.42, .40], [.58, .58], [.75, .44], [.88, .60], [1, .72]], '#90a4ae');
+					[[.15, .45], [.5, .3], [.8, .38]].forEach(([px, py]) => {
+						ctx.beginPath();
+						ctx.moveTo(px*W, py*H);
+						ctx.lineTo((px - .07)*W, (py + .12)*H);
+						ctx.lineTo((px + .07)*W, (py + .12)*H);
+						ctx.closePath();
+						ctx.fillStyle = 'rgba(255,255,255,0.55)';
+						ctx.fill();
+					});
+					drawMtn([[0, .82], [.18, .55], [.35, .68], [.55, .48], [.72, .62], [.88, .52], [1, .75]], '#455a64');
+					[[.18, .55], [.55, .48], [.88, .52]].forEach(([px, py]) => {
+						ctx.beginPath();
+						ctx.moveTo(px*W, py*H);
+						ctx.lineTo((px - .09)*W, (py + .13)*H);
+						ctx.lineTo((px + .09)*W, (py + .13)*H);
+						ctx.closePath();
+						ctx.fillStyle = '#ffffff';
+						ctx.fill();
+					});
+					g = ctx.createLinearGradient(0, H*.82, 0, H);
+					g.addColorStop(0, '#e8f4f8');
+					g.addColorStop(1, '#b3d9e8');
+					ctx.fillStyle = g;
+					ctx.fillRect(0, H*.82, W, H*.18);
+					[[.05, .8], [.12, .83], [.82, .81], [.9, .83], [.96, .82]].forEach(([px, py]) => {
+						ctx.fillStyle = '#1b5e20';
+						for(let lvl = 0; lvl < 3; lvl++){
+							ctx.beginPath();
+							ctx.moveTo(px*W, (py - .15 + lvl*.05)*H);
+							ctx.lineTo((px - .04)*W, (py + .02 + lvl*.05)*H);
+							ctx.lineTo((px + .04)*W, (py + .02 + lvl*.05)*H);
+							ctx.closePath();
+							ctx.fill();
+						}
+						ctx.fillStyle = '#4e342e';
+						ctx.fillRect((px - .01)*W, py*H, .02*W, .06*H);
+					});
+				}else if(name === 'giardino'){
+					let g = ctx.createLinearGradient(0, 0, 0, H*.35);
+					g.addColorStop(0, '#81d4fa');
+					g.addColorStop(1, '#b3e5fc');
+					ctx.fillStyle = g;
+					ctx.fillRect(0, 0, W, H*.35);
+					g = ctx.createLinearGradient(0, H*.35, 0, H);
+					g.addColorStop(0, '#66bb6a');
+					g.addColorStop(1, '#388e3c');
+					ctx.fillStyle = g;
+					ctx.fillRect(0, H*.35, W, H*.65);
+					g = ctx.createLinearGradient(0, H*.35, 0, H);
+					g.addColorStop(0, '#d7ccc8');
+					g.addColorStop(1, '#bcaaa4');
+					ctx.fillStyle = g;
+					ctx.beginPath();
+					ctx.moveTo(W*.42, H*.35);
+					ctx.lineTo(W*.58, H*.35);
+					ctx.lineTo(W*.7, H);
+					ctx.lineTo(W*.3, H);
+					ctx.closePath();
+					ctx.fill();
+					[[.03, .45], [.15, .43], [.28, .46], [.62, .43], [.75, .45], [.88, .44], [.96, .47]].forEach(([px, py]) => {
+						ctx.beginPath();
+						ctx.arc(px*W, py*H, W*.07, 0, Math.PI*2);
+						ctx.fillStyle = '#2e7d32';
+						ctx.fill();
+					});
+					const flowers = [[.08, .6, '#e91e63'], [.18, .55, '#ff9800'], [.25, .65, '#e91e63'], [.35, .58, '#ffeb3b'],[.65, .60, '#9c27b0'], [.72, .55, '#ff5722'], [.80, .63, '#ff9800'], [.90, .57, '#e91e63'], [.12, .75, '#ffeb3b'], [.22, .72, '#9c27b0'], [.78, .70, '#e91e63'], [.88, .75, '#ff9800'], [.05, .52, '#ff5722'], [.95, .54, '#ffeb3b']];
+					flowers.forEach(([px, py, col]) => {
+						const cx = px*W, cy = py*H, r = W*.028;
+						for(let a = 0; a < 5; a++){
+							ctx.beginPath();
+							ctx.arc(cx + Math.cos(a*Math.PI*2/5)*r*1.4, cy + Math.sin(a*Math.PI*2/5)*r*1.4, r, 0, Math.PI*2);
+							ctx.fillStyle = col;
+							ctx.fill();
+						}
+						ctx.beginPath();
+						ctx.arc(cx, cy, r*0.9, 0, Math.PI*2);
+						ctx.fillStyle = '#fff176';
+						ctx.fill();
+						ctx.beginPath();
+						ctx.moveTo(cx, cy + r);
+						ctx.lineTo(cx, cy + r*3.5);
+						ctx.strokeStyle = '#388e3c';
+						ctx.lineWidth = 2;
+						ctx.stroke();
+					});
+					ctx.save();
+					ctx.translate(W*.48, H*.42);
+					[[1, -1], [1, 1], [-1, -1], [-1, 1]].forEach(([sx, sy]) => {
+						ctx.beginPath();
+						ctx.ellipse(sx*14, sy*8, 14, 8, sx*sy*.5, 0, Math.PI*2);
+						ctx.fillStyle = sx > 0 ? 'rgba(243,229,245,0.9)' : 'rgba(225,190,231,0.9)';
+						ctx.fill();
+						ctx.strokeStyle = '#7b1fa2';
+						ctx.lineWidth = 1;
+						ctx.stroke();
+					});
+					ctx.restore();
+				}else if(name === 'galassia'){
+					ctx.fillStyle = '#020008';
+					ctx.fillRect(0, 0, W, H);
+					[[.3, .4, '#1a0533', 120], [.7, .6, '#001a33', 100], [.5, .5, '#0a1a00', 90]].forEach(([px, py, col, r]) => {
+						const gr = ctx.createRadialGradient(px*W, py*H, 0, px*W, py*H, r);
+						gr.addColorStop(0, col + 'ff');
+						gr.addColorStop(1, col + '00');
+						ctx.fillStyle = gr;
+						ctx.fillRect(0, 0, W, H);
+					});
+					for(let i = 0; i < 300; i++){
+						const sx = (i*137 + 23)%W, sy = (i*89 + 17)%H;
+						const brightness = 0.3 + (i%7)*0.1;
+						const size = i%15 === 0 ? 2.5 : i%5 === 0 ? 1.5 : 0.8;
+						ctx.beginPath();
+						ctx.arc(sx, sy, size, 0, Math.PI*2);
+						ctx.fillStyle = `rgba(255,255,255,${brightness})`;
+						ctx.fill();
+					}
+					const mw = ctx.createLinearGradient(0, H*.2, W, H*.8);
+					mw.addColorStop(0, 'rgba(80,60,120,0)');
+					mw.addColorStop(.3, 'rgba(80,60,120,0.18)');
+					mw.addColorStop(.5, 'rgba(120,100,160,0.25)');
+					mw.addColorStop(.7, 'rgba(80,60,120,0.18)');
+					mw.addColorStop(1, 'rgba(80,60,120,0)');
+					ctx.save();
+					ctx.transform(1, 0, 0.4, 1, 0, 0);
+					ctx.fillStyle = mw;
+					ctx.fillRect(0, 0, W, H);
+					ctx.restore();
+					[['#ff9ff3', .12], ['#54a0ff', .18], ['#ffeaa7', .22], ['#00d2d3', .16]].forEach(([col, frac], ci) => {
+						for(let i = 0; i < 15; i++){
+							const sx = ((ci*53 + i*97 + 30)%W), sy = ((ci*71 + i*61 + 20)%H);
+							ctx.beginPath();
+							ctx.arc(sx, sy, 1.2 + i%2, 0, Math.PI*2);
+							ctx.fillStyle = col;
+							ctx.fill();
+						}
+					});
+					const galX = W*.45, galY = H*.5;
+					const galGr = ctx.createRadialGradient(galX, galY, 0, galX, galY, W*.22);
+					galGr.addColorStop(0, 'rgba(255,240,200,0.55)');
+					galGr.addColorStop(.3, 'rgba(180,120,255,0.18)');
+					galGr.addColorStop(1, 'rgba(0,0,0,0)');
+					ctx.fillStyle = galGr;
+					ctx.fillRect(0, 0, W, H);
+					ctx.beginPath();
+					ctx.moveTo(W*.2, H*.15);
+					ctx.lineTo(W*.35, H*.22);
+					ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+					ctx.lineWidth = 1.5;
+					ctx.stroke();
+				}else{
+					let g = ctx.createLinearGradient(0, 0, W, H);
+					g.addColorStop(0, '#0d0d2b');
+					g.addColorStop(1, '#1a0a2e');
+					ctx.fillStyle = g;
+					ctx.fillRect(0, 0, W, H);
+					const pal = ['#6c3483', '#1a5276', '#0e6655', '#784212', '#6e2f1a', '#1f618d'];
+					for(let i = 0; i < 20; i++){
+						const x = (i*83 + 40)%W, y = (i*57 + 30)%H, r = 15 + (i*23)%75;
+						ctx.beginPath();
+						ctx.arc(x, y, r, 0, Math.PI*2);
+						ctx.fillStyle = pal[i%(pal.length)] + '99';
+						ctx.fill();
+					}
+					for(let i = 0; i < 12; i++){
+						ctx.beginPath();
+						ctx.moveTo((i*37 + 10)%W, (i*71 + 20)%H);
+						ctx.lineTo((i*53 + 80)%W, (i*43 + 90)%H);
+						ctx.strokeStyle = `hsla(${200 + i*20},80%,70%,0.32)`;
+						ctx.lineWidth = 2;
+						ctx.stroke();
+					}
+					for(let i = 0; i < 80; i++){
+						ctx.beginPath();
+						ctx.arc((i*97 + 13)%W, (i*61 + 17)%H, 1 + (i%3)*.5, 0, Math.PI*2);
+						ctx.fillStyle = 'rgba(255,255,255,0.72)';
+						ctx.fill();
+					}
+				}
+			}
+
+			let customImage = null;
+			let _prevImgVal = 'tramonto';
+
+			function loadImageFromFile(file){
+				if(!file || !file.type.startsWith('image/')){
+					document.getElementById('sel-img').value = _prevImgVal;
+					return;
+				}
+				const reader = new FileReader();
+				reader.onload = e => {
+					const img = new Image();
+					img.onload = () => {
+						customImage = img;
+						const thumb = document.getElementById('thumb');
+						thumb.src = e.target.result;
+						thumb.style.display = 'inline-block';
+						document.getElementById('sel-img').value = 'custom';
+						startGame();
+					};
+					img.src = e.target.result;
+				};
+				reader.readAsDataURL(file);
+			}
+			document.getElementById('sel-img').addEventListener('change', () => {
+				const selImg = document.getElementById('sel-img');
+				const val = selImg.value;
+				if(val !== 'custom'){
+					_prevImgVal = val;
+				}
+			}, true);
+			document.getElementById('file-input').addEventListener('change', e => {
+				if(e.target.files[0]){
+					loadImageFromFile(e.target.files[0]);
+				}else{
+					document.getElementById('sel-img').value = _prevImgVal;
+				}
+				e.target.value = '';
+			});
+			document.getElementById('file-input').addEventListener('cancel', () => {
+				document.getElementById('sel-img').value = _prevImgVal;
+			});
+			const canvasWrap = document.getElementById('canvas-wrap');
+			const dropOverlay = document.getElementById('drop-overlay');
+			canvasWrap.addEventListener('dragover', e => {
+				e.preventDefault();
+				dropOverlay.classList.add('show');
+			});
+			canvasWrap.addEventListener('dragleave', e => {
+				dropOverlay.classList.remove('show');
+			});
+			canvasWrap.addEventListener('drop', e => {
+				e.preventDefault();
+				dropOverlay.classList.remove('show');
+				if(e.dataTransfer.files[0]){
+					loadImageFromFile(e.dataTransfer.files[0]);
+				}
+			});
+
+			const TAB_BASE = 0.26;
+			const CTRL_BASE = 0.16;
+			let N = 6, COLS = 6, ROWS = 6, PS_W = 80, PS_H = 80;
+			let SRC_W = 480, SRC_H = 480;
+			let pieces = [], groups = {}, nextGid = 0, zOrder = [];
+			let srcCanvas = null;
+			let moves = 0, timerSec = 0, timerInt = null;
+			let _winMoves = 0, _winTime = '0:00';
+			let dragging = null, dragGid = -1, dragStartX = 0, dragStartY = 0;
+			let selectedGid = -1;
+			let rotationMode = false;
+			let panActive = false, panStartX = 0, panStartY = 0;
+
+			const wrap = document.getElementById('canvas-wrap');
+			const mc = document.getElementById('main-canvas');
+			const ctx = mc.getContext('2d');
+			const prevCvs = document.getElementById('prev-cvs');
+			const prevCtx = prevCvs.getContext('2d');
+
+			function resizeCanvas(){
+				const dpr = window.devicePixelRatio || 1;
+				const cssW = wrap.clientWidth, cssH = wrap.clientHeight;
+				mc.width = Math.round(cssW*dpr);
+				mc.height = Math.round(cssH*dpr);
+				mc.style.width = cssW + 'px';
+				mc.style.height = cssH + 'px';
+				ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+				render();
+			}
+
+			function buildSidePath(tabs, psW, psH, c, side){
+				c = c || ctx;
+				const hw = psW/2, hh = psH/2;
+				const tabH = Math.min(TAB_BASE, 0.38)*psW;
+				const tabV = Math.min(TAB_BASE, 0.38)*psH;
+				const Rl = Math.min(tabH, psW*0.38);
+				const Rt = Math.min(tabV, psH*0.38);
+				const Ct_h = Rl*(CTRL_BASE/TAB_BASE);
+				const Ct_v = Rt*(CTRL_BASE/TAB_BASE);
+				c.beginPath();
+				if(side === 'top'){
+					c.moveTo(-hw, -hh);
+					const d = tabs.top;
+					if(d === 0){
+						c.lineTo(hw, -hh);
+					}else{
+						const th = psH*TAB_BASE*Math.min(1, psW/psH);
+						c.lineTo(-Rl, -hh);
+						c.bezierCurveTo(-Rl, -hh - Ct_h*d, -Ct_h, -hh - th*d, 0, -hh - th*d);
+						c.bezierCurveTo(Ct_h, -hh - th*d, Rl, -hh - Ct_h*d, Rl, -hh);
+						c.lineTo(hw, -hh);
+					}
+				}else if(side === 'right'){
+					c.moveTo(hw, -hh);
+					const d = tabs.right;
+					if(d === 0){
+						c.lineTo(hw, hh);
+					}else{
+						const tw = psW*TAB_BASE*Math.min(1, psH/psW);
+						c.lineTo(hw, -Rt);
+						c.bezierCurveTo(hw + Ct_v*d, -Rt, hw + tw*d, -Ct_v, hw + tw*d, 0);
+						c.bezierCurveTo(hw + tw*d, Ct_v, hw + Ct_v*d, Rt, hw, Rt);
+						c.lineTo(hw, hh);
+					}
+				}else if(side === 'bottom'){
+					c.moveTo(hw, hh);
+					const d = tabs.bottom;
+					if(d === 0){
+						c.lineTo(-hw, hh);
+					}else{
+						const th = psH*TAB_BASE*Math.min(1, psW/psH);
+						c.lineTo(Rl, hh);
+						c.bezierCurveTo(Rl, hh + Ct_h*d, Ct_h, hh + th*d, 0, hh + th*d);
+						c.bezierCurveTo(-Ct_h, hh + th*d, -Rl, hh + Ct_h*d, -Rl, hh);
+						c.lineTo(-hw, hh);
+					}
+				}else if(side === 'left'){
+					c.moveTo(-hw, hh);
+					const d = tabs.left;
+					if(d === 0){
+						c.lineTo(-hw, -hh);
+					}else{
+						const tw = psW*TAB_BASE*Math.min(1, psH/psW);
+						c.lineTo(-hw, Rt);
+						c.bezierCurveTo(-hw - Ct_v*d, Rt, -hw - tw*d, Ct_v, -hw - tw*d, 0);
+						c.bezierCurveTo(-hw - tw*d, -Ct_v, -hw - Ct_v*d, -Rt, -hw, -Rt);
+						c.lineTo(-hw, -hh);
+					}
+				}
+			}
+
+			function buildPathLocal(tabs, psW, psH, c){
+				c = c || ctx;
+				const hw = psW/2, hh = psH/2;
+				const tabH = Math.min(TAB_BASE, 0.38)*psW;
+				const tabV = Math.min(TAB_BASE, 0.38)*psH;
+				const Rl = Math.min(tabH, psW*0.38);
+				const Rt = Math.min(tabV, psH*0.38);
+				const Ct_h = Rl*(CTRL_BASE/TAB_BASE);
+				const Ct_v = Rt*(CTRL_BASE/TAB_BASE);
+				c.beginPath();
+				c.moveTo(-hw, -hh);
+				if(tabs.top === 0){
+					c.lineTo(hw, -hh);
+				}else{
+					const d = tabs.top;
+					const th = psH*TAB_BASE*Math.min(1, psW/psH);
+					c.lineTo(-Rl, -hh);
+					c.bezierCurveTo(-Rl, -hh - Ct_h*d, -Ct_h, -hh - th*d, 0, -hh - th*d);
+					c.bezierCurveTo(Ct_h, -hh - th*d, Rl, -hh - Ct_h*d, Rl, -hh);
+					c.lineTo(hw, -hh);
+				}
+				if(tabs.right === 0){
+					c.lineTo(hw, hh);
+				}else{
+					const d = tabs.right;
+					const tw = psW*TAB_BASE*Math.min(1, psH/psW);
+					c.lineTo(hw, -Rt);
+					c.bezierCurveTo(hw + Ct_v*d, -Rt, hw + tw*d, -Ct_v, hw + tw*d, 0);
+					c.bezierCurveTo(hw + tw*d, Ct_v, hw + Ct_v*d, Rt, hw, Rt);
+					c.lineTo(hw, hh);
+				}
+				if(tabs.bottom === 0){
+					c.lineTo(-hw, hh);
+				}else{
+					const d = tabs.bottom;
+					const th = psH*TAB_BASE*Math.min(1, psW/psH);
+					c.lineTo(Rl, hh);
+					c.bezierCurveTo(Rl, hh + Ct_h*d, Ct_h, hh + th*d, 0, hh + th*d);
+					c.bezierCurveTo(-Ct_h, hh + th*d, -Rl, hh + Ct_h*d, -Rl, hh);
+					c.lineTo(-hw, hh);
+				}
+				if(tabs.left === 0){
+					c.lineTo(-hw, -hh);
+				}else{
+					const d = tabs.left;
+					const tw = psW*TAB_BASE*Math.min(1, psH/psW);
+					c.lineTo(-hw, Rt);
+					c.bezierCurveTo(-hw - Ct_v*d, Rt, -hw - tw*d, Ct_v, -hw - tw*d, 0);
+					c.bezierCurveTo(-hw - tw*d, -Ct_v, -hw - Ct_v*d, -Rt, -hw, -Rt);
+					c.lineTo(-hw, -hh);
+				}
+				c.closePath();
+			}
+
+			function drawPiece(p, isActive, isSelected){
+				if(!srcCanvas){
+					return;
+				}
+				const srcPW = SRC_W/COLS;
+				const srcPH = SRC_H/ROWS;
+				const rot = p.rotation || 0;
+				const scaleX = PS_W/srcPW;
+				const scaleY = PS_H/srcPH;
+				const protrudeV = PS_H*TAB_BASE*Math.min(1, PS_W/PS_H);
+				const protrudeH = PS_W*TAB_BASE*Math.min(1, PS_H/PS_W);
+				const extraX = protrudeH/scaleX;
+				const extraY = protrudeV/scaleY;
+				const rawL = p.col*srcPW - extraX;
+				const rawT = p.row*srcPH - extraY;
+				const rawR = rawL + srcPW + extraX*2;
+				const rawB = rawT + srcPH + extraY*2;
+				const cL = Math.max(0, rawL);
+				const cT = Math.max(0, rawT);
+				const cR = Math.min(SRC_W, rawR);
+				const cB = Math.min(SRC_H, rawB);
+				const sx = cL, sy = cT, sw = cR - cL, sh = cB - cT;
+				const ddx = -PS_W/2 - extraX*scaleX + (cL - rawL)*scaleX;
+				const ddy = -PS_H/2 - extraY*scaleY + (cT - rawT)*scaleY;
+				const ddw = sw*scaleX;
+				const ddh = sh*scaleY;
+				ctx.save();
+				ctx.translate(p.x, p.y);
+				ctx.rotate(rot*Math.PI/2);
+				buildPathLocal(p.tabs, PS_W, PS_H, ctx);
+				ctx.save();
+				ctx.clip();
+				ctx.drawImage(srcCanvas, sx, sy, sw, sh, ddx, ddy, ddw, ddh);
+				ctx.restore();
+				const adjIdx = {
+					top: p.row > 0 ? (p.row - 1)*COLS + p.col : -1,
+					right: p.col < COLS - 1 ? p.row*COLS + (p.col + 1) : -1,
+					bottom: p.row < ROWS - 1 ? (p.row + 1)*COLS + p.col : -1,
+					left: p.col > 0 ? p.row*COLS + (p.col - 1) : -1,
+				};
+				function sideNeedsBorder(side){
+					const ni = adjIdx[side];
+					if(ni === -1){
+						return true;
+					}
+					return pieces[ni].gid !== p.gid;
+				}
+				const sides = ['top', 'right', 'bottom', 'left'];
+				for(const side of sides){
+					if(!sideNeedsBorder(side)){
+						continue;
+					}
+					const isBorderSide = adjIdx[side] === -1;
+					buildSidePath(p.tabs, PS_W, PS_H, ctx, side);
+					if(isBorderSide){
+						ctx.strokeStyle = (isSelected || isActive) ? '#ffcc33' : '#e6b422';
+						ctx.lineWidth = (isSelected || isActive) ? 3.5 : 2.5;
+					}else{
+						ctx.strokeStyle = (isSelected || isActive) ? '#ffffff' : 'rgba(255,255,255,0.4)';
+						ctx.lineWidth = (isSelected || isActive) ? 2.8 : 1.5;
+					}
+					ctx.stroke();
+				}
+				if(isSelected && rot !== 0){
+					ctx.fillStyle = '#f0e8d8';
+					ctx.font = `bold ${Math.round(PS_W*0.22)}px Georgia`;
+					ctx.textAlign = 'center';
+					ctx.textBaseline = 'middle';
+					ctx.fillText(['', '↻', '↕', '↺'][rot], 0, 0);
+					buildPathLocal(p.tabs, PS_W, PS_H, ctx);
+					ctx.strokeStyle = '#ffcc33';
+					ctx.lineWidth = 3;
+					ctx.stroke();
+				}else if(isSelected){
+					buildPathLocal(p.tabs, PS_W, PS_H, ctx);
+					ctx.strokeStyle = '#ffcc33';
+					ctx.lineWidth = 3;
+					ctx.stroke();
+				}
+				ctx.restore();
+			}
+
+			function buildPuzzle(){
+				const hEdge = [], vEdge = [];
+				for(let r = 0; r < ROWS - 1; r++){
+					hEdge[r] = [];
+					for(let c = 0; c < COLS; c++){
+						hEdge[r][c] = Math.random() < .5 ? 1 : -1;
+					}
+				}
+				for(let r = 0; r < ROWS; r++){
+					vEdge[r] = [];
+					for(let c = 0; c < COLS - 1; c++){
+						vEdge[r][c] = Math.random() < .5 ? 1 : -1;
+					}
+				}
+				pieces = [];
+				for(let r = 0; r < ROWS; r++){
+					for(let c = 0; c < COLS; c++){
+						const isTop = r === 0, isBottom = r === ROWS - 1, isLeft = c === 0, isRight = c === COLS - 1;
+						const rot = rotationMode ? Math.floor(Math.random()*4) : 0;
+						pieces.push({
+							col: c, row: r, x: 0, y: 0,
+							tabs: {
+								top: isTop ? 0 : -hEdge[r - 1][c],
+								right: isRight ? 0 : vEdge[r][c],
+								bottom: isBottom ? 0 : hEdge[r][c],
+								left: isLeft ? 0 : -vEdge[r][c - 1]
+							},
+							isBorder: isTop || isBottom || isLeft || isRight,
+							gid: -1,
+							rotation: rot
+						});
+					}
+				}
+			}
+
+			function scatterPieces(){
+				const cw = wrap.clientWidth, ch = wrap.clientHeight;
+				const mw = PS_W*0.8, mh = PS_H*0.8;
+				const safeW = Math.max(cw - mw*2, mw);
+				const safeH = Math.max(ch - mh*2, mh);
+				pieces.forEach(p => {
+					p.x = mw + Math.random()*safeW;
+					p.y = mh + Math.random()*safeH;
+				});
+			}
+
+			function initGroups(){
+				groups = {};
+				nextGid = 0;
+				zOrder = [];
+				pieces.forEach((p, i) => {
+					const g = nextGid++;
+					p.gid = g;
+					groups[g] = new Set([i]);
+					zOrder.push(g);
+				});
+			}
+
+			function render(){
+				if(!mc.width || !mc.height){
+					return;
+				}
+				ctx.clearRect(0, 0, mc.width, mc.height);
+				zOrder.forEach(gid => {
+					if(!groups[gid]){
+						return;
+					}
+					const isDragged = (gid === dragGid);
+					const isSelected = (gid === selectedGid);
+					groups[gid].forEach(i => drawPiece(pieces[i], isDragged, isSelected));
+				});
+				const alive = Object.values(groups).filter(g => g && g.size > 0).length;
+				document.getElementById('s-groups').textContent = alive;
+				const scGroups = document.getElementById('sc-groups');
+				if(scGroups){
+					scGroups.textContent = alive;
+				}
+			}
+			const SNAP = 26;
+			const DIR = [{ dc: 0, dr: -1 }, { dc: 1, dr: 0 }, { dc: 0, dr: 1 }, { dc: -1, dr: 0 }];
+
+			function rotateDir(dc, dr, rot){
+				let x = dc, y = dr;
+				for(let i = 0; i < rot; i++){
+					const t = x;
+					x = -y;
+					y = t;
+				}
+				return { x, y };
+			}
+
+			function trySnapGroup(movedGid){
+				const mySet = groups[movedGid];
+				if(!mySet){
+					return;
+				}
+				for(const i of mySet){
+					const p = pieces[i];
+					const pRot = (p.rotation || 0);
+					for(const dir of DIR){
+						const nc = p.col + dir.dc;
+						const nr = p.row + dir.dr;
+						if(nc < 0 || nc >= COLS || nr < 0 || nr >= ROWS){
+							continue;
+						}
+						const ni = nr*COLS + nc;
+						if(ni < 0 || ni >= COLS*ROWS){
+							continue;
+						}
+						const q = pieces[ni];
+						if(q.gid === movedGid){
+							continue;
+						}
+						if(pRot !== (q.rotation || 0)){
+							continue;
+						}
+						const rv = rotateDir(dir.dc, dir.dr, pRot);
+						const expectedX = q.x - rv.x*PS_W;
+						const expectedY = q.y - rv.y*PS_H;
+						const dx = p.x - expectedX, dy = p.y - expectedY;
+						if(dx*dx + dy*dy < SNAP*SNAP){
+							const shiftX = expectedX - p.x, shiftY = expectedY - p.y;
+							mySet.forEach(j => {
+								pieces[j].x += shiftX;
+								pieces[j].y += shiftY;
+							});
+							const theirGid = q.gid;
+							const theirSet = groups[theirGid];
+							if(theirSet){
+								theirSet.forEach(j => {
+									pieces[j].gid = movedGid;
+									mySet.add(j);
+								});
+								delete groups[theirGid];
+								zOrder = zOrder.filter(g => g !== theirGid);
+							}
+							trySnapGroup(movedGid);
+							return;
+						}
+					}
+				}
+			}
+
+			function rotateSelectedPiece(){
+				if(selectedGid === -1){
+					return false;
+				}
+				const mySet = groups[selectedGid];
+				if(!mySet || mySet.size === 0){
+					return false;
+				}
+				if(mySet.size === 1){
+					const [idx] = mySet;
+					pieces[idx].rotation = ((pieces[idx].rotation || 0) + 1)%4;
+				}else{
+					let cx = 0, cy = 0;
+					mySet.forEach(j => {
+						cx += pieces[j].x;
+						cy += pieces[j].y;
+					});
+					cx /= mySet.size;
+					cy /= mySet.size;
+					mySet.forEach(j => {
+						const p = pieces[j];
+						const rx = p.x - cx, ry = p.y - cy;
+						p.x = cx - ry;
+						p.y = cy + rx;
+						p.rotation = ((p.rotation || 0) + 1)%4;
+					});
+				}
+				render();
+				return true;
+			}
+
+			function hitTest(x, y){
+				for(let z = zOrder.length - 1; z >= 0; z--){
+					const gid = zOrder[z], g = groups[gid];
+					if(!g){
+						continue;
+					}
+					for(const i of g){
+						const p = pieces[i];
+						const rot = (p.rotation || 0);
+						const dx = x - p.x, dy = y - p.y;
+						let lx = dx, ly = dy;
+						for(let k = 0; k < rot; k++){
+							const t = lx;
+							lx = ly;
+							ly = -t;
+						}
+						const hw = PS_W/2 + PS_W*TAB_BASE*0.5;
+						const hh = PS_H/2 + PS_H*TAB_BASE*0.5;
+						if(Math.abs(lx) < hw && Math.abs(ly) < hh){
+							return { gid, idx: i };
+						}
+					}
+				}
+				return null;
+			}
+
+			function bringToTop(gid){
+				zOrder = zOrder.filter(g => g !== gid);
+				zOrder.push(gid);
+			}
+
+			function getCanvasCoords(e, isTouch = false, touchIdx = 0){
+				const r = mc.getBoundingClientRect();
+				let clientX, clientY;
+				if(isTouch){
+					const t = e.touches[touchIdx] || e.changedTouches[touchIdx];
+					clientX = t.clientX;
+					clientY = t.clientY;
+				}else{
+					clientX = e.clientX;
+					clientY = e.clientY;
+				}
+				const x = (clientX - r.left)*(r.width > 0 ? 1 : 1);
+				const y = (clientY - r.top)*(r.height > 0 ? 1 : 1);
+				return {
+					x: Math.min(Math.max(0, clientX - r.left), r.width),
+					y: Math.min(Math.max(0, clientY - r.top), r.height)
+				};
+			}
+
+			function onDragStart(x, y){
+				const hit = hitTest(x, y);
+				if(!hit){
+					panActive = true;
+					panStartX = x;
+					panStartY = y;
+					return false;
+				}
+				dragging = hit.idx;
+				dragGid = pieces[hit.idx].gid;
+				selectedGid = dragGid;
+				dragStartX = x;
+				dragStartY = y;
+				bringToTop(dragGid);
+				render();
+				return true;
+			}
+
+			function onDragMove(x, y){
+				if(panActive){
+					const dx = x - panStartX, dy = y - panStartY;
+					panStartX = x;
+					panStartY = y;
+					pieces.forEach(p => {
+						p.x += dx;
+						p.y += dy;
+					});
+					render();
+					return;
+				}
+				if(dragging === null){
+					return;
+				}
+				const dx = x - dragStartX, dy = y - dragStartY;
+				dragStartX = x;
+				dragStartY = y;
+				groups[dragGid]?.forEach(j => {
+					pieces[j].x += dx;
+					pieces[j].y += dy;
+				});
+				render();
+			}
+
+			function onDragEnd(){
+				if(panActive){
+					panActive = false;
+					return;
+				}
+				if(dragging === null){
+					return;
+				}
+				trySnapGroup(dragGid);
+				moves++;
+				document.getElementById('s-moves').textContent = moves;
+				const smMoves = document.getElementById('sm-moves');
+				if(smMoves){
+					smMoves.textContent = moves;
+				}
+				const scMoves = document.getElementById('sc-moves');
+				if(scMoves){
+					scMoves.textContent = moves;
+				}
+				dragging = null;
+				dragGid = -1;
+				render();
+				checkWin();
+			}
+			const DRAG_THRESHOLD = 4;
+			let pointerMoved = false;
+			mc.addEventListener('mousedown', e => {
+				e.preventDefault();
+				pointerMoved = false;
+				const p = getCanvasCoords(e, false);
+				onDragStart(p.x, p.y);
+			});
+			window.addEventListener('mousemove', e => {
+				if(dragging !== null || panActive){
+					e.preventDefault();
+					const p = getCanvasCoords(e, false);
+					const dx = p.x - dragStartX, dy = p.y - dragStartY;
+					if(!pointerMoved && dx*dx + dy*dy > DRAG_THRESHOLD*DRAG_THRESHOLD){
+						pointerMoved = true;
+					}
+					onDragMove(p.x, p.y);
+				}
+			});
+			window.addEventListener('mouseup', e => {
+				if(dragging !== null || panActive){
+					const wasDrag = pointerMoved;
+					const p = getCanvasCoords(e, false);
+					onDragEnd();
+					if(!wasDrag){
+						const hit = hitTest(p.x, p.y);
+						selectedGid = hit ? hit.gid : -1;
+						render();
+					}
+				}
+			});
+			mc.addEventListener('touchstart', e => {
+				e.preventDefault();
+				pointerMoved = false;
+				const p = getCanvasCoords(e, true, 0);
+				onDragStart(p.x, p.y);
+			});
+			window.addEventListener('touchmove', e => {
+				if(dragging !== null || panActive){
+					e.preventDefault();
+					pointerMoved = true;
+					const p = getCanvasCoords(e, true, 0);
+					onDragMove(p.x, p.y);
+				}
+			});
+			window.addEventListener('touchend', e => {
+				if(dragging !== null || panActive){
+					const wasDrag = pointerMoved;
+					const p = getCanvasCoords(e, true, 0);
+					onDragEnd();
+					if(!wasDrag){
+						const hit = hitTest(p.x, p.y);
+						selectedGid = hit ? hit.gid : -1;
+						render();
+					}
+				}
+			});
+
+			function toggleHelp(){
+				document.getElementById('help-overlay').classList.toggle('show');
+			}
+			document.addEventListener('keydown', e => {
+				const tag = document.activeElement?.tagName;
+				if(tag === 'INPUT' || tag === 'SELECT'){
+					return;
+				}
+				switch(e.key){
+					case 'r': case 'R':
+						rotateSelectedPiece();
+						e.preventDefault();
+						break;
+					case 's': case 'S':
+						openSlotsOverlay();
+						e.preventDefault();
+						break;
+					case 'n': case 'N':
+						startGame();
+						e.preventDefault();
+						break;
+					case 'p': case 'P': {
+						const panel = document.getElementById('preview-panel');
+						panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
+						e.preventDefault();
+						break;
+					}
+					case 'x': case 'X': {
+						const btn = document.getElementById('btn-rotate-mode');
+						btn.click();
+						e.preventDefault();
+						break;
+					}
+					case 'l': case 'L':
+						_prevImgVal = document.getElementById('sel-img').value !== 'custom' ? document.getElementById('sel-img').value : _prevImgVal;
+						document.getElementById('file-input').click();
+						e.preventDefault();
+						break;
+					case 't': case 'T':
+						cycleLanguage();
+						e.preventDefault();
+						break;
+					case 'Escape':
+						if(document.getElementById('slots-overlay').classList.contains('show')){
+							closeSlotsOverlay();
+						}else if(document.getElementById('help-overlay').classList.contains('show')){
+							document.getElementById('help-overlay').classList.remove('show');
+						}else{
+							selectedGid = -1;
+							render();
+						}
+						e.preventDefault();
+						break;
+					case '?':
+						toggleHelp();
+						e.preventDefault();
+						break;
+				}
+			});
+
+			function checkWin() {
+				const alive = Object.keys(groups).filter(g => groups[g] && groups[g].size > 0);
+				if(rotationMode){
+					const allCorrect = pieces.every(p => (p.rotation || 0) === 0);
+					if(!allCorrect){
+						return;
+					}
+				}
+				if(alive.length === 1 && groups[alive[0]] && groups[alive[0]].size === COLS*ROWS){
+					const p0 = pieces[0];
+					let posOk = true;
+					for(let i = 1; i < pieces.length; i++){
+						const p = pieces[i];
+						const expectedX = p0.x + (p.col - p0.col)*PS_W;
+						const expectedY = p0.y + (p.row - p0.row)*PS_H;
+						if(Math.abs(p.x - expectedX) > 2 || Math.abs(p.y - expectedY) > 2){
+							posOk = false;
+							break;
+						}
+					}
+					if(!posOk){
+						return;
+					}
+					if(timerInt){
+						clearInterval(timerInt);
+					}
+					timerInt = null;
+					_winMoves = moves;
+					_winTime = fmtTime(timerSec);
+					const lang = LANGUAGES[currentLangIdx].code;
+					document.getElementById('win-txt').innerHTML = TRANSLATIONS[lang].winTxt(_winMoves, _winTime);
+					document.getElementById('win-overlay').classList.add('show');
+				}
+			}
+
+			function fmtTime(s){
+				return Math.floor(s/60) + ':' + (s%60 + '').padStart(2, '0');
+			}
+
+			function startGame(){
+				document.getElementById('win-overlay').classList.remove('show');
+				if(timerInt){
+					clearInterval(timerInt);
+				}
+				timerSec = 0;
+				moves = 0;
+				selectedGid = -1;
+				dragGid = -1;
+				dragging = null;
+				document.getElementById('s-moves').textContent = '0';
+				document.getElementById('s-time').textContent = '0:00';
+				const _smM = document.getElementById('sm-moves');
+				if(_smM){
+					_smM.textContent = '0';
+				}
+				const _smT = document.getElementById('sm-time');
+				if(_smT){
+					_smT.textContent = '0:00';
+				}
+				const _scM = document.getElementById('sc-moves');
+				if(_scM){
+					_scM.textContent = '0';
+				}
+				const _scT = document.getElementById('sc-time');
+				if(_scT){
+					_scT.textContent = '0:00';
+				}
+				N = parseInt(document.getElementById('sel-size').value);
+				const imgKey = document.getElementById('sel-img').value;
+				resizeCanvas();
+				const dpr = window.devicePixelRatio || 1;
+				const cw = wrap.clientWidth, ch = wrap.clientHeight;
+				if(cw <= 20 || ch <= 20){
+					setTimeout(startGame, 30);
+					return;
+				}
+				srcCanvas = document.createElement('canvas');
+				if(imgKey === 'custom' && customImage){
+					const img = customImage;
+					const imgAspect = (img.width)/(img.height);
+					const maxW = cw*0.8, maxH = ch*0.8;
+					let puzzleW, puzzleH;
+					if(imgAspect >= maxW/maxH){
+						puzzleW = maxW;
+						puzzleH = puzzleW/imgAspect;
+					}else{
+						puzzleH = maxH;
+						puzzleW = puzzleH*imgAspect;
+					}
+					const targetPS = Math.sqrt((puzzleW*puzzleH)/(N*N));
+					COLS = Math.max(1, Math.round(puzzleW/targetPS));
+					ROWS = Math.max(1, Math.round(puzzleH/targetPS));
+					PS_W = Math.max(18, Math.floor(puzzleW/COLS));
+					PS_H = Math.max(18, Math.floor(puzzleH/ROWS));
+					SRC_W = PS_W*COLS;
+					SRC_H = PS_H*ROWS;
+					srcCanvas.width = SRC_W;
+					srcCanvas.height = SRC_H;
+					const sCtx = srcCanvas.getContext('2d');
+					sCtx.drawImage(img, 0, 0, SRC_W, SRC_H);
+					const prevW = 150;
+					const prevH = Math.round(150/imgAspect);
+					prevCvs.width = prevW;
+					prevCvs.height = prevH;
+					prevCtx.drawImage(srcCanvas, 0, 0, SRC_W, SRC_H, 0, 0, prevW, prevH);
+				}else{
+					COLS = N;
+					ROWS = N;
+					PS_W = Math.max(20, Math.min(110, Math.floor(Math.min(cw*.85/N, ch*.85/N))));
+					PS_H = PS_W;
+					SRC_W = PS_W*N;
+					SRC_H = PS_H*N;
+					srcCanvas.width = SRC_W;
+					srcCanvas.height = SRC_H;
+					const sCtx = srcCanvas.getContext('2d');
+					drawScene(sCtx, imgKey, SRC_W, SRC_H);
+					prevCvs.width = 150;
+					prevCvs.height = 150;
+					prevCtx.drawImage(srcCanvas, 0, 0, SRC_W, SRC_H, 0, 0, 150, 150);
+				}
+				buildPuzzle();
+				scatterPieces();
+				initGroups();
+				const selSize = document.getElementById('sel-size');
+				Array.from(selSize.options).forEach(o => {
+					const nv = parseInt(o.value);
+					if(imgKey === 'custom' && customImage){
+						const imgAspect = customImage.width/customImage.height;
+						const maxW = wrap.clientWidth*0.8, maxH = wrap.clientHeight*0.8;
+						let pW, pH;
+						if(imgAspect >= maxW/maxH){
+							pW = maxW;
+							pH = pW/imgAspect;
+						}else{
+							pH = maxH;
+							pW = pH*imgAspect;
+						}
+						const tPS = Math.sqrt((pW*pH)/(nv*nv));
+						const c = Math.max(1, Math.round(pW/tPS));
+						const r = Math.max(1, Math.round(pH/tPS));
+						o.text = c + '\u00d7' + r;
+					}else{
+						o.text = nv + '\u00d7' + nv;
+					}
+				});
+				render();
+				timerInt = setInterval(tickTimer, 1000);
+			}
+
+			function tickTimer(){
+				timerSec++;
+				const timeStr = fmtTime(timerSec);
+				document.getElementById('s-time').textContent = timeStr;
+				const smTime = document.getElementById('sm-time');
+				if(smTime){
+					smTime.textContent = timeStr;
+				}
+				const scTime = document.getElementById('sc-time');
+				if(scTime){
+					scTime.textContent = timeStr;
+				}
+			}
+
+			const SLOT_KEY = (i) => `puzzle_slot_${i}`;
+			const SLOT_COUNT = 3;
+
+			function buildSaveData(){
+				if(!srcCanvas){
+					return null;
+				}
+				const imgKey = document.getElementById('sel-img').value;
+				return {
+					version: 3,
+					ts: Date.now(),
+					imgKey,
+					customImageData: (imgKey === 'custom' && customImage) ? srcCanvas.toDataURL('image/jpeg', 0.75) : null,
+					N, COLS, ROWS, PS_W, PS_H, SRC_W, SRC_H,
+					rotationMode,
+					moves, timerSec,
+					selectedGid,
+					pieces: pieces.map(p => ({ col: p.col, row: p.row, x: p.x, y: p.y, gid: p.gid, rotation: p.rotation || 0, tabs: p.tabs, isBorder: p.isBorder })),
+					groups: Object.fromEntries(Object.entries(groups).filter(([, v]) => v && v.size > 0).map(([k, v]) => [k, [...v]])),
+					nextGid,
+					zOrder,
+				};
+			}
+
+			function saveToSlot(i){
+				const d = buildSaveData();
+				if(!d){
+					return;
+				}
+				try{
+					localStorage.setItem(SLOT_KEY(i), JSON.stringify(d));
+				}catch (e){
+					alert('Impossibile salvare: memoria localStorage esaurita.');
+					return;
+				}
+				refreshSlotsUI();
+			}
+
+			function loadFromSlot(i){
+				const raw = localStorage.getItem(SLOT_KEY(i));
+				if(!raw){
+					return;
+				}
+				try{
+					const d = JSON.parse(raw);
+					applyLoadedData(d);
+					closeSlotsOverlay();
+				}catch (e){
+					alert('Errore nel caricamento dello slot: ' + e.message);
+				}
+			}
+
+			function deleteSlot(i){
+				localStorage.removeItem(SLOT_KEY(i));
+				refreshSlotsUI();
+			}
+
+			function applyLoadedData(d){
+				if(!d.version || !d.pieces || !d.groups){
+					throw new Error('Dati non validi');
+				}
+				document.getElementById('win-overlay').classList.remove('show');
+				if(timerInt){
+					clearInterval(timerInt);
+					timerInt = null;
+				}
+				N = d.N;
+				COLS = d.COLS;
+				ROWS = d.ROWS;
+				PS_W = d.PS_W;
+				PS_H = d.PS_H;
+				SRC_W = d.SRC_W;
+				SRC_H = d.SRC_H;
+				rotationMode = d.rotationMode || false;
+				moves = d.moves || 0;
+				timerSec = d.timerSec || 0;
+				selectedGid = d.selectedGid !== undefined ? d.selectedGid : -1;
+				nextGid = d.nextGid;
+				zOrder = d.zOrder;
+				document.getElementById('btn-rotate-mode').classList.toggle('active', rotationMode);
+				document.getElementById('rotate-hint').classList.toggle('show', rotationMode);
+				document.getElementById('s-moves').textContent = moves;
+				document.getElementById('s-time').textContent = fmtTime(timerSec);
+				const _smM2 = document.getElementById('sm-moves');
+				if(_smM2){
+					_smM2.textContent = moves;
+				}
+				const _smT2 = document.getElementById('sm-time');
+				if(_smT2){
+					_smT2.textContent = fmtTime(timerSec);
+				}
+				const _scM2 = document.getElementById('sc-moves');
+				if(_scM2){
+					_scM2.textContent = moves;
+				}
+				const _scT2 = document.getElementById('sc-time');
+				if(_scT2){
+					_scT2.textContent = fmtTime(timerSec);
+				}
+				pieces = d.pieces.map(p => ({ ...p }));
+				groups = {};
+				Object.entries(d.groups).forEach(([k, v]) => { groups[k] = new Set(v); });
+				const selSize = document.getElementById('sel-size');
+				let bestOpt = selSize.options[0], bestDiff = Infinity;
+				Array.from(selSize.options).forEach(o => {
+					const diff = Math.abs(parseInt(o.value) - N);
+					if(diff < bestDiff){
+						bestDiff = diff;
+						bestOpt = o;
+					}
+				});
+				selSize.value = bestOpt.value;
+				selSize.options[selSize.selectedIndex].text = COLS + '\u00d7' + ROWS;
+				const restore = () => {
+					resizeCanvas();
+					const prevW = 150, prevH = Math.round(150*SRC_H/SRC_W);
+					prevCvs.width = prevW;
+					prevCvs.height = prevH;
+					prevCtx.drawImage(srcCanvas, 0, 0, SRC_W, SRC_H, 0, 0, prevW, prevH);
+					render();
+					timerInt = setInterval(tickTimer, 1000);
+				};
+				if(d.imgKey === 'custom' && d.customImageData){
+					srcCanvas = document.createElement('canvas');
+					srcCanvas.width = SRC_W;
+					srcCanvas.height = SRC_H;
+					const img = new Image();
+					img.onload = () => {
+						srcCanvas.getContext('2d').drawImage(img, 0, 0, SRC_W, SRC_H);
+						customImage = img;
+						const thumb = document.getElementById('thumb');
+						thumb.src = d.customImageData;
+						thumb.style.display = 'inline-block';
+						document.getElementById('sel-img').value = 'custom';
+						restore();
+					};
+					img.src = d.customImageData;
+				}else{
+					document.getElementById('sel-img').value = d.imgKey || 'tramonto';
+					srcCanvas = document.createElement('canvas');
+					srcCanvas.width = SRC_W;
+					srcCanvas.height = SRC_H;
+					drawScene(srcCanvas.getContext('2d'), d.imgKey, SRC_W, SRC_H);
+					restore();
+				}
+			}
+
+			function slotLabel(i){
+				return t('slotName') ? t('slotName').replace('{n}', i + 1) : `Slot ${i + 1}`;
+			}
+
+			function slotDesc(d){
+				if(!d){
+					return '—';
+				}
+				const date = new Date(d.ts);
+				const dateStr = date.toLocaleDateString(undefined, { day: '2-digit', month: '2-digit', year: '2-digit' });
+				const timeStr = date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+				const img = d.imgKey === 'custom' ? (t('optCustom') || '📷') : (t('opt' + d.imgKey.charAt(0).toUpperCase() + d.imgKey.slice(1)) || d.imgKey);
+				return `${dateStr} ${timeStr} · ${d.COLS}×${d.ROWS} · ${d.moves} ${t('statMoves') || 'moves'} ${fmtTime(d.timerSec)}`;
+			}
+
+			function refreshSlotsUI(){
+				for(let i = 0; i < SLOT_COUNT; i++){
+					const raw = localStorage.getItem(SLOT_KEY(i));
+					const d = raw ? (() => { try{ return JSON.parse(raw); }catch (e){ return null; } })() : null;
+					const slotEl = document.querySelector(`.slot[data-slot="${i}"]`);
+					if(!slotEl){
+						continue;
+					}
+					slotEl.querySelector('.slot-name').textContent = slotLabel(i);
+					slotEl.querySelector('.slot-desc').textContent = slotDesc(d);
+					slotEl.classList.toggle('has-data', !!d);
+					slotEl.querySelector('.slot-load').disabled = !d;
+					slotEl.querySelector('.slot-del').disabled = !d;
+					slotEl.querySelector('.slot-save').title = t('slotBtnSave') || 'Save here';
+					slotEl.querySelector('.slot-load').title = t('slotBtnLoad') || 'Load';
+					slotEl.querySelector('.slot-del').title = t('slotBtnDel') || 'Delete';
+				}
+			}
+
+			function openSlotsOverlay(){
+				refreshSlotsUI();
+				document.getElementById('slots-overlay').classList.add('show');
+			}
+
+			function closeSlotsOverlay(){
+				document.getElementById('slots-overlay').classList.remove('show');
+			}
+
+			document.getElementById('btn-slots').addEventListener('click', openSlotsOverlay);
+			document.getElementById('slots-close').addEventListener('click', closeSlotsOverlay);
+			document.getElementById('slots-overlay').addEventListener('click', e => {
+				if(e.target === document.getElementById('slots-overlay')){
+					closeSlotsOverlay();
+				}
+			});
+			document.querySelectorAll('.slot-save').forEach(btn => {
+				btn.addEventListener('click', () => {
+					const i = parseInt(btn.closest('.slot').dataset.slot);
+					saveToSlot(i);
+				});
+			});
+			document.querySelectorAll('.slot-load').forEach(btn => {
+				btn.addEventListener('click', () => {
+					const i = parseInt(btn.closest('.slot').dataset.slot);
+					loadFromSlot(i);
+				});
+			});
+			document.querySelectorAll('.slot-del').forEach(btn => {
+				btn.addEventListener('click', () => {
+					const i = parseInt(btn.closest('.slot').dataset.slot);
+					deleteSlot(i);
+				});
+			});
+			document.getElementById('btn-new').addEventListener('click', startGame);
+			document.getElementById('sel-img').addEventListener('change', () => {
+				const val = document.getElementById('sel-img').value;
+				if(val === 'custom'){
+					if(!customImage){
+						document.getElementById('file-input').click();
+					}else{
+						startGame();
+					}
+				}else{
+					startGame();
+				}
+			});
+			document.getElementById('sel-size').addEventListener('change', startGame);
+			document.getElementById('btn-preview').addEventListener('click', () => {
+				const p = document.getElementById('preview-panel');
+				p.style.display = p.style.display === 'flex' ? 'none' : 'flex';
+			});
+			document.getElementById('btn-close-win').addEventListener('click', () => {
+				document.getElementById('win-overlay').classList.remove('show');
+			});
+			document.getElementById('win-new-game').addEventListener('click', () => {
+				document.getElementById('win-overlay').classList.remove('show');
+				startGame();
+			});
+			const btnRotateMode = document.getElementById('btn-rotate-mode');
+			btnRotateMode.addEventListener('click', () => {
+				rotationMode = !rotationMode;
+				btnRotateMode.classList.toggle('active', rotationMode);
+				document.getElementById('rotate-hint').classList.toggle('show', rotationMode);
+				startGame();
+			});
+			const btnRotateSingle = document.getElementById('btn-rotate-single');
+			btnRotateSingle.addEventListener('click', () => {
+				if(!rotateSelectedPiece()){
+					if(selectedGid === -1){
+						const hint = document.getElementById('rotate-hint');
+						const origDisplay = hint.style.display;
+						hint.style.display = 'block';
+						setTimeout(() => {
+							if(!rotationMode && hint.style.display === 'block'){
+								hint.style.display = 'none';
+							}else if(!rotationMode){
+								hint.style.display = 'none';
+							}
+						}, 1200);
+					}
+				}
+			});
+			document.getElementById('btn-help').addEventListener('click', toggleHelp);
+			document.getElementById('help-close').addEventListener('click', () => {
+				document.getElementById('help-overlay').classList.remove('show');
+			});
+			document.getElementById('btn-lang').addEventListener('click', cycleLanguage);
+			document.getElementById('help-overlay').addEventListener('click', e => {
+				if(e.target === document.getElementById('help-overlay')){
+					document.getElementById('help-overlay').classList.remove('show');
+				}
+			});
+			window.addEventListener('resize', () => {
+				resizeCanvas();
+				if(srcCanvas){
+					render();
+				}
+			});
+			const mbNew = document.getElementById('mb-new');
+			const mbSlots = document.getElementById('mb-slots');
+			const mbRotate = document.getElementById('mb-rotate');
+			const mbPreview = document.getElementById('mb-preview');
+			const mbSettings = document.getElementById('mb-settings');
+			if(mbNew){
+				mbNew.addEventListener('click', startGame);
+			}
+			if(mbSlots){
+				mbSlots.addEventListener('click', openSlotsOverlay);
+			}
+			if(mbRotate)mbRotate.addEventListener('click', () => {
+				rotateSelectedPiece();
+			});
+			if(mbPreview){
+				mbPreview.addEventListener('click', () => {
+					const p = document.getElementById('preview-panel');
+					p.style.display = p.style.display === 'flex' ? 'none' : 'flex';
+				});
+			}
+			if(mbSettings){
+					mbSettings.addEventListener('click', () => {
+					const selImgM = document.getElementById('sel-img-m');
+					const selSizeM = document.getElementById('sel-size-m');
+					if(selImgM){
+						selImgM.value = document.getElementById('sel-img').value;
+					}
+					if(selSizeM){
+						selSizeM.value = document.getElementById('sel-size').value;
+					}
+					document.getElementById('mobile-drawer').classList.add('show');
+				});
+			}
+			const btnLangM = document.getElementById('btn-lang-m');
+			if(btnLangM){
+				btnLangM.addEventListener('click', cycleLanguage);
+			}
+			const drawerClose = document.getElementById('drawer-close');
+			if(drawerClose){
+					drawerClose.addEventListener('click', () => {
+					document.getElementById('mobile-drawer').classList.remove('show');
+				});
+			}
+			document.getElementById('mobile-drawer')?.addEventListener('click', e => {
+				if(e.target === document.getElementById('mobile-drawer')){
+					document.getElementById('mobile-drawer').classList.remove('show');
+				}
+			});
+			const selImgM = document.getElementById('sel-img-m');
+			const selSizeM = document.getElementById('sel-size-m');
+			if(selImgM){
+				selImgM.addEventListener('change', () => {
+					document.getElementById('sel-img').value = selImgM.value;
+					document.getElementById('sel-img').dispatchEvent(new Event('change'));
+					document.getElementById('mobile-drawer').classList.remove('show');
+				});
+			}
+			if(selSizeM){
+					selSizeM.addEventListener('change', () => {
+					document.getElementById('sel-size').value = selSizeM.value;
+					startGame();
+					document.getElementById('mobile-drawer').classList.remove('show');
+				});
+			}
+			const dmRotMode = document.getElementById('dm-rotate-mode');
+			if(dmRotMode){
+				dmRotMode.addEventListener('click', () => {
+					document.getElementById('btn-rotate-mode').click();
+					dmRotMode.classList.toggle('active', rotationMode);
+				});
+			}
+			const dmLang = document.getElementById('dm-lang');
+			if(dmLang){
+				dmLang.addEventListener('click', cycleLanguage);
+			}
+			resizeCanvas();
+			applyLanguage();
+			startGame();
+		</script>
+	</body>
+</html>

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en"><!--T12#031 - Marcella - Image Editor-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>RGB Studio Pro | International</title>
+		<style>
+			:root{
+				--bg: #0f111a;
+				--card-bg: #1a1d29;
+				--accent-primary: #7c4dff;
+				--accent-secondary: #00e5ff;
+				--text-main: #e0e0e0;
+				--text-muted: #94a3b8;
+				--red: #ff5252;
+				--green: #69f0ae;
+				--blue: #448aff;
+				--border: #2d3142;
+			}
+			*{
+				box-sizing: border-box;
+				transition: all 0.2s ease;
+			}
+			body{
+				font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+				background: var(--bg);
+				color: var(--text-main);
+				margin: 0;
+				display: flex;
+				justify-content: center;
+				min-height: 100vh;
+			}
+			.app-wrapper{
+				display: grid;
+				grid-template-columns: 350px 1fr;
+				gap: 20px;
+				max-width: 1400px;
+				width: 100%;
+				padding: 30px;
+				position: relative;
+			}
+			.lang-switcher{
+				position: absolute;
+				top: 20px;
+				right: 30px;
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				background: var(--card-bg);
+				padding: 8px 16px;
+				border-radius: 20px;
+				border: 1px solid var(--border);
+				z-index: 1000;
+				box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+			}
+			.lang-switcher:hover{
+				border-color: var(--accent-secondary);
+				transform: translateY(-2px);
+			}
+			.flag-svg{
+				width: 28px;
+				height: 18px;
+				display: block;
+			}
+			.lang-label{
+				font-size: 0.85rem;
+				font-weight: 800;
+				color: var(--accent-secondary);
+				pointer-events: none;
+			}
+			.sidebar{
+				display: flex;
+				flex-direction: column;
+				gap: 20px;
+			}
+			.card{
+				background: var(--card-bg);
+				border: 1px solid var(--border);
+				border-radius: 12px;
+				padding: 20px;
+				box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+			}
+			h1{
+				font-size: 1.1rem;
+				margin: 0 0 20px 0;
+				font-weight: 700;
+				color: #fff;
+			}
+			h2{
+				font-size: 0.7rem;
+				color: var(--text-muted);
+				text-transform: uppercase;
+				letter-spacing: 1.5px;
+				margin-bottom: 15px;
+				border-bottom: 1px solid var(--border);
+				padding-bottom: 8px;
+			}
+			.matrix-grid{
+				display: grid;
+				grid-template-columns: 1fr 1fr 1fr 1fr;
+				gap: 8px;
+				margin-bottom: 10px;
+			}
+			.matrix-label{
+				font-size: 10px;
+				color: var(--text-muted);
+				text-align: center;
+			}
+			.row-name{
+				font-size: 11px;
+				font-weight: bold;
+				align-self: center;
+			}
+			input[type="radio"]{
+				cursor: pointer;
+				accent-color: var(--accent-primary);
+				width: 16px;
+				height: 16px;
+			}
+			.slider-group{
+				margin-bottom: 15px;
+			}
+			.slider-header{
+				display: flex;
+				justify-content: space-between;
+				font-size: 11px;
+				margin-bottom: 5px;
+				font-weight: 600;
+			}
+			input[type="range"]{
+				width: 100%;
+				height: 6px;
+				background: var(--border);
+				border-radius: 3px;
+				appearance: none;
+				outline: none;
+				cursor: pointer;
+			}
+			input[type="range"]::-webkit-slider-thumb{
+				appearance: none;
+				width: 16px;
+				height: 16px;
+				background: #fff;
+				border-radius: 50%;
+				border: 2px solid var(--accent-primary);
+			}
+			.btn-group{
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 10px;
+			}
+			button,
+			.btn-upload{
+				padding: 12px;
+				border: none;
+				border-radius: 8px;
+				font-size: 11px;
+				font-weight: 700;
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 8px;
+			}
+			.btn-upload{
+				background: var(--accent-primary);
+				color: white;
+				width: 100%;
+				margin-bottom: 20px;
+			}
+			.btn-secondary{
+				background: var(--border);
+				color: var(--text-main);
+			}
+			.btn-download{
+				background: var(--accent-secondary);
+				color: #000;
+				grid-column: span 2;
+				margin-top: 5px;
+			}
+			.preview-area{
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				background: #090b10;
+				border-radius: 16px;
+				border: 2px dashed var(--border);
+				min-height: 500px;
+				padding: 20px;
+			}
+			canvas{
+				max-width: 100%;
+				max-height: 80vh;
+				border-radius: 8px;
+				display: none;
+				box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+			}
+			input[type="file"]{
+				display: none;
+			}
+			@media (max-width: 900px){
+				.app-wrapper{
+					grid-template-columns: 1fr;
+					padding-top: 80px;
+				}
+				.lang-switcher{
+					top: 15px;
+					right: 15px;
+				}
+			}
+			.row-red{
+				color: var(--red);
+			}
+			.row-green{
+				color: var(--green);
+			}
+			.row-blue{
+				color: var(--blue);
+			}
+			.btn-full-width{
+				grid-column: span 2;
+			}
+			.placeholder-container{
+				color: var(--text-muted);
+				text-align: center;
+			}
+			.placeholder-icon{
+				font-size: 3rem;
+				margin: 0;
+			}
+			.text-red{
+				color: var(--red);
+			}
+			.text-green{
+				color: var(--green);
+			}
+			.text-blue{
+				color: var(--blue);
+			}
+			*{
+				-webkit-tap-highlight-color: transparent;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="app-wrapper">
+			<div class="lang-switcher" id="langSwitcher"></div>
+			<div class="sidebar">
+				<div class="card">
+					<h1 id="txt-title">RGB STUDIO PRO</h1>
+					<label class="btn-upload">
+						<span>📁</span> <span id="txt-load">LOAD IMAGE</span>
+						<input type="file" id="upload" accept="image/*">
+					</label>
+					<h2 id="txt-matrix">CHANNEL MAPPING</h2>
+					<div class="matrix-grid" id="matrixContainer">
+						<div></div>
+						<div class="matrix-label">IN R</div>
+						<div class="matrix-label">IN G</div>
+						<div class="matrix-label">IN B</div>
+						<div class="row-name row-red">OUT R</div>
+						<input title="outR" type="radio" name="outR" value="r" checked>
+						<input title="outR" type="radio" name="outR" value="g">
+						<input title="outR" type="radio" name="outR" value="b">
+						<div class="row-name row-green">OUT G</div>
+						<input title="outG" type="radio" name="outG" value="r">
+						<input title="outG" type="radio" name="outG" value="g" checked>
+						<input title="outG" type="radio" name="outG" value="b">
+						<div class="row-name row-blue">OUT B</div>
+						<input title="outB" type="radio" name="outB" value="r">
+						<input title="outB" type="radio" name="outB" value="g">
+						<input title="outB" type="radio" name="outB" value="b" checked>
+					</div>
+				</div>
+				<div class="card">
+					<h2 id="txt-gain">INTENSITY BOOST</h2>
+					<div id="slidersContainer">
+						<div class="slider-group">
+							<div class="slider-header">
+								<span class="text-red" id="txt-r">RED</span>
+								<span id="valR">1.00</span>
+							</div>
+							<input title="gainR" type="range" id="gainR" min="0" max="2" step="0.01" value="1">
+						</div>
+						<div class="slider-group">
+							<div class="slider-header">
+								<span class="text-green" id="txt-g">GREEN</span>
+								<span id="valG">1.00</span>
+							</div>
+							<input title="gainG" type="range" id="gainG" min="0" max="2" step="0.01" value="1">
+						</div>
+						<div class="slider-group">
+							<div class="slider-header">
+								<span class="text-blue" id="txt-b">BLUE</span>
+								<span id="valB">1.00</span>
+							</div>
+							<input title="gainB" type="range" id="gainB" min="0" max="2" step="0.01" value="1">
+						</div>
+					</div>
+				</div>
+				<div class="card">
+					<h2 id="txt-effects">EFFECTS & EXPORT</h2>
+					<div class="btn-group">
+						<button class="btn-secondary" id="txt-gray">GRAY</button>
+						<button class="btn-secondary" id="txt-neg">NEG</button>
+						<button class="btn-secondary btn-full-width" id="txt-reset">RESET DEFAULT</button>
+						<button class="btn-download" id="txt-export">EXPORT PNG</button>
+					</div>
+				</div>
+			</div>
+			<div class="preview-area">
+				<div id="placeholder" class="placeholder-container">
+					<p class="placeholder-icon">🖼️</p>
+					<p id="txt-placeholder">Processed image will appear here</p>
+				</div>
+				<canvas id="canvas"></canvas>
+			</div>
+		</div>
+		<script>
+			const FLAGS_SVG = [
+				'<svg class="flag-svg" viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#s)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#c60b1e"/><rect width="3" height="1" y="0.5" fill="#ffc400"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 5 3"><rect width="5" height="3"/><rect width="5" height="2" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 600 400"><rect width="240" height="400" fill="#006600"/><rect x="240" width="360" height="400" fill="#ff0000"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002b7f"/><rect width="1" height="2" x="1" fill="#fcd116"/><rect width="1" height="2" x="2" fill="#ce1126"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 27 18"><rect width="27" height="18" fill="#005bae"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#005bae"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#800000"/><path d="M0.5,0.5 L2.5,0.5 L2.5,1.5 L0.5,1.5 Z" fill="none" stroke="#FFD700" stroke-width="0.1"/><text x="1.5" y="1.15" font-family="serif" font-weight="bold" font-size="0.4" fill="#FFD700" text-anchor="middle">SPQR</text></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#de2110"/><path d="M.5 1.1l.3-.9.3.9-1-.6h1z" fill="#ffde00" transform="matrix(.4 0 0 .4 .1 .1)"/></svg>',
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>'
+			];
+			const TRANSLATIONS ={
+				en:{ title: "RGB STUDIO PRO", load: "LOAD IMAGE", matrix: "CHANNEL MAPPING", gain: "INTENSITY BOOST", r: "RED", g: "GREEN", b: "BLUE", effects: "EFFECTS & EXPORT", gray: "GRAY", neg: "NEG", reset: "RESET DEFAULT", export: "EXPORT PNG", placeholder: "Processed image will appear here", lang: "EN" },
+				it:{ title: "RGB STUDIO PRO", load: "CARICA IMMAGINE", matrix: "MAPPATURA CANALI", gain: "POTENZIAMENTO", r: "ROSSO", g: "VERDE", b: "BLU", effects: "EFFETTI E EXPORT", gray: "GRIGIO", neg: "NEG", reset: "RIPRISTINA", export: "ESPORTA PNG", placeholder: "L'immagine apparirà qui", lang: "IT" },
+				fr:{ title: "RGB STUDIO PRO", load: "CHARGER IMAGE", matrix: "MAPPAGE CANAUX", gain: "INTENSITÉ", r: "ROUGE", g: "VERT", b: "BLEU", effects: "EFFETS & EXPORT", gray: "GRIS", neg: "NÉG", reset: "RÉINITIALISER", export: "EXPORTER PNG", placeholder: "L'image apparaîtra ici", lang: "FR" },
+				es:{ title: "RGB STUDIO PRO", load: "SUBIR IMAGEN", matrix: "MAPEO DE CANALES", gain: "INTENSIDAD", r: "ROJO", g: "VERDE", b: "AZUL", effects: "EFECTOS & EXPORT", gray: "GRIS", neg: "NEG", reset: "REINICIAR", export: "EXPORTAR PNG", placeholder: "La imagen aparecerá aquí", lang: "ES" },
+				de:{ title: "RGB STUDIO PRO", load: "BILD LADEN", matrix: "KANAL-MAPPING", gain: "INTENSITÄT", r: "ROT", g: "GRÜN", b: "BLAU", effects: "EFFEKTE & EXPORT", gray: "GRAU", neg: "NEG", reset: "ZURÜCKSETZEN", export: "PNG EXPORTIEREN", placeholder: "Das Bild wird hier erscheinen", lang: "DE" },
+				pt:{ title: "RGB STUDIO PRO", load: "CARREGAR IMAGEM", matrix: "MAPEAMENTO CANAIS", gain: "INTENSIDADE", r: "VERMELHO", g: "VERDE", b: "AZUL", effects: "EFEITOS & EXPORT", gray: "CINZA", neg: "NEG", reset: "REINICIAR", export: "EXPORTAR PNG", placeholder: "A imagem aparecerá aqui", lang: "PT" },
+				ro:{ title: "RGB STUDIO PRO", load: "ÎNCARCĂ IMAGINEA", matrix: "MAPARE CANALE", gain: "INTENSITATE", r: "ROȘU", g: "VERDE", b: "ALBASTRU", effects: "EFECTE ȘI EXPORT", gray: "GRI", neg: "NEG", reset: "RESETARE", export: "EXPORT PNG", placeholder: "Imaginea va apărea aici", lang: "RO" },
+				ua:{ title: "RGB STUDIO PRO", load: "ЗАВАНТАЖИТИ", matrix: "КАРТА КАНАЛІВ", gain: "ІНТЕНСИВНІСТЬ", r: "ЧЕРВОНИЙ", g: "ЗЕЛЕНИЙ", b: "СИНІЙ", effects: "ЕФЕКТИ ТА ЕКСПОРТ", gray: "СІРИЙ", neg: "НЕГ", reset: "СКИДАННЯ", export: "ЕКСПОРТ PNG", placeholder: "Зображення з'явиться тут", lang: "UA" },
+				gr:{ title: "RGB STUDIO PRO", load: "ΦΟΡΤΩΣΗ ΕΙΚΟΝΑΣ", matrix: "ΧΑΡΤΟΓΡΑΦΗΣΗ", gain: "ΕΝΤΑΣΗ", r: "ΚΟΚΚΙΝΟ", g: "ΠΡΑΣΙΝΟ", b: "ΜΠΛΕ", effects: "ΕΦΕ ΚΑΙ ΕΞΑΓΩΓΗ", gray: "ΓΚΡΙ", neg: "ΑΡΝ", reset: "ΕΠΑΝΑΦΟΡΑ", export: "ΕΞΑΓΩΓΗ PNG", placeholder: "Η εικόνα θα εμφανιστεί εδώ", lang: "GR" },
+				la:{ title: "RGB TABERNA PRO", load: "IMAGINEM ONERARE", matrix: "CANALIUM MAPPA", gain: "INTENSITAS", r: "RUBER", g: "VIRIDIS", b: "CAERULEUS", effects: "EFFECTUS ET EXPORT", gray: "CINEREUS", neg: "NEG", reset: "RESTAURARE", export: "EFFERRE PNG", placeholder: "Imago hic apparebit", lang: "LA" },
+				cn:{ title: "RGB 專業工作室", load: "載入圖像", matrix: "通道映射", gain: "強度增強", r: "紅色", g: "綠色", b: "藍色", effects: "效果與導出", gray: "灰度", neg: "負片", reset: "重置", export: "導出 PNG", placeholder: "處理後的圖像將在此顯示", lang: "CN" },
+				jp:{ title: "RGB スタジオプロ", load: "画像を読み込む", matrix: "チャンネルマップ", gain: "ゲイン調整", r: "赤", g: "緑", b: "青", effects: "エフェクトと出力", gray: "グレースケール", neg: "反転", reset: "リセット", export: "PNG書き出し", placeholder: "ここに画像が表示されます", lang: "JP" }
+			};
+			const LANG_KEYS = Object.keys(TRANSLATIONS);
+			let currentLangIdx = 0;
+			let originalImageData = null;
+			let img = new Image();
+
+			function updateLanguage(){
+				const lang = LANG_KEYS[currentLangIdx];
+				const t = TRANSLATIONS[lang];
+				for(const key in t){
+					const el = document.getElementById('txt-' + key);
+					if(el){
+						el.textContent = t[key];
+					}
+				}
+				const switcher = document.getElementById('langSwitcher');
+				if(switcher){
+					switcher.innerHTML = `${FLAGS_SVG[currentLangIdx]} <span class="lang-label">${t.lang}</span>`;
+				}
+			}
+
+			function cycleLanguage(){
+				currentLangIdx = (currentLangIdx + 1)%(LANG_KEYS.length);
+				updateLanguage();
+			}
+
+			function process(){
+				const canvas = document.getElementById('canvas');
+				const ctx = canvas.getContext('2d',{ willReadFrequently: true });
+				if(!originalImageData){
+					return;
+				}
+				const mapR = document.querySelector('input[name="outR"]:checked').value;
+				const mapG = document.querySelector('input[name="outG"]:checked').value;
+				const mapB = document.querySelector('input[name="outB"]:checked').value;
+				const gR = parseFloat(document.getElementById('gainR').value);
+				const gG = parseFloat(document.getElementById('gainG').value);
+				const gB = parseFloat(document.getElementById('gainB').value);
+				const filtered = new ImageData(new Uint8ClampedArray(originalImageData.data), canvas.width, canvas.height);
+				const d = filtered.data;
+				for(let i = 0; i < d.length; i += 4){
+					const r = d[i], g = d[i + 1], b = d[i + 2];
+					const getVal = (m) => (m === 'r' ? r : (m === 'g' ? g : b));
+					d[i] = Math.min(255, getVal(mapR)*gR);
+					d[i + 1] = Math.min(255, getVal(mapG)*gG);
+					d[i + 2] = Math.min(255, getVal(mapB)*gB);
+				}
+				ctx.putImageData(filtered, 0, 0);
+			}
+
+			function applySpecial(type){
+				const canvas = document.getElementById('canvas');
+				const ctx = canvas.getContext('2d');
+				if(!originalImageData){
+					return;
+				}
+				const id = ctx.getImageData(0, 0, canvas.width, canvas.height);
+				const d = id.data;
+				for(let i = 0; i < d.length; i += 4){
+					if(type === 'negative'){
+						d[i] = 255 - d[i]; d[i + 1] = 255 - d[i + 1]; d[i + 2] = 255 - d[i + 2];
+					}else{
+						const gray = 0.299*d[i] + 0.587*d[i + 1] + 0.114*d[i + 2];
+						d[i] = d[i + 1] = d[i + 2] = gray;
+					}
+				}
+				ctx.putImageData(id, 0, 0);
+			}
+
+			function downloadImage(){
+				const canvas = document.getElementById('canvas');
+				if(!originalImageData){
+					return;
+				}
+				const link = document.createElement('a');
+				link.download = `RGB-Studio-Pro-${Date.now()}.png`;
+				link.href = canvas.toDataURL('image/png');
+				link.click();
+			}
+
+			function resetAll(){
+				document.querySelector('input[name="outR"][value="r"]').checked = true;
+				document.querySelector('input[name="outG"][value="g"]').checked = true;
+				document.querySelector('input[name="outB"][value="b"]').checked = true;
+				['R', 'G', 'B'].forEach(c => {
+					const slider = document.getElementById('gain' + c);
+					slider.value = 1;
+					document.getElementById('val' + c).textContent = "1.00";
+				});
+				process();
+			}
+
+			window.onload = function (){
+				const canvas = document.getElementById('canvas');
+				const ctx = canvas.getContext('2d',{ willReadFrequently: true });
+				const upload = document.getElementById('upload');
+				const placeholder = document.getElementById('placeholder');
+				upload.onchange = (e) => {
+					if(!e.target.files[0]){
+						return;
+					}
+					const reader = new FileReader();
+					reader.onload = (ev) => img.src = ev.target.result;
+					reader.readAsDataURL(e.target.files[0]);
+				};
+				img.onload = () => {
+					const maxWidth = 1200;
+					const scale = Math.min(1, maxWidth/img.width);
+					canvas.width = img.width*scale;
+					canvas.height = img.height*scale;
+					ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+					originalImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+					placeholder.style.display = 'none';
+					canvas.style.display = 'block';
+					process();
+				};
+				document.getElementById('matrixContainer').addEventListener('change', process);
+				document.getElementById('slidersContainer').addEventListener('input', (e) => {
+					if(e.target.id.startsWith('gain')){
+						const char = e.target.id.charAt(4);
+						document.getElementById('val' + char).textContent = parseFloat(e.target.value).toFixed(2);
+					}
+					process();
+				});
+				updateLanguage();
+			};
+
+			document.getElementById('langSwitcher').addEventListener('click', cycleLanguage);
+			document.getElementById('txt-gray').addEventListener('click', () => applySpecial('grayscale'));
+			document.getElementById('txt-neg').addEventListener('click', () => applySpecial('negative'));
+			document.getElementById('txt-reset').addEventListener('click', resetAll);
+			document.getElementById('txt-export').addEventListener('click', downloadImage);
+		</script>
+	</body>
+</html>

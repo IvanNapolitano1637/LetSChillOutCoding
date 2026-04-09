@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="it"><!--T13#032 - Rosa - Centomila miliardi di poesie-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Centomila miliardi di poesie</title>
+		<style>
+			:root{
+				--bg: #fdfaf6;
+				--paper: #ffffff;
+				--text: #2c3e50;
+				--muted: #95a5a6;
+				--accent: #34495e;
+				--border: #e0dcd5;
+			}
+			@media (prefers-color-scheme: dark){
+				:root{
+					--bg: #1a1a1a;
+					--paper: #252525;
+					--text: #e0e0e0;
+					--muted: #7f8c8d;
+					--accent: #3498db;
+					--border: #333;
+				}
+			}
+			body{
+				font-family: 'Georgia', serif;
+				background-color: var(--bg);
+				color: var(--text);
+				margin: 0;
+				display: flex;
+				justify-content: center;
+				padding: 2rem 0.5rem;
+				line-height: 1.5;
+			}
+			main{
+				width: 100%;
+				max-width: 700px;
+			}
+			header{
+				text-align: center;
+				margin-bottom: 1.5rem;
+				border-bottom: 1px solid var(--border);
+				padding-bottom: 1rem;
+			}
+			h1{
+				font-size: 0.9rem;
+				text-transform: uppercase;
+				letter-spacing: 2px;
+				color: var(--muted);
+				margin: 0 0 10px 0;
+			}
+			.intro-text{
+				font-size: 0.75rem;
+				font-style: italic;
+				color: var(--muted);
+			}
+			.sonnet{
+				background: var(--paper);
+				padding: 20px 15px;
+				border: 1px solid var(--border);
+				box-shadow: 8px 8px 0px var(--border);
+			}
+			.stanza{
+				margin-bottom: 1.2rem;
+			}
+			.line-wrap{
+				display: flex;
+				align-items: center;
+				padding: 4px 0;
+				cursor: pointer;
+				transition: background 0.1s;
+				border-radius: 4px;
+				white-space: nowrap;
+				overflow: hidden;
+			}
+			.line-wrap:hover{
+				background: rgba(0, 0, 0, 0.03);
+			}
+			.line-num{
+				width: 1.5rem;
+				font-size: 0.65rem;
+				color: var(--muted);
+				font-family: sans-serif;
+				flex-shrink: 0;
+			}
+			.verse{
+				font-size: 1.05rem;
+				flex: 1;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+			.arrows{
+				display: flex;
+				gap: 3px;
+				opacity: 0;
+				transition: opacity 0.2s;
+				flex-shrink: 0;
+				margin-left: 5px;
+			}
+			.line-wrap:hover .arrows{
+				opacity: 1;
+			}
+			.arrow-btn{
+				background: none;
+				border: 1px solid var(--border);
+				color: var(--text);
+				cursor: pointer;
+				padding: 2px 6px;
+				font-size: 0.65rem;
+				border-radius: 3px;
+			}
+			.controls{
+				display: flex;
+				justify-content: center;
+				gap: 8px;
+				margin-top: 1.5rem;
+			}
+			button.main-btn{
+				background-color: var(--accent);
+				color: white;
+				border: none;
+				padding: 8px 16px;
+				font-family: sans-serif;
+				font-size: 0.7rem;
+				font-weight: bold;
+				text-transform: uppercase;
+				cursor: pointer;
+				border-radius: 4px;
+			}
+			.counter{
+				text-align: center;
+				margin-top: 1.2rem;
+				font-size: 0.75rem;
+				color: var(--muted);
+				font-family: sans-serif;
+			}
+			footer{
+				margin-top: 2rem;
+				font-size: 0.65rem;
+				color: var(--muted);
+				text-align: center;
+				line-height: 1.4;
+			}
+			@media (max-width: 480px){
+				.verse{
+					font-size: 0.82rem;
+				}
+				.sonnet{
+					padding: 15px 10px;
+				}
+				.line-num{
+					width: 1.2rem;
+					margin-right: 4px;
+				}
+				.arrows{
+					opacity: 0.4;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<main>
+			<header>
+				<h1>Centomila miliardi di poesie</h1>
+				<p class="intro-text">
+					Omaggio interattivo a Raymond Queneau.<br>
+					Clicca sui versi per cambiare la trama del destino.
+				</p>
+			</header>
+			<div class="sonnet" id="poem-container"></div>
+			<div class="controls">
+				<button class="main-btn" onclick="randomize()">Casuale</button>
+				<button class="main-btn" onclick="resetPoem()">Reset</button>
+			</div>
+			<div class="counter" id="counter"></div>
+			<footer>
+				Schema metrico: Sonetto (ABBA ABBA CDE CDE).<br>
+				14 versi con 10 varianti ciascuno: 10<sup>14</sup> combinazioni possibili.
+			</footer>
+		</main>
+		<script>
+			const verses = [
+				["Il sole stenta ancora a tramontare", "Un vecchio stivatore scende al mare", "Il vento non smetteva di soffiare", "Il tempo sembra quasi rallentare", "Un brivido comincia a serpeggiare", "L'aurora si distende per brillare", "Un lupo si prepara per urlare", "Il ghiaccio si decide a sprofondare", "La pioggia non accenna a ritornare", "Si sente un grido forte rimbombare"],
+				["mentre la luna sorge lentamente,", "guarda l'abisso così intensamente,", "e si muoveva molto stancamente,", "seguendo un'ombra quasi evanescente,", "cercando un segno nella fredda mente,", "gridando un nome a caso tra la gente,", "osserva il mondo in modo indifferente,", "aspetta un cenno del tutto insolente,", "ascolta il suono di un fiume fluente,", "percorre il viale molto tristemente,"],
+				["tra la nebbia che avvolge ogni mente", "senza curarsi di tutta la gente", "sopra la sabbia calda e rilucente", "nella penombra di un sole morente", "dentro un ricordo che vive latente", "con il sospiro di chi è dissenziente", "come un veleno che resta pungente", "sotto un riflesso di luce radente", "dentro la furia d'un tuono imminente", "senza la guida di un dio onnipotente"],
+				["e il pescatore smette di vogare.", "col desiderio solo di affondare.", "fino a che il cuore smette di tremare.", "nel vano sforzo di voler restare.", "senza più scuse per voler pregare.", "com'è difficile poter cambiare.", "mentre la flotta sta per ritornare.", "ed ogni stella inizia a naufragare.", "come se il mondo smetta di girare.", "senza una rotta per poter tornare."],
+
+				["Si sente un eco dolce rimbombare", "Non c'è più tempo ormai per rimandare", "È tempo ormai di mettersi a cantare", "Qualcosa sta per giungere dal mare", "Un nuovo sogno sembra risvegliare", "La terra trema e smette di girare", "Nessuno sa che cosa raccontare", "Un vecchio libro torna a farsi amare", "Il buio scende e prova a soffocare", "Un uomo solo prova a camminare"],
+				["da quel deserto bianco e trasparente", "lungo il sentiero aspro e inconcludente", "un inno chiaro, puro e onnipotente", "dal profondo di un animo incosciente", "un canto antico e molto seducente", "tra i vicoli di un borgo decadente", "come un segreto detto tra la gente", "dal labbro di chi appare sorridente", "con il vigore di chi è prepotente", "portato via da un soffio di corrente"],
+				["che splende come un raggio d'oriente", "perso nel buio di un'ombra fuggente", "che resti fisso dentro la mia mente", "quasi fosse un pensiero deficiente", "come un destino che non è clemente", "che brucia tutto quanto inutilmente", "con un fervore che non è silente", "sotto un cielo di piombo appariscente", "per un antico patto irriverente", "mentre lo sguardo vaga assente mente"],
+				["dentro un silenzio che fa riposare.", "senza più sogni da voler svelare.", "come una flotta pronta per salpare.", "nel grande vuoto che si può sognare.", "per chi non ha più nulla da sperare.", "tra le memorie che san perdonare.", "nell'infinito che sta per sbocciare.", "per un amore che deve restare.", "mentre la vita continua a giocare.", "con la speranza di poter volare."],
+
+				["Svanisce l'ombra dentro il breve oblio", "Si perde il senso in questo lungo addio", "Risuona forte il battito del mio", "Ognuno segue il proprio calpestio", "Si spegne piano l'ultimo rinvio", "Ascolta bene questo mormorio", "Si rompe il ghiaccio nel calmo pendio", "Si cerca in terra un cenno di qualche dio", "È tutto un gioco, è tutto un lavorio", "Si chiude il cerchio, inizia il sogno mio"],
+				["cercando un raggio di nuovo splendore", "nel vuoto immenso di un finto dolore", "piccolo cuore pieno di fervore", "dietro la scia di un antico sapore", "portando in dono un petalo di fiore", "senza il timore di perdere l'onore", "nel freddo inverno che ruba il calore", "gridando al vento l'ultimo furore", "per ritrovare un briciolo d'amore", "con lo stupore di chi sente il valore"],
+				["dentro un destino magico e fatale.", "lungo un cammino troppo razionale.", "contro la sorte, contro ogni mio male.", "sotto un riflesso che non è reale.", "oltre lo specchio di un atto formale.", "come una traccia di bene immortale.", "senza la macchia del peccato originale.", "verso una fine che non è banale.", "nel punto esatto del bene e del male.", "seguendo il volo dell'aquila reale."],
+
+				["Tutto sussurra un timido fruscio", "Nulla rimane tranne il solo io", "Resta il silenzio, dono d'un qualche dio", "Non serve a niente questo mormorio", "Il fiume scorre verso il proprio addio", "S'increspa l'acqua lungo il mio pendio", "Un'altra volta cerco il mio rinvio", "Rimane il peso di questo lavorio", "S'allunga l'ombra del mio calpestio", "S'arrende l'eco all'ultimo oblio"],
+				["che porta pace e toglie ogni timore", "che non conosce limite o colore", "che spegne l'odio e accende solo amore", "che vibra solo per quel batticuore", "nel moto eterno di un motore", "cercando scampo dentro un grande errore", "vestito d'oro e tinto di rosso colore", "per chi ha sofferto troppo per l'ardore", "senza la rabbia e senza più livore", "nel buio pesto cercando un bagliore"],
+				["nel cerchio eterno del bene e del male.", "oltre la soglia dell'atto formale.", "nel grande volo, l'atto finale.", "come un presagio di luce astrale.", "dentro la quiete di un'alba spettrale.", "senza ritorno, nel senso totale.", "per chi ha cercato l'idea universale.", "seguendo il ritmo di un suono corale.", "nell'infinito spazio siderale.", "verso il riposo, nel porto finale."]
+			];
+			let currentIndices = Array(14).fill(0);
+
+			function render(){
+				const container = document.getElementById('poem-container');
+				container.innerHTML = '';
+				const stanzas = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10], [11, 12, 13]];
+				stanzas.forEach(group => {
+					const stanzaDiv = document.createElement('div');
+					stanzaDiv.className = 'stanza';
+					group.forEach(lineIdx => {
+						const wrap = document.createElement('div');
+						wrap.className = 'line-wrap';
+						wrap.onclick = () => changeVerse(lineIdx, 1);
+						wrap.innerHTML = `
+								<span class="line-num">${lineIdx + 1}</span>
+								<span class="verse">${verses[lineIdx][currentIndices[lineIdx]]}</span>
+								<span class="arrows">
+									<button class="arrow-btn" onclick="event.stopPropagation(); changeVerse(${lineIdx}, -1)">▲</button>
+									<button class="arrow-btn" onclick="event.stopPropagation(); changeVerse(${lineIdx}, 1)">▼</button>
+								</span>
+							`;
+						stanzaDiv.appendChild(wrap);
+					});
+					container.appendChild(stanzaDiv);
+				});
+				updateCounter();
+			}
+
+			function changeVerse(line, dir){
+				currentIndices[line] = (currentIndices[line] + dir + 10)%10;
+				render();
+			}
+
+			function randomize(){
+				currentIndices = currentIndices.map(() => Math.floor(Math.random()*10));
+				render();
+			}
+
+			function resetPoem(){
+				currentIndices = Array(14).fill(0);
+				render();
+			}
+
+			function updateCounter(){
+				let total = BigInt(0);
+				currentIndices.forEach((val, i) => {
+					total += BigInt(val)*(10n ** BigInt(13 - i));
+				});
+				const display = (total + 1n).toLocaleString('it-IT');
+				document.getElementById('counter').innerHTML = `Sonetto n. <strong>${display}</strong> di 100.000.000.000.000`;
+			}
+
+			window.onload = randomize;
+		</script>
+	</body>
+</html>
