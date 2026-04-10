@@ -5212,6 +5212,24 @@ document.addEventListener('keydown', function(e) {
 			.btn-primary:hover{
 				background-color: #1976d2;
 			}
+			.stats-container{
+				display: flex;
+				gap: 20px;
+				justify-content: center;
+			}
+			.button-group{
+				width: 100%;
+				display: flex;
+				justify-content: center;
+				gap: 8px;
+				margin-top: 10px;
+			}
+			.color-success{
+				color: #4caf50;
+			}
+			.color-error{
+				color: var(--error-color);
+			}
 			@media (max-width: 480px){
 				button {
 					font-size: 0.8em;
@@ -5238,7 +5256,11 @@ document.addEventListener('keydown', function(e) {
 				font-size: 1.1em;
 				font-weight: bold;
 				cursor: pointer;
+				-webkit-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
 				user-select: none;
+				-webkit-tap-highlight-color: transparent;
 				border-radius: 8px;
 				border: 1px solid #ccc;
 				transition: all 0.2s ease, background-color 0.4s ease;
@@ -5362,17 +5384,18 @@ document.addEventListener('keydown', function(e) {
 	</head>
 	<body lang="en">
 		<div class="header">
-			<div>
-				<b><span id="txt-errors">Errors</span>: <span id="errors" style="color: var(--error-color);">0</span>/<span id="maxErrors">5</span></b>
+			<div class="stats-container">
+				<b><span id="txt-matches">Pairs</span>: <span id="matches" class="color-success">0</span>/<span id="maxMatches">18</span></b>
+				<b><span id="txt-errors">Errors</span>: <span id="errors" class="color-error">0</span>/<span id="maxErrors">5</span></b>
 			</div>
 			<div class="controls">
 				<div class="p-input-group">
 					<label for="pVal" id="labelP">P = </label>
 					<input type="number" id="pVal" value="37" min="3" max="101">
 					<button id="btnUpdateP" class="btn-primary">Update P</button>
-					<button id="btnLang" onclick="nextLang()"></button>
+					<button id="btnLang" title="btnLang" onclick="nextLang()"></button>
 				</div>
-				<div style="width: 100%; display: flex; justify-content: center; gap: 8px; margin-top: 10px;">
+				<div class="button-group">
 					<button id="btnDouble">Highlight doubles</button>
 					<button id="btnOpposite">Highlight opposites</button>
 				</div>
@@ -5405,18 +5428,18 @@ document.addEventListener('keydown', function(e) {
 			];
 			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
 			const TRANSLATIONS = {
-				en: { errors: "Errors", updateP: "Update P", hlDoubles: "Highlight doubles (2x)", hlOpposites: "Highlight opposites (-x)", notPrime: " is not prime. Some numbers may lack an inverse. Continue?", warnPrime: " is not prime. Some numbers could not have a reverse.", maxErrors: "Max errors!", win: "Win! :-D", varP: "P", varX: "x" },
-				it: { errors: "Errori", updateP: "Aggiorna P", hlDoubles: "Evidenzia doppi (2x)", hlOpposites: "Evidenzia opposti (-x)", notPrime: " non è primo. Alcuni numeri potrebbero non avere un inverso. Continuare?", warnPrime: " non è primo. Alcuni numeri potrebbero non avere un inverso.", maxErrors: "Max errori!", win: "Vinto! :-D", varP: "P", varX: "x" },
-				fr: { errors: "Erreurs", updateP: "MàJ P", hlDoubles: "Surligner doubles (2x)", hlOpposites: "Surligner opposés (-x)", notPrime: " n'est pas premier. Certains nombres peuvent manquer d'inverse. Continuer?", warnPrime: " n'est pas premier. Certains nombres pourraient ne pas avoir d'inverse.", maxErrors: "Max erreurs!", win: "Gagné! :-D", varP: "P", varX: "x" },
-				es: { errors: "Errores", updateP: "Actualizar P", hlDoubles: "Resaltar dobles (2x)", hlOpposites: "Resaltar opuestos (-x)", notPrime: " no es primo. Algunos números podrían no tener inverso. ¿Continuar?", warnPrime: " no es primo. Algunos números podrían no tener inverso.", maxErrors: "¡Max errori!", win: "¡Ganaste! :-D", varP: "P", varX: "x" },
-				de: { errors: "Fehler", updateP: "P akt.", hlDoubles: "Doppelte hervorheben (2x)", hlOpposites: "Gegenteile hervorheben (-x)", notPrime: " ist keine Primzahl. Einige Zahlen haben eventuell keinen Kehrwert. Fortfahren?", warnPrime: " ist keine Primzahl. Einige Zahlen könnten keinen Kehrwert haben.", maxErrors: "Fehlerlimit!", win: "Sieg! :-D", varP: "P", varX: "x" },
-				pt: { errors: "Erros", updateP: "Atualizar P", hlDoubles: "Destacar dobros (2x)", hlOpposites: "Destacar opostos (-x)", notPrime: " não è primo. Alguns números podem não ter inverso. Continuar?", warnPrime: " não è primo. Alguns números podem não ter inverso.", maxErrors: "Erro max!", win: "Ganhou! :-D", varP: "P", varX: "x" },
-				ro: { errors: "Erori", updateP: "Actualizează P", hlDoubles: "Evidențiază dubluri (2x)", hlOpposites: "Evidențiază opuse (-x)", notPrime: " nu este prim. Unele numere ar putea să nu aibă invers. Continuați?", warnPrime: " nu este prim. Unele numere ar putea să nu aibă invers.", maxErrors: "Erori max!", win: "Victorie! :-D", varP: "P", varX: "x" },
-				uk: { errors: "Помилки", updateP: "Оновити П", hlDoubles: "Виділити подвійні (2n)", hlOpposites: "Виділити протилежні (-n)", notPrime: " не є простим. Деякі числа можуть не мати оберненого. Продовжити?", warnPrime: " не є простим. Деякі числа можуть не мати оберненого.", maxErrors: "Помилки!", win: "Перемога! :-D", varP: "П", varX: "n" },
-				el: { errors: "Σφάλματα", updateP: "Ενημέρωση Π", hlDoubles: "Επισήμανση διπλών (2x)", hlOpposites: "Επισήμανση αντίθετων (-x)", notPrime: " δεν είναι πρώτος. Ορισμένοι αριθμοί μπορεί να μην έχουν αντίστροφο. Συνέχεια;", warnPrime: " δεν είναι πρώτος. Ορισμένοι αριθμοί μπορεί να μην έχουν αντίστροφο.", maxErrors: "Σφάλματα!", win: "Νίκη! :-D", varP: "Π", varX: "x" },
-				la: { errors: "Errores", updateP: "Renova P", hlDoubles: "Ostende duplices (2x)", hlOpposites: "Ostende oppositos (-x)", notPrime: " non est primus. Aliqui numeri inversum non habere possunt. Pergere?", warnPrime: " non est primus. Aliqui numeri inversum non habere possunt.", maxErrors: "Errores!", win: "Vicisti! :-D", varP: "P", varX: "x" },
-				zh: { errors: "错误", updateP: "更新 模", hlDoubles: "高亮双倍 (2n)", hlOpposites: "高亮相反数 (-n)", notPrime: " 不是质数。某些数字可能没有逆元。继续？", warnPrime: " 不是质数。某些数字可能没有逆元。", maxErrors: "错误过多!", win: "赢了! :-D", varP: "模", varX: "n" },
-				ja: { errors: "エラー", updateP: "P 更新", hlDoubles: "2倍を強調 (2n)", hlOpposites: "逆数を強調 (-n)", notPrime: " は素数ではありません。一部の数値には逆数がない場合があります。続行？", warnPrime: " は素数ではありません。一部の数値には逆数がない場合があります。", maxErrors: "リトライ!", win: "勝ち! :-D", varP: "P", varX: "n" }
+				en: { errors: "Errors", matches: "Pairs", updateP: "Update P", hlDoubles: "Highlight doubles (2x)", hlOpposites: "Highlight opposites (-x)", notPrime: " is not prime. Some numbers may lack an inverse. Continue?", warnPrime: " is not prime. Some numbers could not have a reverse.", maxErrors: "Max errors!", win: "You win! Congratulations! 🎉", varP: "P", varX: "x" },
+				it: { errors: "Errori", matches: "Coppie", updateP: "Aggiorna P", hlDoubles: "Evidenzia doppi (2x)", hlOpposites: "Evidenzia opposti (-x)", notPrime: " non è primo. Alcuni numeri potrebbero non avere un inverso. Continuare?", warnPrime: " non è primo. Alcuni numeri potrebbero non avere un inverso.", maxErrors: "Max errori!", win: "Hai vinto! Complimenti! 🎉", varP: "P", varX: "x" },
+				fr: { errors: "Erreurs", matches: "Paires", updateP: "MàJ P", hlDoubles: "Surligner doubles (2x)", hlOpposites: "Surligner opposés (-x)", notPrime: " n'est pas premier. Certains nombres peuvent manquer d'inverse. Continuer?", warnPrime: " n'est pas premier. Certains nombres pourraient ne pas avoir d'inverse.", maxErrors: "Max erreurs!", win: "Vous avez gagné ! Félicitations ! 🎉", varP: "P", varX: "x" },
+				es: { errors: "Errores", matches: "Pares", updateP: "Actualizar P", hlDoubles: "Resaltar dobles (2x)", hlOpposites: "Resaltar opuestos (-x)", notPrime: " no es primo. Algunos números podrían no tener inverso. ¿Continuar?", warnPrime: " no es primo. Algunos números podrían no tener inverso.", maxErrors: "¡Max errori!", win: "¡Has ganado! ¡Felicitaciones! 🎉", varP: "P", varX: "x" },
+				de: { errors: "Fehler", matches: "Paare", updateP: "P akt.", hlDoubles: "Doppelte hervorheben (2x)", hlOpposites: "Gegenteile hervorheben (-x)", notPrime: " ist keine Primzahl. Einige Zahlen haben eventuell keinen Kehrwert. Fortfahren?", warnPrime: " ist keine Primzahl. Einige Zahlen könnten keinen Kehrwert haben.", maxErrors: "Fehlerlimit!", win: "Du hast gewonnen! Herzlichen Glückwunsch! 🎉", varP: "P", varX: "x" },
+				pt: { errors: "Erros", matches: "Pares", updateP: "Atualizar P", hlDoubles: "Destacar dobros (2x)", hlOpposites: "Destacar opostos (-x)", notPrime: " não è primo. Alguns números podem não ter inverso. Continuar?", warnPrime: " não è primo. Alguns números podem não ter inverso.", maxErrors: "Erro max!", win: "Você ganhou! Parabéns! 🎉", varP: "P", varX: "x" },
+				ro: { errors: "Erori", matches: "Perechi", updateP: "Actualizează P", hlDoubles: "Evidențiază dubluri (2x)", hlOpposites: "Evidențiază opuse (-x)", notPrime: " nu este prim. Unele numere ar putea să nu aibă invers. Continuați?", warnPrime: " nu este prim. Unele numere ar putea să nu aibă invers.", maxErrors: "Erori max!", win: "Ai câștigat! Felicitări! 🎉", varP: "P", varX: "x" },
+				uk: { errors: "Помилки", matches: "Пари", updateP: "Оновити П", hlDoubles: "Виділити подвійні (2n)", hlOpposites: "Виділити протилежні (-n)", notPrime: " не є простим. Деякі числа можуть не мати оберненого. Продовжити?", warnPrime: " не є простим. Деякі числа можуть не мати оберненого.", maxErrors: "Помилки!", win: "Ви перемогли! Вітаємо! 🎉", varP: "П", varX: "n" },
+				el: { errors: "Σφάλματα", matches: "Ζεύγη", updateP: "Ενημέρωση Π", hlDoubles: "Επισήμανση διπλών (2x)", hlOpposites: "Επισήμανση αντίθετων (-x)", notPrime: " δεν είναι πρώτος. Ορισμένοι αριθμοί μπορεί να μην έχουν αντίστροφο. Συνέχεια;", warnPrime: " δεν είναι πρώτος. Ορισμένοι αριθμοί μπορεί να μην έχουν αντίστροφο.", maxErrors: "Σφάλματα!", win: "Κερδίσατε! Συγχαρητήρια! 🎉", varP: "Π", varX: "x" },
+				la: { errors: "Errores", matches: "Paria", updateP: "Renova P", hlDoubles: "Ostende duplices (2x)", hlOpposites: "Ostende oppositos (-x)", notPrime: " non est primus. Aliqui numeri inversum non habere possunt. Pergere?", warnPrime: " non est primus. Aliqui numeri inversum non habere possunt.", maxErrors: "Errores!", win: "Vicisti! Gratulationes! 🎉", varP: "P", varX: "x" },
+				zh: { errors: "错误", matches: "对数", updateP: "更新 模", hlDoubles: "高亮双倍 (2n)", hlOpposites: "高亮相反数 (-n)", notPrime: " 不是质数。某些数字可能没有逆元。继续？", warnPrime: " 不是质数。某些数字可能没有逆元。", maxErrors: "错误过多!", win: "你赢了！恭喜！ 🎉", varP: "模", varX: "n" },
+				ja: { errors: "エラー", matches: "ペア", updateP: "P 更新", hlDoubles: "2倍を強調 (2n)", hlOpposites: "逆数を強調 (-n)", notPrime: " は素数ではありません。一部の数値には逆数がない場合があります。続行？", warnPrime: " は素数ではありません。一部の数値には逆数がない場合があります。", maxErrors: "リトライ!", win: "あなたの勝ちです！おめでとうございます！ 🎉", varP: "P", varX: "n" }
 			};
 			const HELP_TITLE = {
 				en: "Keyboard Shortcuts", it: "Tasti di scelta rapida", fr: "Raccourcis clavier",
@@ -5447,6 +5470,7 @@ document.addEventListener('keydown', function(e) {
 
 			function updateUI(){
 				document.getElementById('txt-errors').textContent = t("errors");
+				document.getElementById('txt-matches').textContent = t("matches");
 				document.getElementById('labelP').textContent = t("varP") + " = ";
 				document.getElementById('btnUpdateP').textContent = t("updateP");
 				document.getElementById('btnDouble').textContent = t("hlDoubles");
@@ -5493,8 +5517,14 @@ document.addEventListener('keydown', function(e) {
 				let currentErrors = 0;
 				let selectedCells = [];
 				let matchedNumbersCount = 0;
+				let pairsFound = 0;
+				let maxPairs = 0;
 				let showDoubles = false;
 				let showOpposites = false;
+
+				function gcd(a, b){
+					return b === 0 ? a : gcd(b, a % b);
+				}
 
 				function isPrime(num){
 					for(let i = 2, s = Math.sqrt(num); i <= s; i++){
@@ -5505,21 +5535,40 @@ document.addEventListener('keydown', function(e) {
 					return num > 1;
 				}
 
+				function getModularInverse(a, m){
+					for(let x = 1; x < m; x++){
+						if((a*x)%m === 1){
+							return x;
+						}
+					}
+					return null;
+				}
+
 				function initGame(){
 					const pInput = parseInt(document.getElementById('pVal').value);
 					if(pInput < 2){
 						return;
 					}
 					P = pInput;
-					if(!isPrime(P)){
-						console.warn(P + t("warnPrime"));
-					}
 					GRID.innerHTML = '';
 					currentErrors = 0;
-					matchedNumbersCount = 0;
+					pairsFound = 0;
 					selectedCells = [];
+					let processed = new Set();
+					let totalPairs = 0;
+					for(let i = 1; i < P; i++){
+						let inv = getModularInverse(i, P);
+						if(inv !== null && !processed.has(i)){
+							totalPairs++;
+							processed.add(inv);
+							processed.add(i);
+						}
+					}
+					maxPairs = totalPairs;
 					document.getElementById('errors').textContent = '0';
 					document.getElementById('maxErrors').textContent = MAX_NUMBER_OF_ERRORS;
+					document.getElementById('matches').textContent = '0';
+					document.getElementById('maxMatches').textContent = maxPairs;
 					const fontSize = P > 50 ? "0.9em" : "1.1em";
 					for(let i = 1; i < P; i++){
 						const cell = document.createElement('div');
@@ -5530,25 +5579,11 @@ document.addEventListener('keydown', function(e) {
 						cell.onclick = () => handleCellClick(cell);
 						GRID.appendChild(cell);
 					}
-					updateHighlights();
 				}
 
 				function handleCellClick(cell){
 					if(cell.classList.contains('matched')){
 						return;
-					}
-					if(cell.classList.contains('revealed')){
-						const num = parseInt(cell.dataset.number);
-						if((num*num)%P === 1){
-							setAsMatched(cell, num, num);
-							selectedCells = [];
-							checkWin();
-							return;
-						}else{
-							cell.classList.remove('revealed');
-							selectedCells = [];
-							return;
-						}
 					}
 					cell.classList.add('revealed');
 					selectedCells.push(cell);
@@ -5558,15 +5593,18 @@ document.addEventListener('keydown', function(e) {
 				}
 
 				function checkMatch(){
-					if(selectedCells.length < 2){
-						return;
-					}
 					const [cell1, cell2] = selectedCells;
 					const num1 = parseInt(cell1.dataset.number);
 					const num2 = parseInt(cell2.dataset.number);
 					if((num1*num2)%P === 1){
-						setAsMatched(cell1, num1, num2);
-						setAsMatched(cell2, num2, num1);
+						pairsFound++;
+						document.getElementById('matches').textContent = pairsFound;
+						if(cell1 === cell2){
+							setAsMatched(cell1, num1, num1);
+						}else{
+							setAsMatched(cell1, num1, num2);
+							setAsMatched(cell2, num2, num1);
+						}
 						checkWin();
 					}else{
 						currentErrors++;
@@ -5578,10 +5616,7 @@ document.addEventListener('keydown', function(e) {
 							cell2.classList.remove('revealed', 'error-flash');
 						}, 400);
 						if(currentErrors >= MAX_NUMBER_OF_ERRORS){
-							setTimeout(() => {
-								alert(t("maxErrors"));
-								initGame();
-							}, 100);
+							setTimeout(() => { alert(t("maxErrors")); initGame(); }, 100);
 						}
 					}
 					selectedCells = [];
@@ -5597,7 +5632,7 @@ document.addEventListener('keydown', function(e) {
 				}
 
 				function checkWin(){
-					if(matchedNumbersCount === P - 1){
+					if(pairsFound === maxPairs){
 						setTimeout(() => alert(t("win")), 200);
 					}
 				}
