@@ -1035,7 +1035,13 @@
 						}
 						const move = legalMoves.find(m => m.r === dr && m.c === dc);
 						if(move){
-							sq.classList.add((board[dr][dc] || move.enPassant) ? 'capture-mark' : 'legal-dot');
+							if(board[dr][dc] || move.enPassant){
+								sq.classList.add('capture-mark');
+							}else{
+								if(currentDiffIdx < 2){
+									sq.classList.add('legal-dot');
+								}
+							}
 						}
 						sq.onclick = () => handleClick(dr, dc);
 						boardEl.appendChild(sq);
