@@ -6386,7 +6386,7 @@ document.addEventListener('keydown', function(e) {
 <html lang="en"><!--G07#016 - Filippo - Chess-->
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 		<title>Chess</title>
 		<style>
 			:root{
@@ -6407,9 +6407,10 @@ document.addEventListener('keydown', function(e) {
 				display: flex;
 				flex-direction: column;
 				align-items: center;
-				padding: 10px;
+				padding: 10px 10px 40px;
 				margin: 0;
 				min-height: 100vh;
+				box-sizing: border-box;
 			}
 			.game-layout{
 				display: flex;
@@ -6717,21 +6718,26 @@ document.addEventListener('keydown', function(e) {
 				top: 0;
 				left: 0;
 				width: 100%;
-				height: 100%;
+				height: 100vh;
+				height: 100dvh;
 				background: #1a2535;
 				z-index: 9999;
 				display: flex;
 				flex-direction: column;
-				justify-content: center;
 				align-items: center;
-				gap: 30px;
+				gap: 16px;
+				overflow-y: auto;
+				overflow-x: hidden;
+				padding: 28px 10px 40px;
+				box-sizing: border-box;
 			}
 			#color-select-overlay h2{
 				color: var(--status-color);
-				font-size: 1.6rem;
+				font-size: 1.4rem;
 				margin: 0;
 				letter-spacing: 2px;
 				text-transform: uppercase;
+				flex-shrink: 0;
 			}
 			.color-choices{
 				display: flex;
@@ -6864,15 +6870,17 @@ document.addEventListener('keydown', function(e) {
 				font-size: 1.1rem;
 				font-weight: bold;
 				letter-spacing: 2px;
-				cursor: pointer;
+				cursor: not-allowed;
 				box-shadow: 0 6px 20px rgba(0,0,0,0.4);
 				transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
-				opacity: 0.45;
+				opacity: 0.35;
 				pointer-events: none;
+				flex-shrink: 0;
 			}
 			#startBtn.ready{
 				opacity: 1;
 				pointer-events: auto;
+				cursor: pointer;
 			}
 			#startBtn.ready:hover{
 				transform: scale(1.05);
@@ -6883,17 +6891,103 @@ document.addEventListener('keydown', function(e) {
 				box-shadow: 0 10px 30px rgba(0,0,0,0.6);
 				transform: scale(1.07);
 			}
+			.timer-section{
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 8px;
+			}
+			.timer-mode-choices{
+				display: flex;
+				gap: 8px;
+				flex-wrap: wrap;
+				justify-content: center;
+			}
+			.timer-mode-btn{
+				padding: 7px 14px;
+				border-radius: 8px;
+				border: 3px solid transparent;
+				cursor: pointer;
+				font-size: 0.72rem;
+				font-weight: bold;
+				color: white;
+				background: #34495e;
+				transition: transform 0.15s, border-color 0.15s, opacity 0.15s;
+				opacity: 0.6;
+			}
+			.timer-mode-btn.selected-timer{
+				opacity: 1;
+				border-color: var(--status-color);
+				transform: scale(1.06);
+			}
+			.timer-mode-btn:hover{
+				opacity: 0.85;
+			}
+			.timer-mode-btn.selected-timer:hover{
+				opacity: 1;
+			}
+			.clocks-bar{
+				display: none;
+				justify-content: space-between;
+				align-items: center;
+				width: 100%;
+				max-width: calc(8*var(--sq-size) + 8px);
+				gap: 8px;
+				margin-bottom: 4px;
+			}
+			.clocks-bar.active{
+				display: flex;
+			}
+			.clock-box{
+				flex: 1;
+				background: #34495e;
+				border-radius: 8px;
+				padding: 6px 10px;
+				text-align: center;
+				font-family: monospace;
+				font-size: 1.1rem;
+				font-weight: bold;
+				color: #ecf0f1;
+				border: 2px solid transparent;
+				transition: border-color 0.3s, background 0.3s, color 0.3s;
+			}
+			.clock-box.running{
+				border-color: var(--status-color);
+				background: #1a6b3a;
+			}
+			.clock-box.low{
+				border-color: #e74c3c;
+				background: #7b1a1a;
+				color: #ff8080;
+				animation: pulse-low 0.8s infinite;
+			}
+			.clock-box.timed-out{
+				border-color: #e74c3c;
+				background: #e74c3c;
+				color: white;
+			}
+			@keyframes pulse-low{
+				0%,100%{
+					opacity: 1;
+				}
+				50%{
+					opacity: 0.6;
+				}
+			}
+			.clock-label{
+				font-size: 0.6rem;
+				font-weight: normal;
+				opacity: 0.7;
+				margin-bottom: 2px;
+				font-family: 'Segoe UI', sans-serif;
+			}
+			.clock-move-limit{
+				font-size: 0.58rem;
+				opacity: 0.6;
+				margin-top: 2px;
+				font-family: 'Segoe UI', sans-serif;
+			}
 			@media (max-width: 600px){
-				#color-select-overlay{
-					gap: 15px;
-					padding: 20px 10px;
-					justify-content: flex-start;
-					overflow-y: auto;
-				}
-				#color-select-overlay h2{
-					font-size: 1.2rem;
-					margin-bottom: 5px;
-				}
 				.color-choices{
 					gap: 15px;
 				}
@@ -6915,6 +7009,7 @@ document.addEventListener('keydown', function(e) {
 				.diff-choice-btn{
 					width: 65px;
 					height: 38px;
+					font-size: 0.68rem;
 				}
 				.flag-grid{
 					max-width: 280px;
@@ -6927,7 +7022,6 @@ document.addEventListener('keydown', function(e) {
 				#startBtn{
 					padding: 10px 40px;
 					font-size: 0.9rem;
-					margin-top: 10px;
 				}
 			}
 		</style>
@@ -6970,7 +7064,31 @@ document.addEventListener('keydown', function(e) {
 				<div class="flag-grid" id="flagGrid"></div>
 			</div>
 			<hr class="overlay-divider">
-			<button id="startBtn" onclick="startGame()" id="startBtn"></button>
+			<div class="overlay-section timer-section">
+				<h3 id="lbl-timermode">⏱ Timer</h3>
+				<div class="timer-mode-choices">
+					<button class="timer-mode-btn selected-timer" id="otimer-0" onclick="selectTimerMode(0)"></button>
+					<button class="timer-mode-btn" id="otimer-1" onclick="selectTimerMode(1)"></button>
+				</div>
+				<div id="timer-info-line" style="font-size:0.62rem;opacity:0.6;text-align:center;min-height:1.1em;margin-top:2px;"></div>
+			</div>
+			<hr class="overlay-divider">
+			<p id="start-hint" style="font-size:0.72rem;color:#7f8c8d;margin:0;text-align:center;"></p>
+			<button id="startBtn" onclick="startGame()"></button>
+			<div style="height:10px;flex-shrink:0;"></div>
+		</div>
+		<div id="clocksBar" class="clocks-bar">
+			<div class="clock-box" id="clockWhite">
+				<div class="clock-label" id="clockLabelWhite">WHITE</div>
+				<div id="clockTimeWhite">—</div>
+				<div class="clock-move-limit" id="clockMoveWhite"></div>
+			</div>
+			<div style="font-size:0.7rem; opacity:0.5; flex-shrink:0;">vs</div>
+			<div class="clock-box" id="clockBlack">
+				<div class="clock-label" id="clockLabelBlack">BLACK</div>
+				<div id="clockTimeBlack">—</div>
+				<div class="clock-move-limit" id="clockMoveBlack"></div>
+			</div>
 		</div>
 		<div class="game-layout">
 			<div id="board" class="board">
@@ -7034,6 +7152,14 @@ document.addEventListener('keydown', function(e) {
 			const AUDIO_CXT = new (window.AudioContext || window.webkitAudioContext)();
 			let currentDiffIdx = 2;
 			let pendingPromotion = null;
+			let timerMode = 0;
+			let currentTimerModeIdx = 0;
+			const TIMER_TOTAL = [600, 420, 300, 180];
+			const TIMER_MOVE  = [60,  45,  30,  20];
+			let clockW = 0, clockB = 0;
+			let moveClockW = 0, moveClockB = 0;
+			let timerInterval = null;
+			let timerActive = false;
 			const PAWN_TABLE_WHITE = [[0, 0, 0, 0, 0, 0, 0, 0],[50, 50, 50, 50, 50, 50, 50, 50],[10, 10, 20, 30, 30, 20, 10, 10],[5, 5, 10, 25, 25, 10, 5, 5],[0, 0, 0, 20, 20, 0, 0, 0],[5, -5, -10, 0, 0, -10, -5, 5],[5, 10, 10, -20, -20, 10, 10, 5],[0, 0, 0, 0, 0, 0, 0, 0]];
 			const KNIGHT_TABLE = [[-50, -40, -30, -30, -30, -30, -40, -50],[-40, -20, 0, 0, 0, 0, -20, -40],[-30, 0, 10, 15, 15, 10, 0, -30],[-30, 5, 15, 20, 20, 15, 5, -30],[-30, 0, 15, 20, 20, 15, 0, -30],[-30, 5, 10, 15, 15, 10, 5, -30],[-40, -20, 0, 5, 5, 0, -20, -40],[-50, -40, -30, -30, -30, -30, -40, -50]];
 			const BISHOP_TABLE = [[-20, -10, -10, -10, -10, -10, -10, -20],[-10, 0, 0, 0, 0, 0, 0, -10],[-10, 0, 5, 10, 10, 5, 0, -10],[-10, 5, 5, 10, 10, 5, 5, -10],[-10, 0, 10, 10, 10, 10, 0, -10],[-10, 10, 10, 10, 10, 10, 10, -10],[-10, 5, 0, 0, 0, 0, 5, -10],[-20, -10, -10, -10, -10, -10, -10, -20]];
@@ -7066,7 +7192,7 @@ document.addEventListener('keydown', function(e) {
 				helpEnter:"Start the game",
 				helpD_game:"Cycle difficulty level", helpL_game:"Cycle language",
 				helpT:"Show / Hide move log", helpU:"Undo last move",
-				helpR:"Reset game (reload)", helpQuestion:"Show this help" },
+				helpR:"Reset game (reload)", helpQuestion:"Show this help", timeout:"⏰ {w} wins on time!", chooseColorHint:"← choose a color to start →", timerPerMove:"/ move" },
 				it: { chooseColor:"♟ Scegli il tuo Colore ♟", language:"Lingua", start:"INIZIA", whiteMove:"Muove il Bianco.", blackMove:"Muove il Nero.", check:" (+)", checkmate:"SCACCO MATTO! Vince il {w}!", stalemate:"STALLO! È un pari.", draw:"PARI! Materiale insufficiente.", level:"Livello", easy:"Facile", medium:"Medio", hard:"Difficile", expert:"Esperto", showLog:"Mostra Log", hideLog:"Nascondi Log", undo:"Annulla", reset:"Ricomincia", logTitle:"LOG MOSSE", saveInfo:"Hai fino a tre slot per salvare la partita.<br/>Se uno slot è occupato puoi caricare, sovrascrivere o eliminare. Scegli con cura.", slot:"Slot", empty:"Vuoto", confirmLoad:"Slot {n}: Vuoi caricare la partita salvata?", confirmReplace:"Vuoi sostituire il salvataggio precedente?", confirmDelete:"Sei sicuro di voler eliminare definitivamente il salvataggio nello Slot {n}?", white:"Bianco", black:"Nero", pawn:"Pedone", rook:"Torre", knight:"Cavallo", bishop:"Alfiere", queen:"Regina", king:"Re",
 				helpTitle:"⌨ Tasti di Scelta Rapida",
 				helpSectionGame:"Durante la Partita", helpSectionSetup:"Schermata di Setup",
@@ -7075,7 +7201,7 @@ document.addEventListener('keydown', function(e) {
 				helpEnter:"Avvia la partita",
 				helpD_game:"Cambia livello di difficoltà", helpL_game:"Cambia lingua",
 				helpT:"Mostra / Nascondi log mosse", helpU:"Annulla ultima mossa",
-				helpR:"Ricomincia la partita (ricarica)", helpQuestion:"Mostra questa guida" },
+				helpR:"Ricomincia la partita (ricarica)", helpQuestion:"Mostra questa guida", timeout:"⏰ Vince {w} per tempo!", chooseColorHint:"← scegli un colore per iniziare →", timerPerMove:"/ mossa" },
 				fr: { chooseColor:"♟ Choisissez votre Couleur ♟", language:"Langue", start:"DÉMARRER", whiteMove:"Au tour des Blancs.", blackMove:"Au tour des Noirs.", check:" (+)", checkmate:"ÉCHEC ET MAT ! Les {w} gagnent !", stalemate:"PAT ! Match nul.", draw:"NUL ! Matériel insuffisant.", level:"Niveau", easy:"Facile", medium:"Moyen", hard:"Difficile", expert:"Expert", showLog:"Voir Log", hideLog:"Cacher Log", undo:"Annuler", reset:"Rejouer", logTitle:"LOG COUPS", saveInfo:"Vous avez jusqu'à trois emplacements pour sauvegarder.<br/>Un emplacement occupé peut être chargé, écrasé ou supprimé. Choisissez bien.", slot:"Slot", empty:"Vide", confirmLoad:"Slot {n} : Voulez-vous charger la partie sauvegardée ?", confirmReplace:"Voulez-vous remplacer la sauvegarde précédente ?", confirmDelete:"Voulez-vous vraiment supprimer définitivement la sauvegarde du Slot {n} ?", white:"Blancs", black:"Noirs", pawn:"Pion", rook:"Tour", knight:"Cavalier", bishop:"Fou", queen:"Dame", king:"Roi",
 				helpTitle:"⌨ Raccourcis Clavier",
 				helpSectionGame:"Pendant la Partie", helpSectionSetup:"Écran de Configuration",
@@ -7084,7 +7210,7 @@ document.addEventListener('keydown', function(e) {
 				helpEnter:"Démarrer la partie",
 				helpD_game:"Changer la difficulté", helpL_game:"Changer la langue",
 				helpT:"Afficher / Masquer le log", helpU:"Annuler le dernier coup",
-				helpR:"Recommencer la partie (recharger)", helpQuestion:"Afficher cette aide" },
+				helpR:"Recommencer la partie (recharger)", helpQuestion:"Afficher cette aide", timeout:"⏰ {w} gagne au temps !", chooseColorHint:"← choisissez une couleur pour commencer →", timerPerMove:"/ coup" },
 				es: { chooseColor:"♟ Elige tu Color ♟", language:"Idioma", start:"EMPEZAR", whiteMove:"Mueven las Blancas.", blackMove:"Mueven las Negras.", check:" (+)", checkmate:"¡JAQUE MATE! ¡Ganan las {w}!", stalemate:"¡AHOGADO! Es un empate.", draw:"¡EMPATE! Material insuficiente.", level:"Nivel", easy:"Fácil", medium:"Medio", hard:"Difícil", expert:"Experto", showLog:"Ver Log", hideLog:"Ocultar Log", undo:"Deshacer", reset:"Reanudar", logTitle:"LOG MOVS", saveInfo:"Tienes hasta tres ranuras para guardar tu partida.<br/>Una ranura ocupada se puede cargar, sobrescribir o eliminar. Elige bien.", slot:"Ranura", empty:"Vacío", confirmLoad:"Ranura {n}: ¿Deseas cargar la partida guardada?", confirmReplace:"¿Deseas reemplazar el guardado anterior?", confirmDelete:"¿Seguro que quieres eliminar permanentemente el guardado de la Ranura {n}?", white:"Blancas", black:"Negras", pawn:"Peón", rook:"Torre", knight:"Caballo", bishop:"Alfil", queen:"Reina", king:"Rey",
 				helpTitle:"⌨ Atajos de Teclado",
 				helpSectionGame:"Durante la Partida", helpSectionSetup:"Pantalla de Configuración",
@@ -7093,7 +7219,7 @@ document.addEventListener('keydown', function(e) {
 				helpEnter:"Iniciar la partida",
 				helpD_game:"Cambiar dificultad", helpL_game:"Cambiar idioma",
 				helpT:"Mostrar / Ocultar log", helpU:"Deshacer último movimiento",
-				helpR:"Reiniciar partida (recargar)", helpQuestion:"Mostrar esta ayuda" },
+				helpR:"Reiniciar partida (recargar)", helpQuestion:"Mostrar esta ayuda", timeout:"⏰ ¡{w} gana por tiempo!", chooseColorHint:"← elige un color para empezar →", timerPerMove:"/ mov." },
 				de: { chooseColor:"♟ Wähle deine Farbe ♟", language:"Sprache", start:"STARTEN", whiteMove:"Weiß ist am Zug.", blackMove:"Schwarz ist am Zug.", check:" (+)", checkmate:"SCHACHMATT! {w} gewinnt!", stalemate:"PATT! Unentschieden.", draw:"REMIS! Unzureichendes Material.", level:"Stufe", easy:"Leicht", medium:"Mittel", hard:"Schwer", expert:"Experte", showLog:"Log zeigen", hideLog:"Log ausblenden", undo:"Rückgängig", reset:"Neu starten", logTitle:"ZUG-LOG", saveInfo:"Sie haben bis zu drei Slots zum Speichern.<br/>Ein belegter Slot kann geladen, überschrieben oder gelöscht werden. Wählen Sie weise.", slot:"Slot", empty:"Leer", confirmLoad:"Slot {n}: Möchten Sie das gespeicherte Spiel laden?", confirmReplace:"Möchten Sie den vorherigen Speicherstand ersetzen?", confirmDelete:"Sind Sie sicher, dass Sie Slot {n} dauerhaft löschen möchten?", white:"Weiß", black:"Schwarz", pawn:"Bauer", rook:"Turm", knight:"Springer", bishop:"Läufer", queen:"Dame", king:"König",
 				helpTitle:"⌨ Tastaturkürzel",
 				helpSectionGame:"Während des Spiels", helpSectionSetup:"Einrichtungsbildschirm",
@@ -7102,7 +7228,7 @@ document.addEventListener('keydown', function(e) {
 				helpEnter:"Spiel starten",
 				helpD_game:"Schwierigkeitsgrad wechseln", helpL_game:"Sprache wechseln",
 				helpT:"Zugprotokoll ein-/ausblenden", helpU:"Letzten Zug rückgängig machen",
-				helpR:"Spiel neu starten (neu laden)", helpQuestion:"Diese Hilfe anzeigen" },
+				helpR:"Spiel neu starten (neu laden)", helpQuestion:"Diese Hilfe anzeigen", timeout:"⏰ {w} gewinnt auf Zeit!", chooseColorHint:"← wähle eine Farbe zum Starten →", timerPerMove:"/ Zug" },
 				pt: { chooseColor:"♟ Escolha a sua Cor ♟", language:"Idioma", start:"COMEÇAR", whiteMove:"Brancas jogam.", blackMove:"Negras jogam.", check:" (+)", checkmate:"XEQUE-MATE! As {w} vencem!", stalemate:"AFOGAMENTO! Empate.", draw:"EMPATE! Material insuficiente.", level:"Nível", easy:"Fácil", medium:"Médio", hard:"Difícil", expert:"Especialista", showLog:"Ver Log", hideLog:"Ocultar Log", undo:"Desfazer", reset:"Recomeçar", logTitle:"LOG LANÇ", saveInfo:"Você tem até três slots para salvar sua partida.<br/>Um slot ocupado pode ser carregado, substituído ou excluído. Escolha com cuidado.", slot:"Slot", empty:"Vazio", confirmLoad:"Slot {n}: Deseja carregar o jogo salvo?", confirmReplace:"Deseja substituir o salvamento anterior?", confirmDelete:"Tem certeza de que deseja excluir permanentemente o Slot {n}?", white:"Brancas", black:"Negras", pawn:"Peão", rook:"Torre", knight:"Cavalo", bishop:"Bispo", queen:"Rainha", king:"Rei",
 				helpTitle:"⌨ Atalhos de Teclado",
 				helpSectionGame:"Durante a Partida", helpSectionSetup:"Tela de Configuração",
@@ -7111,7 +7237,7 @@ document.addEventListener('keydown', function(e) {
 				helpEnter:"Iniciar a partida",
 				helpD_game:"Mudar nível de dificuldade", helpL_game:"Mudar idioma",
 				helpT:"Mostrar / Ocultar log de lances", helpU:"Desfazer último lance",
-				helpR:"Reiniciar partida (recarregar)", helpQuestion:"Mostrar esta ajuda" },
+				helpR:"Reiniciar partida (recarregar)", helpQuestion:"Mostrar esta ajuda", timeout:"⏰ {w} vence por tempo!", chooseColorHint:"← escolha uma cor para começar →", timerPerMove:"/ lance" },
 				ro: { chooseColor:"♟ Alege Culoarea ta ♟", language:"Limbă", start:"ÎNCEPE", whiteMove:"Albul mută.", blackMove:"Negrul mută.", check:" (+)", checkmate:"ȘAH MAT! Câștigă {w}!", stalemate:"PAT! Remiză.", draw:"REMIZĂ! Material insuficient.", level:"Nivel", easy:"Ușor", medium:"Mediu", hard:"Greu", expert:"Expert", showLog:"Arată Log", hideLog:"Ascunde Log", undo:"Anulează", reset:"Reîncepere", logTitle:"LOG MUTĂRI", saveInfo:"Ai până la trei sloturi pentru a salva jocul.<br/>Un slot ocupat poate fi încărcat, suprascris sau șters. Alege cu înțelepciune.", slot:"Slot", empty:"Gol", confirmLoad:"Slot {n}: Vrei să încarci jocul salvat?", confirmReplace:"Vrei să înlocuiești salvarea anterioară?", confirmDelete:"Ești sigur că vrei să ștergi permanent Slot {n}?", white:"Alb", black:"Negru", pawn:"Pion", rook:"Turn", knight:"Cal", bishop:"Nebun", queen:"Regină", king:"Rege",
 				helpTitle:"⌨ Comenzi Rapide Tastatură",
 				helpSectionGame:"În Timpul Jocului", helpSectionSetup:"Ecran de Configurare",
@@ -7120,7 +7246,7 @@ document.addEventListener('keydown', function(e) {
 				helpEnter:"Pornește jocul",
 				helpD_game:"Schimbă dificultatea", helpL_game:"Schimbă limba",
 				helpT:"Arată / Ascunde jurnalul", helpU:"Anulează ultima mutare",
-				helpR:"Resetează jocul (reîncarcă)", helpQuestion:"Arată acest ajutor" },
+				helpR:"Resetează jocul (reîncarcă)", helpQuestion:"Arată acest ajutor", timeout:"⏰ {w} câștigă la timp!", chooseColorHint:"← alege o culoare pentru a începe →", timerPerMove:"/ mutare" },
 				uk: { chooseColor:"♟ Оберіть свій Колір ♟", language:"Мова", start:"ПОЧАТИ", whiteMove:"Ходять білі.", blackMove:"Ходять чорні.", check:" (+)", checkmate:"ШАХ І МАТ! Перемагають {w}!", stalemate:"ПАТ! Нічия.", draw:"НІЧИЯ! Недостатньо матеріалу.", level:"Рівень", easy:"Легко", medium:"Середній", hard:"Важко", expert:"Експерт", showLog:"Показати лог", hideLog:"Сховати лог", undo:"Скасувати", reset:"Перезапуск", logTitle:"ЛОГ ХОДІВ", saveInfo:"У вас є до трьох слотів для збереження гри.<br/>Заповнений слот можна завантажити, перезаписати або видалити.", slot:"Слот", empty:"Порожньо", confirmLoad:"Слот {n}: Завантажити збережену гру?", confirmReplace:"Замінити попереднє збереження?", confirmDelete:"Ви впевнені, що хочете видалити Слот {n}?", white:"Білі", black:"Чорні", pawn:"Пішак", rook:"Тура", knight:"Кінь", bishop:"Слон", queen:"Ферзь", king:"Король",
 				helpTitle:"⌨ Гарячі Клавіші",
 				helpSectionGame:"Під Час Гри", helpSectionSetup:"Екран Налаштувань",
@@ -7129,7 +7255,7 @@ document.addEventListener('keydown', function(e) {
 				helpEnter:"Почати гру",
 				helpD_game:"Змінити рівень складності", helpL_game:"Змінити мову",
 				helpT:"Показати / Сховати журнал ходів", helpU:"Скасувати останній хід",
-				helpR:"Перезапустити гру (перезавантажити)", helpQuestion:"Показати цю довідку" },
+				helpR:"Перезапустити гру (перезавантажити)", helpQuestion:"Показати цю довідку", timeout:"⏰ {w} перемагає за часом!", chooseColorHint:"← оберіть колір щоб почати →", timerPerMove:"/ хід" },
 				el: { chooseColor:"♟ Διάλεξε το Χρώμα σου ♟", language:"Γλώσσα", start:"ΕΝΑΡΞΗ", whiteMove:"Κινούνται τα Λευκά.", blackMove:"Κινούνται τα Μαύρα.", check:" (+)", checkmate:"ΣΑΧΜΑΤ! Κερδίζουν τα {w}!", stalemate:"ΠΑΤ! Ισοπαλία.", draw:"ΙΣΟΠΑΛΙΑ! Ανεπαρκές υλικό.", level:"Επίπεδο", easy:"Εύκολο", medium:"Μέτριο", hard:"Δύσκολο", expert:"Ειδικός", showLog:"Εμφ. Log", hideLog:"Απόκρ. Log", undo:"Αναίρεση", reset:"Επανεκκίν.", logTitle:"LOG ΚΙΝΉΣΕΩΝ", saveInfo:"Έχετε έως τρεις θέσεις αποθήκευσης.<br/>Μια κατεχόμενη θέση μπορεί να φορτωθεί, αντικατασταθεί ή διαγραφεί.", slot:"Θέση", empty:"Κενό", confirmLoad:"Θέση {n}: Να φορτωθεί η αποθηκευμένη παρτίδα;", confirmReplace:"Να αντικατασταθεί η προηγούμενη αποθήκευση;", confirmDelete:"Σίγουρα διαγραφή Θέση {n};", white:"Λευκά", black:"Μαύρα", pawn:"Πιόνι", rook:"Πύργος", knight:"Ίππος", bishop:"Αξιωματικός", queen:"Βασίλισσα", king:"Βασιλιάς",
 				helpTitle:"⌨ Συντομεύσεις Πληκτρολογίου",
 				helpSectionGame:"Κατά τη Διάρκεια του Παιχνιδιού", helpSectionSetup:"Οθόνη Ρύθμισης",
@@ -7138,7 +7264,7 @@ document.addEventListener('keydown', function(e) {
 				helpEnter:"Έναρξη παιχνιδιού",
 				helpD_game:"Αλλαγή δυσκολίας", helpL_game:"Αλλαγή γλώσσας",
 				helpT:"Εμφάνιση / Απόκρυψη καταγραφής", helpU:"Αναίρεση τελευταίας κίνησης",
-				helpR:"Επαναφορά παιχνιδιού (επαναφόρτωση)", helpQuestion:"Εμφάνιση αυτής της βοήθειας" },
+				helpR:"Επαναφορά παιχνιδιού (επαναφόρτωση)", helpQuestion:"Εμφάνιση αυτής της βοήθειας", timeout:"⏰ {w} κερδίζει στο χρόνο!", chooseColorHint:"← επίλεξε χρώμα για να ξεκινήσεις →", timerPerMove:"/ κίν." },
 				la: { chooseColor:"♟ Elige Colorem tuum ♟", language:"Lingua", start:"INCIPE", whiteMove:"Albi moventur.", blackMove:"Nigri moventur.", check:" (+)", checkmate:"SCACUS MATUS! {w} vincunt!", stalemate:"IMPASSE! Par est.", draw:"PAR! Materia insufficiens.", level:"Gradus", easy:"Facile", medium:"Medium", hard:"Difficile", expert:"Peritus", showLog:"Monstra Log", hideLog:"Absconde Log", undo:"Rescinde", reset:"Reinitiare", logTitle:"LOG MOTUUM", saveInfo:"Tres locos habes ad ludum servandum.<br/>Locus occupatus onerari, deleri, mutarive potest.", slot:"Locus", empty:"Vacuus", confirmLoad:"Locus {n}: Ludum servatum onerare vis?", confirmReplace:"Conservationem priorem substituere vis?", confirmDelete:"Locum {n} delere vis?", white:"Albi", black:"Nigri", pawn:"Pedes", rook:"Turris", knight:"Eques", bishop:"Episcopus", queen:"Regina", king:"Rex",
 				helpTitle:"⌨ Compendia Claviaturae",
 				helpSectionGame:"In Ludo", helpSectionSetup:"Tabella Praeparationis",
@@ -7147,7 +7273,7 @@ document.addEventListener('keydown', function(e) {
 				helpEnter:"Ludum incipere",
 				helpD_game:"Gradum mutare", helpL_game:"Linguam mutare",
 				helpT:"Log ostendere / abscondere", helpU:"Motum ultimum rescindere",
-				helpR:"Ludum renovare (recarricare)", helpQuestion:"Hoc auxilium ostendere" },
+				helpR:"Ludum renovare (recarricare)", helpQuestion:"Hoc auxilium ostendere", timeout:"⏰ {w} tempore vincit!", chooseColorHint:"← elige colorem ut incipias →", timerPerMove:"/ motus" },
 				zh: { chooseColor:"♟ 选择你的颜色 ♟", language:"语言", start:"开始", whiteMove:"白方走棋。", blackMove:"黑方走棋。", check:" (+)", checkmate:"将死！{w}获胜！", stalemate:"僵局！平局。", draw:"平局！子力不足。", level:"难度", easy:"简单", medium:"中等", hard:"困难", expert:"专家", showLog:"显示日志", hideLog:"隐藏日志", undo:"撤销", reset:"重新开始", logTitle:"走棋日志", saveInfo:"您最多可使用三个存档槽。<br/>已占用的槽可以加载、覆盖或删除。请慎重选择。", slot:"槽", empty:"空", confirmLoad:"槽 {n}：是否加载已保存的游戏？", confirmReplace:"是否替换之前的存档？", confirmDelete:"确定要永久删除槽 {n} 的存档吗？", white:"白方", black:"黑方", pawn:"兵", rook:"车", knight:"马", bishop:"象", queen:"后", king:"王",
 				helpTitle:"⌨ 键盘快捷键",
 				helpSectionGame:"游戏中", helpSectionSetup:"设置界面",
@@ -7156,7 +7282,7 @@ document.addEventListener('keydown', function(e) {
 				helpEnter:"开始游戏",
 				helpD_game:"切换难度", helpL_game:"切换语言",
 				helpT:"显示 / 隐藏走棋记录", helpU:"撤销上一步",
-				helpR:"重新开始游戏（重新加载）", helpQuestion:"显示此帮助" },
+				helpR:"重新开始游戏（重新加载）", helpQuestion:"显示此帮助", timeout:"⏰ {w}超时获胜！", chooseColorHint:"← 选择颜色开始 →", timerPerMove:"/ 步" },
 				ja: { chooseColor:"♟ 色を選んでください ♟", language:"言語", start:"スタート", whiteMove:"白の手番。", blackMove:"黒の手番。", check:" (+)", checkmate:"チェックメイト！{w}の勝ち！", stalemate:"ステイルメイト！引き分け。", draw:"引き分け！駒不足。", level:"レベル", easy:"簡単", medium:"普通", hard:"難しい", expert:"エキスパート", showLog:"ログ表示", hideLog:"ログ非表示", undo:"元に戻す", reset:"再スタート", logTitle:"手順ログ", saveInfo:"ゲームを保存するスロットが3つあります。<br/>使用済みスロットは読込・上書き・削除が可能です。", slot:"スロット", empty:"空", confirmLoad:"スロット{n}：保存済みゲームを読み込みますか？", confirmReplace:"前の保存データを上書きしますか？", confirmDelete:"スロット{n}を完全に削除しますか？", white:"白", black:"黒", pawn:"ポーン", rook:"ルーク", knight:"ナイト", bishop:"ビショップ", queen:"クイーン", king:"キング",
 				helpTitle:"⌨ キーボードショートカット",
 				helpSectionGame:"ゲーム中", helpSectionSetup:"設定画面",
@@ -7165,11 +7291,160 @@ document.addEventListener('keydown', function(e) {
 				helpEnter:"ゲームを開始",
 				helpD_game:"難易度を切り替え", helpL_game:"言語を切り替え",
 				helpT:"手順ログの表示 / 非表示", helpU:"最後の手を元に戻す",
-				helpR:"ゲームをリセット（再読み込み）", helpQuestion:"このヘルプを表示" }
+				helpR:"ゲームをリセット（再読み込み）", helpQuestion:"このヘルプを表示", timeout:"⏰ {w}が時間切れで勝利！", chooseColorHint:"← 色を選んでスタート →", timerPerMove:"/ 手" }
 			};
 			const LEVELS = [{name: 'Easy', val: 1, color: '#27ae60'}, {name: 'Medium', val: 2, color: '#2980b9'}, {name: 'Hard', val: 3, color: '#c0392b'}, {name: 'Expert', val: 4, color: '#4a235a'}];
 			const LEVEL_KEYS = ['easy','medium','hard','expert'];
 			let currentLangIndex = 0;
+
+			function selectTimerMode(idx){
+				currentTimerModeIdx = idx;
+				document.getElementById('otimer-0').classList.toggle('selected-timer', idx === 0);
+				document.getElementById('otimer-1').classList.toggle('selected-timer', idx === 1);
+				updateTimerOverlayLabels();
+			}
+
+			function updateTimerOverlayLabels(){
+				const btn0 = document.getElementById('otimer-0');
+				const btn1 = document.getElementById('otimer-1');
+				const info = document.getElementById('timer-info-line');
+				if(!btn0){
+					return;
+				}
+				const offLabels = {en:'Off',it:'Off',fr:'Off',es:'Off',de:'Off',pt:'Off',ro:'Off',uk:'Вимк.',el:'Όχι',la:'Off',zh:'关',ja:'なし'};
+				const onLabels  = {en:'Timer',it:'Timer',fr:'Timer',es:'Timer',de:'Timer',pt:'Timer',ro:'Timer',uk:'Таймер',el:'Timer',la:'Timer',zh:'计时',ja:'タイマー'};
+				const lang = LANG_KEYS[currentLangIndex];
+				btn0.textContent = offLabels[lang] || 'Off';
+				btn1.textContent = onLabels[lang]  || 'Timer';
+				if(info){
+					if(currentTimerModeIdx === 1){
+						const tot = formatTime(TIMER_TOTAL[currentDiffIdx]);
+						const mov = TIMER_MOVE[currentDiffIdx] + 's';
+						info.textContent = '⏱ ' + tot + ' ' + t('timerPerMove') + ' ' + mov;
+					}else{
+						info.textContent = '';
+					}
+				}
+			}
+
+			function formatTime(s){
+				const m = Math.floor(Math.abs(s)/60);
+				const sec = Math.abs(s)%60;
+				return m + ':' + sec.toString().padStart(2,'0');
+			}
+
+			function initClocks(){
+				timerMode = currentTimerModeIdx;
+				if(timerMode === 0){
+					document.getElementById('clocksBar').classList.remove('active');
+					return;
+				}
+				clockW = TIMER_TOTAL[currentDiffIdx];
+				clockB = TIMER_TOTAL[currentDiffIdx];
+				moveClockW = TIMER_MOVE[currentDiffIdx];
+				moveClockB = TIMER_MOVE[currentDiffIdx];
+				document.getElementById('clocksBar').classList.add('active');
+				renderClocks();
+			}
+
+			function renderClocks(){
+				if(timerMode === 0){
+					return;
+				}
+				document.getElementById('clockLabelWhite').textContent = t('white');
+				document.getElementById('clockLabelBlack').textContent = t('black');
+				const cwEl = document.getElementById('clockWhite');
+				const cbEl = document.getElementById('clockBlack');
+				const twEl = document.getElementById('clockTimeWhite');
+				const tbEl = document.getElementById('clockTimeBlack');
+				const mwEl = document.getElementById('clockMoveWhite');
+				const mbEl = document.getElementById('clockMoveBlack');
+				twEl.textContent = formatTime(moveClockW);
+				tbEl.textContent = formatTime(moveClockB);
+				mwEl.textContent = '(' + formatTime(clockW) + ')';
+				mbEl.textContent = '(' + formatTime(clockB) + ')';
+				cwEl.classList.remove('running','low','timed-out');
+				cbEl.classList.remove('running','low','timed-out');
+				if(turn === 'OVER' || !timerActive){
+					return;
+				}
+				const activeEl = turn === 'W' ? cwEl : cbEl;
+				const activeSec = turn === 'W' ? moveClockW : moveClockB;
+				activeEl.classList.add(activeSec <= 10 ? 'low' : 'running');
+			}
+
+			function startClockTick(){
+				if(timerMode === 0){
+					return;
+				}
+				stopClockTick();
+				timerActive = true;
+				timerInterval = setInterval(() => {
+					if(turn === 'OVER'){
+						stopClockTick();
+						return;
+					}
+					if(turn === 'W'){
+						moveClockW = Math.max(0, moveClockW - 1);
+						clockW = Math.max(0, clockW - 1);
+						if(moveClockW === 0 || clockW === 0){
+							handleTimeout('W');
+							return;
+						}
+					}else{
+						moveClockB = Math.max(0, moveClockB - 1);
+						clockB = Math.max(0, clockB - 1);
+						if(moveClockB === 0 || clockB === 0){
+							handleTimeout('B');
+							return;
+						}
+					}
+					renderClocks();
+				}, 1000);
+			}
+
+			function stopClockTick(){
+				if(timerInterval){
+					clearInterval(timerInterval);
+					timerInterval = null;
+				}
+				timerActive = false;
+			}
+
+			function switchClock(){
+				if(timerMode === 1){
+					if(turn === 'W'){
+						moveClockB = TIMER_MOVE[currentDiffIdx];
+					}else{
+						moveClockW = TIMER_MOVE[currentDiffIdx];
+					}
+				}
+				renderClocks();
+			}
+
+			function handleTimeout(loserColor){
+				stopClockTick();
+				turn = 'OVER';
+				const winner = loserColor === 'W' ? t('black') : t('white');
+				const statusBtn = document.getElementById('statusBtn');
+				statusBtn.textContent = t('timeout', {w: winner});
+				statusBtn.style.background = '#e74c3c';
+				statusBtn.style.color = 'white';
+				const loserEl = document.getElementById(loserColor === 'W' ? 'clockWhite' : 'clockBlack');
+				loserEl.classList.remove('running','low');
+				loserEl.classList.add('timed-out');
+				playSound('mate');
+				renderClocks();
+			}
+
+			function resetTimerState(){
+				stopClockTick();
+				clockW = TIMER_TOTAL[currentDiffIdx];
+				clockB = TIMER_TOTAL[currentDiffIdx];
+				moveClockW = TIMER_MOVE[currentDiffIdx];
+				moveClockB = TIMER_MOVE[currentDiffIdx];
+				timerActive = false;
+			}
 
 			function levelName(idx){
 				return t(LEVEL_KEYS[idx]);
@@ -7268,7 +7543,8 @@ document.addEventListener('keydown', function(e) {
 				const gameState = {
 					board, moved, enPassantTarget, history, currentDiffIdx, turn, lastMove,
 					logHtml: document.getElementById('moveLog').innerHTML,
-					timestamp: timeStr
+					timestamp: timeStr,
+					timerMode, clockW, clockB, moveClockW, moveClockB
 				};
 				localStorage.setItem(\`chess_slot_\${i}\`, JSON.stringify(gameState));
 				updateSaveUI();
@@ -7293,10 +7569,28 @@ document.addEventListener('keydown', function(e) {
 				btn.style.background = LEVELS[currentDiffIdx].color;
 				selected = null;
 				legalMoves = [];
+				stopClockTick();
+				timerMode = gs.timerMode || 0;
+				currentTimerModeIdx = timerMode;
+				if(timerMode > 0){
+					clockW = gs.clockW || TIMER_TOTAL[currentDiffIdx];
+					clockB = gs.clockB || TIMER_TOTAL[currentDiffIdx];
+					moveClockW = gs.moveClockW || TIMER_MOVE[currentDiffIdx];
+					moveClockB = gs.moveClockB || TIMER_MOVE[currentDiffIdx];
+					document.getElementById('clocksBar').classList.add('active');
+					renderClocks();
+				}else{
+					document.getElementById('clocksBar').classList.remove('active');
+				}
 				checkGameState();
 				drawBoard();
-				if(turn === 'B'){
-					setTimeout(pcMove, 600);
+				if(turn !== 'OVER'){
+					const isPlayerTurn = turn === playerColor;
+					if(isPlayerTurn){
+						startClockTick();
+					} else {
+						setTimeout(pcMove, 600);
+					}
 				}
 			}
 
@@ -7369,12 +7663,17 @@ document.addEventListener('keydown', function(e) {
 				document.getElementById('btn-white').classList.toggle('selected-color', color === 'W');
 				document.getElementById('btn-black').classList.toggle('selected-color', color === 'B');
 				document.getElementById('startBtn').classList.add('ready');
+				const hint = document.getElementById('start-hint');
+				if(hint){
+					hint.style.display = 'none';
+				}
 			}
 
 			function startGame(){
 				if(!pendingPlayerColor) return;
 				playerColor = pendingPlayerColor;
 				document.getElementById('color-select-overlay').style.display = 'none';
+				initClocks();
 				if(playerColor === 'B'){
 					document.querySelectorAll('.promo-choice')[0].textContent = '♛';
 					document.querySelectorAll('.promo-choice')[1].textContent = '♜';
@@ -7382,9 +7681,11 @@ document.addEventListener('keydown', function(e) {
 					document.querySelectorAll('.promo-choice')[3].textContent = '♞';
 					turn = 'W';
 					drawBoard();
+					startClockTick();
 					setTimeout(pcMove, 600);
 				}else{
 					drawBoard();
+					startClockTick();
 				}
 			}
 
@@ -7571,6 +7872,7 @@ document.addEventListener('keydown', function(e) {
 					statusBtn.style.background = "#e74c3c";
 					statusBtn.style.color = "white";
 					turn = 'OVER';
+					stopClockTick();
 				}else if(piecesLeft.length <= 3){
 					const nonKing = piecesLeft.filter(p => p !== 'k');
 					if(nonKing.length === 0 || (nonKing.length === 1 && (nonKing[0] === 'b' || nonKing[0] === 'n'))){
@@ -7579,6 +7881,7 @@ document.addEventListener('keydown', function(e) {
 						statusBtn.style.background = "#e74c3c";
 						statusBtn.style.color = "white";
 						turn = 'OVER';
+						stopClockTick();
 					}
 				}else{
 					if(inCheck){
@@ -7667,8 +7970,11 @@ document.addEventListener('keydown', function(e) {
 				selected = null;
 				legalMoves = [];
 				turn = (turn === 'W') ? 'B' : 'W';
+				switchClock();
 				positionHistory.push(board.map(row => row.join('')).join('|'));
-				if(positionHistory.length > 12) positionHistory.shift();
+				if(positionHistory.length > 12){
+					positionHistory.shift();
+				}
 				checkGameState();
 				drawBoard();
 				if(turn !== playerColor){
@@ -7686,16 +7992,25 @@ document.addEventListener('keydown', function(e) {
 				pendingPromotion = null;
 				selected = null;
 				legalMoves = [];
-				turn = playerColor === 'W' ? 'B' : 'W';
+				if(timerMode === 1){
+					if(playerColor === 'W'){
+						moveClockW = TIMER_MOVE[currentDiffIdx];
+					}else{
+						moveClockB = TIMER_MOVE[currentDiffIdx];
+					}
+				}
 				checkGameState();
 				drawBoard();
-				setTimeout(pcMove, 600);
+				if(turn !== 'OVER'){
+					startClockTick();
+				}
 			}
 
 			function undoMove(){
 				if(turn !== playerColor || history.length === 0){
 					return;
 				}
+				stopClockTick();
 				const lastState = history.pop();
 				board = lastState.board;
 				moved = lastState.moved;
@@ -7708,8 +8023,18 @@ document.addEventListener('keydown', function(e) {
 				turn = playerColor;
 				selected = null;
 				legalMoves = [];
+				if(timerMode === 1){
+					if(playerColor === 'W'){
+						moveClockW = TIMER_MOVE[currentDiffIdx];
+					}else{
+						moveClockB = TIMER_MOVE[currentDiffIdx];
+					}
+				}
 				checkGameState();
 				drawBoard();
+				if(turn !== 'OVER'){
+					startClockTick();
+				}
 			}
 
 			function evaluateBoard(b, forBlack = true){
@@ -7934,6 +8259,8 @@ document.addEventListener('keydown', function(e) {
 			}
 
 			function restartSame(){
+				stopClockTick();
+				resetTimerState();
 				board = [['r','n','b','q','k','b','n','r'],['p','p','p','p','p','p','p','p'],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['P','P','P','P','P','P','P','P'],['R','N','B','Q','K','B','N','R']];
 				moved = {'K': false, 'k': false, 'R_7_0': false, 'R_7_7': false, 'r_0_0': false, 'r_0_7': false};
 				enPassantTarget = null;
@@ -7950,10 +8277,16 @@ document.addEventListener('keydown', function(e) {
 					logContainer.style.display = 'none';
 					document.getElementById('toggleLogBtn').textContent = t('showLog');
 				}
+				if(timerMode > 0){
+					initClocks();
+				}
 				checkGameState();
 				drawBoard();
 				if(playerColor === 'B'){
+					startClockTick();
 					setTimeout(pcMove, 600);
+				}else{
+					startClockTick();
 				}
 			}
 
@@ -8078,6 +8411,7 @@ document.addEventListener('keydown', function(e) {
 				const btn = document.getElementById('diffBtn');
 				btn.textContent = levelName(currentDiffIdx);
 				btn.style.background = LEVELS[currentDiffIdx].color;
+				updateTimerOverlayLabels();
 			}
 
 			function updateColorOverlayLabels(){
@@ -8086,7 +8420,15 @@ document.addEventListener('keydown', function(e) {
 				document.getElementById('lbl-black').textContent = t('black');
 				document.getElementById('lbl-difficulty').textContent = t('level');
 				document.getElementById('lbl-language').textContent = t('language');
-				document.getElementById('startBtn').textContent = t('start');
+				const sb = document.getElementById('startBtn');
+				sb.textContent = t('start');
+				if(pendingPlayerColor){
+					sb.classList.add('ready');
+				}
+				const hint = document.getElementById('start-hint');
+				if(hint){
+					hint.textContent = pendingPlayerColor ? '' : t('chooseColorHint');
+				}
 				document.getElementById('statusBtn').textContent = t('whiteMove');
 				for(let i = 0; i < 4; i++){
 					document.getElementById('odiff-' + i).textContent = levelName(i);
@@ -8099,6 +8441,7 @@ document.addEventListener('keydown', function(e) {
 						fb.classList.toggle('selected-lang', i === currentLangIndex);
 					}
 				}
+				updateTimerOverlayLabels();
 			}
 		<\/script>
 	<script>
