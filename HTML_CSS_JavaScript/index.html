@@ -8674,57 +8674,88 @@ document.addEventListener('keydown', function(e) {
 				if(turn !== pcColor){
 					return;
 				}
-				const depth = LEVELS[currentDiffIdx].val;
-				let allMoves = [];
-				for(let r = 0; r < 8; r++){
-					for(let c = 0; c < 8; c++){
-						const p = board[r][c];
-						if(!p){
-							continue;
-						}
-						const isPcPiece = pcColor === 'B' ? p === p.toLowerCase() : p === p.toUpperCase();
-						if(isPcPiece){
-							getSafeMoves(board, r, c).forEach(m => allMoves.push({fR: r, fC: c, tR: m.r, tC: m.c, special: m }));
+				let wasTimerActive = false;
+				if(timerMode !== 0 && timerActive){
+					wasTimerActive = true;
+					stopClockTick();
+				}
+				setTimeout(() => {
+					const startTime = Date.now();
+					const depth = LEVELS[currentDiffIdx].val;
+					let allMoves = [];
+					for(let r = 0; r < 8; r++){
+						for(let c = 0; c < 8; c++){
+							const p = board[r][c];
+							if(!p){
+								continue;
+							}
+							const isPcPiece = pcColor === 'B' ? p === p.toLowerCase() : p === p.toUpperCase();
+							if(isPcPiece){
+								getSafeMoves(board, r, c).forEach(m => allMoves.push({fR: r, fC: c, tR: m.r, tC: m.c, special: m }));
+							}
 						}
 					}
-				}
-				if(allMoves.length === 0){
-					return;
-				}
-				let bestValue = -Infinity, bestPromo = pcColor === 'B' ? 'q' : 'Q';
-				let bestMoves = [];
-				for(const m of allMoves){
-					const isPromo = (pcColor === 'B') ? (board[m.fR][m.fC] === 'p' && m.tR === 7) : (board[m.fR][m.fC] === 'P' && m.tR === 0);
-					const promoChoices = isPromo ? (pcColor === 'B' ? ['q', 'n', 'r', 'b'] : ['Q', 'N', 'R', 'B']) : [null];
-					for(const choice of promoChoices){
-						const tmp = board.map(row => [...row]);
-						tmp[m.tR][m.tC] = isPromo ? choice : tmp[m.fR][m.fC];
-						tmp[m.fR][m.fC] = '';
-						const startMax = pcColor === 'B' ? false : true;
-						let v = minimax(tmp, depth - 1, -Infinity, Infinity, startMax);
+					if(allMoves.length === 0){
+						if(wasTimerActive){
+							startClockTick();
+						}
+						return;
+					}
+					let bestValue = -Infinity, bestPromo = pcColor === 'B' ? 'q' : 'Q';
+					let bestMoves = [];
+					for(const m of allMoves){
+						const isPromo = (pcColor === 'B') ? (board[m.fR][m.fC] === 'p' && m.tR === 7) : (board[m.fR][m.fC] === 'P' && m.tR === 0);
+						const promoChoices = isPromo ? (pcColor === 'B' ? ['q', 'n', 'r', 'b'] : ['Q', 'N', 'R', 'B']) : [null];
+						for(const choice of promoChoices){
+							const tmp = board.map(row => [...row]);
+							tmp[m.tR][m.tC] = isPromo ? choice : tmp[m.fR][m.fC];
+							tmp[m.fR][m.fC] = '';
+							const startMax = pcColor === 'B' ? false : true;
+							let v = minimax(tmp, depth - 1, -Infinity, Infinity, startMax);
+							if(pcColor === 'W'){
+								v = -v;
+							}
+							const posKey = tmp.map(row => row.join('')).join('|');
+							const repetitions = positionHistory.filter(h => h === posKey).length;
+							if(repetitions >= 1){
+								v -= 30 * repetitions;
+							}
+							if(v > bestValue){
+								bestValue = v;
+								bestMoves = [{move: m, promo: choice}];
+							}else if(v === bestValue){
+								bestMoves.push({move: m, promo: choice});
+							}
+						}
+					}
+					const elapsedSeconds = Math.round((Date.now() - startTime)/1000);
+					if(wasTimerActive){
 						if(pcColor === 'W'){
-							v = -v;
+							moveClockW = Math.max(0, moveClockW - elapsedSeconds);
+							clockW = Math.max(0, clockW - elapsedSeconds);
+							if(moveClockW === 0 || clockW === 0){
+								handleTimeout('W');
+								return;
+							}
+						}else{
+							moveClockB = Math.max(0, moveClockB - elapsedSeconds);
+							clockB = Math.max(0, clockB - elapsedSeconds);
+							if(moveClockB === 0 || clockB === 0){
+								handleTimeout('B');
+								return;
+							}
 						}
-						const posKey = tmp.map(row => row.join('')).join('|');
-						const repetitions = positionHistory.filter(h => h === posKey).length;
-						if(repetitions >= 1){
-							v -= 30 * repetitions;
-						}
-						if(v > bestValue){
-							bestValue = v;
-							bestMoves = [{move: m, promo: choice}];
-						}else if(v === bestValue){
-							bestMoves.push({move: m, promo: choice});
-						}
+						renderClocks();
+						startClockTick();
 					}
-				}
-				const chosen = bestMoves[Math.floor(Math.random()*(bestMoves.length))];
-				if(chosen){
-					if(chosen.promo){
-						bestPromo = chosen.promo;
+					const chosen = bestMoves[Math.floor(Math.random()*(bestMoves.length))];
+					if(chosen){
+						if(chosen.promo){
+							bestPromo = chosen.promo;
+						}
+						executeMove(chosen.move.fR, chosen.move.fC, chosen.move.tR, chosen.move.tC, chosen.move.special, bestPromo);
 					}
-					executeMove(chosen.move.fR, chosen.move.fC, chosen.move.tR, chosen.move.tC, chosen.move.special, bestPromo);
-				}
+				}, 50);
 			}
 
 			function handleClick(r, c){
