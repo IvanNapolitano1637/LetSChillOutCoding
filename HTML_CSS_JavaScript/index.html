@@ -6733,11 +6733,12 @@ document.addEventListener('keydown', function(e) {
 			}
 			#color-select-overlay h2{
 				color: var(--status-color);
-				font-size: 1.4rem;
+				font-size: clamp(0.8rem, 4vw, 1.4rem);
 				margin: 0;
 				letter-spacing: 2px;
 				text-transform: uppercase;
 				flex-shrink: 0;
+				text-align: center;
 			}
 			.color-choices{
 				display: flex;
@@ -7941,9 +7942,10 @@ document.addEventListener('keydown', function(e) {
 			function handleTimeout(loserColor){
 				stopClockTick();
 				turn = 'OVER';
-				const winner = loserColor === 'W' ? t('black') : t('white');
+				gameOverKey = 'timeout';
+				gameOverVars = {w: loserColor === 'W' ? 'black' : 'white'};
 				const statusBtn = document.getElementById('statusBtn');
-				statusBtn.textContent = t('timeout', {w: winner});
+				statusBtn.textContent = t('timeout', {w: t(gameOverVars.w)});
 				statusBtn.style.background = '#e74c3c';
 				statusBtn.style.color = 'white';
 				const loserEl = document.getElementById(loserColor === 'W' ? 'clockWhite' : 'clockBlack');
@@ -7982,6 +7984,10 @@ document.addEventListener('keydown', function(e) {
 			function refreshStatusText(){
 				const statusBtn = document.getElementById('statusBtn');
 				if(turn === 'OVER'){
+					if(gameOverKey){
+						const vars = gameOverVars.w ? {w: t(gameOverVars.w)} : {};
+						statusBtn.textContent = t(gameOverKey, vars);
+					}
 					return;
 				}
 				const kPos = findKing(board, turn);
@@ -7993,6 +7999,8 @@ document.addEventListener('keydown', function(e) {
 
 			function updateLangUI(){
 				document.getElementById('btnLang').innerHTML = FLAGS_SVG[currentLangIndex];
+				document.getElementById('clockLabelWhite').textContent = t('white');
+				document.getElementById('clockLabelBlack').textContent = t('black');
 				refreshStatusText();
 				const diffBtn = document.getElementById('diffBtn');
 				diffBtn.textContent = levelName(currentDiffIdx);
@@ -8173,6 +8181,8 @@ document.addEventListener('keydown', function(e) {
 			}
 
 			let pendingPlayerColor = null;
+			let gameOverKey = null;
+			let gameOverVars = {};
 
 			function selectColor(color){
 				pendingPlayerColor = color;
@@ -8186,7 +8196,9 @@ document.addEventListener('keydown', function(e) {
 			}
 
 			function startGame(){
-				if(!pendingPlayerColor) return;
+				if(!pendingPlayerColor){
+					return;
+				}
 				playerColor = pendingPlayerColor;
 				document.getElementById('color-select-overlay').style.display = 'none';
 				initClocks();
@@ -8379,10 +8391,13 @@ document.addEventListener('keydown', function(e) {
 				if(moves.length === 0){
 					if(inCheck){
 						playSound('mate');
-						const winner = turn === 'W' ? t('black') : t('white');
-						statusBtn.textContent = t('checkmate', {w: winner});
+						gameOverKey = 'checkmate';
+						gameOverVars = {w: turn === 'W' ? 'black' : 'white'};
+						statusBtn.textContent = t('checkmate', {w: t(gameOverVars.w)});
 					}else{
 						playSound('draw');
+						gameOverKey = 'stalemate';
+						gameOverVars = {};
 						statusBtn.textContent = t('stalemate');
 					}
 					statusBtn.style.background = "#e74c3c";
@@ -8393,6 +8408,8 @@ document.addEventListener('keydown', function(e) {
 					const nonKing = piecesLeft.filter(p => p !== 'k');
 					if(nonKing.length === 0 || (nonKing.length === 1 && (nonKing[0] === 'b' || nonKing[0] === 'n'))){
 						playSound('draw');
+						gameOverKey = 'draw';
+						gameOverVars = {};
 						statusBtn.textContent = t('draw');
 						statusBtn.style.background = "#e74c3c";
 						statusBtn.style.color = "white";
@@ -8787,6 +8804,8 @@ document.addEventListener('keydown', function(e) {
 				lastMove = null;
 				pendingPromotion = null;
 				turn = 'W';
+				gameOverKey = null;
+				gameOverVars = {};
 				document.getElementById('moveLog').innerHTML = '';
 				const logContainer = document.getElementById('logContainer');
 				if(logContainer.style.display === 'block'){
@@ -8908,7 +8927,9 @@ document.addEventListener('keydown', function(e) {
 
 			function buildFlagGrid(){
 				const grid = document.getElementById('flagGrid');
-				if(grid.children.length > 0) return;
+				if(grid.children.length > 0){
+					return;
+				}
 				FLAGS_SVG.forEach((svg, i) => {
 					const btn = document.createElement('button');
 					btn.className = 'flag-grid-btn';
@@ -8945,7 +8966,9 @@ document.addEventListener('keydown', function(e) {
 				if(hint){
 					hint.textContent = pendingPlayerColor ? '' : t('chooseColorHint');
 				}
-				document.getElementById('statusBtn').textContent = t('whiteMove');
+				if(turn !== 'OVER'){
+					document.getElementById('statusBtn').textContent = t('whiteMove');
+				}
 				for(let i = 0; i < 4; i++){
 					document.getElementById('odiff-' + i).textContent = levelName(i);
 					document.getElementById('odiff-' + i).classList.toggle('selected-diff', i === currentDiffIdx);
