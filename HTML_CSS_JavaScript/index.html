@@ -8570,192 +8570,295 @@ document.addEventListener('keydown', function(e) {
 				}
 			}
 
-			function evaluateBoard(b, forBlack = true){
-				let score = 0;
-				for(let r = 0; r < 8; r++){
-					for(let c = 0; c < 8; c++){
-						const p = b[r][c];
-						if(!p){
-							continue;
-						}
-						const isBlackPiece = p === p.toLowerCase();
-						const type = p.toLowerCase();
-						let value = PIECE_VALUES[type];
-						let posBonus = 0;
-						if(type === 'p'){
-							posBonus = isBlackPiece ? PAWN_TABLE_WHITE[r][c] : PAWN_TABLE_WHITE[7 - r][c];
-						}else if(type === 'n'){
-							posBonus = isBlackPiece ? KNIGHT_TABLE[r][c] : KNIGHT_TABLE[7 - r][c];
-						}else if(type === 'b'){
-							posBonus = isBlackPiece ? BISHOP_TABLE[r][c] : BISHOP_TABLE[7 - r][c];
-						}else if(type === 'r'){
-							posBonus = isBlackPiece ? ROOK_TABLE[r][c] : ROOK_TABLE[7 - r][c];
-						}else if(type === 'q'){
-							posBonus = isBlackPiece ? QUEEN_TABLE[r][c] : QUEEN_TABLE[7 - r][c];
-						}else if(type === 'k'){
-							posBonus = isBlackPiece ? KING_TABLE_MIDDLE[r][c] : KING_TABLE_MIDDLE[7 - r][c];
-						}
-						value += posBonus;
-						score += isBlackPiece ? value : -value;
+			const WORKER_SRC = \`
+				const PIECE_VALUES = {'p':100,'n':320,'b':330,'r':500,'q':900,'k':20000};
+				const PAWN_TABLE_WHITE = [[0,0,0,0,0,0,0,0],[50,50,50,50,50,50,50,50],[10,10,20,30,30,20,10,10],[5,5,10,25,25,10,5,5],[0,0,0,20,20,0,0,0],[5,-5,-10,0,0,-10,-5,5],[5,10,10,-20,-20,10,10,5],[0,0,0,0,0,0,0,0]];
+				const KNIGHT_TABLE = [[-50,-40,-30,-30,-30,-30,-40,-50],[-40,-20,0,0,0,0,-20,-40],[-30,0,10,15,15,10,0,-30],[-30,5,15,20,20,15,5,-30],[-30,0,15,20,20,15,0,-30],[-30,5,10,15,15,10,5,-30],[-40,-20,0,5,5,0,-20,-40],[-50,-40,-30,-30,-30,-30,-40,-50]];
+				const BISHOP_TABLE = [[-20,-10,-10,-10,-10,-10,-10,-20],[-10,0,0,0,0,0,0,-10],[-10,0,5,10,10,5,0,-10],[-10,5,5,10,10,5,5,-10],[-10,0,10,10,10,10,0,-10],[-10,10,10,10,10,10,10,-10],[-10,5,0,0,0,0,5,-10],[-20,-10,-10,-10,-10,-10,-10,-20]];
+				const ROOK_TABLE = [[0,0,0,0,0,0,0,0],[5,10,10,10,10,10,10,5],[-5,0,0,0,0,0,0,-5],[-5,0,0,0,0,0,0,-5],[-5,0,0,0,0,0,0,-5],[-5,0,0,0,0,0,0,-5],[-5,0,0,0,0,0,0,-5],[0,0,0,5,5,0,0,0]];
+				const QUEEN_TABLE = [[-20,-10,-10,-5,-5,-10,-10,-20],[-10,0,0,0,0,0,0,-10],[-10,0,5,5,5,5,0,-10],[-5,0,5,5,5,5,0,-5],[0,0,5,5,5,5,0,-5],[-10,5,5,5,5,5,0,-10],[-10,0,5,0,0,0,0,-10],[-20,-10,-10,-5,-5,-10,-10,-20]];
+				const KING_TABLE_MIDDLE = [[-30,-40,-40,-50,-50,-40,-40,-30],[-30,-40,-40,-50,-50,-40,-40,-30],[-30,-40,-40,-50,-50,-40,-40,-30],[-30,-40,-40,-50,-50,-40,-40,-30],[-20,-30,-30,-40,-40,-30,-30,-20],[-10,-20,-20,-20,-20,-20,-20,-10],[20,20,0,0,0,0,20,20],[20,30,10,0,0,10,30,20]];
+				let enPassantTarget = null;
+				function getRawMoves(b, r, c, includeCastling){
+					if(includeCastling === undefined){
+						includeCastling = false;
 					}
-				}
-				return forBlack ? score : -score;
-			}
-
-			function minimax(b, depth, alpha, beta, maximizing){
-				if(depth === 0){
-					return evaluateBoard(b, true);
-				}
-				const color = maximizing ? 'B' : 'W';
-				let allMoves = [];
-				for(let r = 0; r < 8; r++){
-					for(let c = 0; c < 8; c++){
-						const p = b[r][c];
-						if(!p || (maximizing ? (p !== p.toLowerCase()) : (p !== p.toUpperCase()))){
-							continue;
-						}
-						getSafeMoves(b, r, c).forEach(m => allMoves.push({fR: r, fC: c, tR: m.r, tC: m.c, special: m}));
-					}
-				}
-				if(allMoves.length === 0){
-					const king = findKing(b, color);
-					if(isSquareAttacked(b, king.r, king.c, color === 'W' ? 'B' : 'W')){
-						return maximizing ? -50000 : 50000;
-					}
-					return 0;
-				}
-				if(maximizing){
-					let maxEval = -Infinity;
-					for(const move of allMoves){
-						const isPromo = b[move.fR][move.fC] === 'p' && move.tR === 7;
-						const promoChoices = isPromo ? ['q', 'n', 'r', 'b'] : [null];
-						for(const choice of promoChoices){
-							const tmp = b.map(row => [...row]);
-							tmp[move.tR][move.tC] = isPromo ? choice : tmp[move.fR][move.fC];
-							tmp[move.fR][move.fC] = '';
-							const evaluation = minimax(tmp, depth - 1, alpha, beta, false);
-							maxEval = Math.max(maxEval, evaluation);
-							alpha = Math.max(alpha, evaluation);
-							if(beta <= alpha){
-								break;
+					let m = [];
+					const piece = b[r][c];
+					const p = piece.toLowerCase();
+					const isW = piece === piece.toUpperCase();
+					const dirs = {'r':[[1,0],[-1,0],[0,1],[0,-1]],'b':[[1,1],[1,-1],[-1,1],[-1,-1]],'q':[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]],'n':[[2,1],[2,-1],[-2,1],[-2,-1],[1,2],[1,-2],[-1,2],[-1,-2]],'k':[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]]};
+					if(p === 'p'){
+						let d = isW ? -1 : 1;
+						if(r + d >= 0 && r + d < 8 && !b[r+d][c]){
+							m.push({r:r+d,c:c});
+							if(((isW && r === 6)||(!isW && r === 1)) && !b[r + 2*d][c]){
+								m.push({r:r + 2*d,c:c});
 							}
 						}
-						if(beta <= alpha){
-							break;
-						}
-					}
-					return maxEval;
-				}else{
-					let minEval = Infinity;
-					for(const move of allMoves){
-						const isPromo = b[move.fR][move.fC] === 'P' && move.tR === 0;
-						const promoChoices = isPromo ? ['Q', 'N', 'R', 'B'] : [null];
-						for(const choice of promoChoices){
-							const tmp = b.map(row => [...row]);
-							tmp[move.tR][move.tC] = isPromo ? choice : tmp[move.fR][move.fC];
-							tmp[move.fR][move.fC] = '';
-							const evaluation = minimax(tmp, depth - 1, alpha, beta, true);
-							minEval = Math.min(minEval, evaluation);
-							beta = Math.min(beta, evaluation);
-							if(beta <= alpha){
-								break;
+						for(let dc of [-1,1]){
+							let nr = r + d, nc = c + dc;
+							if(nr >= 0 && nr < 8 && nc >= 0 && nc < 8){
+								if(b[nr][nc]&&(isW ? b[nr][nc] === b[nr][nc].toLowerCase() : b[nr][nc] === b[nr][nc].toUpperCase())){
+									m.push({r:nr,c:nc});
+								}
+								if(!b[nr][nc] && enPassantTarget && enPassantTarget.r === nr && enPassantTarget.c === nc){
+									m.push({r:nr,c:nc,enPassant:true});
+								}
 							}
 						}
-						if(beta <= alpha){
-							break;
+					}else if(dirs[p]){
+						for(let [dr,dc] of dirs[p]){
+							let nr = r + dr, nc = c + dc;
+							while(nr >= 0 && nr < 8 && nc >= 0 && nc < 8){
+								if(!b[nr][nc]){
+									m.push({r:nr,c:nc});
+								}else{
+									if(isW ? b[nr][nc] === b[nr][nc].toLowerCase() : b[nr][nc] === b[nr][nc].toUpperCase()){
+										m.push({r:nr,c:nc});
+									}
+									break;
+								}
+								if(p === 'n' || p === 'k'){
+									break;
+								}
+								nr += dr;
+								nc += dc;
+							}
 						}
 					}
-					return minEval;
+					return m;
 				}
-			}
 
-			function pcMove(){
-				const pcColor = playerColor === 'W' ? 'B' : 'W';
-				if(turn !== pcColor){
-					return;
-				}
-				let wasTimerActive = false;
-				if(timerMode !== 0 && timerActive){
-					wasTimerActive = true;
-					stopClockTick();
-				}
-				setTimeout(() => {
-					const startTime = Date.now();
-					const depth = LEVELS[currentDiffIdx].val;
-					let allMoves = [];
+				function findKing(b, color){
+					const target = color === 'W'?'K':'k';
 					for(let r = 0; r < 8; r++){
 						for(let c = 0; c < 8; c++){
-							const p = board[r][c];
+							if(b[r][c] === target){
+								return {r,c};
+							}
+						}
+					}
+					return {r:0,c:0};
+				}
+
+				function isSquareAttacked(b, row, col, attackerColor){
+					for(let r = 0; r < 8; r++){
+						for(let c = 0; c < 8; c++){
+							const p = b[r][c];
+							if(!p || (attackerColor==='W' ? p !== p.toUpperCase() : p !== p.toLowerCase())){
+								continue;
+							}
+							if(getRawMoves(b,r,c,false).some(m => m.r === row && m.c === col)){
+								return true;
+							}
+						}
+					}
+					return false;
+				}
+
+				function getSafeMoves(b, r, c){
+					const isW = b[r][c] === b[r][c].toUpperCase();
+					return getRawMoves(b,r,c,false).filter(m=>{
+						const tmp = b.map(row => [...row]);
+						if(m.enPassant){
+							tmp[r][m.c]='';
+						}
+						tmp[m.r][m.c] = tmp[r][c];
+						tmp[r][c]='';
+						const k = findKing(tmp,isW ? 'W' : 'B');
+						return !isSquareAttacked(tmp,k.r,k.c,isW ? 'B' : 'W');
+					});
+				}
+
+				function evaluateBoard(b){
+					let score=0;
+					for(let r = 0; r < 8; r++){
+						for(let c = 0; c < 8; c++){
+							const p = b[r][c];
 							if(!p){
 								continue;
 							}
-							const isPcPiece = pcColor === 'B' ? p === p.toLowerCase() : p === p.toUpperCase();
-							if(isPcPiece){
-								getSafeMoves(board, r, c).forEach(m => allMoves.push({fR: r, fC: c, tR: m.r, tC: m.c, special: m }));
+							const isBlack = p === p.toLowerCase();
+							const type = p.toLowerCase();
+							let value = PIECE_VALUES[type]||0;
+							if(type === 'p'){
+								value += isBlack ? PAWN_TABLE_WHITE[r][c] : PAWN_TABLE_WHITE[7-r][c];
+							}else if(type === 'n'){
+								value += isBlack ? KNIGHT_TABLE[r][c] : KNIGHT_TABLE[7-r][c];
+							}else if(type === 'b'){
+								value += isBlack ? BISHOP_TABLE[r][c] : BISHOP_TABLE[7-r][c];
+							}else if(type === 'r'){
+								value += isBlack ? ROOK_TABLE[r][c] : ROOK_TABLE[7-r][c];
+							}else if(type === 'q'){
+								value += isBlack ? QUEEN_TABLE[r][c] : QUEEN_TABLE[7-r][c];
+							}else if(type === 'k'){
+								value += isBlack ? KING_TABLE_MIDDLE[r][c] : KING_TABLE_MIDDLE[7-r][c];
+							}
+							score += isBlack?value:-value;
+						}
+					}
+					return score;
+				}
+
+				function minimax(b, depth, alpha, beta, maximizing){
+					if(depth === 0){
+						return evaluateBoard(b);
+					}
+					const color = maximizing ? 'B' : 'W';
+					let allMoves=[];
+					for(let r = 0; r < 8; r++){
+						for(let c = 0; c < 8; c++){
+							const p = b[r][c];
+							if(!p||(maximizing ? (p !== p.toLowerCase()) : (p !== p.toUpperCase()))){
+								continue;
+							}
+							getSafeMoves(b,r,c).forEach(m => allMoves.push({fR:r,fC:c,tR:m.r,tC:m.c,special:m}));
+						}
+					}
+					if(allMoves.length === 0){
+						const king = findKing(b,color);
+						return isSquareAttacked(b,king.r,king.c,color === 'W' ? 'B' : 'W') ? (maximizing ? -50000 : 50000):0;
+					}
+					if(maximizing){
+						let maxEval = -Infinity;
+						for(const move of allMoves){
+							const isPromo = b[move.fR][move.fC] === 'p' && move.tR === 7;
+							for(const choice of (isPromo ? ['q','n','r','b'] : [null])){
+								const tmp = b.map(row => [...row]);
+								tmp[move.tR][move.tC] = isPromo ? choice : tmp[move.fR][move.fC];
+								tmp[move.fR][move.fC] = '';
+								const ev = minimax(tmp,depth - 1,alpha,beta,false);
+								maxEval = Math.max(maxEval,ev);
+								alpha=Math.max(alpha,ev);
+								if(beta <= alpha){
+									break;
+								}
+							}
+							if(beta <= alpha){
+								break;
+							}
+						}
+						return maxEval;
+					}else{
+						let minEval = Infinity;
+						for(const move of allMoves){
+							const isPromo = b[move.fR][move.fC] === 'P' && move.tR === 0;
+							for(const choice of (isPromo ? ['Q','N','R','B'] : [null])){
+								const tmp = b.map(row => [...row]);
+								tmp[move.tR][move.tC] = isPromo ? choice:tmp[move.fR][move.fC];
+								tmp[move.fR][move.fC] = '';
+								const ev = minimax(tmp,depth - 1,alpha,beta,true);
+								minEval = Math.min(minEval,ev);
+								beta = Math.min(beta,ev);
+								if(beta <= alpha){
+									break;
+								}
+							}
+							if(beta <= alpha){
+								break;
+							}
+						}
+						return minEval;
+					}
+				}
+
+				self.onmessage = function(e){
+					const {boardState, enPassant, depth, pcColor, positionHistory} = e.data;
+					enPassantTarget = enPassant;
+					let allMoves = [];
+					for(let r = 0; r < 8; r++){
+						for(let c = 0; c < 8; c++){
+							const p = boardState[r][c];
+							if(!p){
+								continue;
+							}
+							const isPc = pcColor === 'B' ? p === p.toLowerCase() : p === p.toUpperCase();
+							if(isPc){
+								getSafeMoves(boardState,r,c).forEach(m => allMoves.push({fR:r,fC:c,tR:m.r,tC:m.c,special:m}));
 							}
 						}
 					}
 					if(allMoves.length === 0){
-						if(wasTimerActive){
-							startClockTick();
-						}
+						self.postMessage({noMoves:true});
 						return;
 					}
-					let bestValue = -Infinity, bestPromo = pcColor === 'B' ? 'q' : 'Q';
+					let bestValue = -Infinity;
 					let bestMoves = [];
 					for(const m of allMoves){
-						const isPromo = (pcColor === 'B') ? (board[m.fR][m.fC] === 'p' && m.tR === 7) : (board[m.fR][m.fC] === 'P' && m.tR === 0);
-						const promoChoices = isPromo ? (pcColor === 'B' ? ['q', 'n', 'r', 'b'] : ['Q', 'N', 'R', 'B']) : [null];
+						const isPromo = (pcColor === 'B') ? (boardState[m.fR][m.fC] === 'p' && m.tR === 7) : (boardState[m.fR][m.fC] === 'P' && m.tR === 0);
+						const promoChoices = isPromo ? (pcColor === 'B' ? ['q','n','r','b'] : ['Q','N','R','B']) : [null];
 						for(const choice of promoChoices){
-							const tmp = board.map(row => [...row]);
+							const tmp = boardState.map(row => [...row]);
 							tmp[m.tR][m.tC] = isPromo ? choice : tmp[m.fR][m.fC];
-							tmp[m.fR][m.fC] = '';
+							tmp[m.fR][m.fC]='';
 							const startMax = pcColor === 'B' ? false : true;
-							let v = minimax(tmp, depth - 1, -Infinity, Infinity, startMax);
-							if(pcColor === 'W'){
+							let v = minimax(tmp,depth - 1, -Infinity,Infinity,startMax);
+							if(pcColor==='W'){
 								v = -v;
 							}
 							const posKey = tmp.map(row => row.join('')).join('|');
 							const repetitions = positionHistory.filter(h => h === posKey).length;
 							if(repetitions >= 1){
-								v -= 30 * repetitions;
+								v -= 30*repetitions;
 							}
 							if(v > bestValue){
 								bestValue = v;
-								bestMoves = [{move: m, promo: choice}];
+								bestMoves=[{move:m,promo:choice}];
 							}else if(v === bestValue){
-								bestMoves.push({move: m, promo: choice});
+								bestMoves.push({move:m,promo:choice});
 							}
 						}
 					}
-					const elapsedSeconds = Math.round((Date.now() - startTime)/1000);
-					if(wasTimerActive){
-						if(pcColor === 'W'){
-							moveClockW = Math.max(0, moveClockW - elapsedSeconds);
-							clockW = Math.max(0, clockW - elapsedSeconds);
-							if(moveClockW === 0 || clockW === 0){
-								handleTimeout('W');
-								return;
-							}
-						}else{
-							moveClockB = Math.max(0, moveClockB - elapsedSeconds);
-							clockB = Math.max(0, clockB - elapsedSeconds);
-							if(moveClockB === 0 || clockB === 0){
-								handleTimeout('B');
-								return;
-							}
-						}
-						renderClocks();
-						startClockTick();
+					const chosen = bestMoves[Math.floor(Math.random()*bestMoves.length)];
+					self.postMessage({chosen});
+				};
+			\`;
+
+			let _aiWorker = null;
+
+			function getAiWorker(){
+				if(_aiWorker){
+					_aiWorker.terminate();
+				}
+				const blob = new Blob([WORKER_SRC], {type: 'application/javascript'});
+				_aiWorker = new Worker(URL.createObjectURL(blob));
+				return _aiWorker;
+			}
+
+			function pcMove(){
+				const pcColor = playerColor === 'W' ? 'B' : 'W';
+				if(turn !== pcColor || turn === 'OVER'){
+					return;
+				}
+				const worker = getAiWorker();
+				worker.onmessage = function(e){
+					worker.terminate();
+					_aiWorker = null;
+					if(turn !== pcColor || turn === 'OVER'){
+						return;
 					}
-					const chosen = bestMoves[Math.floor(Math.random()*(bestMoves.length))];
+					if(e.data.noMoves){
+						return;
+					}
+					const {chosen} = e.data;
 					if(chosen){
-						if(chosen.promo){
-							bestPromo = chosen.promo;
-						}
+						const bestPromo = chosen.promo || (pcColor === 'B' ? 'q' : 'Q');
 						executeMove(chosen.move.fR, chosen.move.fC, chosen.move.tR, chosen.move.tC, chosen.move.special, bestPromo);
 					}
-				}, 50);
+				};
+				worker.onerror = function(err){
+					console.error('AI Worker error:', err);
+					worker.terminate();
+					_aiWorker = null;
+				};
+				worker.postMessage({
+					boardState: board.map(row => [...row]),
+					enPassant: enPassantTarget ? {...enPassantTarget} : null,
+					depth: LEVELS[currentDiffIdx].val,
+					pcColor: pcColor,
+					positionHistory: [...positionHistory]
+				});
 			}
 
 			function handleClick(r, c){
