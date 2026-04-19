@@ -1504,7 +1504,7 @@
 					function placeDot(h,s,l,hex){
 						const chroma=(s/100)*(1-Math.abs(2*l/100-1));
 						const r=chroma*(R-14);
-						const ang=(h-90)*Math.PI/180;
+						const ang=h*Math.PI/180;
 						const dot=document.getElementById('v5_dot');
 						dot.style.left=(CX+r*Math.cos(ang))+'px';
 						dot.style.top=(CY+r*Math.sin(ang))+'px';
