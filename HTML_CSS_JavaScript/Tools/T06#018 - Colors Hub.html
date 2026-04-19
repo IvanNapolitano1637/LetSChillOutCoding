@@ -1413,6 +1413,21 @@
 
 					<div class="v5-sliders">
 						<div class="v5-row">
+							<div class="v5-track" style="background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red); border-radius:50%;"></div>
+							<input type="range" id="v5_h" min="0" max="359" value="0">
+							<span class="v5-val" id="v5_vh">0°</span>
+						</div>
+						<div class="v5-row">
+							<div class="v5-track" style="background:linear-gradient(to right,#888,#f00); border-radius:3px; width:12px; height:12px;"></div>
+							<input type="range" id="v5_s" min="0" max="100" value="0">
+							<span class="v5-val" id="v5_vs">0%</span>
+						</div>
+						<div class="v5-row">
+							<div class="v5-track" style="background:linear-gradient(to right,#000,#fff); border-radius:3px; width:12px; height:12px;"></div>
+							<input type="range" id="v5_l" min="0" max="100" value="100">
+							<span class="v5-val" id="v5_vl">100%</span>
+						</div>
+						<div class="v5-row" style="border-top:1px solid rgba(0,0,0,0.1); padding-top:6px; margin-top:2px;">
 							<div class="v5-track" style="background:#f00;"></div>
 							<input type="range" id="v5_r" min="0" max="255" value="255">
 							<span class="v5-val" id="v5_vr">255</span>
@@ -1520,6 +1535,9 @@
 						const lum=Math.round((Math.max(rv,gv,bv)+Math.min(rv,gv,bv))/2);
 						document.getElementById('v5_hex').textContent=hex;
 						document.getElementById('v5-body').style.backgroundColor=hex;
+						if(source!=='h'){document.getElementById('v5_h').value=h; document.getElementById('v5_vh').textContent=h+'°';}
+						if(source!=='s'){document.getElementById('v5_s').value=s; document.getElementById('v5_vs').textContent=s+'%';}
+						if(source!=='l'){document.getElementById('v5_l').value=l; document.getElementById('v5_vl').textContent=l+'%';}
 						if(source!=='r'){document.getElementById('v5_r').value=rv; document.getElementById('v5_vr').textContent=rv;}
 						if(source!=='g'){document.getElementById('v5_g').value=gv; document.getElementById('v5_vg').textContent=gv;}
 						if(source!=='b'){document.getElementById('v5_b').value=bv; document.getElementById('v5_vb').textContent=bv;}
@@ -1530,6 +1548,21 @@
 					window.v5_set=function(r,g,b){ v5_apply(r,g,b,''); };
 					window.v5_random=function(){ v5_apply(Math.random()*255,Math.random()*255,Math.random()*255,''); };
 
+					document.getElementById('v5_h').addEventListener('input',function(){
+						document.getElementById('v5_vh').textContent=this.value+'°';
+						const [rv,gv,bv]=hslToRgb(+this.value,+document.getElementById('v5_s').value,+document.getElementById('v5_l').value);
+						v5_apply(rv,gv,bv,'h');
+					});
+					document.getElementById('v5_s').addEventListener('input',function(){
+						document.getElementById('v5_vs').textContent=this.value+'%';
+						const [rv,gv,bv]=hslToRgb(+document.getElementById('v5_h').value,+this.value,+document.getElementById('v5_l').value);
+						v5_apply(rv,gv,bv,'s');
+					});
+					document.getElementById('v5_l').addEventListener('input',function(){
+						document.getElementById('v5_vl').textContent=this.value+'%';
+						const [rv,gv,bv]=hslToRgb(+document.getElementById('v5_h').value,+document.getElementById('v5_s').value,+this.value);
+						v5_apply(rv,gv,bv,'l');
+					});
 					document.getElementById('v5_r').addEventListener('input',function(){
 						const rv=+this.value;
 						document.getElementById('v5_vr').textContent=rv;
