@@ -216,6 +216,7 @@
 				<div class="card" onclick="showVersion('v2')">II</div>
 				<div class="card" onclick="showVersion('v3')">III</div>
 				<div class="card" onclick="showVersion('v4')">IIII</div>
+				<div class="card" onclick="showVersion('v5')" style="grid-column: span 2;">IIIII</div>
 			</div>
 		</div>
 		<div id="v1" class="version-container"> <!--EX IRENE-->
@@ -1279,6 +1280,314 @@
 				v4_fillBody();
 			</script>
 		</div>
+		<div id="v5" class="version-container"> <!--"LUIGI"-->
+			<style>
+				#v5 .v5-body{
+					min-height: 100vh;
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					justify-content: center;
+					transition: background-color 0.15s;
+					padding: 20px;
+					box-sizing: border-box;
+				}
+				#v5 .v5-panel{
+					background: rgba(255,255,255,0.88);
+					border-radius: 16px;
+					box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+					padding: 22px 24px 18px;
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					gap: 16px;
+					max-width: 340px;
+					width: 100%;
+					box-sizing: border-box;
+				}
+				#v5 #v5_hex{
+					font-family: monospace;
+					font-size: 1.5em;
+					font-weight: bold;
+					background: #FFFF00;
+					border: 2px solid #333;
+					border-radius: 8px;
+					padding: 4px 16px;
+					color: #000;
+					letter-spacing: 1px;
+					cursor: pointer;
+					user-select: all;
+				}
+				#v5 .v5-wheel-wrap{
+					position: relative;
+					width: 220px;
+					height: 220px;
+					flex-shrink: 0;
+				}
+				#v5 canvas#v5_wheel{
+					border-radius: 50%;
+					display: block;
+					cursor: crosshair;
+				}
+				#v5 .v5-dot{
+					position: absolute;
+					width: 16px;
+					height: 16px;
+					border-radius: 50%;
+					border: 2.5px solid #fff;
+					box-shadow: 0 0 0 1.5px rgba(0,0,0,0.5);
+					transform: translate(-50%,-50%);
+					pointer-events: none;
+					transition: left .08s, top .08s, background .08s;
+				}
+				#v5 .v5-sliders{
+					width: 100%;
+					display: flex;
+					flex-direction: column;
+					gap: 6px;
+				}
+				#v5 .v5-row{
+					display: flex;
+					align-items: center;
+					gap: 8px;
+				}
+				#v5 .v5-row input[type=range]{
+					flex: 1;
+					height: 5px;
+					cursor: pointer;
+					accent-color: #555;
+				}
+				#v5 .v5-track{
+					width: 12px;
+					height: 12px;
+					border-radius: 50%;
+					flex-shrink: 0;
+					border: 1.5px solid rgba(0,0,0,0.3);
+				}
+				#v5 .v5-val{
+					font-family: monospace;
+					font-size: 12px;
+					min-width: 36px;
+					text-align: right;
+					color: #333;
+				}
+				#v5 .v5-footer{
+					display: flex;
+					gap: 10px;
+					flex-wrap: wrap;
+					justify-content: center;
+				}
+				#v5 .v5-footer button{
+					width: 42px;
+					height: 42px;
+					border-radius: 50%;
+					border: 2px solid #333;
+					background: white;
+					font-size: 1.2em;
+					cursor: pointer;
+					display: inline-flex;
+					align-items: center;
+					justify-content: center;
+					padding: 0;
+					transition: transform 0.1s;
+				}
+				#v5 .v5-footer button:active{
+					transform: scale(0.93);
+				}
+				#v5 .v5-swatch-btn{
+					width: 42px !important;
+					height: 42px !important;
+					border-radius: 50% !important;
+					padding: 0 !important;
+					border: 2px solid #333 !important;
+				}
+			</style>
+			<div class="v5-body" id="v5-body">
+				<div class="v5-panel">
+					<output id="v5_hex">#FFFFFF</output>
+
+					<div class="v5-wheel-wrap">
+						<canvas id="v5_wheel" width="220" height="220"></canvas>
+						<div class="v5-dot" id="v5_dot"></div>
+					</div>
+
+					<div class="v5-sliders">
+						<div class="v5-row">
+							<div class="v5-track" style="background:#f00;"></div>
+							<input type="range" id="v5_r" min="0" max="255" value="255">
+							<span class="v5-val" id="v5_vr">255</span>
+						</div>
+						<div class="v5-row">
+							<div class="v5-track" style="background:#0f0;"></div>
+							<input type="range" id="v5_g" min="0" max="255" value="255">
+							<span class="v5-val" id="v5_vg">255</span>
+						</div>
+						<div class="v5-row">
+							<div class="v5-track" style="background:#00f;"></div>
+							<input type="range" id="v5_b" min="0" max="255" value="255">
+							<span class="v5-val" id="v5_vb">255</span>
+						</div>
+						<div class="v5-row">
+							<div class="v5-track" style="background:linear-gradient(to right,#000,#fff); border-radius:3px; width:12px; height:12px;"></div>
+							<input type="range" id="v5_lum" min="0" max="255" value="255">
+							<span class="v5-val" id="v5_vlum">255</span>
+						</div>
+					</div>
+
+					<div class="v5-footer">
+						<button class="v5-swatch-btn" onclick="v5_set(0,0,0)" style="background:#000;"></button>
+						<button class="v5-swatch-btn" onclick="v5_set(255,255,255)" style="background:#fff;"></button>
+						<button class="v5-swatch-btn" onclick="v5_set(255,0,0)" style="background:#f00;"></button>
+						<button class="v5-swatch-btn" onclick="v5_set(0,255,0)" style="background:#0f0;"></button>
+						<button class="v5-swatch-btn" onclick="v5_set(0,0,255)" style="background:#00f;"></button>
+						<button class="v5-swatch-btn" onclick="v5_set(0,255,255)" style="background:#0ff;"></button>
+						<button class="v5-swatch-btn" onclick="v5_set(255,0,255)" style="background:#f0f;"></button>
+						<button class="v5-swatch-btn" onclick="v5_set(255,255,0)" style="background:#ff0;"></button>
+						<button onclick="v5_random()">🎲</button>
+						<button onclick="location.reload()">⟳</button>
+					</div>
+				</div>
+			</div>
+			<script>
+				(function(){
+					function hslToRgb(h,s,l){
+						s/=100; l/=100;
+						const k=n=>(n+h/30)%12;
+						const a=s*Math.min(l,1-l);
+						const f=n=>l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));
+						return [Math.round(f(0)*255),Math.round(f(8)*255),Math.round(f(4)*255)];
+					}
+					function rgbToHsl(r,g,b){
+						r/=255;g/=255;b/=255;
+						const max=Math.max(r,g,b),min=Math.min(r,g,b);
+						const l=(max+min)/2, d=max-min;
+						let h=0,s=0;
+						if(d){
+							s=d/(1-Math.abs(2*l-1));
+							switch(max){
+								case r: h=((g-b)/d+6)%6; break;
+								case g: h=(b-r)/d+2; break;
+								case b: h=(r-g)/d+4; break;
+							}
+							h*=60;
+						}
+						return [Math.round(h),Math.round(s*100),Math.round(l*100)];
+					}
+					function toHex(r,g,b){
+						return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('').toUpperCase();
+					}
+
+					const canvas=document.getElementById('v5_wheel');
+					const ctx=canvas.getContext('2d');
+					const CX=110,CY=110,R=108;
+
+					function drawWheel(){
+						for(let a=0;a<360;a++){
+							const s=(a-0.5)*Math.PI/180, e=(a+0.5)*Math.PI/180;
+							const gr=ctx.createRadialGradient(CX,CY,0,CX,CY,R);
+							gr.addColorStop(0,'white');
+							gr.addColorStop(1,`hsl(${a},100%,50%)`);
+							ctx.beginPath();
+							ctx.moveTo(CX,CY);
+							ctx.arc(CX,CY,R,s,e);
+							ctx.closePath();
+							ctx.fillStyle=gr;
+							ctx.fill();
+						}
+						ctx.beginPath();
+						ctx.arc(CX,CY,R,0,2*Math.PI);
+						ctx.strokeStyle='rgba(0,0,0,0.15)';
+						ctx.lineWidth=1;
+						ctx.stroke();
+					}
+
+					function placeDot(h,s,l,hex){
+						const chroma=(s/100)*(1-Math.abs(2*l/100-1));
+						const r=chroma*(R-14);
+						const ang=(h-90)*Math.PI/180;
+						const dot=document.getElementById('v5_dot');
+						dot.style.left=(CX+r*Math.cos(ang))+'px';
+						dot.style.top=(CY+r*Math.sin(ang))+'px';
+						dot.style.background=hex;
+					}
+
+					function v5_apply(rv,gv,bv,source){
+						rv=Math.max(0,Math.min(255,Math.round(rv)));
+						gv=Math.max(0,Math.min(255,Math.round(gv)));
+						bv=Math.max(0,Math.min(255,Math.round(bv)));
+						const hex=toHex(rv,gv,bv);
+						const [h,s,l]=rgbToHsl(rv,gv,bv);
+						const lum=Math.round((Math.max(rv,gv,bv)+Math.min(rv,gv,bv))/2);
+						document.getElementById('v5_hex').textContent=hex;
+						document.getElementById('v5-body').style.backgroundColor=hex;
+						if(source!=='r'){document.getElementById('v5_r').value=rv; document.getElementById('v5_vr').textContent=rv;}
+						if(source!=='g'){document.getElementById('v5_g').value=gv; document.getElementById('v5_vg').textContent=gv;}
+						if(source!=='b'){document.getElementById('v5_b').value=bv; document.getElementById('v5_vb').textContent=bv;}
+						if(source!=='lum'){document.getElementById('v5_lum').value=lum; document.getElementById('v5_vlum').textContent=lum;}
+						placeDot(h,s,l,hex);
+					}
+
+					window.v5_set=function(r,g,b){ v5_apply(r,g,b,''); };
+					window.v5_random=function(){ v5_apply(Math.random()*255,Math.random()*255,Math.random()*255,''); };
+
+					document.getElementById('v5_r').addEventListener('input',function(){
+						const rv=+this.value;
+						document.getElementById('v5_vr').textContent=rv;
+						v5_apply(rv,+document.getElementById('v5_g').value,+document.getElementById('v5_b').value,'r');
+					});
+					document.getElementById('v5_g').addEventListener('input',function(){
+						const gv=+this.value;
+						document.getElementById('v5_vg').textContent=gv;
+						v5_apply(+document.getElementById('v5_r').value,gv,+document.getElementById('v5_b').value,'g');
+					});
+					document.getElementById('v5_b').addEventListener('input',function(){
+						const bv=+this.value;
+						document.getElementById('v5_vb').textContent=bv;
+						v5_apply(+document.getElementById('v5_r').value,+document.getElementById('v5_g').value,bv,'b');
+					});
+					document.getElementById('v5_lum').addEventListener('input',function(){
+						const lum=+this.value;
+						document.getElementById('v5_vlum').textContent=lum;
+						const rv=+document.getElementById('v5_r').value;
+						const gv=+document.getElementById('v5_g').value;
+						const bv=+document.getElementById('v5_b').value;
+						const cur=Math.round((Math.max(rv,gv,bv)+Math.min(rv,gv,bv))/2);
+						const delta=lum-cur;
+						v5_apply(rv+delta,gv+delta,bv+delta,'lum');
+					});
+
+					canvas.addEventListener('mousedown', startDrag);
+					canvas.addEventListener('touchstart', startDrag, {passive:true});
+
+					function pickFromCanvas(e){
+						const rect=canvas.getBoundingClientRect();
+						const cx=(e.touches?e.touches[0].clientX:e.clientX)-rect.left;
+						const cy=(e.touches?e.touches[0].clientY:e.clientY)-rect.top;
+						const scaleX=220/rect.width, scaleY=220/rect.height;
+						const px=cx*scaleX, py=cy*scaleY;
+						const imgData=ctx.getImageData(Math.round(px),Math.round(py),1,1).data;
+						v5_apply(imgData[0],imgData[1],imgData[2],'');
+					}
+
+					function startDrag(e){
+						pickFromCanvas(e);
+						const mm=ev=>pickFromCanvas(ev);
+						const up=()=>{window.removeEventListener('mousemove',mm); window.removeEventListener('mouseup',up); window.removeEventListener('touchmove',mm); window.removeEventListener('touchend',up);};
+						window.addEventListener('mousemove',mm);
+						window.addEventListener('mouseup',up);
+						window.addEventListener('touchmove',mm);
+						window.addEventListener('touchend',up);
+					}
+
+					document.getElementById('v5_hex').addEventListener('click',function(){
+						navigator.clipboard.writeText(this.textContent).catch(()=>{});
+					});
+
+					drawWheel();
+					v5_apply(255,255,255,'');
+				})();
+			</script>
+		</div>
 		<script>
 			function helpOpen(){
 				document.getElementById('helpOverlay').classList.add('open');
@@ -1335,6 +1644,10 @@
 						v4_setWhite();
 						switchVersion('v4');
 						break;
+					case '5':
+						v5_set(255,255,255);
+						switchVersion('v5');
+						break;
 					case 'escape':
 					case 'esc':
 						location.reload();
@@ -1344,6 +1657,7 @@
 						v2_random();
 						v3_random();
 						v4_setRandomBackgroundColor();
+						v5_random();
 						break;
 					case 'k':
 						v1_setColor(0, 0, 0);
@@ -1351,6 +1665,7 @@
 						v3_color(0, 0, 0);
 						v4_actualComponents = [0, 0, 0];
 						v4_updateInterface();
+						v5_set(0,0,0);
 						break;
 					case 'r':
 						v1_setColor(255, 0, 0);
@@ -1358,6 +1673,7 @@
 						v3_color(15, 0, 0);
 						v4_actualComponents = [4, 0, 0];
 						v4_updateInterface();
+						v5_set(255,0,0);
 						break;
 					case 'g':
 						v1_setColor(0, 255, 0);
@@ -1365,6 +1681,7 @@
 						v3_color(0, 15, 0);
 						v4_actualComponents = [0, 4, 0];
 						v4_updateInterface();
+						v5_set(0,255,0);
 						break;
 					case 'b':
 						v1_setColor(0, 0, 255);
@@ -1372,6 +1689,7 @@
 						v3_color(0, 0, 15);
 						v4_actualComponents = [0, 0, 4];
 						v4_updateInterface();
+						v5_set(0,0,255);
 						break;
 					case 'c':
 						v1_setColor(0, 255, 255);
@@ -1379,6 +1697,7 @@
 						v3_color(0, 15, 15);
 						v4_actualComponents = [0, 4, 4];
 						v4_updateInterface();
+						v5_set(0,255,255);
 						break;
 					case 'm':
 						v1_setColor(255, 0, 255);
@@ -1386,6 +1705,7 @@
 						v3_color(15, 0, 15);
 						v4_actualComponents = [4, 0, 4];
 						v4_updateInterface();
+						v5_set(255,0,255);
 						break;
 					case 'y':
 						v1_setColor(255, 255, 0);
@@ -1393,6 +1713,7 @@
 						v3_color(15, 15, 0);
 						v4_actualComponents = [4, 4, 0];
 						v4_updateInterface();
+						v5_set(255,255,0);
 						break;
 					case 'w':
 						v1_setColor(255, 255, 255);
@@ -1400,6 +1721,7 @@
 						v3_color(15, 15, 15);
 						v4_actualComponents = [4, 4, 4];
 						v4_updateInterface();
+						v5_set(255,255,255);
 						break;
 					case 'arrowright':
 						v1_changeGray(1);
