@@ -5143,9 +5143,9 @@ document.addEventListener('keydown', function(e) {
 				--match-color: #8bc34a;
 				--reveal-color: #ff9800;
 				--error-color: #f44336;
-				--color-double: #81d4fa;
-				--color-opposite: #fff176;
-				--color-both: #ce93d8;
+				--color-double: #ffe000;
+				--color-opposite: #b388ff;
+				--color-both: #00e676;
 			}
 			body{
 				font-family: 'Segoe UI', sans-serif;
@@ -5203,6 +5203,14 @@ document.addEventListener('keydown', function(e) {
 				background: #e0e0e0;
 				border-color: #999;
 				box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+			}
+			#btnDouble.active{
+				background: var(--color-double);
+				border-color: #ccb200;
+			}
+			#btnOpposite.active{
+				background: var(--color-opposite);
+				border-color: #7c52cc;
 			}
 			.btn-primary{
 				background-color: #2196f3;
@@ -5668,9 +5676,19 @@ document.addEventListener('keydown', function(e) {
 					initGame();
 				});
 
+				function updateBtnColors(){
+					const bd = document.getElementById('btnDouble');
+					const bo = document.getElementById('btnOpposite');
+					bd.style.background = showDoubles ? 'var(--color-double)' : '';
+					bd.style.borderColor = showDoubles ? '#ccb200' : '';
+					bo.style.background = showOpposites ? 'var(--color-opposite)' : '';
+					bo.style.borderColor = showOpposites ? '#7c52cc' : '';
+				}
+
 				function highlightDouble(){
 					showDoubles = !showDoubles;
 					document.getElementById('btnDouble').classList.toggle('active', showDoubles);
+					updateBtnColors();
 					updateHighlights();
 				}
 
@@ -5681,6 +5699,7 @@ document.addEventListener('keydown', function(e) {
 				function highlightOpposite(){
 					showOpposites = !showOpposites;
 					document.getElementById('btnOpposite').classList.toggle('active', showOpposites);
+					updateBtnColors();
 					updateHighlights();
 				}
 
