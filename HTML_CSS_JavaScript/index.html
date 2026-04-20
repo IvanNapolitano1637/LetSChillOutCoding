@@ -15599,11 +15599,11 @@ document.addEventListener('keydown', function(e) {
 
 	// --- Rubik's Cube ---
 	'Games_G13_034___Rubik_s_Cube_html': { name: `Rubik's Cube`, content: `<!DOCTYPE html>
-<html lang="it"><!--G13#034 - Ernesto - Rubik's Cube-->
+<html lang="en"><!--G13#034 - Ernesto - Rubik's Cube-->
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Cubo di Rubik 3D</title>
+		<title>Rubik's Cube</title>
 		<style>
 			@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap');
 			:root{
@@ -15637,7 +15637,8 @@ document.addEventListener('keydown', function(e) {
 				flex-shrink: 0;
 				display: flex;
 				align-items: center;
-				justify-content: space - between;
+				justify-content: space-between;
+				gap: .5rem;
 				padding:.5rem 1rem;
 				background: var(--surf);
 				border-bottom: 1px solid var(--brd);
@@ -16024,6 +16025,38 @@ document.addEventListener('keydown', function(e) {
 				background: var(--surf2);
 				border-radius: 2px;
 			}
+			.lang-bar{
+				display: flex;
+				gap: 5px;
+				align-items: center;
+				flex-wrap: wrap;
+				justify-content: center;
+			}
+			.lang-btn{
+				background: none;
+				border: 2px solid transparent;
+				border-radius: 4px;
+				padding: 1px 2px;
+				cursor: pointer;
+				opacity: 0.5;
+				transition: opacity 0.15s, border-color 0.15s;
+				display: flex;
+				align-items: center;
+				line-height: 0;
+			}
+			.lang-btn:hover{
+				opacity: 0.85;
+			}
+			.lang-btn.active{
+				opacity: 1;
+				border-color: var(--acc);
+			}
+			.flag-svg{
+				width: 28px;
+				height: 18px;
+				border-radius: 2px;
+				display: block;
+			}
 			.sw-red{
 				background: #f44336;
 			}
@@ -16228,100 +16261,56 @@ document.addEventListener('keydown', function(e) {
 		<header>
 			<div class="logo">
 				<div class="logo-cube">
-					<span class="sw-red">
-					</span>
-					<span class="sw-blue">
-					</span>
-					<span class="sw-green">
-					</span>
-					<span class="sw-yellow">
-					</span>
+					<span class="sw-red"></span>
+					<span class="sw-blue"></span>
+					<span class="sw-green"></span>
+					<span class="sw-yellow"></span>
 				</div>
-				Cubo di Rubik 3D
+				<span data-i18n="title">Rubik's Cube 3D</span>
 			</div>
+			<div class="lang-bar" id="lang-bar"></div>
 			<div class="stats">
 				<div class="stat">
-					<div class="sv" id="mc">
-						0
-					</div>
-					<div class="sl">
-						Mosse
-					</div>
+					<div class="sv" id="mc">0</div>
+					<div class="sl" data-i18n="moves">Moves</div>
 				</div>
 				<div class="stat">
-					<div class="sv" id="tm">
-						00:00
-					</div>
-					<div class="sl">
-						Tempo
-					</div>
+					<div class="sv" id="tm">00:00</div>
+					<div class="sl" data-i18n="time">Time</div>
 				</div>
 				<div class="stat">
-					<div class="sv" id="br">
-						--:--
-					</div>
-					<div class="sl">
-						Record
-					</div>
+					<div class="sv" id="br">--:--</div>
+					<div class="sl" data-i18n="record">Record</div>
 				</div>
 			</div>
 		</header>
 		<main>
 			<aside class="sb desktop-sidebar">
-				<div class="pt">
-					Mosse facce
-				</div>
-				<div class="bg" id="desk-moves">
-				</div>
-				<div class="pt">
-					Rotazione vista
-				</div>
+				<div class="pt" data-i18n="faceMoves">Face Moves</div>
+				<div class="bg" id="desk-moves"></div>
+				<div class="pt" data-i18n="viewRot">View Rotation</div>
 				<div class="rot-grid">
-					<button class="btn" onclick="orbitCam('y',-1)">
-						&#9664; Sin
-					</button>
-					<button class="btn" onclick="orbitCam('y', 1)">
-						Dex &#9654;
-					</button>
-					<button class="btn" onclick="orbitCam('x', 1)">
-						&#9650; Su
-					</button>
-					<button class="btn" onclick="orbitCam('x',-1)">
-						&#9660; Giu
-					</button>
-					<button class="btn" onclick="orbitCam('z', 1)">
-						&#8635; CW
-					</button>
-					<button class="btn" onclick="orbitCam('z',-1)">
-						&#8634; CCW
-					</button>
+					<button class="btn" onclick="orbitCam('y',-1)">&#9664; <span data-i18n="left">Left</span></button>
+					<button class="btn" onclick="orbitCam('y', 1)"><span data-i18n="right">Right</span> &#9654;</button>
+					<button class="btn" onclick="orbitCam('x', 1)">&#9650; <span data-i18n="up">Up</span></button>
+					<button class="btn" onclick="orbitCam('x',-1)">&#9660; <span data-i18n="down">Down</span></button>
+					<button class="btn" onclick="orbitCam('z', 1)">&#8635; CW</button>
+					<button class="btn" onclick="orbitCam('z',-1)">&#8634; CCW</button>
 				</div>
-				<div class="pt">
-					Azioni
+				<div class="pt" data-i18n="actions">Actions</div>
 				</div>
 				<div class="bg">
-					<button class="btn f p" onclick="scramble()">
-						&#128256; Mescola
-					</button>
-					<button class="btn f d" onclick="resetCube()">
-						&#8634; Reset
-					</button>
-					<button class="btn f" id="undo-btn-desk" onclick="undo()">
-						&#8617; Annulla
-					</button>
+					<button class="btn f p" onclick="scramble()">&#128256; <span data-i18n="scramble">Scramble</span></button>
+					<button class="btn f d" onclick="resetCube()">&#8634; <span data-i18n="reset">Reset</span></button>
+					<button class="btn f" id="undo-btn-desk" onclick="undo()">&#8617; <span data-i18n="undo">Undo</span></button>
 				</div>
-				<div class="pt">
-					Cronologia
-				</div>
-				<div class="mw" id="mlog-d">
-				</div>
+				<div class="pt" data-i18n="history">History</div>
+				<div class="mw" id="mlog-d"></div>
 			</aside>
 			<div class="scene">
 				<canvas id="c">
 				</canvas>
-				<div class="hint">
-					Trascina per ruotare &middot; Scroll per zoom
-				</div>
+				<div class="hint" data-i18n="hint">Drag to rotate &middot; Scroll to zoom</div>
 				<div class="rot-overlay">
 					<button class="rot-btn rot-up" onclick="orbitCam('x', 1)">
 						&#9650;
@@ -16344,100 +16333,33 @@ document.addEventListener('keydown', function(e) {
 				</div>
 			</div>
 			<aside class="sb r desktop-sidebar">
-				<div class="pt">
-					Algoritmi
-				</div>
-				<div class="al-d" id="al-d">
-				</div>
-				<div class="pt">
-					Tastiera
-				</div>
+				<div class="pt" data-i18n="algorithms">Algorithms</div>
+				<div class="al-d" id="al-d"></div>
+				<div class="pt" data-i18n="keyboard">Keyboard</div>
 				<div class="km">
-					<div class="kr">
-						<span class="kk">
-							U D R L F B
-						</span>
-						mossa CW
-					</div>
-					<div class="kr">
-						<span class="kk">
-							Shift
-						</span>
-						+tasto inv.
-					</div>
-					<div class="kr">
-						<span class="kk">
-							Frecce
-						</span>
-						ruota vista
-					</div>
-					<div class="kr">
-						<span class="kk">
-							Z
-						</span>
-						annulla
-					</div>
-					<div class="kr">
-						<span class="kk">
-							S
-						</span>
-						mescola
-					</div>
-					<div class="kr">
-						<span class="kk">
-							Enter
-						</span>
-						reset
-					</div>
+					<div class="kr"><span class="kk">U D R L F B</span> <span data-i18n="kbCW">CW move</span></div>
+					<div class="kr"><span class="kk">Shift</span> <span data-i18n="kbInv">+ key inv.</span></div>
+					<div class="kr"><span class="kk"><span data-i18n="kbArrows">Arrows</span></span> <span data-i18n="kbRotate">rotate view</span></div>
+					<div class="kr"><span class="kk">Z</span> <span data-i18n="kbUndo">undo</span></div>
+					<div class="kr"><span class="kk">S</span> <span data-i18n="kbScramble">scramble</span></div>
+					<div class="kr"><span class="kk">Enter</span> <span data-i18n="kbReset">reset</span></div>
 				</div>
-				<div class="pt">
-					Colori
-				</div>
+				<div class="pt" data-i18n="colors">Colors</div>
 				<div class="leg">
-					<div class="lr">
-						<span class="sw sw-white">
-						</span>
-						Bianco &mdash; U
-					</div>
-					<div class="lr">
-						<span class="sw sw-yellow">
-						</span>
-						Giallo &mdash; D
-					</div>
-					<div class="lr">
-						<span class="sw sw-red">
-						</span>
-						Rosso &mdash; F
-					</div>
-					<div class="lr">
-						<span class="sw sw-orange">
-						</span>
-						Arancio &mdash; B
-					</div>
-					<div class="lr">
-						<span class="sw sw-blue">
-						</span>
-						Blu &mdash; R
-					</div>
-					<div class="lr">
-						<span class="sw sw-green">
-						</span>
-						Verde &mdash; L
-					</div>
+					<div class="lr"><span class="sw sw-white"></span> <span data-i18n="colWhite">White</span> &mdash; U</div>
+					<div class="lr"><span class="sw sw-yellow"></span> <span data-i18n="colYellow">Yellow</span> &mdash; D</div>
+					<div class="lr"><span class="sw sw-red"></span> <span data-i18n="colRed">Red</span> &mdash; F</div>
+					<div class="lr"><span class="sw sw-orange"></span> <span data-i18n="colOrange">Orange</span> &mdash; B</div>
+					<div class="lr"><span class="sw sw-blue"></span> <span data-i18n="colBlue">Blue</span> &mdash; R</div>
+					<div class="lr"><span class="sw sw-green"></span> <span data-i18n="colGreen">Green</span> &mdash; L</div>
 				</div>
 			</aside>
 		</main>
 		<div class="bottom">
 			<div class="quick-row">
-				<button class="qbtn p" onclick="scramble()">
-					&#128256; Mescola
-				</button>
-				<button class="qbtn" id="undo-btn-mobile" onclick="undo()">
-					&#8617; Annulla
-				</button>
-				<button class="qbtn d" onclick="resetCube()">
-					&#8634; Reset
-				</button>
+				<button class="qbtn p" onclick="scramble()">&#128256; <span data-i18n="scramble">Scramble</span></button>
+				<button class="qbtn" id="undo-btn-mobile" onclick="undo()">&#8617; <span data-i18n="undo">Undo</span></button>
+				<button class="qbtn d" onclick="resetCube()">&#8634; <span data-i18n="reset">Reset</span></button>
 			</div>
 			<div class="moves-scroll" id="moves-scroll">
 			</div>
@@ -16452,63 +16374,261 @@ document.addEventListener('keydown', function(e) {
 		<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()">
 		</div>
 		<div class="drawer" id="drawer">
-			<div class="drawer-handle">
-			</div>
-			<h3>
-				Algoritmi
-			</h3>
-			<div class="al" id="al-m">
-			</div>
-			<h3>
-				Colori
-			</h3>
+			<div class="drawer-handle"></div>
+			<h3 data-i18n="algorithms">Algorithms</h3>
+			<div class="al" id="al-m"></div>
+			<h3 data-i18n="colors">Colors</h3>
 			<div class="leg leg-mb">
-				<div class="lr">
-					<span class="sw sw-white">
-					</span>
-					Bianco &mdash; U (alto)
-				</div>
-				<div class="lr">
-					<span class="sw sw-yellow">
-					</span>
-					Giallo &mdash; D (basso)
-				</div>
-				<div class="lr">
-					<span class="sw sw-red">
-					</span>
-					Rosso &mdash; F (fronte)
-				</div>
-				<div class="lr">
-					<span class="sw sw-orange">
-					</span>
-					Arancio &mdash; B (retro)
-				</div>
-				<div class="lr">
-					<span class="sw sw-blue">
-					</span>
-					Blu &mdash; R (destra)
-				</div>
-				<div class="lr">
-					<span class="sw sw-green">
-					</span>
-					Verde &mdash; L (sinistra)
-				</div>
+				<div class="lr"><span class="sw sw-white"></span> <span data-i18n="colWhiteLong">White &mdash; U (top)</span></div>
+				<div class="lr"><span class="sw sw-yellow"></span> <span data-i18n="colYellowLong">Yellow &mdash; D (bottom)</span></div>
+				<div class="lr"><span class="sw sw-red"></span> <span data-i18n="colRedLong">Red &mdash; F (front)</span></div>
+				<div class="lr"><span class="sw sw-orange"></span> <span data-i18n="colOrangeLong">Orange &mdash; B (back)</span></div>
+				<div class="lr"><span class="sw sw-blue"></span> <span data-i18n="colBlueLong">Blue &mdash; R (right)</span></div>
+				<div class="lr"><span class="sw sw-green"></span> <span data-i18n="colGreenLong">Green &mdash; L (left)</span></div>
 			</div>
 		</div>
 		<div class="banner" id="ban">
-			<h2>
-				&#127881; Risolto!
-			</h2>
-			<p id="banmsg">
-			</p>
-			<button class="bbtn" onclick="document.getElementById('ban').classList.remove('show');scramble()">
-				Nuova sfida
-			</button>
+			<h2 data-i18n="solved">&#127881; Solved!</h2>
+			<p id="banmsg"></p>
+			<button class="bbtn" onclick="document.getElementById('ban').classList.remove('show');scramble()" data-i18n="newChallenge">New Challenge</button>
 		</div>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
 		<\/script>
 		<script>
 			const canvas = document.getElementById('c');
+			const FLAGS_SVG = [
+				'<svg class="flag-svg" viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#s)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>', // UK
+				//'<svg class="flag-svg" viewBox="0 0 7410 3900"><rect width="7410" height="3900" fill="#b22234"/><path d="M0 300h7410M0 900h7410M0 1500h7410M0 2100h7410M0 2700h7410M0 3300h7410" stroke="#fff" stroke-width="300"/><rect width="2964" height="2100" fill="#3c3b6e"/><path d="M247 175l247 759-646-469h798l-646 469z" fill="#fff" transform="scale(.2)"/></svg>', // US
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>', // IT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg>', // FR
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#c60b1e"/><rect width="3" height="1" y="0.5" fill="#ffc400"/></svg>', // ES
+				'<svg class="flag-svg" viewBox="0 0 5 3"><rect width="5" height="3"/><rect width="5" height="2" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg>', // DE
+				'<svg class="flag-svg" viewBox="0 0 600 400"><rect width="240" height="400" fill="#006600"/><rect x="240" width="360" height="400" fill="#ff0000"/></svg>', // PT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002b7f"/><rect width="1" height="2" x="1" fill="#fcd116"/><rect width="1" height="2" x="2" fill="#ce1126"/></svg>', // RO
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>', // UA
+				'<svg class="flag-svg" viewBox="0 0 27 18"><rect width="27" height="18" fill="#005bae"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#005bae"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>', // GR
+				//'<svg class="flag-svg" viewBox="0 0 1 1"><rect width="0.5" height="1" fill="#ffe000"/><rect x="0.5" width="0.5" height="1" fill="#fff"/></svg>', // VA
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#800000"/><path d="M0.5,0.5 L2.5,0.5 L2.5,1.5 L0.5,1.5 Z" fill="none" stroke="#FFD700" stroke-width="0.1"/><text x="1.5" y="1.15" font-family="serif" font-weight="bold" font-size="0.4" fill="#FFD700" text-anchor="middle">SPQR</text></svg>', // ROMA
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#de2110"/><path d="M.5 1.1l.3-.9.3.9-1-.6h1z" fill="#ffde00" transform="matrix(.4 0 0 .4 .1 .1)"/></svg>', // CN
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>' // JP
+			];
+
+			const LANG_CODES = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
+			const TRANSLATIONS = {
+				en: {
+					title:"Rubik's Cube 3D", moves:"Moves", time:"Time", record:"Record",
+					faceMoves:"Face Moves", viewRot:"View Rotation", actions:"Actions",
+					left:"Left", right:"Right", up:"Up", down:"Down",
+					scramble:"Scramble", reset:"Reset", undo:"Undo", history:"History",
+					algorithms:"Algorithms", keyboard:"Keyboard", colors:"Colors",
+					kbCW:"CW move", kbInv:"+ key inv.", kbArrows:"Arrows", kbRotate:"rotate view",
+					kbUndo:"undo", kbScramble:"scramble", kbReset:"reset",
+					colWhite:"White", colYellow:"Yellow", colRed:"Red", colOrange:"Orange", colBlue:"Blue", colGreen:"Green",
+					colWhiteLong:"White \\u2014 U (top)", colYellowLong:"Yellow \\u2014 D (bottom)",
+					colRedLong:"Red \\u2014 F (front)", colOrangeLong:"Orange \\u2014 B (back)",
+					colBlueLong:"Blue \\u2014 R (right)", colGreenLong:"Green \\u2014 L (left)",
+					hint:"Drag to rotate \\u00b7 Scroll to zoom",
+					solved:"\\u{1F389} Solved!", newChallenge:"New Challenge", movesSuffix:"moves"
+				},
+				it: {
+					title:"Cubo di Rubik 3D", moves:"Mosse", time:"Tempo", record:"Record",
+					faceMoves:"Mosse facce", viewRot:"Rotazione vista", actions:"Azioni",
+					left:"Sin", right:"Dex", up:"Su", down:"Giu",
+					scramble:"Mescola", reset:"Reset", undo:"Annulla", history:"Cronologia",
+					algorithms:"Algoritmi", keyboard:"Tastiera", colors:"Colori",
+					kbCW:"mossa CW", kbInv:"+tasto inv.", kbArrows:"Frecce", kbRotate:"ruota vista",
+					kbUndo:"annulla", kbScramble:"mescola", kbReset:"reset",
+					colWhite:"Bianco", colYellow:"Giallo", colRed:"Rosso", colOrange:"Arancio", colBlue:"Blu", colGreen:"Verde",
+					colWhiteLong:"Bianco \\u2014 U (alto)", colYellowLong:"Giallo \\u2014 D (basso)",
+					colRedLong:"Rosso \\u2014 F (fronte)", colOrangeLong:"Arancio \\u2014 B (retro)",
+					colBlueLong:"Blu \\u2014 R (destra)", colGreenLong:"Verde \\u2014 L (sinistra)",
+					hint:"Trascina per ruotare \\u00b7 Scroll per zoom",
+					solved:"\\u{1F389} Risolto!", newChallenge:"Nuova sfida", movesSuffix:"mosse"
+				},
+				fr: {
+					title:"Cube Rubik 3D", moves:"Coups", time:"Temps", record:"Record",
+					faceMoves:"Mouvements", viewRot:"Rotation vue", actions:"Actions",
+					left:"Gauche", right:"Droite", up:"Haut", down:"Bas",
+					scramble:"M\\xe9langer", reset:"R\\xe9init.", undo:"Annuler", history:"Historique",
+					algorithms:"Algorithmes", keyboard:"Clavier", colors:"Couleurs",
+					kbCW:"coup CW", kbInv:"+touche inv.", kbArrows:"Fl\\xe8ches", kbRotate:"tourner vue",
+					kbUndo:"annuler", kbScramble:"m\\xe9langer", kbReset:"r\\xe9init.",
+					colWhite:"Blanc", colYellow:"Jaune", colRed:"Rouge", colOrange:"Orange", colBlue:"Bleu", colGreen:"Vert",
+					colWhiteLong:"Blanc \\u2014 U (haut)", colYellowLong:"Jaune \\u2014 D (bas)",
+					colRedLong:"Rouge \\u2014 F (devant)", colOrangeLong:"Orange \\u2014 B (derri\\xe8re)",
+					colBlueLong:"Bleu \\u2014 R (droite)", colGreenLong:"Vert \\u2014 L (gauche)",
+					hint:"Glisser pour tourner \\u00b7 Molette pour zoomer",
+					solved:"\\u{1F389} R\\xe9solu!", newChallenge:"Nouveau d\\xe9fi", movesSuffix:"coups"
+				},
+				es: {
+					title:"Cubo de Rubik 3D", moves:"Movim.", time:"Tiempo", record:"R\\xe9cord",
+					faceMoves:"Movimientos", viewRot:"Rotar vista", actions:"Acciones",
+					left:"Izq.", right:"Der.", up:"Arriba", down:"Abajo",
+					scramble:"Mezclar", reset:"Reset", undo:"Deshacer", history:"Historial",
+					algorithms:"Algoritmos", keyboard:"Teclado", colors:"Colores",
+					kbCW:"mov. CW", kbInv:"+tecla inv.", kbArrows:"Flechas", kbRotate:"rotar vista",
+					kbUndo:"deshacer", kbScramble:"mezclar", kbReset:"reset",
+					colWhite:"Blanco", colYellow:"Amarillo", colRed:"Rojo", colOrange:"Naranja", colBlue:"Azul", colGreen:"Verde",
+					colWhiteLong:"Blanco \\u2014 U (arriba)", colYellowLong:"Amarillo \\u2014 D (abajo)",
+					colRedLong:"Rojo \\u2014 F (frente)", colOrangeLong:"Naranja \\u2014 B (atr\\xe1s)",
+					colBlueLong:"Azul \\u2014 R (derecha)", colGreenLong:"Verde \\u2014 L (izquierda)",
+					hint:"Arrastrar para rotar \\u00b7 Scroll para zoom",
+					solved:"\\u{1F389} \\xa1Resuelto!", newChallenge:"Nuevo reto", movesSuffix:"movimientos"
+				},
+				de: {
+					title:"Rubik's W\\xfcrfel 3D", moves:"Z\\xfcge", time:"Zeit", record:"Rekord",
+					faceMoves:"Fl\\xe4chenz\\xfcge", viewRot:"Ansicht drehen", actions:"Aktionen",
+					left:"Links", right:"Rechts", up:"Oben", down:"Unten",
+					scramble:"Mischen", reset:"Reset", undo:"R\\xfcckg.", history:"Verlauf",
+					algorithms:"Algorithmen", keyboard:"Tastatur", colors:"Farben",
+					kbCW:"Zug CW", kbInv:"+Taste inv.", kbArrows:"Pfeile", kbRotate:"Ansicht drehen",
+					kbUndo:"r\\xfcckg.", kbScramble:"mischen", kbReset:"reset",
+					colWhite:"Wei\\xdf", colYellow:"Gelb", colRed:"Rot", colOrange:"Orange", colBlue:"Blau", colGreen:"Gr\\xfcn",
+					colWhiteLong:"Wei\\xdf \\u2014 U (oben)", colYellowLong:"Gelb \\u2014 D (unten)",
+					colRedLong:"Rot \\u2014 F (vorne)", colOrangeLong:"Orange \\u2014 B (hinten)",
+					colBlueLong:"Blau \\u2014 R (rechts)", colGreenLong:"Gr\\xfcn \\u2014 L (links)",
+					hint:"Ziehen zum Drehen \\u00b7 Scrollen zum Zoomen",
+					solved:"\\u{1F389} Gel\\xf6st!", newChallenge:"Neue Herausforderung", movesSuffix:"Z\\xfcge"
+				},
+				pt: {
+					title:"Cubo de Rubik 3D", moves:"Movim.", time:"Tempo", record:"Recorde",
+					faceMoves:"Movimentos", viewRot:"Rodar vista", actions:"A\\xe7\\xf5es",
+					left:"Esq.", right:"Dir.", up:"Cima", down:"Baixo",
+					scramble:"Baralhar", reset:"Reset", undo:"Desfazer", history:"Hist\\xf3rico",
+					algorithms:"Algoritmos", keyboard:"Teclado", colors:"Cores",
+					kbCW:"mov. CW", kbInv:"+tecla inv.", kbArrows:"Setas", kbRotate:"rodar vista",
+					kbUndo:"desfazer", kbScramble:"baralhar", kbReset:"reset",
+					colWhite:"Branco", colYellow:"Amarelo", colRed:"Vermelho", colOrange:"Laranja", colBlue:"Azul", colGreen:"Verde",
+					colWhiteLong:"Branco \\u2014 U (topo)", colYellowLong:"Amarelo \\u2014 D (baixo)",
+					colRedLong:"Vermelho \\u2014 F (frente)", colOrangeLong:"Laranja \\u2014 B (tr\\xe1s)",
+					colBlueLong:"Azul \\u2014 R (direita)", colGreenLong:"Verde \\u2014 L (esquerda)",
+					hint:"Arrastar para rodar \\u00b7 Scroll para zoom",
+					solved:"\\u{1F389} Resolvido!", newChallenge:"Novo desafio", movesSuffix:"movimentos"
+				},
+				ro: {
+					title:"Cubul Rubik 3D", moves:"Mi\\u0219c\\u0103ri", time:"Timp", record:"Record",
+					faceMoves:"Mi\\u0219c\\u0103ri fe\\u021be", viewRot:"Rotire vedere", actions:"Ac\\u021biuni",
+					left:"St\\xe2nga", right:"Dreapta", up:"Sus", down:"Jos",
+					scramble:"Amestecare", reset:"Reset", undo:"Anulare", history:"Istoric",
+					algorithms:"Algoritmi", keyboard:"Tastatur\\u0103", colors:"Culori",
+					kbCW:"mi\\u0219care CW", kbInv:"+tast\\u0103 inv.", kbArrows:"S\\u0103ge\\u021bi", kbRotate:"rotire vedere",
+					kbUndo:"anulare", kbScramble:"amestecare", kbReset:"reset",
+					colWhite:"Alb", colYellow:"Galben", colRed:"Ro\\u0219u", colOrange:"Portocaliu", colBlue:"Albastru", colGreen:"Verde",
+					colWhiteLong:"Alb \\u2014 U (sus)", colYellowLong:"Galben \\u2014 D (jos)",
+					colRedLong:"Ro\\u0219u \\u2014 F (fa\\u021b\\u0103)", colOrangeLong:"Portocaliu \\u2014 B (spate)",
+					colBlueLong:"Albastru \\u2014 R (dreapta)", colGreenLong:"Verde \\u2014 L (st\\xe2nga)",
+					hint:"Trage\\u021bi pentru rotire \\u00b7 Scroll pentru zoom",
+					solved:"\\u{1F389} Rezolvat!", newChallenge:"Provocare nou\\u0103", movesSuffix:"mi\\u0219c\\u0103ri"
+				},
+				uk: {
+					title:"\\u041a\\u0443\\u0431 \\u0420\\u0443\\u0431\\u0456\\u043a\\u0430 3D", moves:"\\u0425\\u043e\\u0434\\u0438", time:"\\u0427\\u0430\\u0441", record:"\\u0420\\u0435\\u043a\\u043e\\u0440\\u0434",
+					faceMoves:"\\u0425\\u043e\\u0434\\u0438 \\u0433\\u0440\\u0430\\u043d\\u0435\\u0439", viewRot:"\\u041e\\u0431\\u0435\\u0440\\u0442\\u0430\\u043d\\u043d\\u044f", actions:"\\u0414\\u0456\\u0457",
+					left:"\\u041b\\u0456\\u0432\\u043e", right:"\\u041f\\u0440\\u0430\\u0432\\u043e", up:"\\u0412\\u0433\\u043e\\u0440\\u0443", down:"\\u0412\\u043d\\u0438\\u0437",
+					scramble:"\\u041f\\u0435\\u0440\\u0435\\u043c\\u0456\\u0448\\u0430\\u0442\\u0438", reset:"\\u0421\\u043a\\u0438\\u043d\\u0443\\u0442\\u0438", undo:"\\u0421\\u043a\\u0430\\u0441\\u0443\\u0432\\u0430\\u0442\\u0438", history:"\\u0406\\u0441\\u0442\\u043e\\u0440\\u0456\\u044f",
+					algorithms:"\\u0410\\u043b\\u0433\\u043e\\u0440\\u0438\\u0442\\u043c\\u0438", keyboard:"\\u041a\\u043b\\u0430\\u0432\\u0456\\u0430\\u0442\\u0443\\u0440\\u0430", colors:"\\u041a\\u043e\\u043b\\u044c\\u043e\\u0440\\u0438",
+					kbCW:"\\u0445\\u0456\\u0434 CW", kbInv:"+\\u043a\\u043b\\u0430\\u0432. \\u0456\\u043d\\u0432.", kbArrows:"\\u0421\\u0442\\u0440\\u0456\\u043b\\u043a\\u0438", kbRotate:"\\u043e\\u0431\\u0435\\u0440\\u0442\\u0430\\u043d\\u043d\\u044f",
+					kbUndo:"\\u0441\\u043a\\u0430\\u0441\\u0443\\u0432\\u0430\\u0442\\u0438", kbScramble:"\\u043f\\u0435\\u0440\\u0435\\u043c\\u0456\\u0448\\u0430\\u0442\\u0438", kbReset:"\\u0441\\u043a\\u0438\\u043d\\u0443\\u0442\\u0438",
+					colWhite:"\\u0411\\u0456\\u043b\\u0438\\u0439", colYellow:"\\u0416\\u043e\\u0432\\u0442\\u0438\\u0439", colRed:"\\u0427\\u0435\\u0440\\u0432\\u043e\\u043d\\u0438\\u0439", colOrange:"\\u041f\\u043e\\u043c\\u0430\\u0440\\u0430\\u043d\\u0447\\u0435\\u0432\\u0438\\u0439", colBlue:"\\u0421\\u0438\\u043d\\u0456\\u0439", colGreen:"\\u0417\\u0435\\u043b\\u0435\\u043d\\u0438\\u0439",
+					colWhiteLong:"\\u0411\\u0456\\u043b\\u0438\\u0439 \\u2014 U (\\u0432\\u0435\\u0440\\u0445)", colYellowLong:"\\u0416\\u043e\\u0432\\u0442\\u0438\\u0439 \\u2014 D (\\u043d\\u0438\\u0437)",
+					colRedLong:"\\u0427\\u0435\\u0440\\u0432\\u043e\\u043d\\u0438\\u0439 \\u2014 F (\\u043f\\u0435\\u0440\\u0435\\u0434)", colOrangeLong:"\\u041f\\u043e\\u043c\\u0430\\u0440\\u0430\\u043d\\u0447\\u0435\\u0432\\u0438\\u0439 \\u2014 B (\\u0437\\u0430\\u0434)",
+					colBlueLong:"\\u0421\\u0438\\u043d\\u0456\\u0439 \\u2014 R (\\u043f\\u0440\\u0430\\u0432\\u043e)", colGreenLong:"\\u0417\\u0435\\u043b\\u0435\\u043d\\u0438\\u0439 \\u2014 L (\\u043b\\u0456\\u0432\\u043e)",
+					hint:"\\u041f\\u0435\\u0440\\u0435\\u0442\\u044f\\u0433\\u043d\\u0456\\u0442\\u044c \\u0434\\u043b\\u044f \\u043e\\u0431\\u0435\\u0440\\u0442\\u0430\\u043d\\u043d\\u044f \\u00b7 \\u041f\\u0440\\u043e\\u043a\\u0440\\u0443\\u0442\\u043a\\u0430 \\u0434\\u043b\\u044f \\u0437\\u0443\\u043c\\u0443",
+					solved:"\\u{1F389} \\u0412\\u0438\\u0440\\u0456\\u0448\\u0435\\u043d\\u043e!", newChallenge:"\\u041d\\u043e\\u0432\\u0435 \\u0437\\u0430\\u0432\\u0434\\u0430\\u043d\\u043d\\u044f", movesSuffix:"\\u0445\\u043e\\u0434\\u0456\\u0432"
+				},
+				el: {
+					title:"\\u039a\\u03cd\\u03b2\\u03bf\\u03c2 Rubik 3D", moves:"\\u039a\\u03b9\\u03bd\\u03ae\\u03c3\\u03b5\\u03b9\\u03c2", time:"\\u03a7\\u03c1\\u03cc\\u03bd\\u03bf\\u03c2", record:"\\u03a1\\u03b5\\u03ba\\u03cc\\u03c1",
+					faceMoves:"\\u039a\\u03b9\\u03bd\\u03ae\\u03c3\\u03b5\\u03b9\\u03c2", viewRot:"\\u03a3\\u03c4\\u03c1\\u03bf\\u03c6\\u03ae", actions:"\\u0395\\u03bd\\u03ad\\u03c1\\u03b3\\u03b5\\u03b9\\u03b5\\u03c2",
+					left:"\\u0391\\u03c1\\u03b9\\u03c3\\u03c4.", right:"\\u0394\\u03b5\\u03be\\u03b9\\u03ac", up:"\\u0391\\u03bd\\u03c9", down:"\\u039a\\u03ac\\u03c4\\u03c9",
+					scramble:"\\u0391\\u03bd\\u03b1\\u03ba\\u03ac\\u03c4\\u03b5\\u03c5\\u03c3\\u03b7", reset:"\\u0395\\u03c0\\u03b1\\u03bd\\u03b1\\u03c6.", undo:"\\u0391\\u03bd\\u03b1\\u03af\\u03c1\\u03b5\\u03c3\\u03b7", history:"\\u0399\\u03c3\\u03c4\\u03bf\\u03c1\\u03b9\\u03ba\\u03cc",
+					algorithms:"\\u0391\\u03bb\\u03b3\\u03cc\\u03c1\\u03b9\\u03b8\\u03bc\\u03bf\\u03b9", keyboard:"\\u03a0\\u03bb\\u03b7\\u03ba\\u03c4\\u03c1\\u03bf\\u03bb\\u03cc\\u03b3\\u03b9\\u03bf", colors:"\\u03a7\\u03c1\\u03ce\\u03bc\\u03b1\\u03c4\\u03b1",
+					kbCW:"\\u03ba\\u03af\\u03bd. CW", kbInv:"+\\u03c0\\u03bb\\u03ae\\u03ba\\u03c4\\u03c1\\u03bf \\u03b1\\u03bd.", kbArrows:"\\u0392\\u03ad\\u03bb\\u03b7", kbRotate:"\\u03c3\\u03c4\\u03c1\\u03bf\\u03c6\\u03ae",
+					kbUndo:"\\u03b1\\u03bd\\u03b1\\u03af\\u03c1\\u03b5\\u03c3\\u03b7", kbScramble:"\\u03b1\\u03bd\\u03b1\\u03ba\\u03ac\\u03c4\\u03b5\\u03c5\\u03c3\\u03b7", kbReset:"\\u03b5\\u03c0\\u03b1\\u03bd\\u03b1\\u03c6.",
+					colWhite:"\\u039b\\u03b5\\u03c5\\u03ba\\u03cc", colYellow:"\\u039a\\u03af\\u03c4\\u03c1\\u03b9\\u03bd\\u03bf", colRed:"\\u039a\\u03cc\\u03ba\\u03ba\\u03b9\\u03bd\\u03bf", colOrange:"\\u03a0\\u03bf\\u03c1\\u03c4\\u03bf\\u03ba\\u03b1\\u03bb\\u03af", colBlue:"\\u039c\\u03c0\\u03bb\\u03b5", colGreen:"\\u03a0\\u03c1\\u03ac\\u03c3\\u03b9\\u03bd\\u03bf",
+					colWhiteLong:"\\u039b\\u03b5\\u03c5\\u03ba\\u03cc \\u2014 U (\\u03ac\\u03bd\\u03c9)", colYellowLong:"\\u039a\\u03af\\u03c4\\u03c1\\u03b9\\u03bd\\u03bf \\u2014 D (\\u03ba\\u03ac\\u03c4\\u03c9)",
+					colRedLong:"\\u039a\\u03cc\\u03ba\\u03ba\\u03b9\\u03bd\\u03bf \\u2014 F (\\u03bc\\u03c0\\u03c1\\u03bf\\u03c3\\u03c4\\u03ac)", colOrangeLong:"\\u03a0\\u03bf\\u03c1\\u03c4\\u03bf\\u03ba\\u03b1\\u03bb\\u03af \\u2014 B (\\u03c0\\u03af\\u03c3\\u03c9)",
+					colBlueLong:"\\u039c\\u03c0\\u03bb\\u03b5 \\u2014 R (\\u03b4\\u03b5\\u03be\\u03b9\\u03ac)", colGreenLong:"\\u03a0\\u03c1\\u03ac\\u03c3\\u03b9\\u03bd\\u03bf \\u2014 L (\\u03b1\\u03c1\\u03b9\\u03c3\\u03c4\\u03b5\\u03c1\\u03ac)",
+					hint:"\\u03a3\\u03cd\\u03c1\\u03b5 \\u03b3\\u03b9\\u03b1 \\u03c3\\u03c4\\u03c1\\u03bf\\u03c6\\u03ae \\u00b7 Scroll \\u03b3\\u03b9\\u03b1 \\u03b6\\u03bf\\u03cd\\u03bc",
+					solved:"\\u{1F389} \\u0395\\u03c0\\u03b9\\u03bb\\u03cd\\u03b8\\u03b7\\u03ba\\u03b5!", newChallenge:"\\u039d\\u03ad\\u03b1 \\u03c0\\u03c1\\u03cc\\u03ba\\u03bb\\u03b7\\u03c3\\u03b7", movesSuffix:"\\u03ba\\u03b9\\u03bd\\u03ae\\u03c3\\u03b5\\u03b9\\u03c2"
+				},
+				la: {
+					title:"Cubus Rubici 3D", moves:"Motus", time:"Tempus", record:"Recordum",
+					faceMoves:"Motus faciei", viewRot:"Rotatio visus", actions:"Actiones",
+					left:"Sinister", right:"Dexter", up:"Sursum", down:"Deorsum",
+					scramble:"Miscere", reset:"Renovare", undo:"Revocare", history:"Historia",
+					algorithms:"Algorithmi", keyboard:"Claviatura", colors:"Colores",
+					kbCW:"motus CW", kbInv:"+clavis inv.", kbArrows:"Sagittae", kbRotate:"rotare visum",
+					kbUndo:"revocare", kbScramble:"miscere", kbReset:"renovare",
+					colWhite:"Album", colYellow:"Flavum", colRed:"Rubrum", colOrange:"Aurantiacum", colBlue:"Caeruleum", colGreen:"Viride",
+					colWhiteLong:"Album \\u2014 U (supra)", colYellowLong:"Flavum \\u2014 D (infra)",
+					colRedLong:"Rubrum \\u2014 F (ante)", colOrangeLong:"Aurantiacum \\u2014 B (post)",
+					colBlueLong:"Caeruleum \\u2014 R (dextra)", colGreenLong:"Viride \\u2014 L (sinistra)",
+					hint:"Trahe ad rotandum \\u00b7 Volve ad zoomare",
+					solved:"\\u{1F389} Solutum!", newChallenge:"Novum certamen", movesSuffix:"motus"
+				},
+				zh: {
+					title:"\\u9b54\\u65b9\\u9b543D", moves:"\\u6b65\\u6570", time:"\\u65f6\\u95f4", record:"\\u8bb0\\u5f55",
+					faceMoves:"\\u9762\\u64cd\\u4f5c", viewRot:"\\u8c03\\u6574\\u89c6\\u89d2", actions:"\\u64cd\\u4f5c",
+					left:"\\u5de6", right:"\\u53f3", up:"\\u4e0a", down:"\\u4e0b",
+					scramble:"\\u6253\\u4e71", reset:"\\u91cd\\u7f6e", undo:"\\u64a4\\u9500", history:"\\u5386\\u53f2",
+					algorithms:"\\u516c\\u5f0f", keyboard:"\\u952e\\u76d8", colors:"\\u989c\\u8272",
+					kbCW:"CW\\u8f6c\\u52a8", kbInv:"+\\u9006\\u8f6c", kbArrows:"\\u65b9\\u5411\\u952e", kbRotate:"\\u65cb\\u8f6c\\u89c6\\u89d2",
+					kbUndo:"\\u64a4\\u9500", kbScramble:"\\u6253\\u4e71", kbReset:"\\u91cd\\u7f6e",
+					colWhite:"\\u767d", colYellow:"\\u9ec4", colRed:"\\u7ea2", colOrange:"\\u6a59", colBlue:"\\u84dd", colGreen:"\\u7eff",
+					colWhiteLong:"\\u767d \\u2014 U (\\u4e0a)", colYellowLong:"\\u9ec4 \\u2014 D (\\u4e0b)",
+					colRedLong:"\\u7ea2 \\u2014 F (\\u524d)", colOrangeLong:"\\u6a59 \\u2014 B (\\u540e)",
+					colBlueLong:"\\u84dd \\u2014 R (\\u53f3)", colGreenLong:"\\u7eff \\u2014 L (\\u5de6)",
+					hint:"\\u62d6\\u52a8\\u65cb\\u8f6c \\u00b7 \\u6eda\\u8f6e\\u7f29\\u653e",
+					solved:"\\u{1F389} \\u5b8c\\u6210\\uff01", newChallenge:"\\u65b0\\u6311\\u6218", movesSuffix:"\\u6b65"
+				},
+				ja: {
+					title:"\\u30eb\\u30fc\\u30d3\\u30c3\\u30af\\u30ad\\u30e5\\u30fc\\u30d6 3D", moves:"\\u624b\\u6570", time:"\\u6642\\u9593", record:"\\u8a18\\u9332",
+					faceMoves:"\\u9762\\u306e\\u5c55\\u958b", viewRot:"\\u8996\\u70b9\\u56de\\u8ee2", actions:"\\u64cd\\u4f5c",
+					left:"\\u5de6", right:"\\u53f3", up:"\\u4e0a", down:"\\u4e0b",
+					scramble:"\\u30b7\\u30e3\\u30c3\\u30d5\\u30eb", reset:"\\u30ea\\u30bb\\u30c3\\u30c8", undo:"\\u623b\\u3059", history:"\\u5c65\\u6b74",
+					algorithms:"\\u30a2\\u30eb\\u30b4\\u30ea\\u30ba\\u30e0", keyboard:"\\u30ad\\u30fc\\u30dc\\u30fc\\u30c9", colors:"\\u8272",
+					kbCW:"CW\\u56de\\u8ee2", kbInv:"+\\u9006\\u56de\\u8ee2", kbArrows:"\\u77e2\\u5370\\u30ad\\u30fc", kbRotate:"\\u8996\\u70b9\\u56de\\u8ee2",
+					kbUndo:"\\u623b\\u3059", kbScramble:"\\u30b7\\u30e3\\u30c3\\u30d5\\u30eb", kbReset:"\\u30ea\\u30bb\\u30c3\\u30c8",
+					colWhite:"\\u767d", colYellow:"\\u9ec4", colRed:"\\u8d64", colOrange:"\\u6a59", colBlue:"\\u9752", colGreen:"\\u7dd1",
+					colWhiteLong:"\\u767d \\u2014 U (\\u4e0a)", colYellowLong:"\\u9ec4 \\u2014 D (\\u4e0b)",
+					colRedLong:"\\u8d64 \\u2014 F (\\u524d)", colOrangeLong:"\\u6a59 \\u2014 B (\\u5f8c)",
+					colBlueLong:"\\u9752 \\u2014 R (\\u53f3)", colGreenLong:"\\u7dd1 \\u2014 L (\\u5de6)",
+					hint:"\\u30c9\\u30e9\\u30c3\\u30b0\\u3067\\u56de\\u8ee2 \\u00b7 \\u30b9\\u30af\\u30ed\\u30fc\\u30eb\\u3067\\u30ba\\u30fc\\u30e0",
+					solved:"\\u{1F389} \\u5b8c\\u6210\\uff01", newChallenge:"\\u65b0\\u3057\\u3044\\u6311\\u6226", movesSuffix:"\\u624b"
+				}
+			};
+
+			let currentLang = 'en';
+
+			function applyLang(lang){
+				currentLang = lang;
+				const t = TRANSLATIONS[lang] || TRANSLATIONS['en'];
+				document.querySelectorAll('[data-i18n]').forEach(el => {
+					const key = el.getAttribute('data-i18n');
+					if(t[key] !== undefined){
+						el.textContent = t[key];
+					}
+				});
+				document.querySelectorAll('.lang-btn').forEach(btn => {
+					btn.classList.toggle('active', btn.dataset.lang === lang);
+				});
+				document.documentElement.lang = lang === 'uk' ? 'uk' : lang === 'el' ? 'el' : lang === 'zh' ? 'zh' : lang === 'ja' ? 'ja' : lang;
+			}
+
+			(function buildLangBar(){
+				const bar = document.getElementById('lang-bar');
+				if(!bar) return;
+				FLAGS_SVG.forEach((svg, i) => {
+					const code = LANG_CODES[i];
+					const btn = document.createElement('button');
+					btn.className = 'lang-btn' + (code === 'en' ? ' active' : '');
+					btn.dataset.lang = code;
+					btn.innerHTML = svg;
+					btn.title = code.toUpperCase();
+					btn.onclick = () => applyLang(code);
+					bar.appendChild(btn);
+				});
+			})();
+
 			if(canvas){
 				const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
 				renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -16542,7 +16662,7 @@ document.addEventListener('keydown', function(e) {
 				const planeGeo = new THREE.PlaneGeometry(SSIZE, SSIZE);
 				let cubies = [];
 
-        function newMat(hex){
+				function newMat(hex){
 					return new THREE.MeshLambertMaterial({
 						color: hex, side: THREE.FrontSide
 					});
@@ -16638,10 +16758,10 @@ document.addEventListener('keydown', function(e) {
 				}
 				const MOVE_DEF = {U:{axis: 'y', coord: 1, sign: 1}, D:{axis: 'y', coord: -1, sign: -1}, R:{axis: 'x', coord: 1, sign: -1}, L:{axis: 'x', coord: -1, sign: 1}, F:{axis: 'z', coord: 1, sign: -1}, B:{axis: 'z', coord: -1, sign: 1}, M:{axis: 'x', coord: 0, sign: 1}, E:{axis: 'y', coord: 0, sign: -1}, S:{axis: 'z', coord: 0, sign: -1},};
 
-        const ADUR = 160;
+				const ADUR = 160;
 				let animQ = [], isCubeAnim = false, isCamAnim = false;
 
-        function eio(t){
+				function eio(t){
 					return t <.5 ? 2*t*t: -1 +(4 - 2*t)*t;
 				}
 
@@ -16684,7 +16804,9 @@ document.addEventListener('keydown', function(e) {
 					}
 					requestAnimationFrame(step);
 				}
+
 				let moveCount = 0, history = [], startTime = null, timerInt = null, bestMs = null;
+
 				function setText(id, text){
 					const el = document.getElementById(id);
 					if(el){
@@ -16707,13 +16829,13 @@ document.addEventListener('keydown', function(e) {
 							setText('mc', moveCount);
 							addTag(inv ? move + "'" : move);
 							if(moveCount === 1 &&!timerInt){
-                startTimer();
-              }
+								startTimer();
+							}
 							updateUndoBtn();
 							checkSolved();
 						}
 						pump();
-          });
+					});
 				}
 
 				function mv(notation, logical = true){
@@ -16744,8 +16866,8 @@ document.addEventListener('keydown', function(e) {
 						const planes = cubies [i].g.children.filter(ch =>  ch instanceof THREE.Mesh && ch.geometry === planeGeo);
 						planes.forEach((p, j)  =>  {
 							if(s.stickers [j] !== undefined){
-                p.material.color.setHex(s.stickers [j]);
-              }
+								p.material.color.setHex(s.stickers [j]);
+							}
 						});
 					});
 				}
@@ -16770,9 +16892,9 @@ document.addEventListener('keydown', function(e) {
 					updateUndoBtn();
 				}
 
-        const FACE_AXES ={U: new THREE.Vector3(0, 1, 0), D: new THREE.Vector3(0, -1, 0), R: new THREE.Vector3(1, 0, 0), L: new THREE.Vector3(-1, 0, 0), F: new THREE.Vector3(0, 0, 1), B: new THREE.Vector3(0, 0, -1),};
+				const FACE_AXES ={U: new THREE.Vector3(0, 1, 0), D: new THREE.Vector3(0, -1, 0), R: new THREE.Vector3(1, 0, 0), L: new THREE.Vector3(-1, 0, 0), F: new THREE.Vector3(0, 0, 1), B: new THREE.Vector3(0, 0, -1),};
 
-        function closestFace(dir){
+				function closestFace(dir){
 					let best = null, bestDot = -Infinity;
 					for(const [name, ax] of Object.entries(FACE_AXES)){
 						const d = dir.dot(ax);
@@ -16824,13 +16946,14 @@ document.addEventListener('keydown', function(e) {
 					requestAnimationFrame(step);
 				}
 
-        const REMAPPABLE = ['U', 'D', 'R', 'L', 'F', 'B'];
+				const REMAPPABLE = ['U', 'D', 'R', 'L', 'F', 'B'];
 				const ALL_PAIRS = [ ['U', "U'"], ['D', "D'"], ['R', "R'"], ['L', "L'"], ['F', "F'"], ['B', "B'"], ['M', "M'"], ['E', "E'"]];
 
-        function refreshMoveBtns(){
+				function refreshMoveBtns(){
 				}
 
-        const scrollEl = document.getElementById('moves-scroll');
+				const scrollEl = document.getElementById('moves-scroll');
+
 				if(scrollEl){
 					ALL_PAIRS.forEach(( [cw, ccw])  =>  {
 						const base = cw.replace("'", "");
@@ -16941,7 +17064,7 @@ document.addEventListener('keydown', function(e) {
 						bestMs = e;
 						setText('br', fmt(e));
 					}
-					setText('banmsg', moveCount + ' moves' + (e > 0 ? ' \\xb7 ' + fmt(e): ''));
+					setText('banmsg', moveCount + ' ' + (TRANSLATIONS[currentLang] || TRANSLATIONS['en']).movesSuffix + (e > 0 ? ' \\xb7 ' + fmt(e): ''));
 					if(ban){
 						ban.classList.add('show');
 					}
@@ -17121,8 +17244,8 @@ document.addEventListener('keydown', function(e) {
 				},{passive: true});
 				document.addEventListener('keydown', e => {
 					if(e.target.tagName === 'INPUT'){
-            return;
-          }
+						return;
+					}
 					const k = e.key.toUpperCase();
 					const faceKeys = {U: 'U', D: 'D', R: 'R', L: 'L', F: 'F', B: 'B'};
 					if(faceKeys [k]){
@@ -17170,6 +17293,7 @@ document.addEventListener('keydown', function(e) {
 				updateUndoBtn();
 				loop();
 			}
+			applyLang('en');
 		<\/script>
 	<script>
 document.addEventListener('keydown', function(e) {
