@@ -23310,12 +23310,10 @@ document.addEventListener('keydown', function(e) {
 			<div class="v5-body" id="v5-body">
 				<div class="v5-panel">
 					<output id="v5_hex">#FFFFFF</output>
-
 					<div class="v5-wheel-wrap">
 						<canvas id="v5_wheel" width="220" height="220"></canvas>
 						<div class="v5-dot" id="v5_dot"></div>
 					</div>
-
 					<div class="v5-sliders">
 						<div class="v5-row">
 							<div class="v5-track" style="background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red); border-radius:50%;"></div>
@@ -23353,7 +23351,6 @@ document.addEventListener('keydown', function(e) {
 							<span class="v5-val" id="v5_vlum">255</span>
 						</div>
 					</div>
-
 					<div class="v5-footer">
 						<button class="v5-swatch-btn" onclick="v5_set(0,0,0)" style="background:#000;"></button>
 						<button class="v5-swatch-btn" onclick="v5_set(255,255,255)" style="background:#fff;"></button>
@@ -23370,159 +23367,221 @@ document.addEventListener('keydown', function(e) {
 			</div>
 			<script>
 				(function(){
-					function hslToRgb(h,s,l){
-						s/=100; l/=100;
-						const k=n=>(n+h/30)%12;
-						const a=s*Math.min(l,1-l);
-						const f=n=>l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));
-						return [Math.round(f(0)*255),Math.round(f(8)*255),Math.round(f(4)*255)];
-					}
-					function rgbToHsl(r,g,b){
-						r/=255;g/=255;b/=255;
-						const max=Math.max(r,g,b),min=Math.min(r,g,b);
-						const l=(max+min)/2, d=max-min;
-						let h=0,s=0;
-						if(d){
-							s=d/(1-Math.abs(2*l-1));
-							switch(max){
-								case r: h=((g-b)/d+6)%6; break;
-								case g: h=(b-r)/d+2; break;
-								case b: h=(r-g)/d+4; break;
-							}
-							h*=60;
-						}
-						return [Math.round(h),Math.round(s*100),Math.round(l*100)];
-					}
-					function toHex(r,g,b){
-						return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('').toUpperCase();
+					function hslToRgb(h, s, l){
+						s /= 100;
+						l /= 100;
+						const k = n => (n + h / 30)%12;
+						const a = s * Math.min(l, 1 - l);
+						const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+						return [Math.round(f(0)*255), Math.round(f(8)*255), Math.round(f(4)*255)];
 					}
 
-					const canvas=document.getElementById('v5_wheel');
-					const ctx=canvas.getContext('2d');
-					const CX=110,CY=110,R=108;
+					function rgbToHsl(r, g, b){
+						r /= 255;
+						g /= 255;
+						b /= 255;
+						const max = Math.max(r, g, b);
+						const min = Math.min(r, g, b);
+						const l = (max + min)/2;
+						const d = max - min;
+						let h = 0, s = 0;
+						if(d){
+							s = d/(1 - Math.abs(2*l - 1));
+							switch(max){
+								case r: h = ((g - b)/d + 6)%6;
+								break;
+								case g: h = (b - r)/d + 2;
+								break;
+								case b: h = (r - g)/d + 4;
+								break;
+							}
+							h *= 60;
+						}
+						return [Math.round(h), Math.round(s*100), Math.round(l*100)];
+					}
+
+					function toHex(r, g, b){
+						return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase();
+					}
+
+					const canvas = document.getElementById('v5_wheel');
+					const ctx = canvas.getContext('2d');
+					const CX = 110, CY = 110, R = 108;
 
 					function drawWheel(){
-						for(let a=0;a<360;a++){
-							const s=(a-0.5)*Math.PI/180, e=(a+0.5)*Math.PI/180;
-							const gr=ctx.createRadialGradient(CX,CY,0,CX,CY,R);
-							gr.addColorStop(0,'white');
-							gr.addColorStop(1,\`hsl(\${a},100%,50%)\`);
+						for(let a = 0; a < 360; a++){
+							const s = (a - 0.5)*Math.PI/180;
+							const e = (a + 0.5)*Math.PI/180;
+							const gr = ctx.createRadialGradient(CX, CY, 0, CX, CY, R);
+							gr.addColorStop(0, 'white');
+							gr.addColorStop(1, \`hsl(\${a},100%,50%)\`);
 							ctx.beginPath();
-							ctx.moveTo(CX,CY);
-							ctx.arc(CX,CY,R,s,e);
+							ctx.moveTo(CX, CY);
+							ctx.arc(CX, CY, R, s, e);
 							ctx.closePath();
-							ctx.fillStyle=gr;
+							ctx.fillStyle = gr;
 							ctx.fill();
 						}
 						ctx.beginPath();
-						ctx.arc(CX,CY,R,0,2*Math.PI);
-						ctx.strokeStyle='rgba(0,0,0,0.15)';
-						ctx.lineWidth=1;
+						ctx.arc(CX, CY, R, 0, 2*Math.PI);
+						ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+						ctx.lineWidth = 1;
 						ctx.stroke();
 					}
 
-					function placeDot(h,s,l,hex){
-						const chroma=(s/100)*(1-Math.abs(2*l/100-1));
-						const r=chroma*(R-14);
-						const ang=h*Math.PI/180;
-						const dot=document.getElementById('v5_dot');
-						dot.style.left=(CX+r*Math.cos(ang))+'px';
-						dot.style.top=(CY+r*Math.sin(ang))+'px';
-						dot.style.background=hex;
+					function placeDot(h, s, l, hex){
+						const chroma = (s/100)*(1 - Math.abs(2*l/100 - 1));
+						const r = chroma*(R - 14);
+						const ang = h*Math.PI/180;
+						const dot = document.getElementById('v5_dot');
+						dot.style.left = (CX + r*Math.cos(ang)) + 'px';
+						dot.style.top = (CY + r*Math.sin(ang)) + 'px';
+						dot.style.background = hex;
 					}
 
-					function v5_apply(rv,gv,bv,source){
-						rv=Math.max(0,Math.min(255,Math.round(rv)));
-						gv=Math.max(0,Math.min(255,Math.round(gv)));
-						bv=Math.max(0,Math.min(255,Math.round(bv)));
-						const hex=toHex(rv,gv,bv);
-						const [h,s,l]=rgbToHsl(rv,gv,bv);
-						const lum=Math.round((Math.max(rv,gv,bv)+Math.min(rv,gv,bv))/2);
-						document.getElementById('v5_hex').textContent=hex;
-						document.getElementById('v5-body').style.backgroundColor=hex;
-						if(source!=='h'){document.getElementById('v5_h').value=h; document.getElementById('v5_vh').textContent=h+'°';}
-						if(source!=='s'){document.getElementById('v5_s').value=s; document.getElementById('v5_vs').textContent=s+'%';}
-						if(source!=='l'){document.getElementById('v5_l').value=l; document.getElementById('v5_vl').textContent=l+'%';}
-						if(source!=='r'){document.getElementById('v5_r').value=rv; document.getElementById('v5_vr').textContent=rv;}
-						if(source!=='g'){document.getElementById('v5_g').value=gv; document.getElementById('v5_vg').textContent=gv;}
-						if(source!=='b'){document.getElementById('v5_b').value=bv; document.getElementById('v5_vb').textContent=bv;}
-						if(source!=='lum'){document.getElementById('v5_lum').value=lum; document.getElementById('v5_vlum').textContent=lum;}
-						placeDot(h,s,l,hex);
+					function v5_apply(rv, gv, bv, source){
+						rv = Math.max(0, Math.min(255, Math.round(rv)));
+						gv = Math.max(0, Math.min(255, Math.round(gv)));
+						bv = Math.max(0, Math.min(255, Math.round(bv)));
+						const hex = toHex(rv, gv, bv);
+						const [h, s, l] = rgbToHsl(rv, gv, bv);
+						const lum = Math.round((Math.max(rv, gv, bv) + Math.min(rv, gv, bv))/2);
+						document.getElementById('v5_hex').textContent = hex;
+						document.getElementById('v5-body').style.backgroundColor = hex;
+						if(source !== 'h'){
+							document.getElementById('v5_h').value = h;
+							document.getElementById('v5_vh').textContent = h + '°';
+						}
+						if(source !== 's'){
+							document.getElementById('v5_s').value = s;
+							document.getElementById('v5_vs').textContent = s + '%';
+						}
+						if(source !== 'l'){
+							document.getElementById('v5_l').value = l;
+							document.getElementById('v5_vl').textContent = l + '%';
+						}
+						if(source !== 'r'){
+							document.getElementById('v5_r').value = rv;
+							document.getElementById('v5_vr').textContent = rv;
+						}
+						if(source !== 'g'){
+							document.getElementById('v5_g').value = gv;
+							document.getElementById('v5_vg').textContent = gv;
+						}
+						if(source !== 'b'){
+							document.getElementById('v5_b').value = bv;
+							document.getElementById('v5_vb').textContent = bv;
+						}
+						if(source !== 'lum'){
+							document.getElementById('v5_lum').value = lum;
+							document.getElementById('v5_vlum').textContent = lum;
+						}
+						placeDot(h, s, l, hex);
 					}
 
-					window.v5_set=function(r,g,b){ v5_apply(r,g,b,''); };
-					window.v5_random=function(){ v5_apply(Math.random()*255,Math.random()*255,Math.random()*255,''); };
+					window.v5_set = function(r, g, b){
+						v5_apply(r, g, b, '');
+					};
 
-					document.getElementById('v5_h').addEventListener('input',function(){
-						document.getElementById('v5_vh').textContent=this.value+'°';
-						const [rv,gv,bv]=hslToRgb(+this.value,+document.getElementById('v5_s').value,+document.getElementById('v5_l').value);
-						v5_apply(rv,gv,bv,'h');
+					window.v5_random = function(){
+						v5_apply(Math.random()*255, Math.random()*255, Math.random()*255, '');
+					};
+
+					document.getElementById('v5_h').addEventListener('input', function(){
+						document.getElementById('v5_vh').textContent = this.value + '°';
+						const [rv, gv, bv] = hslToRgb(
+							+this.value,
+							+document.getElementById('v5_s').value,
+							+document.getElementById('v5_l').value
+						);
+						v5_apply(rv, gv, bv, 'h');
 					});
-					document.getElementById('v5_s').addEventListener('input',function(){
-						document.getElementById('v5_vs').textContent=this.value+'%';
-						const [rv,gv,bv]=hslToRgb(+document.getElementById('v5_h').value,+this.value,+document.getElementById('v5_l').value);
-						v5_apply(rv,gv,bv,'s');
+
+					document.getElementById('v5_s').addEventListener('input', function(){
+						document.getElementById('v5_vs').textContent = this.value + '%';
+						const [rv, gv, bv] = hslToRgb(
+							+document.getElementById('v5_h').value,
+							+this.value,
+							+document.getElementById('v5_l').value
+						);
+						v5_apply(rv, gv, bv, 's');
 					});
-					document.getElementById('v5_l').addEventListener('input',function(){
-						document.getElementById('v5_vl').textContent=this.value+'%';
-						const [rv,gv,bv]=hslToRgb(+document.getElementById('v5_h').value,+document.getElementById('v5_s').value,+this.value);
-						v5_apply(rv,gv,bv,'l');
+
+					document.getElementById('v5_l').addEventListener('input', function(){
+						document.getElementById('v5_vl').textContent = this.value + '%';
+						const [rv, gv, bv] = hslToRgb(
+							+document.getElementById('v5_h').value,
+							+document.getElementById('v5_s').value,
+							+this.value
+						);
+						v5_apply(rv, gv, bv, 'l');
 					});
-					document.getElementById('v5_r').addEventListener('input',function(){
-						const rv=+this.value;
-						document.getElementById('v5_vr').textContent=rv;
-						v5_apply(rv,+document.getElementById('v5_g').value,+document.getElementById('v5_b').value,'r');
+
+					document.getElementById('v5_r').addEventListener('input', function(){
+						const rv = +this.value;
+						document.getElementById('v5_vr').textContent = rv;
+						v5_apply(rv, +document.getElementById('v5_g').value, +document.getElementById('v5_b').value, 'r');
 					});
-					document.getElementById('v5_g').addEventListener('input',function(){
-						const gv=+this.value;
-						document.getElementById('v5_vg').textContent=gv;
-						v5_apply(+document.getElementById('v5_r').value,gv,+document.getElementById('v5_b').value,'g');
+
+					document.getElementById('v5_g').addEventListener('input', function(){
+						const gv = +this.value;
+						document.getElementById('v5_vg').textContent = gv;
+						v5_apply(+document.getElementById('v5_r').value, gv, +document.getElementById('v5_b').value, 'g');
 					});
-					document.getElementById('v5_b').addEventListener('input',function(){
-						const bv=+this.value;
-						document.getElementById('v5_vb').textContent=bv;
-						v5_apply(+document.getElementById('v5_r').value,+document.getElementById('v5_g').value,bv,'b');
+
+					document.getElementById('v5_b').addEventListener('input', function(){
+						const bv = +this.value;
+						document.getElementById('v5_vb').textContent = bv;
+						v5_apply(+document.getElementById('v5_r').value, +document.getElementById('v5_g').value, bv, 'b');
 					});
-					document.getElementById('v5_lum').addEventListener('input',function(){
-						const lum=+this.value;
-						document.getElementById('v5_vlum').textContent=lum;
-						const rv=+document.getElementById('v5_r').value;
-						const gv=+document.getElementById('v5_g').value;
-						const bv=+document.getElementById('v5_b').value;
-						const cur=Math.round((Math.max(rv,gv,bv)+Math.min(rv,gv,bv))/2);
-						const delta=lum-cur;
-						v5_apply(rv+delta,gv+delta,bv+delta,'lum');
+
+					document.getElementById('v5_lum').addEventListener('input', function(){
+						const lum = +this.value;
+						document.getElementById('v5_vlum').textContent = lum;
+						const rv = +document.getElementById('v5_r').value;
+						const gv = +document.getElementById('v5_g').value;
+						const bv = +document.getElementById('v5_b').value;
+						const cur = Math.round((Math.max(rv, gv, bv) + Math.min(rv, gv, bv))/2);
+						const delta = lum - cur;
+						v5_apply(rv + delta, gv + delta, bv + delta, 'lum');
 					});
 
 					canvas.addEventListener('mousedown', startDrag);
-					canvas.addEventListener('touchstart', startDrag, {passive:true});
+					canvas.addEventListener('touchstart', startDrag, {passive: true});
 
 					function pickFromCanvas(e){
-						const rect=canvas.getBoundingClientRect();
-						const cx=(e.touches?e.touches[0].clientX:e.clientX)-rect.left;
-						const cy=(e.touches?e.touches[0].clientY:e.clientY)-rect.top;
-						const scaleX=220/rect.width, scaleY=220/rect.height;
-						const px=cx*scaleX, py=cy*scaleY;
-						const imgData=ctx.getImageData(Math.round(px),Math.round(py),1,1).data;
-						v5_apply(imgData[0],imgData[1],imgData[2],'');
+						const rect = canvas.getBoundingClientRect();
+						const cx = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+						const cy = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+						const scaleX = 220/rect.width;
+						const scaleY = 220/rect.height;
+						const px = cx*scaleX;
+						const py = cy*scaleY;
+						const imgData = ctx.getImageData(Math.round(px), Math.round(py), 1, 1).data;
+						v5_apply(imgData[0], imgData[1], imgData[2], '');
 					}
 
 					function startDrag(e){
 						pickFromCanvas(e);
-						const mm=ev=>pickFromCanvas(ev);
-						const up=()=>{window.removeEventListener('mousemove',mm); window.removeEventListener('mouseup',up); window.removeEventListener('touchmove',mm); window.removeEventListener('touchend',up);};
-						window.addEventListener('mousemove',mm);
-						window.addEventListener('mouseup',up);
-						window.addEventListener('touchmove',mm);
-						window.addEventListener('touchend',up);
+						const mm = ev => pickFromCanvas(ev);
+						const up = () => {
+							window.removeEventListener('mousemove', mm);
+							window.removeEventListener('mouseup', up);
+							window.removeEventListener('touchmove', mm);
+							window.removeEventListener('touchend', up);
+						};
+						window.addEventListener('mousemove', mm);
+						window.addEventListener('mouseup', up);
+						window.addEventListener('touchmove', mm);
+						window.addEventListener('touchend', up);
 					}
 
-					document.getElementById('v5_hex').addEventListener('click',function(){
-						navigator.clipboard.writeText(this.textContent).catch(()=>{});
+					document.getElementById('v5_hex').addEventListener('click', function(){
+						navigator.clipboard.writeText(this.textContent).catch(() => {});
 					});
 
 					drawWheel();
-					v5_apply(255,255,255,'');
+					v5_apply(255, 255, 255, '');
 				})();
 			<\/script>
 		</div>
