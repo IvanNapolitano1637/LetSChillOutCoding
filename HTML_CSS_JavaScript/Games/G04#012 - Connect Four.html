@@ -11,6 +11,7 @@
 				transition: background 0.5s;
 				padding: 10px;
 				-webkit-tap-highlight-color: transparent;
+				background: #f0f0f0;
 			}
 			canvas{
 				cursor: pointer;
@@ -19,6 +20,9 @@
 				box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 				max-width: 100%;
 				height: auto;
+			}
+			#gameArea{
+				display: none;
 			}
 			button, select{
 				margin: 5px;
@@ -56,11 +60,7 @@
 				display: inline-block;
 				flex-shrink: 0;
 			}
-			#starter{
-				flex-basis: 100%;
-				margin-top: 15px;
-				display: inline-block;
-			}
+
 			@media (max-width: 600px){
 				.controls button{
 					flex: 0 1 45%;
@@ -131,9 +131,157 @@
 			#helpCloseBtn:hover{
 				color: #000;
 			}
+			#setupOverlay{
+				display: none;
+				position: fixed;
+				inset: 0;
+				background: rgba(0,0,0,0.65);
+				z-index: 2000;
+				justify-content: center;
+				align-items: center;
+			}
+			#setupOverlay.visible{
+				display: flex;
+			}
+			#setupBox{
+				background: #fff;
+				border-radius: 16px;
+				box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+				padding: 28px 32px 24px;
+				max-width: 420px;
+				width: 92%;
+				max-height: 90vh;
+				overflow-y: auto;
+				text-align: center;
+			}
+			#setupBox h2{
+				margin: 0 0 22px;
+				font-size: 1.4em;
+				color: #0033FF;
+			}
+			.setup-section{
+				margin-bottom: 16px;
+				text-align: left;
+			}
+			.setup-heading{
+				display: block;
+				font-weight: bold;
+				margin-bottom: 8px;
+				color: #333;
+			}
+			.setup-btn-group{
+				display: flex;
+				flex-wrap: wrap;
+				gap: 8px;
+			}
+			.setup-btn{
+				flex: 1 1 auto;
+				padding: 9px 14px;
+				border: 2px solid #ccc;
+				border-radius: 8px;
+				background: #f5f5f5;
+				cursor: pointer;
+				font-size: 0.95em;
+				font-weight: bold;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				gap: 6px;
+			}
+			.setup-btn:hover{
+				background: #e8e8e8;
+			}
+			.setup-btn.selected{
+				border-color: #0033FF;
+				background: #dde8ff;
+			}
+			.setup-btn.color-yellow.selected{
+				border-color: #ccaa00;
+				background: #fffacc;
+			}
+			.setup-btn.color-red.selected{
+				border-color: #cc0022;
+				background: #ffe0e5;
+			}
+			.lang-grid{
+				display: grid;
+				grid-template-columns: repeat(4, 1fr);
+				gap: 6px;
+			}
+			.lang-btn{
+				padding: 6px 4px;
+				border: 2px solid #ccc;
+				border-radius: 7px;
+				background: #f5f5f5;
+				cursor: pointer;
+				font-size: 0.78em;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 3px;
+			}
+			.lang-btn:hover{
+				background: #e8e8e8;
+			}
+			.lang-btn.selected{
+				border-color: #0033FF;
+				background: #dde8ff;
+			}
+			#setupConfirmBtn{
+				margin-top: 8px;
+				padding: 12px 36px;
+				background: #0033FF;
+				color: #fff;
+				border: none;
+				border-radius: 9px;
+				font-size: 1.1em;
+				font-weight: bold;
+				cursor: pointer;
+			}
+			#setupConfirmBtn:hover{
+				background: #0026cc;
+			}
+			.disc-dot{
+				display: inline-block;
+				width: 14px;
+				height: 14px;
+				border-radius: 50%;
+				vertical-align: middle;
+			}
 		</style>
 	</head>
 	<body>
+		<div id="setupOverlay">
+			<div id="setupBox">
+				<h2 id="setupTitle">Connect Four</h2>
+				<div class="setup-section">
+					<label class="setup-heading" id="setupLangHeading">Language</label>
+					<div class="lang-grid" id="langGrid"></div>
+				</div>
+				<div class="setup-section">
+					<label class="setup-heading" id="setupDiffHeading">Difficulty</label>
+					<div class="setup-btn-group" id="diffGroup"></div>
+				</div>
+				<div class="setup-section">
+					<label class="setup-heading" id="setupStarterHeading">Who starts?</label>
+					<div class="setup-btn-group" id="starterGroup"></div>
+				</div>
+				<div class="setup-section">
+					<label class="setup-heading" id="setupColorHeading">Your colour</label>
+					<div class="setup-btn-group" id="colorGroup">
+						<button class="setup-btn color-yellow selected" id="btnYellow" onclick="selectSetupColor('yellow')">
+							<span class="disc-dot" style="background:#FFFF33;border:1px solid #aaa;"></span>
+							<span id="setupYellowLabel">Yellow</span>
+						</button>
+						<button class="setup-btn color-red" id="btnRed" onclick="selectSetupColor('red')">
+							<span class="disc-dot" style="background:#FF0033;border:1px solid #aaa;"></span>
+							<span id="setupRedLabel">Red</span>
+						</button>
+					</div>
+				</div>
+				<button id="setupConfirmBtn" onclick="confirmSetup()">&#9654; Play</button>
+			</div>
+		</div>
 		<div id="helpOverlay" role="dialog" aria-modal="true" onclick="if(event.target===this){closeHelp();}">
 			<div id="helpBox">
 				<button id="helpCloseBtn" onclick="closeHelp()" aria-label="Close">✕</button>
@@ -141,18 +289,13 @@
 				<table id="helpTable"></table>
 			</div>
 		</div>
-		<canvas id="board">Upgrade Browser</canvas>
-		<div class="controls">
-			<button type="button" id="undoButton" onclick="undoLastMove()">Undo</button>
-			<button type="button" id="difficultyButton" onclick="cycleDifficulty()">Medium</button>
-			<button type="button" id="restartButton" onclick="refresh()">Start again!</button>
-			<button type="button" id="changeLanguageButton" onclick="cycleLanguage()">Language</button>
-			<div id="starter">
-				<label id="starterText">Starter: </label>
-				<input type="radio" id="Yellow" name="beginner" checked onclick="setStarter(false)">
-				<label id="YellowLabel" for="Yellow">Yellow</label>
-				<input type="radio" id="Red" name="beginner" checked onclick="setStarter(true)">
-				<label id="RedLabel" for="Red">Red</label>
+		<div id="gameArea">
+			<canvas id="board">Upgrade Browser</canvas>
+			<div class="controls">
+				<button type="button" id="undoButton" onclick="undoLastMove()">Undo</button>
+				<button type="button" id="difficultyButton" onclick="cycleDifficulty()">Medium</button>
+				<button type="button" id="restartButton" onclick="refresh()">Start again!</button>
+				<button type="button" id="changeLanguageButton" onclick="cycleLanguage()">Language</button>
 			</div>
 		</div>
 		<script>
@@ -189,7 +332,6 @@
 			const RESTART_LABELS = ["Start again!", "Ricomincia", "Recommencer", "¡Reiniciar!", "Erneut starten!", "Recomeçar", "Începe din nou", "Почати заново", "Ξεκινήστε ξανά", "Iterum incipere", "重新开始", "再スタート"];
 			const LANGUAGES_LABELS = ["English", "Italiano", "Français", "Español", "Deutsch", "Português", "Română", "Українська", "Ελληνικά", "Latine", "中文", "日本語"];
 			const UNDO_LABELS = ["Undo", "Annulla", "Annuler", "Anula", "Abbrechen", "Desfazer", "Anulează", "Скасувати", "Αναίρεση", "Annula", "撤销", "元に戻す"];
-			const BEGINNING_LABELS = ["Starter: ", "Inizia: ", "Commencer: ", "Comenzar: ", "Anfang: ", "Começar: ", "Începe :", "Почати: ", "Αρχή: ", "Incipit: ", "开始: ", "開始: "];
 			const YELLOW_LABEL = ["Yellow", "Giallo", "Jaune", "Amarillo", "Gelb", "Amarelo", "Galben", "Жовтий", "Κίτρινο", "Flavus", "黄色", "黄色"];
 			const RED_LABEL = ["Red", "Rosso", "Rouge", "Rojo", "Rot", "Vermelho", "Roșu", "Червоний", "Κόкκινο", "Ruber", "红色", "赤"];
 			const WINNING_MESSAGE = ["The winner is: ", "Vince: ", "Le gagnant est: ", "El ganador es: ", "Der Gewinner ist: ", "O vencedor è: ", "Câștigătorul este: ", "Переможець: ", "Ο νικητής è: ", "Victor est: ", "获胜者是: ", "勝者は: "];
@@ -228,8 +370,7 @@
 				canvas = document.getElementById("board");
 				ctx = canvas.getContext("2d");
 				canvas.addEventListener("click", select);
-				updateLabels();
-				drawUniverse();
+				openSetupPopup();
 			};
 
 			function playClackSound(){
@@ -249,13 +390,6 @@
 				}catch(e){}
 			}
 
-			function setStarter(isYellow){
-				if(numberOfMoves === 0){
-					moveYellow = isYellow;
-					humanIsYellow = isYellow;
-				}
-			}
-
 			function drawCircle(row, column, color){
 				ctx.fillStyle = color;
 				ctx.beginPath();
@@ -271,8 +405,6 @@
 				winningCells = [];
 				numberOfMoves = 0;
 				goOn = true;
-				moveYellow = document.getElementById("Yellow").checked;
-				humanIsYellow = moveYellow;
 				canvas.width = COLUMN_NUMBER*DIAMETER + GRID_THICKNESS*(COLUMN_NUMBER + 1);
 				canvas.height = ROW_NUMBER*DIAMETER + GRID_THICKNESS*(ROW_NUMBER + 1);
 				ctx.fillStyle = BLUE_COLOR;
@@ -282,7 +414,6 @@
 						drawCircle(r, c, WHITE);
 					}
 				}
-				document.getElementById('starter').style.visibility = "visible";
 				if(numberOfMoves === 0 && moveYellow !== humanIsYellow){
 					setTimeout(computerMove, 600);
 				}
@@ -574,7 +705,6 @@
 					playClackSound();
 					moves.push({r: row, c: column });
 					numberOfMoves++;
-					document.getElementById('starter').style.visibility = "hidden";
 					let win = check(row, column);
 					if(win){
 						goOn = false;
@@ -640,9 +770,6 @@
 				document.title = TITLES[languageIndex];
 				document.getElementById("restartButton").textContent = RESTART_LABELS[languageIndex];
 				document.getElementById("undoButton").textContent = UNDO_LABELS[languageIndex];
-				document.getElementById("starterText").textContent = BEGINNING_LABELS[languageIndex];
-				document.getElementById("YellowLabel").textContent = YELLOW_LABEL[languageIndex];
-				document.getElementById("RedLabel").textContent = RED_LABEL[languageIndex];
 				document.getElementById("changeLanguageButton").innerHTML = FLAGS_SVG[languageIndex] + " " + LANGUAGES_LABELS[languageIndex];
 				const diffTexts = [EASY_LABELS, MEDIUM_LABELS, HARD_LABELS, EXPERT_LABELS];
 				document.getElementById("difficultyButton").textContent = diffTexts[difficultyIndex][languageIndex];
@@ -662,13 +789,11 @@
 						goOn = true;
 					}
 				}
-				if(numberOfMoves === 0){
-					document.getElementById('starter').style.visibility = "visible";
-				}
+
 			}
 
 			function refresh(){
-				drawUniverse();
+				openSetupPopup();
 			}
 
 			function openHelp(){
@@ -718,6 +843,110 @@
 					}
 				}
 			});
+
+			const SETUP_LANG_HEADING = ["Language","Lingua","Langue","Idioma","Sprache","Idioma","Limbă","Мова","Γλώσσα","Lingua","语言","言語"];
+			const SETUP_DIFF_HEADING = ["Difficulty","Difficoltà","Difficulté","Dificultad","Schwierigkeit","Dificuldade","Dificultate","Складність","Δυσκολία","Difficultas","难度","難易度"];
+			const SETUP_STARTER_HEADING = ["Who starts?","Chi inizia?","Qui commence ?","¿Quién empieza?","Wer fängt an?","Quem começa?","Cine începe?","Хто починає?","Ποιος αρχίζει;","Quis incipit?","谁先走?","誰が始める?"];
+			const SETUP_COLOR_HEADING = ["Your colour","Il tuo colore","Votre couleur","Tu color","Deine Farbe","A sua cor","Culoarea ta","Твій колір","Το χρώμα σου","Color tuus","你的颜色","あなたの色"];
+			const SETUP_HUMAN_LABEL = ["Me","Io","Moi","Yo","Ich","Eu","Eu","Я","Εγώ","Ego","我","私"];
+			const SETUP_MACHINE_LABEL = ["Computer","Computer","Ordinateur","Ordenador","Computer","Computador","Calculator","Комп'ютер","Υπολογιστής","Computatrum","电脑","コンピュータ"];
+			const SETUP_PLAY_LABEL = ["▶ Play","▶ Gioca","▶ Jouer","▶ Jugar","▶ Spielen","▶ Jogar","▶ Joacă","▶ Грати","▶ Παίξε","▶ Lude","▶ 开始","▶ プレイ"];
+
+			let setupLangIndex = 0;
+			let setupDiffIndex = 1;
+			let setupHumanStarts = true;
+			let setupPlayerColor = 'yellow';
+
+			function openSetupPopup(){
+				buildSetupPopup();
+				document.getElementById("setupOverlay").classList.add("visible");
+			}
+
+			function closeSetupPopup(){
+				document.getElementById("setupOverlay").classList.remove("visible");
+			}
+
+			function buildSetupPopup(){
+				const langGrid = document.getElementById("langGrid");
+				langGrid.innerHTML = "";
+				FLAGS_SVG.forEach(function(svg, i){
+					const btn = document.createElement("button");
+					btn.className = "lang-btn" + (i === setupLangIndex ? " selected" : "");
+					btn.innerHTML = svg + "<span>" + LANGUAGES_LABELS[i] + "</span>";
+					btn.onclick = (function(idx){ return function(){ selectSetupLang(idx); }; })(i);
+					langGrid.appendChild(btn);
+				});
+				const diffLabels = [EASY_LABELS, MEDIUM_LABELS, HARD_LABELS, EXPERT_LABELS];
+				const diffGroup = document.getElementById("diffGroup");
+				diffGroup.innerHTML = "";
+				diffLabels.forEach(function(arr, i){
+					const btn = document.createElement("button");
+					btn.className = "setup-btn" + (i === setupDiffIndex ? " selected" : "");
+					btn.textContent = arr[setupLangIndex];
+					btn.onclick = (function(idx){ return function(){ selectSetupDiff(idx); }; })(i);
+					diffGroup.appendChild(btn);
+				});
+				const starterGroup = document.getElementById("starterGroup");
+				starterGroup.innerHTML = "";
+				const btnHuman = document.createElement("button");
+				btnHuman.className = "setup-btn" + (setupHumanStarts ? " selected" : "");
+				btnHuman.id = "starterHuman";
+				btnHuman.textContent = SETUP_HUMAN_LABEL[setupLangIndex];
+				btnHuman.onclick = function(){ selectSetupStarter(true); };
+				const btnComp = document.createElement("button");
+				btnComp.className = "setup-btn" + (!setupHumanStarts ? " selected" : "");
+				btnComp.id = "starterComp";
+				btnComp.textContent = SETUP_MACHINE_LABEL[setupLangIndex];
+				btnComp.onclick = function(){ selectSetupStarter(false); };
+				starterGroup.appendChild(btnHuman);
+				starterGroup.appendChild(btnComp);
+				document.getElementById("setupYellowLabel").textContent = YELLOW_LABEL[setupLangIndex];
+				document.getElementById("setupRedLabel").textContent = RED_LABEL[setupLangIndex];
+				document.getElementById("btnYellow").className = "setup-btn color-yellow" + (setupPlayerColor === 'yellow' ? " selected" : "");
+				document.getElementById("btnRed").className = "setup-btn color-red" + (setupPlayerColor === 'red' ? " selected" : "");
+				document.getElementById("setupTitle").textContent = TITLES[setupLangIndex];
+				document.getElementById("setupLangHeading").textContent = SETUP_LANG_HEADING[setupLangIndex];
+				document.getElementById("setupDiffHeading").textContent = SETUP_DIFF_HEADING[setupLangIndex];
+				document.getElementById("setupStarterHeading").textContent = SETUP_STARTER_HEADING[setupLangIndex];
+				document.getElementById("setupColorHeading").textContent = SETUP_COLOR_HEADING[setupLangIndex];
+				document.getElementById("setupConfirmBtn").textContent = SETUP_PLAY_LABEL[setupLangIndex];
+			}
+
+			function selectSetupLang(i){
+				setupLangIndex = i;
+				buildSetupPopup();
+			}
+
+			function selectSetupDiff(i){
+				setupDiffIndex = i;
+				document.querySelectorAll("#diffGroup .setup-btn").forEach(function(b, j){
+					b.classList.toggle("selected", j === i);
+				});
+			}
+
+			function selectSetupStarter(humanFirst){
+				setupHumanStarts = humanFirst;
+				document.getElementById("starterHuman").classList.toggle("selected", humanFirst);
+				document.getElementById("starterComp").classList.toggle("selected", !humanFirst);
+			}
+
+			function selectSetupColor(color){
+				setupPlayerColor = color;
+				document.getElementById("btnYellow").classList.toggle("selected", color === 'yellow');
+				document.getElementById("btnRed").classList.toggle("selected", color === 'red');
+			}
+
+			function confirmSetup(){
+				languageIndex = setupLangIndex;
+				difficultyIndex = setupDiffIndex;
+				const playerIsYellow = (setupPlayerColor === 'yellow');
+				humanIsYellow = playerIsYellow;
+				moveYellow = setupHumanStarts ? playerIsYellow : !playerIsYellow;
+				closeSetupPopup();
+				document.getElementById("gameArea").style.display = "block";
+				updateLabels();
+				drawUniverse();
+			}
 		</script>
 	</body>
 </html>
