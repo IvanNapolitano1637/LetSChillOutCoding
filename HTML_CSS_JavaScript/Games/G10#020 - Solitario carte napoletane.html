@@ -5,25 +5,28 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Solitario carte napoletane</title>
 		<style>
+			@import url('https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cinzel:wght@400;700&display=swap');
 			:root{
-				--bg-color: #1b5e20;
-				--bg-D: #F5C842;
-				--bg-C: #4FC3F7;
-				--bg-S: #CE93D8;
-				--bg-B: #FFAB76;
+				--bg-color: #1a5c2a;
+				--bg-felt: radial-gradient(ellipse at center, #237832 0%, #1a5c2a 60%, #143f1e 100%);
+				--card-ivory: #fdf6e3;
 				--card-width: clamp(40px, 13vw, 85px);
 				--card-height: clamp(58px, 19vw, 125px);
 				--gap: clamp(2px, 1.2vw, 15px);
 				--overlap: clamp(50px, 12.5vw, 100px);
 				--font-val: clamp(9px, 3vw, 16px);
+				--suit-D: #b8860b;
+				--suit-C: #8b0000;
+				--suit-S: #1a1a6e;
+				--suit-B: #5c3a00;
 			}
 			*, *::before, *::after{
 				box-sizing: border-box;
 			}
 			body{
-				font-family: 'Arial', sans-serif;
-				background-color: var(--bg-color);
-				color: white;
+				font-family: 'IM Fell English', 'Georgia', serif;
+				background: var(--bg-felt);
+				color: #f0e6c8;
 				display: flex;
 				flex-direction: column;
 				align-items: center;
@@ -34,27 +37,37 @@
 				padding: 8px 4px;
 			}
 			h1{
-				font-size: clamp(20px, 5vw, 32px);
-				margin: 0 0 15px;
-				text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-				font-weight: 300;
-				letter-spacing: 1px;
+				font-family: 'Cinzel', 'Georgia', serif;
+				font-size: clamp(16px, 4.5vw, 28px);
+				margin: 0 0 12px;
+				text-shadow: 1px 1px 3px rgba(0,0,0,0.6), 0 0 20px rgba(255,220,100,0.2);
+				font-weight: 700;
+				letter-spacing: 2px;
+				color: #f5dfa0;
 			}
 			button{
-				padding: 10px 25px;
-				background: #ffffff;
-				color: #1b5e20;
-				border: none;
-				border-radius: 50px;
+				padding: 8px 22px;
+				background: linear-gradient(145deg, #c8a84b, #8b6914);
+				color: #fdf6e3;
+				border: 1px solid #6b4f10;
+				border-radius: 4px;
 				cursor: pointer;
-				font-weight: bold;
-				font-size: 14px;
-				margin-bottom: 25px;
-				box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-				transition: transform 0.2s, background 0.2s;
+				font-family: 'Cinzel', serif;
+				font-weight: 700;
+				font-size: 12px;
+				letter-spacing: 1px;
+				margin-bottom: 20px;
+				box-shadow: 0 3px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+				transition: transform 0.15s, box-shadow 0.15s;
+				text-transform: uppercase;
+			}
+			button:hover{
+				transform: translateY(-1px);
+				box-shadow: 0 5px 12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2);
 			}
 			button:active{
-				transform: scale(0.95);
+				transform: scale(0.96) translateY(1px);
+				box-shadow: 0 2px 4px rgba(0,0,0,0.4);
 			}
 			.top-row{
 				display: flex;
@@ -81,68 +94,95 @@
 			.column{
 				width: var(--card-width);
 				min-height: var(--card-height);
-				border: 2px dashed rgba(255,255,255,0.15);
-				border-radius: 6px;
+				border: 1px dashed rgba(255,240,180,0.18);
+				border-radius: 4px;
 				flex-shrink: 0;
 			}
 			.waste-slot{
 				width: var(--card-width);
 				height: var(--card-height);
 				position: relative;
-				border: 2px solid rgba(255,255,255,0.2);
-				border-radius: 6px;
+				border: 1px solid rgba(255,240,180,0.2);
+				border-radius: 4px;
 				flex-shrink: 0;
 			}
 			.foundation-slot, .deck-slot{
 				width: var(--card-width);
 				height: var(--card-height);
-				border: 2px solid rgba(255,255,255,0.3);
-				border-radius: 6px;
+				border: 1px solid rgba(255,240,180,0.3);
+				border-radius: 4px;
 				display: flex;
 				justify-content: center;
 				align-items: center;
+				font-family: 'Cinzel', serif;
 				font-size: var(--font-val);
-				color: rgba(255,255,255,0.35);
+				color: rgba(255,240,180,0.4);
 				position: relative;
 				cursor: pointer;
 				flex-shrink: 0;
 				touch-action: manipulation;
+				background: rgba(0,0,0,0.12);
 			}
 			.foundation-slot.valid-target{
-				border-color: #ffeb3b;
-				box-shadow: 0 0 10px #ffeb3b88;
+				border-color: #f5dfa0;
+				box-shadow: 0 0 12px rgba(245,223,160,0.6);
 			}
 			.card{
 				width: var(--card-width);
 				height: var(--card-height);
-				background-color: white;
-				border-radius: 6px;
-				border: 1px solid #999;
-				color: #111;
+				background-color: var(--card-ivory);
+				border-radius: 4px;
+				border: 1px solid #c8a050;
 				position: relative;
-				box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+				box-shadow: 0 3px 6px rgba(0,0,0,0.45);
 				cursor: pointer;
 				flex-shrink: 0;
 				touch-action: manipulation;
+				overflow: hidden;
+				isolation: isolate;
 			}
-			.card.suit-D{
-				background-color: var(--bg-D);
-				border-color: #c8a000;
-			}
-			.card.suit-C{
-				background-color: var(--bg-C);
-				border-color: #0288d1;
-			}
-			.card.suit-S{
-				background-color: var(--bg-S);
-				border-color: #9c27b0;
-			}
-			.card.suit-B{
-				background-color: var(--bg-B);
-				border-color: #e65100;
+			.card::before{
+				content: '';
+				position: absolute;
+				inset: 3px;
+				border: 1px solid rgba(180,130,40,0.35);
+				border-radius: 2px;
+				pointer-events: none;
+				z-index: 2;
 			}
 			.column .card{
 				margin-bottom: calc(-1 * var(--overlap));
+				position: relative;
+			}
+			.column .card:nth-child(1){
+				z-index: 1;
+			}
+			.column .card:nth-child(2){
+				z-index: 2;
+			}
+			.column .card:nth-child(3){
+				z-index: 3;
+			}
+			.column .card:nth-child(4){
+				z-index: 4;
+			}
+			.column .card:nth-child(5){
+				z-index: 5;
+			}
+			.column .card:nth-child(6){
+				z-index: 6;
+			}
+			.column .card:nth-child(7){
+				z-index: 7;
+			}
+			.column .card:nth-child(8){
+				z-index: 8;
+			}
+			.column .card:nth-child(9){
+				z-index: 9;
+			}
+			.column .card:nth-child(10){
+				z-index: 10;
 			}
 			.foundation-slot .card, .waste-slot .card{
 				position: absolute;
@@ -157,48 +197,97 @@
 				pointer-events: auto;
 			}
 			.card.back{
-				background: #b71c1c linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%);
-				background-size: 10px 10px;
+				background: #8b1a1a !important;
+				border-color: #6b1010 !important;
+			}
+			.card.back::before{
+				border-color: rgba(255,200,150,0.3) !important;
+				inset: 5px;
+				background: repeating-linear-gradient(
+					45deg,
+					rgba(255,255,255,0.05) 0px,
+					rgba(255,255,255,0.05) 2px,
+					transparent 2px,
+					transparent 9px
+				),
+				repeating-linear-gradient(
+					-45deg,
+					rgba(255,255,255,0.05) 0px,
+					rgba(255,255,255,0.05) 2px,
+					transparent 2px,
+					transparent 9px
+				);
 			}
 			.card.selected{
-				box-shadow: 0 0 12px #ffeb3b;
+				box-shadow: 0 0 0 2px #f5dfa0, 0 0 16px rgba(245,223,160,0.7), 0 4px 8px rgba(0,0,0,0.5);
 				transform: translateY(-8px);
 				z-index: 1000 !important;
 			}
 			.card-val{
 				position: absolute;
-				font-weight: bold;
-				font-size: calc(var(--font-val) * 0.9);
-				color: #111;
+				font-family: 'Cinzel', serif;
 				pointer-events: none;
 				line-height: 1;
 				white-space: nowrap;
+				z-index: 3;
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				gap: 2px;
+			}
+			.card-val .num{
+				font-size: calc(var(--font-val) * 1.15);
+				font-weight: 700;
+				line-height: 1;
 			}
 			.v-tl{
-				top: 4px;
-				left: 5px;
-			}
-			.v-tr{
-				top: 4px;
-				right: 5px;
-			}
-			.v-bl{
-				bottom: 4px;
-				left: 5px;
-				transform: rotate(180deg);
+				top: 3px;
+				left: 4px;
 			}
 			.v-br{
-				bottom: 4px;
-				right: 5px;
+				bottom: 3px;
+				right: 4px;
 				transform: rotate(180deg);
 			}
-			.suit-icon{
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
-				font-size: calc(var(--font-val) * 2.5);
-				opacity: 0.8;
+			.card.suit-D{
+				background: linear-gradient(160deg, #fffde8 0%, #fff4c2 60%, #fde68a 100%);
+				border-color: #c8900a;
+			}
+			.card.suit-C{
+				background: linear-gradient(160deg, #fff5f5 0%, #ffe4e4 60%, #ffc8c8 100%);
+				border-color: #9b0000;
+			}
+			.card.suit-S{
+				background: linear-gradient(160deg, #f0f0ff 0%, #dde0ff 60%, #c0c8ff 100%);
+				border-color: #18186a;
+			}
+			.card.suit-B{
+				background: linear-gradient(160deg, #fdf5e6 0%, #f5e2c0 60%, #e8c87a 100%);
+				border-color: #6b3a00;
+			}
+			.card.suit-D::before{
+				border-color: rgba(200,144,10,0.4);
+			}
+			.card.suit-C::before{
+				border-color: rgba(155,0,0,0.3);
+			}
+			.card.suit-S::before{
+				border-color: rgba(24,24,106,0.3);
+			}
+			.card.suit-B::before{
+				border-color: rgba(107,58,0,0.35);
+			}
+			.card.suit-D .card-val{
+				color: var(--suit-D);
+			}
+			.card.suit-C .card-val{
+				color: var(--suit-C);
+			}
+			.card.suit-S .card-val{
+				color: var(--suit-S);
+			}
+			.card.suit-B .card-val{
+				color: var(--suit-B);
 			}
 			.column .card:not(:last-child){
 				cursor: default;
@@ -206,7 +295,7 @@
 			*{
 				-webkit-tap-highlight-color: transparent;
 			}
-			button:focus, .card:focus {
+			button:focus, .card:focus{
 				outline: none;
 			}
 			@media (max-width: 380px){
@@ -222,7 +311,7 @@
 				display: none;
 				position: fixed;
 				inset: 0;
-				background: rgba(0,0,0,0.65);
+				background: rgba(0,0,0,0.72);
 				z-index: 9999;
 				justify-content: center;
 				align-items: center;
@@ -231,26 +320,28 @@
 				display: flex;
 			}
 			.help-box{
-				background: #1b5e20;
-				border: 2px solid rgba(255,255,255,0.35);
-				border-radius: 14px;
+				background: linear-gradient(160deg, #1e4d28, #143518);
+				border: 1px solid rgba(245,223,160,0.4);
+				border-radius: 8px;
 				padding: 28px 32px;
 				max-width: 420px;
 				width: 90%;
-				box-shadow: 0 8px 40px rgba(0,0,0,0.5);
-				color: white;
+				box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+				color: #f0e6c8;
 			}
 			.help-box h2{
+				font-family: 'Cinzel', serif;
 				margin: 0 0 18px;
-				font-size: 18px;
-				font-weight: 600;
-				letter-spacing: 0.5px;
+				font-size: 16px;
+				font-weight: 700;
+				letter-spacing: 1px;
 				text-align: center;
+				color: #f5dfa0;
 			}
 			.help-table{
 				width: 100%;
 				border-collapse: collapse;
-				font-size: 14px;
+				font-size: 13px;
 			}
 			.help-table tr:not(:last-child) td{
 				padding-bottom: 10px;
@@ -260,24 +351,24 @@
 			}
 			.kbd{
 				display: inline-block;
-				background: rgba(255,255,255,0.15);
-				border: 1px solid rgba(255,255,255,0.4);
-				border-radius: 5px;
-				padding: 2px 8px;
+				background: rgba(255,240,180,0.12);
+				border: 1px solid rgba(255,240,180,0.35);
+				border-radius: 3px;
+				padding: 2px 7px;
 				font-family: monospace;
-				font-size: 13px;
+				font-size: 12px;
 				font-weight: bold;
 				letter-spacing: 0.5px;
+				color: #f5dfa0;
 			}
 			.help-close{
 				display: block;
 				margin: 20px auto 0;
 				padding: 8px 28px;
 			}
-			/* Keyboard hint bar */
 			.kb-hint{
 				font-size: 11px;
-				color: rgba(255,255,255,0.45);
+				color: rgba(240,230,200,0.4);
 				margin-bottom: 10px;
 				letter-spacing: 0.3px;
 			}
@@ -403,6 +494,13 @@
 					renderCardContent(card);
 				}else{
 					card.classList.add('back');
+					card.innerHTML = `<svg viewBox="0 0 60 88" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.22;pointer-events:none;">
+						<rect x="4" y="4" width="52" height="80" rx="2" fill="none" stroke="#ffccaa" stroke-width="1"/>
+						<line x1="4" y1="4" x2="56" y2="84" stroke="#ffccaa" stroke-width="0.5"/>
+						<line x1="56" y1="4" x2="4" y2="84" stroke="#ffccaa" stroke-width="0.5"/>
+						<circle cx="30" cy="44" r="10" fill="none" stroke="#ffccaa" stroke-width="1"/>
+						<circle cx="30" cy="44" r="5" fill="#ffccaa" opacity="0.4"/>
+					</svg>`;
 				}
 				card.addEventListener('click', e => {
 					e.stopPropagation();
@@ -411,15 +509,388 @@
 				container.appendChild(card);
 			}
 
+			function svgDenaro(w, h){
+				return `<svg viewBox="0 0 40 40" width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">
+					<defs>
+						<radialGradient id="dg_${w}" cx="38%" cy="35%">
+							<stop offset="0%" stop-color="#fff7a0"/>
+							<stop offset="45%" stop-color="#f0c020"/>
+							<stop offset="80%" stop-color="#c07808"/>
+							<stop offset="100%" stop-color="#7a4e00"/>
+						</radialGradient>
+					</defs>
+					<circle cx="20" cy="20" r="18" fill="url(#dg_${w})" stroke="#8a5800" stroke-width="2"/>
+					<circle cx="20" cy="20" r="13" fill="none" stroke="#8a5800" stroke-width="1.2"/>
+					<circle cx="20" cy="20" r="13" fill="none" stroke="#ffe090" stroke-width="0.6" opacity="0.7"/>
+					<polygon points="20,9 22.5,16.5 30.5,16.5 24,21 26.5,28.5 20,24 13.5,28.5 16,21 9.5,16.5 17.5,16.5"
+					         fill="#fff5b0" stroke="#8a5800" stroke-width="0.7" opacity="0.9"/>
+					<ellipse cx="14" cy="13" rx="5" ry="3" fill="white" opacity="0.18" transform="rotate(-30,14,13)"/>
+				</svg>`;
+			}
+
+			function svgCoppa(w, h){
+				return `<svg viewBox="0 0 40 48" width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">
+					<defs>
+						<linearGradient id="cg_${w}" x1="0%" y1="0%" x2="100%" y2="0%">
+							<stop offset="0%" stop-color="#7a0000"/>
+							<stop offset="35%" stop-color="#cc1818"/>
+							<stop offset="55%" stop-color="#e83030"/>
+							<stop offset="100%" stop-color="#8b0000"/>
+						</linearGradient>
+					</defs>
+					<ellipse cx="20" cy="7" rx="11" ry="3" fill="#aa0000" stroke="#600000" stroke-width="1"/>
+					<path d="M9,7 Q8,20 13,27 Q17,31 20,32 Q23,31 27,27 Q32,20 31,7 Z" fill="url(#cg_${w})" stroke="#600000" stroke-width="1.2"/>
+					<path d="M11,8 Q10,18 14,25 Q10,18 11,9Z" fill="white" opacity="0.18"/>
+					<path d="M9,9 Q3,11 3,18 Q3,25 9,26 Q6,23 6,18 Q6,12 9,12" fill="none" stroke="#8b0000" stroke-width="2" stroke-linecap="round"/>
+					<path d="M31,9 Q37,11 37,18 Q37,25 31,26 Q34,23 34,18 Q34,12 31,12" fill="none" stroke="#8b0000" stroke-width="2" stroke-linecap="round"/>
+					<path d="M17,32 Q16,37 14,41 L26,41 Q24,37 23,32Z" fill="#8b0000" stroke="#600000" stroke-width="1"/>
+					<ellipse cx="20" cy="41" rx="8" ry="2.5" fill="#700000" stroke="#500000" stroke-width="1"/>
+				</svg>`;
+			}
+
+			function svgSpada(w, h){
+				return `<svg viewBox="0 0 30 60" width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">
+					<defs>
+						<linearGradient id="sg_${w}" x1="0%" y1="0%" x2="100%" y2="0%">
+							<stop offset="0%" stop-color="#2a2a8a"/>
+							<stop offset="40%" stop-color="#7070d0"/>
+							<stop offset="50%" stop-color="#e0e0ff"/>
+							<stop offset="60%" stop-color="#7070d0"/>
+							<stop offset="100%" stop-color="#2a2a8a"/>
+						</linearGradient>
+					</defs>
+					<!-- lama -->
+					<polygon points="15,2 17.5,44 15,46 12.5,44" fill="url(#sg_${w})" stroke="#1a1a6a" stroke-width="0.8"/>
+					<!-- punta -->
+					<polygon points="15,2 16,6 15,4 14,6" fill="#d0d0ff" stroke="none"/>
+					<!-- riflesso lama -->
+					<line x1="15" y1="4" x2="15" y2="42" stroke="#e8e8ff" stroke-width="0.7" opacity="0.6"/>
+					<!-- guardia orizzontale -->
+					<rect x="4" y="42" width="22" height="4" rx="2" fill="#1a1a70" stroke="#0a0a50" stroke-width="0.8"/>
+					<ellipse cx="15" cy="44" rx="11" ry="3" fill="none" stroke="#4040a0" stroke-width="0.6" opacity="0.6"/>
+					<!-- impugnatura -->
+					<rect x="12.5" y="46" width="5" height="10" rx="2" fill="#18186a" stroke="#0a0a50" stroke-width="0.8"/>
+					<!-- pomolo -->
+					<ellipse cx="15" cy="57" rx="5" ry="3" fill="#2525a0" stroke="#0a0a50" stroke-width="0.8"/>
+					<ellipse cx="15" cy="56.5" rx="3" ry="1.8" fill="#4040c0"/>
+				</svg>`;
+			}
+
+			function svgBastone(w, h){
+				return `<svg viewBox="0 0 22 70" width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">
+					<!-- corpo del bastone, tre sezioni colorate -->
+					<!-- sezione verde (bassa) -->
+					<rect x="7" y="46" width="8" height="22" rx="3" fill="#2a7a00" stroke="#1a4e00" stroke-width="1"/>
+					<!-- sezione rossa (centrale) -->
+					<rect x="7" y="24" width="8" height="24" rx="3" fill="#c01010" stroke="#7a0000" stroke-width="1"/>
+					<!-- sezione gialla (alta) -->
+					<rect x="7" y="3" width="8" height="23" rx="3" fill="#d4920c" stroke="#8a5800" stroke-width="1"/>
+					<!-- nodi lungo tutto il bastone -->
+					<ellipse cx="11" cy="6"  rx="7" ry="4.5" fill="#b87800" stroke="#6b4400" stroke-width="1"/>
+					<ellipse cx="11" cy="20" rx="6.5" ry="4" fill="#a80000" stroke="#6a0000" stroke-width="1"/>
+					<ellipse cx="11" cy="34" rx="6" ry="3.8" fill="#a80000" stroke="#6a0000" stroke-width="1"/>
+					<ellipse cx="11" cy="48" rx="5.5" ry="3.5" fill="#1d6200" stroke="#0f3a00" stroke-width="1"/>
+					<ellipse cx="11" cy="62" rx="5" ry="3.2" fill="#1d6200" stroke="#0f3a00" stroke-width="1"/>
+					<!-- cima arrotondata -->
+					<ellipse cx="11" cy="3"  rx="5" ry="3" fill="#8a5800" stroke="#5a3400" stroke-width="1"/>
+					<!-- punta in basso -->
+					<ellipse cx="11" cy="68" rx="4" ry="2.5" fill="#0f3a00" stroke="#071e00" stroke-width="1"/>
+				</svg>`;
+			}
+
+			function getPositions(n){
+				const L = {
+					1: [[50,50]],
+					2: [[50,28],[50,72]],
+					3: [[50,20],[50,50],[50,80]],
+					4: [[26,28],[74,28],[26,72],[74,72]],
+					5: [[26,20],[74,20],[50,50],[26,80],[74,80]],
+					6: [[26,18],[74,18],[26,50],[74,50],[26,82],[74,82]],
+					7: [[26,16],[74,16],[26,44],[74,44],[50,62],[26,80],[74,80]],
+				};
+				return (L[n] || L[1]).map(([x,y]) => ({x,y}));
+			}
+
+			function svgFigura(suit, value){
+				const C = {
+					D: {bg:'#fffbe6', border:'#c8900a', main:'#8a5000', accent:'#d4920c', light:'#ffe090', skin:'#f5cfa0', dark:'#5a2000'},
+					C: {bg:'#fff5f5', border:'#9b0000', main:'#7a0000', accent:'#cc1010', light:'#ffaaaa', skin:'#f5cfa0', dark:'#500000'},
+					S: {bg:'#f0f0ff', border:'#18186a', main:'#0a0a60', accent:'#2525a0', light:'#aaaaff', skin:'#f5cfa0', dark:'#080840'},
+					B: {bg:'#f5efe0', border:'#6b3a00', main:'#3d2000', accent:'#8b5a00', light:'#d4a050', skin:'#f5cfa0', dark:'#1e0e00'},
+				}[suit] || {bg:'#fffbe6', border:'#c8900a', main:'#8a5000', accent:'#d4920c', light:'#ffe090', skin:'#f5cfa0', dark:'#5a2000'};
+				if(value === 8){
+					const weapon = {
+						D: `<circle cx="50" cy="72" r="14" fill="${C.accent}" stroke="${C.dark}" stroke-width="1.5"/><circle cx="50" cy="72" r="9" fill="${C.light}" stroke="${C.dark}" stroke-width="1"/><circle cx="50" cy="72" r="4" fill="${C.main}"/>`,
+						C: `<path d="M43,60 Q44,68 50,72 Q56,68 57,60 Q54,56 50,55 Q46,56 43,60Z" fill="${C.accent}" stroke="${C.dark}" stroke-width="1.2"/><path d="M44,60 Q43,54 40,52 Q38,54 40,58Z" fill="${C.accent}" stroke="${C.dark}" stroke-width="1"/><path d="M56,60 Q57,54 60,52 Q62,54 60,58Z" fill="${C.accent}" stroke="${C.dark}" stroke-width="1"/><rect x="47" y="72" width="6" height="10" rx="2" fill="${C.main}"/>`,
+						S: `<polygon points="50,56 52,70 50,72 48,70" fill="${C.accent}" stroke="${C.dark}" stroke-width="1"/><rect x="44" y="70" width="12" height="3" rx="1.5" fill="${C.main}"/><rect x="48" y="73" width="4" height="6" rx="1" fill="${C.main}"/>`,
+						B: `<rect x="48" y="54" width="4" height="22" rx="2" fill="${C.accent}" stroke="${C.dark}" stroke-width="1"/><ellipse cx="50" cy="55" rx="5" ry="3.5" fill="${C.main}"/><ellipse cx="50" cy="63" rx="4.5" ry="3" fill="${C.dark}"/>`,
+					}[suit] || '';
+					return `<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+						<rect x="0" y="0" width="100" height="140" rx="4" fill="${C.bg}"/>
+						<!-- sfondo decorativo -->
+						<rect x="0" y="0" width="100" height="140" rx="4" fill="none" stroke="${C.border}" stroke-width="1.5"/>
+						<!-- pavimento -->
+						<rect x="0" y="100" width="100" height="40" rx="4" fill="${C.accent}" opacity="0.10"/>
+						<!-- cornice ornamentale -->
+						<rect x="4" y="4" width="92" height="132" rx="3" fill="none" stroke="${C.border}" stroke-width="0.6" opacity="0.4"/>
+						<!-- corpo fante -->
+						<!-- gambe -->
+						<rect x="42" y="96" width="7" height="28" rx="3" fill="${C.main}" stroke="${C.dark}" stroke-width="1"/>
+						<rect x="51" y="94" width="7" height="30" rx="3" fill="${C.accent}" stroke="${C.dark}" stroke-width="1"/>
+						<!-- scarpe -->
+						<ellipse cx="45" cy="124" rx="6" ry="3" fill="${C.dark}"/>
+						<ellipse cx="54" cy="125" rx="6" ry="3" fill="${C.dark}"/>
+						<!-- giacca/tunica -->
+						<path d="M33,65 Q35,60 42,58 L50,56 L58,58 Q65,60 67,65 L68,96 L32,96 Z" fill="${C.accent}" stroke="${C.dark}" stroke-width="1.2"/>
+						<!-- cintura -->
+						<rect x="32" y="85" width="36" height="6" rx="2" fill="${C.dark}" stroke="${C.dark}" stroke-width="0.8"/>
+						<rect x="47" y="84" width="6" height="8" rx="1.5" fill="${C.light}" stroke="${C.main}" stroke-width="0.8"/>
+						<!-- decorazione giacca -->
+						<line x1="50" y1="58" x2="50" y2="85" stroke="${C.light}" stroke-width="1.5" opacity="0.6"/>
+						<circle cx="50" cy="65" r="2" fill="${C.light}" opacity="0.8"/>
+						<circle cx="50" cy="72" r="2" fill="${C.light}" opacity="0.8"/>
+						<circle cx="50" cy="79" r="2" fill="${C.light}" opacity="0.8"/>
+						<!-- collo e testa -->
+						<rect x="45" y="48" width="10" height="12" rx="2" fill="${C.skin}" stroke="${C.dark}" stroke-width="0.8"/>
+						<!-- testa -->
+						<ellipse cx="50" cy="40" rx="14" ry="15" fill="${C.skin}" stroke="${C.dark}" stroke-width="1.2"/>
+						<!-- capelli/fronte -->
+						<path d="M36,35 Q38,24 50,22 Q62,24 64,35" fill="${C.dark}" stroke="${C.dark}" stroke-width="0.5"/>
+						<!-- cappello piumato -->
+						<path d="M34,34 Q36,26 50,24 Q64,26 66,34 L64,36 Q50,30 36,36Z" fill="${C.main}" stroke="${C.dark}" stroke-width="1"/>
+						<!-- piuma cappello -->
+						<path d="M64,36 Q72,28 76,18 Q78,12 72,14 Q74,20 68,28 Q66,32 64,36Z" fill="${C.light}" stroke="${C.dark}" stroke-width="0.8"/>
+						<!-- occhi -->
+						<ellipse cx="44" cy="40" rx="3" ry="2.5" fill="white"/>
+						<circle cx="44" cy="40" r="1.5" fill="${C.dark}"/>
+						<ellipse cx="56" cy="40" rx="3" ry="2.5" fill="white"/>
+						<circle cx="56" cy="40" r="1.5" fill="${C.dark}"/>
+						<!-- naso -->
+						<path d="M49,42 Q48,46 50,47 Q52,46 51,42" fill="none" stroke="${C.dark}" stroke-width="0.8"/>
+						<!-- bocca -->
+						<path d="M45,50 Q50,53 55,50" fill="none" stroke="${C.dark}" stroke-width="1"/>
+						<!-- baffi -->
+						<path d="M43,48 Q46,47 50,48" fill="none" stroke="${C.dark}" stroke-width="0.8"/>
+						<path d="M50,48 Q54,47 57,48" fill="none" stroke="${C.dark}" stroke-width="0.8"/>
+						<!-- braccia -->
+						<path d="M33,65 Q24,68 22,80 Q22,88 28,88" fill="none" stroke="${C.accent}" stroke-width="8" stroke-linecap="round"/>
+						<path d="M33,65 Q24,68 22,80 Q22,88 28,88" fill="none" stroke="${C.dark}" stroke-width="8.5" stroke-linecap="round" opacity="0.2"/>
+						<path d="M67,65 Q76,68 78,78 Q78,86 72,87" fill="none" stroke="${C.accent}" stroke-width="8" stroke-linecap="round"/>
+						<!-- mano sinistra con arma del seme -->
+						<ellipse cx="27" cy="90" rx="6" ry="5" fill="${C.skin}" stroke="${C.dark}" stroke-width="0.8"/>
+						<!-- arma del seme centrata nel braccio -->
+						${weapon}
+					</svg>`;
+				}
+				if(value === 9){
+					const rider_colors = {
+						D: {tunica:'#d4920c', pantaloni:'#8a5000', cavallo_corpo:'#8B4513', cavallo_criniera:'#3d1a00'},
+						C: {tunica:'#cc1010', pantaloni:'#7a0000', cavallo_corpo:'#C0C0C0', cavallo_criniera:'#555'},
+						S: {tunica:'#2525a0', pantaloni:'#0a0a60', cavallo_corpo:'#333', cavallo_criniera:'#111'},
+						B: {tunica:'#8b5a00', pantaloni:'#3d2000', cavallo_corpo:'#D2691E', cavallo_criniera:'#5a2a00'},
+					}[suit] || {};
+					const rc = rider_colors;
+					return `<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+						<rect x="0" y="0" width="100" height="140" rx="4" fill="${C.bg}"/>
+						<rect x="0" y="0" width="100" height="140" rx="4" fill="none" stroke="${C.border}" stroke-width="1.5"/>
+						<rect x="4" y="4" width="92" height="132" rx="3" fill="none" stroke="${C.border}" stroke-width="0.6" opacity="0.4"/>
+						<!-- terreno -->
+						<ellipse cx="50" cy="128" rx="40" ry="8" fill="${C.accent}" opacity="0.15"/>
+						<!-- corpo del cavallo -->
+						<!-- zampe posteriori -->
+						<line x1="30" y1="105" x2="22" y2="130" stroke="${rc.cavallo_corpo}" stroke-width="6" stroke-linecap="round"/>
+						<line x1="38" y1="108" x2="32" y2="132" stroke="${rc.cavallo_corpo}" stroke-width="5" stroke-linecap="round"/>
+						<!-- zoccoli posteriori -->
+						<ellipse cx="22" cy="131" rx="5" ry="2.5" fill="${rc.cavallo_criniera}"/>
+						<ellipse cx="31" cy="133" rx="5" ry="2.5" fill="${rc.cavallo_criniera}"/>
+						<!-- corpo cavallo -->
+						<ellipse cx="48" cy="105" rx="28" ry="18" fill="${rc.cavallo_corpo}" stroke="${rc.cavallo_criniera}" stroke-width="1.2"/>
+						<!-- pancia cavallo -->
+						<path d="M22,105 Q30,122 48,124 Q66,122 74,105" fill="${rc.cavallo_corpo}" stroke="${rc.cavallo_criniera}" stroke-width="0.8"/>
+						<!-- zampe anteriori (al galoppo) -->
+						<line x1="62" y1="108" x2="72" y2="128" stroke="${rc.cavallo_corpo}" stroke-width="6" stroke-linecap="round"/>
+						<line x1="70" y1="105" x2="84" y2="118" stroke="${rc.cavallo_corpo}" stroke-width="5" stroke-linecap="round"/>
+						<!-- zoccoli anteriori -->
+						<ellipse cx="72" cy="129" rx="5" ry="2.5" fill="${rc.cavallo_criniera}"/>
+						<ellipse cx="84" cy="119" rx="5" ry="2.5" fill="${rc.cavallo_criniera}"/>
+						<!-- collo cavallo -->
+						<path d="M52,90 Q58,82 62,74 Q64,66 60,60 Q54,56 50,60 Q48,68 50,76 Q50,84 52,90Z" fill="${rc.cavallo_corpo}" stroke="${rc.cavallo_criniera}" stroke-width="1.2"/>
+						<!-- testa cavallo -->
+						<ellipse cx="57" cy="55" rx="12" ry="9" fill="${rc.cavallo_corpo}" stroke="${rc.cavallo_criniera}" stroke-width="1.2"/>
+						<!-- muso -->
+						<path d="M62,52 Q72,54 74,60 Q72,65 62,62" fill="${rc.cavallo_corpo}" stroke="${rc.cavallo_criniera}" stroke-width="1"/>
+						<!-- narice -->
+						<ellipse cx="71" cy="61" rx="2.5" ry="1.5" fill="${rc.cavallo_criniera}" opacity="0.5"/>
+						<!-- occhio cavallo -->
+						<circle cx="55" cy="52" r="3" fill="white"/>
+						<circle cx="55" cy="52" r="1.5" fill="${rc.cavallo_criniera}"/>
+						<!-- orecchio -->
+						<polygon points="50,48 47,40 54,44" fill="${rc.cavallo_corpo}" stroke="${rc.cavallo_criniera}" stroke-width="0.8"/>
+						<!-- criniera -->
+						<path d="M50,60 Q44,68 44,80 Q44,88 46,92" fill="none" stroke="${rc.cavallo_criniera}" stroke-width="4" stroke-linecap="round"/>
+						<path d="M52,62 Q46,70 46,82 Q46,90 48,93" fill="none" stroke="${rc.cavallo_criniera}" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
+						<!-- coda -->
+						<path d="M20,100 Q10,108 8,118 Q12,125 18,120 Q14,114 18,108 Q22,104 22,100" fill="${rc.cavallo_criniera}" stroke="${rc.cavallo_criniera}" stroke-width="0.5"/>
+						<!-- cavaliere: corpo/tunica -->
+						<path d="M35,78 Q38,68 50,65 Q58,65 60,68 L62,90 Q58,95 50,96 Q42,96 38,92 Z" fill="${rc.tunica}" stroke="${C.dark}" stroke-width="1.2"/>
+						<!-- cavaliere: gambe/sella -->
+						<path d="M38,88 Q36,100 30,106" fill="none" stroke="${rc.pantaloni}" stroke-width="7" stroke-linecap="round"/>
+						<path d="M62,88 Q66,98 68,106" fill="none" stroke="${rc.pantaloni}" stroke-width="7" stroke-linecap="round"/>
+						<!-- staffa -->
+						<path d="M26,106 Q28,110 34,109" fill="none" stroke="${C.dark}" stroke-width="1.5"/>
+						<!-- decorazione tunica -->
+						<line x1="49" y1="66" x2="49" y2="90" stroke="${C.light}" stroke-width="1.2" opacity="0.6"/>
+						<circle cx="49" cy="72" r="1.8" fill="${C.light}" opacity="0.8"/>
+						<circle cx="49" cy="80" r="1.8" fill="${C.light}" opacity="0.8"/>
+						<!-- cavaliere: collo -->
+						<rect x="44" y="58" width="9" height="10" rx="2" fill="${C.skin}" stroke="${C.dark}" stroke-width="0.8"/>
+						<!-- cavaliere: testa -->
+						<ellipse cx="49" cy="48" rx="13" ry="14" fill="${C.skin}" stroke="${C.dark}" stroke-width="1.2"/>
+						<!-- elmo/cappello -->
+						<path d="M36,44 Q37,32 49,30 Q61,32 62,44 L60,46 Q49,40 38,46Z" fill="${C.main}" stroke="${C.dark}" stroke-width="1"/>
+						<!-- pennacchio elmo -->
+						<path d="M49,30 Q52,20 56,14 Q60,10 58,8 Q54,10 52,16 Q50,22 49,30Z" fill="${C.light}" stroke="${C.dark}" stroke-width="0.7"/>
+						<!-- visiera elmo -->
+						<rect x="37" y="44" width="24" height="8" rx="2" fill="${C.main}" stroke="${C.dark}" stroke-width="0.8" opacity="0.7"/>
+						<!-- occhi (visibili sotto visiera) -->
+						<ellipse cx="43" cy="48" rx="2.5" ry="2" fill="white" opacity="0.8"/>
+						<circle cx="43" cy="48" r="1.2" fill="${C.dark}"/>
+						<ellipse cx="55" cy="48" rx="2.5" ry="2" fill="white" opacity="0.8"/>
+						<circle cx="55" cy="48" r="1.2" fill="${C.dark}"/>
+						<!-- cavaliere: braccio destro alzato con arma -->
+						<path d="M60,70 Q70,60 72,50" fill="none" stroke="${rc.tunica}" stroke-width="8" stroke-linecap="round"/>
+						<path d="M60,70 Q70,60 72,50" fill="none" stroke="${C.dark}" stroke-width="8.5" stroke-linecap="round" opacity="0.15"/>
+						<!-- mano e simbolo del seme come arma -->
+						<ellipse cx="72" cy="49" rx="5" ry="5" fill="${C.skin}" stroke="${C.dark}" stroke-width="0.8"/>
+					</svg>`;
+				}
+				const throne_colors = {
+					D: {manto:'#d4920c', veste:'#fffbe6', trono:'#8a5000'},
+					C: {manto:'#cc1010', veste:'#fff5f5', trono:'#7a0000'},
+					S: {manto:'#2525a0', veste:'#f0f0ff', trono:'#0a0a60'},
+					B: {manto:'#8b5a00', veste:'#f5efe0', trono:'#3d2000'},
+				}[suit] || {};
+				const tc = throne_colors;
+				return `<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+					<rect x="0" y="0" width="100" height="140" rx="4" fill="${C.bg}"/>
+					<rect x="0" y="0" width="100" height="140" rx="4" fill="none" stroke="${C.border}" stroke-width="1.5"/>
+					<rect x="4" y="4" width="92" height="132" rx="3" fill="none" stroke="${C.border}" stroke-width="0.6" opacity="0.4"/>
+					<!-- trono -->
+					<rect x="20" y="80" width="60" height="55" rx="4" fill="${tc.trono}" stroke="${C.dark}" stroke-width="1.5"/>
+					<rect x="16" y="70" width="8" height="70" rx="4" fill="${tc.trono}" stroke="${C.dark}" stroke-width="1.2"/>
+					<rect x="76" y="70" width="8" height="70" rx="4" fill="${tc.trono}" stroke="${C.dark}" stroke-width="1.2"/>
+					<!-- schienale trono decorato -->
+					<rect x="22" y="76" width="56" height="10" rx="3" fill="${C.accent}" opacity="0.4"/>
+					<circle cx="30" cy="81" r="4" fill="${C.light}" opacity="0.6"/>
+					<circle cx="50" cy="81" r="4" fill="${C.light}" opacity="0.6"/>
+					<circle cx="70" cy="81" r="4" fill="${C.light}" opacity="0.6"/>
+					<!-- cuscino seduta -->
+					<rect x="24" y="96" width="52" height="14" rx="4" fill="${C.accent}" opacity="0.5"/>
+					<!-- gambe re -->
+					<rect x="30" y="108" width="12" height="25" rx="4" fill="${tc.manto}" stroke="${C.dark}" stroke-width="1"/>
+					<rect x="58" y="108" width="12" height="25" rx="4" fill="${tc.manto}" stroke="${C.dark}" stroke-width="1"/>
+					<!-- scarpe/stivali -->
+					<ellipse cx="36" cy="133" rx="9" ry="4" fill="${C.dark}"/>
+					<ellipse cx="64" cy="133" rx="9" ry="4" fill="${C.dark}"/>
+					<!-- corpo/mantello -->
+					<path d="M24,68 Q26,60 38,56 L50,54 L62,56 Q74,60 76,68 L78,110 L22,110 Z" fill="${tc.manto}" stroke="${C.dark}" stroke-width="1.3"/>
+					<!-- veste sottostante -->
+					<path d="M34,58 Q36,56 50,55 Q64,56 66,58 L66,110 L34,110 Z" fill="${tc.veste}" stroke="${C.dark}" stroke-width="0.7" opacity="0.6"/>
+					<!-- cintura ornata -->
+					<rect x="26" y="86" width="48" height="7" rx="2" fill="${C.dark}" stroke="${C.dark}" stroke-width="0.8"/>
+					<rect x="44" y="85" width="12" height="9" rx="2" fill="${C.light}" stroke="${C.main}" stroke-width="0.8"/>
+					<!-- fibbia cintura -->
+					<rect x="47" y="87" width="6" height="5" rx="1" fill="${C.main}"/>
+					<!-- decorazione manto (bottoni/gem) -->
+					<circle cx="50" cy="66" r="2.5" fill="${C.light}" stroke="${C.main}" stroke-width="0.5"/>
+					<circle cx="50" cy="75" r="2.5" fill="${C.light}" stroke="${C.main}" stroke-width="0.5"/>
+					<!-- braccio sinistro: scettro/simbolo -->
+					<path d="M26,68 Q16,72 14,82 Q14,90 20,90" fill="none" stroke="${tc.manto}" stroke-width="9" stroke-linecap="round"/>
+					<path d="M26,68 Q16,72 14,82 Q14,90 20,90" fill="none" stroke="${C.dark}" stroke-width="9.5" stroke-linecap="round" opacity="0.18"/>
+					<ellipse cx="19" cy="91" rx="6" ry="5" fill="${C.skin}" stroke="${C.dark}" stroke-width="0.8"/>
+					<!-- scettro -->
+					<line x1="14" y1="92" x2="8" y2="130" stroke="${C.accent}" stroke-width="3" stroke-linecap="round"/>
+					<ellipse cx="8" cy="131" rx="6" ry="3" fill="${C.main}"/>
+					<circle cx="8" cy="125" r="4" fill="${C.light}" stroke="${C.main}" stroke-width="0.8"/>
+					<!-- braccio destro: tiene il simbolo del seme -->
+					<path d="M74,68 Q84,72 86,82 Q86,90 80,90" fill="none" stroke="${tc.manto}" stroke-width="9" stroke-linecap="round"/>
+					<path d="M74,68 Q84,72 86,82 Q86,90 80,90" fill="none" stroke="${C.dark}" stroke-width="9.5" stroke-linecap="round" opacity="0.18"/>
+					<ellipse cx="81" cy="91" rx="6" ry="5" fill="${C.skin}" stroke="${C.dark}" stroke-width="0.8"/>
+					<!-- collo -->
+					<rect x="44" y="46" width="12" height="12" rx="2" fill="${C.skin}" stroke="${C.dark}" stroke-width="0.8"/>
+					<!-- collare ermellino/pelliccia -->
+					<path d="M34,58 Q38,52 50,50 Q62,52 66,58" fill="${tc.veste}" stroke="${C.dark}" stroke-width="0.8"/>
+					<path d="M36,57 Q50,50 64,57" fill="none" stroke="${C.light}" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.7"/>
+					<!-- testa re -->
+					<ellipse cx="50" cy="36" rx="16" ry="17" fill="${C.skin}" stroke="${C.dark}" stroke-width="1.3"/>
+					<!-- barba/capelli lati -->
+					<path d="M34,42 Q32,50 36,56 Q40,58 42,54 Q36,50 36,44Z" fill="${C.dark}" opacity="0.7"/>
+					<path d="M66,42 Q68,50 64,56 Q60,58 58,54 Q64,50 64,44Z" fill="${C.dark}" opacity="0.7"/>
+					<!-- baffi e barba frontale -->
+					<path d="M40,50 Q45,48 50,49 Q55,48 60,50 Q58,54 50,56 Q42,54 40,50Z" fill="${C.dark}" opacity="0.5"/>
+					<!-- occhi -->
+					<ellipse cx="43" cy="36" rx="4" ry="3.5" fill="white"/>
+					<circle cx="43" cy="36" r="2" fill="${C.dark}"/>
+					<ellipse cx="57" cy="36" rx="4" ry="3.5" fill="white"/>
+					<circle cx="57" cy="36" r="2" fill="${C.dark}"/>
+					<!-- naso -->
+					<path d="M48,38 Q47,43 50,44 Q53,43 52,38" fill="none" stroke="${C.dark}" stroke-width="0.9"/>
+					<!-- bocca -->
+					<path d="M44,49 Q50,52 56,49" fill="none" stroke="${C.dark}" stroke-width="1.2"/>
+					<!-- sopracciglia severe -->
+					<path d="M38,30 Q43,28 48,30" fill="none" stroke="${C.dark}" stroke-width="1.5" stroke-linecap="round"/>
+					<path d="M52,30 Q57,28 62,30" fill="none" stroke="${C.dark}" stroke-width="1.5" stroke-linecap="round"/>
+					<!-- corona -->
+					<path d="M34,26 L34,14 L40,20 L50,10 L60,20 L66,14 L66,26 Z" fill="${C.accent}" stroke="${C.dark}" stroke-width="1.3"/>
+					<rect x="34" y="24" width="32" height="6" rx="2" fill="${C.accent}" stroke="${C.dark}" stroke-width="1"/>
+					<!-- gemme corona -->
+					<circle cx="50" cy="13" r="3.5" fill="${C.light}" stroke="${C.main}" stroke-width="0.8"/>
+					<circle cx="40" cy="20" r="2.5" fill="${C.light}" stroke="${C.main}" stroke-width="0.7"/>
+					<circle cx="60" cy="20" r="2.5" fill="${C.light}" stroke="${C.main}" stroke-width="0.7"/>
+				</svg>`;
+			}
+
+			const SUIT_MINI = {
+				'D': `<svg viewBox="0 0 16 16" width="10" height="10"><circle cx="8" cy="8" r="7" fill="#c8900a" stroke="#7a5000" stroke-width="1.5"/><circle cx="8" cy="8" r="4.5" fill="#f0c030" stroke="#7a5000" stroke-width="0.8"/><circle cx="8" cy="8" r="1.8" fill="#ffe870"/></svg>`,
+				'C': `<svg viewBox="0 0 16 20" width="8" height="10"><ellipse cx="8" cy="3" rx="5" ry="1.7" fill="#9b0000"/><path d="M3,3 Q2,9 5,13 Q8,15 11,13 Q14,9 13,3Z" fill="#cc1010" stroke="#700000" stroke-width="0.7"/><rect x="6.5" y="13" width="3" height="5" rx="1" fill="#8b0000"/><ellipse cx="8" cy="18.5" rx="4" ry="1.3" fill="#700000"/></svg>`,
+				'S': `<svg viewBox="0 0 14 26" width="7" height="13"><polygon points="7,1 8.5,19 7,21 5.5,19" fill="#2525a0" stroke="#1a1a6a" stroke-width="0.6"/><line x1="7" y1="3" x2="7" y2="18" stroke="#d0d0ff" stroke-width="0.6" opacity="0.6"/><rect x="1" y="19" width="12" height="2.5" rx="1.2" fill="#1a1a70" stroke="#0a0a50" stroke-width="0.5"/><rect x="5.5" y="21.5" width="3" height="3.5" rx="1" fill="#18186a"/><ellipse cx="7" cy="25.5" rx="3.5" ry="1.8" fill="#2525a0"/></svg>`,
+				'B': `<svg viewBox="0 0 12 28" width="7" height="14"><rect x="4" y="1" width="4" height="24" rx="2" fill="#8b5200" stroke="#3d2000" stroke-width="0.7"/><ellipse cx="6" cy="3" rx="4.5" ry="3" fill="#b87800" stroke="#6b4400" stroke-width="0.8"/><ellipse cx="6" cy="11" rx="4" ry="2.8" fill="#a80000" stroke="#6a0000" stroke-width="0.8"/><ellipse cx="6" cy="19" rx="3.5" ry="2.5" fill="#1d6200" stroke="#0f3a00" stroke-width="0.8"/><ellipse cx="6" cy="26" rx="3" ry="2" fill="#0f3a00" stroke="#071e00" stroke-width="0.7"/></svg>`
+			};
+
+			function symSize(n, suit){
+				const base = {
+					D: [[34,34],[30,30],[28,28],[25,25],[23,23],[21,21],[20,20]],
+					C: [[28,34],[25,30],[23,28],[21,25],[20,23],[18,21],[17,20]],
+					S: [[20,40],[18,36],[17,34],[15,30],[14,28],[13,26],[12,24]],
+					B: [[14,44],[13,40],[12,38],[11,34],[10,32],[10,30],[9,28]],
+				};
+				const idx = Math.min(n,7)-1;
+				return (base[suit] || base.D)[idx];
+			}
+
 			function renderCardContent(card){
-				const v = card.dataset.value;
+				const v = parseInt(card.dataset.value);
 				const s = card.dataset.suit;
-				const suitSymbols = {'D': '🟡', 'C': '🍷', 'S': '⚔️', 'B': '🪵'};
-				const symbol = suitSymbols[s] || '';
+				const numLabel = v === 1 ? 'A' : String(v);
+				const suitColors = {'D':'#8a5000','C':'#7a0000','S':'#0a0a60','B':'#3d2000'};
+				const color = suitColors[s] || '#333';
+				const miniSvg = SUIT_MINI[s] || '';
+				let centerHtml = '';
+				if(v >= 8){
+					centerHtml = `<div style="position:absolute;inset:0;z-index:2;pointer-events:none">${svgFigura(s,v)}</div>`;
+				}else{
+					const positions = getPositions(v);
+					const [sw, sh] = symSize(v, s);
+					const symFn = {D:svgDenaro, C:svgCoppa, S:svgSpada, B:svgBastone}[s];
+					const symbols = positions.map(({x,y}) => {
+						return `<div style="position:absolute;left:${x}%;top:${y}%;transform:translate(-50%,-50%);line-height:0">${symFn(sw,sh)}</div>`;
+					}).join('');
+					centerHtml = `<div style="position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden">${symbols}</div>`;
+				}
 				card.innerHTML = `
-					<div class="card-val v-tl">${v}${symbol}</div>
-					<div class="suit-icon">${symbol}</div>
-					<div class="card-val v-br">${v}${symbol}</div>
+					<div class="card-val v-tl" style="color:${color}"><span class="num">${numLabel}</span>${miniSvg}</div>
+					${centerHtml}
+					<div class="card-val v-br" style="color:${color}"><span class="num">${numLabel}</span>${miniSvg}</div>
 				`;
 				card.classList.remove('back');
 				card.dataset.faceUp = "true";
