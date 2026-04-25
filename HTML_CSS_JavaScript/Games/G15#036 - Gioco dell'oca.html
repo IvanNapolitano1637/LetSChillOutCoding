@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en"><!--G15#036 - Flavia - Gioco dell'oca-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>🪿 Gioco dell'Oca</title>
+		<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+		<style>
+			:root{
+				--gold: #c8962a;
+				--gold-light: #f0c050;
+				--gold-dark: #7a5a10;
+				--parchment: #f5e8c0;
+				--parchment-dark: #ddc98a;
+				--deep-green: #1a3a1a;
+				--green: #2d5a27;
+				--red: #8b1a1a;
+				--blue: #1a2d6e;
+				--ink: #1a100a;
+				--shadow: rgba(0, 0, 0, 0.5);
+			}
+			*,
+			*::before,
+			*::after {
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+			}
+			body{
+				background: var(--deep-green);
+				background-image:
+					radial-gradient(ellipse at 20% 20%, #2d5a27 0%, transparent 50%),
+					radial-gradient(ellipse at 80% 80%, #0f2410 0%, transparent 50%),
+					repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(0, 0, 0, 0.03) 30px, rgba(0, 0, 0, 0.03) 60px);
+				min-height: 100vh;
+				font-family: 'Crimson Text', serif;
+				color: var(--ink);
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				padding: 10px;
+				overflow-x: hidden;
+			}
+			h1{
+				font-family: 'Cinzel Decorative', cursive;
+				color: var(--gold-light);
+				text-shadow: 0 0 20px rgba(200, 150, 42, 0.6), 2px 2px 0 var(--gold-dark);
+				font-size: clamp(1.4rem, 5vw, 2.8rem);
+				text-align: center;
+				margin: 10px 0 6px;
+				letter-spacing: 0.05em;
+			}
+			.subtitle{
+				color: var(--parchment-dark);
+				font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+				font-style: italic;
+				margin-bottom: 10px;
+				text-align: center;
+			}
+			#setup-panel{
+				background: linear-gradient(135deg, var(--parchment) 0%, var(--parchment-dark) 100%);
+				border: 3px solid var(--gold);
+				border-radius: 12px;
+				padding: 20px 28px;
+				max-width: 480px;
+				width: 100%;
+				box-shadow: 0 8px 32px var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+				margin-bottom: 14px;
+			}
+			#setup-panel h2{
+				font-family: 'Cinzel Decorative', cursive;
+				color: var(--gold-dark);
+				font-size: 1.15rem;
+				text-align: center;
+				margin-bottom: 16px;
+			}
+			.player-row{
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				margin-bottom: 10px;
+			}
+			.player-row label{
+				font-size: 1rem;
+				color: var(--ink);
+				min-width: 70px;
+			}
+			.player-row input{
+				flex: 1;
+				padding: 7px 12px;
+				border: 2px solid var(--gold);
+				border-radius: 6px;
+				background: rgba(255, 255, 255, 0.7);
+				font-family: 'Crimson Text', serif;
+				font-size: 1rem;
+				color: var(--ink);
+				outline: none;
+				transition: border-color 0.2s;
+			}
+			.player-row input:focus{
+				border-color: var(--gold-dark);
+			}
+			.token-picker{
+				display: flex;
+				gap: 2px;
+				flex-wrap: wrap;
+			}
+			.token-option{
+				font-size: 1.1rem;
+				cursor: pointer;
+				padding: 1px 2px;
+				border-radius: 4px;
+				border: 2px solid transparent;
+				transition: all 0.15s;
+				line-height: 1;
+			}
+			.token-option:hover{
+				border-color: var(--gold);
+				background: rgba(200, 150, 42, 0.15);
+			}
+			.token-option.selected{
+				border-color: var(--gold-dark);
+				background: rgba(200, 150, 42, 0.3);
+			}
+			.btn{
+				display: block;
+				width: 100%;
+				padding: 12px;
+				margin-top: 14px;
+				background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+				color: var(--ink);
+				border: none;
+				border-radius: 8px;
+				font-family: 'Cinzel Decorative', cursive;
+				font-size: 1rem;
+				font-weight: 700;
+				cursor: pointer;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+				transition: transform 0.1s, box-shadow 0.1s;
+				letter-spacing: 0.03em;
+			}
+			.btn:hover{
+				transform: translateY(-1px);
+				box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+			}
+			.btn:active{
+				transform: translateY(1px);
+				box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+			}
+			.btn.secondary{
+				background: linear-gradient(135deg, #555 0%, #888 50%, #555 100%);
+				color: var(--parchment);
+				margin-top: 8px;
+				font-size: 0.85rem;
+			}
+			#game-area{
+				display: none;
+				width: 100%;
+				max-width: 900px;
+			}
+			.game-layout{
+				display: grid;
+				grid-template-columns: 1fr 260px;
+				gap: 12px;
+				align-items: start;
+			}
+			@media (max-width: 700px){
+				.game-layout{
+					grid-template-columns: 1fr;
+				}
+			}
+			#board-container{
+				background: linear-gradient(135deg, #f0e0a0 0%, var(--parchment) 50%, #e8d090 100%);
+				border: 4px solid var(--gold);
+				border-radius: 10px;
+				padding: 8px;
+				box-shadow: 0 8px 32px var(--shadow), inset 0 0 40px rgba(200, 150, 42, 0.1);
+				position: relative;
+				overflow: hidden;
+			}
+			#board-container::before{
+				content: '';
+				position: absolute;
+				inset: 0;
+				background-image:
+					repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(200, 150, 42, 0.08) 28px, rgba(200, 150, 42, 0.08) 29px),
+					repeating-linear-gradient(90deg, transparent, transparent 28px, rgba(200, 150, 42, 0.08) 28px, rgba(200, 150, 42, 0.08) 29px);
+				pointer-events: none;
+			}
+			#board{
+				display: grid;
+				grid-template-columns: repeat(9, 1fr);
+				gap: 3px;
+				position: relative;
+				z-index: 1;
+			}
+			.cell{
+				aspect-ratio: 1;
+				border: 1.5px solid var(--gold-dark);
+				border-radius: 5px;
+				background: rgba(255, 255, 255, 0.55);
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				position: relative;
+				cursor: default;
+				transition: background 0.2s;
+				min-width: 0;
+				overflow: hidden;
+			}
+			.cell:hover{
+				background: rgba(255, 255, 255, 0.8);
+			}
+			.cell-num{
+				font-family: 'Cinzel Decorative', cursive;
+				font-size: clamp(0.45rem, 1.4vw, 0.75rem);
+				color: var(--gold-dark);
+				line-height: 1;
+				font-weight: 900;
+			}
+			.cell-icon{
+				font-size: clamp(0.7rem, 2.2vw, 1.3rem);
+				line-height: 1;
+			}
+			.cell.goose{
+				background: rgba(100, 200, 100, 0.3);
+				border-color: var(--green);
+			}
+			.cell.bridge{
+				background: rgba(100, 150, 255, 0.3);
+				border-color: var(--blue);
+			}
+			.cell.inn{
+				background: rgba(255, 200, 50, 0.3);
+				border-color: var(--gold-dark);
+			}
+			.cell.well{
+				background: rgba(150, 200, 255, 0.3);
+				border-color: #4488bb;
+			}
+			.cell.maze{
+				background: rgba(200, 100, 200, 0.3);
+				border-color: #884488;
+			}
+			.cell.prison{
+				background: rgba(50, 50, 50, 0.3);
+				border-color: #444;
+			}
+			.cell.death{
+				background: rgba(200, 30, 30, 0.3);
+				border-color: var(--red);
+			}
+			.cell.skull{
+				background: rgba(80, 0, 0, 0.25);
+				border-color: #6b0000;
+			}
+			.cell.start{
+				background: rgba(200, 200, 255, 0.35);
+				border-color: var(--blue);
+			}
+			.cell.finish{
+				background: linear-gradient(135deg, rgba(255, 215, 0, 0.5), rgba(200, 150, 42, 0.5));
+				border-color: var(--gold);
+			}
+			.tokens-on-cell{
+				position: absolute;
+				bottom: 2px;
+				left: 0;
+				right: 0;
+				display: flex;
+				flex-wrap: wrap;
+				gap: 1px;
+				justify-content: center;
+				align-items: center;
+			}
+			.token-on-board{
+				font-size: clamp(0.55rem, 1.6vw, 0.9rem);
+				line-height: 1;
+				filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+				animation: tokenPop 0.3s ease;
+			}
+			@keyframes tokenPop{
+				0%{
+					transform: scale(0);
+				}
+				70%{
+					transform: scale(1.3);
+				}
+				100%{
+					transform: scale(1);
+				}
+			}
+			.side-panel{
+				display: flex;
+				flex-direction: column;
+				gap: 10px;
+			}
+			.panel-box{
+				background: linear-gradient(135deg, var(--parchment) 0%, var(--parchment-dark) 100%);
+				border: 2.5px solid var(--gold);
+				border-radius: 10px;
+				padding: 12px 14px;
+				box-shadow: 0 4px 16px var(--shadow);
+			}
+			.panel-box h3{
+				font-family: 'Cinzel Decorative', cursive;
+				color: var(--gold-dark);
+				font-size: 0.9rem;
+				text-align: center;
+				margin-bottom: 10px;
+				border-bottom: 1px solid var(--parchment-dark);
+				padding-bottom: 6px;
+			}
+			.dice-area{
+				text-align: center;
+			}
+			#current-player-name{
+				font-family: 'Cinzel Decorative', cursive;
+				font-size: 1rem;
+				color: var(--gold-dark);
+				margin-bottom: 8px;
+				line-height: 1.3;
+			}
+			.dice-row{
+				display: flex;
+				justify-content: center;
+				gap: 14px;
+				margin: 12px 0;
+			}
+			.die{
+				width: clamp(42px, 11vw, 58px);
+				height: clamp(42px, 11vw, 58px);
+				background: white;
+				border-radius: 10px;
+				border: 2.5px solid var(--ink);
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				grid-template-rows: repeat(3, 1fr);
+				padding: 5px;
+				gap: 2px;
+				box-shadow: 3px 3px 0 var(--ink);
+				transition: transform 0.1s;
+			}
+			.die.rolling{
+				animation: rollDie 0.6s ease;
+			}
+			@keyframes rollDie{
+				0%,
+				100%{
+					transform: rotate(0deg) scale(1);
+				}
+				25%{
+					transform: rotate(-15deg) scale(1.1);
+				}
+				50%{
+					transform: rotate(15deg) scale(0.9);
+				}
+				75%{
+					transform: rotate(-10deg) scale(1.05);
+				}
+			}
+			.pip{
+				width: 100%;
+				height: 100%;
+				background: var(--ink);
+				border-radius: 50%;
+				opacity: 0;
+			}
+			.pip.show{
+				opacity: 1;
+			}
+			.die-sum{
+				font-family: 'Cinzel Decorative', cursive;
+				font-size: 1.1rem;
+				color: var(--gold-dark);
+				margin: 6px 0 10px;
+			}
+			#roll-btn{
+				background: linear-gradient(135deg, var(--red) 0%, #cc3333 50%, var(--red) 100%);
+				color: var(--parchment);
+				border: none;
+				border-radius: 8px;
+				padding: 10px 20px;
+				font-family: 'Cinzel Decorative', cursive;
+				font-size: 0.95rem;
+				cursor: pointer;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+				transition: transform 0.1s, box-shadow 0.1s;
+				width: 100%;
+				letter-spacing: 0.03em;
+			}
+			#roll-btn:hover{
+				transform: translateY(-1px);
+			}
+			#roll-btn:active{
+				transform: translateY(1px);
+			}
+			#roll-btn:disabled{
+				background: #888;
+				cursor: not-allowed;
+				transform: none;
+			}
+			.player-info{
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				padding: 7px 8px;
+				border-radius: 7px;
+				margin-bottom: 6px;
+				border: 2px solid transparent;
+				transition: all 0.3s;
+				font-size: 0.95rem;
+				background: rgba(255, 255, 255, 0.3);
+			}
+			.player-info.active{
+				border-color: var(--gold);
+				background: rgba(200, 150, 42, 0.15);
+				box-shadow: 0 0 10px rgba(200, 150, 42, 0.3);
+			}
+			.player-info.blocked{
+				opacity: 0.5;
+			}
+			.player-token-icon{
+				font-size: 1.3rem;
+			}
+			.player-details{
+				flex: 1;
+			}
+			.player-name{
+				font-weight: 600;
+				color: var(--ink);
+			}
+			.player-pos{
+				font-size: 0.82rem;
+				color: #555;
+			}
+			.player-status{
+				font-size: 0.78rem;
+				color: var(--red);
+				font-style: italic;
+			}
+			#log{
+				max-height: 160px;
+				overflow-y: auto;
+				font-size: 0.87rem;
+				line-height: 1.5;
+				color: var(--ink);
+			}
+			#log::-webkit-scrollbar{
+				width: 6px;
+			}
+			#log::-webkit-scrollbar-track{
+				background: rgba(0, 0, 0, 0.05);
+				border-radius: 10px;
+			}
+			#log::-webkit-scrollbar-thumb{
+				background-color: var(--gold);
+				border-radius: 10px;
+			}
+			#log::-webkit-scrollbar-thumb:hover{
+				background-color: #d4af37;
+			}
+			@supports (scrollbar-width: thin){
+				#log{
+					scrollbar-width: thin;
+					scrollbar-color: var(--gold) rgba(0, 0, 0, 0.05);
+				}
+			}
+			#log p{
+				padding: 3px 0;
+				border-bottom: 1px solid rgba(200, 150, 42, 0.2);
+			}
+			#log p:last-child{
+				border-bottom: none;
+				font-weight: 600;
+			}
+			.log-special{
+				color: var(--red);
+				font-style: italic;
+			}
+			.log-goose{
+				color: var(--green);
+				font-style: italic;
+			}
+			.log-win{
+				color: var(--gold-dark);
+				font-weight: 700 !important;
+				font-size: 1rem !important;
+			}
+			.legend{
+				display: flex;
+				flex-wrap: wrap;
+				gap: 5px;
+			}
+			.legend-item{
+				display: flex;
+				align-items: center;
+				gap: 4px;
+				font-size: 0.78rem;
+				color: var(--ink);
+				background: rgba(255, 255, 255, 0.4);
+				border-radius: 4px;
+				padding: 2px 6px;
+				border: 1px solid var(--parchment-dark);
+			}
+			#win-modal{
+				display: none;
+				position: fixed;
+				inset: 0;
+				background: rgba(0, 0, 0, 0.75);
+				z-index: 1000;
+				align-items: center;
+				justify-content: center;
+				padding: 20px;
+			}
+			#win-modal.show{
+				display: flex;
+			}
+			.win-box{
+				background: linear-gradient(135deg, var(--parchment) 0%, var(--parchment-dark) 100%);
+				border: 5px double var(--gold);
+				border-radius: 16px;
+				padding: 32px 40px;
+				text-align: center;
+				max-width: 400px;
+				width: 100%;
+				box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+				animation: winPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+			}
+			@keyframes winPop{
+				from{
+					transform: scale(0.5) rotate(-10deg);
+					opacity: 0;
+				}
+				to{
+					transform: scale(1) rotate(0deg);
+					opacity: 1;
+				}
+			}
+			.win-emoji{
+				font-size: 4rem;
+				display: block;
+				margin-bottom: 10px;
+			}
+			.win-title{
+				font-family: 'Cinzel Decorative', cursive;
+				color: var(--gold-dark);
+				font-size: 1.6rem;
+				margin-bottom: 8px;
+			}
+			.win-name{
+				color: var(--red);
+				font-size: 1.3rem;
+				font-weight: 600;
+			}
+			.win-sub{
+				font-style: italic;
+				margin: 10px 0 20px;
+				font-size: 1rem;
+			}
+			@media (max-width: 700px){
+				.side-panel{
+					flex-direction: column;
+				}
+				#board{
+					gap: 2px;
+				}
+				.cell{
+					border-radius: 3px;
+				}
+			}
+			.tooltip{
+				position: absolute;
+				bottom: 105%;
+				left: 50%;
+				transform: translateX(-50%);
+				background: rgba(26, 16, 10, 0.92);
+				color: var(--parchment);
+				font-size: 0.72rem;
+				padding: 4px 8px;
+				border-radius: 5px;
+				white-space: nowrap;
+				pointer-events: none;
+				opacity: 0;
+				transition: opacity 0.2s;
+				z-index: 10;
+				font-family: 'Crimson Text', serif;
+				border: 1px solid var(--gold-dark);
+			}
+			.cell:hover .tooltip{
+				opacity: 1;
+			}
+			.player-setup-row{
+				display: flex;
+				flex-direction: column;
+				align-items: stretch;
+				gap: 6px;
+				margin-bottom: 10px;
+				max-width: 340px;
+				margin-left: auto;
+				margin-right: auto;
+			}
+			.player-setup-name-row{
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				margin-bottom: 0;
+			}
+			.player-setup-token-row{
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				margin-bottom: 0;
+				flex-wrap: wrap;
+			}
+			.player-setup-token-label{
+				font-size: 0.88rem;
+				color: var(--ink);
+				min-width: 0;
+			}
+			.player-count-row{
+				margin-top: 10px;
+				display: flex;
+				gap: 10px;
+				align-items: center;
+				justify-content: center;
+			}
+			.player-count-label{
+				font-size: 0.95rem;
+				color: var(--ink);
+			}
+			#player-count{
+				padding: 6px 10px;
+				border: 2px solid var(--gold);
+				border-radius: 6px;
+				font-family: 'Crimson Text', serif;
+				font-size: 1rem;
+				background: rgba(255, 255, 255, 0.7);
+				color: var(--ink);
+				outline: none;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>🪿 Gioco dell'Oca</h1>
+		<p class="subtitle">Il classico gioco da tavolo — per 2, 3 o 4 giocatori</p>
+		<div id="setup-panel">
+			<h2>⚙️ Nuova Partita</h2>
+			<div id="players-setup"></div>
+			<div class="player-count-row">
+				<label class="player-count-label">Giocatori:</label>
+				<select id="player-count" title="Numero di giocatori" aria-label="Numero di giocatori">
+					<option value="2">2</option>
+					<option value="3">3</option>
+					<option value="4" selected>4</option>
+				</select>
+			</div>
+			<button class="btn" onclick="startGame()">🎲 Inizia a Giocare!</button>
+		</div>
+		<div id="game-area">
+			<div class="game-layout">
+				<div id="board-container">
+					<div id="board"></div>
+				</div>
+				<div class="side-panel">
+					<div class="panel-box dice-area">
+						<h3>🎲 Turno</h3>
+						<div id="current-player-name">—</div>
+						<div class="dice-row">
+							<div class="die" id="die1"></div>
+							<div class="die" id="die2"></div>
+						</div>
+						<div class="die-sum" id="die-sum">—</div>
+						<button id="roll-btn" onclick="rollDice()">Lancia i Dadi!</button>
+					</div>
+					<div class="panel-box">
+						<h3>👥 Giocatori</h3>
+						<div id="players-display"></div>
+					</div>
+					<div class="panel-box">
+						<h3>📜 Cronaca</h3>
+						<div id="log"></div>
+					</div>
+					<div class="panel-box">
+						<h3>📖 Legenda</h3>
+						<div class="legend">
+							<div class="legend-item">🪿 Oca</div>
+							<div class="legend-item">🌉 Ponte (6)</div>
+							<div class="legend-item">🏨 Locanda (19)</div>
+							<div class="legend-item">🪣 Pozzo (31)</div>
+							<div class="legend-item">🌀 Labirinto (42)</div>
+							<div class="legend-item">⛓️ Prigione (52)</div>
+							<div class="legend-item">💀 Morte (58)</div>
+							<div class="legend-item">🏆 Fine (63)</div>
+						</div>
+					</div>
+					<button class="btn secondary" onclick="newGame()">🔄 Nuova Partita</button>
+				</div>
+			</div>
+		</div>
+		<div id="win-modal">
+			<div class="win-box">
+				<span class="win-emoji">🏆</span>
+				<div class="win-title">Vittoria!</div>
+				<div class="win-name" id="win-name"></div>
+				<div class="win-sub">Ha vinto il Gioco dell'Oca!</div>
+				<button class="btn" onclick="newGame()">🎲 Gioca ancora</button>
+			</div>
+		</div>
+		<script>
+			const TOTAL_CELLS = 63;
+			const GOOSE_CELLS = [5, 9, 14, 18, 23, 27, 32, 36, 41, 45, 50, 54, 59];
+			const SPECIAL_CELLS = {
+				6: { type: 'bridge', icon: '🌉', label: 'Ponte', desc: 'Vai al 12!' },
+				12: { type: 'bridge', icon: '🌉', label: 'Ponte', desc: 'Vai al 6!' },
+				19: { type: 'inn', icon: '🏨', label: 'Locanda', desc: 'Salta 2 turni!' },
+				31: { type: 'well', icon: '🪣', label: 'Pozzo', desc: 'Aspetta 3 turni!' },
+				42: { type: 'maze', icon: '🌀', label: 'Labirinto', desc: 'Torna al 30!' },
+				52: { type: 'prison', icon: '⛓️', label: 'Prigione', desc: 'Aspetta 3 turni!' },
+				58: { type: 'death', icon: '💀', label: 'Morte', desc: 'Torna al 1!' },
+			};
+			const TOKENS_AVAILABLE = ['🔴', '🔵', '🟢', '🟡', '🟣', '🟠'];
+			const TOKEN_NAMES = ['Rosso', 'Blu', 'Verde', 'Giallo', 'Viola', 'Arancio'];
+			let players = [];
+			let currentPlayerIdx = 0;
+			let rolling = false;
+			let gameStarted = false;
+
+			function initSetup(){
+				const count = parseInt(document.getElementById('player-count').value);
+				const container = document.getElementById('players-setup');
+				container.innerHTML = '';
+				const defaultNames = ['Giocatore 1', 'Giocatore 2', 'Giocatore 3', 'Giocatore 4'];
+				for(let i = 0; i < count; i++){
+					const row = document.createElement('div');
+					row.className = 'player-setup-row';
+					const nameRow = document.createElement('div');
+					nameRow.className = 'player-setup-name-row';
+					const nameLabel = document.createElement('label');
+					nameLabel.textContent = `P${i + 1}:`;
+					nameLabel.setAttribute('for', `player-name-${i}`);
+					const nameInput = document.createElement('input');
+					nameInput.type = 'text';
+					nameInput.placeholder = defaultNames[i];
+					nameInput.id = `player-name-${i}`;
+					nameInput.value = defaultNames[i];
+					nameRow.appendChild(nameLabel);
+					nameRow.appendChild(nameInput);
+					const tokenRow = document.createElement('div');
+					tokenRow.className = 'player-setup-token-row';
+					const tokenLabel = document.createElement('label');
+					tokenLabel.textContent = 'Pedina:';
+					tokenLabel.className = 'player-setup-token-label';
+					const picker = document.createElement('div');
+					picker.className = 'token-picker';
+					TOKENS_AVAILABLE.forEach((tok, ti) => {
+						const opt = document.createElement('span');
+						opt.className = 'token-option' + (ti === i ? ' selected' : '');
+						opt.textContent = tok;
+						opt.dataset.idx = ti;
+						opt.dataset.playerIdx = i;
+					opt.onclick = () => selectToken(i, ti, opt);
+						picker.appendChild(opt);
+					});	
+					tokenRow.appendChild(tokenLabel);
+					tokenRow.appendChild(picker);
+					row.appendChild(nameRow);
+					row.appendChild(tokenRow);
+					container.appendChild(row);
+				}
+			}
+
+			function selectToken(playerIdx, tokenIdx, el){
+				document.querySelectorAll(`#players-setup .token-option`).forEach(opt => {
+					if(parseInt(opt.dataset.playerIdx) === playerIdx){
+						opt.classList.remove('selected');
+					}
+				});
+				el.classList.add('selected');
+			}
+
+			document.getElementById('player-count').addEventListener('change', initSetup);
+			initSetup();
+
+			function startGame(){
+				const count = parseInt(document.getElementById('player-count').value);
+				players = [];
+				for(let i = 0; i < count; i++){
+					const nameInput = document.getElementById(`player-name-${i}`);
+					const name = nameInput.value.trim() || `Giocatore ${i + 1}`;
+					const selectedToken = document.querySelector(`#players-setup [data-player-idx="${i}"].selected`);
+					const tokenIdx = selectedToken ? parseInt(selectedToken.dataset.idx) : i;
+					players.push({
+						name,
+						token: TOKENS_AVAILABLE[tokenIdx % TOKENS_AVAILABLE.length],
+						tokenName: TOKEN_NAMES[tokenIdx % TOKEN_NAMES.length],
+						pos: 0,
+						blocked: 0,
+						blockType: null,
+					});
+				}
+				currentPlayerIdx = 0;
+				rolling = false;
+				gameStarted = true;
+				document.getElementById('setup-panel').style.display = 'none';
+				document.getElementById('game-area').style.display = 'block';
+				buildBoard();
+				renderPlayersDisplay();
+				updateCurrentPlayer();
+				clearLog();
+				addLog(`La partita inizia! Buona fortuna a tutti! 🎲`);
+			}
+
+			function buildBoard(){
+				const board = document.getElementById('board');
+				board.innerHTML = '';
+				const sequence = buildSequence();
+				const startCell = document.createElement('div');
+				startCell.className = 'cell start';
+				startCell.innerHTML = `
+					<div class="cell-icon">🏁</div>
+					<div class="cell-num">0</div>
+					<div class="tokens-on-cell" id="tokens-0"></div>
+					<div class="tooltip">Partenza</div>
+				`;
+				startCell.style.gridColumn = '1';
+				startCell.style.gridRow = '8';
+				board.appendChild(startCell);
+				sequence.forEach(({ num, col, row }) => {
+					const cell = document.createElement('div');
+					const isGoose = GOOSE_CELLS.includes(num);
+					const special = SPECIAL_CELLS[num];
+					const isFinish = num === TOTAL_CELLS;
+					let cls = 'cell';
+					let icon = '';
+					let tooltip = `Casella ${num}`;
+					if(isFinish){
+						cls += ' finish';
+						icon = '🏆';
+						tooltip = 'Arrivo!';
+					}else if(isGoose){
+						cls += ' goose';
+						icon = '🪿';
+						tooltip = 'Oca — rilancia!';
+					}else if(special) {
+						cls += ` ${special.type}`;
+						icon = special.icon;
+						tooltip = `${special.label}: ${special.desc}`;
+					}
+					cell.className = cls;
+					cell.id = `cell-${num}`;
+					cell.style.gridColumn = col;
+					cell.style.gridRow = row;
+					cell.innerHTML = `
+						<div class="cell-num">${num}</div>
+						${icon ? '<div class="cell-icon">' + icon + '</div>' : ''}
+						<div class="tokens-on-cell" id="tokens-${num}"></div>
+						<div class="tooltip">${tooltip}</div>
+					`;
+					board.appendChild(cell);
+				});
+				renderTokens();
+			}
+
+			function buildSequence(){
+				const cells = [];
+				for(let i = 1; i <= 63; i++){
+					const zeroIdx = i - 1;
+					const rowFromBottom = Math.floor(zeroIdx/9);
+					const posInRow = zeroIdx%9;
+					const gridRow = 7 - rowFromBottom;
+					let gridCol;
+					if(rowFromBottom%2 === 0){
+						gridCol = posInRow + 1;
+					}else{
+						gridCol = 9 - posInRow;
+					}
+					cells.push({ num: i, col: gridCol, row: gridRow });
+				}
+				return cells;
+			}
+
+			function renderTokens(){
+				document.querySelectorAll('.tokens-on-cell').forEach(el => el.innerHTML = '');
+				players.forEach(p => {
+					const container = document.getElementById(`tokens-${p.pos}`);
+					if(container){
+						const span = document.createElement('span');
+						span.className = 'token-on-board';
+						span.textContent = p.token;
+						container.appendChild(span);
+					}
+				});
+			}
+
+			function renderPlayersDisplay(){
+				const container = document.getElementById('players-display');
+				container.innerHTML = '';
+				players.forEach((p, i) => {
+					const div = document.createElement('div');
+					div.className = `player-info${i === currentPlayerIdx ? ' active' : ''}${p.blocked > 0 ? ' blocked' : ''}`;
+					div.id = `player-display-${i}`;
+					let statusText = '';
+					if(p.blocked > 0){
+						statusText = `<div class="player-status">⏸ Bloccato (${p.blocked} turni)</div>`;
+					}
+					div.innerHTML = `
+						<span class="player-token-icon">${p.token}</span>
+						<div class="player-details">
+							<div class="player-name">${p.name}</div>
+							<div class="player-pos">Casella: ${p.pos}</div>
+							${statusText}
+						</div>
+					`;
+					container.appendChild(div);
+				});
+			}
+
+			function updateCurrentPlayer(){
+				const p = players[currentPlayerIdx];
+				document.getElementById('current-player-name').textContent = `${p.token} ${p.name}`;
+				document.getElementById('roll-btn').disabled = false;
+				renderPlayersDisplay();
+			}
+
+			function addLog(msg, cls = ''){
+				const log = document.getElementById('log');
+				const p = document.createElement('p');
+				if(cls){
+					p.className = cls;
+				}
+				p.innerHTML = msg;
+				log.appendChild(p);
+				log.scrollTop = log.scrollHeight;
+			}
+
+			function clearLog(){
+				document.getElementById('log').innerHTML = '';
+			}
+
+			const DIE_PIPS = {
+				1: [[1, 1]],
+				2: [[0, 0], [2, 2]],
+				3: [[0, 0], [1, 1], [2, 2]],
+				4: [[0, 0], [0, 2], [2, 0], [2, 2]],
+				5: [[0, 0], [0, 2], [1, 1], [2, 0], [2, 2]],
+				6: [[0, 0], [0, 2], [1, 0], [1, 2], [2, 0], [2, 2]],
+			};
+
+			function renderDie(dieEl, val){
+				dieEl.innerHTML = '';
+				for(let r = 0; r < 3; r++){
+					for(let c = 0; c < 3; c++){
+						const pip = document.createElement('div');
+						pip.className = 'pip';
+						const active = DIE_PIPS[val].some(([pr, pc]) => pr === r && pc === c);
+						if(active){
+							pip.classList.add('show');
+						}
+						dieEl.appendChild(pip);
+					}
+				}
+			}
+
+			function rollDice(){
+				if(rolling){
+					return;
+				}
+				rolling = true;
+				const player = players[currentPlayerIdx];
+				const rollBtn = document.getElementById('roll-btn');
+				rollBtn.disabled = true;
+				if(player.blocked > 0){
+					player.blocked--;
+					addLog(`${player.token} <b>${player.name}</b> è bloccato. Turni rimanenti: ${player.blocked}`, 'log-special');
+					rolling = false;
+					nextPlayer();
+					return;
+				}
+				const die1El = document.getElementById('die1');
+				const die2El = document.getElementById('die2');
+				die1El.classList.add('rolling');
+				die2El.classList.add('rolling');
+				let frames = 0;
+				const anim = setInterval(() => {
+					const r1 = Math.ceil(Math.random()*6);
+					const r2 = Math.ceil(Math.random()*6);
+					renderDie(die1El, r1);
+					renderDie(die2El, r2);
+					frames++;
+					if(frames > 8){
+						clearInterval(anim);
+						die1El.classList.remove('rolling');
+						die2El.classList.remove('rolling');
+						const d1 = Math.ceil(Math.random()*6);
+						const d2 = Math.ceil(Math.random()*6);
+						renderDie(die1El, d1);
+						renderDie(die2El, d2);
+						document.getElementById('die-sum').textContent = `Totale: ${d1 + d2}`;
+						setTimeout(() => movePlayer(currentPlayerIdx, d1 + d2, d1, d2), 300);
+					}
+				}, 80);
+			}
+
+			function movePlayer(idx, steps, d1, d2){
+				const player = players[idx];
+				const oldPos = player.pos;
+				let newPos = player.pos + steps;
+				addLog(`${player.token} <b>${player.name}</b> tira ${d1}+${d2}=${steps} → casella ${Math.min(newPos, TOTAL_CELLS)}`);
+				if(newPos > TOTAL_CELLS){
+					newPos = TOTAL_CELLS - (newPos - TOTAL_CELLS);
+					addLog(`↩️ Rimbalzo! Torna alla casella ${newPos}`, 'log-special');
+				}
+				player.pos = newPos;
+				renderTokens();
+				if(newPos === TOTAL_CELLS){
+					renderPlayersDisplay();
+					setTimeout(() => showWin(player), 400);
+					rolling = false;
+					return;
+				}
+				let extraTurn = false;
+				if(GOOSE_CELLS.includes(newPos)){
+					addLog(`🪿 Oca! <b>${player.name}</b> rilancia di ${steps}!`, 'log-goose');
+					player.pos += steps;
+					if(player.pos > TOTAL_CELLS){
+						player.pos = TOTAL_CELLS - (player.pos - TOTAL_CELLS);
+					}
+					renderTokens();
+					extraTurn = true;
+					addLog(`🪿 Finisce alla casella ${player.pos}!`, 'log-goose');
+					if(player.pos === TOTAL_CELLS){
+						renderPlayersDisplay();
+						setTimeout(() => showWin(player), 400);
+						rolling = false;
+						return;
+					}
+					checkSpecial(player, true);
+				}else{
+					extraTurn = checkSpecial(player, false);
+				}
+				renderPlayersDisplay();
+				rolling = false;
+				if(extraTurn){
+					updateCurrentPlayer();
+				}else{
+					nextPlayer();
+				}
+			}
+
+			function checkSpecial(player, afterGoose){
+				const special = SPECIAL_CELLS[player.pos];
+				if(!special){
+					return false;
+				}
+				switch(special.type){
+					case 'bridge': {
+						const dest = player.pos === 6 ? 12 : 6;
+						addLog(`🌉 Ponte! <b>${player.name}</b> salta alla casella ${dest}!`, 'log-special');
+						player.pos = dest;
+						renderTokens();
+						return true;
+					}
+					case 'inn':
+						player.blocked = 2;
+						addLog(`🏨 Locanda! <b>${player.name}</b> si ferma 2 turni!`, 'log-special');
+						return false;
+					case 'well':
+						player.blocked = 3;
+						addLog(`🪣 Pozzo! <b>${player.name}</b> aspetta 3 turni!`, 'log-special');
+						return false;
+					case 'maze':
+						player.pos = 30;
+						renderTokens();
+						addLog(`🌀 Labirinto! <b>${player.name}</b> torna alla casella 30!`, 'log-special');
+						return false;
+					case 'prison':
+						player.blocked = 3;
+						addLog(`⛓️ Prigione! <b>${player.name}</b> resta 3 turni!`, 'log-special');
+						return false;
+					case 'death':
+						player.pos = 1;
+						renderTokens();
+						addLog(`💀 Morte! <b>${player.name}</b> ricomincia dalla casella 1!`, 'log-special');
+						return false;
+				}
+				return false;
+			}
+
+			function nextPlayer(){
+				currentPlayerIdx = (currentPlayerIdx + 1)%players.length;
+				updateCurrentPlayer();
+			}
+
+			function showWin(player){
+				document.getElementById('win-name').textContent = `${player.token} ${player.name}`;
+				document.getElementById('win-modal').classList.add('show');
+				addLog(`🏆 ${player.token} ${player.name} ha vinto!!!`, 'log-win');
+				document.getElementById('roll-btn').disabled = true;
+			}
+
+			function newGame(){
+				document.getElementById('win-modal').classList.remove('show');
+				document.getElementById('game-area').style.display = 'none';
+				document.getElementById('setup-panel').style.display = 'block';
+				gameStarted = false;
+				initSetup();
+			}
+		</script>
+	</body>
+</html>
