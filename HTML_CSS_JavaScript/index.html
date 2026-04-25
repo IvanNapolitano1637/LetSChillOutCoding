@@ -11455,7 +11455,19 @@ document.addEventListener('keydown', function(e) {
 				</svg>\`;
 			}
 
-			function getPositions(n){
+			function getPositions(n, suit){
+				if(suit === 'B'){
+					const LB = {
+						1: [[50,50]],
+						2: [[32,28],[68,72]],
+						3: [[32,20],[68,50],[32,80]],
+						4: [[28,25],[72,25],[28,75],[72,75]],
+						5: [[28,18],[72,18],[50,50],[28,82],[72,82]],
+						6: [[28,16],[72,16],[28,50],[72,50],[28,84],[72,84]],
+						7: [[28,14],[72,14],[28,42],[72,42],[50,60],[28,80],[72,80]],
+					};
+					return (LB[n] || LB[1]).map(([x,y]) => ({x,y}));
+				}
 				const L = {
 					1: [[50,50]],
 					2: [[50,28],[50,72]],
@@ -11721,8 +11733,12 @@ document.addEventListener('keydown', function(e) {
 					S: [[20,40],[18,36],[17,34],[15,30],[14,28],[13,26],[12,24]],
 					B: [[14,44],[13,40],[12,38],[11,34],[10,32],[10,30],[9,28]],
 				};
-				const idx = Math.min(n,7)-1;
-				return (base[suit] || base.D)[idx];
+				const idx = Math.min(n,7) - 1;
+				const [w, h] = (base[suit] || base.D)[idx];
+				const cardEl = document.querySelector('.card');
+				const cw = cardEl ? cardEl.getBoundingClientRect().width : 85;
+				const scale = Math.min(1, cw/85);
+				return [Math.round(w*scale), Math.round(h*scale)];
 			}
 
 			function renderCardContent(card){
@@ -11736,13 +11752,13 @@ document.addEventListener('keydown', function(e) {
 				if(v >= 8){
 					centerHtml = \`<div style="position:absolute;inset:0;z-index:2;pointer-events:none">\${svgFigura(s,v)}</div>\`;
 				}else{
-					const positions = getPositions(v);
+					const positions = getPositions(v, s);
 					const [sw, sh] = symSize(v, s);
 					const symFn = {D:svgDenaro, C:svgCoppa, S:svgSpada, B:svgBastone}[s];
 					const symbols = positions.map(({x,y}) => {
 						return \`<div style="position:absolute;left:\${x}%;top:\${y}%;transform:translate(-50%,-50%);line-height:0">\${symFn(sw,sh)}</div>\`;
 					}).join('');
-					centerHtml = \`<div style="position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden">\${symbols}</div>\`;
+					centerHtml = \`<div style="position:absolute;inset:22% 0 22%;z-index:2;pointer-events:none;overflow:hidden">\${symbols}</div>\`;
 				}
 				card.innerHTML = \`
 					<div class="card-val v-tl" style="color:\${color}"><span class="num">\${numLabel}</span>\${miniSvg}</div>
