@@ -335,18 +335,24 @@
 			.card-inner{
 				position: absolute;
 				inset: 0;
-				padding: 3px 4px;
-				display: flex;
-				flex-direction: column;
-				justify-content: space-between;
+				pointer-events: none;
+				z-index: 10;
 			}
 			.card-corner{
+				position: absolute;
 				display: flex;
-				flex-direction: column;
-				align-items: center;
+				flex-direction: row;
+				align-items: baseline;
+				gap: 1px;
 				line-height: 1;
+				top: 3px;
+				left: 4px;
 			}
 			.card-corner.bot{
+				top: auto;
+				left: auto;
+				bottom: 3px;
+				right: 4px;
 				transform: rotate(180deg);
 			}
 			.card-rank{
@@ -357,6 +363,27 @@
 			.card-suit-sm{
 				font-size: calc(var(--cw)*0.18);
 				line-height: 1;
+			}
+			.card-corner::before{
+				content: '';
+				position: absolute;
+				inset: -2px -3px;
+				background: rgba(255,255,255,0.82);
+				border-radius: 3px;
+				z-index: -1;
+			}
+			.card-figure{
+				position: absolute;
+				inset: 0;
+				overflow: hidden;
+				border-radius: 5px;
+				pointer-events: none;
+				z-index: 1;
+			}
+			.card-pips-area{
+				position: absolute;
+				inset: 0;
+				pointer-events: none;
 			}
 			.card-center-suit{
 				position: absolute;
@@ -521,9 +548,33 @@
 			.foundation-slot.suit-black-empty{
 				color: rgba(201, 168, 76, 0.25);
 			}
+			@keyframes hintPulse{
+				0%,100%{
+					opacity: 1;
+				}
+				50%{
+					opacity: 0.6;
+				}
+			}
+			.card.hint-from{
+				box-shadow: 0 0 0 2.5px #f39c12, 0 0 12px rgba(243,156,18,0.6) !important;
+				animation: hintPulse 1s ease-in-out infinite !important;
+				z-index: 500 !important;
+			}
+			.card.hint-to{
+				box-shadow: 0 0 0 2.5px #2ecc71, 0 0 12px rgba(46,204,113,0.5) !important;
+				animation: hintPulse 1s ease-in-out infinite !important;
+				z-index: 499 !important;
+			}
+			.hint-btn-on{
+				background: rgba(243,156,18,0.25) !important;
+				border-color: #f39c12 !important;
+				color: #f39c12 !important;
+			}
 			@media(max-width:600px){
 				#undo-btn-hdr,
-				#new-game-btn{
+				#new-game-btn,
+				#hint-btn-hdr{
 					display: none;
 				}
 			}
@@ -543,6 +594,7 @@
 					<button class="diff-btn" data-suits="2">2♠♥</button>
 					<button class="diff-btn" data-suits="4">4♠♥♦♣</button>
 				</div>
+				<button class="hdr-btn" id="hint-btn-hdr">💡</button>
 				<button class="hdr-btn" id="undo-btn-hdr">↩</button>
 				<button class="hdr-btn primary" id="new-game-btn">Nuovo</button>
 			</header>
@@ -566,6 +618,7 @@
 					<button class="diff-btn" data-suits="4">4♠♥♦♣</button>
 				</div>
 				<button class="hdr-btn" id="undo-btn-mob">↩ Annulla</button>
+				<button class="hdr-btn" id="hint-btn-mob">💡 Aiuto</button>
 				<button class="hdr-btn primary" id="new-game-btn-mob">Nuovo</button>
 			</div>
 			<div id="win-overlay">
@@ -921,12 +974,160 @@
 				el.scrollTop = scrollTop;
 			}
 
+			const SUIT_PIPS = {
+				'A':  [[50,50]],
+				'2':  [[50,25],[50,75]],
+				'3':  [[50,22],[50,50],[50,78]],
+				'4':  [[28,25],[72,25],[28,75],[72,75]],
+				'5':  [[28,22],[72,22],[50,50],[28,78],[72,78]],
+				'6':  [[28,22],[72,22],[28,50],[72,50],[28,78],[72,78]],
+				'7':  [[28,20],[72,20],[50,37],[28,55],[72,55],[28,78],[72,78]],
+				'8':  [[28,18],[72,18],[28,38],[72,38],[28,62],[72,62],[28,82],[72,82]],
+				'9':  [[28,17],[72,17],[28,35],[72,35],[50,50],[28,65],[72,65],[28,83],[72,83]],
+				'10': [[28,16],[72,16],[28,33],[72,33],[50,27],[50,73],[28,67],[72,67],[28,84],[72,84]],
+			};
+
+			function getFigureSVG(rank, suit, color){
+				const isRed = color === 'red';
+				const c = isRed ? '#c0392b' : '#1a1a2e';
+				const bg = isRed ? '#fff0f0' : '#f0f0ff';
+				const ac = isRed ? '#e74c3c' : '#2c3e6b';
+
+				if(rank === 'J'){
+					return `<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+						<rect width="100" height="140" fill="${bg}" rx="3"/>
+						<rect x="8" y="8" width="84" height="124" fill="none" stroke="${ac}" stroke-width="1" rx="2" opacity="0.4"/>
+						<!-- Body -->
+						<rect x="32" y="72" width="36" height="42" fill="${c}" rx="4"/>
+						<!-- Collar -->
+						<polygon points="42,72 50,82 58,72" fill="white" opacity="0.9"/>
+						<line x1="50" y1="82" x2="50" y2="110" stroke="white" stroke-width="1.5" opacity="0.7"/>
+						<!-- Head -->
+						<ellipse cx="50" cy="55" rx="16" ry="18" fill="#f5d5a0"/>
+						<!-- Hair -->
+						<ellipse cx="50" cy="38" rx="16" ry="8" fill="${c}"/>
+						<rect x="34" y="38" width="32" height="6" fill="${c}"/>
+						<!-- Eyes -->
+						<ellipse cx="44" cy="53" rx="2.5" ry="2.5" fill="${c}"/>
+						<ellipse cx="56" cy="53" rx="2.5" ry="2.5" fill="${c}"/>
+						<!-- Mouth -->
+						<path d="M44 61 Q50 65 56 61" stroke="${c}" stroke-width="1.5" fill="none"/>
+						<!-- Belt -->
+						<rect x="32" y="95" width="36" height="5" fill="${ac}" opacity="0.6"/>
+						<!-- Legs -->
+						<rect x="34" y="114" width="13" height="20" fill="${c}" rx="2"/>
+						<rect x="53" y="114" width="13" height="20" fill="${c}" rx="2"/>
+						<!-- Suit symbol on chest -->
+						<text x="50" y="92" text-anchor="middle" font-size="11" fill="white" opacity="0.9">${suit}</text>
+					</svg>`;
+				}
+				if(rank === 'Q'){
+					return `<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+						<rect width="100" height="140" fill="${bg}" rx="3"/>
+						<rect x="8" y="8" width="84" height="124" fill="none" stroke="${ac}" stroke-width="1" rx="2" opacity="0.4"/>
+						<!-- Dress -->
+						<polygon points="28,75 72,75 80,130 20,130" fill="${c}" opacity="0.9"/>
+						<!-- Bodice -->
+						<rect x="34" y="65" width="32" height="18" fill="${c}" rx="3"/>
+						<!-- Collar decoration -->
+						<path d="M34 68 Q50 78 66 68" stroke="${ac}" stroke-width="2" fill="none" opacity="0.7"/>
+						<!-- Head -->
+						<ellipse cx="50" cy="48" rx="15" ry="17" fill="#f5d5a0"/>
+						<!-- Crown -->
+						<polygon points="35,32 38,22 43,30 50,18 57,30 62,22 65,32" fill="#c9a84c"/>
+						<rect x="34" y="30" width="32" height="5" fill="#c9a84c"/>
+						<!-- Crown gems -->
+						<circle cx="50" cy="21" r="2.5" fill="#e74c3c"/>
+						<circle cx="40" cy="25" r="2" fill="#3498db"/>
+						<circle cx="60" cy="25" r="2" fill="#2ecc71"/>
+						<!-- Eyes -->
+						<ellipse cx="44" cy="46" rx="2.5" ry="2.5" fill="${c}"/>
+						<ellipse cx="56" cy="46" rx="2.5" ry="2.5" fill="${c}"/>
+						<!-- Mouth -->
+						<path d="M44 54 Q50 59 56 54" stroke="${c}" stroke-width="1.5" fill="none"/>
+						<!-- Dress decoration -->
+						<line x1="50" y1="75" x2="50" y2="120" stroke="${ac}" stroke-width="1" opacity="0.4"/>
+						<ellipse cx="50" cy="95" rx="8" ry="8" fill="none" stroke="${ac}" stroke-width="1" opacity="0.4"/>
+						<!-- Suit symbol -->
+						<text x="50" y="80" text-anchor="middle" font-size="10" fill="white" opacity="0.85">${suit}</text>
+					</svg>`;
+				}
+				if(rank === 'K'){
+					return `<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+						<rect width="100" height="140" fill="${bg}" rx="3"/>
+						<rect x="8" y="8" width="84" height="124" fill="none" stroke="${ac}" stroke-width="1" rx="2" opacity="0.4"/>
+						<!-- Cape/Mantle -->
+						<path d="M20,75 Q15,110 18,135 L82,135 Q85,110 80,75 Z" fill="${ac}" opacity="0.35"/>
+						<!-- Body/Armor -->
+						<rect x="30" y="70" width="40" height="45" fill="${c}" rx="4"/>
+						<!-- Armor details -->
+						<line x1="50" y1="70" x2="50" y2="115" stroke="${ac}" stroke-width="1.5" opacity="0.5"/>
+						<line x1="30" y1="85" x2="70" y2="85" stroke="${ac}" stroke-width="1" opacity="0.4"/>
+						<line x1="30" y1="98" x2="70" y2="98" stroke="${ac}" stroke-width="1" opacity="0.4"/>
+						<!-- Shoulders -->
+						<ellipse cx="30" cy="73" rx="9" ry="7" fill="${ac}" opacity="0.7"/>
+						<ellipse cx="70" cy="73" rx="9" ry="7" fill="${ac}" opacity="0.7"/>
+						<!-- Head -->
+						<ellipse cx="50" cy="50" rx="16" ry="18" fill="#f5d5a0"/>
+						<!-- Crown -->
+						<polygon points="34,30 37,19 43,28 50,15 57,28 63,19 66,30" fill="#c9a84c"/>
+						<rect x="33" y="28" width="34" height="6" fill="#c9a84c"/>
+						<!-- Crown gems -->
+						<circle cx="50" cy="18" r="3" fill="#e74c3c"/>
+						<circle cx="39" cy="22" r="2" fill="#9b59b6"/>
+						<circle cx="61" cy="22" r="2" fill="#3498db"/>
+						<!-- Beard -->
+						<path d="M37 60 Q50 72 63 60 Q60 68 50 70 Q40 68 37 60Z" fill="#8B6914" opacity="0.7"/>
+						<!-- Eyes -->
+						<ellipse cx="44" cy="47" rx="2.5" ry="2.5" fill="${c}"/>
+						<ellipse cx="56" cy="47" rx="2.5" ry="2.5" fill="${c}"/>
+						<!-- Scepter -->
+						<line x1="72" y1="62" x2="72" y2="115" stroke="#c9a84c" stroke-width="3"/>
+						<circle cx="72" cy="60" r="5" fill="#c9a84c"/>
+						<text x="72" y="63" text-anchor="middle" font-size="6" fill="white">${suit}</text>
+						<!-- Suit on chest -->
+						<text x="46" y="95" text-anchor="middle" font-size="11" fill="white" opacity="0.9">${suit}</text>
+						<!-- Legs -->
+						<rect x="33" y="114" width="14" height="20" fill="${c}" rx="2"/>
+						<rect x="53" y="114" width="14" height="20" fill="${c}" rx="2"/>
+					</svg>`;
+				}
+				return '';
+			}
+
+			function makePipsSVG(rank, suit, color){
+				const positions = SUIT_PIPS[rank];
+				if(!positions) return '';
+				const isRed = color === 'red';
+				const sc = isRed ? '#d63031' : '#1a1a1a';
+				const fs = rank === 'A' ? 28 : 13;
+				let svgContent = '';
+				for(let i = 0; i < positions.length; i++){
+					const [x, y] = positions[i];
+					const flip = (rank !== 'A' && rank !== '5' && rank !== '9') ? (y > 50) : false;
+					const transform = flip ? `rotate(180, ${x}, ${y})` : '';
+					svgContent += `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" font-size="${fs}" fill="${sc}" transform="${transform}">${suit}</text>`;
+				}
+				return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none">${svgContent}</svg>`;
+			}
+
 			function makeCard(card, col, cidx){
 				const el = document.createElement('div');
 				el.className = 'card' + (card.faceUp ? '' : ' face-down');
-				el.dataset.col = col; el.dataset.idx = cidx;
+				el.dataset.col = col;
+				el.dataset.idx = cidx;
 				if(card.faceUp){
 					const color = SUIT_COLOR[card.suit];
+					const isFace = ['J','Q','K'].includes(card.rank);
+					const isPip = SUIT_PIPS[card.rank] !== undefined;
+					let centerHTML = '';
+					if(isFace){
+						centerHTML = `<div class="card-figure">${getFigureSVG(card.rank, card.suit, color)}</div>`;
+					}else if(isPip){
+						centerHTML = `<div class="card-pips-area">${makePipsSVG(card.rank, card.suit, color)}</div>`;
+					}else{
+						centerHTML = `<div class="card-center-suit ${color}">${card.suit}</div>`;
+					}
 					el.innerHTML = `
 				<div class="card-inner">
 					<div class="card-corner ${color}">
@@ -938,7 +1139,7 @@
 						<span class="card-suit-sm">${card.suit}</span>
 					</div>
 				</div>
-				<div class="card-center-suit ${color}">${card.suit}</div>`;
+				${centerHTML}`;
 					el.addEventListener('click', (e) => {
 						e.stopPropagation(); onCardClick(col, cidx);
 					});
@@ -947,6 +1148,7 @@
 			}
 
 			function onCardClick(colIdx, cardIdx){
+				clearHints();
 				const card = tableau[colIdx][cardIdx];
 				if(!card.faceUp){
 					return;
@@ -1061,10 +1263,91 @@
 				newGame();
 			}
 
+			function findAllMoves(){
+				const moves = [];
+				const seen = new Set();
+				for(let fromCol = 0; fromCol < 10; fromCol++){
+					const cards = tableau[fromCol];
+					for(let fromIdx = 0; fromIdx < cards.length; fromIdx++){
+						const moving = getMovable(fromCol, fromIdx);
+						if(!moving){
+							continue;
+						}
+						for(let toCol = 0; toCol < 10; toCol++){
+							if(toCol === fromCol){
+								continue;
+							}
+							if(!canPlace(moving, toCol)){
+								continue;
+							}
+							const key = `${fromCol}-${fromIdx}-${toCol}`;
+							if(!seen.has(key)){
+								seen.add(key);
+								moves.push({ fromCol, fromIdx, toCol });
+							}
+						}
+					}
+				}
+				return moves;
+			}
+
+			let hintTimer = null;
+			let hintActive = false;
+
+			function clearHints(){
+				document.querySelectorAll('.card.hint-from, .card.hint-to').forEach(el => {
+					el.classList.remove('hint-from', 'hint-to');
+				});
+				clearTimeout(hintTimer);
+				hintActive = false;
+				document.querySelectorAll('#hint-btn-hdr, #hint-btn-mob').forEach(b => b.classList.remove('hint-btn-on'));
+			}
+
+			function showHint(){
+				if(hintActive){
+					clearHints();
+					return;
+				}
+				const moves = findAllMoves();
+				if(!moves.length){
+					toast('Nessuna mossa disponibile — distribuisci le carte!');
+					return;
+				}
+				const fromGroups = new Set();
+				const toCols = new Set();
+				moves.forEach(m => {
+					fromGroups.add(`${m.fromCol}-${m.fromIdx}`);
+					toCols.add(m.toCol);
+				});
+				document.querySelectorAll('.card').forEach(el => {
+					const col = parseInt(el.dataset.col);
+					const idx = parseInt(el.dataset.idx);
+					for(const key of fromGroups){
+						const [fc, fi] = key.split('-').map(Number);
+						if(col === fc && idx >= fi){
+							el.classList.add('hint-from');
+							break;
+						}
+					}
+					if(toCols.has(col)){
+						const colCards = document.querySelectorAll(`.card[data-col="${col}"]`);
+						const topIdx = colCards.length - 1;
+						if(el.dataset.idx == topIdx){
+							el.classList.add('hint-to');
+						}
+					}
+				});
+				hintActive = true;
+				document.querySelectorAll('#hint-btn-hdr, #hint-btn-mob').forEach(b => b.classList.add('hint-btn-on'));
+				hintTimer = setTimeout(clearHints, 4000);
+			}
+
 			document.getElementById('new-game-btn').onclick = startNew;
 			document.getElementById('new-game-btn-mob').onclick = startNew;
 			document.getElementById('play-again-btn').onclick = startNew;
 			document.getElementById('undo-btn-hdr').onclick = undo;
+			document.getElementById('hint-btn-hdr').onclick = showHint;
+			document.getElementById('hint-btn-mob').onclick = showHint;
 			document.getElementById('undo-btn-mob').onclick = undo;
 			document.getElementById('deal-btn-mobile').onclick = dealStock;
 
