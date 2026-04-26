@@ -128,8 +128,26 @@
 				border: 1px solid #333;
 				box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.8);
 			}
-			#dealBtn{
+			#undoBtn{
+				background: linear-gradient(to bottom, #f8f8f8, #d8d8d8);
+				border: 1px solid #888;
+				border-radius: 3px;
+				padding: 3px 10px;
+				font-size: 11px;
+				cursor: pointer;
+				white-space: nowrap;
+				box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 				margin-left: auto;
+			}
+			#undoBtn:active{
+				background: linear-gradient(to bottom, #d0d0d0, #e8e8e8);
+			}
+			#undoBtn:disabled{
+				opacity: 0.4;
+				cursor: default;
+			}
+			#dealBtn{
+				margin-left: 4px;
 				background: linear-gradient(to bottom, #f8f8f8, #d8d8d8);
 				border: 1px solid #888;
 				border-radius: 3px;
@@ -386,6 +404,10 @@
 					padding: 1px 5px;
 					font-size: 9px;
 				}
+				#undoBtn{
+					padding: 1px 5px;
+					font-size: 9px;
+				}
 				#gameArea{
 					padding-top: 2px;
 				}
@@ -441,6 +463,7 @@
 				<span class="score-label">Tempo:</span>
 				<span class="score-value" id="timeDisplay">0</span>
 			</div>
+			<button id="undoBtn" onclick="undoMove()" title="Annulla ultima mossa">↩ Annulla</button>
 			<button id="dealBtn" onclick="newGame()">Nuova partita</button>
 		</div>
 		<div id="gameArea">
@@ -526,6 +549,37 @@
 			let dragState = null;
 			let winAnimRunning = false;
 			let selectedCard = null;
+			let undoHistory = [];
+
+			function saveState(){
+				undoHistory.push({
+					stock: stock.map(c => ({...c})),
+					waste: waste.map(c => ({...c})),
+					foundations: foundations.map(f => f.map(c => ({...c}))),
+					tableau: tableau.map(col => col.map(c => ({...c}))),
+					score
+				});
+				updateUndoBtn();
+			}
+
+			function undoMove(){
+				if(undoHistory.length === 0) return;
+				const state = undoHistory.pop();
+				stock = state.stock;
+				waste = state.waste;
+				foundations = state.foundations;
+				tableau = state.tableau;
+				score = state.score;
+				selectedCard = null;
+				updateScoreDisplay();
+				updateUndoBtn();
+				render();
+			}
+
+			function updateUndoBtn(){
+				const btn = document.getElementById('undoBtn');
+				if(btn) btn.disabled = undoHistory.length === 0;
+			}
 
 			function makeCard(suit, rank){
 				return {suit, rank, faceUp: false};
@@ -590,6 +644,8 @@
 					c.faceUp = false;
 					return c;
 				});
+				undoHistory = [];
+				updateUndoBtn();
 				startTimer();
 				render();
 			}
@@ -874,6 +930,7 @@
 
 			function drawFromStock(){
 				selectedCard = null;
+				saveState();
 				if(stock.length === 0){
 					waste.reverse().forEach(c => {
 						c.faceUp = false;
@@ -1194,6 +1251,7 @@
 						return false;
 					}
 				}
+				saveState();
 				removeFromSource(dragState.from);
 				foundations[f].push(card);
 				addScore(10);
@@ -1222,6 +1280,7 @@
 						return false;
 					}
 				}
+				saveState();
 				removeFromSource(dragState.from);
 				dragState.cards.forEach(c => tableau[col].push(c));
 				addScore(5);
@@ -1249,6 +1308,7 @@
 				if(!canPlaceOnFoundation(card, f)){
 					return;
 				}
+				saveState();
 				waste.pop();
 				foundations[f].push(card);
 				addScore(10);
@@ -1288,6 +1348,7 @@
 				}
 				for(let f = 0; f < 4; f++){
 					if(canPlaceOnFoundation(card, f)){
+						saveState();
 						removeFromSource(info);
 						foundations[f].push(card);
 						addScore(10);
