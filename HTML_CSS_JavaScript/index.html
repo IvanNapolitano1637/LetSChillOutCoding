@@ -18232,7 +18232,7 @@ document.addEventListener('keydown', function(e) {
 			}
 			#waste{
 				position: relative;
-				width: calc(var(--cw) + var(--cw) * 0.44);
+				width: calc(var(--cw) + var(--cw) * 0.44 * 2);
 				flex-shrink: 0;
 				height: var(--ch);
 			}
@@ -18345,6 +18345,73 @@ document.addEventListener('keydown', function(e) {
 				justify-content: center;
 				color: rgba(255, 255, 255, 0.4);
 				font-size: calc(var(--cw) * 0.55);
+			}
+			#modeOverlay{
+				display: none;
+				position: fixed;
+				inset: 0;
+				background: rgba(0, 0, 0, 0.7);
+				z-index: 10000;
+				align-items: center;
+				justify-content: center;
+			}
+			#modeOverlay.show{
+				display: flex;
+			}
+			#modeBox{
+				background: linear-gradient(to bottom, #f8f8f8, #e8e8e8);
+				border: 2px solid #888;
+				border-radius: 8px;
+				padding: 24px 32px;
+				text-align: center;
+				box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+				max-width: 92vw;
+				width: 400px;
+			}
+			#modeBox h2{
+				font-size: 22px;
+				color: #1a5a9e;
+				margin-bottom: 6px;
+			}
+			#modeBox p{
+				color: #444;
+				font-size: 13px;
+				margin-bottom: 16px;
+			}
+			.mode-options{
+				display: flex;
+				flex-direction: column;
+				gap: 10px;
+			}
+			.mode-btn{
+				display: flex;
+				flex-direction: column;
+				align-items: flex-start;
+				background: linear-gradient(to bottom, #ffffff, #eef4ff);
+				border: 1px solid #aac4ee;
+				border-radius: 6px;
+				padding: 10px 14px;
+				cursor: pointer;
+				text-align: left;
+				transition: background 0.15s, box-shadow 0.15s;
+				gap: 2px;
+			}
+			.mode-btn:hover{
+				background: linear-gradient(to bottom, #ddeeff, #c8e0ff);
+				box-shadow: 0 2px 8px rgba(44, 111, 173, 0.25);
+			}
+			.mode-btn .mode-icon{
+				font-size: 18px;
+				margin-bottom: 2px;
+			}
+			.mode-btn strong{
+				font-size: 13px;
+				color: #1a3a6e;
+			}
+			.mode-btn small{
+				font-size: 11px;
+				color: #555;
+				line-height: 1.4;
 			}
 			#winOverlay{
 				display: none;
@@ -18510,7 +18577,30 @@ document.addEventListener('keydown', function(e) {
 				<div class="tableau-col" id="t6"></div>
 			</div>
 		</div>
-		<div id="winOverlay">
+		<div id="modeOverlay">
+		<div id="modeBox">
+			<h2>🃏 Klondike</h2>
+			<p>Scegli come pescare dal mazzo:</p>
+			<div class="mode-options">
+				<button class="mode-btn" onclick="startWithMode('draw3-any')">
+					<span class="mode-icon">🂠🂠🂠</span>
+					<strong>3 carte — libere</strong>
+					<small>Vengono girate 3 carte; tutte e tre sono subito disponibili in qualsiasi ordine.</small>
+				</button>
+				<button class="mode-btn" onclick="startWithMode('draw3-seq')">
+					<span class="mode-icon">🂠🂠→🃟</span>
+					<strong>3 carte — in ordine</strong>
+					<small>Vengono girate 3 carte; devono essere giocate nell'ordine in cui sono uscite.</small>
+				</button>
+				<button class="mode-btn" onclick="startWithMode('draw1')">
+					<span class="mode-icon">🂠</span>
+					<strong>1 carta</strong>
+					<small>Viene girata una carta alla volta.</small>
+				</button>
+			</div>
+		</div>
+	</div>
+	<div id="winOverlay">
 			<div id="winBox">
 				<h2>🎉 Hai vinto!</h2>
 				<p id="winMsg">Punteggio: 0 — Tempo: 0s</p>
@@ -18574,6 +18664,8 @@ document.addEventListener('keydown', function(e) {
 			let winAnimRunning = false;
 			let selectedCard = null;
 			let undoHistory = [];
+			let drawMode = 'draw3-any';
+			let currentGroupId = 0;
 
 			function saveState(){
 				undoHistory.push({
@@ -18581,19 +18673,23 @@ document.addEventListener('keydown', function(e) {
 					waste: waste.map(c => ({...c})),
 					foundations: foundations.map(f => f.map(c => ({...c}))),
 					tableau: tableau.map(col => col.map(c => ({...c}))),
-					score
+					score,
+					currentGroupId
 				});
 				updateUndoBtn();
 			}
 
 			function undoMove(){
-				if(undoHistory.length === 0) return;
+				if(undoHistory.length === 0){
+					return;
+				}
 				const state = undoHistory.pop();
 				stock = state.stock;
 				waste = state.waste;
 				foundations = state.foundations;
 				tableau = state.tableau;
 				score = state.score;
+				currentGroupId = state.currentGroupId ?? 0;
 				selectedCard = null;
 				updateScoreDisplay();
 				updateUndoBtn();
@@ -18602,7 +18698,9 @@ document.addEventListener('keydown', function(e) {
 
 			function updateUndoBtn(){
 				const btn = document.getElementById('undoBtn');
-				if(btn) btn.disabled = undoHistory.length === 0;
+				if(btn){
+					btn.disabled = undoHistory.length === 0;
+				}
 			}
 
 			function makeCard(suit, rank){
@@ -18636,6 +18734,16 @@ document.addEventListener('keydown', function(e) {
 			}
 
 			function newGame(){
+				document.getElementById('modeOverlay').classList.add('show');
+			}
+
+			function startWithMode(mode){
+				drawMode = mode;
+				document.getElementById('modeOverlay').classList.remove('show');
+				_startGame();
+			}
+
+			function _startGame(){
 				clearInterval(timerInterval);
 				score = 0;
 				seconds = 0;
@@ -18669,6 +18777,7 @@ document.addEventListener('keydown', function(e) {
 					return c;
 				});
 				undoHistory = [];
+				currentGroupId = 0;
 				updateUndoBtn();
 				startTimer();
 				render();
@@ -18863,24 +18972,54 @@ document.addEventListener('keydown', function(e) {
 					return;
 				}
 				const fanOffset = Math.min(18, Math.floor(CARD_W()*0.22));
-				const shown = waste.slice(-3);
-				shown.forEach((card, i) => {
-					const cEl = createCardEl({...card, faceUp: true});
-					cEl.style.position = 'absolute';
-					cEl.style.left = (i*fanOffset) + 'px';
-					cEl.style.top = '0';
-					cEl.style.zIndex = i + 1;
-					if(i === shown.length - 1){
-						cEl.addEventListener('mousedown', e => onCardMouseDown(e, 'waste', waste.length - 1));
-						cEl.addEventListener('touchstart', e => onCardTouchStart(e, 'waste', waste.length - 1),{passive: false});
-						cEl.addEventListener('dblclick',() => autoMoveCard({pile: 'waste'}));
-						cEl.addEventListener('click', e => onCardClick(e, 'waste', null, null));
-						if(selectedCard && selectedCard.pile === 'waste'){
+				const topGroupId = waste[waste.length - 1].groupId;
+				const groupCards = [];
+				for(let i = 0; i < waste.length; i++){
+					if(waste[i].groupId === topGroupId){
+						groupCards.push({card: waste[i], wasteIdx: i});
+					}
+				}
+				if(drawMode === 'draw3-seq'){
+					const n = groupCards.length;
+					groupCards.forEach(({card, wasteIdx}, i) => {
+						const cEl = createCardEl({...card, faceUp: true});
+						cEl.style.position = 'absolute';
+						cEl.style.left = ((n - 1 - i) * fanOffset) + 'px';
+						cEl.style.top = '0';
+						cEl.style.zIndex = (n - i);
+						const isPlayable = (card.groupPos === 0);
+						if(isPlayable){
+							cEl.addEventListener('mousedown', e => onCardMouseDown(e, 'waste', wasteIdx));
+							cEl.addEventListener('touchstart', e => onCardTouchStart(e, 'waste', wasteIdx), {passive: false});
+							cEl.addEventListener('dblclick', () => autoMoveCard({pile:'waste', specificIdx: wasteIdx}));
+							cEl.addEventListener('click', e => onCardClickWaste(e, wasteIdx));
+							if(selectedCard && selectedCard.pile === 'waste' && selectedCard.wasteIdx === wasteIdx){
+								cEl.classList.add('selected');
+							}
+						}else{
+							cEl.style.opacity = '0.5';
+							cEl.style.cursor = 'default';
+							cEl.style.pointerEvents = 'none';
+						}
+						el.appendChild(cEl);
+					});
+				}else{
+					groupCards.forEach(({card, wasteIdx}, i) => {
+						const cEl = createCardEl({...card, faceUp: true});
+						cEl.style.position = 'absolute';
+						cEl.style.left = (i*fanOffset) + 'px';
+						cEl.style.top = '0';
+						cEl.style.zIndex = i + 1;
+						cEl.addEventListener('mousedown', e => onCardMouseDown(e, 'waste', wasteIdx));
+						cEl.addEventListener('touchstart', e => onCardTouchStart(e, 'waste', wasteIdx), {passive: false});
+						cEl.addEventListener('dblclick', () => autoMoveCard({pile:'waste', specificIdx: wasteIdx}));
+						cEl.addEventListener('click', e => onCardClickWaste(e, wasteIdx));
+						if(selectedCard && selectedCard.pile === 'waste' && selectedCard.wasteIdx === wasteIdx){
 							cEl.classList.add('selected');
 						}
-					}
-					el.appendChild(cEl);
-				});
+						el.appendChild(cEl);
+					});
+				}
 			}
 
 			function renderFoundations(){
@@ -18958,14 +19097,24 @@ document.addEventListener('keydown', function(e) {
 				if(stock.length === 0){
 					waste.reverse().forEach(c => {
 						c.faceUp = false;
+						delete c.groupId;
+						delete c.groupPos;
 						stock.push(c);
 					});
 					waste = [];
+					currentGroupId = 0;
 					addScore(-100);
 				}else{
-					const c = stock.pop();
-					c.faceUp = true;
-					waste.push(c);
+					currentGroupId++;
+					const n = (drawMode === 'draw1') ? 1 : 3;
+					let pos = 0;
+					for(let i = 0; i < n && stock.length > 0; i++){
+						const c = stock.pop();
+						c.faceUp = true;
+						c.groupId = currentGroupId;
+						c.groupPos = pos++;
+						waste.push(c);
+					}
 					addScore(5);
 				}
 				render();
@@ -18975,11 +19124,12 @@ document.addEventListener('keydown', function(e) {
 				selectedCard = null;
 				let cards, fromInfo;
 				if(pile === 'waste'){
-					if(waste.length === 0){
+					const wIdx = colOrIndex !== null ? colOrIndex : waste.length - 1;
+					if(waste.length === 0 || !waste[wIdx]){
 						return;
 					}
-					cards = [waste[waste.length - 1]];
-					fromInfo = {pile: 'waste'};
+					cards = [waste[wIdx]];
+					fromInfo = {pile: 'waste', wasteIdx: wIdx};
 				}else{
 					const col = colOrIndex, idx = cardIndex;
 					if(!tableau[col][idx].faceUp){
@@ -19058,12 +19208,13 @@ document.addEventListener('keydown', function(e) {
 				}
 				let cards, fromInfo;
 				if(selectedCard.pile === 'waste'){
-					if(waste.length === 0){
+					const wIdx = selectedCard.wasteIdx !== undefined ? selectedCard.wasteIdx : waste.length - 1;
+					if(waste.length === 0 || !waste[wIdx]){
 						clearSelection();
 						return false;
 					}
-					cards = [waste[waste.length - 1]];
-					fromInfo = {pile: 'waste'};
+					cards = [waste[wIdx]];
+					fromInfo = {pile: 'waste', wasteIdx: wIdx};
 				}else{
 					const col = selectedCard.col, idx = selectedCard.index;
 					if(!tableau[col][idx] ||!tableau[col][idx].faceUp){
@@ -19086,6 +19237,22 @@ document.addEventListener('keydown', function(e) {
 				render();
 				checkWin();
 				return dropped;
+			}
+
+			function onCardClickWaste(e, wasteIdx){
+				e.stopPropagation();
+				if(selectedCard){
+					if(selectedCard.pile === 'waste' && selectedCard.wasteIdx === wasteIdx){
+						clearSelection();
+						return;
+					}
+					clearSelection();
+					selectCard({pile: 'waste', wasteIdx});
+					return;
+				}
+				if(waste[wasteIdx]){
+					selectCard({pile: 'waste', wasteIdx});
+				}
 			}
 
 			function onCardClick(e, pile, colOrIndex, cardIndex){
@@ -19181,7 +19348,11 @@ document.addEventListener('keydown', function(e) {
 				if(pendingMouseDown){
 					const p = pendingMouseDown;
 					pendingMouseDown = null;
-					onCardClick(e, p.pile, p.colOrIndex, p.cardIndex);
+					if(p.pile === 'waste' && p.colOrIndex !== null){
+						onCardClickWaste(e, p.colOrIndex);
+					}else{
+						onCardClick(e, p.pile, p.colOrIndex, p.cardIndex);
+					}
 					return;
 				}
 				if(dragState){
@@ -19200,7 +19371,7 @@ document.addEventListener('keydown', function(e) {
 					lastTapTime = 0;
 					lastTapTarget = null;
 					if(pile === 'waste'){
-						autoMoveCard({pile: 'waste'});
+						autoMoveCard({pile: 'waste', specificIdx: colOrIndex !== null ? colOrIndex : undefined});
 					}else{
 						autoMoveCard({pile: 'tableau', col: colOrIndex, index: cardIndex});
 					}
@@ -19237,7 +19408,11 @@ document.addEventListener('keydown', function(e) {
 				if(pendingTouchDown){
 					const p = pendingTouchDown;
 					pendingTouchDown = null;
-					onCardClick(e, p.pile, p.colOrIndex, p.cardIndex);
+					if(p.pile === 'waste' && p.colOrIndex !== null){
+						onCardClickWaste(e, p.colOrIndex);
+					}else{
+						onCardClick(e, p.pile, p.colOrIndex, p.cardIndex);
+					}
 					return;
 				}
 				if(dragState){
@@ -19313,11 +19488,21 @@ document.addEventListener('keydown', function(e) {
 
 			function removeFromSource(from){
 				if(from.pile === 'waste'){
-					waste.pop();
+					const wIdx = from.wasteIdx !== undefined ? from.wasteIdx : waste.length - 1;
+					if(drawMode === 'draw3-seq' && waste[wIdx] && waste[wIdx].groupPos === 0){
+						const gId = waste[wIdx].groupId;
+						for(let i = wIdx + 1; i < waste.length; i++){
+							if(waste[i].groupId === gId){
+								waste[i].groupPos = 0;
+								break;
+							}
+						}
+					}
+					waste.splice(wIdx, 1);
 				}else{
 					tableau[from.col].splice(from.index);
 					const col = tableau[from.col];
-					if(col.length > 0 &&!col[col.length - 1].faceUp){
+					if(col.length > 0 && !col[col.length - 1].faceUp){
 						col[col.length - 1].faceUp = true;
 						addScore(5);
 					}
@@ -19328,12 +19513,13 @@ document.addEventListener('keydown', function(e) {
 				if(waste.length === 0){
 					return;
 				}
-				const card = waste[waste.length - 1];
-				if(!canPlaceOnFoundation(card, f)){
+				const wIdx = (selectedCard && selectedCard.pile === 'waste' && selectedCard.wasteIdx !== undefined) ? selectedCard.wasteIdx : (waste.length - 1);
+				const card = waste[wIdx];
+				if(!card || !canPlaceOnFoundation(card, f)){
 					return;
 				}
 				saveState();
-				waste.pop();
+				removeFromSource({pile: 'waste', wasteIdx: wIdx});
 				foundations[f].push(card);
 				addScore(10);
 				render();
@@ -19362,23 +19548,38 @@ document.addEventListener('keydown', function(e) {
 					if(waste.length === 0){
 						return;
 					}
-					card = waste[waste.length - 1];
+					const wIdx = info.specificIdx !== undefined ? info.specificIdx : waste.length - 1;
+					if(!waste[wIdx]){
+						return;
+					}
+					card = waste[wIdx];
+					for(let f = 0; f < 4; f++){
+						if(canPlaceOnFoundation(card, f)){
+							saveState();
+							removeFromSource({pile: 'waste', wasteIdx: wIdx});
+							foundations[f].push(card);
+							addScore(10);
+							render();
+							checkWin();
+							return;
+						}
+					}
 				}else{
 					const col = tableau[info.col];
 					if(info.index !== col.length - 1){
 						return;
 					}
 					card = col[col.length - 1];
-				}
-				for(let f = 0; f < 4; f++){
-					if(canPlaceOnFoundation(card, f)){
-						saveState();
-						removeFromSource(info);
-						foundations[f].push(card);
-						addScore(10);
-						render();
-						checkWin();
-						return;
+					for(let f = 0; f < 4; f++){
+						if(canPlaceOnFoundation(card, f)){
+							saveState();
+							removeFromSource(info);
+							foundations[f].push(card);
+							addScore(10);
+							render();
+							checkWin();
+							return;
+						}
 					}
 				}
 			}
