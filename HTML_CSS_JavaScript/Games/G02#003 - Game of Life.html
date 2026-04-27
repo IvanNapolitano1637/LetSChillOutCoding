@@ -172,6 +172,7 @@
 		<div class="controls">
 			<div class="control-row">
 				<button type="button" id="btn-reset" onclick="refreshPage()">Reset</button>
+				<button type="button" id="btn-random" onclick="randomize()">Random</button>
 				<button type="button" id="btn-next" onclick="nextGeneration()">Next</button>
 				<button type="button" id="life" onclick="live()">Start</button>
 			</div>
@@ -212,18 +213,18 @@
 			];
 			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
 			const TRANSLATIONS = {
-				en: { reset: "Reset", next: "Next", start: "Start", stop: "Stop", load: "-- Load schema --", glider: "Glider", exploder: "Small Exploder", row: "10 Cell Row", slow: "Slow", fast: "Fast" },
-				it: { reset: "Reset", next: "Avanti", start: "Avvia", stop: "Ferma", load: "-- Carica schema --", glider: "Aliante", exploder: "Esplosione", row: "Riga 10 Celle", slow: "Lento", fast: "Veloce" },
-				fr: { reset: "Réinitialiser", next: "Suivant", start: "Démarrer", stop: "Arrêter", load: "-- Charger --", glider: "Planeur", exploder: "Exploseur", row: "Ligne 10", slow: "Lent", fast: "Rapide" },
-				es: { reset: "Reiniciar", next: "Siguiente", start: "Iniciar", stop: "Detener", load: "-- Cargar --", glider: "Planeador", exploder: "Explosivo", row: "Fila de 10", slow: "Lento", fast: "Rápido" },
-				de: { reset: "Reset", next: "Nächste", start: "Start", stop: "Stopp", load: "-- Muster laden --", glider: "Gleiter", exploder: "Explodierer", row: "10er Reihe", slow: "Langsam", fast: "Schnell" },
-				pt: { reset: "Reset", next: "Próximo", start: "Iniciar", stop: "Parar", load: "-- Carregar --", glider: "Planador", exploder: "Explosivo", row: "Linha de 10", slow: "Lento", fast: "Rápido" },
-				ro: { reset: "Resetare", next: "Următorul", start: "Start", stop: "Stop", load: "-- Încarcă --", glider: "Glider", exploder: "Exploder", row: "Rând 10", slow: "Încet", fast: "Repede" },
-				uk: { reset: "Скинути", next: "Далі", start: "Старт", stop: "Стоп", load: "-- Завантажити --", glider: "Глайдер", exploder: "Вибух", row: "Ряд 10", slow: "Повільно", fast: "Швидко" },
-				el: { reset: "Επαναφορά", next: "Επόμενο", start: "Έναρξη", stop: "Διακοπή", load: "-- Φόρτωση --", glider: "Ανεμοπλάνο", exploder: "Έκρηξη", row: "Σειρά 10", slow: "Αργά", fast: "Γρήγορα" },
-				la: { reset: "Redintegra", next: "Deinceps", start: "Incipe", stop: "Siste", load: "-- Elige --", glider: "Volator", exploder: "Diruptor", row: "Series 10", slow: "Lente", fast: "Celeriter" },
-				zh: { reset: "重置", next: "下一步", start: "开始", stop: "停止", load: "-- 加载预设 --", glider: "滑翔者", exploder: "爆炸者", row: "10格行", slow: "慢", fast: "快" },
-				ja: { reset: "リセット", next: "次へ", start: "開始", stop: "停止", load: "-- パターン --", glider: "グライダー", exploder: "エクスプローダー", row: "10セル行", slow: "遅い", fast: "速い" }
+				en: { reset: "Reset", next: "Next", start: "Start", stop: "Stop", load: "-- Load schema --", glider: "Glider", exploder: "Small Exploder", row: "10 Cell Row", slow: "Slow", fast: "Fast", random: "Random" },
+				it: { reset: "Reset", next: "Avanti", start: "Avvia", stop: "Ferma", load: "-- Carica schema --", glider: "Aliante", exploder: "Esplosione", row: "Riga 10 Celle", slow: "Lento", fast: "Veloce", random: "Casuale" },
+				fr: { reset: "Réinitialiser", next: "Suivant", start: "Démarrer", stop: "Arrêter", load: "-- Charger --", glider: "Planeur", exploder: "Exploseur", row: "Ligne 10", slow: "Lent", fast: "Rapide", random: "Aléatoire" },
+				es: { reset: "Reiniciar", next: "Siguiente", start: "Iniciar", stop: "Detener", load: "-- Cargar --", glider: "Planeador", exploder: "Explosivo", row: "Fila de 10", slow: "Lento", fast: "Rápido", random: "Aleatorio" },
+				de: { reset: "Reset", next: "Nächste", start: "Start", stop: "Stopp", load: "-- Muster laden --", glider: "Gleiter", exploder: "Explodierer", row: "10er Reihe", slow: "Langsam", fast: "Schnell", random: "Zufällig" },
+				pt: { reset: "Reset", next: "Próximo", start: "Iniciar", stop: "Parar", load: "-- Carregar --", glider: "Planador", exploder: "Explosivo", row: "Linha de 10", slow: "Lento", fast: "Rápido", random: "Aleatório" },
+				ro: { reset: "Resetare", next: "Următorul", start: "Start", stop: "Stop", load: "-- Încarcă --", glider: "Glider", exploder: "Exploder", row: "Rând 10", slow: "Încet", fast: "Repede", random: "Aleatoriu" },
+				uk: { reset: "Скинути", next: "Далі", start: "Старт", stop: "Стоп", load: "-- Завантажити --", glider: "Глайдер", exploder: "Вибух", row: "Ряд 10", slow: "Повільно", fast: "Швидко", random: "Випадково" },
+				el: { reset: "Επαναφορά", next: "Επόμενο", start: "Έναρξη", stop: "Διακοπή", load: "-- Φόρτωση --", glider: "Ανεμοπλάνο", exploder: "Έκρηξη", row: "Σειρά 10", slow: "Αργά", fast: "Γρήγορα", random: "Τυχαίο" },
+				la: { reset: "Redintegra", next: "Deinceps", start: "Incipe", stop: "Siste", load: "-- Elige --", glider: "Volator", exploder: "Diruptor", row: "Series 10", slow: "Lente", fast: "Celeriter", random: "Fortuito" },
+				zh: { reset: "重置", next: "下一步", start: "开始", stop: "停止", load: "-- 加载预设 --", glider: "滑翔者", exploder: "爆炸者", row: "10格行", slow: "慢", fast: "快", random: "随机" },
+				ja: { reset: "リセット", next: "次へ", start: "開始", stop: "停止", load: "-- パターン --", glider: "グライダー", exploder: "エクスプローダー", row: "10セル行", slow: "遅い", fast: "速い", random: "ランダム" }
 			};
 			const HELP_TITLE = {
 				en:"Keyboard Shortcuts", it:"Tasti di scelta rapida", fr:"Raccourcis clavier",
@@ -251,6 +252,7 @@
 			function updateUI(){
 				const lang = TRANSLATIONS[LANG_KEYS[currentLangIndex]];
 				document.getElementById('btn-reset').innerText = lang.reset;
+				document.getElementById('btn-random').innerText = lang.random;
 				document.getElementById('btn-next').innerText = lang.next;
 				document.getElementById('life').innerText = goOnAlone ? lang.stop : lang.start;
 				document.getElementById('opt-load').innerText = lang.load;
@@ -422,6 +424,16 @@
 					clearInterval(nIntervId);
 					btn.innerHTML = lang.start;
 					btn.style.backgroundColor = "";
+				}
+			}
+
+			function randomize(){
+				refreshPage();
+				for(let i = 0; i < ROW_NUMBER; i++){
+					for(let j = 0; j < COLUMN_NUMBER; j++){
+						grid[i][j] = Math.random() < 0.3;
+						drawSquare(i, j, grid[i][j] ? ALIVE_COLOR : DEAD_COLOR);
+					}
 				}
 			}
 
