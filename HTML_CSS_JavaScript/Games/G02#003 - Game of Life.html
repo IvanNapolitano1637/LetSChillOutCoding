@@ -234,18 +234,18 @@
 				zh:"键盘快捷键", ja:"キーボードショートカット"
 			};
 			const HELP_SHORTCUTS = {
-				en:[["R","Reset the grid"],["N","Advance one generation"],["S","Start / Stop the simulation"],["L","Switch language"],["?","Show / hide this help"]],
-				it:[["R","Azzera la griglia"],["N","Avanza di una generazione"],["S","Avvia / Ferma la simulazione"],["L","Cambia lingua"],["?","Mostra / nascondi questo aiuto"]],
-				fr:[["R","Réinitialiser la grille"],["N","Avancer d'une génération"],["S","Démarrer / Arrêter la simulation"],["L","Changer de langue"],["?","Afficher / masquer cette aide"]],
-				es:[["R","Reiniciar la cuadrícula"],["N","Avanzar una generación"],["S","Iniciar / Detener la simulación"],["L","Cambiar idioma"],["?","Mostrar / ocultar esta ayuda"]],
-				de:[["R","Gitter zurücksetzen"],["N","Eine Generation weiter"],["S","Simulation starten / stoppen"],["L","Sprache wechseln"],["?","Hilfe anzeigen / ausblenden"]],
-				pt:[["R","Reiniciar a grelha"],["N","Avançar uma geração"],["S","Iniciar / Parar a simulação"],["L","Mudar idioma"],["?","Mostrar / ocultar esta ajuda"]],
-				ro:[["R","Resetează grila"],["N","Avansează o generație"],["S","Pornește / Oprește simularea"],["L","Schimbă limba"],["?","Afișează / ascunde această ajutor"]],
-				uk:[["R","Скинути сітку"],["N","Перейти до наступного покоління"],["S","Запустити / Зупинити симуляцію"],["L","Змінити мову"],["?","Показати / приховати цю довідку"]],
-				el:[["R","Επαναφορά πλέγματος"],["N","Επόμενη γενιά"],["S","Έναρξη / Διακοπή προσομοίωσης"],["L","Αλλαγή γλώσσας"],["?","Εμφάνιση / απόκρυψη βοήθειας"]],
-				la:[["R","Reticulum redintegra"],["N","Ad proximam generationem progredere"],["S","Simulationem incipe / siste"],["L","Linguam muta"],["?","Auxilium ostende / absconde"]],
-				zh:[["R","重置网格"],["N","前进一代"],["S","开始 / 停止模拟"],["L","切换语言"],["?","显示 / 隐藏帮助"]],
-				ja:[["R","グリッドをリセット"],["N","1世代進める"],["S","シミュレーション 開始 / 停止"],["L","言語を切替"],["?","ヘルプを表示 / 非表示"]]
+				en:[["R","Reset the grid"],["F","Random fill"],["N","Advance one generation"],["S","Start / Stop the simulation"],["L","Switch language"],["?","Show / hide this help"]],
+				it:[["R","Azzera la griglia"],["F","Riempimento casuale"],["N","Avanza di una generazione"],["S","Avvia / Ferma la simulazione"],["L","Cambia lingua"],["?","Mostra / nascondi questo aiuto"]],
+				fr:[["R","Réinitialiser la grille"],["F","Remplissage aléatoire"],["N","Avancer d'une génération"],["S","Démarrer / Arrêter la simulation"],["L","Changer de langue"],["?","Afficher / masquer cette aide"]],
+				es:[["R","Reiniciar la cuadrícula"],["F","Relleno aleatorio"],["N","Avanzar una generación"],["S","Iniciar / Detener la simulación"],["L","Cambiar idioma"],["?","Mostrar / ocultar esta ayuda"]],
+				de:[["R","Gitter zurücksetzen"],["F","Zufällig füllen"],["N","Eine Generation weiter"],["S","Simulation starten / stoppen"],["L","Sprache wechseln"],["?","Hilfe anzeigen / ausblenden"]],
+				pt:[["R","Reiniciar a grelha"],["F","Preenchimento aleatório"],["N","Avançar uma geração"],["S","Iniciar / Parar a simulação"],["L","Mudar idioma"],["?","Mostrar / ocultar esta ajuda"]],
+				ro:[["R","Resetează grila"],["F","Umplere aleatorie"],["N","Avansează o generație"],["S","Pornește / Oprește simularea"],["L","Schimbă limba"],["?","Afișează / ascunde această ajutor"]],
+				uk:[["R","Скинути сітку"],["F","Випадкове заповнення"],["N","Перейти до наступного покоління"],["S","Запустити / Зупинити симуляцію"],["L","Змінити мову"],["?","Показати / приховати цю довідку"]],
+				el:[["R","Επαναφορά πλέγματος"],["F","Τυχαία πλήρωση"],["N","Επόμενη γενιά"],["S","Έναρξη / Διακοπή προσομοίωσης"],["L","Αλλαγή γλώσσας"],["?","Εμφάνιση / απόκρυψη βοήθειας"]],
+				la:[["R","Reticulum redintegra"],["F","Fortuito imple"],["N","Ad proximam generationem progredere"],["S","Simulationem incipe / siste"],["L","Linguam muta"],["?","Auxilium ostende / absconde"]],
+				zh:[["R","重置网格"],["F","随机填充"],["N","前进一代"],["S","开始 / 停止模拟"],["L","切换语言"],["?","显示 / 隐藏帮助"]],
+				ja:[["R","グリッドをリセット"],["F","ランダム配置"],["N","1世代進める"],["S","シミュレーション 開始 / 停止"],["L","言語を切替"],["?","ヘルプを表示 / 非表示"]]
 			};
 			let currentLangIndex = 0;
 
@@ -445,6 +445,8 @@
 			document.addEventListener("keydown", e => {
 				if(e.key.toLowerCase() === "r"){
 					refreshPage();
+				}else if(e.key.toLowerCase() === "f"){
+					randomize();
 				}else if(e.key.toLowerCase() === "n"){
 					nextGeneration();
 				}else if(e.key.toLowerCase() === "s"){
