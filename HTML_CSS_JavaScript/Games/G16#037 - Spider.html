@@ -730,7 +730,13 @@
 
 			function getMovable(col, idx){
 				const cards = tableau[col].slice(idx);
-				if(cards.some(c => !c.faceUp) || !isSeq(cards)){
+				if(cards.some(c => !c.faceUp)){
+					return null;
+				}
+				if(cards.length === 1){
+					return cards;
+				}
+				if(!isSameSuitSeq(cards)){
 					return null;
 				}
 				return cards;
