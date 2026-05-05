@@ -3,22 +3,30 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 
-//Codice per creare un unico file HTML con all'interno tutte le pagine che stanno nelle tre cartelle "Clocks", "Games" e "Tools".
+//Codice per creare un unico file HTML con all'interno tutte le pagine che stanno nelle cartelle "Games" e "Tools".
+//La cartella "Games" contiene quattro sottocartelle: "Board", "Card", "Math" e "Puzzle".
+//La cartella "Tools" contiene tre sottocartelle: "Clocks", "Lab" e "Utilities".
 //Codice creato da Gemini e Claude lunedì nove febbraio duemilaventisei dopo un altro tentativo fatto con Gemini due giorni prima.
-//Ho fatto varie altre modifiche. Le ultime mercoledì primo aprile duemilaventisei.
+//Ho fatto varie altre modifiche. Le ultime martedì cinque maggio duemilaventisei.
 //Il numero di pagine cresce sempre più e stanno per arrivarne diverse altre.
-//Da mettere nella cartella in cui ci sono: "Clocks", "Games" e "Tools".
+//Da mettere nella cartella in cui ci sono: "Games" e "Tools".
 //Da compilare e lanciare lì da terminale.
 
 public class HTML_Pages_Unifier{
 
-	private static final String[] FOLDERS = {"Clocks", "Games", "Tools"};
+	private static final String[] FOLDERS = {"Games", "Tools"};
 	private static final Map<String, String> EMOJIS;
 	static {
 		Map<String, String> tempMap = new HashMap<>();
-		tempMap.put("Clocks","🕰️");
 		tempMap.put("Games","🎮");
+		tempMap.put("Board","♟️");
+		tempMap.put("Card","🃏");
+		tempMap.put("Math","🔢");
+		tempMap.put("Puzzle","🧩");
 		tempMap.put("Tools","🛠️");
+		tempMap.put("Clocks","🕰️");
+		tempMap.put("Lab","🧪");
+		tempMap.put("Utilities","⚙️");
 		EMOJIS = Collections.unmodifiableMap(tempMap);
 	}
 
@@ -42,34 +50,32 @@ public class HTML_Pages_Unifier{
 	public static void main(String[] args) {
 		StringBuilder jsDataBuilder = new StringBuilder();
 		StringBuilder htmlMenuBuilder = new StringBuilder();
+
+		// Mappa delle sottocartelle per ciascuna cartella principale
+		Map<String, String[]> subFolderMap = new LinkedHashMap<>();
+		subFolderMap.put("Games", new String[]{"Board", "Card", "Math", "Puzzle"});
+		subFolderMap.put("Tools", new String[]{"Clocks", "Lab", "Utilities"});
+
 		for(String folderName : FOLDERS){
 			File folder = new File(folderName);
-			String sectionId = "grid-" + folderName.toLowerCase();
-			htmlMenuBuilder.append("<div class='section'>").append("<h2 class='section-header' tabindex='0' onclick=\"toggleSection('").append(sectionId).append("')\">").append("<span>").append(EMOJIS.get(folderName) + " " + folderName).append("</span>").append("<span class='arrow'>&#9654;</span>").append("</h2>").append("<div class='grid' id='").append(sectionId).append("'>");
+			String sectionId = "grid-" + folderName.toLowerCase().replace(" ", "-");
+			htmlMenuBuilder.append("<div class='section'>").append("<h2 class='section-header' tabindex='0' onclick=\"toggleSection('").append(sectionId).append("')\">").append("<span>").append(EMOJIS.get(folderName) + " " + folderName).append("</span>").append("<span class='arrow'>&#9654;</span>").append("</h2>").append("<div class='section-body' id='").append(sectionId).append("'>");
 			if(folder.exists() && folder.isDirectory()){
-				File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".html"));
-				if(files != null){
-					Arrays.sort(files);
-					for(File file : files){
-						try{
-							String content = Files.readString(file.toPath(), StandardCharsets.UTF_8);
-							content = replaceReloadCalls(content);
-							content = injectEscHandler(content);
-							content = content.replace("\\", "\\\\").replace("`", "\\`").replace("${", "\\${").replace("</script>", "<\\/script>");
-							String fileName = file.getName();
-							String displayName = fileName.replace(".html", "").replace("_", " ");
-							String key = folderName + "_" + fileName.replaceAll("[^a-zA-Z0-8]", "_");
-							if(fileName.contains(" - ")){
-								String[] parts = fileName.split(" - ");
-								if(parts.length > 1){
-									displayName = parts[1].replace(".html", "").replace("_", " ");
+				String[] subFolderNames = subFolderMap.get(folderName);
+				if(subFolderNames != null){
+					for(String subFolderName : subFolderNames){
+						File subFolder = new File(folder, subFolderName);
+						if(subFolder.exists() && subFolder.isDirectory()){
+							String subSectionId = "grid-" + subFolderName.toLowerCase().replace(" ", "-");
+							htmlMenuBuilder.append("<div class='section subsection'>").append("<h2 class='section-header subsection-header' tabindex='0' onclick=\"toggleSection('").append(subSectionId).append("')\">").append("<span>").append(EMOJIS.get(subFolderName) + " " + subFolderName).append("</span>").append("<span class='arrow'>&#9654;</span>").append("</h2>").append("<div class='grid' id='").append(subSectionId).append("'>");
+							File[] subFiles = subFolder.listFiles((dir, name) -> name.toLowerCase().endsWith(".html"));
+							if(subFiles != null){
+								Arrays.sort(subFiles);
+								for(File file : subFiles){
+									processFile(file, subFolderName, jsDataBuilder, htmlMenuBuilder);
 								}
 							}
-							jsDataBuilder.append("\n	// --- ").append(displayName).append(" ---\n");
-							jsDataBuilder.append("	'").append(key).append("': { name: `").append(displayName).append("`, content: `").append(content).append("` },\n");
-							htmlMenuBuilder.append("<button class='card' onclick=\"openPage('").append(key).append("')\">").append(displayName).append("</button>");
-						}catch(IOException e){
-							System.err.println("Errore lettura: " + file.getName());
+							htmlMenuBuilder.append("</div></div>");
 						}
 					}
 				}
@@ -77,6 +83,29 @@ public class HTML_Pages_Unifier{
 			htmlMenuBuilder.append("</div></div>");
 		}
 		generateFinalHtml(htmlMenuBuilder.toString(), jsDataBuilder.toString());
+	}
+
+	private static void processFile(File file, String folderName, StringBuilder jsDataBuilder, StringBuilder htmlMenuBuilder){
+		try{
+			String content = Files.readString(file.toPath(), StandardCharsets.UTF_8);
+			content = replaceReloadCalls(content);
+			content = injectEscHandler(content);
+			content = content.replace("\\", "\\\\").replace("`", "\\`").replace("${", "\\${").replace("</script>", "<\\/script>");
+			String fileName = file.getName();
+			String displayName = fileName.replace(".html", "").replace("_", " ");
+			String key = folderName.replace(" ", "_") + "_" + fileName.replaceAll("[^a-zA-Z0-8]", "_");
+			if(fileName.contains(" - ")){
+				String[] parts = fileName.split(" - ");
+				if(parts.length > 1){
+					displayName = parts[1].replace(".html", "").replace("_", " ");
+				}
+			}
+			jsDataBuilder.append("\n	// --- ").append(displayName).append(" ---\n");
+			jsDataBuilder.append("	'").append(key).append("': { name: `").append(displayName).append("`, content: `").append(content).append("` },\n");
+			htmlMenuBuilder.append("<button class='card' onclick=\"openPage('").append(key).append("')\">").append(displayName).append("</button>");
+		}catch(IOException e){
+			System.err.println("Errore lettura: " + file.getName());
+		}
 	}
 
 	private static String replaceReloadCalls(String content){
@@ -173,6 +202,21 @@ public class HTML_Pages_Unifier{
 				text-transform: uppercase;
 				letter-spacing: 1.5px;
 				transition: color 0.3s;
+			}
+		
+			.section-body{
+				display: none;
+			}
+		
+			.subsection{
+				margin-top: 10px;
+			}
+		
+			.subsection-header{
+				font-size: 0.8rem;
+				margin-top: 20px;
+				padding-left: 10px;
+				border-left: 3px solid var(--accent);
 			}
 		
 			.section-header{
@@ -486,11 +530,13 @@ public class HTML_Pages_Unifier{
 				document.getElementById('kb-hint-btn').style.display = DESKTOP ? 'block' : 'none';
 			}
 		
-			function toggleSection(gridId){
-				const grid = document.getElementById(gridId);
-				const header = grid.previousElementSibling;
-				const isOpen = grid.style.display === 'grid';
-				grid.style.display = isOpen ? 'none' : 'grid';
+			function toggleSection(sectionId){
+				const el = document.getElementById(sectionId);
+				const header = el.previousElementSibling;
+				const isOpen = el.style.display !== 'none' && el.style.display !== '';
+				// section-body usa display:block, grid usa display:grid
+				const openDisplay = el.classList.contains('grid') ? 'grid' : 'block';
+				el.style.display = isOpen ? 'none' : openDisplay;
 				header.classList.toggle('open', !isOpen);
 			}
 		
@@ -596,7 +642,25 @@ public class HTML_Pages_Unifier{
 					if(e.key.toLowerCase() === 't'){
 						toggleSection('grid-tools');
 					}
+					if(e.key.toLowerCase() === 'b'){
+						toggleSection('grid-board');
+					}
+					if(e.key.toLowerCase() === 'a'){
+						toggleSection('grid-card');
+					}
+					if(e.key.toLowerCase() === 'm'){
+						toggleSection('grid-math');
+					}
+					if(e.key.toLowerCase() === 'p'){
+						toggleSection('grid-puzzle');
+					}
+					if(e.key.toLowerCase() === 'u'){
+						toggleSection('grid-utilities');
+					}
 					if(e.key.toLowerCase() === 'l'){
+						toggleSection('grid-lab');
+					}
+					if(e.key.toLowerCase() === 'n'){
 						activeKbLang = (activeKbLang + 1) % kbMessages.length;
 						selectKbLang(activeKbLang);
 					}
