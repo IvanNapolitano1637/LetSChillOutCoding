@@ -69,6 +69,11 @@
 				transform: scale(0.96) translateY(1px);
 				box-shadow: 0 2px 4px rgba(0,0,0,0.4);
 			}
+			#btn-undo:not([disabled]){
+				background: linear-gradient(145deg, #9a7a3a, #5a3a10);
+				opacity: 1;
+				cursor: pointer;
+			}
 			.top-row{
 				display: flex;
 				justify-content: space-between;
@@ -418,6 +423,10 @@
 							<td>Ricomincia partita</td>
 						</tr>
 						<tr>
+							<td><span class="kbd">Z</span></td>
+							<td>Annulla ultima mossa</td>
+						</tr>
+						<tr>
 							<td><span class="kbd">?</span></td>
 							<td>Apri / Chiudi questa guida</td>
 						</tr>
@@ -427,7 +436,10 @@
 			</div>
 		</div>
 		<h1>Solitario carte napoletane</h1>
-		<button onclick="initGame()">Nuova Partita</button>
+		<div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:20px;">
+			<button style="margin-bottom:0" onclick="initGame()">Nuova Partita</button>
+			<button style="margin-bottom:0;background:linear-gradient(145deg,#7a6a3a,#4a3a10);opacity:0.5;cursor:not-allowed" id="btn-undo" onclick="undoMove()" disabled>↩ Annulla</button>
+		</div>
 		<div class="top-row">
 			<div class="deck-area">
 				<div id="deck" class="deck-slot" onclick="handleDeckClick()">Mazzo</div>
@@ -458,10 +470,85 @@
 			];
 			let deckData = [];
 			let selection = null;
+			let history = [];
+
+			function captureState(){
+				const cols = [];
+				for(let i = 0; i < 5; i++){
+					const col = document.getElementById(`col-${i}`);
+					cols.push(Array.from(col.querySelectorAll('.card')).map(c => ({
+						suit: c.dataset.suit,
+						value: parseInt(c.dataset.value),
+						faceUp: c.dataset.faceUp === "true"
+					})));
+				}
+				const waste = Array.from(document.getElementById('waste').querySelectorAll('.card')).map(c => ({
+					suit: c.dataset.suit,
+					value: parseInt(c.dataset.value),
+					faceUp: true
+				}));
+				return {
+					cols: JSON.parse(JSON.stringify(cols)),
+					waste: JSON.parse(JSON.stringify(waste)),
+					deck: JSON.parse(JSON.stringify(deckData)),
+					foundation: JSON.parse(JSON.stringify(foundationSlots))
+				};
+			}
+
+			function pushHistory(){
+				history.push(captureState());
+				document.getElementById('btn-undo').disabled = false;
+				document.getElementById('btn-undo').style.opacity = '1';
+				document.getElementById('btn-undo').style.cursor = 'pointer';
+			}
+
+			function undoMove(){
+				if(history.length === 0){
+					return;
+				}
+				clearSelection();
+				const state = history.pop();
+				restoreState(state);
+				if(history.length === 0){
+					document.getElementById('btn-undo').disabled = true;
+					document.getElementById('btn-undo').style.opacity = '0.5';
+					document.getElementById('btn-undo').style.cursor = 'not-allowed';
+				}
+			}
+
+			function restoreState(state){
+				deckData = state.deck;
+				foundationSlots = state.foundation;
+				for(let i = 0; i < 5; i++){
+					const col = document.getElementById(`col-${i}`);
+					col.innerHTML = '';
+					state.cols[i].forEach(cd => addCard(col, cd, cd.faceUp));
+				}
+				const wasteEl = document.getElementById('waste');
+				wasteEl.innerHTML = '';
+				state.waste.forEach(cd => addCard(wasteEl, cd, true));
+				document.querySelectorAll('.foundation-slot').forEach(slot => {
+					slot.querySelectorAll('.card').forEach(c => c.remove());
+				});
+				foundationSlots.forEach((fs, i) => {
+					const slot = document.querySelector(`.foundation-slot[data-fslot="${i}"]`);
+					if(fs.suit !== null){
+						for(let v = 1; v <= fs.value; v++){
+							addCard(slot, {suit: fs.suit, value: v}, true);
+						}
+						refreshFoundationPointerEvents(slot);
+					}
+				});
+				updateDeckUI();
+			}
 
 			function initGame(){
 				deckData = [];
 				selection = null;
+				history = [];
+				document.getElementById('btn-undo').disabled = true;
+				document.getElementById('btn-undo').style.opacity = '0.5';
+				document.getElementById('btn-undo').style.cursor = 'not-allowed';
 				foundationSlots = [{suit:null,value:0},{suit:null,value:0},{suit:null,value:0},{suit:null,value:0}];
 				document.getElementById('waste').innerHTML = '';
 				document.querySelectorAll('.foundation-slot').forEach(s => {
@@ -1006,6 +1093,7 @@
 			}
 
 			function placeCardOnFoundation(fslotIdx, card){
+				pushHistory();
 				const destSlot = document.querySelector(`.foundation-slot[data-fslot="${fslotIdx}"]`);
 				const origin = selection.origin;
 				const originType = selection.originType;
@@ -1029,6 +1117,7 @@
 			}
 	
 			function moveSelectionToColumn(destCol){
+				pushHistory();
 				const origin = selection.origin;
 				const originType = selection.originType;
 				selection.cards.forEach(c => {
@@ -1072,6 +1161,7 @@
 				const waste = document.getElementById('waste');
 				clearSelection();
 				if(deckData.length > 0){
+					pushHistory();
 					const emptyCol = findEmptyColumn();
 					const cardData = deckData.pop();
 					addCard(emptyCol || waste, cardData, true);
@@ -1081,6 +1171,7 @@
 						alert("Nessuna carta rimasta nel mazzo o negli scarti!");
 						return;
 					}
+					pushHistory();
 					wasteCards.reverse().forEach(c =>
 						deckData.push({ suit: c.dataset.suit, value: parseInt(c.dataset.value) })
 					);
@@ -1162,6 +1253,7 @@
 				'q': () => handleDeckClick(),
 				'w': () => triggerWaste(),
 				'r': () => initGame(),
+				'z': () => undoMove(),
 				'?': () => toggleHelp()
 			};
 
