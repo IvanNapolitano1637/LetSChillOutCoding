@@ -344,24 +344,24 @@
 					<input type="number" id="shiftValue" value="3" style="width: 45px; padding: 2px 5px; font-size: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; height: 24px; background: var(--input-bg);">
 					<button type="button" id="btnEncPlus" class="copy-btn" onclick="caesarShift(true)">Enc +</button>
 					<button type="button" id="btnDecMinus" class="copy-btn" onclick="caesarShift(false)">Dec -</button>
-					<button type="button" class="copy-btn" data-copy onclick="copyValue('alphaInput')">Copy</button>
+					<button type="button" class="copy-btn" data-copy onclick="copyValue(event, 'alphaInput')">Copy</button>
 				</div>
 			</div>
 			<div class="group">
 				<label class="input-label" for="numInput" id="labelNum">Decimal</label>
 				<input type="text" id="numInput" min="1" oninput="convertToAlpha()">
-				<button type="button" class="copy-btn" data-copy onclick="copyValue('numInput')">Copy</button>
+				<button type="button" class="copy-btn" data-copy onclick="copyValue(event, 'numInput')">Copy</button>
 				<button type="button" id="btnFactorize" class="copy-btn" style="margin-right: 8px;" onclick="factorize()">Factorize</button>
 			</div>
 			<div class="group">
 				<label class="input-label" for="binInput" id="labelBin">Binary</label>
 				<input type="text" id="binInput" oninput="convertFromBase(2, 'binInput')">
-				<button type="button" class="copy-btn" data-copy onclick="copyValue('binInput')">Copy</button>
+				<button type="button" class="copy-btn" data-copy onclick="copyValue(event, 'binInput')">Copy</button>
 			</div>
 			<div class="group">
 				<label class="input-label" for="hexInput" id="labelHex">Hexadecimal</label>
 				<input type="text" id="hexInput" oninput="convertFromBase(16, 'hexInput')">
-				<button type="button" class="copy-btn" data-copy onclick="copyValue('hexInput')">Copy</button>
+				<button type="button" class="copy-btn" data-copy onclick="copyValue(event, 'hexInput')">Copy</button>
 			</div>
 			<div id="factorResult"></div>
 			<div class="info" id="alphabetDisplay">
@@ -500,13 +500,13 @@
 				convertToNumber();
 			}
 
-			function copyValue(id){
+			function copyValue(event, id){
 				const inputField = document.getElementById(id);
-				const btn = event.currentTarget;
-				if(!inputField.value){
+				const btn = event.currentTarget || event.target;
+				if(!inputField || !inputField.value){
 					return;
 				}
-				navigator.clipboard.writeText(inputField.value).then(() => {
+				const successUI = () => {
 					const oldTxt = btn.innerText;
 					const oldCol = btn.style.color;
 					btn.innerText = "Saved!";
@@ -515,7 +515,30 @@
 						btn.innerText = oldTxt;
 						btn.style.color = oldCol;
 					}, 1000);
-				});
+				};
+				if(navigator.clipboard && window.isSecureContext){
+					navigator.clipboard.writeText(inputField.value)
+						.then(successUI)
+						.catch(() => fallbackCopy(inputField, successUI));
+				}else{
+					fallbackCopy(inputField, successUI);
+				}
+			}
+
+			function fallbackCopy(inputField, callback) {
+				inputField.select();
+				inputField.setSelectionRange(0, 99999);
+				try{
+					const successful = document.execCommand('copy');
+					if(successful){
+						callback();
+					}
+				}catch(err){
+					console.error('Error during copy fallback:', err);
+					alert("Error: Unable to copy. Please select the text manually.");
+				}
+				inputField.blur();
+				window.getSelection().removeAllRanges();
 			}
 
 			function factorize(){
