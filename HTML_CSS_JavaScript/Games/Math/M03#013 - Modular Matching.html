@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en"><!--M03#013 - Federico - Modular Matching-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Modular Matching Game</title>
+		<style>
+			:root{
+				--bg-cell: #f0f0f0;
+				--match-color: #8bc34a;
+				--reveal-color: #ff9800;
+				--error-color: #f44336;
+				--color-double: #ffe000;
+				--color-opposite: #b388ff;
+				--color-both: #00e676;
+			}
+			body{
+				font-family: 'Segoe UI', sans-serif;
+				margin: 0;
+				background-color: #fafafa;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+			.header{
+				position: sticky;
+				top: 0;
+				width: 100%;
+				background: white;
+				padding: 15px 0;
+				text-align: center;
+				box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+				z-index: 100;
+			}
+			.controls{
+				margin-top: 10px;
+				display: flex;
+				gap: 10px;
+				justify-content: center;
+				flex-wrap: wrap;
+				padding: 0 10px;
+			}
+			.p-input-group{
+				margin-right: 5px;
+				display: flex;
+				gap: 5px;
+				align-items: center;
+			}
+			input[type="number"]{
+				width: 60px;
+				padding: 5px;
+				border-radius: 4px;
+				border: 1px solid #ccc;
+				font-weight: bold;
+			}
+			button{
+				padding: 8px 12px;
+				cursor: pointer;
+				border-radius: 5px;
+				border: 1px solid #ccc;
+				background: white;
+				transition: all 0.3s;
+				font-size: 0.95em;
+				hyphens: auto;
+			}
+			button:hover{
+				background: #f5f5f5;
+			}
+			button.active{
+				background: #e0e0e0;
+				border-color: #999;
+				box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+			}
+			#btnDouble.active{
+				background: var(--color-double);
+				border-color: #ccb200;
+			}
+			#btnOpposite.active{
+				background: var(--color-opposite);
+				border-color: #7c52cc;
+			}
+			.btn-primary{
+				background-color: #2196f3;
+				color: white;
+				border: none;
+			}
+			.btn-primary:hover{
+				background-color: #1976d2;
+			}
+			.stats-container{
+				display: flex;
+				gap: 20px;
+				justify-content: center;
+			}
+			.button-group{
+				width: 100%;
+				display: flex;
+				justify-content: center;
+				gap: 8px;
+				margin-top: 10px;
+			}
+			.color-success{
+				color: #4caf50;
+			}
+			.color-error{
+				color: var(--error-color);
+			}
+			@media (max-width: 480px){
+				button {
+					font-size: 0.8em;
+					padding: 6px 10px;
+				}
+				.controls {
+					gap: 5px;
+				}
+			}
+			.grid{
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+				gap: 8px;
+				width: 95%;
+				max-width: 800px;
+				padding: 20px 0;
+			}
+			.cell{
+				background-color: var(--bg-cell);
+				aspect-ratio: 1/1;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-size: 1.1em;
+				font-weight: bold;
+				cursor: pointer;
+				-webkit-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+				-webkit-tap-highlight-color: transparent;
+				border-radius: 8px;
+				border: 1px solid #ccc;
+				transition: all 0.2s ease, background-color 0.4s ease;
+				text-align: center;
+				line-height: 1.2;
+			}
+			.cell.highlight-double{
+				background-color: var(--color-double);
+			}
+			.cell.highlight-opposite{
+				background-color: var(--color-opposite);
+			}
+			.cell.highlight-both{
+				background-color: var(--color-both);
+			}
+			.matched{
+				background-color: var(--match-color) !important;
+				color: white;
+				font-size: 0.85em;
+				line-height: 1;
+				border-color: #689f38;
+				cursor: default;
+				white-space: nowrap;
+			}
+			.revealed{
+				background-color: var(--reveal-color);
+				color: white;
+				transform: scale(1.05);
+			}
+			.error-flash{
+				background-color: var(--error-color) !important;
+				animation: shake 0.3s;
+			}
+			@keyframes shake{
+				0%, 100%{
+					transform: translateX(0);
+				}
+				25%{
+					transform: translateX(-5px);
+				}
+				75%{
+					transform: translateX(5px);
+				}
+			}
+			#btnLang .flag-svg{
+				width: 28px;
+				height: 19px;
+				display: block;
+				margin: 0 auto;
+				pointer-events: none;
+			}
+			*{
+				-webkit-tap-highlight-color: transparent;
+			}
+			#helpOverlay{
+				display: none;
+				position: fixed;
+				inset: 0;
+				background: rgba(0,0,0,0.55);
+				z-index: 1000;
+				justify-content: center;
+				align-items: center;
+			}
+			#helpOverlay.visible{
+				display: flex;
+			}
+			#helpBox{
+				background: #fff;
+				border-radius: 12px;
+				box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+				padding: 28px 32px 24px;
+				max-width: 480px;
+				width: 90%;
+				max-height: 85vh;
+				overflow-y: auto;
+				position: relative;
+				text-align: left;
+			}
+			#helpBox h2{
+				margin: 0 0 18px;
+				font-size: 1.3em;
+				text-align: center;
+				color: #2196f3;
+			}
+			#helpBox table{
+				width: 100%;
+				border-collapse: collapse;
+			}
+			#helpBox td{
+				padding: 7px 10px;
+				vertical-align: top;
+			}
+			#helpBox tr:nth-child(even) td{
+				background: #f4f4f4;
+				border-radius: 4px;
+			}
+			#helpBox .key{
+				font-family: monospace;
+				font-weight: bold;
+				font-size: 1.05em;
+				color: #f44336;
+				white-space: nowrap;
+				width: 1%;
+			}
+			#helpCloseBtn{
+				position: absolute;
+				top: 12px;
+				right: 16px;
+				background: none;
+				border: none;
+				font-size: 1.5em;
+				cursor: pointer;
+				color: #555;
+				padding: 2px 6px;
+				line-height: 1;
+			}
+			#helpCloseBtn:hover{
+				color: #000;
+			}
+		</style>
+	</head>
+	<body lang="en">
+		<div class="header">
+			<div class="stats-container">
+				<b><span id="txt-matches">Pairs</span>: <span id="matches" class="color-success">0</span>/<span id="maxMatches">18</span></b>
+				<b><span id="txt-errors">Errors</span>: <span id="errors" class="color-error">0</span>/<span id="maxErrors">5</span></b>
+			</div>
+			<div class="controls">
+				<div class="p-input-group">
+					<label for="pVal" id="labelP">P = </label>
+					<input type="number" id="pVal" value="37" min="3" max="101">
+					<button id="btnUpdateP" class="btn-primary">Update P</button>
+					<button id="btnLang" title="btnLang" onclick="nextLang()"></button>
+				</div>
+				<div class="button-group">
+					<button id="btnDouble">Highlight doubles</button>
+					<button id="btnOpposite">Highlight opposites</button>
+				</div>
+			</div>
+		</div>
+		<div id="helpOverlay" role="dialog" aria-modal="true" onclick="if(event.target===this){closeHelp();}">
+			<div id="helpBox">
+				<button id="helpCloseBtn" onclick="closeHelp()" aria-label="Close">✕</button>
+				<h2 id="helpTitle">Keyboard Shortcuts</h2>
+				<table id="helpTable"></table>
+			</div>
+		</div>
+		<div class="grid" id="gameGrid"></div>
+		<script>
+			const FLAGS_SVG = [
+				'<svg class="flag-svg" viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#s)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>', // UK
+				//'<svg class="flag-svg" viewBox="0 0 7410 3900"><rect width="7410" height="3900" fill="#b22234"/><path d="M0 300h7410M0 900h7410M0 1500h7410M0 2100h7410M0 2700h7410M0 3300h7410" stroke="#fff" stroke-width="300"/><rect width="2964" height="2100" fill="#3c3b6e"/><path d="M247 175l247 759-646-469h798l-646 469z" fill="#fff" transform="scale(.2)"/></svg>', // US
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>', // IT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg>', // FR
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#c60b1e"/><rect width="3" height="1" y="0.5" fill="#ffc400"/></svg>', // ES
+				'<svg class="flag-svg" viewBox="0 0 5 3"><rect width="5" height="3"/><rect width="5" height="2" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg>', // DE
+				'<svg class="flag-svg" viewBox="0 0 600 400"><rect width="240" height="400" fill="#006600"/><rect x="240" width="360" height="400" fill="#ff0000"/></svg>', // PT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002b7f"/><rect width="1" height="2" x="1" fill="#fcd116"/><rect width="1" height="2" x="2" fill="#ce1126"/></svg>', // RO
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>', // UA
+				'<svg class="flag-svg" viewBox="0 0 27 18"><rect width="27" height="18" fill="#005bae"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#005bae"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>', // GR
+				//'<svg class="flag-svg" viewBox="0 0 1 1"><rect width="0.5" height="1" fill="#ffe000"/><rect x="0.5" width="0.5" height="1" fill="#fff"/></svg>', // VA
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#800000"/><path d="M0.5,0.5 L2.5,0.5 L2.5,1.5 L0.5,1.5 Z" fill="none" stroke="#FFD700" stroke-width="0.1"/><text x="1.5" y="1.15" font-family="serif" font-weight="bold" font-size="0.4" fill="#FFD700" text-anchor="middle">SPQR</text></svg>', // ROMA
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#de2110"/><path d="M.5 1.1l.3-.9.3.9-1-.6h1z" fill="#ffde00" transform="matrix(.4 0 0 .4 .1 .1)"/></svg>', // CN
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>' // JP
+			];
+			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
+			const TRANSLATIONS = {
+				en: { errors: "Errors", matches: "Pairs", updateP: "Update P", hlDoubles: "Highlight doubles (2x)", hlOpposites: "Highlight opposites (-x)", notPrime: " is not prime. Some numbers may lack an inverse. Continue?", warnPrime: " is not prime. Some numbers could not have a reverse.", maxErrors: "Max errors!", win: "You win! Congratulations! 🎉", varP: "P", varX: "x" },
+				it: { errors: "Errori", matches: "Coppie", updateP: "Aggiorna P", hlDoubles: "Evidenzia doppi (2x)", hlOpposites: "Evidenzia opposti (-x)", notPrime: " non è primo. Alcuni numeri potrebbero non avere un inverso. Continuare?", warnPrime: " non è primo. Alcuni numeri potrebbero non avere un inverso.", maxErrors: "Max errori!", win: "Hai vinto! Complimenti! 🎉", varP: "P", varX: "x" },
+				fr: { errors: "Erreurs", matches: "Paires", updateP: "MàJ P", hlDoubles: "Surligner doubles (2x)", hlOpposites: "Surligner opposés (-x)", notPrime: " n'est pas premier. Certains nombres peuvent manquer d'inverse. Continuer?", warnPrime: " n'est pas premier. Certains nombres pourraient ne pas avoir d'inverse.", maxErrors: "Max erreurs!", win: "Vous avez gagné ! Félicitations ! 🎉", varP: "P", varX: "x" },
+				es: { errors: "Errores", matches: "Pares", updateP: "Actualizar P", hlDoubles: "Resaltar dobles (2x)", hlOpposites: "Resaltar opuestos (-x)", notPrime: " no es primo. Algunos números podrían no tener inverso. ¿Continuar?", warnPrime: " no es primo. Algunos números podrían no tener inverso.", maxErrors: "¡Max errori!", win: "¡Has ganado! ¡Felicitaciones! 🎉", varP: "P", varX: "x" },
+				de: { errors: "Fehler", matches: "Paare", updateP: "P akt.", hlDoubles: "Doppelte hervorheben (2x)", hlOpposites: "Gegenteile hervorheben (-x)", notPrime: " ist keine Primzahl. Einige Zahlen haben eventuell keinen Kehrwert. Fortfahren?", warnPrime: " ist keine Primzahl. Einige Zahlen könnten keinen Kehrwert haben.", maxErrors: "Fehlerlimit!", win: "Du hast gewonnen! Herzlichen Glückwunsch! 🎉", varP: "P", varX: "x" },
+				pt: { errors: "Erros", matches: "Pares", updateP: "Atualizar P", hlDoubles: "Destacar dobros (2x)", hlOpposites: "Destacar opostos (-x)", notPrime: " não è primo. Alguns números podem não ter inverso. Continuar?", warnPrime: " não è primo. Alguns números podem não ter inverso.", maxErrors: "Erro max!", win: "Você ganhou! Parabéns! 🎉", varP: "P", varX: "x" },
+				ro: { errors: "Erori", matches: "Perechi", updateP: "Actualizează P", hlDoubles: "Evidențiază dubluri (2x)", hlOpposites: "Evidențiază opuse (-x)", notPrime: " nu este prim. Unele numere ar putea să nu aibă invers. Continuați?", warnPrime: " nu este prim. Unele numere ar putea să nu aibă invers.", maxErrors: "Erori max!", win: "Ai câștigat! Felicitări! 🎉", varP: "P", varX: "x" },
+				uk: { errors: "Помилки", matches: "Пари", updateP: "Оновити П", hlDoubles: "Виділити подвійні (2n)", hlOpposites: "Виділити протилежні (-n)", notPrime: " не є простим. Деякі числа можуть не мати оберненого. Продовжити?", warnPrime: " не є простим. Деякі числа можуть не мати оберненого.", maxErrors: "Помилки!", win: "Ви перемогли! Вітаємо! 🎉", varP: "П", varX: "n" },
+				el: { errors: "Σφάλματα", matches: "Ζεύγη", updateP: "Ενημέρωση Π", hlDoubles: "Επισήμανση διπλών (2x)", hlOpposites: "Επισήμανση αντίθετων (-x)", notPrime: " δεν είναι πρώτος. Ορισμένοι αριθμοί μπορεί να μην έχουν αντίστροφο. Συνέχεια;", warnPrime: " δεν είναι πρώτος. Ορισμένοι αριθμοί μπορεί να μην έχουν αντίστροφο.", maxErrors: "Σφάλματα!", win: "Κερδίσατε! Συγχαρητήρια! 🎉", varP: "Π", varX: "x" },
+				la: { errors: "Errores", matches: "Paria", updateP: "Renova P", hlDoubles: "Ostende duplices (2x)", hlOpposites: "Ostende oppositos (-x)", notPrime: " non est primus. Aliqui numeri inversum non habere possunt. Pergere?", warnPrime: " non est primus. Aliqui numeri inversum non habere possunt.", maxErrors: "Errores!", win: "Vicisti! Gratulationes! 🎉", varP: "P", varX: "x" },
+				zh: { errors: "错误", matches: "对数", updateP: "更新 模", hlDoubles: "高亮双倍 (2n)", hlOpposites: "高亮相反数 (-n)", notPrime: " 不是质数。某些数字可能没有逆元。继续？", warnPrime: " 不是质数。某些数字可能没有逆元。", maxErrors: "错误过多!", win: "你赢了！恭喜！ 🎉", varP: "模", varX: "n" },
+				ja: { errors: "エラー", matches: "ペア", updateP: "P 更新", hlDoubles: "2倍を強調 (2n)", hlOpposites: "逆数を強調 (-n)", notPrime: " は素数ではありません。一部の数値には逆数がない場合があります。続行？", warnPrime: " は素数ではありません。一部の数値には逆数がない場合があります。", maxErrors: "リトライ!", win: "あなたの勝ちです！おめでとうございます！ 🎉", varP: "P", varX: "n" }
+			};
+			const HELP_TITLE = {
+				en: "Keyboard Shortcuts", it: "Tasti di scelta rapida", fr: "Raccourcis clavier",
+				es: "Atajos de teclado", de: "Tastenkürzel", pt: "Atalhos de teclado",
+				ro: "Scurtături de tastatură", uk: "Клавіші швидкого доступу",
+				el: "Συντομεύσεις πληκτρολογίου", la: "Clavium compendia",
+				zh: "键盘快捷键", ja: "キーボードショートカット"
+			};
+			const HELP_SHORTCUTS = {
+				en: [["D","Toggle highlight doubles (2x)"],["O","Toggle highlight opposites (-x)"],["L","Switch language"],["Z","Reset error counter"],["?","Show / hide this help"]],
+				it: [["D","Attiva/disattiva evidenziazione doppi (2x)"],["O","Attiva/disattiva evidenziazione opposti (-x)"],["L","Cambia lingua"],["Z","Azzera contatore errori"],["?","Mostra / nascondi questo aiuto"]],
+				fr: [["D","Activer/désactiver surlignage doubles (2x)"],["O","Activer/désactiver surlignage opposés (-x)"],["L","Changer de langue"],["Z","Réinitialiser le compteur d'erreurs"],["?","Afficher / masquer cette aide"]],
+				es: [["D","Activar/desactivar resaltado dobles (2x)"],["O","Activar/desactivar resaltado opuestos (-x)"],["L","Cambiar idioma"],["Z","Reiniciar contador de errores"],["?","Mostrar / ocultar esta ayuda"]],
+				de: [["D","Doppelte hervorheben ein/aus (2x)"],["O","Gegenteile hervorheben ein/aus (-x)"],["L","Sprache wechseln"],["Z","Fehlerzähler zurücksetzen"],["?","Hilfe anzeigen / ausblenden"]],
+				pt: [["D","Ativar/desativar destaque dobros (2x)"],["O","Ativar/desativar destaque opostos (-x)"],["L","Mudar idioma"],["Z","Redefinir contador de erros"],["?","Mostrar / ocultar esta ajuda"]],
+				ro: [["D","Activează/dezactivează evidențiere dubluri (2x)"],["O","Activează/dezactivează evidențiere opuse (-x)"],["L","Schimbă limba"],["Z","Resetează contorul de erori"],["?","Afișează / ascunde această ajutor"]],
+				uk: [["D","Увімк./вимк. виділення подвійних (2n)"],["O","Увімк./вимк. виділення протилежних (-n)"],["L","Змінити мову"],["Z","Скинути лічильник помилок"],["?","Показати / приховати цю довідку"]],
+				el: [["D","Ενεργοπ./Απενεργοπ. επισήμανση διπλών (2x)"],["O","Ενεργοπ./Απενεργοπ. επισήμανση αντίθετων (-x)"],["L","Αλλαγή γλώσσας"],["Z","Μηδενισμός μετρητή σφαλμάτων"],["?","Εμφάνιση / απόκρυψη βοήθειας"]],
+				la: [["D","Ostende/absconde duplices (2x)"],["O","Ostende/absconde oppositos (-x)"],["L","Linguam muta"],["Z","Errores tolle"],["?","Auxilium ostende / absconde"]],
+				zh: [["D","切换双倍高亮 (2n)"],["O","切换相反数高亮 (-n)"],["L","切换语言"],["Z","重置错误计数器"],["?","显示 / 隐藏帮助"]],
+				ja: [["D","2倍の強調表示 オン/オフ (2n)"],["O","逆数の強調表示 オン/オフ (-n)"],["L","言語を切替"],["Z","エラーカウンターをリセット"],["?","ヘルプを表示 / 非表示"]]
+			};
+			let currentLangIndex = 0;
+
+			function t(key){
+				return TRANSLATIONS[LANG_KEYS[currentLangIndex]][key];
+			}
+
+			function updateUI(){
+				document.getElementById('txt-errors').textContent = t("errors");
+				document.getElementById('txt-matches').textContent = t("matches");
+				document.getElementById('labelP').textContent = t("varP") + " = ";
+				document.getElementById('btnUpdateP').textContent = t("updateP");
+				document.getElementById('btnDouble').textContent = t("hlDoubles");
+				document.getElementById('btnOpposite').textContent = t("hlOpposites");
+				document.getElementById('btnLang').innerHTML = FLAGS_SVG[currentLangIndex];
+				document.body.setAttribute('lang', LANG_KEYS[currentLangIndex]);
+			}
+
+			function openHelp(){
+				updateHelpContent();
+				document.getElementById("helpOverlay").classList.add("visible");
+			}
+
+			function closeHelp(){
+				document.getElementById("helpOverlay").classList.remove("visible");
+			}
+
+			function updateHelpContent(){
+				const lang = LANG_KEYS[currentLangIndex];
+				document.getElementById("helpTitle").textContent = HELP_TITLE[lang];
+				const rows = HELP_SHORTCUTS[lang];
+				document.getElementById("helpTable").innerHTML = rows.map(([k,d]) =>
+					`<tr><td class="key">${k}</td><td>${d}</td></tr>`
+				).join("");
+			}
+			function nextLang(){
+				currentLangIndex = (currentLangIndex + 1)%(LANG_KEYS.length);
+				updateUI();
+				if(document.getElementById('helpOverlay').classList.contains('visible')){
+					updateHelpContent();
+				}
+				document.querySelectorAll('.cell.matched').forEach(cell => {
+					const n1 = cell.dataset.number;
+					const n2 = cell.dataset.inverse;
+					cell.innerHTML = (n1 === n2) ? `${n1} = ${n1}⁻¹` : `${n1} = ${n2}⁻¹`;
+				});
+			}
+
+			document.addEventListener('DOMContentLoaded',() => {
+				let P = 37;
+				const GRID = document.getElementById('gameGrid');
+				const MAX_NUMBER_OF_ERRORS = 5;
+				//const MAX_NUMBER_OF_ERRORS = 86400;
+				let currentErrors = 0;
+				let selectedCells = [];
+				let matchedNumbersCount = 0;
+				let pairsFound = 0;
+				let maxPairs = 0;
+				let showDoubles = false;
+				let showOpposites = false;
+
+				function gcd(a, b){
+					return b === 0 ? a : gcd(b, a%b);
+				}
+
+				function isPrime(num){
+					for(let i = 2, s = Math.sqrt(num); i <= s; i++){
+						if(num%i === 0){
+							return false;
+						}
+					}
+					return num > 1;
+				}
+
+				function getModularInverse(a, m){
+					for(let x = 1; x < m; x++){
+						if((a*x)%m === 1){
+							return x;
+						}
+					}
+					return null;
+				}
+
+				function initGame(){
+					const pInput = parseInt(document.getElementById('pVal').value);
+					if(pInput < 2){
+						return;
+					}
+					P = pInput;
+					GRID.innerHTML = '';
+					currentErrors = 0;
+					pairsFound = 0;
+					selectedCells = [];
+					let processed = new Set();
+					let totalPairs = 0;
+					for(let i = 1; i < P; i++){
+						let inv = getModularInverse(i, P);
+						if(inv !== null && !processed.has(i)){
+							totalPairs++;
+							processed.add(inv);
+							processed.add(i);
+						}
+					}
+					maxPairs = totalPairs;
+					document.getElementById('errors').textContent = '0';
+					document.getElementById('maxErrors').textContent = MAX_NUMBER_OF_ERRORS;
+					document.getElementById('matches').textContent = '0';
+					document.getElementById('maxMatches').textContent = maxPairs;
+					const fontSize = P > 50 ? "0.9em" : "1.1em";
+					for(let i = 1; i < P; i++){
+						const cell = document.createElement('div');
+						cell.classList.add('cell');
+						cell.style.fontSize = fontSize;
+						cell.dataset.number = i;
+						cell.innerText = i;
+						cell.onclick = () => handleCellClick(cell);
+						GRID.appendChild(cell);
+					}
+				}
+
+				function handleCellClick(cell){
+					if(cell.classList.contains('matched')){
+						return;
+					}
+					cell.classList.add('revealed');
+					selectedCells.push(cell);
+					if(selectedCells.length === 2){
+						setTimeout(checkMatch, 300);
+					}
+				}
+
+				function checkMatch(){
+					const [cell1, cell2] = selectedCells;
+					const num1 = parseInt(cell1.dataset.number);
+					const num2 = parseInt(cell2.dataset.number);
+					if((num1*num2)%P === 1){
+						pairsFound++;
+						document.getElementById('matches').textContent = pairsFound;
+						if(cell1 === cell2){
+							setAsMatched(cell1, num1, num1);
+						}else{
+							setAsMatched(cell1, num1, num2);
+							setAsMatched(cell2, num2, num1);
+						}
+						checkWin();
+					}else{
+						currentErrors++;
+						document.getElementById('errors').textContent = currentErrors;
+						cell1.classList.add('error-flash');
+						cell2.classList.add('error-flash');
+						setTimeout(() => {
+							cell1.classList.remove('revealed', 'error-flash');
+							cell2.classList.remove('revealed', 'error-flash');
+						}, 400);
+						if(currentErrors >= MAX_NUMBER_OF_ERRORS){
+							setTimeout(() => { alert(t("maxErrors")); initGame(); }, 100);
+						}
+					}
+					selectedCells = [];
+				}
+
+				function setAsMatched(cell, n1, n2){
+					cell.classList.add('matched');
+					cell.classList.remove('revealed');
+					cell.dataset.inverse = n2;
+					cell.innerHTML = (n1 === n2) ? `${n1} = ${n1}⁻¹` : `${n1} = ${n2}⁻¹`;
+					matchedNumbersCount++;
+					updateHighlights();
+				}
+
+				function checkWin(){
+					if(pairsFound === maxPairs){
+						setTimeout(() => alert(t("win")), 200);
+					}
+				}
+
+				function updateHighlights(){
+					const cells = Array.from(document.querySelectorAll('.cell'));
+					const matchedNumbers = cells.filter(c => c.classList.contains('matched')).map(c => parseInt(c.dataset.number));
+					cells.forEach(cell => {
+						cell.classList.remove('highlight-double', 'highlight-opposite', 'highlight-both');
+						if(cell.classList.contains('matched')){
+							return;
+						}
+						const val = parseInt(cell.dataset.number);
+						const isDouble = showDoubles && matchedNumbers.some(m =>(m*2) === val);
+						const isOpposite = showOpposites && matchedNumbers.some(m =>(m + val) === P);
+						if(isDouble && isOpposite){
+							cell.classList.add('highlight-both');
+						}else if(isDouble){
+							cell.classList.add('highlight-double');
+						}else if(isOpposite){
+							cell.classList.add('highlight-opposite');
+						}
+					});
+				}
+
+				document.getElementById('btnUpdateP').addEventListener('click',() => {
+					const pVal = parseInt(document.getElementById('pVal').value);
+					if(!isPrime(pVal)){
+						if(!confirm(pVal + t("notPrime"))){
+							return;
+						}
+					}
+					initGame();
+				});
+
+				function updateBtnColors(){
+					const bd = document.getElementById('btnDouble');
+					const bo = document.getElementById('btnOpposite');
+					bd.style.background = showDoubles ? 'var(--color-double)' : '';
+					bd.style.borderColor = showDoubles ? '#ccb200' : '';
+					bo.style.background = showOpposites ? 'var(--color-opposite)' : '';
+					bo.style.borderColor = showOpposites ? '#7c52cc' : '';
+				}
+
+				function highlightDouble(){
+					showDoubles = !showDoubles;
+					document.getElementById('btnDouble').classList.toggle('active', showDoubles);
+					updateBtnColors();
+					updateHighlights();
+				}
+
+				document.getElementById('btnDouble').addEventListener('click',() => {
+					highlightDouble();
+				});
+
+				function highlightOpposite(){
+					showOpposites = !showOpposites;
+					document.getElementById('btnOpposite').classList.toggle('active', showOpposites);
+					updateBtnColors();
+					updateHighlights();
+				}
+
+				document.getElementById('btnOpposite').addEventListener('click',() => {
+					highlightOpposite();
+				});
+
+				document.addEventListener("keydown", e => {
+					if(e.key.toLowerCase() === "l"){
+						nextLang();
+					}else if(e.key.toLowerCase() === "d"){
+						highlightDouble();
+					}else if(e.key.toLowerCase() === "o"){
+						highlightOpposite();
+					}else if(e.key.toLowerCase() === "z"){
+						currentErrors = 0;
+						document.getElementById('errors').textContent = currentErrors;
+					}else if(e.key === "?"){
+						const ov = document.getElementById("helpOverlay");
+						if(ov.classList.contains("visible")){
+							closeHelp();
+						}else{
+							openHelp();
+						}
+					}
+				});
+
+				initGame();
+				updateUI();
+			});
+		</script>
+	</body>
+</html>

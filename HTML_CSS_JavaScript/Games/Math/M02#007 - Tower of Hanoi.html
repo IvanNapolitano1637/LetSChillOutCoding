@@ -1,0 +1,790 @@
+<!DOCTYPE HTML>
+<html lang="en"><!--M02#007 - Luca - Tower of Hanoi-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>Tower of Hanoi</title>
+		<style>
+			:root{
+				--accent-color: #4a90e2;
+				--button-hover: #357abd;
+				--panel-bg: rgba(255, 255, 255, 0.85);
+			}
+			body{
+				font-family: 'Segoe UI', Tahoma, sans-serif;
+				background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+				background-attachment: fixed;
+				text-align: center;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				margin: 0;
+				padding: 20px;
+				min-height: 100vh;
+				user-select: none;
+				-webkit-user-select: none;
+				touch-action: manipulation;
+			}
+			.top-bar{
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				margin-bottom: 15px;
+			}
+			.stats{
+				background: var(--panel-bg);
+				padding: 10px 25px;
+				border-radius: 50px;
+				font-weight: bold;
+				font-size: 1.2em;
+				box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+				color: #333;
+				display: flex;
+				align-items: center;
+			}
+			.stats span{
+				margin-left: 8px;
+			}
+			canvas{
+				background: rgba(255, 255, 255, 0.2);
+				cursor: pointer;
+				display: block;
+				margin: 10px auto;
+				max-width: 100%;
+				height: auto;
+				border-radius: 15px;
+				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+				border: 2px solid rgba(255, 255, 255, 0.4);
+				touch-action: none;
+				-webkit-tap-highlight-color: transparent;
+			}
+			.controls{
+				background: var(--panel-bg);
+				padding: 10px 14px;
+				border-radius: 12px;
+				display: flex;
+				flex-wrap: nowrap;
+				justify-content: center;
+				align-items: center;
+				gap: 8px;
+				box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+			}
+			select, button{
+				padding: 8px 14px;
+				font-size: 14px;
+				border-radius: 8px;
+				border: none;
+				cursor: pointer;
+				transition: all 0.2s ease;
+				outline: none;
+			}
+			select{
+				background: var(--panel-bg);
+				border: 1px solid rgba(255,255,255,0.5);
+				box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+				font-weight: bold;
+				height: 40px;
+				max-width: 110px;
+			}
+			button{
+				background-color: var(--accent-color);
+				color: white;
+				font-weight: bold;
+				text-transform: uppercase;
+				min-width: 0;
+				padding: 8px 10px;
+			}
+			button:hover{
+				background-color: var(--button-hover);
+				transform: translateY(-2px);
+			}
+			.flag-svg{
+				width: 32px;
+				height: 20px;
+				display: inline-block;
+				vertical-align: middle;
+				border: 1px solid rgba(255,255,255,0.5);
+				border-radius: 2px;
+			}
+			*{
+				-webkit-tap-highlight-color: transparent;
+			}
+			@media screen and (max-width: 600px){
+				.controls{
+					padding: 8px 10px;
+					gap: 6px;
+				}
+				select{
+					max-width: 90px;
+					font-size: 12px;
+				}
+				button{
+					font-size: 13px;
+					padding: 7px 8px;
+				}
+			}
+			#helpOverlay{
+				display: none;
+				position: fixed;
+				inset: 0;
+				background: rgba(0,0,0,0.55);
+				z-index: 1000;
+				justify-content: center;
+				align-items: center;
+			}
+			#helpOverlay.visible{
+				display: flex;
+			}
+			#helpBox{
+				background: #fff;
+				border-radius: 12px;
+				box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+				padding: 28px 32px 24px;
+				max-width: 480px;
+				width: 90%;
+				max-height: 85vh;
+				overflow-y: auto;
+				position: relative;
+				text-align: left;
+			}
+			#helpBox h2{
+				margin: 0 0 18px;
+				font-size: 1.3em;
+				text-align: center;
+				color: #4a90e2;
+			}
+			#helpBox table{
+				width: 100%;
+				border-collapse: collapse;
+			}
+			#helpBox td{
+				padding: 7px 10px;
+				vertical-align: top;
+			}
+			#helpBox tr:nth-child(even) td{
+				background: #f4f4f4;
+				border-radius: 4px;
+			}
+			#helpBox .key{
+				font-family: monospace;
+				font-weight: bold;
+				font-size: 1.05em;
+				color: #e2574a;
+				white-space: nowrap;
+				width: 1%;
+			}
+			#helpCloseBtn{
+				position: absolute;
+				top: 12px;
+				right: 16px;
+				background: none;
+				border: none;
+				font-size: 1.5em;
+				cursor: pointer;
+				color: #555;
+				padding: 2px 6px;
+				line-height: 1;
+			}
+			#helpCloseBtn:hover{
+				color: #000;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="top-bar">
+			<select id="disksNumber" onchange="changeDiskCount()"></select>
+			<div class="stats"><span id="movesLabel">Moves:</span> <span id="moveCounter">0</span></div>
+		</div>
+		<div id="helpOverlay" role="dialog" aria-modal="true" onclick="if(event.target===this){closeHelp();}">
+			<div id="helpBox">
+				<button id="helpCloseBtn" onclick="closeHelp()" aria-label="Close">✕</button>
+				<h2 id="helpTitle">Keyboard Shortcuts</h2>
+				<table id="helpTable"></table>
+			</div>
+		</div>
+		<canvas id="universe"></canvas>
+		<div class="controls">
+			<button type="button" id="restartBtn" onclick="resetGame()">⟳</button>
+			<button type="button" id="demoBtn" onclick="animatedSolving()">Solve</button>
+			<button type="button" id="saveBtn" onclick="openSaveModal()">💾</button>
+			<button type="button" id="loadBtn" onclick="openLoadModal()">📂</button>
+			<button type="button" id="langBtn" onclick="nextLanguage()"></button>
+		</div>
+		<div id="saveModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:2000;justify-content:center;align-items:center;" onclick="if(event.target===this)closeSaveModal();">
+			<div style="background:#fff;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.35);padding:24px 28px;max-width:420px;width:90%;position:relative;">
+				<button onclick="closeSaveModal()" style="position:absolute;top:10px;right:14px;background:none;border:none;font-size:1.4em;cursor:pointer;color:#555;padding:2px 6px;">✕</button>
+				<h2 id="modalTitle" style="margin:0 0 16px;font-size:1.2em;text-align:center;color:#4a90e2;"></h2>
+				<div id="slotsContainer" style="display:flex;flex-direction:column;gap:10px;"></div>
+				<p id="noSavesMsg" style="text-align:center;color:#999;display:none;"></p>
+			</div>
+		</div>
+		<div id="toast" style="display:none;position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 22px;border-radius:30px;font-size:1em;z-index:3000;box-shadow:0 4px 12px rgba(0,0,0,0.3);pointer-events:none;"></div>
+		<script>
+			const FLAGS_SVG = [
+				'<svg class="flag-svg" viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#s)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>', // UK
+				//'<svg class="flag-svg" viewBox="0 0 7410 3900"><rect width="7410" height="3900" fill="#b22234"/><path d="M0 300h7410M0 900h7410M0 1500h7410M0 2100h7410M0 2700h7410M0 3300h7410" stroke="#fff" stroke-width="300"/><rect width="2964" height="2100" fill="#3c3b6e"/><path d="M247 175l247 759-646-469h798l-646 469z" fill="#fff" transform="scale(.2)"/></svg>', // US
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>', // IT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg>', // FR
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#c60b1e"/><rect width="3" height="1" y="0.5" fill="#ffc400"/></svg>', // ES
+				'<svg class="flag-svg" viewBox="0 0 5 3"><rect width="5" height="3"/><rect width="5" height="2" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg>', // DE
+				'<svg class="flag-svg" viewBox="0 0 600 400"><rect width="240" height="400" fill="#006600"/><rect x="240" width="360" height="400" fill="#ff0000"/></svg>', // PT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002b7f"/><rect width="1" height="2" x="1" fill="#fcd116"/><rect width="1" height="2" x="2" fill="#ce1126"/></svg>', // RO
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>', // UA
+				'<svg class="flag-svg" viewBox="0 0 27 18"><rect width="27" height="18" fill="#005bae"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#005bae"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>', // GR
+				//'<svg class="flag-svg" viewBox="0 0 1 1"><rect width="0.5" height="1" fill="#ffe000"/><rect x="0.5" width="0.5" height="1" fill="#fff"/></svg>', // VA
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#800000"/><path d="M0.5,0.5 L2.5,0.5 L2.5,1.5 L0.5,1.5 Z" fill="none" stroke="#FFD700" stroke-width="0.1"/><text x="1.5" y="1.15" font-family="serif" font-weight="bold" font-size="0.4" fill="#FFD700" text-anchor="middle">SPQR</text></svg>', // ROMA
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#de2110"/><path d="M.5 1.1l.3-.9.3.9-1-.6h1z" fill="#ffde00" transform="matrix(.4 0 0 .4 .1 .1)"/></svg>', // CN
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>' // JP
+			];
+			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
+			const TRANSLATIONS = {
+				en: { restart:"Restart", demo:"Solve", level:"Level", moves:"Moves", win:"Wonderful! :-D You win in ", move:"move", moves_pl:"moves", save:"Save", load:"Load", save_ok:"Game saved!", load_ok:"Game loaded!", load_err:"No saved game found.", save_slot:"Save slot", overwrite:"Overwrite?", delete_save:"Delete", no_saves:"No saved games." },
+				it: { restart:"Ricomincia", demo:"Risolvi", level:"Livello", moves:"Mosse", win:"Fantastico! :-D Hai vinto in ", move:"mossa", moves_pl:"mosse", save:"Salva", load:"Carica", save_ok:"Partita salvata!", load_ok:"Partita caricata!", load_err:"Nessuna partita salvata.", save_slot:"Slot salvataggio", overwrite:"Sovrascrivere?", delete_save:"Elimina", no_saves:"Nessuna partita salvata." },
+				fr: { restart:"Recommencer", demo:"Résoudre", level:"Niveau", moves:"Coups", win:"Magnifique ! :-D Tu gagnes en ", move:"coup", moves_pl:"coups", save:"Sauver", load:"Charger", save_ok:"Partie sauvegardée!", load_ok:"Partie chargée!", load_err:"Aucune sauvegarde trouvée.", save_slot:"Emplacement", overwrite:"Écraser?", delete_save:"Supprimer", no_saves:"Aucune sauvegarde." },
+				es: { restart:"Reiniciar", demo:"Resolver", level:"Nivel", moves:"Movimientos", win:"¡Maravilloso! :-D Ganaste en ", move:"movimiento", moves_pl:"movimientos", save:"Guardar", load:"Cargar", save_ok:"¡Partida guardada!", load_ok:"¡Partida cargada!", load_err:"No hay partida guardada.", save_slot:"Ranura", overwrite:"¿Sobreescribir?", delete_save:"Eliminar", no_saves:"No hay partidas guardadas." },
+				de: { restart:"Neustart", demo:"Lösen", level:"Stufe", moves:"Züge", win:"Wunderbar! :-D Du gewinnst in ", move:"Zug", moves_pl:"Zügen", save:"Speichern", load:"Laden", save_ok:"Spiel gespeichert!", load_ok:"Spiel geladen!", load_err:"Kein gespeichertes Spiel.", save_slot:"Spielstand", overwrite:"Überschreiben?", delete_save:"Löschen", no_saves:"Keine Spielstände." },
+				pt: { restart:"Reiniciar", demo:"Resolver", level:"Nível", moves:"Movimentos", win:"Maravilhoso! :-D Você venceu em ", move:"movimento", moves_pl:"movimentos", save:"Salvar", load:"Carregar", save_ok:"Jogo salvo!", load_ok:"Jogo carregado!", load_err:"Nenhuma partida salva.", save_slot:"Slot", overwrite:"Sobrescrever?", delete_save:"Apagar", no_saves:"Nenhuma partida salva." },
+				ro: { restart:"Repornire", demo:"Rezolvă", level:"Nivel", moves:"Mutări", win:"Minunat! :-D Ai câștigat în ", move:"mutare", moves_pl:"mutări", save:"Salvează", load:"Încarcă", save_ok:"Joc salvat!", load_ok:"Joc încărcat!", load_err:"Nicio salvare găsită.", save_slot:"Slot", overwrite:"Suprascrieți?", delete_save:"Șterge", no_saves:"Nicio salvare." },
+				uk: { restart:"Перезапуск", demo:"Вирішити", level:"Рівень", moves:"Ходи", win:"Чудово! :-D Ви виграли за ", move:"хід", moves_pl:"ходів", save:"Зберегти", load:"Завантажити", save_ok:"Гру збережено!", load_ok:"Гру завантажено!", load_err:"Збережену гру не знайдено.", save_slot:"Слот", overwrite:"Перезаписати?", delete_save:"Видалити", no_saves:"Немає збережень." },
+				el: { restart:"Επανεκκίνηση", demo:"Επίλυση", level:"Επίπεδο", moves:"Κινήσεις", win:"Υπέροχα! :-D Κερδίσατε σε ", move:"κίνηση", moves_pl:"κινήσεις", save:"Αποθήκευση", load:"Φόρτωση", save_ok:"Αποθηκεύτηκε!", load_ok:"Φορτώθηκε!", load_err:"Δεν βρέθηκε αποθήκευση.", save_slot:"Θέση", overwrite:"Αντικατάσταση;", delete_save:"Διαγραφή", no_saves:"Καμία αποθήκευση." },
+				la: { restart:"Restitue", demo:"Solve", level:"Gradus", moves:"Motus", win:"Mirabile! :-D Vicisti in ", move:"motu", moves_pl:"motibus", save:"Serva", load:"Onus", save_ok:"Salvatum!", load_ok:"Oneratum!", load_err:"Nulla salvatio.", save_slot:"Theca", overwrite:"Rescribe?", delete_save:"Dele", no_saves:"Nulla salvatio." },
+				zh: { restart:"重新开始", demo:"求解", level:"等级", moves:"步数", win:"太棒了！:-D 你用 ", move:"步", moves_pl:"步", save:"保存", load:"加载", save_ok:"游戏已保存！", load_ok:"游戏已加载！", load_err:"没有找到存档。", save_slot:"存档槽", overwrite:"覆盖？", delete_save:"删除", no_saves:"没有存档。" },
+				ja: { restart:"リスタート", demo:"解く", level:"レベル", moves:"手数", win:"素晴らしい！:-D ", move:"手で勝利！", moves_pl:"手で勝利！", save:"保存", load:"読込", save_ok:"保存しました！", load_ok:"読み込みました！", load_err:"セーブデータが見つかりません。", save_slot:"スロット", overwrite:"上書き？", delete_save:"削除", no_saves:"セーブデータなし。" }
+			};
+			const HELP_TITLE = {
+				en:"Keyboard Shortcuts", it:"Tasti di scelta rapida", fr:"Raccourcis clavier",
+				es:"Atajos de teclado", de:"Tastenkürzel", pt:"Atalhos de teclado",
+				ro:"Scurtături de tastatură", uk:"Клавіші швидкого доступу",
+				el:"Συντομεύσεις πληκτρολογίου", la:"Clavium compendia",
+				zh:"键盘快捷键", ja:"キーボードショートカット"
+			};
+			const HELP_SHORTCUTS = {
+				en:[["R","Restart the game"],["S","Watch the automatic solution"],["L","Switch language"],["?","Show / hide this help"],["F5","Save game (slot 1)"],["F9","Load game (slot 1)"]],
+				it:[["R","Ricomincia la partita"],["S","Guarda la soluzione automatica"],["L","Cambia lingua"],["?","Mostra / nascondi questo aiuto"],["F5","Salva partita (slot 1)"],["F9","Carica partita (slot 1)"]],
+				fr:[["R","Recommencer la partie"],["S","Voir la solution automatique"],["L","Changer de langue"],["?","Afficher / masquer cette aide"],["F5","Sauvegarder (emplacement 1)"],["F9","Charger (emplacement 1)"]],
+				es:[["R","Reiniciar la partida"],["S","Ver la solución automática"],["L","Cambiar idioma"],["?","Mostrar / ocultar esta ayuda"],["F5","Guardar partida (ranura 1)"],["F9","Cargar partida (ranura 1)"]],
+				de:[["R","Spiel neu starten"],["S","Automatische Lösung ansehen"],["L","Sprache wechseln"],["?","Hilfe anzeigen / ausblenden"],["F5","Spiel speichern (Slot 1)"],["F9","Spiel laden (Slot 1)"]],
+				pt:[["R","Reiniciar o jogo"],["S","Ver a solução automática"],["L","Mudar idioma"],["?","Mostrar / ocultar esta ajuda"],["F5","Salvar jogo (slot 1)"],["F9","Carregar jogo (slot 1)"]],
+				ro:[["R","Repornește jocul"],["S","Urmărește soluția automată"],["L","Schimbă limba"],["?","Afișează / ascunde această ajutor"],["F5","Salvează jocul (slot 1)"],["F9","Încarcă jocul (slot 1)"]],
+				uk:[["R","Перезапустити гру"],["S","Переглянути автоматичне рішення"],["L","Змінити мову"],["?","Показати / приховати цю довідку"],["F5","Зберегти гру (слот 1)"],["F9","Завантажити гру (слот 1)"]],
+				el:[["R","Επανεκκίνηση παιχνιδιού"],["S","Δείτε την αυτόματη λύση"],["L","Αλλαγή γλώσσας"],["?","Εμφάνιση / απόκρυψη βοήθειας"],["F5","Αποθήκευση (θέση 1)"],["F9","Φόρτωση (θέση 1)"]],
+				la:[["R","Ludum restitue"],["S","Solutionem automaticam vide"],["L","Linguam muta"],["?","Auxilium ostende / absconde"],["F5","Serva ludum (theca 1)"],["F9","Onus ludum (theca 1)"]],
+				zh:[["R","重新开始游戏"],["S","观看自动解法"],["L","切换语言"],["?","显示 / 隐藏帮助"],["F5","保存游戏（槽1）"],["F9","加载游戏（槽1）"]],
+				ja:[["R","ゲームを再スタート"],["S","自動解法を見る"],["L","言語を切替"],["?","ヘルプを表示 / 非表示"],["F5","ゲームを保存（スロット1）"],["F9","ゲームを読込（スロット1）"]]
+			};
+			let currentLangIndex = 0;
+
+			function tr(key){
+				return TRANSLATIONS[LANG_KEYS[currentLangIndex]][key];
+			}
+
+			function nextLanguage(){
+				currentLangIndex = (currentLangIndex + 1)%(LANG_KEYS.length);
+				applyTranslation();
+				if(document.getElementById('helpOverlay').classList.contains('visible')){
+					updateHelpContent();
+				}
+			}
+
+			function openHelp(){
+				updateHelpContent();
+				document.getElementById("helpOverlay").classList.add("visible");
+			}
+
+			function closeHelp(){
+				document.getElementById("helpOverlay").classList.remove("visible");
+			}
+
+			function updateHelpContent(){
+				const lang = LANG_KEYS[currentLangIndex];
+				document.getElementById("helpTitle").textContent = HELP_TITLE[lang];
+				document.getElementById("helpTable").innerHTML = HELP_SHORTCUTS[lang].map(([k,d]) => `<tr><td class="key">${k}</td><td>${d}</td></tr>`).join("");
+			}
+
+			function applyTranslation(){
+				document.getElementById("langBtn").innerHTML = FLAGS_SVG[currentLangIndex];
+				document.getElementById("restartBtn").textContent = "⟳";
+				document.getElementById("demoBtn").textContent = tr("demo");
+				document.getElementById("movesLabel").textContent = tr("moves") + ":";
+				document.getElementById("saveBtn").title = tr("save");
+				document.getElementById("loadBtn").title = tr("load");
+				const select = document.getElementById("disksNumber");
+				const current = select.value;
+				select.innerHTML = "";
+				for(let i = 1; i <= 10; i++){
+					let opt = document.createElement("option");
+					opt.value = i;
+					opt.text = tr("level") + " " + i;
+					if(String(i) === String(current)){
+						opt.selected = true;
+					}
+					select.add(opt);
+				}
+			}
+
+			const AUDIO_CTX = new (window.AudioContext || window.webkitAudioContext)();
+
+			function playTone(freq, type, duration){
+				if(AUDIO_CTX.state === 'suspended'){
+					AUDIO_CTX.resume();
+				}
+				const osc = AUDIO_CTX.createOscillator();
+				const gain = AUDIO_CTX.createGain();
+				osc.type = type;
+				osc.frequency.setValueAtTime(freq, AUDIO_CTX.currentTime);
+				gain.gain.setValueAtTime(0.1, AUDIO_CTX.currentTime);
+				gain.gain.exponentialRampToValueAtTime(0.0001, AUDIO_CTX.currentTime + duration);
+				osc.connect(gain);
+				gain.connect(AUDIO_CTX.destination);
+				osc.start();
+				osc.stop(AUDIO_CTX.currentTime + duration);
+			}
+
+			const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
+			const UNIT = DESKTOP ? 9 : 7;
+			const H_SPACE = 8*UNIT, V_SPACE = 6*UNIT;
+			const WIDTH = 36*UNIT;
+			const PAGE_WIDTH = 3.5*UNIT;
+			const BASE_HEIGHT = 2.5*UNIT;
+			const DISK_INCREASE = 3*UNIT;
+			const DISK_BASE_LENGTH = 12*UNIT;
+			const DISK_HEIGHT = (DESKTOP ? 5 : 8)*UNIT;
+			const UPPER_MARGIN = 4*UNIT, UPPER_PAGE_MARGIN = 2*UNIT, LOWER_MARGIN = 2*UNIT;
+			const TOTAL_WIDTH = (3*WIDTH) + (4*H_SPACE);
+			const BROWN = "#8D6E63", ORANGE = "#FFCA28";
+			const COLORS = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#FF8000", "#8000FF", "#008000", "#333333"];
+			let numberOfDisks = 4;
+			let moves = 0;
+			let universe, context, nIntervId = null;
+			let towers = [[], [], []], selectedTower = [false, false, false];
+			let activeTower = -1, wan = false, demo = false, steps = "", step = 0;
+			let cursorX = 0;
+			let totalHeight, pegHeight;
+
+			window.onload = function(){
+				applyTranslation();
+				initGame();
+			};
+
+			function initGame(){
+				universe = document.getElementById("universe");
+				context = universe.getContext("2d");
+				const handleInteraction = (e) => {
+					const rect = universe.getBoundingClientRect();
+					const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+					const scaleX = universe.width/rect.width;
+					cursorX = (clientX - rect.left)*scaleX;
+					selectTowerClick();
+					if(e.touches){
+						e.preventDefault();
+					}
+				};
+				universe.addEventListener('mousedown', handleInteraction);
+				universe.addEventListener('touchstart', handleInteraction, {passive: false});
+				resetGame();
+			}
+
+			function resetGame(){
+				document.body.style.background = "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)";
+				if(nIntervId){
+					clearInterval(nIntervId);
+					nIntervId = null;
+				}
+				moves = 0;
+				updateMoveDisplay();
+				pegHeight = numberOfDisks*DISK_HEIGHT + UPPER_PAGE_MARGIN;
+				totalHeight = V_SPACE + UPPER_MARGIN + pegHeight + BASE_HEIGHT + LOWER_MARGIN;
+				universe.width = TOTAL_WIDTH;
+				universe.height = totalHeight;
+				wan = false;
+				demo = false;
+				activeTower = -1;
+				towers = [[], [], []];
+				selectedTower = [false, false, false];
+				for(let i = 0; i < numberOfDisks; i++){
+					towers[0][i] = numberOfDisks - i - 1;
+					towers[1][i] = -1;
+					towers[2][i] = -1;
+				}
+				const select = document.getElementById("disksNumber");
+				if(select.innerHTML === ""){
+					for(let i = 1; i <= 10; i++){
+						let opt = document.createElement("option");
+						opt.value = i;
+						opt.text = tr("level") + " " + i;
+						if(i === numberOfDisks){
+							opt.selected = true;
+						}
+						select.add(opt);
+					}
+				}
+				steps = calculateSteps(numberOfDisks);
+				step = 0;
+				drawAll();
+			}
+
+			function updateMoveDisplay(){
+				document.getElementById("moveCounter").innerText = moves;
+			}
+
+			function drawAll(){
+				context.clearRect(0, 0, universe.width, universe.height);
+				for(let i = 0; i < 3; i++){
+					drawTower(i);
+				}
+			}
+
+			function drawTower(idx){
+				let x0 = H_SPACE + idx*(WIDTH + H_SPACE);
+				context.fillStyle = selectedTower[idx] ? ORANGE : "rgba(0,0,0,0.06)";
+				context.fillRect(x0, V_SPACE, WIDTH, totalHeight - V_SPACE);
+				context.fillStyle = BROWN;
+				context.fillRect(x0 + (WIDTH - PAGE_WIDTH)/2, V_SPACE + UPPER_MARGIN, PAGE_WIDTH, pegHeight);
+				context.fillRect(x0 + 3*UNIT, V_SPACE + UPPER_MARGIN + pegHeight, WIDTH - 6*UNIT, BASE_HEIGHT);
+				for(let i = 0; i < numberOfDisks; i++){
+					let diskValue = towers[idx][i];
+					if(diskValue >= 0){
+						drawDisk(idx, numberOfDisks - i - 1, diskValue);
+					}
+				}
+			}
+
+			function drawDisk(tIdx, level, dSize){
+				let w = DISK_BASE_LENGTH + dSize*DISK_INCREASE;
+				let x0 = H_SPACE + tIdx*(WIDTH + H_SPACE);
+				let x = x0 + (WIDTH - w)/2;
+				let y = V_SPACE + level*DISK_HEIGHT + UPPER_MARGIN + UPPER_PAGE_MARGIN;
+				let h = DISK_HEIGHT - 2;
+				context.fillStyle = COLORS[dSize];
+				context.strokeStyle = "#000000";
+				context.lineWidth = 1.5;
+				context.beginPath();
+				if(context.roundRect){
+					context.roundRect(x, y, w, h, h/2);
+				}else{
+					context.rect(x, y, w, h);
+				}
+				context.fill();
+				context.stroke();
+			}
+
+			function selectTowerClick(){
+				if(wan){
+					return;
+				}
+				let towerIdx = -1;
+				for(let i = 0; i < 3; i++){
+					let xStart = H_SPACE + i*(WIDTH + H_SPACE);
+					if(cursorX >= xStart && cursorX <= xStart + WIDTH){
+						towerIdx = i;
+						break;
+					}
+				}
+				if(towerIdx === -1){
+					return;
+				}
+				if(activeTower === -1){
+					if(getLastDiskIndex(towerIdx) !== -1){
+						activeTower = towerIdx;
+						selectedTower[towerIdx] = true;
+						playTone(440, 'sine', 0.1);
+					}
+				}else{
+					if(activeTower === towerIdx){
+						selectedTower[towerIdx] = false;
+						activeTower = -1;
+					}else{
+						if(moveDisk(activeTower, towerIdx)){
+							moves++;
+							updateMoveDisplay();
+							playTone(600, 'sine', 0.1);
+						}else{
+							playTone(150, 'triangle', 0.2);
+						}
+						selectedTower[activeTower] = false;
+						activeTower = -1;
+					}
+				}
+				drawAll();
+				checkWin();
+			}
+
+			function moveDisk(from, to){
+				let fromIdx = getLastDiskIndex(from);
+				let toIdx = getLastDiskIndex(to);
+				let diskToMove = towers[from][fromIdx];
+				if(toIdx === -1 || diskToMove < towers[to][toIdx]){
+					towers[from][fromIdx] = -1;
+					towers[to][toIdx + 1] = diskToMove;
+					return true;
+				}
+				return false;
+			}
+
+			function getLastDiskIndex(t){
+				let idx = numberOfDisks - 1;
+				while(idx >= 0 && towers[t][idx] === -1){
+					idx--;
+				}
+				return idx;
+			}
+
+			function checkWin(){
+				if(towers[1][numberOfDisks - 1] !== -1 || towers[2][numberOfDisks - 1] !== -1){
+					wan = true;
+					document.body.style.background = "linear-gradient(135deg, #11998e, #38ef7d)";
+					playTone(800, 'sine', 0.4);
+					if(!demo){
+						setTimeout(() => alert(tr("win") + moves + " " + (moves === 1 ? tr("move") : tr("moves_pl")) + "! :-D"), 200);
+					}
+				}
+			}
+
+			function changeDiskCount(){
+				numberOfDisks = parseInt(document.getElementById("disksNumber").value);
+				resetGame();
+			}
+
+			function calculateSteps(n){
+				let movesList = [];
+				function hanoi(num, from, to, aux){
+					if(num === 1){
+						movesList.push({f: from, t: to});
+						return;
+					}
+					hanoi(num - 1, from, aux, to);
+					movesList.push({f: from, t: to});
+					hanoi(num - 1, aux, to, from);
+				}
+				hanoi(n, 0, 2, 1);
+				return movesList;
+			}
+
+			function animatedSolving(){
+				resetGame();
+				demo = true;
+				nIntervId = setInterval(() => {
+					if(step < steps.length){
+						let m = steps[step];
+						moveDisk(m.f, m.t);
+						moves++;
+						updateMoveDisplay();
+						drawAll();
+						checkWin();
+						step++;
+						playTone(500, 'sine', 0.05);
+					}else{
+						clearInterval(nIntervId);
+					}
+				}, 500);
+			}
+
+			document.addEventListener("keydown", e => {
+				if(e.key.toLowerCase() === "r"){
+					resetGame();
+				}else if(e.key.toLowerCase() === "s"){
+					animatedSolving();
+				}else if(e.key.toLowerCase() === "l"){
+					nextLanguage();
+				}else if(e.key === "?"){
+					const ov = document.getElementById("helpOverlay");
+					if(ov.classList.contains("visible")){
+						closeHelp();
+					}else{
+						openHelp();
+					}
+				}else if(e.key === "F5"){
+					e.preventDefault();
+					saveGame(1);
+				}else if(e.key === "F9"){
+					e.preventDefault();
+					loadGame(1);
+				}
+			});
+
+			const MAX_SLOTS = 3;
+			let modalMode = 'save';
+
+			function getSnapshot(){
+				return {
+					numberOfDisks,
+					moves,
+					towers: towers.map(t => [...t]),
+					currentLangIndex,
+					timestamp: Date.now()
+				};
+			}
+
+			function applySnapshot(snap){
+				if(nIntervId){
+					clearInterval(nIntervId);
+					nIntervId = null;
+				}
+				numberOfDisks = snap.numberOfDisks;
+				moves = snap.moves;
+				towers = snap.towers.map(t => [...t]);
+				currentLangIndex = snap.currentLangIndex;
+				wan = false;
+				demo = false;
+				activeTower = -1;
+				selectedTower = [false, false, false];
+				steps = calculateSteps(numberOfDisks);
+				step = 0;
+				applyTranslation();
+				document.getElementById("disksNumber").value = numberOfDisks;
+				updateMoveDisplay();
+				pegHeight = numberOfDisks*DISK_HEIGHT + UPPER_PAGE_MARGIN;
+				totalHeight = V_SPACE + UPPER_MARGIN + pegHeight + BASE_HEIGHT + LOWER_MARGIN;
+				universe.width = TOTAL_WIDTH;
+				universe.height = totalHeight;
+				document.body.style.background = "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)";
+				drawAll();
+			}
+
+			function storageKey(slot){
+				return `hanoi_save_${slot}`;
+			}
+
+			function saveGame(slot){
+				const snap = getSnapshot();
+				try{
+					localStorage.setItem(storageKey(slot), JSON.stringify(snap));
+					showToast(tr("save_ok"));
+				}catch(err){
+					showToast("Error: " + err.message);
+				}
+			}
+
+			function loadGame(slot){
+				try{
+					const raw = localStorage.getItem(storageKey(slot));
+					if(!raw) throw new Error("empty");
+					const snap = JSON.parse(raw);
+					applySnapshot(snap);
+					showToast(tr("load_ok"));
+				}catch(err){
+					showToast(tr("load_err"));
+				}
+			}
+
+			function deleteGame(slot){
+				localStorage.removeItem(storageKey(slot));
+			}
+
+			function formatDate(ts){
+				const d = new Date(ts);
+				return d.toLocaleDateString() + " " + d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+			}
+
+			function showToast(msg){
+				const t = document.getElementById("toast");
+				t.textContent = msg;
+				t.style.display = "block";
+				setTimeout(() => {
+					t.style.display = "none";
+				}, 2200);
+			}
+
+			function openSaveModal(){
+				modalMode = 'save';
+				document.getElementById("modalTitle").textContent = tr("save") + " – " + tr("save_slot");
+				renderSlots();
+				document.getElementById("saveModal").style.display = "flex";
+			}
+
+			function openLoadModal(){
+				modalMode = 'load';
+				document.getElementById("modalTitle").textContent = tr("load") + " – " + tr("save_slot");
+				renderSlots();
+				document.getElementById("saveModal").style.display = "flex";
+			}
+
+			function closeSaveModal(){
+				document.getElementById("saveModal").style.display = "none";
+			}
+
+			function renderSlots(){
+				const container = document.getElementById("slotsContainer");
+				const noMsg = document.getElementById("noSavesMsg");
+				container.innerHTML = "";
+				noMsg.style.display = "none";
+				let anySlot = false;
+				for(let slot = 1; slot <= MAX_SLOTS; slot++){
+					let snap = null;
+					try{
+						const raw = localStorage.getItem(storageKey(slot));
+						if(raw) snap = JSON.parse(raw);
+					}catch(e){}
+					if(modalMode === 'load' && !snap){
+						continue;
+					}
+					anySlot = true;
+					const row = document.createElement("div");
+					row.style.cssText = "display:flex;align-items:center;gap:8px;background:#f4f6fb;border-radius:8px;padding:10px 14px;";
+					const info = document.createElement("div");
+					info.style.cssText = "flex:1;text-align:left;";
+					const title = document.createElement("strong");
+					title.textContent = `${tr("save_slot")} ${slot}`;
+					info.appendChild(title);
+					if(snap){
+						const sub = document.createElement("div");
+						sub.style.cssText = "font-size:0.82em;color:#666;margin-top:2px;";
+						sub.textContent = `${tr("level")} ${snap.numberOfDisks} · ${snap.moves} ${tr("moves_pl")} · ${formatDate(snap.timestamp)}`;
+						info.appendChild(sub);
+					}else{
+						const sub = document.createElement("div");
+						sub.style.cssText = "font-size:0.82em;color:#bbb;margin-top:2px;";
+						sub.textContent = "–";
+						info.appendChild(sub);
+					}
+					row.appendChild(info);
+					if(modalMode === 'save'){
+						const btn = document.createElement("button");
+						btn.textContent = snap ? "💾 " + tr("overwrite") : "💾";
+						btn.style.cssText = "background:#4a90e2;color:#fff;border:none;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:0.9em;font-weight:bold;white-space:nowrap;";
+						btn.onclick = () => {
+							saveGame(slot);
+							closeSaveModal();
+						};
+						row.appendChild(btn);
+						if(snap){
+							const del = document.createElement("button");
+							del.textContent = "🗑";
+							del.title = tr("delete_save");
+							del.style.cssText = "background:#e25252;color:#fff;border:none;border-radius:6px;padding:7px 10px;cursor:pointer;font-size:0.9em;";
+							del.onclick = () => {
+								deleteGame(slot);
+								renderSlots();
+							};
+							row.appendChild(del);
+						}
+					}else{
+						const btn = document.createElement("button");
+						btn.textContent = "📂";
+						btn.style.cssText = "background:#4a90e2;color:#fff;border:none;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:0.9em;font-weight:bold;";
+						btn.onclick = () => {
+							loadGame(slot);
+							closeSaveModal();
+						};
+						row.appendChild(btn);
+						const del = document.createElement("button");
+						del.textContent = "🗑";
+						del.title = tr("delete_save");
+						del.style.cssText = "background:#e25252;color:#fff;border:none;border-radius:6px;padding:7px 10px;cursor:pointer;font-size:0.9em;";
+						del.onclick = () => {
+							deleteGame(slot);
+							renderSlots();
+						};
+						row.appendChild(del);
+					}
+					container.appendChild(row);
+				}
+
+				if(!anySlot && modalMode === 'load'){
+					noMsg.textContent = tr("no_saves");
+					noMsg.style.display = "block";
+				}
+			}
+		</script>
+	</body>
+</html>

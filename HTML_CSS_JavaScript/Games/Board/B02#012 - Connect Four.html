@@ -1,0 +1,952 @@
+<!DOCTYPE HTML>
+<html lang="en"><!--B02#012 - Carmela - Connect Four-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title id="title">Connect Four</title>
+		<style>
+			body{
+				text-align: center;
+				font-family: sans-serif;
+				transition: background 0.5s;
+				padding: 10px;
+				-webkit-tap-highlight-color: transparent;
+				background: #f0f0f0;
+			}
+			canvas{
+				cursor: pointer;
+				margin-top: 10px;
+				border-radius: 8px;
+				box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+				max-width: 100%;
+				height: auto;
+			}
+			#gameArea{
+				display: none;
+			}
+			button, select{
+				margin: 5px;
+				padding: 10px 15px;
+				cursor: pointer;
+				font-weight: bold;
+				border-radius: 5px;
+				border: 1px solid #999;
+				background: #eee;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				gap: 10px;
+			}
+			button:hover, select:hover{
+				background-color: #ddd;
+			}
+			.controls{
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				align-items: center;
+				max-width: 800px;
+				margin: 10px auto;
+			}
+			.controls button{
+				flex: 0 1 160px;
+				margin: 5px;
+				height: 45px;
+			}
+			.flag-svg {
+				width: 24px;
+				height: auto;
+				border: 1px solid #ccc;
+				display: inline-block;
+				flex-shrink: 0;
+			}
+
+			@media (max-width: 600px){
+				.controls button{
+					flex: 0 1 45%;
+				}
+			}
+			#helpOverlay{
+				display: none;
+				position: fixed;
+				inset: 0;
+				background: rgba(0,0,0,0.55);
+				z-index: 1000;
+				justify-content: center;
+				align-items: center;
+			}
+			#helpOverlay.visible{
+				display: flex;
+			}
+			#helpBox{
+				background: #fff;
+				border-radius: 12px;
+				box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+				padding: 28px 32px 24px;
+				max-width: 480px;
+				width: 90%;
+				max-height: 85vh;
+				overflow-y: auto;
+				position: relative;
+				text-align: left;
+			}
+			#helpBox h2{
+				margin: 0 0 18px;
+				font-size: 1.3em;
+				text-align: center;
+				color: #0033FF;
+			}
+			#helpBox table{
+				width: 100%;
+				border-collapse: collapse;
+			}
+			#helpBox td{
+				padding: 7px 10px;
+				vertical-align: top;
+			}
+			#helpBox tr:nth-child(even) td{
+				background: #f4f4f4;
+				border-radius: 4px;
+			}
+			#helpBox .key{
+				font-family: monospace;
+				font-weight: bold;
+				font-size: 1.05em;
+				color: #c60b1e;
+				white-space: nowrap;
+				width: 1%;
+			}
+			#helpCloseBtn{
+				position: absolute;
+				top: 12px;
+				right: 16px;
+				background: none;
+				border: none;
+				font-size: 1.5em;
+				cursor: pointer;
+				color: #555;
+				padding: 2px 6px;
+				line-height: 1;
+			}
+			#helpCloseBtn:hover{
+				color: #000;
+			}
+			#setupOverlay{
+				display: none;
+				position: fixed;
+				inset: 0;
+				background: rgba(0,0,0,0.65);
+				z-index: 2000;
+				justify-content: center;
+				align-items: center;
+			}
+			#setupOverlay.visible{
+				display: flex;
+			}
+			#setupBox{
+				background: #fff;
+				border-radius: 16px;
+				box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+				padding: 28px 32px 24px;
+				max-width: 420px;
+				width: 92%;
+				max-height: 90vh;
+				overflow-y: auto;
+				text-align: center;
+			}
+			#setupBox h2{
+				margin: 0 0 22px;
+				font-size: 1.4em;
+				color: #0033FF;
+			}
+			.setup-section{
+				margin-bottom: 16px;
+				text-align: left;
+			}
+			.setup-heading{
+				display: block;
+				font-weight: bold;
+				margin-bottom: 8px;
+				color: #333;
+			}
+			.setup-btn-group{
+				display: flex;
+				flex-wrap: wrap;
+				gap: 8px;
+			}
+			.setup-btn{
+				flex: 1 1 auto;
+				padding: 9px 14px;
+				border: 2px solid #ccc;
+				border-radius: 8px;
+				background: #f5f5f5;
+				cursor: pointer;
+				font-size: 0.95em;
+				font-weight: bold;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				gap: 6px;
+			}
+			.setup-btn:hover{
+				background: #e8e8e8;
+			}
+			.setup-btn.selected{
+				border-color: #0033FF;
+				background: #dde8ff;
+			}
+			.setup-btn.color-yellow.selected{
+				border-color: #ccaa00;
+				background: #fffacc;
+			}
+			.setup-btn.color-red.selected{
+				border-color: #cc0022;
+				background: #ffe0e5;
+			}
+			.lang-grid{
+				display: grid;
+				grid-template-columns: repeat(4, 1fr);
+				gap: 6px;
+			}
+			.lang-btn{
+				padding: 6px 4px;
+				border: 2px solid #ccc;
+				border-radius: 7px;
+				background: #f5f5f5;
+				cursor: pointer;
+				font-size: 0.78em;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 3px;
+			}
+			.lang-btn:hover{
+				background: #e8e8e8;
+			}
+			.lang-btn.selected{
+				border-color: #0033FF;
+				background: #dde8ff;
+			}
+			#setupConfirmBtn{
+				margin-top: 8px;
+				padding: 12px 36px;
+				background: #0033FF;
+				color: #fff;
+				border: none;
+				border-radius: 9px;
+				font-size: 1.1em;
+				font-weight: bold;
+				cursor: pointer;
+			}
+			#setupConfirmBtn:hover{
+				background: #0026cc;
+			}
+			.disc-dot{
+				display: inline-block;
+				width: 14px;
+				height: 14px;
+				border-radius: 50%;
+				vertical-align: middle;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="setupOverlay">
+			<div id="setupBox">
+				<h2 id="setupTitle">Connect Four</h2>
+				<div class="setup-section">
+					<label class="setup-heading" id="setupLangHeading">Language</label>
+					<div class="lang-grid" id="langGrid"></div>
+				</div>
+				<div class="setup-section">
+					<label class="setup-heading" id="setupDiffHeading">Difficulty</label>
+					<div class="setup-btn-group" id="diffGroup"></div>
+				</div>
+				<div class="setup-section">
+					<label class="setup-heading" id="setupStarterHeading">Who starts?</label>
+					<div class="setup-btn-group" id="starterGroup"></div>
+				</div>
+				<div class="setup-section">
+					<label class="setup-heading" id="setupColorHeading">Your colour</label>
+					<div class="setup-btn-group" id="colorGroup">
+						<button class="setup-btn color-yellow selected" id="btnYellow" onclick="selectSetupColor('yellow')">
+							<span class="disc-dot" style="background:#FFFF33;border:1px solid #aaa;"></span>
+							<span id="setupYellowLabel">Yellow</span>
+						</button>
+						<button class="setup-btn color-red" id="btnRed" onclick="selectSetupColor('red')">
+							<span class="disc-dot" style="background:#FF0033;border:1px solid #aaa;"></span>
+							<span id="setupRedLabel">Red</span>
+						</button>
+					</div>
+				</div>
+				<button id="setupConfirmBtn" onclick="confirmSetup()">&#9654; Play</button>
+			</div>
+		</div>
+		<div id="helpOverlay" role="dialog" aria-modal="true" onclick="if(event.target===this){closeHelp();}">
+			<div id="helpBox">
+				<button id="helpCloseBtn" onclick="closeHelp()" aria-label="Close">✕</button>
+				<h2 id="helpTitle">Keyboard Shortcuts</h2>
+				<table id="helpTable"></table>
+			</div>
+		</div>
+		<div id="gameArea">
+			<canvas id="board">Upgrade Browser</canvas>
+			<div class="controls">
+				<button type="button" id="undoButton" onclick="undoLastMove()">Undo</button>
+				<button type="button" id="difficultyButton" onclick="cycleDifficulty()">Medium</button>
+				<button type="button" id="restartButton" onclick="refresh()">Start again!</button>
+				<button type="button" id="changeLanguageButton" onclick="cycleLanguage()">Language</button>
+			</div>
+		</div>
+		<script>
+			const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
+			const UNIT = DESKTOP ? 10 : 5;
+			const RADIUS = 4*UNIT;
+			const DIAMETER = 2*RADIUS;
+			const GRID_THICKNESS = UNIT;
+			const ROW_NUMBER = 6;
+			const COLUMN_NUMBER = 7;
+			const DEPTH = 5;
+			const BLUE_COLOR = "#0033FF";
+			const YELLOW_COLOR = "#FFFF33";
+			const RED_COLOR = "#FF0033";
+			const LIGHT_ORANGE_COLOR = "#FFCC33";
+			const WHITE = "#FFFFFF";
+			const FLAGS_SVG = [
+				'<svg class="flag-svg" viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#s)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>', // UK
+				//'<svg class="flag-svg" viewBox="0 0 7410 3900"><rect width="7410" height="3900" fill="#b22234"/><path d="M0 300h7410M0 900h7410M0 1500h7410M0 2100h7410M0 2700h7410M0 3300h7410" stroke="#fff" stroke-width="300"/><rect width="2964" height="2100" fill="#3c3b6e"/><path d="M247 175l247 759-646-469h798l-646 469z" fill="#fff" transform="scale(.2)"/></svg>', // US
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>', // IT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg>', // FR
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#c60b1e"/><rect width="3" height="1" y="0.5" fill="#ffc400"/></svg>', // ES
+				'<svg class="flag-svg" viewBox="0 0 5 3"><rect width="5" height="3"/><rect width="5" height="2" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg>', // DE
+				'<svg class="flag-svg" viewBox="0 0 600 400"><rect width="240" height="400" fill="#006600"/><rect x="240" width="360" height="400" fill="#ff0000"/></svg>', // PT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002b7f"/><rect width="1" height="2" x="1" fill="#fcd116"/><rect width="1" height="2" x="2" fill="#ce1126"/></svg>', // RO
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>', // UA
+				'<svg class="flag-svg" viewBox="0 0 27 18"><rect width="27" height="18" fill="#005bae"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#005bae"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>', // GR
+				//'<svg class="flag-svg" viewBox="0 0 1 1"><rect width="0.5" height="1" fill="#ffe000"/><rect x="0.5" width="0.5" height="1" fill="#fff"/></svg>', // VA
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#800000"/><path d="M0.5,0.5 L2.5,0.5 L2.5,1.5 L0.5,1.5 Z" fill="none" stroke="#FFD700" stroke-width="0.1"/><text x="1.5" y="1.15" font-family="serif" font-weight="bold" font-size="0.4" fill="#FFD700" text-anchor="middle">SPQR</text></svg>', // ROMA
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#de2110"/><path d="M.5 1.1l.3-.9.3.9-1-.6h1z" fill="#ffde00" transform="matrix(.4 0 0 .4 .1 .1)"/></svg>', // CN
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>' // JP
+			];
+			const TITLES = ["Connect four", "Forza 4", "Connecter Quatre", "Conecta 4", "Vier Gewinnt", "Conecta 4", "Conecta patru", "Чотири в ряд", "Συνδέστε τέσσερα", "Conecta quattuor", "四子连珠", "四目並べ"];
+			const RESTART_LABELS = ["Start again!", "Ricomincia", "Recommencer", "¡Reiniciar!", "Erneut starten!", "Recomeçar", "Începe din nou", "Почати заново", "Ξεκινήστε ξανά", "Iterum incipere", "重新开始", "再スタート"];
+			const LANGUAGES_LABELS = ["English", "Italiano", "Français", "Español", "Deutsch", "Português", "Română", "Українська", "Ελληνικά", "Latine", "中文", "日本語"];
+			const UNDO_LABELS = ["Undo", "Annulla", "Annuler", "Anula", "Abbrechen", "Desfazer", "Anulează", "Скасувати", "Αναίρεση", "Annula", "撤销", "元に戻す"];
+			const YELLOW_LABEL = ["Yellow", "Giallo", "Jaune", "Amarillo", "Gelb", "Amarelo", "Galben", "Жовтий", "Κίτρινο", "Flavus", "黄色", "黄色"];
+			const RED_LABEL = ["Red", "Rosso", "Rouge", "Rojo", "Rot", "Vermelho", "Roșu", "Червоний", "Κόкκινο", "Ruber", "红色", "赤"];
+			const WINNING_MESSAGE = ["The winner is: ", "Vince: ", "Le gagnant est: ", "El ganador es: ", "Der Gewinner ist: ", "O vencedor è: ", "Câștigătorul este: ", "Переможець: ", "Ο νικητής è: ", "Victor est: ", "获胜者是: ", "勝者は: "];
+			const EASY_LABELS = ["Easy", "Facile", "Facile", "Fácil", "Einfach", "Fácil", "Ușor", "Легко", "Εύκολο", "Facilis", "简单", "簡単"];
+			const MEDIUM_LABELS = ["Medium", "Medio", "Moyen", "Medio", "Mittel", "Médio", "Mediu", "Середній", "Μέτριο", "Medium", "中等", "中級"];
+			const HARD_LABELS = ["Hard", "Difficile", "Difficile", "Difícil", "Schwer", "Difícil", "Greu", "Важко", "Δύσκολο", "Difficilis", "困难", "上級"];
+			const EXPERT_LABELS = ["Expert", "Esperto", "Expert", "Experto", "Experte", "Especialista", "Expert", "Експерт", "Ειδικός", "Peritus", "专家", "エキスパート"];
+			//const HINT_LABELS = ["Hint", "Suggerimento", "Conseil", "Sugerencia", "Hinweis", "Sugestão", "Sugestie", "Підказка", "Υπόδειξη", "Consilium", "提示", "ヒント"];
+			const HELP_TITLE = ["Keyboard Shortcuts","Tasti di scelta rapida","Raccourcis clavier","Atajos de teclado","Tastenkürzel","Atalhos de teclado","Scurtături de tastatură","Клавіші швидкого доступу","Συντομεύσεις πληκτρολογίου","Clavium compendia","键盘快捷键","キーボードショートカット"];
+			const HELP_SHORTCUTS = [
+				[["1 – 7","Drop a disc in column 1 to 7"],["U","Undo last move"],["D","Cycle difficulty (Easy / Medium / Hard / Expert)"],["R","Restart the game"],["L","Switch language"],["?","Show / hide this help"]],
+				[["1 – 7","Inserisci un disco nella colonna da 1 a 7"],["U","Annulla l'ultima mossa"],["D","Cambia difficoltà (Facile / Medio / Difficile / Esperto)"],["R","Ricomincia la partita"],["L","Cambia lingua"],["?","Mostra / nascondi questo aiuto"]],
+				[["1 – 7","Placer un jeton dans la colonne 1 à 7"],["U","Annuler le dernier coup"],["D","Changer la difficulté (Facile / Moyen / Difficile / Expert)"],["R","Recommencer la partie"],["L","Changer de langue"],["?","Afficher / masquer cette aide"]],
+				[["1 – 7","Coloca una ficha en la columna 1 a 7"],["U","Deshacer el último movimiento"],["D","Cambiar dificultad (Fácil / Medio / Difícil / Experto)"],["R","Reiniciar la partida"],["L","Cambiar idioma"],["?","Mostrar / ocultar esta ayuda"]],
+				[["1 – 7","Stein in Spalte 1 bis 7 einwerfen"],["U","Letzten Zug rückgängig machen"],["D","Schwierigkeit wechseln (Einfach / Mittel / Schwer / Experte)"],["R","Spiel neu starten"],["L","Sprache wechseln"],["?","Hilfe anzeigen / ausblenden"]],
+				[["1 – 7","Soltar peça na coluna 1 a 7"],["U","Desfazer o último movimento"],["D","Alterar dificuldade (Fácil / Médio / Difícil / Especialista)"],["R","Reiniciar o jogo"],["L","Mudar idioma"],["?","Mostrar / ocultar esta ajuda"]],
+				[["1 – 7","Plasează o piesă în coloana 1 până la 7"],["U","Anulează ultima mutare"],["D","Schimbă dificultatea (Ușor / Mediu / Greu / Expert)"],["R","Repornește jocul"],["L","Schimbă limba"],["?","Afișează / ascunde această ajutor"]],
+				[["1 – 7","Кинути фішку в колонку від 1 до 7"],["U","Скасувати останній хід"],["D","Змінити складність (Легко / Середній / Важко / Експерт)"],["R","Почати заново"],["L","Змінити мову"],["?","Показати / приховати цю довідку"]],
+				[["1 – 7","Ρίξε πιόνι στη στήλη 1 έως 7"],["U","Αναίρεση τελευταίας κίνησης"],["D","Αλλαγή δυσκολίας (Εύκολο / Μέτριο / Δύσκολο / Ειδικός)"],["R","Επανεκκίνηση παιχνιδιού"],["L","Αλλαγή γλώσσας"],["?","Εμφάνιση / απόκρυψη αυτής της βοήθειας"]],
+				[["1 – 7","Calculum in columnam 1 ad 7 mitte"],["U","Ultimum motum annula"],["D","Difficultatem muta (Facilis / Medium / Difficilis / Peritus)"],["R","Ludum iterum incipe"],["L","Linguam muta"],["?","Auxilium ostende / absconde"]],
+				[["1 – 7","将棋子投入第1至7列"],["U","撤销上一步"],["D","切换难度（简单 / 中等 / 困难 / 专家）"],["R","重新开始游戏"],["L","切换语言"],["?","显示 / 隐藏本帮助"]],
+				[["1 – 7","列1〜7にコマを置く"],["U","直前の手を元に戻す"],["D","難易度を切替（簡単 / 中級 / 上級 / エキスパート）"],["R","ゲームを再スタート"],["L","言語を切替"],["?","このヘルプを表示 / 非表示"]]
+			];
+			let difficultyIndex = 1;
+			let grid = [];
+			let moves = [];
+			let moveYellow = true;
+			let numberOfMoves = 0;
+			let languageIndex = 0;
+			let goOn = true;
+			let canvas, ctx, blinkInterval;
+			let winningCells = [];
+			let humanIsYellow = true;
+
+			window.onload = function(){
+				canvas = document.getElementById("board");
+				ctx = canvas.getContext("2d");
+				canvas.addEventListener("click", select);
+				openSetupPopup();
+			};
+
+			function playClackSound(){
+				try{
+					const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+					const oscillator = audioCtx.createOscillator();
+					const gainNode = audioCtx.createGain();
+					oscillator.type = 'triangle';
+					oscillator.frequency.setValueAtTime(150, audioCtx.currentTime);
+					oscillator.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.1);
+					gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+					gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+					oscillator.connect(gainNode);
+					gainNode.connect(audioCtx.destination);
+					oscillator.start();
+					oscillator.stop(audioCtx.currentTime + 0.1);
+				}catch(e){}
+			}
+
+			function drawCircle(row, column, color){
+				ctx.fillStyle = color;
+				ctx.beginPath();
+				ctx.arc((column + 1)*GRID_THICKNESS + column*DIAMETER + RADIUS, (row + 1)*GRID_THICKNESS + row*DIAMETER + RADIUS, RADIUS, 0, 2*Math.PI);
+				ctx.fill();
+			}
+
+			function drawUniverse(){
+				clearInterval(blinkInterval);
+				document.body.style.background = LIGHT_ORANGE_COLOR;
+				grid = Array.from({length: ROW_NUMBER },() => Array(COLUMN_NUMBER).fill(-1));
+				moves = [];
+				winningCells = [];
+				numberOfMoves = 0;
+				goOn = true;
+				canvas.width = COLUMN_NUMBER*DIAMETER + GRID_THICKNESS*(COLUMN_NUMBER + 1);
+				canvas.height = ROW_NUMBER*DIAMETER + GRID_THICKNESS*(ROW_NUMBER + 1);
+				ctx.fillStyle = BLUE_COLOR;
+				ctx.fillRect(0, 0, canvas.width, canvas.height);
+				for(let r = 0; r < ROW_NUMBER; r++){
+					for(let c = 0; c < COLUMN_NUMBER; c++){
+						drawCircle(r, c, WHITE);
+					}
+				}
+				if(numberOfMoves === 0 && moveYellow !== humanIsYellow){
+					setTimeout(computerMove, 600);
+				}
+			}
+
+			function computerMove(){
+				if(!goOn){
+					return;
+				}
+				const difficulty = difficultyIndex;
+				let chosenColumn = -1;
+				if(difficulty === 0){
+					let validCols = [];
+					for(let c = 0; c < COLUMN_NUMBER; c++){
+						if(grid[0][c] === -1){
+							validCols.push(c);
+						}
+					}
+					chosenColumn = validCols[Math.floor(Math.random()*validCols.length)];
+				}else if(difficulty === 1){
+					let bestScore = -Infinity;
+					for(let c = 0; c < COLUMN_NUMBER; c++){
+						let r = getAvailableRow(c);
+						if(r !== -1){
+							grid[r][c] = 1;
+							let score = evaluateMoveMedium(r, c);
+							grid[r][c] = -1;
+							if(score > bestScore){
+								bestScore = score;
+								chosenColumn = c;
+							}
+						}
+					}
+				}else if(difficulty === 2){
+					let bestScore = -Infinity;
+					for(let c = 0; c < COLUMN_NUMBER; c++){
+						let r = getAvailableRow(c);
+						if(r !== -1){
+							grid[r][c] = 1;
+							let score = minimax(grid, DEPTH, false, -Infinity, Infinity);
+							grid[r][c] = -1;
+							if(score > bestScore){
+								bestScore = score;
+								chosenColumn = c;
+							}
+						}
+					}
+				}else{
+					const EXPERT_DEPTH = 8;
+					const colOrder = [3, 2, 4, 1, 5, 0, 6];
+					let bestScore = -Infinity;
+					for(let i = 0; i < colOrder.length; i++){
+						let c = colOrder[i];
+						let r = getAvailableRow(c);
+						if(r !== -1){
+							grid[r][c] = 1;
+							let score = minimaxExpert(grid, EXPERT_DEPTH, false, -Infinity, Infinity);
+							grid[r][c] = -1;
+							if(score > bestScore){
+								bestScore = score;
+								chosenColumn = c;
+							}
+						}
+					}
+				}
+				if(chosenColumn !== -1){
+					const rect = canvas.getBoundingClientRect();
+					const fakeEvent = { clientX: rect.left + (chosenColumn*(DIAMETER + GRID_THICKNESS)) + RADIUS + GRID_THICKNESS };
+					select(fakeEvent);
+				}
+			}
+
+			function evaluateMoveMedium(row, col){
+				let score = 0;
+				if(check(row, col)){
+					return 10000;
+				}
+				grid[row][col] = 0;
+				if(check(row, col)){
+					grid[row][col] = 1;
+					return 5000;
+				}
+				grid[row][col] = 1;
+				score += (3 - Math.abs(col - 3))*10;
+				return score;
+			}
+
+			function minimax(board, depth, isMaximizing, alpha, beta){
+				let result = checkBoardHard();
+				if(result === 1){
+					return 10000 + depth;
+				}
+				if(result === 0){
+					return -10000 - depth;
+				}
+				if(depth === 0 || moves.length === ROW_NUMBER*COLUMN_NUMBER){
+					return evaluateBoardHard();
+				}
+				if(isMaximizing){
+					let maxEval = -Infinity;
+					for(let c = 0; c < COLUMN_NUMBER; c++){
+						let r = getAvailableRow(c);
+						if(r !== -1){
+							board[r][c] = 1;
+							let ev = minimax(board, depth - 1, false, alpha, beta);
+							board[r][c] = -1;
+							maxEval = Math.max(maxEval, ev);
+							alpha = Math.max(alpha, ev);
+							if(beta <= alpha){
+								break;
+							}
+						}
+					}
+					return maxEval;
+				}else{
+					let minEval = Infinity;
+					for(let c = 0; c < COLUMN_NUMBER; c++){
+						let r = getAvailableRow(c);
+						if(r !== -1){
+							board[r][c] = 0;
+							let ev = minimax(board, depth - 1, true, alpha, beta);
+							board[r][c] = -1;
+							minEval = Math.min(minEval, ev);
+							beta = Math.min(beta, ev);
+							if(beta <= alpha){
+								break;
+							}
+						}
+					}
+					return minEval;
+				}
+			}
+
+			function evaluateBoardHard(){
+				let score = 0;
+				for(let r = 0; r < ROW_NUMBER; r++){
+					if(grid[r][3] === 1){
+						score += 3;
+					}
+					if(grid[r][3] === 0){
+						score -= 3;
+					}
+				}
+				return score;
+			}
+
+			function scoreWindowExpert(w, piece){
+				const opp = piece === 1 ? 0 : 1;
+				const pieceCount = w.filter(x => x === piece).length;
+				const emptyCount = w.filter(x => x === -1).length;
+				const oppCount = w.filter(x => x === opp).length;
+				if(pieceCount === 4){
+					return 100;
+				}
+				if(pieceCount === 3 && emptyCount === 1){
+					return 5;
+				}
+				if(pieceCount === 2 && emptyCount === 2){
+					return 2;
+				}
+				if(oppCount === 3 && emptyCount === 1){
+					return -4;
+				}
+				if(oppCount === 4){
+					return -100;
+				}
+				return 0;
+			}
+
+			function evaluateBoardExpert(){
+				let score = 0;
+				for(let r = 0; r < ROW_NUMBER; r++){
+					score += ((grid[r][3] === 1) ? 6 : 0);
+					score -= ((grid[r][3] === 0) ? 6 : 0);
+					score += ((grid[r][2] === 1 || grid[r][4] === 1) ? 3 : 0);
+					score -= ((grid[r][2] === 0 || grid[r][4] === 0) ? 3 : 0);
+				}
+				for(let r = 0; r < ROW_NUMBER; r++){
+					for(let c = 0; c <= COLUMN_NUMBER - 4; c++){
+						const w = [grid[r][c], grid[r][c+1], grid[r][c+2], grid[r][c+3]];
+						score += scoreWindowExpert(w, 1);
+					}
+				}
+				for(let c = 0; c < COLUMN_NUMBER; c++){
+					for(let r = 0; r <= ROW_NUMBER - 4; r++){
+						const w = [grid[r][c], grid[r+1][c], grid[r+2][c], grid[r+3][c]];
+						score += scoreWindowExpert(w, 1);
+					}
+				}
+				for(let r = 0; r <= ROW_NUMBER - 4; r++){
+					for(let c = 0; c <= COLUMN_NUMBER - 4; c++){
+						const w = [grid[r][c], grid[r+1][c+1], grid[r+2][c+2], grid[r+3][c+3]];
+						score += scoreWindowExpert(w, 1);
+					}
+				}
+				for(let r = 3; r < ROW_NUMBER; r++){
+					for(let c = 0; c <= COLUMN_NUMBER - 4; c++){
+						const w = [grid[r][c], grid[r-1][c+1], grid[r-2][c+2], grid[r-3][c+3]];
+						score += scoreWindowExpert(w, 1);
+					}
+				}
+				return score;
+			}
+
+			function minimaxExpert(board, depth, isMaximizing, alpha, beta){
+				let result = checkBoardHard();
+				if(result === 1){
+					return 100000 + depth;
+				}
+				if(result === 0){
+					return -100000 - depth;
+				}
+				if(depth === 0 || moves.length === ROW_NUMBER * COLUMN_NUMBER){
+					return evaluateBoardExpert();
+				}
+				const colOrder = [3, 2, 4, 1, 5, 0, 6];
+				if(isMaximizing){
+					let maxEval = -Infinity;
+					for(let i = 0; i < colOrder.length; i++){
+						let c = colOrder[i];
+						let r = getAvailableRow(c);
+						if(r !== -1){
+							board[r][c] = 1;
+							let ev = minimaxExpert(board, depth - 1, false, alpha, beta);
+							board[r][c] = -1;
+							maxEval = (ev > maxEval) ? ev : maxEval;
+							alpha = (ev > alpha) ? ev : alpha;
+							if(beta <= alpha){
+								break;
+							}
+						}
+					}
+					return maxEval;
+				}else{
+					let minEval = Infinity;
+					for(let i = 0; i < colOrder.length; i++){
+						let c = colOrder[i];
+						let r = getAvailableRow(c);
+						if(r !== -1){
+							board[r][c] = 0;
+							let ev = minimaxExpert(board, depth - 1, true, alpha, beta);
+							board[r][c] = -1;
+							minEval = (ev < minEval) ? ev : minEval;
+							beta = (ev < beta) ? ev : beta;
+							if(beta <= alpha){
+								break;
+							}
+						}
+					}
+					return minEval;
+				}
+			}
+
+			function checkBoardHard(){
+				for(let r = 0; r < ROW_NUMBER; r++){
+					for(let c = 0; c < COLUMN_NUMBER; c++){
+						if(grid[r][c] !== -1 && check(r, c)){
+							return grid[r][c];
+						}
+					}
+				}
+				return -1;
+			}
+
+			function getAvailableRow(col){
+				for(let r = ROW_NUMBER - 1; r >= 0; r--){
+					if(grid[r][col] === -1){
+						return r;
+					}
+				}
+				return -1;
+			}
+
+			function select(e){
+				if(!goOn){
+					return;
+				}
+				const rect = canvas.getBoundingClientRect();
+				const scaleX = canvas.width/rect.width;
+				const x = (e.clientX - rect.left)*scaleX;
+				const column = Math.floor(x/(DIAMETER + GRID_THICKNESS));
+				if(column < 0 || column >= COLUMN_NUMBER){
+					return;
+				}
+				let row = getAvailableRow(column);
+				if(row >= 0){
+					grid[row][column] = moveYellow ? 0 : 1;
+					drawCircle(row, column, moveYellow ? YELLOW_COLOR : RED_COLOR);
+					playClackSound();
+					moves.push({r: row, c: column });
+					numberOfMoves++;
+					let win = check(row, column);
+					if(win){
+						goOn = false;
+						winningCells = win;
+						startBlinking(moveYellow ? YELLOW_COLOR : RED_COLOR);
+						const winner = moveYellow ? YELLOW_LABEL[languageIndex] : RED_LABEL[languageIndex];
+						document.body.style.background = moveYellow ? "#FFFFCC" : "#FFCCCC";
+						setTimeout(() => alert(WINNING_MESSAGE[languageIndex] + winner + "!"), 100);
+					}
+					if(goOn){
+						moveYellow = !moveYellow;
+						if(moveYellow !== humanIsYellow){
+							canvas.style.pointerEvents = "none";
+							setTimeout(() => {
+								computerMove();
+								canvas.style.pointerEvents = "auto";
+							}, 600);
+						}
+					}
+				}
+			}
+
+			function check(row, col){
+				const current = grid[row][col];
+				const directions = [[[0,1],[0,-1]], [[1,0],[-1,0]], [[1,1],[-1,-1]], [[1,-1],[-1,1]]];
+				for(let d of directions){
+					let cells = [{r: row, c: col}];
+					for(let [dr, dc] of d){
+						let r = row + dr, c = col + dc;
+						while(r >= 0 && r < ROW_NUMBER && c >= 0 && c < COLUMN_NUMBER && grid[r][c] === current){
+							cells.push({r: r, c: c});
+							r += dr;
+							c += dc;
+						}
+					}
+					if(cells.length >= 4){
+						return cells;
+					}
+				}
+				return null;
+			}
+
+			function startBlinking(color){
+				let isOn = true;
+				blinkInterval = setInterval(() => {
+					winningCells.forEach(cell => drawCircle(cell.r, cell.c, isOn ? WHITE : color));
+					isOn = !isOn;
+				}, 400);
+			}
+
+			function cycleLanguage(){
+				languageIndex = (languageIndex + 1)%(TITLES.length);
+				updateLabels();
+			}
+
+			function cycleDifficulty(){
+				difficultyIndex = (difficultyIndex + 1)%4;
+				updateLabels();
+			}
+
+			function updateLabels(){
+				document.getElementById("title").textContent = TITLES[languageIndex];
+				document.title = TITLES[languageIndex];
+				document.getElementById("restartButton").textContent = RESTART_LABELS[languageIndex];
+				document.getElementById("undoButton").textContent = UNDO_LABELS[languageIndex];
+				document.getElementById("changeLanguageButton").innerHTML = FLAGS_SVG[languageIndex] + " " + LANGUAGES_LABELS[languageIndex];
+				const diffTexts = [EASY_LABELS, MEDIUM_LABELS, HARD_LABELS, EXPERT_LABELS];
+				document.getElementById("difficultyButton").textContent = diffTexts[difficultyIndex][languageIndex];
+				if(document.getElementById("helpOverlay").classList.contains("visible")){
+					updateHelpContent();
+				}
+			}
+
+			function undoLastMove(){
+				for(let i = 0; i < 2; i++){
+					if(moves.length > 0){
+						let last = moves.pop();
+						grid[last.r][last.c] = -1;
+						drawCircle(last.r, last.c, WHITE);
+						numberOfMoves--;
+						moveYellow = !moveYellow;
+						goOn = true;
+					}
+				}
+
+			}
+
+			function refresh(){
+				openSetupPopup();
+			}
+
+			function openHelp(){
+				updateHelpContent();
+				document.getElementById("helpOverlay").classList.add("visible");
+			}
+
+			function closeHelp(){
+				document.getElementById("helpOverlay").classList.remove("visible");
+			}
+
+			function updateHelpContent(){
+				document.getElementById("helpTitle").textContent = HELP_TITLE[languageIndex];
+				const rows = HELP_SHORTCUTS[languageIndex];
+				document.getElementById("helpTable").innerHTML = rows.map(([k,d]) =>
+					`<tr><td class="key">${k}</td><td>${d}</td></tr>`
+				).join("");
+			}
+
+			function dropInColumn(column){
+				if(!goOn || moveYellow !== humanIsYellow){
+					return;
+				}
+				const rect = canvas.getBoundingClientRect();
+				const fakeX = rect.left + column*(DIAMETER + GRID_THICKNESS) + RADIUS;
+				select({ clientX: fakeX, clientY: rect.top });
+			}
+
+			document.addEventListener("keydown", e => {
+				const num = parseInt(e.key);
+				if(num >= 1 && num <= COLUMN_NUMBER){
+					dropInColumn(num - 1);
+				}else if(e.key.toLowerCase() === "u"){
+					undoLastMove();
+				}else if(e.key.toLowerCase() === "d"){
+					cycleDifficulty();
+				}else if(e.key.toLowerCase() === "r"){
+					refresh();
+				}else if(e.key.toLowerCase() === "l"){
+					cycleLanguage();
+				}else if(e.key === "?"){
+					const ov = document.getElementById("helpOverlay");
+					if(ov.classList.contains("visible")){
+						closeHelp();
+					}else{
+						openHelp();
+					}
+				}
+			});
+
+			const SETUP_LANG_HEADING = ["Language","Lingua","Langue","Idioma","Sprache","Idioma","Limbă","Мова","Γλώσσα","Lingua","语言","言語"];
+			const SETUP_DIFF_HEADING = ["Difficulty","Difficoltà","Difficulté","Dificultad","Schwierigkeit","Dificuldade","Dificultate","Складність","Δυσκολία","Difficultas","难度","難易度"];
+			const SETUP_STARTER_HEADING = ["Who starts?","Chi inizia?","Qui commence ?","¿Quién empieza?","Wer fängt an?","Quem começa?","Cine începe?","Хто починає?","Ποιος αρχίζει;","Quis incipit?","谁先走?","誰が始める?"];
+			const SETUP_COLOR_HEADING = ["Your colour","Il tuo colore","Votre couleur","Tu color","Deine Farbe","A sua cor","Culoarea ta","Твій колір","Το χρώμα σου","Color tuus","你的颜色","あなたの色"];
+			const SETUP_HUMAN_LABEL = ["Me","Io","Moi","Yo","Ich","Eu","Eu","Я","Εγώ","Ego","我","私"];
+			const SETUP_MACHINE_LABEL = ["Computer","Computer","Ordinateur","Ordenador","Computer","Computador","Calculator","Комп'ютер","Υπολογιστής","Computatrum","电脑","コンピュータ"];
+			const SETUP_PLAY_LABEL = ["▶ Play","▶ Gioca","▶ Jouer","▶ Jugar","▶ Spielen","▶ Jogar","▶ Joacă","▶ Грати","▶ Παίξε","▶ Lude","▶ 开始","▶ プレイ"];
+
+			let setupLangIndex = 0;
+			let setupDiffIndex = 1;
+			let setupHumanStarts = true;
+			let setupPlayerColor = 'yellow';
+
+			function openSetupPopup(){
+				buildSetupPopup();
+				document.getElementById("setupOverlay").classList.add("visible");
+			}
+
+			function closeSetupPopup(){
+				document.getElementById("setupOverlay").classList.remove("visible");
+			}
+
+			function buildSetupPopup(){
+				const langGrid = document.getElementById("langGrid");
+				langGrid.innerHTML = "";
+				FLAGS_SVG.forEach(function(svg, i){
+					const btn = document.createElement("button");
+					btn.className = "lang-btn" + (i === setupLangIndex ? " selected" : "");
+					btn.innerHTML = svg + "<span>" + LANGUAGES_LABELS[i] + "</span>";
+					btn.onclick = (function(idx){ return function(){ selectSetupLang(idx); }; })(i);
+					langGrid.appendChild(btn);
+				});
+				const diffLabels = [EASY_LABELS, MEDIUM_LABELS, HARD_LABELS, EXPERT_LABELS];
+				const diffGroup = document.getElementById("diffGroup");
+				diffGroup.innerHTML = "";
+				diffLabels.forEach(function(arr, i){
+					const btn = document.createElement("button");
+					btn.className = "setup-btn" + (i === setupDiffIndex ? " selected" : "");
+					btn.textContent = arr[setupLangIndex];
+					btn.onclick = (function(idx){ return function(){ selectSetupDiff(idx); }; })(i);
+					diffGroup.appendChild(btn);
+				});
+				const starterGroup = document.getElementById("starterGroup");
+				starterGroup.innerHTML = "";
+				const btnHuman = document.createElement("button");
+				btnHuman.className = "setup-btn" + (setupHumanStarts ? " selected" : "");
+				btnHuman.id = "starterHuman";
+				btnHuman.textContent = SETUP_HUMAN_LABEL[setupLangIndex];
+				btnHuman.onclick = function(){ selectSetupStarter(true); };
+				const btnComp = document.createElement("button");
+				btnComp.className = "setup-btn" + (!setupHumanStarts ? " selected" : "");
+				btnComp.id = "starterComp";
+				btnComp.textContent = SETUP_MACHINE_LABEL[setupLangIndex];
+				btnComp.onclick = function(){ selectSetupStarter(false); };
+				starterGroup.appendChild(btnHuman);
+				starterGroup.appendChild(btnComp);
+				document.getElementById("setupYellowLabel").textContent = YELLOW_LABEL[setupLangIndex];
+				document.getElementById("setupRedLabel").textContent = RED_LABEL[setupLangIndex];
+				document.getElementById("btnYellow").className = "setup-btn color-yellow" + (setupPlayerColor === 'yellow' ? " selected" : "");
+				document.getElementById("btnRed").className = "setup-btn color-red" + (setupPlayerColor === 'red' ? " selected" : "");
+				document.getElementById("setupTitle").textContent = TITLES[setupLangIndex];
+				document.getElementById("setupLangHeading").textContent = SETUP_LANG_HEADING[setupLangIndex];
+				document.getElementById("setupDiffHeading").textContent = SETUP_DIFF_HEADING[setupLangIndex];
+				document.getElementById("setupStarterHeading").textContent = SETUP_STARTER_HEADING[setupLangIndex];
+				document.getElementById("setupColorHeading").textContent = SETUP_COLOR_HEADING[setupLangIndex];
+				document.getElementById("setupConfirmBtn").textContent = SETUP_PLAY_LABEL[setupLangIndex];
+			}
+
+			function selectSetupLang(i){
+				setupLangIndex = i;
+				buildSetupPopup();
+			}
+
+			function selectSetupDiff(i){
+				setupDiffIndex = i;
+				document.querySelectorAll("#diffGroup .setup-btn").forEach(function(b, j){
+					b.classList.toggle("selected", j === i);
+				});
+			}
+
+			function selectSetupStarter(humanFirst){
+				setupHumanStarts = humanFirst;
+				document.getElementById("starterHuman").classList.toggle("selected", humanFirst);
+				document.getElementById("starterComp").classList.toggle("selected", !humanFirst);
+			}
+
+			function selectSetupColor(color){
+				setupPlayerColor = color;
+				document.getElementById("btnYellow").classList.toggle("selected", color === 'yellow');
+				document.getElementById("btnRed").classList.toggle("selected", color === 'red');
+			}
+
+			function confirmSetup(){
+				languageIndex = setupLangIndex;
+				difficultyIndex = setupDiffIndex;
+				const playerIsYellow = (setupPlayerColor === 'yellow');
+				humanIsYellow = playerIsYellow;
+				moveYellow = setupHumanStarts ? playerIsYellow : !playerIsYellow;
+				closeSetupPopup();
+				document.getElementById("gameArea").style.display = "block";
+				updateLabels();
+				drawUniverse();
+			}
+		</script>
+	</body>
+</html>

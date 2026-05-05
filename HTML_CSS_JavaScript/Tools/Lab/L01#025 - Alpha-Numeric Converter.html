@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en"><!--L01#025 - Sophia - Alpha-Numeric Converter-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Alpha-Numeric Converter</title>
+		<style>
+			:root{
+				--bg-body: #f0e97a;
+				--bg-container: #fffde8;
+				--text-main: #5a4a00;
+				--text-secondary: #6b5800;
+				--accent-color: #b8a000;
+				--border-color: #e0d04a;
+				--btn-bg: #fdf7b0;
+				--btn-hover: #f7ef80;
+				--input-bg: #fffeef;
+				--shadow: rgba(180,160,0,0.15);
+				--copy-success: #5a8a5a;
+			}
+			.alt-theme{
+				--bg-body: #f0f2f5;
+				--bg-container: #ffffff;
+				--text-main: #1a1a1a;
+				--text-secondary: #444444;
+				--accent-color: #007bff;
+				--border-color: #e0e0e0;
+				--btn-bg: #f8f9fa;
+				--btn-hover: #eef2f7;
+				--input-bg: #ffffff;
+				--shadow: rgba(0,0,0,0.1);
+				--copy-success: #28a745;
+			}
+			body{
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				min-height: 100vh;
+				background-color: var(--bg-body);
+				margin: 0;
+				transition: background-color 0.4s ease;
+			}
+			.container{
+				background: var(--bg-container);
+				padding: 2rem;
+				border-radius: 12px;
+				box-shadow: 0 8px 30px var(--shadow);
+				width: 100%;
+				max-width: 420px;
+				transition: background-color 0.4s ease, box-shadow 0.4s ease;
+			}
+			h2{
+				color: var(--text-main);
+				text-align: center;
+				margin-bottom: 1.5rem;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			.theme-switch{
+				cursor: pointer;
+				font-size: 1.2rem;
+				margin-left: 12px;
+				opacity: 0.7;
+				transition: transform 0.3s ease, opacity 0.2s;
+				user-select: none;
+				display: inline-block;
+			}
+			.theme-switch:hover{
+				opacity: 1;
+			}
+			.theme-switch:active{
+				transform: rotate(180deg) scale(1.2);
+			}
+			.radio-group{
+				display: flex;
+				gap: 15px;
+				margin-bottom: 1.5rem;
+				justify-content: center;
+			}
+			.radio-option{
+				display: flex;
+				align-items: center;
+				cursor: pointer;
+				font-size: 0.9rem;
+				color: var(--text-secondary);
+				background: var(--btn-bg);
+				padding: 8px 12px;
+				border-radius: 6px;
+				border: 1px solid var(--border-color);
+				transition: all 0.2s;
+			}
+			.radio-option:hover{
+				background: var(--btn-hover);
+			}
+			.radio-option input{
+				margin-right: 8px;
+				cursor: pointer;
+			}
+			.radio-label-text{
+				display: flex;
+				align-items: center;
+				font-size: 0.85rem;
+				color: #666;
+				font-weight: 700;
+				text-transform: uppercase;
+				letter-spacing: 0.5px;
+				padding: 8px 0;
+				margin-right: 8px;
+			}
+			.radio-label-text::after{
+				content: '\2192';
+				margin-left: 6px;
+				color: var(--accent-color);
+				font-weight: bold;
+			}
+			.group{
+				margin-bottom: 1.2rem;
+				position: relative;
+			}
+			label.input-label{
+				display: block;
+				margin-bottom: 0.4rem;
+				font-weight: 600;
+				color: var(--text-secondary);
+				font-size: 0.9rem;
+			}
+			input[type="text"], input[type="number"]{
+				width: 100%;
+				padding: 12px;
+				border: 2px solid var(--border-color);
+				border-radius: 8px;
+				box-sizing: border-box;
+				font-size: 1rem;
+				transition: all 0.2s;
+				background: var(--input-bg);
+				color: var(--text-main);
+			}
+			input:focus{
+				border-color: var(--accent-color);
+				outline: none;
+			}
+			.info{
+				font-size: 0.8rem;
+				color: var(--text-secondary);
+				margin-top: 1rem;
+				line-height: 1.4;
+				border-top: 1px solid var(--border-color);
+				padding-top: 10px;
+				text-align: center;
+			}
+			.highlight{
+				color: var(--accent-color);
+				font-weight: bold;
+			}
+			.copy-btn{
+				background: var(--btn-bg);
+				border: none;
+				border-radius: 4px;
+				color: var(--accent-color);
+				font-size: 0.75rem;
+				font-weight: 600;
+				padding: 4px 8px;
+				cursor: pointer;
+				float: right;
+				margin-top: 4px;
+				transition: background 0.2s;
+				user-select: none;
+			}
+			.copy-btn:active{
+				opacity: 0.7;
+			}
+			#factorResult{
+				color: var(--accent-color);
+				font-size: 0.85rem;
+				text-align: center;
+				margin-bottom: 1rem;
+				font-weight: bold;
+				min-height: 1.2em;
+			}
+			.lang-bar{
+				display: grid;
+				grid-template-columns: repeat(6, 1fr);
+				gap: 6px;
+				margin-top: 1.2rem;
+				padding-top: 10px;
+				border-top: 1px solid var(--border-color);
+			}
+			.flag-btn{
+				width: 100%;
+				background: var(--btn-bg);
+				border: 2px solid transparent;
+				border-radius: 4px;
+				padding: 2px 4px;
+				cursor: pointer;
+				transition: all 0.2s;
+				display: flex;
+				justify-content: center;
+			}
+			.flag-btn:hover, .flag-btn.active{
+				border-color: var(--accent-color);
+				background: var(--btn-hover);
+			}
+			.flag-svg{
+				width: 32px;
+				height: 20px;
+				display: block;
+			}
+			*{
+				-webkit-tap-highlight-color: transparent;
+			}
+			.help-overlay{
+				display: none;
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: rgba(0,0,0,0.45);
+				z-index: 1000;
+				align-items: center;
+				justify-content: center;
+			}
+			.help-overlay.show{
+				display: flex;
+			}
+			.help-modal{
+				background: var(--bg-container);
+				border-radius: 14px;
+				box-shadow: 0 8px 32px var(--shadow);
+				padding: 24px 28px 20px 28px;
+				max-width: 420px;
+				width: 92%;
+				position: relative;
+				animation: fadeIn 0.18s ease;
+				transition: background-color 0.4s ease;
+			}
+			@keyframes fadeIn{
+				from{
+					opacity:0;
+					transform:scale(0.95);
+				}
+				to{
+					opacity:1;
+					transform:scale(1);
+				}
+			}
+			.help-modal h4{
+				color: var(--accent-color);
+				margin: 0 0 16px 0;
+				font-size: 1.1em;
+				text-align: center;
+				letter-spacing: 0.5px;
+			}
+			.help-close{
+				position: absolute;
+				top: 12px;
+				right: 14px;
+				background: none;
+				border: none;
+				font-size: 1.3em;
+				color: var(--text-secondary);
+				cursor: pointer;
+				padding: 2px 6px;
+				line-height: 1;
+				border-radius: 4px;
+				font-weight: bold;
+			}
+			.help-close:hover{
+				background: var(--btn-hover);
+				color: var(--accent-color);
+			}
+			.help-table{
+				width: 100%;
+				border-collapse: collapse;
+				font-size: 0.92em;
+			}
+			.help-table tr{
+				border-bottom: 1px solid var(--border-color);
+			}
+			.help-table tr:last-child{
+				border-bottom: none;
+			}
+			.help-table td{
+				padding: 8px 6px;
+				vertical-align: top;
+			}
+			.help-key{
+				font-family: monospace;
+				background: var(--btn-bg);
+				border: 1px solid var(--border-color);
+				border-radius: 4px;
+				padding: 2px 8px;
+				font-size: 1em;
+				font-weight: bold;
+				color: var(--text-main);
+				white-space: nowrap;
+				display: inline-block;
+				min-width: 28px;
+				text-align: center;
+			}
+			.help-desc{
+				color: var(--text-secondary);
+				padding-left: 8px;
+			}
+			.help-hint{
+				text-align: center;
+				margin-top: 14px;
+				font-size: 0.78em;
+				color: #aaa;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h2 id="mainTitle">Alpha-Numeric Converter <span class="theme-switch" onclick="toggleTheme()" title="Change Theme">🌓</span></h2>
+			<div class="radio-group">
+				<label class="radio-label-text" data-key="keep">Keep </label>
+				<label class="radio-option" data-key="string">
+					<input type="radio" name="keepPreference" value="alpha" onchange="resetAndRecalculate()"> String
+				</label>
+				<label class="radio-option" data-key="number">
+					<input type="radio" name="keepPreference" value="num" checked onchange="resetAndRecalculate()"> Number
+				</label>
+			</div>
+			<div class="radio-group">
+				<label class="radio-label-text" data-key="letters">Letters </label>
+				<label class="radio-option">
+					<input type="radio" name="alphabet" value="26" onclick="resetAndRecalculate()"> 26
+				</label>
+				<label class="radio-option">
+					<input type="radio" name="alphabet" value="23" onclick="resetAndRecalculate()"> 23
+				</label>
+				<label class="radio-option">
+					<input type="radio" name="alphabet" value="21" checked onclick="resetAndRecalculate()"> 21
+				</label>
+			</div>
+			<div class="group">
+				<label class="input-label" for="alphaInput" id="labelAlpha">Alphabetic String</label>
+				<input type="text" id="alphaInput" oninput="convertToNumber()">
+				<div style="display: flex; justify-content: flex-end; align-items: center; gap: 5px; margin-top: 8px;">
+					<label data-key="shift" style="font-size: 0.75rem; font-weight: 600; color: #666;">Shift:</label>
+					<input type="number" id="shiftValue" value="3" style="width: 45px; padding: 2px 5px; font-size: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; height: 24px; background: var(--input-bg);">
+					<button type="button" id="btnEncPlus" class="copy-btn" onclick="caesarShift(true)">Enc +</button>
+					<button type="button" id="btnDecMinus" class="copy-btn" onclick="caesarShift(false)">Dec -</button>
+					<button type="button" class="copy-btn" data-copy onclick="copyValue(event, 'alphaInput')">Copy</button>
+				</div>
+			</div>
+			<div class="group">
+				<label class="input-label" for="numInput" id="labelNum">Decimal</label>
+				<input type="text" id="numInput" min="1" oninput="convertToAlpha()">
+				<button type="button" class="copy-btn" data-copy onclick="copyValue(event, 'numInput')">Copy</button>
+				<button type="button" id="btnFactorize" class="copy-btn" style="margin-right: 8px;" onclick="factorize()">Factorize</button>
+			</div>
+			<div class="group">
+				<label class="input-label" for="binInput" id="labelBin">Binary</label>
+				<input type="text" id="binInput" oninput="convertFromBase(2, 'binInput')">
+				<button type="button" class="copy-btn" data-copy onclick="copyValue(event, 'binInput')">Copy</button>
+			</div>
+			<div class="group">
+				<label class="input-label" for="hexInput" id="labelHex">Hexadecimal</label>
+				<input type="text" id="hexInput" oninput="convertFromBase(16, 'hexInput')">
+				<button type="button" class="copy-btn" data-copy onclick="copyValue(event, 'hexInput')">Copy</button>
+			</div>
+			<div id="factorResult"></div>
+			<div class="info" id="alphabetDisplay">
+				<span class="highlight">A B C D E F G H I J K L M N O P Q R S T U V W X Y Z</span>
+			</div>
+			<div class="lang-bar" id="langBar"></div>
+		</div>
+		<div class="help-overlay" id="helpOverlay" onclick="closeHelp(event)">
+			<div class="help-modal" id="helpModal">
+				<button class="help-close" onclick="toggleHelp()" title="Close">✕</button>
+				<h4 id="helpTitle">Keyboard Shortcuts</h4>
+				<table class="help-table" id="helpTable"></table>
+				<div class="help-hint" id="helpHint">Press ? to close</div>
+			</div>
+		</div>
+		<script>
+			let isAltTheme = false;
+			function toggleTheme(){
+				isAltTheme = !isAltTheme;
+				document.body.classList.toggle('alt-theme', isAltTheme);
+			}
+
+			const alphabets = {
+				"26": "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
+				"23": "ABCDEFGHIKLMNOPQRSTVXYZ".split(""),
+				"21": "ABCDEFGHILMNOPQRSTUVZ".split("")
+			};
+
+			function getActiveAlphabet(){
+				const selected = document.querySelector('input[name="alphabet"]:checked').value;
+				return alphabets[selected];
+			}
+
+			function resetAndRecalculate(){
+				const chars = getActiveAlphabet();
+				document.getElementById('alphabetDisplay').innerHTML = `<span class="highlight">${chars.join(" ")}</span>`;
+				const preference = document.querySelector('input[name="keepPreference"]:checked').value;
+				if(preference === 'alpha'){
+					convertToNumber();
+				}else{
+					convertToAlpha();
+				}
+			}
+
+			function updateAllFields(decimalValue){
+				document.getElementById('factorResult').innerText = '';
+				const numField = document.getElementById('numInput');
+				const binField = document.getElementById('binInput');
+				const hexField = document.getElementById('hexInput');
+				if(!decimalValue || decimalValue <= 0n){
+					[numField, binField, hexField].forEach(f => f.value = '');
+					return;
+				}
+				numField.value = decimalValue.toString();
+				binField.value = decimalValue.toString(2);
+				hexField.value = decimalValue.toString(16).toUpperCase();
+			}
+
+			function convertFromBase(base, elementId){
+				const inputEl = document.getElementById(elementId);
+				if(base === 2){
+					inputEl.value = inputEl.value.replace(/[^01]/g, '').replace(/^0+(?!$)/, '');
+				}else if(base === 16){
+					inputEl.value = inputEl.value.toUpperCase().replace(/[^0-9A-F]/g, '').replace(/^0+(?!$)/, '');
+				}
+				try{
+					if(inputEl.value === ''){
+						document.getElementById('numInput').value = '';
+						document.getElementById('alphaInput').value = '';
+						updateAllFields(0n);
+						return;
+					}
+					const decimalValue = BigInt(base === 16 ? '0x' + inputEl.value : '0b' + inputEl.value);
+					document.getElementById('numInput').value = decimalValue.toString();
+					convertToAlpha();
+				}catch(e){}
+			}
+
+			function convertToNumber(){
+				const inputEl = document.getElementById('alphaInput');
+				const chars = getActiveAlphabet();
+				inputEl.value = inputEl.value.toUpperCase().replace(new RegExp(`[^${chars.join("")}]`, 'gi'), '');
+				const str = inputEl.value;
+				const base = BigInt(chars.length);
+				let result = 0n;
+				for(let i = 0; i < str.length; i++){
+					result = result*base + BigInt(chars.indexOf(str[i]) + 1);
+				}
+				updateAllFields(result);
+			}
+
+			function convertToAlpha(){
+				const numEl = document.getElementById('numInput');
+				numEl.value = numEl.value.replace(/\D/g, '').replace(/^0+/, '');
+				if(!numEl.value){
+					document.getElementById('alphaInput').value = '';
+					updateAllFields(0n);
+					return;
+				}
+				let num = BigInt(numEl.value);
+				updateAllFields(num);
+				const chars = getActiveAlphabet();
+				const base = BigInt(chars.length);
+				let result = "";
+				while(num > 0n){
+					let modulo = Number((num - 1n)%base);
+					result = chars[modulo] + result;
+					num = (num - 1n)/base;
+				}
+				document.getElementById('alphaInput').value = result;
+			}
+
+			function caesarShift(isForward){
+				const inputEl = document.getElementById('alphaInput');
+				const shift = (parseInt(document.getElementById('shiftValue').value) || 0)*(isForward ? 1 : -1);
+				const str = inputEl.value.toUpperCase();
+				if(!str){
+					return;
+				}
+				const chars = getActiveAlphabet();
+				const size = chars.length;
+				let result = "";
+				for(let i = 0; i < str.length; i++){
+					const index = chars.indexOf(str[i]);
+					if(index !== -1){
+						let newIndex = (index + shift)%size;
+						if(newIndex < 0){
+							newIndex += size;
+						}
+						result += chars[newIndex];
+					}else{
+						result += str[i];
+					}
+				}
+				inputEl.value = result;
+				convertToNumber();
+			}
+
+			function copyValue(event, id){
+				const inputField = document.getElementById(id);
+				const btn = event.currentTarget || event.target;
+				if(!inputField || !inputField.value){
+					return;
+				}
+				const successUI = () => {
+					const oldTxt = btn.innerText;
+					const oldCol = btn.style.color;
+					btn.innerText = "Saved!";
+					btn.style.color = "var(--copy-success)";
+					setTimeout(() => {
+						btn.innerText = oldTxt;
+						btn.style.color = oldCol;
+					}, 1000);
+				};
+				if(navigator.clipboard && window.isSecureContext){
+					navigator.clipboard.writeText(inputField.value)
+						.then(successUI)
+						.catch(() => fallbackCopy(inputField, successUI));
+				}else{
+					fallbackCopy(inputField, successUI);
+				}
+			}
+
+			function fallbackCopy(inputField, callback) {
+				inputField.select();
+				inputField.setSelectionRange(0, 99999);
+				try{
+					const successful = document.execCommand('copy');
+					if(successful){
+						callback();
+					}
+				}catch(err){
+					console.error('Error during copy fallback:', err);
+					alert("Error: Unable to copy. Please select the text manually.");
+				}
+				inputField.blur();
+				window.getSelection().removeAllRanges();
+			}
+
+			function factorize(){
+				let n = parseInt(document.getElementById("numInput").value);
+				const resDiv = document.getElementById('factorResult');
+				if(isNaN(n) || n <= 1){
+					return;
+				}
+				let temp = n, result = [], count = 0;
+				const getExp = (e) => ["","","²","³","⁴","⁵","⁶","⁷","⁸","⁹"][e] || e;
+				while(temp%2 === 0){
+					count++;
+					temp /= 2;
+				}
+				if(count > 0){
+					result.push("2" + (count == 1 ? "" : getExp(count)));
+				}
+				for(let i = 3; i*i <= temp; i += 2){
+					count = 0;
+					while(temp%i === 0){
+						count++;
+						temp /= i;
+					}
+					if(count > 0){
+						result.push(i + "" + (count == 1 ? "" : getExp(count)));
+					}
+				}
+				if(temp > 1){
+					result.push(temp.toString());
+				}
+				resDiv.innerText = (result.length === 1 && parseInt(result[0]) === n) ? currentPrimeLabel : n + " = " + result.join(" × ");
+			}
+
+			const FLAGS_SVG = [
+				'<svg class="flag-svg" viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#s)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>', // UK
+				//'<svg class="flag-svg" viewBox="0 0 7410 3900"><rect width="7410" height="3900" fill="#b22234"/><path d="M0 300h7410M0 900h7410M0 1500h7410M0 2100h7410M0 2700h7410M0 3300h7410" stroke="#fff" stroke-width="300"/><rect width="2964" height="2100" fill="#3c3b6e"/><path d="M247 175l247 759-646-469h798l-646 469z" fill="#fff" transform="scale(.2)"/></svg>', // US
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>', // IT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg>', // FR
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#c60b1e"/><rect width="3" height="1" y="0.5" fill="#ffc400"/></svg>', // ES
+				'<svg class="flag-svg" viewBox="0 0 5 3"><rect width="5" height="3"/><rect width="5" height="2" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg>', // DE
+				'<svg class="flag-svg" viewBox="0 0 600 400"><rect width="240" height="400" fill="#006600"/><rect x="240" width="360" height="400" fill="#ff0000"/></svg>', // PT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002b7f"/><rect width="1" height="2" x="1" fill="#fcd116"/><rect width="1" height="2" x="2" fill="#ce1126"/></svg>', // RO
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>', // UA
+				'<svg class="flag-svg" viewBox="0 0 27 18"><rect width="27" height="18" fill="#005bae"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#005bae"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>', // GR
+				//'<svg class="flag-svg" viewBox="0 0 1 1"><rect width="0.5" height="1" fill="#ffe000"/><rect x="0.5" width="0.5" height="1" fill="#fff"/></svg>', // VA
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#800000"/><path d="M0.5,0.5 L2.5,0.5 L2.5,1.5 L0.5,1.5 Z" fill="none" stroke="#FFD700" stroke-width="0.1"/><text x="1.5" y="1.15" font-family="serif" font-weight="bold" font-size="0.4" fill="#FFD700" text-anchor="middle">SPQR</text></svg>', // ROMA
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#de2110"/><path d="M.5 1.1l.3-.9.3.9-1-.6h1z" fill="#ffde00" transform="matrix(.4 0 0 .4 .1 .1)"/></svg>', // CN
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>' // JP
+			];
+			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
+			const TRANSLATIONS = {
+				en: { title:"Alpha-Numeric Converter", keep:"Keep", string:"String", number:"Number", letters:"Letters", alphaLabel:"Alphabetic String", shift:"Shift", decimalLabel:"Decimal", binaryLabel:"Binary", hexLabel:"Hexadecimal", encBtn:"Enc +", decBtn:"Dec -", copyBtn:"Copy", factorBtn:"Factorize", prime:"Prime number! :-D",
+					helpTitle:"Keyboard Shortcuts", helpHint:"Press ? to close",
+					helpShortcuts:[["T","Toggle light/dark theme"],["L","Switch to next language"],["R","Reload the page"],["?","Show / hide this help"]] },
+				it: { title:"Convertitore Alfa-Numerico", keep:"Mantieni", string:"Stringa", number:"Numero", letters:"Lettere", alphaLabel:"Stringa Alfabetica", shift:"Turno", decimalLabel:"Decimale", binaryLabel:"Binario", hexLabel:"Esadecimale", encBtn:"Cif +", decBtn:"Dec -", copyBtn:"Copia", factorBtn:"Fattorizza", prime:"Numero primo! :-D",
+					helpTitle:"Scorciatoie da Tastiera", helpHint:"Premi ? per chiudere",
+					helpShortcuts:[["T","Alterna tema chiaro/scuro"],["L","Passa alla lingua successiva"],["R","Ricarica la pagina"],["?","Mostra / nascondi questa guida"]] },
+				fr: { title:"Convertisseur Alpha-Numérique", keep:"Garder", string:"Chaîne", number:"Nombre", letters:"Lettres", alphaLabel:"Chaîne Alphabétique", shift:"Décalage", decimalLabel:"Décimal", binaryLabel:"Binaire", hexLabel:"Hexadécimal", encBtn:"Chif +", decBtn:"Déch -", copyBtn:"Copier", factorBtn:"Factoriser", prime:"Nombre premier! :-D",
+					helpTitle:"Raccourcis Clavier", helpHint:"Appuyez sur ? pour fermer",
+					helpShortcuts:[["T","Basculer thème clair/sombre"],["L","Passer à la langue suivante"],["R","Recharger la page"],["?","Afficher / masquer cette aide"]] },
+				es: { title:"Convertidor Alfa-Numérico", keep:"Mantener", string:"Cadena", number:"Número", letters:"Letras", alphaLabel:"Cadena Alfabética", shift:"Desplaz.", decimalLabel:"Decimal", binaryLabel:"Binario", hexLabel:"Hexadecimal", encBtn:"Cifr +", decBtn:"Desc -", copyBtn:"Copiar", factorBtn:"Factorizar", prime:"¡Número primo! :-D",
+					helpTitle:"Atajos de Teclado", helpHint:"Pulsa ? para cerrar",
+					helpShortcuts:[["T","Cambiar tema claro/oscuro"],["L","Cambiar al siguiente idioma"],["R","Recargar la página"],["?","Mostrar / ocultar esta ayuda"]] },
+				de: { title:"Alpha-Numerischer Konverter", keep:"Behalten", string:"Text", number:"Zahl", letters:"Buchst.", alphaLabel:"Alphabetische Zeichenf.", shift:"Versch.", decimalLabel:"Dezimal", binaryLabel:"Binär", hexLabel:"Hexadezimal", encBtn:"Versch +", decBtn:"Entsch -", copyBtn:"Kopieren", factorBtn:"Faktorisieren", prime:"Primzahl! :-D",
+					helpTitle:"Tastaturkürzel", helpHint:"? drücken zum Schließen",
+					helpShortcuts:[["T","Hell/Dunkel-Thema wechseln"],["L","Zur nächsten Sprache wechseln"],["R","Seite neu laden"],["?","Diese Hilfe ein- / ausblenden"]] },
+				pt: { title:"Conversor Alfa-Numérico", keep:"Manter", string:"Texto", number:"Número", letters:"Letras", alphaLabel:"String Alfabética", shift:"Desloc.", decimalLabel:"Decimal", binaryLabel:"Binário", hexLabel:"Hexadecimal", encBtn:"Cifr +", decBtn:"Decifr -", copyBtn:"Copiar", factorBtn:"Fatorar", prime:"Número primo! :-D",
+					helpTitle:"Atalhos de Teclado", helpHint:"Prima ? para fechar",
+					helpShortcuts:[["T","Alternar tema claro/escuro"],["L","Mudar para o próximo idioma"],["R","Recarregar a página"],["?","Mostrar / ocultar esta ajuda"]] },
+				ro: { title:"Convertor Alfa-Numeric", keep:"Păstrează", string:"Șir", number:"Număr", letters:"Litere", alphaLabel:"Șir Alfabetic", shift:"Schimb", decimalLabel:"Decimal", binaryLabel:"Binar", hexLabel:"Hexazecimal", encBtn:"Cifr +", decBtn:"Decifr -", copyBtn:"Copiază", factorBtn:"Factorizează", prime:"Număr prim! :-D",
+					helpTitle:"Comenzi Rapide", helpHint:"Apăsați ? pentru a închide",
+					helpShortcuts:[["T","Comutare temă deschisă/închisă"],["L","Treci la limba următoare"],["R","Reîncarcă pagina"],["?","Arată / ascunde acest ajutor"]] },
+				uk: { title:"Альфа-цифровий конвертер", keep:"Зберегти", string:"Рядок", number:"Число", letters:"Літери", alphaLabel:"Алфавітний рядок", shift:"Зсув", decimalLabel:"Десяткове", binaryLabel:"Binary", hexLabel:"Hex", encBtn:"Зашифр +", decBtn:"Розшифр -", copyBtn:"Копіювати", factorBtn:"Фактор", prime:"Просте число! :-D",
+					helpTitle:"Клавіатурні Скорочення", helpHint:"Натисніть ? щоб закрити",
+					helpShortcuts:[["T","Перемкнути світлу/темну тему"],["L","Перейти до наступної мови"],["R","Перезавантажити сторінку"],["?","Показати / приховати довідку"]] },
+				el: { title:"Μετατροπέας Αλφαριθμητικών", keep:"Κράτα", string:"Συμβ.", number:"Αριθμός", letters:"Γράμματα", alphaLabel:"Αλφαβητικό", shift:"Μετατ.", decimalLabel:"Δεκαδικό", binaryLabel:"Δυαδικό", hexLabel:"Δεκαεξαδικό", encBtn:"Κρυπτ +", decBtn:"Αποκρ -", copyBtn:"Αντιγραφή", factorBtn:"Παραγοντ", prime:"Πρώτος αριθμός! :-D",
+					helpTitle:"Συντομεύσεις Πληκτρολογίου", helpHint:"Πατήστε ? για κλείσιμο",
+					helpShortcuts:[["T","Εναλλαγή φωτεινού/σκοτεινού θέματος"],["L","Αλλαγή στην επόμενη γλώσσα"],["R","Επαναφόρτωση σελίδας"],["?","Εμφάνιση / απόκρυψη αυτής της βοήθειας"]] },
+				la: { title:"Conversor Alpha-Numericus", keep:"Serva", string:"Series", number:"Numerus", letters:"Litterae", alphaLabel:"Series Alphabetica", shift:"Ambitus", decimalLabel:"Decimalis", binaryLabel:"Binarius", hexLabel:"Hexadecimalis", encBtn:"Enc +", decBtn:"Dec -", copyBtn:"Copy", factorBtn:"Factor", prime:"Numerus primus! :-D",
+					helpTitle:"Claves Auxiliares", helpHint:"Preme ? ad claudendum",
+					helpShortcuts:[["T","Muta inter lucidum et obscurum"],["L","Muta ad linguam proximam"],["R","Renoua paginam"],["?","Ostende / absconde hoc auxilium"]] },
+				zh: { title:"字母数字转换器", keep:"保持", string:"字符串", number:"数字", letters:"字母", alphaLabel:"字母字符串", shift:"位移", decimalLabel:"十进制", binaryLabel:"二进制", hexLabel:"十六进制", encBtn:"加密 +", decBtn:"解密 -", copyBtn:"复制", factorBtn:"因数分解", prime:"质数! :-D",
+					helpTitle:"键盘快捷键", helpHint:"按 ? 关闭",
+					helpShortcuts:[["T","切换亮色/暗色主题"],["L","切换到下一种语言"],["R","重新加载页面"],["?","显示 / 隐藏此帮助"]] },
+				ja: { title:"英数字コンバーター", keep:"保持", string:"文字列", number:"数値", letters:"文字数", alphaLabel:"アルファベット文字列", shift:"シフト", decimalLabel:"10進数", binaryLabel:"2進数", hexLabel:"16進数", encBtn:"暗号化 +", decBtn:"復号化 -", copyBtn:"コピー", factorBtn:"因数分解", prime:"素数です! :-D",
+					helpTitle:"キーボードショートカット", helpHint:"? を押して閉じる",
+					helpShortcuts:[["T","明るい/暗いテーマを切り替え"],["L","次の言語に切り替え"],["R","ページを再読み込み"],["?","このヘルプを表示 / 非表示"]] }
+			};
+
+			let currentPrimeLabel = TRANSLATIONS['en'].prime;
+
+			function applyTranslation(lang){
+				const t = TRANSLATIONS[lang] || TRANSLATIONS['en'];
+				const titleEl = document.getElementById('mainTitle');
+				titleEl.childNodes[0].textContent = t.title + ' ';
+				document.querySelector('[data-key="keep"]').childNodes[0].textContent = t.keep + ' ';
+				document.querySelector('[data-key="string"]').lastChild.textContent = ' ' + t.string;
+				document.querySelector('[data-key="number"]').lastChild.textContent = ' ' + t.number;
+				document.querySelector('[data-key="letters"]').childNodes[0].textContent = t.letters + ' ';
+				document.getElementById('labelAlpha').textContent = t.alphaLabel;
+				document.querySelector('[data-key="shift"]').textContent = t.shift + ':';
+				document.getElementById('labelNum').textContent = t.decimalLabel;
+				document.getElementById('labelBin').textContent = t.binaryLabel;
+				document.getElementById('labelHex').textContent = t.hexLabel;
+				document.getElementById('btnEncPlus').textContent = t.encBtn;
+				document.getElementById('btnDecMinus').textContent = t.decBtn;
+				document.querySelectorAll('[data-copy]').forEach(b => b.textContent = t.copyBtn);
+				document.getElementById('btnFactorize').textContent = t.factorBtn;
+				currentPrimeLabel = t.prime;
+				document.querySelectorAll('.flag-btn').forEach((b,i) => b.classList.toggle('active', LANG_KEYS[i] === lang));
+				document.getElementById('helpTitle').textContent = t.helpTitle;
+				document.getElementById('helpHint').textContent = t.helpHint;
+				const table = document.getElementById('helpTable');
+				table.innerHTML = '';
+				t.helpShortcuts.forEach(([key, desc]) => {
+					const tr = document.createElement('tr');
+					tr.innerHTML = `<td><span class="help-key">${key}</span></td><td class="help-desc">${desc}</td>`;
+					table.appendChild(tr);
+				});
+			}
+
+			function initLangBar(){
+				const bar = document.getElementById('langBar');
+				LANG_KEYS.forEach((lang, i) => {
+					const btn = document.createElement('button');
+					btn.type = 'button';
+					btn.className = 'flag-btn' + (lang === 'en' ? ' active' : '');
+					btn.innerHTML = FLAGS_SVG[i];
+					btn.onclick = () => applyTranslation(lang);
+					bar.appendChild(btn);
+				});
+			}
+
+			function toggleHelp(){
+				document.getElementById('helpOverlay').classList.toggle('show');
+			}
+
+			function closeHelp(e){
+				if(e.target === document.getElementById('helpOverlay')){
+					document.getElementById('helpOverlay').classList.remove('show');
+				}
+			}
+
+			document.addEventListener("keydown", e => {
+				if(document.activeElement.tagName === "INPUT"){
+					return;
+				}
+				if(e.key === "?"){
+					toggleHelp();
+				}else if(e.key.toLowerCase() === "t"){
+					toggleTheme();
+				}else if(e.key.toLowerCase() === "r"){
+					window.location.reload();
+				}else if(e.key.toLowerCase() === "l"){
+					const currentIndex = LANG_KEYS.findIndex((_, i) => document.querySelectorAll('.flag-btn')[i]?.classList.contains('active'));
+					const nextIndex = (currentIndex + 1)%(LANG_KEYS.length);
+					applyTranslation(LANG_KEYS[nextIndex]);
+				}
+			});
+
+			resetAndRecalculate();
+			initLangBar();
+			applyTranslation('en');
+		</script>
+	</body>
+</html>

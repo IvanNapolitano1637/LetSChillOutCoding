@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="en"><!--U03#009 - Fabio - Sounds-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Sounds Lab</title>
+		<style>
+			body{
+				background: #BFBFFF;
+				font-family: sans-serif;
+				padding: 20px;
+			}
+			output{
+				background: #FFFF7F;
+				padding: 2px 4px;
+				border-radius: 3px;
+			}
+			button{
+				background-color: #FFBFBF;
+				border: 1px solid #999;
+				cursor: pointer;
+				padding: 6px 12px;
+				margin: 2px;
+				border-radius: 4px;
+			}
+			.row{
+				margin-bottom: 15px;
+				display: block;
+			}
+			.flex-row{
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				margin-bottom: 15px;
+				flex-wrap: nowrap;
+			}
+			.section-title{
+				font-weight: bold;
+				border-bottom: 1px solid #777;
+				margin-bottom: 10px;
+				display: block;
+				color: #333;
+				padding-top: 10px;
+			}
+			#scope{
+				background: #222;
+				border: 2px solid #555;
+				display: block;
+				width: 100%;
+				max-width: 1400px;
+				height: 150px;
+				margin-bottom: 20px;
+				border-radius: 8px;
+			}
+			.freq-slider{
+				width: 90%;
+				max-width: 1300px;
+			}
+			.full-width-slider{
+				width: 100%;
+				max-width: 1400px;
+			}
+			.slider-label{
+				min-width: unset;
+				font-size: 0.85em;
+				color: #444;
+			}
+			.slider-container{
+				display: flex;
+				flex-direction: column;
+				align-items: stretch;
+				gap: 5px;
+				margin-bottom: 12px;
+			}
+			.label-row{
+				display: flex;
+				justify-content: flex-start;
+				gap: 8px;
+				align-items: center;
+			}
+			.slider-label{
+				min-width: unset;
+				font-weight: bold;
+				font-size: 0.9em;
+			}
+			.full-width-slider{
+				width: 100%;
+				margin: 0;
+			}
+			#keyboard{
+				display: flex;
+				justify-content: flex-start;
+				position: relative;
+				height: 180px;
+				margin-top: 30px;
+			}
+			#keyboard button{
+				-webkit-tap-highlight-color: transparent;
+				touch-action: none;
+				user-select: none;
+			}
+			#keyboard button.white{
+				flex: 0 0 50px;
+				height: 180px;
+				display: flex;
+				flex-direction: column;
+				justify-content: flex-end;
+				align-items: center;
+				user-select: none;
+				background-color: #FFFFBF;
+				z-index: 1;
+				position: relative;
+				border: 1px solid #999;
+				box-sizing: border-box;
+				transition: transform 0.05s;
+			}
+			#keyboard button.black{
+				width: 35px;
+				height: 110px;
+				background-color: #BFBFBF;
+				position: absolute;
+				top: 0;
+				z-index: 2;
+				border: 1px solid #666;
+				box-sizing: border-box;
+				transition: transform 0.05s;
+				text-align: left;
+				padding-left: 5px;
+			}
+			#keyboard button#Csharp4{
+				left: 33px;
+			}
+			#keyboard button#Dsharp4{
+				left: 88px;
+			}
+			#keyboard button#Fsharp4{
+				left: 196px;
+			}
+			#keyboard button#Gsharp4{
+				left: 250px;
+			}
+			#keyboard button#Asharp4{
+				left: 304px;
+			}
+			#keyboard button.pressed{
+				transform: translateY(4px);
+				background-color: #FFD2D2 !important;
+			}
+			.flex-row[style*="align-items: flex-start;"]{
+				display: flex;
+				flex-direction: row;
+			}
+			@media(max-width: 600px){
+				.flex-row[style*="align-items: flex-start;"]{
+					flex-direction: column;
+				}
+				.row[style*="flex-grow: 1;"]{
+					width: 100%;
+					margin-top: 20px;
+				}
+				.full-width-slider{
+					width: 100%;
+				}
+				.radio-grid{
+					grid-template-columns: 1fr;
+				}
+			}
+			.flex-column{
+				display: flex;
+				flex-direction: column;
+				align-items: flex-start;
+				gap: 8px;
+				margin-bottom: 15px;
+			}
+			.flex-column b{
+				color: #333;
+				font-size: 0.95em;
+			}
+			.radio-grid{
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 10px;
+				width: 100%;
+				max-width: 450px;
+			}
+			.radio-option{
+				display: flex;
+				align-items: center;
+				background: rgba(255, 255, 255, 0.2);
+				padding: 8px;
+				border-radius: 5px;
+				white-space: nowrap;
+			}
+			.radio-option output{
+				margin-left: 5px;
+				flex-grow: 1;
+				text-align: center;
+				overflow: hidden;
+			}
+			.hidden{
+				display: none !important;
+			}
+			.flag-svg{
+				width: 28px;
+				height: 18px;
+				display: inline-block;
+				vertical-align: middle;
+				border: 1px solid #999;
+				border-radius: 2px;
+				flex-shrink: 0;
+			}
+			#translateBtn{
+				display: inline-flex;
+				align-items: center;
+				gap: 6px;
+			}
+			.radio-option input[type="radio"]{
+				transform: scale(1.5);
+				margin: 0 10px;
+				cursor: pointer;
+			}
+			#helpOverlay{
+				display:none;
+				position:fixed;
+				top:0;
+				left:0;
+				width:100%;
+				height:100%;
+				background:rgba(0,0,0,0.55);
+				z-index:9999;
+				justify-content:center;
+				align-items:center;
+			}
+			#helpOverlay.open{
+				display:flex;
+			}
+			#helpBox{
+				background:#FFFFF0;
+				border:2px solid #888;
+				border-radius:10px;
+				padding:24px 28px;
+				max-width:560px;
+				width:90%;
+				max-height:85vh;
+				overflow-y:auto;
+				position:relative;
+				box-shadow:0 8px 32px rgba(0,0,0,0.35);
+			}
+			#helpBox h2{
+				margin:0 0 14px 0;
+				font-size:1.1em;
+				color:#222;
+				border-bottom:1px solid #bbb;
+				padding-bottom:8px;
+			}
+			#helpBox table{
+				width:100%;
+				border-collapse:collapse;
+				font-size:0.91em;
+			}
+			#helpBox th{
+				text-align:left;
+				color:#555;
+				padding:4px 8px;
+				border-bottom:1px solid #ccc;
+			}
+			#helpBox td{
+				padding:5px 8px;
+				border-bottom:1px solid #eee;
+				vertical-align:top;
+			}
+			#helpBox td:first-child{
+				font-family:monospace;
+				font-weight:bold;
+				background:#FFFF7F;
+				border-radius:3px;
+				white-space:nowrap;
+				width:1%;
+			}
+			#helpCloseX{
+				position:absolute;
+				top:10px;
+				right:14px;
+				background:none;
+				border:none;
+				font-size:1.4em;
+				cursor:pointer;
+				color:#666;
+				padding:0;
+				line-height:1;
+			}
+			#helpCloseX:hover{
+				color:#000;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="helpOverlay" onclick="if(event.target===this){helpClose();}">
+			<div id="helpBox">
+				<button id="helpCloseX" onclick="helpClose()">&#x2715;</button>
+				<h2 id="helpH2"></h2>
+				<table>
+					<thead>
+						<tr>
+							<th id="helpTh1"></th>
+							<th id="helpTh2"></th>
+						</tr>
+					</thead>
+					<tbody id="helpTbody"></tbody>
+				</table>
+			</div>
+		</div>
+		<canvas id="scope"></canvas>
+		<div class="section-title" data-i18n="section_osc">OSCILLATOR &amp; ADDITIVE SYNTHESIS</div>
+			<div class="flex-column">
+				<b data-i18n="label_osc_type">Oscillator type:</b>
+				<div class="radio-grid">
+				<div class="radio-option"><input type="radio" id="sine" name="oscillatorType" value="sine" checked><output><span data-i18n="wave_sine">sine</span></output></div>
+				<div class="radio-option"><input type="radio" id="sawtooth" name="oscillatorType" value="sawtooth"><output><span data-i18n="wave_sawtooth">sawtooth</span></output></div>
+				<div class="radio-option"><input type="radio" id="square" name="oscillatorType" value="square"><output><span data-i18n="wave_square">square</span></output></div>
+				<div class="radio-option"><input type="radio" id="triangle" name="oscillatorType" value="triangle"><output><span data-i18n="wave_triangle">triangle</span></output></div>
+			</div>
+		</div>
+		<div id="HarmonicList" class="row hidden">
+			<div id="Harmonic_2" class="slider-container"><span class="slider-label"><span data-i18n="label_h2">2nd Harmonic:</span><output id="h2_val">0.00</output></span><input id="h2" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
+			<div id="Harmonic_3" class="slider-container"><span class="slider-label"><span data-i18n="label_h3">3rd Harmonic:</span><output id="h3_val">0.00</output></span><input id="h3" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
+			<div id="Harmonic_4" class="slider-container"><span class="slider-label"><span data-i18n="label_h4">4th Harmonic:</span><output id="h4_val">0.00</output></span><input id="h4" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0" oninput="updateHarmonics()"></div>
+		</div>
+		<div id="LowPassFilter" class="section-title hidden" data-i18n="section_lpf">LOW PASS FILTER (VCF)</div>
+		<div class="row">
+			<div id="Cutoff" class="slider-container hidden">
+				<span class="slider-label"><span data-i18n="label_cutoff">Cutoff(Freq):</span><output id="cutoff_val">20000 Hz</output></span>
+				<input id="cutoff" type="range" class="full-width-slider" min="20" max="20000" step="1" value="20000" oninput="updateFilter()">			
+			</div>
+			<div id="Resonance" class="slider-container hidden">
+				<span class="slider-label"><span data-i18n="label_resonance">Resonance(Q):</span><output id="resonance_val">1.0</output></span>
+				<input id="resonance" type="range" class="full-width-slider" min="0" max="20" step="0.1" value="1" oninput="updateFilter()">
+			</div>
+		</div>
+		<div class="slider-container">
+			<span class="slider-label" data-i18n="label_frequency">Frequency</span>
+			<input type="range" id="frequencyRange" class="full-width-slider" name="frequency" oninput="setFrequency()">
+			<div style="display: flex; justify-content: space-between; font-size: 0.8em; font-weight: bold; color: #444; margin-top: -2px;">
+				<span><span data-i18n="label_freq_min">Min:</span> <output id="FREQUENCY_MIN_VALUE" style="background:transparent; padding:0;">0 Hz</output></span>
+				<span><span data-i18n="label_freq_cur">Current:</span> <output id="FREQUENCY_VALUE" style="background:transparent; padding:0;">440 Hz</output></span>
+				<span><span data-i18n="label_freq_max">Max:</span> <output id="FREQUENCY_MAX_VALUE" style="background:transparent; padding:0;">1000 Hz</output></span>
+			</div>
+		</div>
+		<div class="flex-row">
+			<button id="play_and_stop_button" onclick="play_and_stop()">▶</button>
+			<button onclick="multiplyFREQUENCY_VALUE(0.5)">f/2</button>
+			<button onclick="multiplyFREQUENCY_VALUE(2)">f×2</button>
+			<button id="showingButton" onclick="toggleShowing()" data-i18n="btn_pro">Pro</button>
+			<button onclick="window.location.reload();" data-i18n="btn_page">&#x27F3; Page</button>
+			<button id="translateBtn" onclick="nextLanguage()"><span id="flagIcon"></span></button>
+		</div>
+		<div class="flex-row" style="align-items: flex-start;">
+			<div class="row" style="min-width: 100px;">
+				<b data-i18n="label_max_freq">Max freq:</b><br>
+				<button onclick="halveMax()" data-i18n="btn_smaller_max">Smaller Max</button><br>
+				<input type="radio" name="maxFrequency" value="50" onchange="setMaxFrequency()" disabled>50<br>
+				<input type="radio" name="maxFrequency" value="100" onchange="setMaxFrequency()" disabled>100<br>
+				<input type="radio" name="maxFrequency" value="200" onchange="setMaxFrequency()" disabled>200<br>
+				<input type="radio" name="maxFrequency" value="500" onchange="setMaxFrequency()">500<br>
+				<input type="radio" name="maxFrequency" value="1000" onchange="setMaxFrequency()" checked>1000<br>
+				<input type="radio" name="maxFrequency" value="2000" onchange="setMaxFrequency()">2000<br>
+				<input type="radio" name="maxFrequency" value="4000" onchange="setMaxFrequency()">4000<br>
+				<input type="radio" name="maxFrequency" value="8000" onchange="setMaxFrequency()">8000<br>
+				<input type="radio" name="maxFrequency" value="16000" onchange="setMaxFrequency()">16000<br>
+				<input type="radio" name="maxFrequency" value="24000" onchange="setMaxFrequency()">24000<br>
+				<button onclick="doubleMax()" data-i18n="btn_bigger_max">Bigger Max</button>
+			</div>
+			<div id="ADSR" class="row hidden" style="flex-grow: 1;">
+				<b data-i18n="label_adsr">ADSR &amp; Master Vol:</b>
+				<div class="slider-container"><span class="slider-label"><span data-i18n="label_attack">Attack:</span><output id="attack_val">10</output></span><input id="attack" type="range" class="full-width-slider" min="0" max="2000" value="10" oninput="updateAdsLabel()"></div>
+				<div class="slider-container"><span class="slider-label"><span data-i18n="label_decay">Decay:</span><output id="decay_val">100</output></span><input id="decay" type="range" class="full-width-slider" min="0" max="2000" value="100" oninput="updateAdsLabel()"></div>
+				<div class="slider-container"><span class="slider-label"><span data-i18n="label_sustain">Sustain:</span><output id="sustain_val">0.80</output></span><input id="sustain" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0.8" oninput="updateAdsLabel()"></div>
+				<div class="slider-container"><span class="slider-label"><span data-i18n="label_release">Release:</span><output id="release_val">150</output></span><input id="release" type="range" class="full-width-slider" min="0" max="3000" value="150" oninput="updateAdsLabel()"></div>
+				<div class="slider-container"><span class="slider-label"><span data-i18n="label_master_vol">Master Vol:</span><output id="masterVol_val">0.60</output></span><input id="masterVol" type="range" class="full-width-slider" min="0" max="1" step="0.01" value="0.6" oninput="setMasterVol()"></div>
+			</div>
+		</div>
+		<div class="section-title" data-i18n="section_sirens">SIRENS</div>
+		<div class="flex-column">
+			<b data-i18n="label_siren_type">Siren type:</b>
+			<div>
+				<input type="radio" id="s0" name="sirenType" onchange="changeSirenType(800,1200,300)" checked><output>I</output>
+				<input type="radio" id="s1" name="sirenType" onchange="changeSirenType(300,600,500)"><output>II</output>
+				<input type="radio" id="s2" name="sirenType" onchange="changeSirenType(1900,2300,50)"><output>III</output>
+				<input type="radio" id="s3" name="sirenType" onchange="changeSirenType(466,622,750)"><output>IV</output>
+				<input type="radio" id="s4" name="sirenType" onchange="changeSirenType(466,622,550)"><output>V</output>
+				<input type="radio" id="s5" name="sirenType" onchange="changeSirenType(1200,1600,500)"><output>VI</output>
+			</div>
+		</div>
+		<div class="flex-column">
+			<b data-i18n="label_siren_wave">Siren Wave:</b>
+			<div class="radio-grid">
+				<div class="radio-option"><input type="radio" name="sirenWave" value="sine" checked onchange="updateSirenWave()"><output><span data-i18n="wave_sine">sine</span></output></div>
+				<div class="radio-option"><input type="radio" name="sirenWave" value="sawtooth" onchange="updateSirenWave()"><output><span data-i18n="wave_sawtooth">sawtooth</span></output></div>
+				<div class="radio-option"><input type="radio" name="sirenWave" value="square" onchange="updateSirenWave()"><output><span data-i18n="wave_square">square</span></output></div>
+				<div class="radio-option"><input type="radio" name="sirenWave" value="triangle" onchange="updateSirenWave()"><output><span data-i18n="wave_triangle">triangle</span></output></div>
+			</div>
+		</div>
+		<div class="flex-row">
+			<button id="sirenButton" onclick="sirenOnOff()" data-i18n="btn_siren_on">Siren On</button>
+		</div>
+		<div id="keyboard">
+			<button class="white" id="C4">C4</button>
+			<button class="white" id="D4">D4</button>
+			<button class="white" id="E4">E4</button>
+			<button class="white" id="F4">F4</button>
+			<button class="white" id="G4">G4</button>
+			<button class="white" id="A4">A4</button>
+			<button class="white" id="B4">B4</button>
+			<button class="white" id="C5">C5</button>
+			<button class="black" id="Csharp4">C#4</button>
+			<button class="black" id="Dsharp4">D#4</button>
+			<button class="black" id="Fsharp4">F#4</button>
+			<button class="black" id="Gsharp4">G#4</button>
+			<button class="black" id="Asharp4">A#4</button>
+		</div>
+		<script>
+			let audioContext = null;
+			let masterGain = null;
+			let analyzer = null;
+			let lowPassFilter = null;
+			let oscillatorinputType = "sine";
+			let frequencyHz = 440;
+			let indexArray = 4;
+			let play = false;
+			let sirenIsOn = false;
+			let basic = true;
+			const ACTIVE_VOICES = new Map();
+			const MAX_FREQUENCY_VALUE = [50,100,200,500,1000,2000,4000,8000,16000,24000];
+			const KEY_MAP = {"a":"C4","w":"Csharp4","s":"D4","e":"Dsharp4","d":"E4","f":"F4","t":"Fsharp4","g":"G4","y":"Gsharp4","h":"A4","u":"Asharp4","j":"B4","k":"C5"};
+			const FREQ_MAP = {"C4":261.62,"Csharp4":277.18,"D4":293.66,"Dsharp4":311.12,"E4":329.62,"F4":349.22,"Fsharp4":369.99,"G4":391.99,"Gsharp4":415.3,"A4":440,"Asharp4":466.16,"B4":493.88,"C5":523.25};
+			const FLAGS_SVG = [
+				'<svg class="flag-svg" viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#s)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>', // UK
+				//'<svg class="flag-svg" viewBox="0 0 7410 3900"><rect width="7410" height="3900" fill="#b22234"/><path d="M0 300h7410M0 900h7410M0 1500h7410M0 2100h7410M0 2700h7410M0 3300h7410" stroke="#fff" stroke-width="300"/><rect width="2964" height="2100" fill="#3c3b6e"/><path d="M247 175l247 759-646-469h798l-646 469z" fill="#fff" transform="scale(.2)"/></svg>', // US
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>', // IT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg>', // FR
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#c60b1e"/><rect width="3" height="1" y="0.5" fill="#ffc400"/></svg>', // ES
+				'<svg class="flag-svg" viewBox="0 0 5 3"><rect width="5" height="3"/><rect width="5" height="2" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg>', // DE
+				'<svg class="flag-svg" viewBox="0 0 600 400"><rect width="240" height="400" fill="#006600"/><rect x="240" width="360" height="400" fill="#ff0000"/></svg>', // PT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002b7f"/><rect width="1" height="2" x="1" fill="#fcd116"/><rect width="1" height="2" x="2" fill="#ce1126"/></svg>', // RO
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>', // UA
+				'<svg class="flag-svg" viewBox="0 0 27 18"><rect width="27" height="18" fill="#005bae"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#005bae"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>', // GR
+				//'<svg class="flag-svg" viewBox="0 0 1 1"><rect width="0.5" height="1" fill="#ffe000"/><rect x="0.5" width="0.5" height="1" fill="#fff"/></svg>', // VA
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#800000"/><path d="M0.5,0.5 L2.5,0.5 L2.5,1.5 L0.5,1.5 Z" fill="none" stroke="#FFD700" stroke-width="0.1"/><text x="1.5" y="1.15" font-family="serif" font-weight="bold" font-size="0.4" fill="#FFD700" text-anchor="middle">SPQR</text></svg>', // ROMA
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#de2110"/><path d="M.5 1.1l.3-.9.3.9-1-.6h1z" fill="#ffde00" transform="matrix(.4 0 0 .4 .1 .1)"/></svg>', // CN
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>' // JP
+			];
+			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
+			const TRANSLATIONS = {
+				en: {
+					section_osc: "OSCILLATOR & ADDITIVE SYNTHESIS",
+					section_lpf: "LOW PASS FILTER (VCF)",
+					section_sirens: "SIRENS",
+					label_osc_type: "Oscillator type:",
+					wave_sine: "sine",
+					wave_sawtooth: "sawtooth",
+					wave_square: "square",
+					wave_triangle: "triangle",
+					label_h2: "2nd Harmonic:",
+					label_h3: "3rd Harmonic:",
+					label_h4: "4th Harmonic:",
+					label_cutoff: "Cutoff(Freq):",
+					label_resonance: "Resonance(Q):",
+					label_frequency: "Frequency",
+					label_freq_min: "Min:",
+					label_freq_cur: "Current:",
+					label_freq_max: "Max:",
+					btn_pro: "Pro",
+					btn_page: "⟳",
+					btn_translate: " Translate",
+					label_max_freq: "Max freq:",
+					btn_smaller_max: "Smaller Max",
+					btn_bigger_max: "Bigger Max",
+					label_adsr: "ADSR & Master Vol:",
+					label_attack: "Attack:",
+					label_decay: "Decay:",
+					label_sustain: "Sustain:",
+					label_release: "Release:",
+					label_master_vol: "Master Vol:",
+					label_siren_type: "Siren type:",
+					label_siren_wave: "Siren Wave:",
+					btn_siren_on: "Siren On",
+					btn_siren_off: "Siren Off",
+					btn_basic: "Basic"
+				},
+				it: {
+					section_osc: "OSCILLATORE & SINTESI ADDITIVA",
+					section_lpf: "FILTRO PASSA-BASSO (VCF)",
+					section_sirens: "SIRENE",
+					label_osc_type: "Tipo di oscillatore:",
+					wave_sine: "sinusoide",
+					wave_sawtooth: "dente di sega",
+					wave_square: "onda quadra",
+					wave_triangle: "triangolare",
+					label_h2: "2° Armonico:",
+					label_h3: "3° Armonico:",
+					label_h4: "4° Armonico:",
+					label_cutoff: "Taglio(Freq):",
+					label_resonance: "Risonanza(Q):",
+					label_frequency: "Frequenza",
+					label_freq_min: "Min:",
+					label_freq_cur: "Corrente:",
+					label_freq_max: "Max:",
+					btn_pro: "Pro",
+					btn_page: "⟳",
+					btn_translate: " Traduci",
+					label_max_freq: "Freq. max:",
+					btn_smaller_max: "Max più piccolo",
+					btn_bigger_max: "Max più grande",
+					label_adsr: "ADSR & Vol. Principale:",
+					label_attack: "Attacco:",
+					label_decay: "Decadimento:",
+					label_sustain: "Sustain:",
+					label_release: "Rilascio:",
+					label_master_vol: "Vol. Principale:",
+					label_siren_type: "Tipo di sirena:",
+					label_siren_wave: "Onda sirena:",
+					btn_siren_on: "Sirena On",
+					btn_siren_off: "Sirena Off",
+					btn_basic: "Base"
+				},
+				fr: {
+					section_osc: "OSCILLATEUR & SYNTHÈSE ADDITIVE",
+					section_lpf: "FILTRE PASSE-BAS (VCF)",
+					section_sirens: "SIRÈNES",
+					label_osc_type: "Type d'oscillateur :",
+					wave_sine: "sinusoïde",
+					wave_sawtooth: "dent de scie",
+					wave_square: "carré",
+					wave_triangle: "triangle",
+					label_h2: "2e Harmonique :",
+					label_h3: "3e Harmonique :",
+					label_h4: "4e Harmonique :",
+					label_cutoff: "Coupure(Fréq) :",
+					label_resonance: "Résonance(Q) :",
+					label_frequency: "Fréquence",
+					label_freq_min: "Min :",
+					label_freq_cur: "Actuel :",
+					label_freq_max: "Max :",
+					btn_pro: "Pro",
+					btn_page: "⟳",
+					btn_translate: " Traduire",
+					label_max_freq: "Fréq. max :",
+					btn_smaller_max: "Max plus petit",
+					btn_bigger_max: "Max plus grand",
+					label_adsr: "ADSR & Vol. Principal :",
+					label_attack: "Attaque :",
+					label_decay: "Déclin :",
+					label_sustain: "Maintien :",
+					label_release: "Relâche :",
+					label_master_vol: "Vol. Principal :",
+					label_siren_type: "Type de sirène :",
+					label_siren_wave: "Onde sirène :",
+					btn_siren_on: "Sirène On",
+					btn_siren_off: "Sirène Off",
+					btn_basic: "Basique"
+				},
+				es: {
+					section_osc: "OSCILADOR & SÍNTESIS ADITIVA",
+					section_lpf: "FILTRO PASA-BAJO (VCF)",
+					section_sirens: "SIRENAS",
+					label_osc_type: "Tipo de oscilador:",
+					wave_sine: "senoidal",
+					wave_sawtooth: "diente de sierra",
+					wave_square: "cuadrada",
+					wave_triangle: "triangular",
+					label_h2: "2° Armónico:",
+					label_h3: "3° Armónico:",
+					label_h4: "4° Armónico:",
+					label_cutoff: "Corte(Frec):",
+					label_resonance: "Resonancia(Q):",
+					label_frequency: "Frecuencia",
+					label_freq_min: "Mín:",
+					label_freq_cur: "Actual:",
+					label_freq_max: "Máx:",
+					btn_pro: "Pro",
+					btn_page: "⟳",
+					btn_translate: " Traducir",
+					label_max_freq: "Frec. máx:",
+					btn_smaller_max: "Max más pequeño",
+					btn_bigger_max: "Max más grande",
+					label_adsr: "ADSR & Vol. Principal:",
+					label_attack: "Ataque:",
+					label_decay: "Decaimiento:",
+					label_sustain: "Sustain:",
+					label_release: "Liberación:",
+					label_master_vol: "Vol. Principal:",
+					label_siren_type: "Tipo de sirena:",
+					label_siren_wave: "Onda sirena:",
+					btn_siren_on: "Sirena On",
+					btn_siren_off: "Sirena Off",
+					btn_basic: "Básico"
+				},
+				de: {
+					section_osc: "OSZILLATOR & ADDITIVE SYNTHESE",
+					section_lpf: "TIEFPASSFILTER (VCF)",
+					section_sirens: "SIRENEN",
+					label_osc_type: "Oszillatortyp:",
+					wave_sine: "Sinus",
+					wave_sawtooth: "Sägezahn",
+					wave_square: "Rechteck",
+					wave_triangle: "Dreieck",
+					label_h2: "2. Oberton:",
+					label_h3: "3. Oberton:",
+					label_h4: "4. Oberton:",
+					label_cutoff: "Grenzfrequenz:",
+					label_resonance: "Resonanz(Q):",
+					label_frequency: "Frequenz",
+					label_freq_min: "Min:",
+					label_freq_cur: "Aktuell:",
+					label_freq_max: "Max:",
+					btn_pro: "Pro",
+					btn_page: "⟳",
+					btn_translate: " Übersetzen",
+					label_max_freq: "Max Freq.:",
+					btn_smaller_max: "Kleineres Max",
+					btn_bigger_max: "Größeres Max",
+					label_adsr: "ADSR & Hauptlautstärke:",
+					label_attack: "Anschlag:",
+					label_decay: "Abfall:",
+					label_sustain: "Sustain:",
+					label_release: "Freigabe:",
+					label_master_vol: "Hauptlautstärke:",
+					label_siren_type: "Sirenentyp:",
+					label_siren_wave: "Sirenenwelle:",
+					btn_siren_on: "Sirene An",
+					btn_siren_off: "Sirene Aus",
+					btn_basic: "Basis"
+				},
+				pt: {
+					section_osc: "OSCILADOR & SÍNTESE ADITIVA",
+					section_lpf: "FILTRO PASSA-BAIXO (VCF)",
+					section_sirens: "SIRENES",
+					label_osc_type: "Tipo de oscilador:",
+					wave_sine: "senoidal",
+					wave_sawtooth: "dente de serra",
+					wave_square: "quadrada",
+					wave_triangle: "triangular",
+					label_h2: "2° Harmônico:",
+					label_h3: "3° Harmônico:",
+					label_h4: "4° Harmônico:",
+					label_cutoff: "Corte(Freq):",
+					label_resonance: "Ressonância(Q):",
+					label_frequency: "Frequência",
+					label_freq_min: "Mín:",
+					label_freq_cur: "Atual:",
+					label_freq_max: "Máx:",
+					btn_pro: "Pro",
+					btn_page: "⟳",
+					btn_translate: " Traduzir",
+					label_max_freq: "Freq. máx:",
+					btn_smaller_max: "Max menor",
+					btn_bigger_max: "Max maior",
+					label_adsr: "ADSR & Vol. Principal:",
+					label_attack: "Ataque:",
+					label_decay: "Decaimento:",
+					label_sustain: "Sustain:",
+					label_release: "Liberação:",
+					label_master_vol: "Vol. Principal:",
+					label_siren_type: "Tipo de sirene:",
+					label_siren_wave: "Onda da sirene:",
+					btn_siren_on: "Sirene On",
+					btn_siren_off: "Sirene Off",
+					btn_basic: "Básico"
+				},
+				ro: {
+					section_osc: "OSCILATOR & SINTEZĂ ADITIVĂ",
+					section_lpf: "FILTRU TRECE-JOS (VCF)",
+					section_sirens: "SIRENE",
+					label_osc_type: "Tip oscilator:",
+					wave_sine: "sinusoidă",
+					wave_sawtooth: "ferăstrău",
+					wave_square: "pătrat",
+					wave_triangle: "triunghi",
+					label_h2: "Armonicul 2:",
+					label_h3: "Armonicul 3:",
+					label_h4: "Armonicul 4:",
+					label_cutoff: "Frecv. tăiere:",
+					label_resonance: "Rezonanță(Q):",
+					label_frequency: "Frecvență",
+					label_freq_min: "Min:",
+					label_freq_cur: "Curent:",
+					label_freq_max: "Max:",
+					btn_pro: "Pro",
+					btn_page: "⟳",
+					btn_translate: " Traduce",
+					label_max_freq: "Freq. max:",
+					btn_smaller_max: "Max mai mic",
+					btn_bigger_max: "Max mai mare",
+					label_adsr: "ADSR & Vol. Principal:",
+					label_attack: "Atac:",
+					label_decay: "Decădere:",
+					label_sustain: "Susținere:",
+					label_release: "Eliberare:",
+					label_master_vol: "Vol. Principal:",
+					label_siren_type: "Tip sirenă:",
+					label_siren_wave: "Undă sirenă:",
+					btn_siren_on: "Sirenă On",
+					btn_siren_off: "Sirenă Off",
+					btn_basic: "De bază"
+				},
+				uk: {
+					section_osc: "ОСЦИЛЯТОР & АДИТИВНИЙ СИНТЕЗ",
+					section_lpf: "ФІЛЬТР НИЗЬКИХ ЧАСТОТ (VCF)",
+					section_sirens: "СИРЕНИ",
+					label_osc_type: "Тип осцилятора:",
+					wave_sine: "синус",
+					wave_sawtooth: "пилка",
+					wave_square: "прямокутна",
+					wave_triangle: "трикутна",
+					label_h2: "2-й гармонік:",
+					label_h3: "3-й гармонік:",
+					label_h4: "4-й гармонік:",
+					label_cutoff: "Зріз(Частота):",
+					label_resonance: "Резонанс(Q):",
+					label_frequency: "Частота",
+					label_freq_min: "Мін:",
+					label_freq_cur: "Поточна:",
+					label_freq_max: "Макс:",
+					btn_pro: "Про",
+					btn_page: "⟳",
+					btn_translate: " Перекласти",
+					label_max_freq: "Макс. частота:",
+					btn_smaller_max: "Менший макс.",
+					btn_bigger_max: "Більший макс.",
+					label_adsr: "ADSR & Основна гучність:",
+					label_attack: "Атака:",
+					label_decay: "Спад:",
+					label_sustain: "Тримання:",
+					label_release: "Відпускання:",
+					label_master_vol: "Основна гучність:",
+					label_siren_type: "Тип сирени:",
+					label_siren_wave: "Хвиля сирени:",
+					btn_siren_on: "Сирена Увімк.",
+					btn_siren_off: "Сирена Вимк.",
+					btn_basic: "Базовий"
+				},
+				el: {
+					section_osc: "ΤΑΛΑΝΤΩΤΗΣ & ΠΡΟΣΘΕΤΙΚΗ ΣΥΝΘΕΣΗ",
+					section_lpf: "ΦΙΛΤΡΟ ΧΑΜΗΛΩΝ ΣΥΧΝΟΤΗΤΩΝ (VCF)",
+					section_sirens: "ΣΕΙΡΗΝΕΣ",
+					label_osc_type: "Τύπος ταλαντωτή:",
+					wave_sine: "ημίτονο",
+					wave_sawtooth: "πριόνι",
+					wave_square: "τετράγωνο",
+					wave_triangle: "τρίγωνο",
+					label_h2: "2η Αρμονική:",
+					label_h3: "3η Αρμονική:",
+					label_h4: "4η Αρμονική:",
+					label_cutoff: "Αποκοπή(Συχν.):",
+					label_resonance: "Συντονισμός(Q):",
+					label_frequency: "Συχνότητα",
+					label_freq_min: "Ελάχ.:",
+					label_freq_cur: "Τρέχουσα:",
+					label_freq_max: "Μέγ.:",
+					btn_pro: "Επαγ.",
+					btn_page: "⟳",
+					btn_translate: " Μετάφραση",
+					label_max_freq: "Μέγ. συχν.:",
+					btn_smaller_max: "Μικρότερο μέγ.",
+					btn_bigger_max: "Μεγαλύτερο μέγ.",
+					label_adsr: "ADSR & Κύρια Ένταση:",
+					label_attack: "Προσβολή:",
+					label_decay: "Κατάπτωση:",
+					label_sustain: "Διατήρηση:",
+					label_release: "Απελευθέρωση:",
+					label_master_vol: "Κύρια Ένταση:",
+					label_siren_type: "Τύπος σειρήνας:",
+					label_siren_wave: "Κύμα σειρήνας:",
+					btn_siren_on: "Σειρήνα On",
+					btn_siren_off: "Σειρήνα Off",
+					btn_basic: "Βασικό"
+				},
+				la: {
+					section_osc: "OSCILLATOR & SYNTHESIS ADDITIVA",
+					section_lpf: "FILTRUM FREQUENTIARUM HUMILIUM (VCF)",
+					section_sirens: "SIRENAE",
+					label_osc_type: "Genus oscillatoris:",
+					wave_sine: "sinusoida",
+					wave_sawtooth: "serra",
+					wave_square: "quadratum",
+					wave_triangle: "triangulum",
+					label_h2: "Harmonicus II:",
+					label_h3: "Harmonicus III:",
+					label_h4: "Harmonicus IV:",
+					label_cutoff: "Sectio(Freq):",
+					label_resonance: "Resonantia(Q):",
+					label_frequency: "Frequentia",
+					label_freq_min: "Min:",
+					label_freq_cur: "Praesens:",
+					label_freq_max: "Max:",
+					btn_pro: "Pro",
+					btn_page: "⟳",
+					btn_translate: " Converte",
+					label_max_freq: "Freq. max:",
+					btn_smaller_max: "Max minor",
+					btn_bigger_max: "Max maior",
+					label_adsr: "ADSR & Volumen Principale:",
+					label_attack: "Impetus:",
+					label_decay: "Decessus:",
+					label_sustain: "Sustentatio:",
+					label_release: "Relaxatio:",
+					label_master_vol: "Volumen Principale:",
+					label_siren_type: "Genus sirenae:",
+					label_siren_wave: "Unda sirenae:",
+					btn_siren_on: "Sirena On",
+					btn_siren_off: "Sirena Off",
+					btn_basic: "Simplex"
+				},
+				zh: {
+					section_osc: "振荡器 & 加法合成",
+					section_lpf: "低通滤波器 (VCF)",
+					section_sirens: "警报",
+					label_osc_type: "振荡器类型：",
+					wave_sine: "正弦波",
+					wave_sawtooth: "锯齿波",
+					wave_square: "方波",
+					wave_triangle: "三角波",
+					label_h2: "第2谐波：",
+					label_h3: "第3谐波：",
+					label_h4: "第4谐波：",
+					label_cutoff: "截止频率：",
+					label_resonance: "共振(Q)：",
+					label_frequency: "频率",
+					label_freq_min: "最小：",
+					label_freq_cur: "当前：",
+					label_freq_max: "最大：",
+					btn_pro: "专业",
+					btn_page: "⟳",
+					btn_translate: " 翻译",
+					label_max_freq: "最大频率：",
+					btn_smaller_max: "减小最大值",
+					btn_bigger_max: "增大最大值",
+					label_adsr: "ADSR & 主音量：",
+					label_attack: "起音：",
+					label_decay: "衰减：",
+					label_sustain: "持音：",
+					label_release: "释音：",
+					label_master_vol: "主音量：",
+					label_siren_type: "警报类型：",
+					label_siren_wave: "警报波形：",
+					btn_siren_on: "警报 开",
+					btn_siren_off: "警报 关",
+					btn_basic: "基础"
+				},
+				ja: {
+					section_osc: "オシレーター & 加算合成",
+					section_lpf: "ローパスフィルター (VCF)",
+					section_sirens: "サイレン",
+					label_osc_type: "オシレーターの種類：",
+					wave_sine: "サイン波",
+					wave_sawtooth: "のこぎり波",
+					wave_square: "矩形波",
+					wave_triangle: "三角波",
+					label_h2: "第2倍音：",
+					label_h3: "第3倍音：",
+					label_h4: "第4倍音：",
+					label_cutoff: "カットオフ(周波数)：",
+					label_resonance: "レゾナンス(Q)：",
+					label_frequency: "周波数",
+					label_freq_min: "最小：",
+					label_freq_cur: "現在：",
+					label_freq_max: "最大：",
+					btn_pro: "プロ",
+					btn_page: "⟳",
+					btn_translate: " 翻訳",
+					label_max_freq: "最大周波数：",
+					btn_smaller_max: "最大値を下げる",
+					btn_bigger_max: "最大値を上げる",
+					label_adsr: "ADSR & マスター音量：",
+					label_attack: "アタック：",
+					label_decay: "ディケイ：",
+					label_sustain: "サスティン：",
+					label_release: "リリース：",
+					label_master_vol: "マスター音量：",
+					label_siren_type: "サイレンの種類：",
+					label_siren_wave: "サイレン波形：",
+					btn_siren_on: "サイレン On",
+					btn_siren_off: "サイレン Off",
+					btn_basic: "基本"
+				}
+			};
+
+			let currentLangIndex = 0;
+
+			const HELP_DATA = {
+				en: { title:"Keyboard Shortcuts", k:"Key", a:"Action", rows:[
+					["A W S E D F T G Y H U J K","Play piano notes C4–C5 (white and black keys)"],
+					["P","Play / Stop the main oscillator"],
+					["I","Halve the current frequency (÷2)"],
+					["O","Double the current frequency (×2)"],
+					["L","Switch to the next language"],
+					["R","Reload the page"],
+					["Q","Toggle siren On / Off"],
+					["V","Toggle Basic / Pro view"],
+					["B","Cycle to next oscillator waveform"],
+					["N","Cycle to next siren type"],
+					["M","Cycle to next siren waveform"],
+					["?","Show / hide this help window"]
+				]},
+				it: { title:"Scorciatoie da tastiera", k:"Tasto", a:"Azione", rows:[
+					["A W S E D F T G Y H U J K","Suona le note del pianoforte da C4 a C5"],
+					["P","Avvia / Ferma l'oscillatore principale"],
+					["I","Dimezza la frequenza corrente (÷2)"],
+					["O","Raddoppia la frequenza corrente (×2)"],
+					["L","Passa alla lingua successiva"],
+					["R","Ricarica la pagina"],
+					["Q","Attiva / disattiva la sirena"],
+					["V","Alterna tra vista Base e Pro"],
+					["B","Passa alla forma d'onda successiva dell'oscillatore"],
+					["N","Passa al tipo di sirena successivo"],
+					["M","Passa alla forma d'onda sirena successiva"],
+					["?","Mostra / nascondi questa finestra di aiuto"]
+				]},
+				fr: { title:"Raccourcis clavier", k:"Touche", a:"Action", rows:[
+					["A W S E D F T G Y H U J K","Jouer les notes du piano C4–C5"],
+					["P","Lancer / Arrêter l'oscillateur principal"],
+					["I","Diviser la fréquence par 2 (÷2)"],
+					["O","Doubler la fréquence (×2)"],
+					["L","Passer à la langue suivante"],
+					["R","Recharger la page"],
+					["Q","Activer / désactiver la sirène"],
+					["V","Basculer entre vue Basique et Pro"],
+					["B","Passer à la prochaine forme d'onde"],
+					["N","Passer au prochain type de sirène"],
+					["M","Passer à la prochaine onde de sirène"],
+					["?","Afficher / masquer cette fenêtre d'aide"]
+				]},
+				es: { title:"Atajos de teclado", k:"Tecla", a:"Acción", rows:[
+					["A W S E D F T G Y H U J K","Tocar notas del piano C4–C5"],
+					["P","Iniciar / Detener el oscilador principal"],
+					["I","Dividir la frecuencia por 2 (÷2)"],
+					["O","Duplicar la frecuencia (×2)"],
+					["L","Cambiar al idioma siguiente"],
+					["R","Recargar la página"],
+					["Q","Activar / desactivar la sirena"],
+					["V","Alternar entre vista Básica y Pro"],
+					["B","Cambiar a la siguiente forma de onda"],
+					["N","Cambiar al siguiente tipo de sirena"],
+					["M","Cambiar a la siguiente onda de sirena"],
+					["?","Mostrar / ocultar esta ventana de ayuda"]
+				]},
+				de: { title:"Tastaturkürzel", k:"Taste", a:"Aktion", rows:[
+					["A W S E D F T G Y H U J K","Klaviertöne C4–C5 spielen"],
+					["P","Oszillator starten / stoppen"],
+					["I","Frequenz halbieren (÷2)"],
+					["O","Frequenz verdoppeln (×2)"],
+					["L","Zur nächsten Sprache wechseln"],
+					["R","Seite neu laden"],
+					["Q","Sirene ein- / ausschalten"],
+					["V","Zwischen Basis- und Pro-Ansicht wechseln"],
+					["B","Nächste Oszillator-Wellenform"],
+					["N","Nächster Sirenentyp"],
+					["M","Nächste Sirenen-Wellenform"],
+					["?","Hilfefenster anzeigen / ausblenden"]
+				]},
+				pt: { title:"Atalhos de teclado", k:"Tecla", a:"Ação", rows:[
+					["A W S E D F T G Y H U J K","Tocar notas do piano C4–C5"],
+					["P","Iniciar / Parar o oscilador principal"],
+					["I","Dividir a frequência por 2 (÷2)"],
+					["O","Dobrar a frequência (×2)"],
+					["L","Mudar para o próximo idioma"],
+					["R","Recarregar a página"],
+					["Q","Ativar / desativar a sirene"],
+					["V","Alternar entre vista Básica e Pro"],
+					["B","Próxima forma de onda do oscilador"],
+					["N","Próximo tipo de sirene"],
+					["M","Próxima forma de onda da sirene"],
+					["?","Mostrar / ocultar esta janela de ajuda"]
+				]},
+				ro: { title:"Comenzi rapide de tastatură", k:"Tastă", a:"Acțiune", rows:[
+					["A W S E D F T G Y H U J K","Cântă note de pian C4–C5"],
+					["P","Pornește / Oprește oscilatorul"],
+					["I","Înjumătățește frecvența (÷2)"],
+					["O","Dublează frecvența (×2)"],
+					["L","Trece la limba următoare"],
+					["R","Reîncarcă pagina"],
+					["Q","Activează / dezactivează sirena"],
+					["V","Comută între vizualizarea De bază și Pro"],
+					["B","Următoarea formă de undă"],
+					["N","Următorul tip de sirenă"],
+					["M","Următoarea undă de sirenă"],
+					["?","Arată / ascunde fereastra de ajutor"]
+				]},
+				uk: { title:"Гарячі клавіші", k:"Клавіша", a:"Дія", rows:[
+					["A W S E D F T G Y H U J K","Грати ноти піаніно C4–C5"],
+					["P","Запустити / Зупинити осцилятор"],
+					["I","Зменшити частоту вдвічі (÷2)"],
+					["O","Збільшити частоту вдвічі (×2)"],
+					["L","Перейти до наступної мови"],
+					["R","Перезавантажити сторінку"],
+					["Q","Увімкнути / вимкнути сирену"],
+					["V","Перемикати між базовим і Pro"],
+					["B","Наступна форма хвилі осцилятора"],
+					["N","Наступний тип сирени"],
+					["M","Наступна форма хвилі сирени"],
+					["?","Показати / приховати вікно довідки"]
+				]},
+				el: { title:"Συντομεύσεις πληκτρολογίου", k:"Πλήκτρο", a:"Ενέργεια", rows:[
+					["A W S E D F T G Y H U J K","Παίξε νότες πιάνου C4–C5"],
+					["P","Έναρξη / Διακοπή ταλαντωτή"],
+					["I","Μείωση συχνότητας κατά μισό (÷2)"],
+					["O","Διπλασιασμός συχνότητας (×2)"],
+					["L","Επόμενη γλώσσα"],
+					["R","Ανανέωση σελίδας"],
+					["Q","Ενεργοποίηση / απενεργοποίηση σειρήνας"],
+					["V","Εναλλαγή Βασικής / Pro προβολής"],
+					["B","Επόμενη μορφή κύματος"],
+					["N","Επόμενος τύπος σειρήνας"],
+					["M","Επόμενη μορφή κύματος σειρήνας"],
+					["?","Εμφάνιση / απόκρυψη βοήθειας"]
+				]},
+				la: { title:"Compendium Clavium", k:"Clavis", a:"Effectus", rows:[
+					["A W S E D F T G Y H U J K","Sona notas clavicordii C4–C5"],
+					["P","Incipe / Siste oscillatorem"],
+					["I","Frequentiam dimidio minue (÷2)"],
+					["O","Frequentiam duplica (×2)"],
+					["L","Ad linguam proximam transi"],
+					["R","Paginam renoua"],
+					["Q","Sirenam accende / extingue"],
+					["V","Inter aspectum Simplicem et Pro commuta"],
+					["B","Ad formam undae proximam transi"],
+					["N","Ad genus sirenae proximum transi"],
+					["M","Ad undae sirenae formam proximam transi"],
+					["?","Hanc fenestram monstra / absconde"]
+				]},
+				zh: { title:"键盘快捷键", k:"按键", a:"功能", rows:[
+					["A W S E D F T G Y H U J K","弹奏钢琴音符 C4–C5"],
+					["P","启动 / 停止振荡器"],
+					["I","将频率减半（÷2）"],
+					["O","将频率翻倍（×2）"],
+					["L","切换到下一种语言"],
+					["R","刷新页面"],
+					["Q","开启 / 关闭警报"],
+					["V","切换基础 / 专业视图"],
+					["B","切换到下一种振荡器波形"],
+					["N","切换到下一种警报类型"],
+					["M","切换到下一种警报波形"],
+					["?","显示 / 隐藏帮助窗口"]
+				]},
+				ja: { title:"キーボードショートカット", k:"キー", a:"操作", rows:[
+					["A W S E D F T G Y H U J K","ピアノの音符 C4–C5 を演奏する"],
+					["P","オシレーターを再生 / 停止"],
+					["I","周波数を半分にする（÷2）"],
+					["O","周波数を2倍にする（×2）"],
+					["L","次の言語に切り替える"],
+					["R","ページをリロード"],
+					["Q","サイレンをオン / オフ"],
+					["V","基本 / プロ表示を切り替える"],
+					["B","次のオシレーター波形"],
+					["N","次のサイレンタイプ"],
+					["M","次のサイレン波形"],
+					["?","このヘルプを表示 / 非表示"]
+				]}
+			};
+
+			function helpOpen(){
+				var lang = LANG_KEYS[currentLangIndex];
+				var d = HELP_DATA[lang] || HELP_DATA['en'];
+				document.getElementById('helpH2').textContent = d.title;
+				document.getElementById('helpTh1').textContent = d.k;
+				document.getElementById('helpTh2').textContent = d.a;
+				var tb = document.getElementById('helpTbody');
+				tb.innerHTML = '';
+				d.rows.forEach(function(r){
+					var tr = document.createElement('tr');
+					var td1 = document.createElement('td');
+					td1.textContent = r[0];
+					var td2 = document.createElement('td');
+					td2.textContent = r[1];
+					tr.appendChild(td1);
+					tr.appendChild(td2);
+					tb.appendChild(tr);
+				});
+				document.getElementById('helpOverlay').classList.add('open');
+			}
+
+			function helpClose(){
+				document.getElementById('helpOverlay').classList.remove('open');
+			}
+
+			function applyTranslation(langIndex){
+				const langKey = LANG_KEYS[langIndex];
+				const t = TRANSLATIONS[langKey];
+				if(!t){
+					return;
+				}
+				document.querySelectorAll('[data-i18n]').forEach(el => {
+					const key = el.getAttribute('data-i18n');
+					if(t[key] !== undefined){
+						el.textContent = t[key];
+					}
+				});
+				document.documentElement.lang = langKey;
+				document.getElementById('flagIcon').innerHTML = FLAGS_SVG[langIndex];
+				const sirenBtn = document.getElementById('sirenButton');
+				sirenBtn.textContent = sirenIsOn ? t['btn_siren_off'] : t['btn_siren_on'];
+				const showBtn = document.getElementById('showingButton');
+				showBtn.textContent = basic ? t['btn_pro'] : t['btn_basic'];
+				if(document.getElementById('helpOverlay').classList.contains('open')){
+					helpOpen();
+				}
+			}
+
+			function nextLanguage(){
+				currentLangIndex = (currentLangIndex + 1)%(LANG_KEYS.length);
+				applyTranslation(currentLangIndex);
+			}
+
+			function initAudio(){
+				if(!audioContext){
+					audioContext = new(window.AudioContext || window.webkitAudioContext)();
+					lowPassFilter = audioContext.createBiquadFilter();
+					lowPassFilter.type = "lowpass";
+					lowPassFilter.frequency.value = document.getElementById("cutoff").value;
+					lowPassFilter.Q.value = document.getElementById("resonance").value;
+					masterGain = audioContext.createGain();
+					masterGain.gain.value = document.getElementById("masterVol").value;
+					analyzer = audioContext.createAnalyser();
+					analyzer.fftSize = 2048;
+					lowPassFilter.connect(masterGain);
+					masterGain.connect(analyzer);
+					analyzer.connect(audioContext.destination);
+					drawScope();
+				}
+			}
+
+			function updateFilter(){
+				if(!audioContext){
+					return;
+				}
+				const cutoff = document.getElementById("cutoff").value;
+				const resonance = document.getElementById("resonance").value;
+				lowPassFilter.frequency.setTargetAtTime(cutoff, audioContext.currentTime, 0.02);
+				lowPassFilter.Q.setTargetAtTime(resonance, audioContext.currentTime, 0.02);
+				document.getElementById("cutoff_val").textContent = cutoff + " Hz";
+				document.getElementById("resonance_val").textContent = parseFloat(resonance).toFixed(1);
+			}
+
+			function updateAdsLabel(){
+				document.getElementById("attack_val").textContent = document.getElementById("attack").value;
+				document.getElementById("decay_val").textContent = document.getElementById("decay").value;
+				document.getElementById("sustain_val").textContent = parseFloat(document.getElementById("sustain").value).toFixed(2);
+				document.getElementById("release_val").textContent = document.getElementById("release").value;
+			}
+
+			function updateHarmonics(){
+				const h2Val = parseFloat(document.getElementById("h2").value);
+				const h3Val = parseFloat(document.getElementById("h3").value);
+				const h4Val = parseFloat(document.getElementById("h4").value);
+				document.getElementById("h2_val").textContent = h2Val.toFixed(2);
+				document.getElementById("h3_val").textContent = h3Val.toFixed(2);
+				document.getElementById("h4_val").textContent = h4Val.toFixed(2);
+				if(!audioContext){
+					return;
+				}
+				ACTIVE_VOICES.forEach(voice => {
+					if(voice.harmonics){
+						const now = audioContext.currentTime;
+						voice.harmonics.h2.gain.gain.setValueAtTime(h2Val, now);
+						voice.harmonics.h3.gain.gain.setValueAtTime(h3Val, now);
+						voice.harmonics.h4.gain.gain.setValueAtTime(h4Val, now);
+					}
+				});
+			}
+
+			function setMasterVol(){
+				initAudio();
+				const v = document.getElementById("masterVol").value;
+				masterGain.gain.setTargetAtTime(v, audioContext.currentTime, 0.02);
+				document.getElementById("masterVol_val").textContent = parseFloat(v).toFixed(2);
+			}
+
+			function setFrequency(){
+				frequencyHz = parseInt(document.getElementById("frequencyRange").value);
+				document.getElementById("FREQUENCY_VALUE").textContent = frequencyHz + " Hz";
+				if(ACTIVE_VOICES.has("mono")){
+					const v = ACTIVE_VOICES.get("mono"), now = audioContext.currentTime;
+					v.osc.frequency.setTargetAtTime(frequencyHz, now, 0.02);
+					v.harmonics.h2.osc.frequency.setTargetAtTime(frequencyHz*2, now, 0.02);
+					v.harmonics.h3.osc.frequency.setTargetAtTime(frequencyHz*3, now, 0.02);
+					v.harmonics.h4.osc.frequency.setTargetAtTime(frequencyHz*4, now, 0.02);
+				}
+				const els = document.getElementsByName("maxFrequency");
+				for(let i=0; i<els.length; i++){
+					els[i].disabled = frequencyHz > MAX_FREQUENCY_VALUE[i];
+				}
+			}
+
+			function createHarmonic(freq, gainVal, parentGain){
+				const osc = audioContext.createOscillator();
+				const g = audioContext.createGain();
+				const now = audioContext.currentTime;
+				osc.type = "sine";
+				osc.frequency.setValueAtTime(freq, now);
+				g.gain.setValueAtTime(0, now);
+				g.gain.linearRampToValueAtTime(gainVal, now + 0.01);
+				osc.connect(g);
+				g.connect(parentGain);
+				osc.start();
+				return {osc, gain: g};
+			}
+
+			function playVoice(id, freq){
+				initAudio();
+				if(ACTIVE_VOICES.has(id)){
+					return;
+				}
+				const now = audioContext.currentTime;
+				const a = document.getElementById("attack").value/1000;
+				const d = document.getElementById("decay").value/1000;
+				const s = parseFloat(document.getElementById("sustain").value);
+				const vGain = audioContext.createGain();
+				vGain.gain.setValueAtTime(0, now);
+				vGain.gain.linearRampToValueAtTime(1, now + a);
+				vGain.gain.linearRampToValueAtTime(s, now + a + d);
+				vGain.connect(lowPassFilter);
+				const osc = audioContext.createOscillator();
+				osc.type = oscillatorinputType;
+				osc.frequency.setValueAtTime(freq, now);
+				osc.connect(vGain);
+				osc.start();
+				const h2 = createHarmonic(freq*2, parseFloat(document.getElementById("h2").value), vGain);
+				const h3 = createHarmonic(freq*3, parseFloat(document.getElementById("h3").value), vGain);
+				const h4 = createHarmonic(freq*4, parseFloat(document.getElementById("h4").value), vGain);
+				ACTIVE_VOICES.set(id,{osc, gain: vGain, harmonics:{h2, h3, h4}});
+			}
+
+			function stopVoice(id){
+				if(!ACTIVE_VOICES.has(id)){
+					return;
+				}
+				const v = ACTIVE_VOICES.get(id), now = audioContext.currentTime, r = document.getElementById("release").value/1000;
+				v.gain.gain.cancelScheduledValues(now);
+				v.gain.gain.setValueAtTime(v.gain.gain.value, now);
+				v.gain.gain.linearRampToValueAtTime(0, now + r);
+				setTimeout(() => {
+					try{
+						v.osc.stop();
+						v.harmonics.h2.osc.stop();
+						v.harmonics.h3.osc.stop();
+						v.harmonics.h4.osc.stop();
+						v.gain.disconnect();
+					}catch(e){}
+					ACTIVE_VOICES.delete(id);
+				}, r*1000 + 50);
+			}
+
+			function drawScope(){
+				const canvas = document.getElementById("scope");
+				const ctx = canvas.getContext("2d");
+				const bufferLength = analyzer.frequencyBinCount;
+				const dataArray = new Uint8Array(bufferLength);
+				function render(){
+					requestAnimationFrame(render);
+					analyzer.getByteTimeDomainData(dataArray);
+					ctx.fillStyle = "#222";
+					ctx.fillRect(0, 0, canvas.width, canvas.height);
+					ctx.lineWidth = 2;
+					ctx.strokeStyle = "#FFFF7F";
+					ctx.beginPath();
+					const sliceWidth = canvas.width/bufferLength;
+					let x = 0;
+					for(let i = 0; i < bufferLength; i++){
+						const v = dataArray[i]/128.0;
+						const y = v*canvas.height/2;
+						if(i === 0){
+							ctx.moveTo(x, y);
+						}else{
+							ctx.lineTo(x, y);
+						}
+						x += sliceWidth;
+					}
+					ctx.lineTo(canvas.width, canvas.height/2);
+					ctx.stroke();
+				}
+				canvas.width = canvas.offsetWidth;
+				canvas.height = canvas.offsetHeight;
+				render();
+			}
+
+			function play_and_stop(){
+				play = !play;
+				if(play){
+					playVoice("mono", frequencyHz);
+				}else{
+					stopVoice("mono");
+				}
+				document.getElementById("play_and_stop_button").textContent = play ? "⏹" : "▶";
+			}
+
+			function multiplyFREQUENCY_VALUE(m){
+				let newFreq = Math.round(frequencyHz*m);
+				const currentMax = parseInt(document.getElementById("frequencyRange").max);
+				if(newFreq > currentMax){
+					return;
+				}
+				frequencyHz = newFreq;
+				document.getElementById("frequencyRange").value = frequencyHz;
+				setFrequency();
+			}
+
+			function resetFrequency(){
+				frequencyHz = 440;
+				document.getElementById("frequencyRange").value = frequencyHz;
+				setFrequency();
+			}
+
+			function setMaxFrequency(){
+				const els = document.getElementsByName("maxFrequency");
+				for(let i=0; i<els.length; i++){
+					if(els[i].checked){
+						indexArray = i;
+						document.getElementById("frequencyRange").max = MAX_FREQUENCY_VALUE[i];
+						document.getElementById("FREQUENCY_MAX_VALUE").textContent = MAX_FREQUENCY_VALUE[i] + " Hz";
+						if(frequencyHz > MAX_FREQUENCY_VALUE[i]){
+							frequencyHz = MAX_FREQUENCY_VALUE[i];
+							document.getElementById("frequencyRange").value = frequencyHz;
+							setFrequency();
+						}
+					}
+				}
+			}
+
+			function halveMax(){
+				if(indexArray > 0){
+					indexArray--;
+					document.getElementsByName("maxFrequency")[indexArray].click();
+				}
+			}
+
+			function doubleMax(){
+				if(indexArray < 9){
+					indexArray++;
+					document.getElementsByName("maxFrequency")[indexArray].click();
+				}
+			}
+
+			document.getElementsByName("oscillatorType").forEach(el => {
+				el.addEventListener("change",() => {
+					oscillatorinputType = el.value;
+					if(ACTIVE_VOICES.has("mono")){
+						ACTIVE_VOICES.get("mono").osc.type = el.value;
+					}
+				});
+			});
+
+			let sOsc = null;
+			let sInt = null;
+			let sMin = 800;
+			let sMax = 1200;
+			let sDur = 300;
+			let sWave = "sine";
+
+			function updateSirenWave(){
+				const waves = document.getElementsByName("sirenWave");
+				for(let w of waves){
+					if(w.checked){
+						sWave = w.value;
+					}
+				}
+				if(sirenIsOn && sOsc){
+					sOsc.type = sWave;
+				}
+			}
+
+			function sirenOn(){
+				initAudio();
+				sirenOff();
+				sOsc = audioContext.createOscillator();
+				let g = audioContext.createGain();
+				g.gain.value = 0.3;
+				sOsc.type = sWave;
+				sOsc.frequency.setValueAtTime(sMin, audioContext.currentTime);
+				sOsc.connect(g);
+				g.connect(lowPassFilter);
+				sOsc.start();
+				let state = true;
+				sInt = setInterval(() => {
+					sOsc.frequency.exponentialRampToValueAtTime(state ? sMax : sMin, audioContext.currentTime + 0.1);
+					state = !state;
+				}, sDur);
+				sirenIsOn = true;
+			}
+
+			function sirenOff(){
+				clearInterval(sInt);
+				if(sOsc){
+					try{
+						sOsc.stop();
+					}catch(e){}
+					sOsc = null;
+				}
+				sirenIsOn = false;
+			}
+
+			function sirenOnOff(){
+				sirenIsOn = !sirenIsOn;
+				const t = TRANSLATIONS[LANG_KEYS[currentLangIndex]];
+				document.getElementById("sirenButton").textContent = sirenIsOn ? t['btn_siren_off'] : t['btn_siren_on'];
+				if(sirenIsOn){
+					sirenOn();
+				}else{
+					sirenOff();
+				}
+			}
+
+			function changeSirenType(min, max, dur){
+				sMin = min;
+				sMax = max;
+				sDur = dur;
+				if(sirenIsOn){
+					sirenOn();
+				}
+			}
+
+			function toggleShowing(){
+				basic = !basic;
+				const t = TRANSLATIONS[LANG_KEYS[currentLangIndex]];
+				document.getElementById("showingButton").textContent = basic ? t['btn_pro'] : t['btn_basic'];
+				const elementsToToggle = ["HarmonicList", "Harmonic_2", "Harmonic_3", "Harmonic_4", "LowPassFilter", "Cutoff", "Resonance", "ADSR"];
+				elementsToToggle.forEach(id => {
+					const el = document.getElementById(id);
+					if(el){
+						el.classList.toggle("hidden");
+					}
+				});
+			}
+
+			document.addEventListener("keydown", e => {
+				let key = e.key.toLowerCase();
+				if(key in KEY_MAP){
+					const btn = document.getElementById(KEY_MAP[key]);
+					if(btn && !btn.classList.contains("pressed")){
+						btn.classList.add("pressed");
+						playVoice(btn.id, FREQ_MAP[btn.id]);
+					}
+				}else if(key === "l"){
+					nextLanguage();
+				}else if(key === "r"){
+					window.location.reload();
+				}else if(key === "i"){
+					multiplyFREQUENCY_VALUE(0.5);
+				}else if(key === "o"){
+					multiplyFREQUENCY_VALUE(2);
+				}else if(key === "p"){
+					play_and_stop();
+				}else if(key === "q"){
+					sirenOnOff();
+				}else if(key === "v"){
+					toggleShowing();
+				}else if(key === "b"){
+					const oscRadios = document.getElementsByName("oscillatorType");
+					for(let i = 0; i < oscRadios.length; i++){
+						if(oscRadios[i].checked){
+							oscRadios[(i + 1)%(oscRadios.length)].click();
+							break;
+						}
+					}
+				}else if(key === "n"){
+					const sirenRadios = document.getElementsByName("sirenType");
+					for(let i = 0; i < sirenRadios.length; i++){
+						if(sirenRadios[i].checked){
+							sirenRadios[(i + 1)%(sirenRadios.length)].click();
+							break;
+						}
+					}
+				}else if(key === "m"){
+					const waveRadios = document.getElementsByName("sirenWave");
+					for(let i = 0; i < waveRadios.length; i++){
+						if(waveRadios[i].checked){
+							waveRadios[(i + 1)%(waveRadios.length)].click();
+							break;
+						}
+					}
+				}else if(e.key === "?" || (e.shiftKey && e.code === "Slash") || e.key === "Escape"){
+					if(e.key === "Escape"){
+						helpClose();
+					}else{
+						var ov = document.getElementById('helpOverlay');
+						if(ov.classList.contains('open')){
+							helpClose();
+						}else{
+							helpOpen();
+						}
+					}
+					e.preventDefault();
+				}
+			});
+
+			document.addEventListener("keyup", e => {
+				let key = e.key.toLowerCase();
+				if(key in KEY_MAP){
+					const btn = document.getElementById(KEY_MAP[key]);
+					if(btn){
+						btn.classList.remove("pressed");
+						stopVoice(btn.id);
+					}
+				}
+			});
+
+			document.querySelectorAll("#keyboard button").forEach(btn => {
+				const startNote = (e) => {
+					e.preventDefault();
+					if(!btn.classList.contains("pressed")){
+						btn.classList.add("pressed");
+						playVoice(btn.id, FREQ_MAP[btn.id]);
+					}
+				};
+				const stopNote = (e) => {
+					e.preventDefault();
+					btn.classList.remove("pressed");
+					stopVoice(btn.id);
+				};
+				btn.addEventListener("mousedown", startNote);
+				btn.addEventListener("mouseup", stopNote);
+				btn.addEventListener("mouseleave", stopNote);
+				btn.addEventListener("touchstart", startNote,{passive: false});
+				btn.addEventListener("touchend", stopNote,{passive: false});
+				btn.addEventListener("touchcancel", stopNote,{passive: false});
+			});
+
+			window.addEventListener('resize',() => {
+				const c = document.getElementById("scope");
+				c.width = c.offsetWidth;
+				c.height = c.offsetHeight;
+			});
+
+			document.getElementById("FREQUENCY_MIN_VALUE").textContent = "0 Hz";
+			document.getElementById("FREQUENCY_MAX_VALUE").textContent = "1000 Hz";
+			document.getElementById("frequencyRange").max = 1000;
+			document.getElementById("frequencyRange").value = 440;
+			applyTranslation(currentLangIndex);
+		</script>
+	</body>
+</html>

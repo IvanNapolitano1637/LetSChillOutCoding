@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en"><!--U02#006 - Claudia - Some Maths-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<title>Some Maths</title>
+		<style>
+			body{
+				font-family: sans-serif;
+				margin: 20px;
+			}
+			.container{
+				display: flex;
+				flex-wrap: wrap;
+				gap: 20px;
+				justify-content: center;
+				flex-direction: row;
+			}
+			.container > div{
+				flex-basis: 100%;
+			}
+			form{
+				border: 1px solid #ccc;
+				padding: 20px;
+				border-radius: 8px;
+				background-color: #f9f9f9;
+				min-width: 320px;
+			}
+			canvas{
+				border: 1px solid #000;
+				background-color: white;
+				max-width: 100%;
+				height: auto;
+				margin-top: 10px;
+			}
+			.output-text{
+				font-weight: bold;
+				color: #2c3e50;
+				margin-top: 5px;
+				display: block;
+				min-height: 1.2em;
+			}
+			label{
+				font-weight: bold;
+				display: block;
+				margin-top: 10px;
+			}
+			input[type="number"]{
+				width: 80%;
+				padding: 5px;
+				margin-bottom: 5px;
+			}
+			button{
+				cursor: pointer;
+				padding: 5px 10px;
+			}
+			h3{
+				margin-top: 0;
+				color: #27ae60;
+			}
+			.action-btn{
+				color: white;
+				border: none;
+				padding: 12px 30px;
+				border-radius: 8px;
+				font-weight: bold;
+				cursor: pointer;
+				font-size: 1rem;
+				display: inline-flex;
+				align-items: center;
+				gap: 8px;
+			}
+			.btn-reset{
+				background-color: #e66465;
+			}
+			.btn-translate{
+				background-color: #4a90d9;
+			}
+			.flag-svg{
+				width: 32px;
+				height: 20px;
+				display: inline-block;
+				vertical-align: middle;
+				border: 1px solid #aaa;
+				border-radius: 2px;
+				flex-shrink: 0;
+			}
+			*{
+				-webkit-tap-highlight-color: transparent;
+			}
+			#kbdModal{
+				display: none;
+				position: fixed;
+				inset: 0;
+				z-index: 9999;
+				background: rgba(0,0,0,0.45);
+				justify-content: center;
+				align-items: center;
+			}
+			#kbdModal.open{
+				display: flex;
+			}
+			#kbdModalBox{
+				background: #fff;
+				border-radius: 12px;
+				padding: 28px 32px 24px 32px;
+				max-width: 480px;
+				width: 92vw;
+				box-shadow: 0 8px 40px rgba(0,0,0,0.22);
+				position: relative;
+			}
+			#kbdModalBox h2{
+				margin: 0 0 18px 0;
+				color: #27ae60;
+				font-size: 1.2rem;
+				display: flex;
+				align-items: center;
+				gap: 10px;
+			}
+			#kbdModalBox table{
+				width: 100%;
+				border-collapse: collapse;
+			}
+			#kbdModalBox td{
+				padding: 7px 6px;
+				vertical-align: middle;
+				border-bottom: 1px solid #eee;
+				font-size: 0.97rem;
+				color: #2c3e50;
+			}
+			#kbdModalBox tr:last-child td{
+				border-bottom: none;
+			}
+			#kbdModalBox td:first-child{
+				width: 44%;
+				font-weight: bold;
+			}
+			kbd{
+				display: inline-block;
+				background: #f0f0f0;
+				border: 1px solid #bbb;
+				border-radius: 5px;
+				padding: 2px 9px;
+				font-family: monospace;
+				font-size: 0.95rem;
+				color: #333;
+				box-shadow: 0 2px 0 #aaa;
+				margin-right: 2px;
+			}
+			#kbdCloseBtn{
+				position: absolute;
+				top: 12px;
+				right: 16px;
+				background: none;
+				border: none;
+				font-size: 1.5rem;
+				cursor: pointer;
+				color: #888;
+				line-height: 1;
+				padding: 0 4px;
+			}
+			#kbdCloseBtn:hover{
+				color: #e66465;
+			}
+		</style>
+	</head>
+	<body style="background-color:#ccffcc;">
+		<div class="container">
+			<form id="mathForm">
+				<h3 data-i18n="title_number_theory">Number Theory</h3>
+				<label data-i18n="label_primality">Primality test</label>
+				<input type="number" id="firstNumber"/>
+				<button type="button" id="primalityTestButton" onclick="handleAction('checkNumber')" data-i18n="btn_check">Check</button>
+				<output id="isPrime" class="output-text"></output>
+				<label data-i18n="label_square">Square of a number</label>
+				<input type="number" id="tenthNumber"/>
+				<button type="button" onclick="handleAction('calculateSquare')" data-i18n="btn_calculate">Calculate</button>
+				<output id="squareOutput" class="output-text"></output>
+				<label data-i18n="label_sqrt">Square root</label>
+				<input type="number" id="secondNumber"/>
+				<button type="button" id="squareRootButton" onclick="handleAction('squareRoot')" data-i18n="btn_calculate">Calculate</button>
+				<output id="sqrt" class="output-text"></output>
+				<label data-i18n="label_triangular">Triangular of a number</label>
+				<input type="number" id="eleventhNumber"/>
+				<button type="button" onclick="handleAction('calculateTriangular')" data-i18n="btn_calculate">Calculate</button>
+				<output id="triangularOutput" class="output-text"></output>
+				<label data-i18n="label_triangular_root">Triangular root</label>
+				<input type="number" id="twelfthNumber"/>
+				<button type="button" onclick="handleAction('checkTriangularity')" data-i18n="btn_calculate">Calculate</button>
+				<output id="checkTriangularOutput" class="output-text"></output>
+				<label data-i18n="label_factorization">Factorization</label>
+				<input type="number" id="thirdNumber"/>
+				<button type="button" id="factorization" onclick="handleAction('factorize')" data-i18n="btn_factorize">Factorize</button>
+				<output id="scomposition" class="output-text"></output>
+				<label data-i18n="label_bezout">Bézout's relation</label>
+				<input type="number" id="fourthNumber" data-i18n-placeholder="placeholder_first"/><br>
+				<input type="number" id="fifthNumber" data-i18n-placeholder="placeholder_latter"/>
+				<button type="button" id="Bezout" onclick="handleAction('computeBezoutRelation')" data-i18n="btn_calculate">Calculate</button>
+				<output id="BezoutsRelation" class="output-text"></output>
+				<label data-i18n="label_fermat">Fermat's primality test</label>
+				<input type="number" id="sixthNumber"/>
+				<button type="button" id="primalityTestOfFermatButton" onclick="handleAction('applyFermatsPrimalityTest')" data-i18n="btn_test">Test</button>
+				<output id="mayBePrime" class="output-text"></output>
+				<label data-i18n="label_polygon_area">Regular polygon area</label>
+				<input type="number" id="seventhNumber" data-i18n-placeholder="placeholder_sides"/><br>
+				<input type="number" id="eighthNumber" data-i18n-placeholder="placeholder_side_length"/>
+				<button type="button" id="calculateAreaButton" onclick="handleAction('calculatePolygonArea')" data-i18n="btn_calc_area">Calculate the area</button>
+				<output id="polygonArea" class="output-text"></output>
+				<label data-i18n="label_sum_squares">Sum of two squares</label>
+				<input type="number" id="ninthNumber"/>
+				<button type="button" id="sumOfSquares" onclick="handleAction('writeAsSumOfSquares')" data-i18n="btn_find">Find</button>
+				<div id="squares" class="output-text"></div>
+			</form>
+			<div style="width: 100%; text-align: center; margin: 10px 0; display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
+				<button type="button" class="action-btn btn-reset" onclick="clearAll()" data-i18n="btn_reset">Reset Page</button>
+				<button type="button" id="translateBtn" class="action-btn btn-translate" onclick="nextLanguage()">
+					<span id="flagIcon"></span>
+				</button>
+			</div>
+			<form>
+				<h3 data-i18n="title_polygon_view">Polygon View</h3>
+				<label for="numberOfSides"><span data-i18n="label_sides">Number of sides:</span> <select id="numberOfSides"></select></label><br>
+				<label style="display:inline;">
+					<input id="diagonals" type="checkbox" onChange="toggleDiagonals()"> <span data-i18n="label_diagonals">Show diagonals</span>
+				</label><br>
+				<canvas id="canvas" width="600" height="600"></canvas>
+			</form>
+		</div>
+		<div id="kbdModal" role="dialog" aria-modal="true" aria-labelledby="kbdModalTitle">
+			<div id="kbdModalBox">
+				<button id="kbdCloseBtn" onclick="closeKbdModal()" aria-label="Close">✕</button>
+				<h2>⌨️ <span id="kbdModalTitle" data-i18n="kbd_title">Keyboard shortcuts</span></h2>
+				<table>
+					<tbody id="kbdShortcutTable">
+						<tr><td><kbd>?</kbd></td><td data-i18n="kbd_open_help">Open / close this help</td></tr>
+						<tr><td><kbd>L</kbd></td><td data-i18n="kbd_next_lang">Switch to next language</td></tr>
+						<tr><td><kbd>R</kbd></td><td data-i18n="kbd_reset">Reset the page</td></tr>
+						<tr><td><kbd>Enter</kbd></td><td data-i18n="kbd_enter">Confirm input in focused field</td></tr>
+						<tr><td><kbd>Esc</kbd></td><td data-i18n="kbd_close_modal">Close this window</td></tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<script>
+			const FLAGS_SVG = [
+				'<svg class="flag-svg" viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#s)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>', // UK
+				//'<svg class="flag-svg" viewBox="0 0 7410 3900"><rect width="7410" height="3900" fill="#b22234"/><path d="M0 300h7410M0 900h7410M0 1500h7410M0 2100h7410M0 2700h7410M0 3300h7410" stroke="#fff" stroke-width="300"/><rect width="2964" height="2100" fill="#3c3b6e"/><path d="M247 175l247 759-646-469h798l-646 469z" fill="#fff" transform="scale(.2)"/></svg>', // US
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>', // IT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg>', // FR
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#c60b1e"/><rect width="3" height="1" y="0.5" fill="#ffc400"/></svg>', // ES
+				'<svg class="flag-svg" viewBox="0 0 5 3"><rect width="5" height="3"/><rect width="5" height="2" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg>', // DE
+				'<svg class="flag-svg" viewBox="0 0 600 400"><rect width="240" height="400" fill="#006600"/><rect x="240" width="360" height="400" fill="#ff0000"/></svg>', // PT
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="1" height="2" fill="#002b7f"/><rect width="1" height="2" x="1" fill="#fcd116"/><rect width="1" height="2" x="2" fill="#ce1126"/></svg>', // RO
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>', // UA
+				'<svg class="flag-svg" viewBox="0 0 27 18"><rect width="27" height="18" fill="#005bae"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#005bae"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>', // GR
+				//'<svg class="flag-svg" viewBox="0 0 1 1"><rect width="0.5" height="1" fill="#ffe000"/><rect x="0.5" width="0.5" height="1" fill="#fff"/></svg>', // VA
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#800000"/><path d="M0.5,0.5 L2.5,0.5 L2.5,1.5 L0.5,1.5 Z" fill="none" stroke="#FFD700" stroke-width="0.1"/><text x="1.5" y="1.15" font-family="serif" font-weight="bold" font-size="0.4" fill="#FFD700" text-anchor="middle">SPQR</text></svg>', // ROMA
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#de2110"/><path d="M.5 1.1l.3-.9.3.9-1-.6h1z" fill="#ffde00" transform="matrix(.4 0 0 .4 .1 .1)"/></svg>', // CN
+				'<svg class="flag-svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>' // JP
+			];
+			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
+			const TRANSLATIONS = {
+				en: {
+					title_number_theory: "Number Theory",
+					title_polygon_view: "Polygon View",
+					label_primality: "Primality test",
+					label_square: "Square of a number",
+					label_sqrt: "Square root",
+					label_triangular: "Triangular of a number",
+					label_triangular_root: "Triangular root",
+					label_factorization: "Factorization",
+					label_bezout: "Bézout's relation",
+					label_fermat: "Fermat's primality test",
+					label_polygon_area: "Regular polygon area",
+					label_sum_squares: "Sum of two squares",
+					label_sides: "Number of sides:",
+					label_diagonals: "Show diagonals",
+					btn_check: "Check",
+					btn_calculate: "Calculate",
+					btn_factorize: "Factorize",
+					btn_test: "Test",
+					btn_calc_area: "Calculate the area",
+					btn_find: "Find",
+					btn_reset: "Reset Page",
+					placeholder_first: "First number",
+					placeholder_latter: "Latter number",
+					placeholder_sides: "Number of sides",
+					placeholder_side_length: "Length of the side",
+					out_is_prime: "The number {n} is prime.",
+					out_is_composite: "The number {n} is composite.",
+					out_is_neither: "The number {n} is neither prime nor composite.",
+					out_prime_number: "Prime number! :-D",
+					out_seems_prime: "Seems prime.",
+					out_likely_prime: "Likely prime.",
+					out_definitely_prime: "Definitely prime.",
+					out_definitely_composite: "Definitely composite.",
+					out_composite_even: "Composite (even).",
+					out_neither_prime_composite: "Neither prime nor composite...",
+					out_area: "Area: {area}",
+					out_no_solution: "No solution.",
+					kbd_title: "Keyboard shortcuts",
+					kbd_open_help: "Open / close this help",
+					kbd_next_lang: "Switch to next language",
+					kbd_reset: "Reset the page",
+					kbd_enter: "Confirm input in focused field",
+					kbd_close_modal: "Close this window"
+				},
+				it: {
+					title_number_theory: "Teoria dei Numeri",
+					title_polygon_view: "Vista Poligono",
+					label_primality: "Test di primalità",
+					label_square: "Quadrato di un numero",
+					label_sqrt: "Radice quadrata",
+					label_triangular: "Triangolare di un numero",
+					label_triangular_root: "Radice triangolare",
+					label_factorization: "Fattorizzazione",
+					label_bezout: "Relazione di Bézout",
+					label_fermat: "Test di primalità di Fermat",
+					label_polygon_area: "Area di un poligono regolare",
+					label_sum_squares: "Somma di due quadrati",
+					label_sides: "Numero di lati:",
+					label_diagonals: "Mostra diagonali",
+					btn_check: "Verifica",
+					btn_calculate: "Calcola",
+					btn_factorize: "Fattorizza",
+					btn_test: "Testa",
+					btn_calc_area: "Calcola l'area",
+					btn_find: "Trova",
+					btn_reset: "Reimposta",
+					placeholder_first: "Primo numero",
+					placeholder_latter: "Secondo numero",
+					placeholder_sides: "Numero di lati",
+					placeholder_side_length: "Lunghezza del lato",
+					out_is_prime: "Il numero {n} è primo.",
+					out_is_composite: "Il numero {n} è composto.",
+					out_is_neither: "Il numero {n} non è né primo né composto.",
+					out_prime_number: "Numero primo! :-D",
+					out_seems_prime: "Sembra primo.",
+					out_likely_prime: "Probabilmente primo.",
+					out_definitely_prime: "Sicuramente primo.",
+					out_definitely_composite: "Sicuramente composto.",
+					out_composite_even: "Composto (pari).",
+					out_neither_prime_composite: "Né primo né composto...",
+					out_area: "Area: {area}",
+					out_no_solution: "Nessuna soluzione.",
+					kbd_title: "Scorciatoie da tastiera",
+					kbd_open_help: "Apri / chiudi questa guida",
+					kbd_next_lang: "Passa alla lingua successiva",
+					kbd_reset: "Reimposta la pagina",
+					kbd_enter: "Conferma il valore nel campo attivo",
+					kbd_close_modal: "Chiudi questa finestra"
+				},
+				fr: {
+					title_number_theory: "Théorie des Nombres",
+					title_polygon_view: "Vue Polygone",
+					label_primality: "Test de primalité",
+					label_square: "Carré d'un nombre",
+					label_sqrt: "Racine carrée",
+					label_triangular: "Triangulaire d'un nombre",
+					label_triangular_root: "Racine triangulaire",
+					label_factorization: "Factorisation",
+					label_bezout: "Relation de Bézout",
+					label_fermat: "Test de primalité de Fermat",
+					label_polygon_area: "Aire d'un polygone régulier",
+					label_sum_squares: "Somme de deux carrés",
+					label_sides: "Nombre de côtés :",
+					label_diagonals: "Afficher les diagonales",
+					btn_check: "Vérifier",
+					btn_calculate: "Calculer",
+					btn_factorize: "Factoriser",
+					btn_test: "Tester",
+					btn_calc_area: "Calculer l'aire",
+					btn_find: "Trouver",
+					btn_reset: "Réinitialiser",
+					placeholder_first: "Premier nombre",
+					placeholder_latter: "Deuxième nombre",
+					placeholder_sides: "Nombre de côtés",
+					placeholder_side_length: "Longueur du côté",
+					out_is_prime: "Le nombre {n} est premier.",
+					out_is_composite: "Le nombre {n} est composé.",
+					out_is_neither: "Le nombre {n} n'est ni premier ni composé.",
+					out_prime_number: "Nombre premier ! :-D",
+					out_seems_prime: "Semble premier.",
+					out_likely_prime: "Probablement premier.",
+					out_definitely_prime: "Certainement premier.",
+					out_definitely_composite: "Certainement composé.",
+					out_composite_even: "Composé (pair).",
+					out_neither_prime_composite: "Ni premier ni composé...",
+					out_area: "Aire : {area}",
+					out_no_solution: "Aucune solution.",
+					kbd_title: "Raccourcis clavier",
+					kbd_open_help: "Ouvrir / fermer cette aide",
+					kbd_next_lang: "Passer à la langue suivante",
+					kbd_reset: "Réinitialiser la page",
+					kbd_enter: "Valider la saisie dans le champ actif",
+					kbd_close_modal: "Fermer cette fenêtre"
+				},
+				es: {
+					title_number_theory: "Teoría de Números",
+					title_polygon_view: "Vista Polígono",
+					label_primality: "Test de primalidad",
+					label_square: "Cuadrado de un número",
+					label_sqrt: "Raíz cuadrada",
+					label_triangular: "Triangular de un número",
+					label_triangular_root: "Raíz triangular",
+					label_factorization: "Factorización",
+					label_bezout: "Relación de Bézout",
+					label_fermat: "Test de primalidad de Fermat",
+					label_polygon_area: "Área de polígono regular",
+					label_sum_squares: "Suma de dos cuadrados",
+					label_sides: "Número de lados:",
+					label_diagonals: "Mostrar diagonales",
+					btn_check: "Verificar",
+					btn_calculate: "Calcular",
+					btn_factorize: "Factorizar",
+					btn_test: "Probar",
+					btn_calc_area: "Calcular el área",
+					btn_find: "Encontrar",
+					btn_reset: "Restablecer",
+					placeholder_first: "Primer número",
+					placeholder_latter: "Segundo número",
+					placeholder_sides: "Número de lados",
+					placeholder_side_length: "Longitud del lado",
+					out_is_prime: "El número {n} es primo.",
+					out_is_composite: "El número {n} es compuesto.",
+					out_is_neither: "El número {n} no es ni primo ni compuesto.",
+					out_prime_number: "¡Número primo! :-D",
+					out_seems_prime: "Parece primo.",
+					out_likely_prime: "Probablemente primo.",
+					out_definitely_prime: "Definitivamente primo.",
+					out_definitely_composite: "Definitivamente compuesto.",
+					out_composite_even: "Compuesto (par).",
+					out_neither_prime_composite: "Ni primo ni compuesto...",
+					out_area: "Área: {area}",
+					out_no_solution: "Sin solución.",
+					kbd_title: "Atajos de teclado",
+					kbd_open_help: "Abrir / cerrar esta ayuda",
+					kbd_next_lang: "Cambiar al siguiente idioma",
+					kbd_reset: "Restablecer la página",
+					kbd_enter: "Confirmar entrada en el campo activo",
+					kbd_close_modal: "Cerrar esta ventana"
+				},
+				de: {
+					title_number_theory: "Zahlentheorie",
+					title_polygon_view: "Polygon-Ansicht",
+					label_primality: "Primzahltest",
+					label_square: "Quadrat einer Zahl",
+					label_sqrt: "Quadratwurzel",
+					label_triangular: "Dreieckszahl",
+					label_triangular_root: "Dreieckswurzel",
+					label_factorization: "Faktorisierung",
+					label_bezout: "Bézout-Relation",
+					label_fermat: "Fermatscher Primzahltest",
+					label_polygon_area: "Fläche eines regelmäßigen Polygons",
+					label_sum_squares: "Summe zweier Quadrate",
+					label_sides: "Anzahl der Seiten:",
+					label_diagonals: "Diagonalen anzeigen",
+					btn_check: "Prüfen",
+					btn_calculate: "Berechnen",
+					btn_factorize: "Faktorisieren",
+					btn_test: "Testen",
+					btn_calc_area: "Fläche berechnen",
+					btn_find: "Finden",
+					btn_reset: "Zurücksetzen",
+					placeholder_first: "Erste Zahl",
+					placeholder_latter: "Zweite Zahl",
+					placeholder_sides: "Anzahl der Seiten",
+					placeholder_side_length: "Seitenlänge",
+					out_is_prime: "Die Zahl {n} ist prim.",
+					out_is_composite: "Die Zahl {n} ist zusammengesetzt.",
+					out_is_neither: "Die Zahl {n} ist weder prim noch zusammengesetzt.",
+					out_prime_number: "Primzahl! :-D",
+					out_seems_prime: "Scheint prim zu sein.",
+					out_likely_prime: "Wahrscheinlich prim.",
+					out_definitely_prime: "Definitiv prim.",
+					out_definitely_composite: "Definitiv zusammengesetzt.",
+					out_composite_even: "Zusammengesetzt (gerade).",
+					out_neither_prime_composite: "Weder prim noch zusammengesetzt...",
+					out_area: "Fläche: {area}",
+					out_no_solution: "Keine Lösung.",
+					kbd_title: "Tastaturkürzel",
+					kbd_open_help: "Diese Hilfe öffnen / schließen",
+					kbd_next_lang: "Zur nächsten Sprache wechseln",
+					kbd_reset: "Seite zurücksetzen",
+					kbd_enter: "Eingabe im aktiven Feld bestätigen",
+					kbd_close_modal: "Dieses Fenster schließen"
+				},
+				pt: {
+					title_number_theory: "Teoria dos Números",
+					title_polygon_view: "Vista Polígono",
+					label_primality: "Teste de primalidade",
+					label_square: "Quadrado de um número",
+					label_sqrt: "Raiz quadrada",
+					label_triangular: "Triangular de um número",
+					label_triangular_root: "Raiz triangular",
+					label_factorization: "Fatorização",
+					label_bezout: "Relação de Bézout",
+					label_fermat: "Teste de primalidade de Fermat",
+					label_polygon_area: "Área de polígono regular",
+					label_sum_squares: "Soma de dois quadrados",
+					label_sides: "Número de lados:",
+					label_diagonals: "Mostrar diagonais",
+					btn_check: "Verificar",
+					btn_calculate: "Calcular",
+					btn_factorize: "Fatorizar",
+					btn_test: "Testar",
+					btn_calc_area: "Calcular a área",
+					btn_find: "Encontrar",
+					btn_reset: "Redefinir",
+					placeholder_first: "Primeiro número",
+					placeholder_latter: "Segundo número",
+					placeholder_sides: "Número de lados",
+					placeholder_side_length: "Comprimento do lado",
+					out_is_prime: "O número {n} é primo.",
+					out_is_composite: "O número {n} é composto.",
+					out_is_neither: "O número {n} não é primo nem composto.",
+					out_prime_number: "Número primo! :-D",
+					out_seems_prime: "Parece primo.",
+					out_likely_prime: "Provavelmente primo.",
+					out_definitely_prime: "Definitivamente primo.",
+					out_definitely_composite: "Definitivamente composto.",
+					out_composite_even: "Composto (par).",
+					out_neither_prime_composite: "Nem primo nem composto...",
+					out_area: "Área: {area}",
+					out_no_solution: "Nenhuma solução.",
+					kbd_title: "Atalhos de teclado",
+					kbd_open_help: "Abrir / fechar esta ajuda",
+					kbd_next_lang: "Mudar para o próximo idioma",
+					kbd_reset: "Redefinir a página",
+					kbd_enter: "Confirmar entrada no campo ativo",
+					kbd_close_modal: "Fechar esta janela"
+				},
+				ro: {
+					title_number_theory: "Teoria Numerelor",
+					title_polygon_view: "Vedere Poligon",
+					label_primality: "Test de primalitate",
+					label_square: "Pătratul unui număr",
+					label_sqrt: "Rădăcină pătrată",
+					label_triangular: "Triunghiular al unui număr",
+					label_triangular_root: "Rădăcină triunghiulară",
+					label_factorization: "Factorizare",
+					label_bezout: "Relația lui Bézout",
+					label_fermat: "Testul de primalitate al lui Fermat",
+					label_polygon_area: "Aria unui poligon regulat",
+					label_sum_squares: "Suma a două pătrate",
+					label_sides: "Număr de laturi:",
+					label_diagonals: "Arată diagonalele",
+					btn_check: "Verifică",
+					btn_calculate: "Calculează",
+					btn_factorize: "Factorizează",
+					btn_test: "Testează",
+					btn_calc_area: "Calculează aria",
+					btn_find: "Găsește",
+					btn_reset: "Resetează",
+					placeholder_first: "Primul număr",
+					placeholder_latter: "Al doilea număr",
+					placeholder_sides: "Număr de laturi",
+					placeholder_side_length: "Lungimea laturii",
+					out_is_prime: "Numărul {n} este prim.",
+					out_is_composite: "Numărul {n} este compus.",
+					out_is_neither: "Numărul {n} nu este nici prim nici compus.",
+					out_prime_number: "Număr prim! :-D",
+					out_seems_prime: "Pare prim.",
+					out_likely_prime: "Probabil prim.",
+					out_definitely_prime: "Sigur prim.",
+					out_definitely_composite: "Sigur compus.",
+					out_composite_even: "Compus (par).",
+					out_neither_prime_composite: "Nici prim nici compus...",
+					out_area: "Arie: {area}",
+					out_no_solution: "Nicio soluție.",
+					kbd_title: "Scurtături de tastatură",
+					kbd_open_help: "Deschide / închide acest ajutor",
+					kbd_next_lang: "Treci la următoarea limbă",
+					kbd_reset: "Resetează pagina",
+					kbd_enter: "Confirmă valoarea în câmpul activ",
+					kbd_close_modal: "Închide această fereastră"
+				},
+				uk: {
+					title_number_theory: "Теорія чисел",
+					title_polygon_view: "Вигляд багатокутника",
+					label_primality: "Тест на простоту",
+					label_square: "Квадрат числа",
+					label_sqrt: "Квадратний корінь",
+					label_triangular: "Трикутне число",
+					label_triangular_root: "Трикутний корінь",
+					label_factorization: "Факторизація",
+					label_bezout: "Відношення Безу",
+					label_fermat: "Тест Ферма на простоту",
+					label_polygon_area: "Площа правильного багатокутника",
+					label_sum_squares: "Сума двох квадратів",
+					label_sides: "Кількість сторін:",
+					label_diagonals: "Показати діагоналі",
+					btn_check: "Перевірити",
+					btn_calculate: "Обчислити",
+					btn_factorize: "Факторизувати",
+					btn_test: "Тестувати",
+					btn_calc_area: "Обчислити площу",
+					btn_find: "Знайти",
+					btn_reset: "Скинути",
+					placeholder_first: "Перше число",
+					placeholder_latter: "Друге число",
+					placeholder_sides: "Кількість сторін",
+					placeholder_side_length: "Довжина сторони",
+					out_is_prime: "Число {n} є простим.",
+					out_is_composite: "Число {n} є складеним.",
+					out_is_neither: "Число {n} не є ні простим, ні складеним.",
+					out_prime_number: "Просте число! :-D",
+					out_seems_prime: "Здається простим.",
+					out_likely_prime: "Мабуть просте.",
+					out_definitely_prime: "Точно просте.",
+					out_definitely_composite: "Точно складене.",
+					out_composite_even: "Складене (парне).",
+					out_neither_prime_composite: "Ні просте, ні складене...",
+					out_area: "Площа: {area}",
+					out_no_solution: "Немає рішення.",
+					kbd_title: "Гарячі клавіші",
+					kbd_open_help: "Відкрити / закрити цю довідку",
+					kbd_next_lang: "Перейти до наступної мови",
+					kbd_reset: "Скинути сторінку",
+					kbd_enter: "Підтвердити значення в активному полі",
+					kbd_close_modal: "Закрити це вікно"
+				},
+				el: {
+					title_number_theory: "Θεωρία Αριθμών",
+					title_polygon_view: "Προβολή Πολυγώνου",
+					label_primality: "Έλεγχος πρώτου αριθμού",
+					label_square: "Τετράγωνο αριθμού",
+					label_sqrt: "Τετραγωνική ρίζα",
+					label_triangular: "Τριγωνικός αριθμός",
+					label_triangular_root: "Τριγωνική ρίζα",
+					label_factorization: "Παραγοντοποίηση",
+					label_bezout: "Σχέση Bézout",
+					label_fermat: "Κριτήριο πρωτότητας Fermat",
+					label_polygon_area: "Εμβαδόν κανονικού πολυγώνου",
+					label_sum_squares: "Άθροισμα δύο τετραγώνων",
+					label_sides: "Αριθμός πλευρών:",
+					label_diagonals: "Εμφάνιση διαγωνίων",
+					btn_check: "Έλεγχος",
+					btn_calculate: "Υπολογισμός",
+					btn_factorize: "Παραγοντοποίηση",
+					btn_test: "Δοκιμή",
+					btn_calc_area: "Υπολογισμός εμβαδού",
+					btn_find: "Εύρεση",
+					btn_reset: "Επαναφορά",
+					placeholder_first: "Πρώτος αριθμός",
+					placeholder_latter: "Δεύτερος αριθμός",
+					placeholder_sides: "Αριθμός πλευρών",
+					placeholder_side_length: "Μήκος πλευράς",
+					out_is_prime: "Ο αριθμός {n} είναι πρώτος.",
+					out_is_composite: "Ο αριθμός {n} είναι σύνθετος.",
+					out_is_neither: "Ο αριθμός {n} δεν είναι ούτε πρώτος ούτε σύνθετος.",
+					out_prime_number: "Πρώτος αριθμός! :-D",
+					out_seems_prime: "Φαίνεται πρώτος.",
+					out_likely_prime: "Πιθανώς πρώτος.",
+					out_definitely_prime: "Σίγουρα πρώτος.",
+					out_definitely_composite: "Σίγουρα σύνθετος.",
+					out_composite_even: "Σύνθετος (άρτιος).",
+					out_neither_prime_composite: "Ούτε πρώτος ούτε σύνθετος...",
+					out_area: "Εμβαδόν: {area}",
+					out_no_solution: "Δεν υπάρχει λύση.",
+					kbd_title: "Συντομεύσεις πληκτρολογίου",
+					kbd_open_help: "Άνοιγμα / κλείσιμο αυτής της βοήθειας",
+					kbd_next_lang: "Μετάβαση στην επόμενη γλώσσα",
+					kbd_reset: "Επαναφορά σελίδας",
+					kbd_enter: "Επιβεβαίωση εισόδου στο ενεργό πεδίο",
+					kbd_close_modal: "Κλείσιμο αυτού του παραθύρου"
+				},
+				la: {
+					title_number_theory: "Theoria Numerorum",
+					title_polygon_view: "Visio Polygoni",
+					label_primality: "Probatio primalitatis",
+					label_square: "Quadratum numeri",
+					label_sqrt: "Radix quadrata",
+					label_triangular: "Numerus triangularis",
+					label_triangular_root: "Radix triangularis",
+					label_factorization: "Factorizatio",
+					label_bezout: "Relatio Bezout",
+					label_fermat: "Probatio Fermati",
+					label_polygon_area: "Area polygoni regularis",
+					label_sum_squares: "Summa duorum quadratorum",
+					label_sides: "Numerus laterum:",
+					label_diagonals: "Monstra diagonales",
+					btn_check: "Verifica",
+					btn_calculate: "Computa",
+					btn_factorize: "Factoriza",
+					btn_test: "Proba",
+					btn_calc_area: "Computa aream",
+					btn_find: "Inveni",
+					btn_reset: "Restitue",
+					placeholder_first: "Primus numerus",
+					placeholder_latter: "Alter numerus",
+					placeholder_sides: "Numerus laterum",
+					placeholder_side_length: "Longitudo lateris",
+					out_is_prime: "Numerus {n} primus est.",
+					out_is_composite: "Numerus {n} compositus est.",
+					out_is_neither: "Numerus {n} nec primus nec compositus est.",
+					out_prime_number: "Numerus primus! :-D",
+					out_seems_prime: "Primus videtur.",
+					out_likely_prime: "Probabiliter primus.",
+					out_definitely_prime: "Certe primus.",
+					out_definitely_composite: "Certe compositus.",
+					out_composite_even: "Compositus (par).",
+					out_neither_prime_composite: "Nec primus nec compositus...",
+					out_area: "Area: {area}",
+					out_no_solution: "Nulla solutio.",
+					kbd_title: "Compendia clavium",
+					kbd_open_help: "Aperi / claude hanc auxilium",
+					kbd_next_lang: "Ad linguam sequentem transi",
+					kbd_reset: "Paginam restitue",
+					kbd_enter: "Valorem in campo activo confirma",
+					kbd_close_modal: "Claude hanc fenestram"
+				},
+				zh: {
+					title_number_theory: "数论",
+					title_polygon_view: "多边形视图",
+					label_primality: "素数测试",
+					label_square: "数的平方",
+					label_sqrt: "平方根",
+					label_triangular: "三角数",
+					label_triangular_root: "三角根",
+					label_factorization: "因式分解",
+					label_bezout: "贝祖关系",
+					label_fermat: "费马素性测试",
+					label_polygon_area: "正多边形面积",
+					label_sum_squares: "两个平方的和",
+					label_sides: "边数：",
+					label_diagonals: "显示对角线",
+					btn_check: "检查",
+					btn_calculate: "计算",
+					btn_factorize: "分解",
+					btn_test: "测试",
+					btn_calc_area: "计算面积",
+					btn_find: "查找",
+					btn_reset: "重置",
+					placeholder_first: "第一个数",
+					placeholder_latter: "第二个数",
+					placeholder_sides: "边数",
+					placeholder_side_length: "边长",
+					out_is_prime: "数字 {n} 是质数。",
+					out_is_composite: "数字 {n} 是合数。",
+					out_is_neither: "数字 {n} 既不是质数也不是合数。",
+					out_prime_number: "质数！:-D",
+					out_seems_prime: "看起来是质数。",
+					out_likely_prime: "可能是质数。",
+					out_definitely_prime: "确定是质数。",
+					out_definitely_composite: "确定是合数。",
+					out_composite_even: "合数（偶数）。",
+					out_neither_prime_composite: "既不是质数也不是合数...",
+					out_area: "面积：{area}",
+					out_no_solution: "无解。",
+					kbd_title: "键盘快捷键",
+					kbd_open_help: "打开 / 关闭此帮助",
+					kbd_next_lang: "切换到下一种语言",
+					kbd_reset: "重置页面",
+					kbd_enter: "确认当前字段的输入",
+					kbd_close_modal: "关闭此窗口"
+				},
+				ja: {
+					title_number_theory: "数論",
+					title_polygon_view: "多角形ビュー",
+					label_primality: "素数判定",
+					label_square: "数の二乗",
+					label_sqrt: "平方根",
+					label_triangular: "三角数",
+					label_triangular_root: "三角根",
+					label_factorization: "素因数分解",
+					label_bezout: "ベズーの関係",
+					label_fermat: "フェルマーの素数判定",
+					label_polygon_area: "正多角形の面積",
+					label_sum_squares: "二つの平方の和",
+					label_sides: "辺の数：",
+					label_diagonals: "対角線を表示",
+					btn_check: "確認",
+					btn_calculate: "計算",
+					btn_factorize: "因数分解",
+					btn_test: "テスト",
+					btn_calc_area: "面積を計算",
+					btn_find: "検索",
+					btn_reset: "リセット",
+					placeholder_first: "最初の数",
+					placeholder_latter: "次の数",
+					placeholder_sides: "辺の数",
+					placeholder_side_length: "辺の長さ",
+					out_is_prime: "{n} は素数です。",
+					out_is_composite: "{n} は合成数です。",
+					out_is_neither: "{n} は素数でも合成数でもありません。",
+					out_prime_number: "素数！:-D",
+					out_seems_prime: "素数のようです。",
+					out_likely_prime: "おそらく素数。",
+					out_definitely_prime: "確実に素数。",
+					out_definitely_composite: "確実に合成数。",
+					out_composite_even: "合成数（偶数）。",
+					out_neither_prime_composite: "素数でも合成数でもない...",
+					out_area: "面積：{area}",
+					out_no_solution: "解なし。",
+					kbd_title: "キーボードショートカット",
+					kbd_open_help: "このヘルプを開く / 閉じる",
+					kbd_next_lang: "次の言語に切り替える",
+					kbd_reset: "ページをリセット",
+					kbd_enter: "アクティブフィールドの入力を確認",
+					kbd_close_modal: "このウィンドウを閉じる"
+				}
+			};
+
+			let currentLangIndex = 0;
+
+			function applyTranslation(langIndex){
+				const langKey = LANG_KEYS[langIndex];
+				const t = TRANSLATIONS[langKey];
+				if(!t){
+					return;
+				}
+				document.querySelectorAll('[data-i18n]').forEach(el => {
+					const key = el.getAttribute('data-i18n');
+					if(t[key] !== undefined){
+						el.textContent = t[key];
+					}
+				});
+				document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+					const key = el.getAttribute('data-i18n-placeholder');
+					if(t[key] !== undefined){
+						el.placeholder = t[key];
+					}
+				});
+				document.documentElement.lang = langKey;
+				document.getElementById('flagIcon').innerHTML = FLAGS_SVG[langIndex];
+			}
+
+			function tr(key, vars){
+				const langKey = LANG_KEYS[currentLangIndex];
+				const t = TRANSLATIONS[langKey];
+				let str = (t && t[key] !== undefined) ? t[key] : (TRANSLATIONS['en'][key] || key);
+				if(vars){
+					for(const k in vars){
+						str = str.replace('{' + k + '}', vars[k]);
+					}
+				}
+				return str;
+			}
+
+			function nextLanguage(){
+				currentLangIndex = (currentLangIndex + 1)%(LANG_KEYS.length);
+				applyTranslation(currentLangIndex);
+				retranslateOutputs();
+			}
+
+			function clearAll(){
+				location.reload();
+			}
+
+			function clearOutputs(){
+				const outputs = ["isPrime", "sqrt", "scomposition", "BezoutsRelation", "mayBePrime", "polygonArea", "squareOutput", "triangularOutput", "checkTriangularOutput"];
+				outputs.forEach(id => {
+					const el = document.getElementById(id);
+					if(el){
+						el.value = "";
+						el.innerHTML = "";
+					}
+				});
+				document.getElementById("squares").innerHTML = "";
+			}
+
+			const lastActions = new Set();
+
+			function handleAction(actionName){
+				clearOutputs();
+				lastActions.clear();
+				lastActions.add(actionName);
+				if(typeof window[actionName] === "function"){
+					window[actionName]();
+				}
+			}
+
+			function retranslateOutputs(){
+				lastActions.forEach(actionName => {
+					if(typeof window[actionName] === "function"){
+						window[actionName]();
+					}
+				});
+			}
+
+			let flagDiagonals = false;
+			const CANVAS = document.getElementById('canvas');
+			if(window.innerWidth < 600){
+				CANVAS.width = 300;
+				CANVAS.height = 300;
+			}
+
+			function fillSelectOption(){
+				const select = document.getElementById("numberOfSides");
+				for(let i = 3; i <= 60; i++){
+					let opt = document.createElement('option');
+					opt.value = i;
+					opt.innerHTML = i;
+					select.appendChild(opt);
+				}
+			}
+
+			function toggleDiagonals(){
+				flagDiagonals = !flagDiagonals;
+				drawPolygon();
+			}
+
+			function drawPolygon(){
+				const numberOfSides = parseInt(document.getElementById('numberOfSides').value);
+				const ctx = CANVAS.getContext('2d');
+				const centerX = CANVAS.width/2;
+				const centerY = CANVAS.height/2;
+				const radius = CANVAS.width*0.45;
+				const angleStep = (2*Math.PI)/numberOfSides;
+				ctx.clearRect(0, 0, CANVAS.width, CANVAS.height);
+				let vertices = [];
+				for(let i = 0; i < numberOfSides; i++){
+					const angle = (-0.5*Math.PI) + (i*angleStep);
+					vertices.push({x: centerX + radius*Math.cos(angle), y: centerY + radius*Math.sin(angle) });
+				}
+				ctx.beginPath();
+				ctx.strokeStyle = "#27ae60";
+				ctx.lineWidth = 2;
+				ctx.moveTo(vertices[0].x, vertices[0].y);
+				for(let i = 1; i < numberOfSides; i++){
+					ctx.lineTo(vertices[i].x, vertices[i].y);
+				}
+				ctx.closePath();
+				ctx.stroke();
+				if(flagDiagonals){
+					ctx.strokeStyle = "rgba(192, 57, 43, 0.2)";
+					ctx.lineWidth = 1;
+					for(let i = 0; i < vertices.length; i++){
+						for(let j = i + 2; j < vertices.length; j++){
+							if(i === 0 && j === vertices.length - 1){
+								continue;
+							}
+							ctx.beginPath();
+							ctx.moveTo(vertices[i].x, vertices[i].y);
+							ctx.lineTo(vertices[j].x, vertices[j].y);
+							ctx.stroke();
+						}
+					}
+				}
+			}
+
+			function checkNumber(){
+				const val = document.getElementById("firstNumber").value;
+				if(!val){
+					return;
+				}
+				const n = parseInt(val);
+				let key = "out_is_prime";
+				if(n < 2){
+					key = "out_is_neither";
+				}else{
+					for(let i = 2; i*i <= n; i++){
+						if(n%i === 0){
+							key = "out_is_composite";
+							break;
+						}
+					}
+				}
+				document.getElementById("isPrime").value = tr(key, {n});
+			}
+
+			function calculateSquare(){
+				const n = parseFloat(document.getElementById("tenthNumber").value);
+				if(isNaN(n)){
+					return;
+				}
+				document.getElementById("squareOutput").value = `${n}² = ${n*n}`;
+			}
+
+			function squareRoot(){
+				const n = parseInt(document.getElementById("secondNumber").value);
+				if(isNaN(n) || n < 0){
+					return;
+				}
+				let m = Math.floor(Math.sqrt(n));
+				document.getElementById("sqrt").value = (m*m === n) ? `${n} = ${m}²` : `${n} = ${m}² + ${n -(m*m)}`;
+			}
+
+			function calculateTriangular(){
+				const n = parseInt(document.getElementById("eleventhNumber").value);
+				if(isNaN(n) || n < 0){
+					return;
+				}
+				const triangular = (n*(n + 1))/2;
+				document.getElementById("triangularOutput").value = `T(${n}) = ${triangular}`;
+			}
+
+			function checkTriangularity(){
+				const x = parseInt(document.getElementById("twelfthNumber").value);
+				if(isNaN(x) || x < 0){
+					return;
+				}
+				const nFloat = (Math.sqrt(8*x + 1) - 1)/2;
+				const n = Math.floor(nFloat);
+				const lowerTriangular = (n*(n + 1))/2;
+				document.getElementById("checkTriangularOutput").value = (x + " = " + "T(" + n + ")" + (Number.isInteger(nFloat) ? "" : (" + " + (x - lowerTriangular))));
+			}
+
+			function getExp(iExp){
+				const expDigits = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
+				return iExp <= 1 ? "" : iExp.toString().split('').map(d => expDigits[d]).join('');
+			}
+
+			function factorize(){
+				let n = parseInt(document.getElementById("thirdNumber").value);
+				if(isNaN(n) || n <= 1){
+					return;
+				}
+				let temp = n, result = [], count = 0;
+				while(temp%2 === 0){
+					count++;
+					temp /= 2;
+				}
+				if(count > 0){
+					result.push("2" + getExp(count));
+				}
+				for(let i = 3; i*i <= temp; i += 2){
+					count = 0;
+					while(temp%i === 0){
+						count++;
+						temp /= i;
+					}
+					if(count > 0){
+						result.push(i + getExp(count));
+					}
+				}
+				if(temp > 1){
+					result.push(temp.toString());
+				}
+				document.getElementById("scomposition").value = (result.length === 1 && parseInt(result[0]) === n) ? tr("out_prime_number") : n + " = " + result.join(" × ");
+			}
+
+			function computeBezoutRelation(){
+				const a = parseInt(document.getElementById("fourthNumber").value);
+				const b = parseInt(document.getElementById("fifthNumber").value);
+				if(isNaN(a) || isNaN(b)){
+					return;
+				}
+				let old_r = a, r = b, old_s = 1, s = 0, old_t = 0, t = 1;
+				while(r !== 0){
+					let q = Math.floor(old_r/r);
+					[old_r, r] = [r, old_r - q*r];
+					[old_s, s] = [s, old_s - q*s];
+					[old_t, t] = [t, old_t - q*t];
+				}
+				document.getElementById("BezoutsRelation").value = `(${old_s})*${a} +(${old_t})*${b} = ${old_r}`;
+			}
+
+			function applyFermatsPrimalityTest_0(){//SOLO FERMAT...
+				let val = document.getElementById("sixthNumber").value;
+				if(!val){
+					return;
+				}
+				let n = BigInt(val);
+				if(n <= 1n){
+					return;
+				}
+				if(n === 2n){
+					document.getElementById("mayBePrime").value = tr("out_seems_prime");
+					return;
+				}
+				const modExp = (b, e, m) => {
+					let r = 1n;
+					b %= m;
+					while(e > 0n){
+						if(e%2n === 1n){
+							r = (r*b)%m;
+						}
+						b = (b*b)%m;
+						e = e/2n;
+					}
+					return r;
+				};
+				let isP = true;
+				for(let a of [2n, 3n, 5n]){
+					if(a >= n){
+						break;
+					}
+					if(modExp(a, n - 1n, n) !== 1n){
+						isP = false;
+						break;
+					}
+				}
+				document.getElementById("mayBePrime").value = isP ? tr("out_seems_prime") : tr("out_definitely_composite");
+			}
+
+			function applyFermatsPrimalityTest(){//...SIA FERMAT CHE MILLER RABIN.
+				let val = document.getElementById("sixthNumber").value;
+				if(!val){
+					return;
+				}
+				let n = BigInt(val);
+				if(n < 2n){
+					document.getElementById("mayBePrime").value = tr("out_neither_prime_composite");
+					return;
+				}
+				if(n === 2n || n === 3n){
+					document.getElementById("mayBePrime").value = tr("out_definitely_prime");
+					return;
+				}
+				if(n%2n === 0n){
+					document.getElementById("mayBePrime").value = tr("out_composite_even");
+					return;
+				}
+				const modExp = (base, exp, mod) => {
+					let res = 1n;
+					base %= mod;
+					while(exp > 0n){
+						if(exp % 2n === 1n){
+							res = (res*base)%mod;
+						}
+						base = (base*base)%mod;
+						exp /= 2n;
+					}
+					return res;
+				};
+				let d = n - 1n;
+				let s = 0n;
+				while(d%2n === 0n){
+					d /= 2n;
+					s++;
+				}
+				// Per n < 3,317,044,064,679,887,361 basta testare queste basi
+				const bases = [2n, 3n, 5n, 7n, 11n, 13n, 17n, 19n, 23n];
+				for(let a of bases){
+					if(n <= a){
+						break;
+					}
+					let x = modExp(a, d, n);
+					if(x === 1n || x === n - 1n){
+						continue;
+					}
+					let composite = true;
+					for(let r = 1n; r < s; r++){
+						x = (x*x)%n;
+						if(x === n - 1n){
+							composite = false;
+							break;
+						}
+					}
+					if(composite){
+						document.getElementById("mayBePrime").value = tr("out_definitely_composite");
+						return;
+					}
+				}
+				document.getElementById("mayBePrime").value = tr("out_likely_prime");
+			}
+
+			function calculatePolygonArea(){
+				let n = parseInt(document.getElementById("seventhNumber").value);
+				let s = parseFloat(document.getElementById("eighthNumber").value);
+				if(n < 3 || s <= 0){
+					return;
+				}
+				let area = (n*s**2)/(4*Math.tan(Math.PI/n));
+				document.getElementById("polygonArea").value = tr("out_area", {area: area.toFixed(4)});
+			}
+
+			function writeAsSumOfSquares(){
+				const n = parseInt(document.getElementById("ninthNumber").value);
+				if(isNaN(n)){
+					return;
+				}
+				let out = "";
+				for(let i = 0; i*i <= n/2; i++){
+					let j = Math.sqrt(n - i*i);
+					if(Number.isInteger(j)){
+						out += `<div>${j}² + ${i}²</div>`;
+					}
+				}
+				document.getElementById("squares").innerHTML = out || tr("out_no_solution");
+			}
+
+			document.getElementById('numberOfSides').addEventListener('change', drawPolygon);
+
+			document.querySelectorAll('input').forEach(input => {
+				input.addEventListener('keypress',(e) => {
+					if(e.key === 'Enter'){
+						e.preventDefault();
+						const btn = input.nextElementSibling?.tagName === 'BUTTON' ? input.nextElementSibling : input.parentElement.querySelector('button');
+						if(btn){
+							btn.click();
+						}
+					}
+				});
+			});
+
+			document.addEventListener("keydown", e => {
+				if(e.key === "?"){
+					if(document.activeElement && document.activeElement.tagName === "INPUT"){
+						return;
+					}
+					e.preventDefault();
+					toggleKbdModal();
+				}else if(e.key === "Escape"){
+					closeKbdModal();
+				}else if(e.key.toLowerCase() === "l"){
+					if(document.activeElement && document.activeElement.tagName === "INPUT"){
+						return;
+					}
+					nextLanguage();
+				}else if(e.key.toLowerCase() === "r"){
+					if(document.activeElement && document.activeElement.tagName === "INPUT"){
+						return;
+					}
+					clearAll();
+				}
+			});
+
+			function toggleKbdModal(){
+				const modal = document.getElementById("kbdModal");
+				if(modal.classList.contains("open")){
+					closeKbdModal();
+				}else{
+					modal.classList.add("open");
+				}
+			}
+
+			function closeKbdModal(){
+				document.getElementById("kbdModal").classList.remove("open");
+			}
+
+			document.getElementById("kbdModal").addEventListener("click", function(e){
+				if(e.target === this){
+					closeKbdModal();
+				}
+			});
+
+			fillSelectOption();
+			drawPolygon();
+			applyTranslation(currentLangIndex);
+		</script>
+	</body>
+</html>
