@@ -146,6 +146,9 @@
 			.card.stacked{
 				box-shadow: 0 2px 6px var(--card-shadow);
 			}
+			.card-in-col.card-tucked{
+				box-shadow: none;
+			}
 			.card{
 				position: absolute;
 				width: 100%;
@@ -200,7 +203,7 @@
 				line-height: 1;
 			}
 			.card-suit-small{
-				font-size: clamp(0.45rem, 1.4vw, 0.75rem);
+				font-size: clamp(0.65rem, 2vw, 1.05rem);
 				line-height: 1;
 			}
 			.pip-grid{
@@ -222,7 +225,7 @@
 				overflow: hidden;
 			}
 			.pip{
-				font-size: calc(var(--card-w, 80px) * 0.11);
+				font-size: calc(var(--card-w, 80px) * 0.17);
 				line-height: 1;
 				display: block;
 			}
@@ -400,6 +403,15 @@
 					font-size: 0.75rem;
 					padding: 4px 10px;
 				}
+				.pip{
+					font-size: calc(var(--card-w, 80px) * 0.20);
+				}
+				.card-rank{
+					font-size: clamp(0.7rem, 2.4vw, 1.1rem);
+				}
+				.card-suit-small{
+					font-size: clamp(0.72rem, 2.2vw, 1.1rem);
+				}
 			}
 			.column-empty{
 				min-height: var(--col-card-h);
@@ -416,6 +428,7 @@
 			.card-in-col.card-tucked{
 				border-bottom-left-radius: 0;
 				border-bottom-right-radius: 0;
+				border-bottom: none;
 				overflow: hidden;
 			}
 			#toast.toast-visible{
@@ -1104,7 +1117,7 @@
 							const isTucked = ri < col.length - 1;
 							cardDiv.className = 'card card-in-col' +(isSelectedSource ? ' selected': '') +(isTop ? '': ' stacked') +(isTucked ? ' card-tucked': '');
 							cardDiv.style.setProperty('--card-top',(ri*OVERLAP) + 'px');
-							cardDiv.style.setProperty('--card-h',(isTop ? cardH: OVERLAP + 2) + 'px');
+							cardDiv.style.setProperty('--card-h',(isTop ? cardH: OVERLAP + 10) + 'px');
 							cardDiv.style.setProperty('--card-z', ri + 1);
 							const isTuckedSelected = !isTop && isSelectedSource;
 							cardDiv.innerHTML = `<div class="card-inner">${cardHTML(card, isTuckedSelected ? 'tucked-selected' : (!isTop && !isSelectedSource))}</div>`;
