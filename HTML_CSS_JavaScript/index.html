@@ -299,11 +299,50 @@
 				border: 1px solid var(--card-border);
 				border-radius: 16px;
 				padding: 30px 35px 25px;
-				max-width: 480px;
+				max-width: 560px;
 				width: 90%;
 				position: relative;
 				box-shadow: 0 20px 60px rgba(0,0,0,0.6);
 				animation: slideUp 0.3s cubic-bezier(0.16,1,0.3,1) forwards;
+				max-height: 85vh;
+				overflow-y: auto;
+			}
+
+			.kb-shortcuts-table{
+				width: 100%;
+				border-collapse: collapse;
+				margin-top: 18px;
+				font-size: 0.88rem;
+			}
+
+			.kb-shortcuts-table tbody tr{
+				border-bottom: 1px solid rgba(255,255,255,0.06);
+			}
+
+			.kb-shortcuts-table tbody tr:last-child{
+				border-bottom: none;
+			}
+
+			.kb-shortcuts-table td{
+				padding: 7px 10px;
+				color: rgba(255,255,255,0.8);
+				vertical-align: middle;
+			}
+
+			.kb-shortcuts-table td:first-child{
+				width: 60px;
+				text-align: center;
+			}
+
+			.kb-shortcuts-table kbd{
+				background: rgba(255,255,255,0.1);
+				border: 1px solid rgba(255,255,255,0.25);
+				border-radius: 5px;
+				padding: 3px 10px;
+				font-family: monospace;
+				font-size: 0.88rem;
+				color: var(--accent);
+				white-space: nowrap;
 			}
 
 			#kb-hint-close{
@@ -383,6 +422,7 @@
 				<button id="kb-hint-close" onclick="closeKbHint()">✕</button>
 				<div id="kb-hint-flags"></div>
 				<div id="kb-hint-text"></div>
+				<div id="kb-shortcuts-body"></div>
 			</div>
 		</div>
 
@@ -33935,36 +33975,238 @@ document.addEventListener('keydown', function(e) {
 			}
 
 			const kbMessages = [
-				{ lang: 'EN', flag: '<svg viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#s)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>', msg: 'Press <kbd>?</kbd> inside an app to open a pop-up with all available keyboard shortcuts for that page.' },
+				{ lang: 'EN', flag: '<svg viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#s)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>',
+				  msg: 'Press <kbd>?</kbd> inside an app to open a pop-up with all available keyboard shortcuts for that page.',
+				  shortcuts: [
+				    { key: 'G', desc: 'Toggle Games section' },
+				    { key: 'T', desc: 'Toggle Tools section' },
+				    { key: 'B', desc: 'Toggle Board subsection' },
+				    { key: 'A', desc: 'Toggle Card subsection' },
+				    { key: 'M', desc: 'Toggle Math subsection' },
+				    { key: 'P', desc: 'Toggle Puzzle subsection' },
+				    { key: 'U', desc: 'Toggle Utilities subsection' },
+				    { key: 'L', desc: 'Toggle Lab subsection' },
+				    { key: 'C', desc: 'Toggle Clocks subsection' },
+				    { key: 'N', desc: 'Next language in this popup' },
+				    { key: '?', desc: 'Open / close this popup' },
+				    { key: 'Esc', desc: 'Close open app or this popup' }
+				  ]
+				},
 				//{ lang: 'EN', flag: '<svg class="flag-svg" viewBox="0 0 7410 3900"><rect width="7410" height="3900" fill="#b22234"/><path d="M0 300h7410M0 900h7410M0 1500h7410M0 2100h7410M0 2700h7410M0 3300h7410" stroke="#fff" stroke-width="300"/><rect width="2964" height="2100" fill="#3c3b6e"/><path d="M247 175l247 759-646-469h798l-646 469z" fill="#fff" transform="scale(.2)"/></svg>',
-				{ lang: 'IT', flag: '<svg viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>', msg: 'Premi <kbd>?</kbd> in un’app per aprire un pop-up con tutte le scorciatoie da tastiera disponibili per quella pagina.' },
-				{ lang: 'FR', flag: '<svg viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg>', msg: 'Appuyez sur <kbd>?</kbd> dans une app pour ouvrir un pop-up avec tous les raccourcis clavier disponibles pour cette page.' },
-				{ lang: 'ES', flag: '<svg viewBox="0 0 3 2"><rect width="3" height="2" fill="#c60b1e"/><rect width="3" height="1" y="0.5" fill="#ffc400"/></svg>', msg: 'Pulsa <kbd>?</kbd> dentro de una app para abrir un pop-up con todos los atajos de teclado disponibles en esa página.' },
-				{ lang: 'DE', flag: '<svg viewBox="0 0 5 3"><rect width="5" height="3"/><rect width="5" height="2" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg>', msg: 'Drücke <kbd>?</kbd> in einer App, um ein Pop-up mit allen verfügbaren Tastaturkürzeln für diese Seite zu öffnen.' },
-				{ lang: 'PT', flag: '<svg viewBox="0 0 600 400"><rect width="240" height="400" fill="#006600"/><rect x="240" width="360" height="400" fill="#ff0000"/></svg>', msg: 'Pressione <kbd>?</kbd> dentro de um app para abrir um pop-up com todos os atalhos de teclado disponíveis nessa página.' },
-				{ lang: 'RO', flag: '<svg viewBox="0 0 3 2"><rect width="1" height="2" fill="#002b7f"/><rect width="1" height="2" x="1" fill="#fcd116"/><rect width="1" height="2" x="2" fill="#ce1126"/></svg>', msg: 'Apasă <kbd>?</kbd> în interiorul unei aplicații pentru a deschide un pop-up cu toate comenzile rapide de tastatură disponibile.' },
-				{ lang: 'UA', flag: '<svg viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>', msg: 'Натисніть <kbd>?</kbd> всередині програми, щоб відкрити спливаюче вікно з усіма доступними комбінаціями клавіш.' },
-				{ lang: 'GR', flag: '<svg viewBox="0 0 27 18"><rect width="27" height="18" fill="#005bae"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#005bae"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>', msg: 'Πατήστε <kbd>?</kbd> μέσα σε μια εφαρμογή για να ανοίξετε ένα pop-up με όλες τις διαθέσιμες συντομεύσεις πληκτρολογίου.' },
+				{ lang: 'IT', flag: '<svg viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>',
+				  msg: 'Premi <kbd>?</kbd> in un’app per aprire un pop-up con tutte le scorciatoie da tastiera disponibili per quella pagina.',
+				  shortcuts: [
+				    { key: 'G', desc: 'Apri/chiudi sezione Games' },
+				    { key: 'T', desc: 'Apri/chiudi sezione Tools' },
+				    { key: 'B', desc: 'Apri/chiudi sottosezione Board' },
+				    { key: 'A', desc: 'Apri/chiudi sottosezione Card' },
+				    { key: 'M', desc: 'Apri/chiudi sottosezione Math' },
+				    { key: 'P', desc: 'Apri/chiudi sottosezione Puzzle' },
+				    { key: 'U', desc: 'Apri/chiudi sottosezione Utilities' },
+				    { key: 'L', desc: 'Apri/chiudi sottosezione Lab' },
+				    { key: 'C', desc: 'Apri/chiudi sottosezione Clocks' },
+				    { key: 'N', desc: 'Lingua successiva in questo popup' },
+				    { key: '?', desc: 'Apri / chiudi questo popup' },
+				    { key: 'Esc', desc: 'Chiudi l’app aperta o questo popup' }
+				  ]
+				},
+				{ lang: 'FR', flag: '<svg viewBox="0 0 3 2"><rect width="1" height="2" fill="#002395"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#ed2939"/></svg>',
+				  msg: 'Appuyez sur <kbd>?</kbd> dans une app pour ouvrir un pop-up avec tous les raccourcis clavier disponibles pour cette page.',
+				  shortcuts: [
+				    { key: 'G', desc: 'Afficher/masquer la section Games' },
+				    { key: 'T', desc: 'Afficher/masquer la section Tools' },
+				    { key: 'B', desc: 'Afficher/masquer la sous-section Board' },
+				    { key: 'A', desc: 'Afficher/masquer la sous-section Card' },
+				    { key: 'M', desc: 'Afficher/masquer la sous-section Math' },
+				    { key: 'P', desc: 'Afficher/masquer la sous-section Puzzle' },
+				    { key: 'U', desc: 'Afficher/masquer la sous-section Utilities' },
+				    { key: 'L', desc: 'Afficher/masquer la sous-section Lab' },
+				    { key: 'C', desc: 'Afficher/masquer la sous-section Clocks' },
+				    { key: 'N', desc: 'Langue suivante dans ce pop-up' },
+				    { key: '?', desc: 'Ouvrir / fermer ce pop-up' },
+				    { key: 'Esc', desc: 'Fermer l’app ouverte ou ce pop-up' }
+				  ]
+				},
+				{ lang: 'ES', flag: '<svg viewBox="0 0 3 2"><rect width="3" height="2" fill="#c60b1e"/><rect width="3" height="1" y="0.5" fill="#ffc400"/></svg>',
+				  msg: 'Pulsa <kbd>?</kbd> dentro de una app para abrir un pop-up con todos los atajos de teclado disponibles en esa página.',
+				  shortcuts: [
+				    { key: 'G', desc: 'Mostrar/ocultar sección Games' },
+				    { key: 'T', desc: 'Mostrar/ocultar sección Tools' },
+				    { key: 'B', desc: 'Mostrar/ocultar subsección Board' },
+				    { key: 'A', desc: 'Mostrar/ocultar subsección Card' },
+				    { key: 'M', desc: 'Mostrar/ocultar subsección Math' },
+				    { key: 'P', desc: 'Mostrar/ocultar subsección Puzzle' },
+				    { key: 'U', desc: 'Mostrar/ocultar subsección Utilities' },
+				    { key: 'L', desc: 'Mostrar/ocultar subsección Lab' },
+				    { key: 'C', desc: 'Mostrar/ocultar subsección Clocks' },
+				    { key: 'N', desc: 'Siguiente idioma en este pop-up' },
+				    { key: '?', desc: 'Abrir / cerrar este pop-up' },
+				    { key: 'Esc', desc: 'Cerrar la app abierta o este pop-up' }
+				  ]
+				},
+				{ lang: 'DE', flag: '<svg viewBox="0 0 5 3"><rect width="5" height="3"/><rect width="5" height="2" y="1" fill="#d00"/><rect width="5" height="1" y="2" fill="#ffce00"/></svg>',
+				  msg: 'Drücke <kbd>?</kbd> in einer App, um ein Pop-up mit allen verfügbaren Tastaturkürzeln für diese Seite zu öffnen.',
+				  shortcuts: [
+				    { key: 'G', desc: 'Abschnitt Games ein-/ausblenden' },
+				    { key: 'T', desc: 'Abschnitt Tools ein-/ausblenden' },
+				    { key: 'B', desc: 'Unterabschnitt Board ein-/ausblenden' },
+				    { key: 'A', desc: 'Unterabschnitt Card ein-/ausblenden' },
+				    { key: 'M', desc: 'Unterabschnitt Math ein-/ausblenden' },
+				    { key: 'P', desc: 'Unterabschnitt Puzzle ein-/ausblenden' },
+				    { key: 'U', desc: 'Unterabschnitt Utilities ein-/ausblenden' },
+				    { key: 'L', desc: 'Unterabschnitt Lab ein-/ausblenden' },
+				    { key: 'C', desc: 'Unterabschnitt Clocks ein-/ausblenden' },
+				    { key: 'N', desc: 'Nächste Sprache in diesem Pop-up' },
+				    { key: '?', desc: 'Dieses Pop-up öffnen / schließen' },
+				    { key: 'Esc', desc: 'Geöffnete App oder dieses Pop-up schließen' }
+				  ]
+				},
+				{ lang: 'PT', flag: '<svg viewBox="0 0 600 400"><rect width="240" height="400" fill="#006600"/><rect x="240" width="360" height="400" fill="#ff0000"/></svg>',
+				  msg: 'Pressione <kbd>?</kbd> dentro de um app para abrir um pop-up com todos os atalhos de teclado disponíveis nessa página.',
+				  shortcuts: [
+				    { key: 'G', desc: 'Mostrar/ocultar seção Games' },
+				    { key: 'T', desc: 'Mostrar/ocultar seção Tools' },
+				    { key: 'B', desc: 'Mostrar/ocultar subseção Board' },
+				    { key: 'A', desc: 'Mostrar/ocultar subseção Card' },
+				    { key: 'M', desc: 'Mostrar/ocultar subseção Math' },
+				    { key: 'P', desc: 'Mostrar/ocultar subseção Puzzle' },
+				    { key: 'U', desc: 'Mostrar/ocultar subseção Utilities' },
+				    { key: 'L', desc: 'Mostrar/ocultar subseção Lab' },
+				    { key: 'C', desc: 'Mostrar/ocultar subseção Clocks' },
+				    { key: 'N', desc: 'Próximo idioma neste pop-up' },
+				    { key: '?', desc: 'Abrir / fechar este pop-up' },
+				    { key: 'Esc', desc: 'Fechar o app aberto ou este pop-up' }
+				  ]
+				},
+				{ lang: 'RO', flag: '<svg viewBox="0 0 3 2"><rect width="1" height="2" fill="#002b7f"/><rect width="1" height="2" x="1" fill="#fcd116"/><rect width="1" height="2" x="2" fill="#ce1126"/></svg>',
+				  msg: 'Apasă <kbd>?</kbd> în interiorul unei aplicații pentru a deschide un pop-up cu toate comenzile rapide de tastatură disponibile.',
+				  shortcuts: [
+				    { key: 'G', desc: 'Arată/ascunde secțiunea Games' },
+				    { key: 'T', desc: 'Arată/ascunde secțiunea Tools' },
+				    { key: 'B', desc: 'Arată/ascunde subsecțiunea Board' },
+				    { key: 'A', desc: 'Arată/ascunde subsecțiunea Card' },
+				    { key: 'M', desc: 'Arată/ascunde subsecțiunea Math' },
+				    { key: 'P', desc: 'Arată/ascunde subsecțiunea Puzzle' },
+				    { key: 'U', desc: 'Arată/ascunde subsecțiunea Utilities' },
+				    { key: 'L', desc: 'Arată/ascunde subsecțiunea Lab' },
+				    { key: 'C', desc: 'Arată/ascunde subsecțiunea Clocks' },
+				    { key: 'N', desc: 'Următoarea limbă în acest pop-up' },
+				    { key: '?', desc: 'Deschide / închide acest pop-up' },
+				    { key: 'Esc', desc: 'Închide aplicația deschisă sau acest pop-up' }
+				  ]
+				},
+				{ lang: 'UA', flag: '<svg viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>',
+				  msg: 'Натисніть <kbd>?</kbd> всередині програми, щоб відкрити спливаюче вікно з усіма доступними комбінаціями клавіш.',
+				  shortcuts: [
+				    { key: 'G', desc: 'Показати/сховати розділ Games' },
+				    { key: 'T', desc: 'Показати/сховати розділ Tools' },
+				    { key: 'B', desc: 'Показати/сховати підрозділ Board' },
+				    { key: 'A', desc: 'Показати/сховати підрозділ Card' },
+				    { key: 'M', desc: 'Показати/сховати підрозділ Math' },
+				    { key: 'P', desc: 'Показати/сховати підрозділ Puzzle' },
+				    { key: 'U', desc: 'Показати/сховати підрозділ Utilities' },
+				    { key: 'L', desc: 'Показати/сховати підрозділ Lab' },
+				    { key: 'C', desc: 'Показати/сховати підрозділ Clocks' },
+				    { key: 'N', desc: 'Наступна мова в цьому вікні' },
+				    { key: '?', desc: 'Відкрити / закрити це вікно' },
+				    { key: 'Esc', desc: 'Закрити відкриту програму або це вікно' }
+				  ]
+				},
+				{ lang: 'GR', flag: '<svg viewBox="0 0 27 18"><rect width="27" height="18" fill="#005bae"/><path d="M0 2h27M0 6h27M0 10h27M0 14h27" stroke="#fff" stroke-width="2"/><rect width="10" height="10" fill="#005bae"/><path d="M5 0v10M0 5h10" stroke="#fff" stroke-width="2"/></svg>',
+				  msg: 'Πατήστε <kbd>?</kbd> μέσα σε μια εφαρμογή για να ανοίξετε ένα pop-up με όλες τις διαθέσιμες συντομεύσεις πληκτρολογίου.',
+				  shortcuts: [
+				    { key: 'G', desc: 'Εμφάνιση/απόκρυψη ενότητας Games' },
+				    { key: 'T', desc: 'Εμφάνιση/απόκρυψη ενότητας Tools' },
+				    { key: 'B', desc: 'Εμφάνιση/απόκρυψη υποενότητας Board' },
+				    { key: 'A', desc: 'Εμφάνιση/απόκρυψη υποενότητας Card' },
+				    { key: 'M', desc: 'Εμφάνιση/απόκρυψη υποενότητας Math' },
+				    { key: 'P', desc: 'Εμφάνιση/απόκρυψη υποενότητας Puzzle' },
+				    { key: 'U', desc: 'Εμφάνιση/απόκρυψη υποενότητας Utilities' },
+				    { key: 'L', desc: 'Εμφάνιση/απόκρυψη υποενότητας Lab' },
+				    { key: 'C', desc: 'Εμφάνιση/απόκρυψη υποενότητας Clocks' },
+				    { key: 'N', desc: 'Επόμενη γλώσσα σε αυτό το pop-up' },
+				    { key: '?', desc: 'Άνοιγμα / κλείσιμο αυτού του pop-up' },
+				    { key: 'Esc', desc: 'Κλείσιμο ανοιχτής εφαρμογής ή του pop-up' }
+				  ]
+				},
 				//{ lang: 'LA', flag '<svg class="flag-svg" viewBox="0 0 1 1"><rect width="0.5" height="1" fill="#ffe000"/><rect x="0.5" width="0.5" height="1" fill="#fff"/></svg>',
-				{ lang: 'LA', flag: '<svg viewBox="0 0 3 2"><rect width="3" height="2" fill="#800000"/><path d="M0.5,0.5 L2.5,0.5 L2.5,1.5 L0.5,1.5 Z" fill="none" stroke="#FFD700" stroke-width="0.1"/><text x="1.5" y="1.15" font-family="serif" font-weight="bold" font-size="0.4" fill="#FFD700" text-anchor="middle">SPQR</text></svg>', msg: 'Preme <kbd>?</kbd> intra applicationem ut fenestram cum omnibus compendiis claviaturarum aperias.' },
-				{ lang: 'CN', flag: '<svg viewBox="0 0 3 2"><rect width="3" height="2" fill="#de2110"/><path d="M.5 1.1l.3-.9.3.9-1-.6h1z" fill="#ffde00" transform="matrix(.4 0 0 .4 .1 .1)"/></svg>', msg: '在应用内按 <kbd>?</kbd> 可打开一个弹窗，显示该页面所有可用的键盘快捷键。' },
-				{ lang: 'JP', flag: '<svg viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>', msg: 'アプリ内で <kbd>?</kbd> を押すと、そのページで使用可能なすべてのキーボードショートカットを表示するポップアップが開きます。' }
+				{ lang: 'LA', flag: '<svg viewBox="0 0 3 2"><rect width="3" height="2" fill="#800000"/><path d="M0.5,0.5 L2.5,0.5 L2.5,1.5 L0.5,1.5 Z" fill="none" stroke="#FFD700" stroke-width="0.1"/><text x="1.5" y="1.15" font-family="serif" font-weight="bold" font-size="0.4" fill="#FFD700" text-anchor="middle">SPQR</text></svg>',
+				  msg: 'Preme <kbd>?</kbd> intra applicationem ut fenestram cum omnibus compendiis claviaturarum aperias.',
+				  shortcuts: [
+				    { key: 'G', desc: 'Ostende/occlude sectionem Games' },
+				    { key: 'T', desc: 'Ostende/occlude sectionem Tools' },
+				    { key: 'B', desc: 'Ostende/occlude subsectionem Board' },
+				    { key: 'A', desc: 'Ostende/occlude subsectionem Card' },
+				    { key: 'M', desc: 'Ostende/occlude subsectionem Math' },
+				    { key: 'P', desc: 'Ostende/occlude subsectionem Puzzle' },
+				    { key: 'U', desc: 'Ostende/occlude subsectionem Utilities' },
+				    { key: 'L', desc: 'Ostende/occlude subsectionem Lab' },
+				    { key: 'C', desc: 'Ostende/occlude subsectionem Clocks' },
+				    { key: 'N', desc: 'Lingua proxima in hac fenestra' },
+				    { key: '?', desc: 'Aperi / claude hanc fenestram' },
+				    { key: 'Esc', desc: 'Claude applicationem apertam aut hanc fenestram' }
+				  ]
+				},
+				{ lang: 'CN', flag: '<svg viewBox="0 0 3 2"><rect width="3" height="2" fill="#de2110"/><path d="M.5 1.1l.3-.9.3.9-1-.6h1z" fill="#ffde00" transform="matrix(.4 0 0 .4 .1 .1)"/></svg>',
+				  msg: '在应用内按 <kbd>?</kbd> 可打开一个弹窗，显示该页面所有可用的键盘快捷键。',
+				  shortcuts: [
+				    { key: 'G', desc: '显示/隐藏 Games 区域' },
+				    { key: 'T', desc: '显示/隐藏 Tools 区域' },
+				    { key: 'B', desc: '显示/隐藏 Board 子区域' },
+				    { key: 'A', desc: '显示/隐藏 Card 子区域' },
+				    { key: 'M', desc: '显示/隐藏 Math 子区域' },
+				    { key: 'P', desc: '显示/隐藏 Puzzle 子区域' },
+				    { key: 'U', desc: '显示/隐藏 Utilities 子区域' },
+				    { key: 'L', desc: '显示/隐藏 Lab 子区域' },
+				    { key: 'C', desc: '显示/隐藏 Clocks 子区域' },
+				    { key: 'N', desc: '弹窗中切换下一种语言' },
+				    { key: '?', desc: '打开 / 关闭弹窗' },
+				    { key: 'Esc', desc: '关闭已打开的应用或弹窗' }
+				  ]
+				},
+				{ lang: 'JP', flag: '<svg viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>',
+				  msg: 'アプリ内で <kbd>?</kbd> を押すと、そのページで使用可能なすべてのキーボードショートカットを表示するポップアップが開きます。',
+				  shortcuts: [
+				    { key: 'G', desc: 'Games セクションを開閉' },
+				    { key: 'T', desc: 'Tools セクションを開閉' },
+				    { key: 'B', desc: 'Board サブセクションを開閉' },
+				    { key: 'A', desc: 'Card サブセクションを開閉' },
+				    { key: 'M', desc: 'Math サブセクションを開閉' },
+				    { key: 'P', desc: 'Puzzle サブセクションを開閉' },
+				    { key: 'U', desc: 'Utilities サブセクションを開閉' },
+				    { key: 'L', desc: 'Lab サブセクションを開閉' },
+				    { key: 'C', desc: 'Clocks サブセクションを開閉' },
+				    { key: 'N', desc: 'このポップアップで次の言語へ' },
+				    { key: '?', desc: 'このポップアップを開く / 閉じる' },
+				    { key: 'Esc', desc: '開いているアプリまたはポップアップを閉じる' }
+				  ]
+				}
 			];
 
 			let activeKbLang = 0;
+
+			function buildShortcutsTable(shortcuts){
+				const rows = shortcuts.map(s =>
+					`<tr><td><kbd>${s.key}</kbd></td><td>${s.desc}</td></tr>`
+				).join('');
+				return `<table class="kb-shortcuts-table"><tbody>${rows}</tbody></table>`;
+			}
 
 			function buildKbHint(){
 				const flagsEl = document.getElementById('kb-hint-flags');
 				flagsEl.innerHTML = kbMessages.map((item, i) =>
 					`<span class="kb-flag-btn ${i===0?'active':''}" onclick="selectKbLang(${i})" title="${item.lang}">${item.flag}</span>`
 				).join('');
-				document.getElementById('kb-hint-text').innerHTML = kbMessages[0].msg;
+				const first = kbMessages[0];
+				document.getElementById('kb-hint-text').innerHTML = first.msg;
+				document.getElementById('kb-shortcuts-body').innerHTML = buildShortcutsTable(first.shortcuts);
 			}
 
 			function selectKbLang(i){
 				activeKbLang = i;
 				document.querySelectorAll('.kb-flag-btn').forEach((el, idx) => el.classList.toggle('active', idx === i));
 				document.getElementById('kb-hint-text').innerHTML = kbMessages[i].msg;
+				document.getElementById('kb-shortcuts-body').innerHTML = buildShortcutsTable(kbMessages[i].shortcuts);
 			}
 
 			function openKbHint(){
