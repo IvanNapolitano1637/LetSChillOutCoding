@@ -8573,10 +8573,10 @@ document.addEventListener('keydown', function(e) {
 				--gap: clamp(2px, 1.2vw, 15px);
 				--overlap: clamp(50px, 12.5vw, 100px);
 				--font-val: clamp(9px, 3vw, 16px);
-				--suit-D: #b8860b;
+				--suit-D: #8a5600;
 				--suit-C: #8b0000;
-				--suit-S: #1a1a6e;
-				--suit-B: #5c3a00;
+				--suit-S: #0a0a70;
+				--suit-B: #4a2800;
 			}
 			*, *::before, *::after{
 				box-sizing: border-box;
@@ -8589,6 +8589,7 @@ document.addEventListener('keydown', function(e) {
 				flex-direction: column;
 				align-items: center;
 				margin: 0;
+				-webkit-user-select: none;
 				user-select: none;
 				touch-action: manipulation;
 				min-height: 100dvh;
@@ -8765,21 +8766,23 @@ document.addEventListener('keydown', function(e) {
 			}
 			.card.back::before{
 				border-color: rgba(255,200,150,0.3) !important;
-				inset: 5px;
-				background: repeating-linear-gradient(
-					45deg,
-					rgba(255,255,255,0.05) 0px,
-					rgba(255,255,255,0.05) 2px,
-					transparent 2px,
-					transparent 9px
-				),
-				repeating-linear-gradient(
-					-45deg,
-					rgba(255,255,255,0.05) 0px,
-					rgba(255,255,255,0.05) 2px,
-					transparent 2px,
-					transparent 9px
-				);
+				inset: 4px;
+				background: 
+					repeating-linear-gradient(
+						45deg,
+						rgba(180,0,0,0.55) 0px,
+						rgba(180,0,0,0.55) 4px,
+						rgba(120,0,0,0.3) 4px,
+						rgba(120,0,0,0.3) 8px
+					),
+					repeating-linear-gradient(
+						-45deg,
+						rgba(255,150,80,0.12) 0px,
+						rgba(255,150,80,0.12) 4px,
+						transparent 4px,
+						transparent 8px
+					);
+				border-radius: 2px;
 			}
 			.card.selected{
 				box-shadow: 0 0 0 2px #f5dfa0, 0 0 16px rgba(245,223,160,0.7), 0 4px 8px rgba(0,0,0,0.5);
@@ -8935,6 +8938,26 @@ document.addEventListener('keydown', function(e) {
 				margin-bottom: 10px;
 				letter-spacing: 0.3px;
 			}
+			.game-controls{
+				display: flex;
+				gap: 12px;
+				flex-wrap: wrap;
+				justify-content: center;
+				margin-bottom: 20px;
+			}
+			.btn-action{
+				margin-bottom: 0;
+			}
+			.btn-undo{
+				margin-bottom: 0;
+				background: linear-gradient(145deg, #7a6a3a, #4a3a10);
+				opacity: 0.5;
+				cursor: not-allowed;
+			}
+			.btn-undo:not(:disabled){
+				opacity: 1;
+				cursor: pointer;
+			}
 		</style>
 	</head>
 	<body>
@@ -8994,9 +9017,9 @@ document.addEventListener('keydown', function(e) {
 			</div>
 		</div>
 		<h1>Solitario carte napoletane</h1>
-		<div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:20px;">
-			<button style="margin-bottom:0" onclick="initGame()">Nuova Partita</button>
-			<button style="margin-bottom:0;background:linear-gradient(145deg,#7a6a3a,#4a3a10);opacity:0.5;cursor:not-allowed" id="btn-undo" onclick="undoMove()" disabled>↩ Annulla</button>
+		<div class="game-controls">
+			<button class="btn-action" onclick="initGame()">Nuova Partita</button>
+			<button id="btn-undo" class="btn-undo" onclick="undoMove()" disabled>↩ Annulla</button>
 		</div>
 		<div class="top-row">
 			<div class="deck-area">
@@ -9155,91 +9178,118 @@ document.addEventListener('keydown', function(e) {
 			}
 
 			function svgDenaro(w, h){
+				const id = \`dg_\${w}_\${h}\`;
 				return \`<svg viewBox="0 0 40 40" width="\${w}" height="\${h}" xmlns="http://www.w3.org/2000/svg">
 					<defs>
-						<radialGradient id="dg_\${w}" cx="38%" cy="35%">
-							<stop offset="0%" stop-color="#fff7a0"/>
-							<stop offset="45%" stop-color="#f0c020"/>
-							<stop offset="80%" stop-color="#c07808"/>
-							<stop offset="100%" stop-color="#7a4e00"/>
+						<radialGradient id="\${id}" cx="38%" cy="32%">
+							<stop offset="0%" stop-color="#fffad0"/>
+							<stop offset="30%" stop-color="#f5d030"/>
+							<stop offset="65%" stop-color="#d49010"/>
+							<stop offset="100%" stop-color="#8a5600"/>
 						</radialGradient>
 					</defs>
-					<circle cx="20" cy="20" r="18" fill="url(#dg_\${w})" stroke="#8a5800" stroke-width="2"/>
-					<circle cx="20" cy="20" r="13" fill="none" stroke="#8a5800" stroke-width="1.2"/>
-					<circle cx="20" cy="20" r="13" fill="none" stroke="#ffe090" stroke-width="0.6" opacity="0.7"/>
-					<polygon points="20,9 22.5,16.5 30.5,16.5 24,21 26.5,28.5 20,24 13.5,28.5 16,21 9.5,16.5 17.5,16.5"
-					         fill="#fff5b0" stroke="#8a5800" stroke-width="0.7" opacity="0.9"/>
-					<ellipse cx="14" cy="13" rx="5" ry="3" fill="white" opacity="0.18" transform="rotate(-30,14,13)"/>
+					<circle cx="20" cy="20" r="18.5" fill="#7a4800" stroke="#5a3200" stroke-width="0.8"/>
+					<circle cx="20" cy="20" r="17" fill="url(#\${id})" stroke="#5a3200" stroke-width="0.5"/>
+					<circle cx="20" cy="20" r="13.5" fill="none" stroke="#8a5800" stroke-width="1.8"/>
+					<circle cx="20" cy="20" r="12.5" fill="none" stroke="#ffe080" stroke-width="0.5" opacity="0.8"/>
+					<line x1="20" y1="9" x2="20" y2="31" stroke="#7a4800" stroke-width="2.2" stroke-linecap="round"/>
+					<line x1="9" y1="20" x2="31" y2="20" stroke="#7a4800" stroke-width="2.2" stroke-linecap="round"/>
+					<circle cx="20" cy="10.5" r="2.5" fill="#c07010" stroke="#7a4800" stroke-width="0.8"/>
+					<circle cx="20" cy="29.5" r="2.5" fill="#c07010" stroke="#7a4800" stroke-width="0.8"/>
+					<circle cx="10.5" cy="20" r="2.5" fill="#c07010" stroke="#7a4800" stroke-width="0.8"/>
+					<circle cx="29.5" cy="20" r="2.5" fill="#c07010" stroke="#7a4800" stroke-width="0.8"/>
+					<rect x="15.5" y="15.5" width="9" height="9" rx="1" fill="#d49010" stroke="#8a5800" stroke-width="0.8" transform="rotate(45,20,20)"/>
+					<rect x="17.5" y="17.5" width="5" height="5" fill="#ffe878" stroke="none" transform="rotate(45,20,20)"/>
+					<ellipse cx="14" cy="13" rx="5" ry="3" fill="white" opacity="0.15" transform="rotate(-30,14,13)"/>
 				</svg>\`;
 			}
 
 			function svgCoppa(w, h){
-				return \`<svg viewBox="0 0 40 48" width="\${w}" height="\${h}" xmlns="http://www.w3.org/2000/svg">
+				const id = \`cg_\${w}_\${h}\`;
+				return \`<svg viewBox="0 0 44 52" width="\${w}" height="\${h}" xmlns="http://www.w3.org/2000/svg">
 					<defs>
-						<linearGradient id="cg_\${w}" x1="0%" y1="0%" x2="100%" y2="0%">
+						<linearGradient id="\${id}" x1="0%" y1="0%" x2="100%" y2="0%">
 							<stop offset="0%" stop-color="#7a0000"/>
-							<stop offset="35%" stop-color="#cc1818"/>
-							<stop offset="55%" stop-color="#e83030"/>
+							<stop offset="30%" stop-color="#cc1818"/>
+							<stop offset="50%" stop-color="#ee3030"/>
+							<stop offset="70%" stop-color="#cc1818"/>
 							<stop offset="100%" stop-color="#8b0000"/>
 						</linearGradient>
 					</defs>
-					<ellipse cx="20" cy="7" rx="11" ry="3" fill="#aa0000" stroke="#600000" stroke-width="1"/>
-					<path d="M9,7 Q8,20 13,27 Q17,31 20,32 Q23,31 27,27 Q32,20 31,7 Z" fill="url(#cg_\${w})" stroke="#600000" stroke-width="1.2"/>
-					<path d="M11,8 Q10,18 14,25 Q10,18 11,9Z" fill="white" opacity="0.18"/>
-					<path d="M9,9 Q3,11 3,18 Q3,25 9,26 Q6,23 6,18 Q6,12 9,12" fill="none" stroke="#8b0000" stroke-width="2" stroke-linecap="round"/>
-					<path d="M31,9 Q37,11 37,18 Q37,25 31,26 Q34,23 34,18 Q34,12 31,12" fill="none" stroke="#8b0000" stroke-width="2" stroke-linecap="round"/>
-					<path d="M17,32 Q16,37 14,41 L26,41 Q24,37 23,32Z" fill="#8b0000" stroke="#600000" stroke-width="1"/>
-					<ellipse cx="20" cy="41" rx="8" ry="2.5" fill="#700000" stroke="#500000" stroke-width="1"/>
+					<ellipse cx="22" cy="48" rx="11" ry="3.5" fill="#7a0000" stroke="#500000" stroke-width="0.8"/>
+					<rect x="11" y="44" width="22" height="5" rx="2" fill="#8b0000" stroke="#600000" stroke-width="0.8"/>
+					<rect x="19.5" y="34" width="5" height="12" rx="2" fill="#7a0000" stroke="#500000" stroke-width="0.7"/>
+					<ellipse cx="22" cy="37" rx="5.5" ry="3.5" fill="#9b0000" stroke="#600000" stroke-width="0.8"/>
+					<path d="M6,12 Q5,22 8,28 Q12,34 22,36 Q32,34 36,28 Q39,22 38,12 Z" fill="url(#\${id})" stroke="#600000" stroke-width="1.2"/>
+					<ellipse cx="22" cy="12" rx="16" ry="4.5" fill="#aa0000" stroke="#600000" stroke-width="1"/>
+					<ellipse cx="22" cy="12" rx="12" ry="3" fill="#cc1818" opacity="0.5"/>
+					<path d="M9,14 Q8,22 11,28 Q9,22 9,15Z" fill="white" opacity="0.20"/>
+					<path d="M6,14 Q-2,14 -2,24 Q-2,32 6,32" fill="none" stroke="#8b0000" stroke-width="4" stroke-linecap="round"/>
+					<path d="M6,14 Q-2,14 -2,24 Q-2,32 6,32" fill="none" stroke="#cc1010" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+					<circle cx="-2" cy="24" r="3" fill="#7a0000" stroke="#500000" stroke-width="0.8"/>
+					<path d="M38,14 Q46,14 46,24 Q46,32 38,32" fill="none" stroke="#8b0000" stroke-width="4" stroke-linecap="round"/>
+					<path d="M38,14 Q46,14 46,24 Q46,32 38,32" fill="none" stroke="#cc1010" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+					<circle cx="46" cy="24" r="3" fill="#7a0000" stroke="#500000" stroke-width="0.8"/>
+					<path d="M14,18 Q22,16 30,18" fill="none" stroke="#ff8888" stroke-width="1" opacity="0.5"/>
 				</svg>\`;
 			}
 
 			function svgSpada(w, h){
-				return \`<svg viewBox="0 0 30 60" width="\${w}" height="\${h}" xmlns="http://www.w3.org/2000/svg">
+				const id = \`sg_\${w}_\${h}\`;
+				return \`<svg viewBox="0 0 28 64" width="\${w}" height="\${h}" xmlns="http://www.w3.org/2000/svg">
 					<defs>
-						<linearGradient id="sg_\${w}" x1="0%" y1="0%" x2="100%" y2="0%">
-							<stop offset="0%" stop-color="#2a2a8a"/>
-							<stop offset="40%" stop-color="#7070d0"/>
-							<stop offset="50%" stop-color="#e0e0ff"/>
-							<stop offset="60%" stop-color="#7070d0"/>
-							<stop offset="100%" stop-color="#2a2a8a"/>
+						<linearGradient id="\${id}" x1="0%" y1="0%" x2="100%" y2="0%">
+							<stop offset="0%" stop-color="#1a1a80"/>
+							<stop offset="35%" stop-color="#5050b8"/>
+							<stop offset="50%" stop-color="#d8d8ff"/>
+							<stop offset="65%" stop-color="#5050b8"/>
+							<stop offset="100%" stop-color="#1a1a80"/>
 						</linearGradient>
 					</defs>
-					<!-- lama -->
-					<polygon points="15,2 17.5,44 15,46 12.5,44" fill="url(#sg_\${w})" stroke="#1a1a6a" stroke-width="0.8"/>
-					<!-- punta -->
-					<polygon points="15,2 16,6 15,4 14,6" fill="#d0d0ff" stroke="none"/>
-					<!-- riflesso lama -->
-					<line x1="15" y1="4" x2="15" y2="42" stroke="#e8e8ff" stroke-width="0.7" opacity="0.6"/>
-					<!-- guardia orizzontale -->
-					<rect x="4" y="42" width="22" height="4" rx="2" fill="#1a1a70" stroke="#0a0a50" stroke-width="0.8"/>
-					<ellipse cx="15" cy="44" rx="11" ry="3" fill="none" stroke="#4040a0" stroke-width="0.6" opacity="0.6"/>
-					<!-- impugnatura -->
-					<rect x="12.5" y="46" width="5" height="10" rx="2" fill="#18186a" stroke="#0a0a50" stroke-width="0.8"/>
-					<!-- pomolo -->
-					<ellipse cx="15" cy="57" rx="5" ry="3" fill="#2525a0" stroke="#0a0a50" stroke-width="0.8"/>
-					<ellipse cx="15" cy="56.5" rx="3" ry="1.8" fill="#4040c0"/>
+					<polygon points="14,2 16,46 14,48 12,46" fill="url(#\${id})" stroke="#0a0a50" stroke-width="0.7"/>
+					<line x1="14" y1="4" x2="14" y2="44" stroke="#e8e8ff" stroke-width="0.8" opacity="0.7"/>
+					<polygon points="14,2 15.5,8 14,5 12.5,8" fill="#c0c0ff" stroke="none"/>
+					<rect x="3" y="44" width="22" height="3.5" rx="1.7" fill="#18187a" stroke="#0a0a50" stroke-width="0.8"/>
+					<circle cx="3.5" cy="45.75" r="2.5" fill="#2525a0" stroke="#0a0a50" stroke-width="0.8"/>
+					<circle cx="24.5" cy="45.75" r="2.5" fill="#2525a0" stroke="#0a0a50" stroke-width="0.8"/>
+					<ellipse cx="14" cy="45.75" rx="3" ry="2" fill="#3535b8" stroke="#1a1a70" stroke-width="0.5"/>
+					<rect x="12.5" y="40" width="3" height="6" fill="#3535a0" stroke="none"/>
+					<rect x="11.5" y="47.5" width="5" height="11" rx="2.5" fill="#18186a" stroke="#0a0a50" stroke-width="0.8"/>
+					<line x1="11.5" y1="50" x2="16.5" y2="50" stroke="#4040a0" stroke-width="0.7" opacity="0.7"/>
+					<line x1="11.5" y1="53" x2="16.5" y2="53" stroke="#4040a0" stroke-width="0.7" opacity="0.7"/>
+					<line x1="11.5" y1="56" x2="16.5" y2="56" stroke="#4040a0" stroke-width="0.7" opacity="0.7"/>
+					<circle cx="14" cy="61" r="4.5" fill="#2020a0" stroke="#0a0a50" stroke-width="0.8"/>
+					<circle cx="14" cy="60.5" r="2.8" fill="#4040c0" stroke="none"/>
+					<circle cx="12.5" cy="59.5" r="1" fill="#8080e0" opacity="0.6"/>
 				</svg>\`;
 			}
 
 			function svgBastone(w, h){
-				return \`<svg viewBox="0 0 22 70" width="\${w}" height="\${h}" xmlns="http://www.w3.org/2000/svg">
-					<!-- corpo del bastone, tre sezioni colorate -->
-					<!-- sezione verde (bassa) -->
-					<rect x="7" y="46" width="8" height="22" rx="3" fill="#2a7a00" stroke="#1a4e00" stroke-width="1"/>
-					<!-- sezione rossa (centrale) -->
-					<rect x="7" y="24" width="8" height="24" rx="3" fill="#c01010" stroke="#7a0000" stroke-width="1"/>
-					<!-- sezione gialla (alta) -->
-					<rect x="7" y="3" width="8" height="23" rx="3" fill="#d4920c" stroke="#8a5800" stroke-width="1"/>
-					<!-- nodi lungo tutto il bastone -->
-					<ellipse cx="11" cy="6"  rx="7" ry="4.5" fill="#b87800" stroke="#6b4400" stroke-width="1"/>
-					<ellipse cx="11" cy="20" rx="6.5" ry="4" fill="#a80000" stroke="#6a0000" stroke-width="1"/>
-					<ellipse cx="11" cy="34" rx="6" ry="3.8" fill="#a80000" stroke="#6a0000" stroke-width="1"/>
-					<ellipse cx="11" cy="48" rx="5.5" ry="3.5" fill="#1d6200" stroke="#0f3a00" stroke-width="1"/>
-					<ellipse cx="11" cy="62" rx="5" ry="3.2" fill="#1d6200" stroke="#0f3a00" stroke-width="1"/>
-					<!-- cima arrotondata -->
-					<ellipse cx="11" cy="3"  rx="5" ry="3" fill="#8a5800" stroke="#5a3400" stroke-width="1"/>
-					<!-- punta in basso -->
-					<ellipse cx="11" cy="68" rx="4" ry="2.5" fill="#0f3a00" stroke="#071e00" stroke-width="1"/>
+				return \`<svg viewBox="0 0 20 72" width="\${w}" height="\${h}" xmlns="http://www.w3.org/2000/svg">
+					<defs>
+						<linearGradient id="bst_gr_\${w}_\${h}" x1="0%" y1="0%" x2="100%" y2="0%">
+							<stop offset="0%" stop-color="#5a3200"/>
+							<stop offset="35%" stop-color="#a06020"/>
+							<stop offset="55%" stop-color="#c88030"/>
+							<stop offset="75%" stop-color="#8a5010"/>
+							<stop offset="100%" stop-color="#4a2800"/>
+						</linearGradient>
+					</defs>
+					<path d="M7,60 Q5,62 5,66 Q5,70 10,71 Q15,70 15,66 Q15,62 13,60Z" fill="#4a2800" stroke="#2a1400" stroke-width="0.7"/>
+					<rect x="6" y="16" width="8" height="46" rx="3.5" fill="url(#bst_gr_\${w}_\${h})" stroke="#3a2000" stroke-width="0.8"/>
+					<rect x="7.5" y="18" width="2" height="42" rx="1" fill="#d09040" opacity="0.3"/>
+					<ellipse cx="10" cy="62" rx="6.5" ry="4" fill="#3d2000" stroke="#2a1400" stroke-width="0.8"/>
+					<ellipse cx="10" cy="62" rx="4.5" ry="2.5" fill="#5a3000" stroke="none"/>
+					<ellipse cx="10" cy="50" rx="7" ry="4.2" fill="#3d2000" stroke="#2a1400" stroke-width="0.8"/>
+					<ellipse cx="10" cy="50" rx="5" ry="2.8" fill="#5a3000" stroke="none"/>
+					<ellipse cx="10" cy="36" rx="7.5" ry="4.5" fill="#3d2000" stroke="#2a1400" stroke-width="0.8"/>
+					<ellipse cx="10" cy="36" rx="5.5" ry="3" fill="#5a3000" stroke="none"/>
+					<ellipse cx="10" cy="22" rx="7" ry="4" fill="#3d2000" stroke="#2a1400" stroke-width="0.8"/>
+					<ellipse cx="10" cy="22" rx="5" ry="2.5" fill="#5a3000" stroke="none"/>
+					<ellipse cx="10" cy="9" rx="8" ry="10" fill="#8a5010" stroke="#3a2000" stroke-width="1"/>
+					<ellipse cx="10" cy="7" rx="6" ry="7" fill="#c07820" stroke="#5a3000" stroke-width="0.5"/>
+					<ellipse cx="8" cy="5.5" rx="3" ry="2.5" fill="#e09830" opacity="0.4"/>
+					<ellipse cx="10" cy="70" rx="4" ry="2.5" fill="#2a1400" stroke="#1a0a00" stroke-width="0.6"/>
 				</svg>\`;
 			}
 
@@ -9284,58 +9334,37 @@ document.addEventListener('keydown', function(e) {
 					}[suit] || '';
 					return \`<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
 						<rect x="0" y="0" width="100" height="140" rx="4" fill="\${C.bg}"/>
-						<!-- sfondo decorativo -->
 						<rect x="0" y="0" width="100" height="140" rx="4" fill="none" stroke="\${C.border}" stroke-width="1.5"/>
-						<!-- pavimento -->
 						<rect x="0" y="100" width="100" height="40" rx="4" fill="\${C.accent}" opacity="0.10"/>
-						<!-- cornice ornamentale -->
 						<rect x="4" y="4" width="92" height="132" rx="3" fill="none" stroke="\${C.border}" stroke-width="0.6" opacity="0.4"/>
-						<!-- corpo fante -->
-						<!-- gambe -->
 						<rect x="42" y="96" width="7" height="28" rx="3" fill="\${C.main}" stroke="\${C.dark}" stroke-width="1"/>
 						<rect x="51" y="94" width="7" height="30" rx="3" fill="\${C.accent}" stroke="\${C.dark}" stroke-width="1"/>
-						<!-- scarpe -->
 						<ellipse cx="45" cy="124" rx="6" ry="3" fill="\${C.dark}"/>
 						<ellipse cx="54" cy="125" rx="6" ry="3" fill="\${C.dark}"/>
-						<!-- giacca/tunica -->
 						<path d="M33,65 Q35,60 42,58 L50,56 L58,58 Q65,60 67,65 L68,96 L32,96 Z" fill="\${C.accent}" stroke="\${C.dark}" stroke-width="1.2"/>
-						<!-- cintura -->
 						<rect x="32" y="85" width="36" height="6" rx="2" fill="\${C.dark}" stroke="\${C.dark}" stroke-width="0.8"/>
 						<rect x="47" y="84" width="6" height="8" rx="1.5" fill="\${C.light}" stroke="\${C.main}" stroke-width="0.8"/>
-						<!-- decorazione giacca -->
 						<line x1="50" y1="58" x2="50" y2="85" stroke="\${C.light}" stroke-width="1.5" opacity="0.6"/>
 						<circle cx="50" cy="65" r="2" fill="\${C.light}" opacity="0.8"/>
 						<circle cx="50" cy="72" r="2" fill="\${C.light}" opacity="0.8"/>
 						<circle cx="50" cy="79" r="2" fill="\${C.light}" opacity="0.8"/>
-						<!-- collo e testa -->
 						<rect x="45" y="48" width="10" height="12" rx="2" fill="\${C.skin}" stroke="\${C.dark}" stroke-width="0.8"/>
-						<!-- testa -->
 						<ellipse cx="50" cy="40" rx="14" ry="15" fill="\${C.skin}" stroke="\${C.dark}" stroke-width="1.2"/>
-						<!-- capelli/fronte -->
 						<path d="M36,35 Q38,24 50,22 Q62,24 64,35" fill="\${C.dark}" stroke="\${C.dark}" stroke-width="0.5"/>
-						<!-- cappello piumato -->
 						<path d="M34,34 Q36,26 50,24 Q64,26 66,34 L64,36 Q50,30 36,36Z" fill="\${C.main}" stroke="\${C.dark}" stroke-width="1"/>
-						<!-- piuma cappello -->
 						<path d="M64,36 Q72,28 76,18 Q78,12 72,14 Q74,20 68,28 Q66,32 64,36Z" fill="\${C.light}" stroke="\${C.dark}" stroke-width="0.8"/>
-						<!-- occhi -->
 						<ellipse cx="44" cy="40" rx="3" ry="2.5" fill="white"/>
 						<circle cx="44" cy="40" r="1.5" fill="\${C.dark}"/>
 						<ellipse cx="56" cy="40" rx="3" ry="2.5" fill="white"/>
 						<circle cx="56" cy="40" r="1.5" fill="\${C.dark}"/>
-						<!-- naso -->
 						<path d="M49,42 Q48,46 50,47 Q52,46 51,42" fill="none" stroke="\${C.dark}" stroke-width="0.8"/>
-						<!-- bocca -->
 						<path d="M45,50 Q50,53 55,50" fill="none" stroke="\${C.dark}" stroke-width="1"/>
-						<!-- baffi -->
 						<path d="M43,48 Q46,47 50,48" fill="none" stroke="\${C.dark}" stroke-width="0.8"/>
 						<path d="M50,48 Q54,47 57,48" fill="none" stroke="\${C.dark}" stroke-width="0.8"/>
-						<!-- braccia -->
 						<path d="M33,65 Q24,68 22,80 Q22,88 28,88" fill="none" stroke="\${C.accent}" stroke-width="8" stroke-linecap="round"/>
 						<path d="M33,65 Q24,68 22,80 Q22,88 28,88" fill="none" stroke="\${C.dark}" stroke-width="8.5" stroke-linecap="round" opacity="0.2"/>
 						<path d="M67,65 Q76,68 78,78 Q78,86 72,87" fill="none" stroke="\${C.accent}" stroke-width="8" stroke-linecap="round"/>
-						<!-- mano sinistra con arma del seme -->
 						<ellipse cx="27" cy="90" rx="6" ry="5" fill="\${C.skin}" stroke="\${C.dark}" stroke-width="0.8"/>
-						<!-- arma del seme centrata nel braccio -->
 						\${weapon}
 					</svg>\`;
 				}
@@ -9351,73 +9380,45 @@ document.addEventListener('keydown', function(e) {
 						<rect x="0" y="0" width="100" height="140" rx="4" fill="\${C.bg}"/>
 						<rect x="0" y="0" width="100" height="140" rx="4" fill="none" stroke="\${C.border}" stroke-width="1.5"/>
 						<rect x="4" y="4" width="92" height="132" rx="3" fill="none" stroke="\${C.border}" stroke-width="0.6" opacity="0.4"/>
-						<!-- terreno -->
 						<ellipse cx="50" cy="128" rx="40" ry="8" fill="\${C.accent}" opacity="0.15"/>
-						<!-- corpo del cavallo -->
-						<!-- zampe posteriori -->
 						<line x1="30" y1="105" x2="22" y2="130" stroke="\${rc.cavallo_corpo}" stroke-width="6" stroke-linecap="round"/>
 						<line x1="38" y1="108" x2="32" y2="132" stroke="\${rc.cavallo_corpo}" stroke-width="5" stroke-linecap="round"/>
-						<!-- zoccoli posteriori -->
 						<ellipse cx="22" cy="131" rx="5" ry="2.5" fill="\${rc.cavallo_criniera}"/>
 						<ellipse cx="31" cy="133" rx="5" ry="2.5" fill="\${rc.cavallo_criniera}"/>
-						<!-- corpo cavallo -->
 						<ellipse cx="48" cy="105" rx="28" ry="18" fill="\${rc.cavallo_corpo}" stroke="\${rc.cavallo_criniera}" stroke-width="1.2"/>
-						<!-- pancia cavallo -->
 						<path d="M22,105 Q30,122 48,124 Q66,122 74,105" fill="\${rc.cavallo_corpo}" stroke="\${rc.cavallo_criniera}" stroke-width="0.8"/>
-						<!-- zampe anteriori (al galoppo) -->
 						<line x1="62" y1="108" x2="72" y2="128" stroke="\${rc.cavallo_corpo}" stroke-width="6" stroke-linecap="round"/>
 						<line x1="70" y1="105" x2="84" y2="118" stroke="\${rc.cavallo_corpo}" stroke-width="5" stroke-linecap="round"/>
-						<!-- zoccoli anteriori -->
 						<ellipse cx="72" cy="129" rx="5" ry="2.5" fill="\${rc.cavallo_criniera}"/>
 						<ellipse cx="84" cy="119" rx="5" ry="2.5" fill="\${rc.cavallo_criniera}"/>
-						<!-- collo cavallo -->
 						<path d="M52,90 Q58,82 62,74 Q64,66 60,60 Q54,56 50,60 Q48,68 50,76 Q50,84 52,90Z" fill="\${rc.cavallo_corpo}" stroke="\${rc.cavallo_criniera}" stroke-width="1.2"/>
-						<!-- testa cavallo -->
 						<ellipse cx="57" cy="55" rx="12" ry="9" fill="\${rc.cavallo_corpo}" stroke="\${rc.cavallo_criniera}" stroke-width="1.2"/>
-						<!-- muso -->
 						<path d="M62,52 Q72,54 74,60 Q72,65 62,62" fill="\${rc.cavallo_corpo}" stroke="\${rc.cavallo_criniera}" stroke-width="1"/>
-						<!-- narice -->
 						<ellipse cx="71" cy="61" rx="2.5" ry="1.5" fill="\${rc.cavallo_criniera}" opacity="0.5"/>
-						<!-- occhio cavallo -->
 						<circle cx="55" cy="52" r="3" fill="white"/>
 						<circle cx="55" cy="52" r="1.5" fill="\${rc.cavallo_criniera}"/>
-						<!-- orecchio -->
 						<polygon points="50,48 47,40 54,44" fill="\${rc.cavallo_corpo}" stroke="\${rc.cavallo_criniera}" stroke-width="0.8"/>
-						<!-- criniera -->
 						<path d="M50,60 Q44,68 44,80 Q44,88 46,92" fill="none" stroke="\${rc.cavallo_criniera}" stroke-width="4" stroke-linecap="round"/>
 						<path d="M52,62 Q46,70 46,82 Q46,90 48,93" fill="none" stroke="\${rc.cavallo_criniera}" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
-						<!-- coda -->
 						<path d="M20,100 Q10,108 8,118 Q12,125 18,120 Q14,114 18,108 Q22,104 22,100" fill="\${rc.cavallo_criniera}" stroke="\${rc.cavallo_criniera}" stroke-width="0.5"/>
-						<!-- cavaliere: corpo/tunica -->
 						<path d="M35,78 Q38,68 50,65 Q58,65 60,68 L62,90 Q58,95 50,96 Q42,96 38,92 Z" fill="\${rc.tunica}" stroke="\${C.dark}" stroke-width="1.2"/>
-						<!-- cavaliere: gambe/sella -->
 						<path d="M38,88 Q36,100 30,106" fill="none" stroke="\${rc.pantaloni}" stroke-width="7" stroke-linecap="round"/>
 						<path d="M62,88 Q66,98 68,106" fill="none" stroke="\${rc.pantaloni}" stroke-width="7" stroke-linecap="round"/>
-						<!-- staffa -->
 						<path d="M26,106 Q28,110 34,109" fill="none" stroke="\${C.dark}" stroke-width="1.5"/>
-						<!-- decorazione tunica -->
 						<line x1="49" y1="66" x2="49" y2="90" stroke="\${C.light}" stroke-width="1.2" opacity="0.6"/>
 						<circle cx="49" cy="72" r="1.8" fill="\${C.light}" opacity="0.8"/>
 						<circle cx="49" cy="80" r="1.8" fill="\${C.light}" opacity="0.8"/>
-						<!-- cavaliere: collo -->
 						<rect x="44" y="58" width="9" height="10" rx="2" fill="\${C.skin}" stroke="\${C.dark}" stroke-width="0.8"/>
-						<!-- cavaliere: testa -->
 						<ellipse cx="49" cy="48" rx="13" ry="14" fill="\${C.skin}" stroke="\${C.dark}" stroke-width="1.2"/>
-						<!-- elmo/cappello -->
 						<path d="M36,44 Q37,32 49,30 Q61,32 62,44 L60,46 Q49,40 38,46Z" fill="\${C.main}" stroke="\${C.dark}" stroke-width="1"/>
-						<!-- pennacchio elmo -->
 						<path d="M49,30 Q52,20 56,14 Q60,10 58,8 Q54,10 52,16 Q50,22 49,30Z" fill="\${C.light}" stroke="\${C.dark}" stroke-width="0.7"/>
-						<!-- visiera elmo -->
 						<rect x="37" y="44" width="24" height="8" rx="2" fill="\${C.main}" stroke="\${C.dark}" stroke-width="0.8" opacity="0.7"/>
-						<!-- occhi (visibili sotto visiera) -->
 						<ellipse cx="43" cy="48" rx="2.5" ry="2" fill="white" opacity="0.8"/>
 						<circle cx="43" cy="48" r="1.2" fill="\${C.dark}"/>
 						<ellipse cx="55" cy="48" rx="2.5" ry="2" fill="white" opacity="0.8"/>
 						<circle cx="55" cy="48" r="1.2" fill="\${C.dark}"/>
-						<!-- cavaliere: braccio destro alzato con arma -->
 						<path d="M60,70 Q70,60 72,50" fill="none" stroke="\${rc.tunica}" stroke-width="8" stroke-linecap="round"/>
 						<path d="M60,70 Q70,60 72,50" fill="none" stroke="\${C.dark}" stroke-width="8.5" stroke-linecap="round" opacity="0.15"/>
-						<!-- mano e simbolo del seme come arma -->
 						<ellipse cx="72" cy="49" rx="5" ry="5" fill="\${C.skin}" stroke="\${C.dark}" stroke-width="0.8"/>
 					</svg>\`;
 				}
@@ -9432,75 +9433,51 @@ document.addEventListener('keydown', function(e) {
 					<rect x="0" y="0" width="100" height="140" rx="4" fill="\${C.bg}"/>
 					<rect x="0" y="0" width="100" height="140" rx="4" fill="none" stroke="\${C.border}" stroke-width="1.5"/>
 					<rect x="4" y="4" width="92" height="132" rx="3" fill="none" stroke="\${C.border}" stroke-width="0.6" opacity="0.4"/>
-					<!-- trono -->
 					<rect x="20" y="80" width="60" height="55" rx="4" fill="\${tc.trono}" stroke="\${C.dark}" stroke-width="1.5"/>
 					<rect x="16" y="70" width="8" height="70" rx="4" fill="\${tc.trono}" stroke="\${C.dark}" stroke-width="1.2"/>
 					<rect x="76" y="70" width="8" height="70" rx="4" fill="\${tc.trono}" stroke="\${C.dark}" stroke-width="1.2"/>
-					<!-- schienale trono decorato -->
 					<rect x="22" y="76" width="56" height="10" rx="3" fill="\${C.accent}" opacity="0.4"/>
 					<circle cx="30" cy="81" r="4" fill="\${C.light}" opacity="0.6"/>
 					<circle cx="50" cy="81" r="4" fill="\${C.light}" opacity="0.6"/>
 					<circle cx="70" cy="81" r="4" fill="\${C.light}" opacity="0.6"/>
-					<!-- cuscino seduta -->
 					<rect x="24" y="96" width="52" height="14" rx="4" fill="\${C.accent}" opacity="0.5"/>
-					<!-- gambe re -->
 					<rect x="30" y="108" width="12" height="25" rx="4" fill="\${tc.manto}" stroke="\${C.dark}" stroke-width="1"/>
 					<rect x="58" y="108" width="12" height="25" rx="4" fill="\${tc.manto}" stroke="\${C.dark}" stroke-width="1"/>
-					<!-- scarpe/stivali -->
 					<ellipse cx="36" cy="133" rx="9" ry="4" fill="\${C.dark}"/>
 					<ellipse cx="64" cy="133" rx="9" ry="4" fill="\${C.dark}"/>
-					<!-- corpo/mantello -->
 					<path d="M24,68 Q26,60 38,56 L50,54 L62,56 Q74,60 76,68 L78,110 L22,110 Z" fill="\${tc.manto}" stroke="\${C.dark}" stroke-width="1.3"/>
-					<!-- veste sottostante -->
 					<path d="M34,58 Q36,56 50,55 Q64,56 66,58 L66,110 L34,110 Z" fill="\${tc.veste}" stroke="\${C.dark}" stroke-width="0.7" opacity="0.6"/>
-					<!-- cintura ornata -->
 					<rect x="26" y="86" width="48" height="7" rx="2" fill="\${C.dark}" stroke="\${C.dark}" stroke-width="0.8"/>
 					<rect x="44" y="85" width="12" height="9" rx="2" fill="\${C.light}" stroke="\${C.main}" stroke-width="0.8"/>
-					<!-- fibbia cintura -->
 					<rect x="47" y="87" width="6" height="5" rx="1" fill="\${C.main}"/>
-					<!-- decorazione manto (bottoni/gem) -->
 					<circle cx="50" cy="66" r="2.5" fill="\${C.light}" stroke="\${C.main}" stroke-width="0.5"/>
 					<circle cx="50" cy="75" r="2.5" fill="\${C.light}" stroke="\${C.main}" stroke-width="0.5"/>
-					<!-- braccio sinistro: scettro/simbolo -->
 					<path d="M26,68 Q16,72 14,82 Q14,90 20,90" fill="none" stroke="\${tc.manto}" stroke-width="9" stroke-linecap="round"/>
 					<path d="M26,68 Q16,72 14,82 Q14,90 20,90" fill="none" stroke="\${C.dark}" stroke-width="9.5" stroke-linecap="round" opacity="0.18"/>
 					<ellipse cx="19" cy="91" rx="6" ry="5" fill="\${C.skin}" stroke="\${C.dark}" stroke-width="0.8"/>
-					<!-- scettro -->
 					<line x1="14" y1="92" x2="8" y2="130" stroke="\${C.accent}" stroke-width="3" stroke-linecap="round"/>
 					<ellipse cx="8" cy="131" rx="6" ry="3" fill="\${C.main}"/>
 					<circle cx="8" cy="125" r="4" fill="\${C.light}" stroke="\${C.main}" stroke-width="0.8"/>
-					<!-- braccio destro: tiene il simbolo del seme -->
 					<path d="M74,68 Q84,72 86,82 Q86,90 80,90" fill="none" stroke="\${tc.manto}" stroke-width="9" stroke-linecap="round"/>
 					<path d="M74,68 Q84,72 86,82 Q86,90 80,90" fill="none" stroke="\${C.dark}" stroke-width="9.5" stroke-linecap="round" opacity="0.18"/>
 					<ellipse cx="81" cy="91" rx="6" ry="5" fill="\${C.skin}" stroke="\${C.dark}" stroke-width="0.8"/>
-					<!-- collo -->
 					<rect x="44" y="46" width="12" height="12" rx="2" fill="\${C.skin}" stroke="\${C.dark}" stroke-width="0.8"/>
-					<!-- collare ermellino/pelliccia -->
 					<path d="M34,58 Q38,52 50,50 Q62,52 66,58" fill="\${tc.veste}" stroke="\${C.dark}" stroke-width="0.8"/>
 					<path d="M36,57 Q50,50 64,57" fill="none" stroke="\${C.light}" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.7"/>
-					<!-- testa re -->
 					<ellipse cx="50" cy="36" rx="16" ry="17" fill="\${C.skin}" stroke="\${C.dark}" stroke-width="1.3"/>
-					<!-- barba/capelli lati -->
 					<path d="M34,42 Q32,50 36,56 Q40,58 42,54 Q36,50 36,44Z" fill="\${C.dark}" opacity="0.7"/>
 					<path d="M66,42 Q68,50 64,56 Q60,58 58,54 Q64,50 64,44Z" fill="\${C.dark}" opacity="0.7"/>
-					<!-- baffi e barba frontale -->
 					<path d="M40,50 Q45,48 50,49 Q55,48 60,50 Q58,54 50,56 Q42,54 40,50Z" fill="\${C.dark}" opacity="0.5"/>
-					<!-- occhi -->
 					<ellipse cx="43" cy="36" rx="4" ry="3.5" fill="white"/>
 					<circle cx="43" cy="36" r="2" fill="\${C.dark}"/>
 					<ellipse cx="57" cy="36" rx="4" ry="3.5" fill="white"/>
 					<circle cx="57" cy="36" r="2" fill="\${C.dark}"/>
-					<!-- naso -->
 					<path d="M48,38 Q47,43 50,44 Q53,43 52,38" fill="none" stroke="\${C.dark}" stroke-width="0.9"/>
-					<!-- bocca -->
 					<path d="M44,49 Q50,52 56,49" fill="none" stroke="\${C.dark}" stroke-width="1.2"/>
-					<!-- sopracciglia severe -->
 					<path d="M38,30 Q43,28 48,30" fill="none" stroke="\${C.dark}" stroke-width="1.5" stroke-linecap="round"/>
 					<path d="M52,30 Q57,28 62,30" fill="none" stroke="\${C.dark}" stroke-width="1.5" stroke-linecap="round"/>
-					<!-- corona -->
 					<path d="M34,26 L34,14 L40,20 L50,10 L60,20 L66,14 L66,26 Z" fill="\${C.accent}" stroke="\${C.dark}" stroke-width="1.3"/>
 					<rect x="34" y="24" width="32" height="6" rx="2" fill="\${C.accent}" stroke="\${C.dark}" stroke-width="1"/>
-					<!-- gemme corona -->
 					<circle cx="50" cy="13" r="3.5" fill="\${C.light}" stroke="\${C.main}" stroke-width="0.8"/>
 					<circle cx="40" cy="20" r="2.5" fill="\${C.light}" stroke="\${C.main}" stroke-width="0.7"/>
 					<circle cx="60" cy="20" r="2.5" fill="\${C.light}" stroke="\${C.main}" stroke-width="0.7"/>
@@ -9508,10 +9485,10 @@ document.addEventListener('keydown', function(e) {
 			}
 
 			const SUIT_MINI = {
-				'D': \`<svg viewBox="0 0 16 16" width="10" height="10"><circle cx="8" cy="8" r="7" fill="#c8900a" stroke="#7a5000" stroke-width="1.5"/><circle cx="8" cy="8" r="4.5" fill="#f0c030" stroke="#7a5000" stroke-width="0.8"/><circle cx="8" cy="8" r="1.8" fill="#ffe870"/></svg>\`,
-				'C': \`<svg viewBox="0 0 16 20" width="8" height="10"><ellipse cx="8" cy="3" rx="5" ry="1.7" fill="#9b0000"/><path d="M3,3 Q2,9 5,13 Q8,15 11,13 Q14,9 13,3Z" fill="#cc1010" stroke="#700000" stroke-width="0.7"/><rect x="6.5" y="13" width="3" height="5" rx="1" fill="#8b0000"/><ellipse cx="8" cy="18.5" rx="4" ry="1.3" fill="#700000"/></svg>\`,
-				'S': \`<svg viewBox="0 0 14 26" width="7" height="13"><polygon points="7,1 8.5,19 7,21 5.5,19" fill="#2525a0" stroke="#1a1a6a" stroke-width="0.6"/><line x1="7" y1="3" x2="7" y2="18" stroke="#d0d0ff" stroke-width="0.6" opacity="0.6"/><rect x="1" y="19" width="12" height="2.5" rx="1.2" fill="#1a1a70" stroke="#0a0a50" stroke-width="0.5"/><rect x="5.5" y="21.5" width="3" height="3.5" rx="1" fill="#18186a"/><ellipse cx="7" cy="25.5" rx="3.5" ry="1.8" fill="#2525a0"/></svg>\`,
-				'B': \`<svg viewBox="0 0 12 28" width="7" height="14"><rect x="4" y="1" width="4" height="24" rx="2" fill="#8b5200" stroke="#3d2000" stroke-width="0.7"/><ellipse cx="6" cy="3" rx="4.5" ry="3" fill="#b87800" stroke="#6b4400" stroke-width="0.8"/><ellipse cx="6" cy="11" rx="4" ry="2.8" fill="#a80000" stroke="#6a0000" stroke-width="0.8"/><ellipse cx="6" cy="19" rx="3.5" ry="2.5" fill="#1d6200" stroke="#0f3a00" stroke-width="0.8"/><ellipse cx="6" cy="26" rx="3" ry="2" fill="#0f3a00" stroke="#071e00" stroke-width="0.7"/></svg>\`
+				'D': \`<svg viewBox="0 0 16 16" width="10" height="10"><circle cx="8" cy="8" r="7.2" fill="#7a4800" stroke="#5a3200" stroke-width="0.5"/><circle cx="8" cy="8" r="6" fill="#d49010" stroke="#5a3200" stroke-width="0.4"/><circle cx="8" cy="8" r="4.5" fill="none" stroke="#8a5800" stroke-width="1.2"/><line x1="8" y1="3.5" x2="8" y2="12.5" stroke="#7a4800" stroke-width="1.2"/><line x1="3.5" y1="8" x2="12.5" y2="8" stroke="#7a4800" stroke-width="1.2"/><rect x="5.5" y="5.5" width="5" height="5" rx="0.5" fill="#c07010" stroke="#7a4800" stroke-width="0.5" transform="rotate(45,8,8)"/></svg>\`,
+				'C': \`<svg viewBox="0 0 18 22" width="9" height="11"><ellipse cx="9" cy="4" rx="7" ry="2.5" fill="#9b0000"/><path d="M2,4 Q1,11 4,16 Q9,19 14,16 Q17,11 16,4Z" fill="#cc1010" stroke="#700000" stroke-width="0.7"/><path d="M2,5 Q0,9 0,13 Q0,18 4,18 Q2,15 2,13 Q2,9 2,6" fill="none" stroke="#8b0000" stroke-width="1.5"/><path d="M16,5 Q18,9 18,13 Q18,18 14,18 Q16,15 16,13 Q16,9 16,6" fill="none" stroke="#8b0000" stroke-width="1.5"/><rect x="7" y="18" width="4" height="3" rx="1" fill="#7a0000"/><ellipse cx="9" cy="21.5" rx="5" ry="1.5" fill="#600000"/></svg>\`,
+				'S': \`<svg viewBox="0 0 14 28" width="7" height="14"><polygon points="7,1 8.8,21 7,23 5.2,21" fill="#1a1a80" stroke="#0a0a50" stroke-width="0.6"/><line x1="7" y1="3" x2="7" y2="20" stroke="#d0d0ff" stroke-width="0.7" opacity="0.6"/><rect x="0.5" y="21" width="13" height="2.5" rx="1.2" fill="#18187a" stroke="#0a0a50" stroke-width="0.5"/><circle cx="0.5" cy="22.25" r="1.5" fill="#2525a0"/><circle cx="13.5" cy="22.25" r="1.5" fill="#2525a0"/><rect x="5.5" y="23.5" width="3" height="3.5" rx="1.2" fill="#18186a"/><circle cx="7" cy="27.5" r="2.5" fill="#2020a0"/></svg>\`,
+				'B': \`<svg viewBox="0 0 13 30" width="7" height="15"><rect x="4.5" y="3" width="4" height="24" rx="2" fill="#8a5010" stroke="#3d2000" stroke-width="0.6"/><ellipse cx="6.5" cy="5" rx="5" ry="6" fill="#8a5010" stroke="#3d2000" stroke-width="0.7"/><ellipse cx="6.5" cy="4" rx="4" ry="5" fill="#c07820" stroke="none"/><ellipse cx="6.5" cy="13" rx="4.5" ry="3" fill="#3d2000" stroke="#2a1400" stroke-width="0.6"/><ellipse cx="6.5" cy="21" rx="4" ry="2.7" fill="#3d2000" stroke="#2a1400" stroke-width="0.6"/><ellipse cx="6.5" cy="28" rx="3.5" ry="2.2" fill="#2a1400" stroke="#1a0a00" stroke-width="0.5"/></svg>\`
 			};
 
 			function symSize(n, suit){
