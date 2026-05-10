@@ -1,0 +1,2014 @@
+<!DOCTYPE html>
+<html lang="it"><!--A05#039 - Dario - Poker-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>♠ Royal Poker Club ♠</title>
+		<style>
+			@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Cinzel+Decorative:wght@400;700&family=Lato:wght@300;400;700&display=swap');
+			:root{
+				--felt: #1a4a2e;
+				--felt-dark: #0f2d1c;
+				--felt-light: #245c38;
+				--gold: #c9a84c;
+				--gold-light: #e8cc7a;
+				--gold-dark: #8b6914;
+				--cream: #f5ecd7;
+				--red: #c0392b;
+				--red-dark: #8b1a0e;
+				--chip-blue: #2471a3;
+				--chip-green: #1e8449;
+				--chip-red: #c0392b;
+				--chip-black: #1c1c1e;
+				--text-light: #f5ecd7;
+				--shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+				--card-w: 70px;
+				--card-h: 100px;
+			}
+			*{
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+			}
+			body{
+				background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0f 100%);
+				font-family: 'Lato', sans-serif;
+				color: var(--cream);
+				min-height: 100vh;
+				overflow-x: hidden;
+			}
+			#header{
+				text-align: center;
+				padding: 24px 16px 12px;
+				position: relative;
+			}
+			#header::before{
+				content: '';
+				position: absolute;
+				inset: 0;
+				background: linear-gradient(180deg, rgba(201, 168, 76, 0.08) 0%, transparent 100%);
+				pointer-events: none;
+			}
+			#header h1{
+				font-family: 'Cinzel Decorative', serif;
+				font-size: clamp(1.4rem, 5vw, 2.6rem);
+				color: var(--gold);
+				text-shadow: 0 0 20px rgba(201, 168, 76, 0.5), 0 2px 4px rgba(0, 0, 0, 0.8);
+				letter-spacing: 3px;
+			}
+			#header p{
+				font-size: 0.85rem;
+				color: var(--gold-light);
+				opacity: 0.7;
+				margin-top: 4px;
+				letter-spacing: 2px;
+				text-transform: uppercase;
+			}
+			#tabs{
+				display: flex;
+				justify-content: center;
+				flex-wrap: wrap;
+				gap: 8px;
+				padding: 16px;
+				background: linear-gradient(180deg, transparent, rgba(201, 168, 76, 0.05));
+			}
+			.tab-btn{
+				background: rgba(201, 168, 76, 0.08);
+				border: 1px solid rgba(201, 168, 76, 0.3);
+				color: var(--gold-light);
+				padding: 8px 16px;
+				border-radius: 4px;
+				cursor: pointer;
+				font-family: 'Lato', sans-serif;
+				font-size: 0.8rem;
+				letter-spacing: 1px;
+				text-transform: uppercase;
+				transition: all 0.2s;
+			}
+			.tab-btn:hover{
+				background: rgba(201, 168, 76, 0.18);
+				border-color: var(--gold);
+			}
+			.tab-btn.active{
+				background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+				border-color: var(--gold-light);
+				color: #1a0e00;
+				font-weight: 700;
+				box-shadow: 0 0 16px rgba(201, 168, 76, 0.4);
+			}
+			.section{
+				display: none;
+				padding: 12px;
+			}
+			.section.active{
+				display: block;
+			}
+			.table{
+				background: radial-gradient(ellipse at center, var(--felt-light) 0%, var(--felt) 50%, var(--felt-dark) 100%);
+				border: 4px solid var(--gold-dark);
+				border-radius: 24px;
+				box-shadow: var(--shadow), inset 0 0 40px rgba(0, 0, 0, 0.4), 0 0 0 2px rgba(201, 168, 76, 0.2);
+				padding: 16px;
+				max-width: 720px;
+				margin: 0 auto;
+				position: relative;
+			}
+			.table::before{
+				content: '';
+				position: absolute;
+				inset: 6px;
+				border: 1px solid rgba(201, 168, 76, 0.15);
+				border-radius: 18px;
+				pointer-events: none;
+			}
+			.card{
+				width: var(--card-w);
+				height: var(--card-h);
+				background: linear-gradient(145deg, #fff 0%, #f0e8d8 100%);
+				border-radius: 8px;
+				border: 1px solid #ccc;
+				display: inline-flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				font-size: 1.3rem;
+				font-weight: 700;
+				cursor: pointer;
+				position: relative;
+				box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.5);
+				transition: transform 0.15s, box-shadow 0.15s;
+				-webkit-user-select: none;
+				user-select: none;
+				flex-shrink: 0;
+			}
+			.card:hover{
+				transform: translateY(-6px);
+				box-shadow: 2px 10px 20px rgba(0, 0, 0, 0.5);
+			}
+			.card.selected{
+				transform: translateY(-14px);
+				box-shadow: 0 0 0 3px var(--gold), 2px 14px 24px rgba(0, 0, 0, 0.5);
+			}
+			.card.back{
+				background: linear-gradient(145deg, #1a237e, #283593);
+				border-color: #1a237e;
+			}
+			.card.back::after{
+				content: '♠';
+				font-size: 2rem;
+				color: rgba(255, 255, 255, 0.15);
+			}
+			.card .rank{
+				font-size: 0.85rem;
+				position: absolute;
+				top: 4px;
+				left: 6px;
+				line-height: 1;
+			}
+			.card .suit{
+				font-size: 1.4rem;
+			}
+			.card .rank-b{
+				font-size: 0.85rem;
+				position: absolute;
+				bottom: 4px;
+				right: 6px;
+				line-height: 1;
+				transform: rotate(180deg);
+			}
+			.card.red{
+				color: var(--red);
+			}
+			.card.black{
+				color: #111;
+			}
+			.hand-area{
+				display: flex;
+				justify-content: center;
+				flex-wrap: wrap;
+				gap: 8px;
+				min-height: 120px;
+				align-items: flex-end;
+				padding: 8px;
+			}
+			.community-area{
+				display: flex;
+				justify-content: center;
+				flex-wrap: wrap;
+				gap: 8px;
+				min-height: 80px;
+				align-items: center;
+				padding: 8px;
+				border-top: 1px solid rgba(201, 168, 76, 0.2);
+				border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+				margin: 8px 0;
+			}
+			.area-label{
+				font-family: 'Playfair Display', serif;
+				font-size: 0.7rem;
+				letter-spacing: 2px;
+				text-transform: uppercase;
+				color: rgba(201, 168, 76, 0.5);
+				text-align: center;
+				margin: 4px 0;
+			}
+			.info-bar{
+				display: flex;
+				justify-content: space-around;
+				align-items: center;
+				flex-wrap: wrap;
+				gap: 8px;
+				padding: 10px 0;
+				margin-top: 8px;
+				border-top: 1px solid rgba(201, 168, 76, 0.2);
+			}
+			.chip-stat{
+				text-align: center;
+			}
+			.chip-stat .val{
+				font-family: 'Playfair Display', serif;
+				font-size: 1.1rem;
+				color: var(--gold);
+				display: block;
+			}
+			.chip-stat .lbl{
+				font-size: 0.65rem;
+				letter-spacing: 2px;
+				text-transform: uppercase;
+				color: rgba(201, 168, 76, 0.5);
+			}
+			.btn-row{
+				display: flex;
+				justify-content: center;
+				flex-wrap: wrap;
+				gap: 8px;
+				margin-top: 12px;
+			}
+			.btn{
+				padding: 10px 20px;
+				border: none;
+				border-radius: 6px;
+				font-family: 'Lato', sans-serif;
+				font-size: 0.85rem;
+				font-weight: 700;
+				letter-spacing: 1px;
+				text-transform: uppercase;
+				cursor: pointer;
+				transition: all 0.15s;
+			}
+			.btn-gold{
+				background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+				color: #1a0e00;
+				box-shadow: 0 4px 12px rgba(201, 168, 76, 0.3);
+			}
+			.btn-gold:hover{
+				transform: translateY(-2px);
+				box-shadow: 0 6px 20px rgba(201, 168, 76, 0.4);
+			}
+			.btn-red{
+				background: linear-gradient(135deg, var(--red-dark), var(--red));
+				color: #fff;
+				box-shadow: 0 4px 12px rgba(192, 57, 43, 0.3);
+			}
+			.btn-red:hover{
+				transform: translateY(-2px);
+			}
+			.btn-green{
+				background: linear-gradient(135deg, #1a5e30, #27ae60);
+				color: #fff;
+				box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+			}
+			.btn-green:hover{
+				transform: translateY(-2px);
+			}
+			.btn-blue{
+				background: linear-gradient(135deg, #1a3a6b, #2471a3);
+				color: #fff;
+			}
+			.btn-blue:hover{
+				transform: translateY(-2px);
+			}
+			.btn-ghost{
+				background: transparent;
+				border: 1px solid rgba(201, 168, 76, 0.3);
+				color: var(--gold-light);
+			}
+			.btn-ghost:hover{
+				background: rgba(201, 168, 76, 0.1);
+			}
+			.btn:disabled{
+				opacity: 0.4;
+				cursor: not-allowed;
+				transform: none !important;
+			}
+			#result-banner{
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%) scale(0);
+				background: linear-gradient(135deg, #1a0e00, #2d1a00);
+				border: 3px solid var(--gold);
+				border-radius: 16px;
+				padding: 32px 48px;
+				text-align: center;
+				z-index: 100;
+				box-shadow: 0 0 80px rgba(201, 168, 76, 0.4), var(--shadow);
+				transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+				max-width: 90vw;
+			}
+			#result-banner.show{
+				transform: translate(-50%, -50%) scale(1);
+			}
+			#result-banner h2{
+				font-family: 'Cinzel Decorative', serif;
+				font-size: clamp(1.2rem, 5vw, 2rem);
+				color: var(--gold);
+				margin-bottom: 8px;
+			}
+			#result-banner p{
+				color: var(--cream);
+				font-size: 1rem;
+			}
+			#result-banner .close-btn{
+				margin-top: 16px;
+				display: inline-block;
+				padding: 8px 24px;
+				background: var(--gold);
+				color: #1a0e00;
+				border-radius: 4px;
+				cursor: pointer;
+				font-weight: 700;
+				font-size: 0.8rem;
+				letter-spacing: 1px;
+			}
+			.bet-row{
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				flex-wrap: wrap;
+				justify-content: center;
+				margin-top: 8px;
+			}
+			.bet-row input[type=range]{
+				-webkit-appearance: none;
+				appearance: none;
+				width: 140px;
+				height: 6px;
+				background: linear-gradient(to right, var(--gold) 0%, rgba(201, 168, 76, 0.2) 0%);
+				border-radius: 3px;
+				outline: none;
+			}
+			.bet-row input[type=range]::-webkit-slider-thumb{
+				-webkit-appearance: none;
+				width: 18px;
+				height: 18px;
+				background: var(--gold);
+				border-radius: 50%;
+				cursor: pointer;
+				box-shadow: 0 0 8px rgba(201, 168, 76, 0.5);
+			}
+			.bet-val{
+				font-family: 'Playfair Display', serif;
+				color: var(--gold);
+				font-size: 1rem;
+				min-width: 60px;
+				text-align: center;
+			}
+			.phase-badge{
+				display: block;
+				background: rgba(201, 168, 76, 0.15);
+				border: 1px solid rgba(201, 168, 76, 0.3);
+				border-radius: 20px;
+				padding: 3px 12px;
+				font-size: 0.7rem;
+				letter-spacing: 2px;
+				text-transform: uppercase;
+				color: var(--gold-light);
+				margin: 6px auto;
+				text-align: center;
+				width: fit-content;
+			}
+			.opponent-row{
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				background: rgba(0, 0, 0, 0.3);
+				border-radius: 8px;
+				padding: 8px 12px;
+				margin-bottom: 8px;
+				border: 1px solid rgba(201, 168, 76, 0.1);
+			}
+			.opp-name{
+				font-size: 0.75rem;
+				letter-spacing: 1px;
+				color: var(--cream);
+			}
+			.opp-chips{
+				font-family: 'Playfair Display', serif;
+				color: var(--gold);
+				font-size: 0.9rem;
+			}
+			.opp-cards{
+				display: flex;
+				gap: 4px;
+			}
+			.mini-card{
+				width: 28px;
+				height: 40px;
+				border-radius: 4px;
+				border: 1px solid rgba(255, 255, 255, 0.3);
+				background: linear-gradient(145deg, #1a237e, #283593);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 0.6rem;
+				color: rgba(255, 255, 255, 0.3);
+			}
+			.mini-card.revealed{
+				background: linear-gradient(145deg, #fff, #f0e8d8);
+				color: var(--red);
+				font-size: 0.75rem;
+				font-weight: 700;
+			}
+			.mini-card.revealed.black-c{
+				color: #111;
+			}
+			.rules-box{
+				background: rgba(0, 0, 0, 0.3);
+				border: 1px solid rgba(201, 168, 76, 0.2);
+				border-radius: 12px;
+				padding: 16px;
+				margin-top: 12px;
+				max-height: 200px;
+				overflow-y: auto;
+			}
+			.rules-box h3{
+				font-family: 'Playfair Display', serif;
+				color: var(--gold);
+				margin-bottom: 8px;
+				font-size: 1rem;
+			}
+			.rules-box ul{
+				padding-left: 20px;
+			}
+			.rules-box li{
+				font-size: 0.8rem;
+				color: rgba(245, 236, 215, 0.8);
+				margin-bottom: 4px;
+				line-height: 1.4;
+			}
+			.rankings-grid{
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+				gap: 8px;
+				margin-top: 8px;
+			}
+			.rank-card{
+				background: rgba(0, 0, 0, 0.3);
+				border: 1px solid rgba(201, 168, 76, 0.2);
+				border-radius: 8px;
+				padding: 8px;
+				text-align: center;
+			}
+			.rank-card .rank-name{
+				font-family: 'Playfair Display', serif;
+				color: var(--gold);
+				font-size: 0.8rem;
+			}
+			.rank-card .rank-desc{
+				font-size: 0.65rem;
+				color: rgba(245, 236, 215, 0.6);
+				margin-top: 2px;
+			}
+			.rank-card .rank-num{
+				font-size: 1.2rem;
+				margin-bottom: 2px;
+			}
+			.paytable{
+				width: 100%;
+				border-collapse: collapse;
+				font-size: 0.75rem;
+				margin: 8px 0;
+			}
+			.paytable th{
+				background: rgba(201, 168, 76, 0.15);
+				color: var(--gold);
+				padding: 5px 8px;
+				text-align: left;
+				font-family: 'Playfair Display', serif;
+				font-weight: 400;
+				letter-spacing: 1px;
+			}
+			.paytable td{
+				padding: 4px 8px;
+				border-bottom: 1px solid rgba(201, 168, 76, 0.08);
+				color: var(--cream);
+			}
+			.paytable tr.highlight td{
+				color: var(--gold);
+				background: rgba(201, 168, 76, 0.06);
+			}
+			#toast{
+				position: fixed;
+				bottom: 24px;
+				left: 50%;
+				transform: translateX(-50%) translateY(80px);
+				background: rgba(26, 74, 46, 0.95);
+				border: 1px solid var(--gold-dark);
+				color: var(--cream);
+				padding: 10px 24px;
+				border-radius: 30px;
+				font-size: 0.85rem;
+				transition: transform 0.3s;
+				z-index: 200;
+				white-space: nowrap;
+				max-width: 90vw;
+				text-align: center;
+			}
+			#toast.show{
+				transform: translateX(-50%) translateY(0);
+			}
+			.dealer-area{
+				border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+				padding-bottom: 8px;
+				margin-bottom: 8px;
+			}
+			/* Classi per eliminare stili inline */
+			.raise-label{
+				font-size: 0.75rem;
+				color: rgba(245, 236, 215, 0.5);
+			}
+			.vp-variant-wrap{
+				text-align: center;
+				margin-bottom: 8px;
+			}
+			.vp-variant-select{
+				background: rgba(0, 0, 0, 0.5);
+				border: 1px solid var(--gold-dark);
+				color: var(--cream);
+				padding: 6px 12px;
+				border-radius: 4px;
+				font-family: 'Lato', sans-serif;
+				font-size: 0.8rem;
+			}
+			.vp-msg-wrap{
+				text-align: center;
+				margin: 8px 0;
+			}
+			.rankings-title{
+				font-family: 'Cinzel Decorative', serif;
+				color: var(--gold);
+				text-align: center;
+				margin-bottom: 12px;
+				font-size: 1.1rem;
+			}
+			.rankings-footer{
+				margin-top: 16px;
+			}
+			.rankings-footer-title{
+				font-family: 'Playfair Display', serif;
+				color: var(--gold);
+				margin-bottom: 8px;
+				font-size: 0.9rem;
+			}
+			.rankings-footer-title-2{
+				font-family: 'Playfair Display', serif;
+				color: var(--gold);
+				margin: 12px 0 8px;
+				font-size: 0.9rem;
+			}
+			.rankings-footer-text{
+				font-size: 0.75rem;
+				color: rgba(245, 236, 215, 0.7);
+			}
+			.hold-label{
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				background: var(--gold);
+				color: #1a0e00;
+				font-size: 0.5rem;
+				font-weight: 700;
+				padding: 2px 5px;
+				border-radius: 3px;
+				letter-spacing: 1px;
+			}
+			.folded-label{
+				opacity: 0.4;
+			}
+			.paytable th.align-right{
+				text-align: right;
+			}
+			.paytable td.payout-val{
+				text-align: right;
+				color: var(--gold);
+			}
+			@media (max-width: 500px){
+				:root{
+					--card-w: 52px;
+					--card-h: 76px;
+				}
+				.card .suit{
+					font-size: 1.1rem;
+				}
+				.card .rank,
+				.card .rank-b{
+					font-size: 0.7rem;
+				}
+				.btn{
+					padding: 9px 14px;
+					font-size: 0.75rem;
+				}
+				#header h1{
+					font-size: 1.3rem;
+				}
+				.tab-btn{
+					padding: 7px 11px;
+					font-size: 0.7rem;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div id="header">
+			<h1>♠ Royal Poker Club ♠</h1>
+			<p>Tutti i giochi — Nessuna connessione richiesta</p>
+		</div>
+		<div id="tabs">
+			<button class="tab-btn active" onclick="showSection('texas')">Texas Hold'em</button>
+			<button class="tab-btn" onclick="showSection('omaha')">Omaha</button>
+			<button class="tab-btn" onclick="showSection('5card')">5-Card Draw</button>
+			<button class="tab-btn" onclick="showSection('7stud')">7-Card Stud</button>
+			<button class="tab-btn" onclick="showSection('video')">Video Poker</button>
+			<button class="tab-btn" onclick="showSection('carib')">Caribbean Stud</button>
+			<button class="tab-btn" onclick="showSection('3card')">3-Card Poker</button>
+			<button class="tab-btn" onclick="showSection('rankings')">Mani</button>
+		</div>
+		<div id="section-texas" class="section active">
+			<div class="table">
+				<div class="area-label">Avversari</div>
+				<div id="th-opponents"></div>
+				<div class="area-label">Board</div>
+				<div class="community-area" id="th-board"></div>
+				<div class="area-label">Le tue carte</div>
+				<div class="hand-area" id="th-hand"></div>
+				<div class="phase-badge" id="th-phase">Pre-flop</div>
+				<div class="info-bar">
+					<div class="chip-stat"><span class="val" id="th-stack">1000</span><span class="lbl">Chips</span></div>
+					<div class="chip-stat"><span class="val" id="th-pot">0</span><span class="lbl">Piatto</span></div>
+					<div class="chip-stat"><span class="val" id="th-bet">0</span><span class="lbl">Puntata</span></div>
+				</div>
+				<div class="bet-row">
+					<span class="raise-label">Raise:</span>
+					<input type="range" id="th-raise-slider" min="20" max="500" value="50" oninput="updateSlider('th')" aria-label="Importo raise">
+					<span class="bet-val" id="th-raise-val">50</span>
+				</div>
+				<div class="btn-row" id="th-actions">
+					<button class="btn btn-ghost" onclick="thAction('fold')">Fold</button>
+					<button class="btn btn-blue" onclick="thAction('check')" id="th-check-btn">Check</button>
+					<button class="btn btn-red" onclick="thAction('call')" id="th-call-btn">Call 20</button>
+					<button class="btn btn-gold" onclick="thAction('raise')" id="th-raise-btn">Raise 50</button>
+				</div>
+				<div class="btn-row">
+					<button class="btn btn-green" onclick="initTexas()">Nuova Mano</button>
+				</div>
+				<div class="rules-box">
+					<h3>Texas Hold'em</h3>
+					<ul>
+						<li>Ogni giocatore riceve 2 carte private (hole cards).</li>
+						<li>5 carte comuni (board): Flop (3), Turn (1), River (1).</li>
+						<li>Si forma la migliore mano da 5 tra le 7 disponibili.</li>
+						<li>Round di puntata: Pre-flop → Flop → Turn → River → Showdown.</li>
+						<li>Big Blind = 20, Small Blind = 10.</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div id="section-omaha" class="section">
+			<div class="table">
+				<div class="area-label">Avversari</div>
+				<div id="om-opponents"></div>
+				<div class="area-label">Board (5 carte comuni)</div>
+				<div class="community-area" id="om-board"></div>
+				<div class="area-label">Le tue 4 carte</div>
+				<div class="hand-area" id="om-hand"></div>
+				<div class="phase-badge" id="om-phase">Pre-flop</div>
+				<div class="info-bar">
+					<div class="chip-stat"><span class="val" id="om-stack">1000</span><span class="lbl">Chips</span></div>
+					<div class="chip-stat"><span class="val" id="om-pot">0</span><span class="lbl">Piatto</span></div>
+					<div class="chip-stat"><span class="val" id="om-bet">0</span><span class="lbl">Puntata</span></div>
+				</div>
+				<div class="bet-row">
+					<span class="raise-label">Raise:</span>
+					<input type="range" id="om-raise-slider" min="20" max="500" value="50" oninput="updateSlider('om')" aria-label="Importo raise">
+					<span class="bet-val" id="om-raise-val">50</span>
+				</div>
+				<div class="btn-row">
+					<button class="btn btn-ghost" onclick="omAction('fold')">Fold</button>
+					<button class="btn btn-blue" onclick="omAction('check')" id="om-check-btn">Check</button>
+					<button class="btn btn-red" onclick="omAction('call')" id="om-call-btn">Call 20</button>
+					<button class="btn btn-gold" onclick="omAction('raise')" id="om-raise-btn">Raise 50</button>
+				</div>
+				<div class="btn-row">
+					<button class="btn btn-green" onclick="initOmaha()">Nuova Mano</button>
+				</div>
+				<div class="rules-box">
+					<h3>Omaha Hold'em</h3>
+					<ul>
+						<li>Ogni giocatore riceve 4 carte private.</li>
+						<li>Devi usare esattamente 2 carte in mano + 3 carte comuni.</li>
+						<li>5 carte comuni come nel Texas Hold'em.</li>
+						<li>Variante Hi-Lo: vince sia il piatto High che il piatto Low.</li>
+						<li>Mano Low: 5 carte ≤ 8, senza coppie.</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div id="section-5card" class="section">
+			<div class="table">
+				<div class="area-label">Avversari</div>
+				<div id="fd-opponents"></div>
+				<div class="area-label">Le tue carte — tocca per scartare</div>
+				<div class="hand-area" id="fd-hand"></div>
+				<div class="phase-badge" id="fd-phase">Prima puntata</div>
+				<div class="info-bar">
+					<div class="chip-stat"><span class="val" id="fd-stack">1000</span><span class="lbl">Chips</span></div>
+					<div class="chip-stat"><span class="val" id="fd-pot">0</span><span class="lbl">Piatto</span></div>
+					<div class="chip-stat"><span class="val" id="fd-discard">0</span><span class="lbl">Scartate</span></div>
+				</div>
+				<div class="btn-row" id="fd-actions">
+					<button class="btn btn-ghost" onclick="fdAction('fold')">Fold</button>
+					<button class="btn btn-blue" onclick="fdAction('check')">Check</button>
+					<button class="btn btn-red" onclick="fdAction('bet50')">Bet 50</button>
+					<button class="btn btn-gold" onclick="fdAction('draw')">Cambia selezionate</button>
+				</div>
+				<div class="btn-row">
+					<button class="btn btn-green" onclick="init5Card()">Nuova Mano</button>
+				</div>
+				<div class="rules-box">
+					<h3>5-Card Draw</h3>
+					<ul>
+						<li>Ogni giocatore riceve 5 carte coperte.</li>
+						<li>Round di puntata → scambio carte → round finale → showdown.</li>
+						<li>Puoi scartare e sostituire da 0 a 5 carte.</li>
+						<li>Tocca/clicca una carta per selezionarla da scartare.</li>
+						<li>Vince chi ha la mano migliore allo showdown.</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div id="section-7stud" class="section">
+			<div class="table">
+				<div class="area-label">Avversari (carte scoperte visibili)</div>
+				<div id="st-opponents"></div>
+				<div class="area-label">Le tue carte (♦ = scoperta)</div>
+				<div class="hand-area" id="st-hand"></div>
+				<div class="phase-badge" id="st-phase">3rd Street</div>
+				<div class="info-bar">
+					<div class="chip-stat"><span class="val" id="st-stack">1000</span><span class="lbl">Chips</span></div>
+					<div class="chip-stat"><span class="val" id="st-pot">0</span><span class="lbl">Piatto</span></div>
+					<div class="chip-stat"><span class="val" id="st-street">3</span><span class="lbl">Street</span></div>
+				</div>
+				<div class="btn-row" id="st-actions">
+					<button class="btn btn-ghost" onclick="stAction('fold')">Fold</button>
+					<button class="btn btn-blue" onclick="stAction('check')">Check</button>
+					<button class="btn btn-red" onclick="stAction('call')">Call 20</button>
+					<button class="btn btn-gold" onclick="stAction('raise')">Raise 40</button>
+				</div>
+				<div class="btn-row">
+					<button class="btn btn-green" onclick="init7Stud()">Nuova Mano</button>
+				</div>
+				<div class="rules-box">
+					<h3>7-Card Stud</h3>
+					<ul>
+						<li>Non ci sono carte comuni. 7 carte a testa: 2 coperte + 4 scoperte + 1 coperta.</li>
+						<li>5 round di puntata (dal 3rd al 7th Street).</li>
+						<li>Il bring-in apre il 3rd Street (carta più bassa scoperta).</li>
+						<li>Dal 4th Street apre chi ha la mano migliore scoperta.</li>
+						<li>Si forma la migliore mano da 5 con le 7 carte.</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div id="section-video" class="section">
+			<div class="table">
+				<div class="vp-variant-wrap">
+					<select id="vp-variant" onchange="initVideo()"
+						class="vp-variant-select">
+						<option value="jacks">Jacks or Better</option>
+						<option value="deuces">Deuces Wild</option>
+						<option value="double">Double Bonus</option>
+						<option value="joker">Joker Wild</option>
+					</select>
+				</div>
+				<table class="paytable" id="vp-paytable"></table>
+				<div class="area-label">Le tue carte — tocca per tenere</div>
+				<div class="hand-area" id="vp-hand"></div>
+				<div class="vp-msg-wrap">
+					<div class="phase-badge" id="vp-msg">Scegli le carte da tenere, poi premi Cambia</div>
+				</div>
+				<div class="info-bar">
+					<div class="chip-stat"><span class="val" id="vp-credits">100</span><span class="lbl">Crediti</span></div>
+					<div class="chip-stat"><span class="val" id="vp-bet-disp">5</span><span class="lbl">Puntata</span></div>
+					<div class="chip-stat"><span class="val" id="vp-won">-</span><span class="lbl">Vinto</span></div>
+				</div>
+				<div class="btn-row">
+					<button class="btn btn-ghost" onclick="vpChangeBet(-1)">Bet -</button>
+					<button class="btn btn-ghost" onclick="vpChangeBet(1)">Bet +</button>
+					<button class="btn btn-gold" onclick="vpDraw()" id="vp-draw-btn">Cambia</button>
+					<button class="btn btn-green" onclick="initVideo()">Nuova</button>
+				</div>
+				<div class="rules-box">
+					<h3>Video Poker</h3>
+					<ul>
+						<li>Ricevi 5 carte. Tocca quelle da tenere, poi premi Cambia.</li>
+						<li>Le carte non tenute vengono sostituite.</li>
+						<li>Jacks or Better: paga da coppia di J in su.</li>
+						<li>Deuces Wild: i 2 sono jolly.</li>
+						<li>Joker Wild: mazzo da 53 con un Jolly.</li>
+						<li>Double Bonus: premi extra per quattro assi.</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div id="section-carib" class="section">
+			<div class="table">
+				<div class="dealer-area">
+					<div class="area-label">Banco</div>
+					<div class="hand-area" id="cs-dealer"></div>
+				</div>
+				<div class="area-label">Le tue carte</div>
+				<div class="hand-area" id="cs-hand"></div>
+				<div class="phase-badge" id="cs-phase">Piazza l'ante</div>
+				<div class="info-bar">
+					<div class="chip-stat"><span class="val" id="cs-stack">1000</span><span class="lbl">Chips</span></div>
+					<div class="chip-stat"><span class="val" id="cs-ante">0</span><span class="lbl">Ante</span></div>
+					<div class="chip-stat"><span class="val" id="cs-raise">0</span><span class="lbl">Call</span></div>
+				</div>
+				<div class="btn-row" id="cs-actions">
+					<button class="btn btn-gold" onclick="csAnte(20)">Ante 20</button>
+					<button class="btn btn-gold" onclick="csAnte(50)">Ante 50</button>
+					<button class="btn btn-gold" onclick="csAnte(100)">Ante 100</button>
+				</div>
+				<div class="btn-row">
+					<button class="btn btn-green" onclick="initCarib()">Nuova Mano</button>
+				</div>
+				<div class="rules-box">
+					<h3>Caribbean Stud</h3>
+					<ul>
+						<li>Piazza l'ante prima di vedere le carte.</li>
+						<li>Ricevi 5 carte; il banco ne mostra 1.</li>
+						<li>Scegli Call (doppio ante) o Fold.</li>
+						<li>Il banco qualifica con A-K o meglio.</li>
+						<li>Se il banco non qualifica: ante vince 1:1, call è push.</li>
+						<li>Se vinci: ante 1:1, call secondo paytable (da 1:1 a 100:1).</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div id="section-3card" class="section">
+			<div class="table">
+				<div class="dealer-area">
+					<div class="area-label">Banco</div>
+					<div class="hand-area" id="tc-dealer"></div>
+				</div>
+				<div class="area-label">Le tue carte</div>
+				<div class="hand-area" id="tc-hand"></div>
+				<div class="phase-badge" id="tc-phase">Piazza Ante e/o Pair Plus</div>
+				<div class="info-bar">
+					<div class="chip-stat"><span class="val" id="tc-stack">1000</span><span class="lbl">Chips</span></div>
+					<div class="chip-stat"><span class="val" id="tc-ante">0</span><span class="lbl">Ante</span></div>
+					<div class="chip-stat"><span class="val" id="tc-pp">0</span><span class="lbl">Pair+</span></div>
+				</div>
+				<div class="btn-row" id="tc-actions">
+					<button class="btn btn-gold" onclick="tcBet('ante',20)">Ante 20</button>
+					<button class="btn btn-blue" onclick="tcBet('pp',20)">Pair+ 20</button>
+					<button class="btn btn-green" onclick="tcDeal()">Distribuisci</button>
+				</div>
+				<div class="btn-row">
+					<button class="btn btn-green" onclick="init3Card()">Nuova Mano</button>
+				</div>
+				<div class="rules-box">
+					<h3>3-Card Poker</h3>
+					<ul>
+						<li>Due scommesse separate: Ante e Pair Plus.</li>
+						<li>Ricevi 3 carte. Scegli Play (uguale all'ante) o Fold.</li>
+						<li>Il banco qualifica con Regina o meglio.</li>
+						<li>Pair Plus paga indipendentemente dal banco: Coppia 1:1, Scala 6:1, Colore 4:1, Scala colore 30:1, Tris 30:1.</li>
+						<li>Mini Royal (A-K-Q stessa seme): 40:1.</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div id="section-rankings" class="section">
+			<div class="table">
+				<h2 class="rankings-title">Classifiche delle Mani</h2>
+				<div class="rankings-grid">
+					<div class="rank-card">
+						<div class="rank-num">🏆</div>
+						<div class="rank-name">Royal Flush</div>
+						<div class="rank-desc">A-K-Q-J-10 stessa seme</div>
+					</div>
+					<div class="rank-card">
+						<div class="rank-num">⭐</div>
+						<div class="rank-name">Scala Colore</div>
+						<div class="rank-desc">5 carte consecutive stessa seme</div>
+					</div>
+					<div class="rank-card">
+						<div class="rank-num">4️⃣</div>
+						<div class="rank-name">Poker</div>
+						<div class="rank-desc">4 carte dello stesso valore</div>
+					</div>
+					<div class="rank-card">
+						<div class="rank-num">🏠</div>
+						<div class="rank-name">Full House</div>
+						<div class="rank-desc">Tris + Coppia</div>
+					</div>
+					<div class="rank-card">
+						<div class="rank-num">🎨</div>
+						<div class="rank-name">Colore (Flush)</div>
+						<div class="rank-desc">5 carte stessa seme</div>
+					</div>
+					<div class="rank-card">
+						<div class="rank-num">📏</div>
+						<div class="rank-name">Scala (Straight)</div>
+						<div class="rank-desc">5 carte consecutive</div>
+					</div>
+					<div class="rank-card">
+						<div class="rank-num">3️⃣</div>
+						<div class="rank-name">Tris</div>
+						<div class="rank-desc">3 carte stesso valore</div>
+					</div>
+					<div class="rank-card">
+						<div class="rank-num">2️⃣</div>
+						<div class="rank-name">Doppia Coppia</div>
+						<div class="rank-desc">Due coppie diverse</div>
+					</div>
+					<div class="rank-card">
+						<div class="rank-num">1️⃣</div>
+						<div class="rank-name">Coppia</div>
+						<div class="rank-desc">2 carte stesso valore</div>
+					</div>
+					<div class="rank-card">
+						<div class="rank-num">🃏</div>
+						<div class="rank-name">Carta Alta</div>
+						<div class="rank-desc">Nessuna combinazione</div>
+					</div>
+				</div>
+				<div class="rankings-footer">
+					<h3 class="rankings-footer-title">Seme —
+						Ordine in caso di parità</h3>
+					<p class="rankings-footer-text">♠ Picche > ♥ Cuori > ♦ Quadri > ♣ Fiori (solo per
+						bring-in nello Stud)</p>
+					<h3 class="rankings-footer-title-2">Valore
+						delle Carte</h3>
+					<p class="rankings-footer-text">A (Asso) > K > Q > J > 10 > 9 > 8 > 7 > 6 > 5 > 4 > 3 >
+						2<br>L'Asso può valere 1 nelle scale basse (A-2-3-4-5)</p>
+				</div>
+			</div>
+		</div>
+		<div id="result-banner">
+			<h2 id="result-title">Risultato</h2>
+			<p id="result-desc"></p>
+			<div class="close-btn" onclick="closeResult()">Continua</div>
+		</div>
+		<div id="toast"></div>
+		<script>
+			const SUITS = ['♠', '♥', '♦', '♣'];
+			const RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+			const RANK_VAL = {2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10, J: 11, Q: 12, K: 13, A: 14};
+
+			function makeDeck(jokers = 0){
+				let d = [];
+				for(let s of SUITS){
+					for(let r of RANKS){
+						d.push({r, s});
+					}
+				}
+				for(let i = 0; i < jokers; i++){
+					d.push({r: '🃏', s: '', joker: true});
+				}
+				return shuffle(d);
+			}
+
+			function shuffle(a){
+				let b = [...a];
+				for(let i = b.length-1; i > 0; i--){
+					let j = Math.floor(Math.random()*(i + 1));
+					[b [i], b [j]] = [b [j], b [i]];
+				}
+				return b;
+			}
+
+			function cardColor(c){
+				return(c.s === '♥' || c.s === '♦') ? 'red': 'black';
+			}
+
+			function cardHTML(c, back = false, selected = false, held = false){
+				if(back){
+					return `<div class="card back"></div>`;
+				}
+				let cls = `card ${cardColor(c)}${selected ? ' selected' : ''}`;
+				let label = held ? '<div class="hold-label">HOLD</div>': '';
+				return `<div class="${cls}"><span class="rank">${c.r}</span><span class="suit">${c.s}</span><span class="rank-b">${c.r}</span>${label}</div>`;
+			}
+
+			function miniCardHTML(c, revealed = false){
+				if(!c ||!revealed){
+					return `<div class="mini-card">?</div>`;
+				}
+				let col = cardColor(c) ? '': 'black-c';
+				if(c.s === '♠' || c.s === '♣'){
+					col = 'black-c';
+				}
+				return `<div class="mini-card revealed ${col}">${c.r}${c.s}</div>`;
+			}
+
+			function showToast(msg, ms = 2500){
+				const t = document.getElementById('toast');
+				t.textContent = msg;
+				t.classList.add('show');
+				setTimeout(() => t.classList.remove('show'), ms);
+			}
+
+			function showResult(title, desc){
+				document.getElementById('result-title').textContent = title;
+				document.getElementById('result-desc').textContent = desc;
+				document.getElementById('result-banner').classList.add('show');
+			}
+
+			function closeResult(){
+				document.getElementById('result-banner').classList.remove('show');
+			}
+
+			function showSection(id){
+				document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+				document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+				document.getElementById('section-' + id).classList.add('active');
+				event.target.classList.add('active');
+			}
+
+			function updateSlider(pfx){
+				const slider = document.getElementById(pfx + '-raise-slider');
+				const val = document.getElementById(pfx + '-raise-val');
+				val.textContent = slider.value;
+				const pct =(slider.value - slider.min)/(slider.max - slider.min)*100;
+				slider.style.background = `linear-gradient(to right, var(--gold) ${pct}%, rgba(201,168,76,0.2) ${pct}%)`;
+				if(pfx === 'th'){
+					document.getElementById('th-raise-btn').textContent = `Raise ${slider.value}`;
+				}
+				if(pfx === 'om'){
+					document.getElementById('om-raise-btn').textContent = `Raise ${slider.value}`;
+				}
+			}
+
+			function evalHand(cards){
+				let jokerCount = cards.filter(c => c.joker).length;
+				let real = cards.filter(c => !c.joker);
+				let vals = real.map(c => RANK_VAL [c.r]).sort((a, b) => b - a);
+				let suits = real.map(c => c.s);
+				let counts = {};
+				vals.forEach( v => {counts [v] =(counts [v] || 0) + 1;});
+				let groups = Object.values(counts).sort((a, b) => b - a);
+				let isFlush = suits.length >= 4 && suits.every(s => s === suits [0]) ||(suits.length === 4 && suits.every(s => s === suits [0]) && jokerCount === 1) ||(suits.length === 5 && suits.every(s => s === suits [0]));
+				function isStraight(vs){
+					let u = [...new Set(vs)].sort((a, b) => b - a);
+					if(u.length < 5){
+						return false;
+					}
+					if(u [0] - u [4] === 4){
+						return true;
+					}
+					if(u [0] === 14 && u [1] === 5 && u [2] === 4 && u [3] === 3 && u [4] === 2){
+						return true;
+					}
+					return false;
+				}
+				let straight = isStraight(vals);
+				if(jokerCount > 0 &&!straight){
+					for(let v = 14; v >= 2; v--){
+						let t = [v,...vals].sort((a, b) => b - a);
+						if(isStraight(t)){
+							straight = true;
+							break;
+						}
+					}
+				}
+				if(jokerCount > 0 &&!isFlush){
+					if(suits.length === 4 && suits.every(s => s === suits [0])){
+						isFlush = true;
+					}
+				}
+				let g = [...groups];
+				if(jokerCount > 0 && g.length > 0){
+					g [0] += jokerCount;
+				}else if(jokerCount > 0){
+					g = [jokerCount];
+				}
+				let royal = isFlush && straight && vals.includes(14) && vals.includes(13);
+				if(royal){
+					return{
+						rank: 9, name: 'Royal Flush'
+					}
+				};
+				if(isFlush && straight){
+					return{
+						rank: 8, name: 'Scala Colore'
+					}
+				};
+				if(g [0] >= 4){
+					return{
+						rank: 7, name: 'Poker'
+					}
+				};
+				if(g [0] >= 3 && g [1] >= 2){
+					return{
+						rank: 6, name: 'Full House'
+					}
+				};
+				if(isFlush){
+					return{
+						rank: 5, name: 'Colore'
+					}
+				};
+				if(straight){
+					return{
+						rank: 4, name: 'Scala'
+					}
+				};
+				if(g [0] >= 3){
+					return{
+						rank: 3, name: 'Tris'
+					}
+				};
+				if(g [0] >= 2 && g [1] >= 2){
+					return{
+						rank: 2, name: 'Doppia Coppia'
+					}
+				};
+				if(g [0] >= 2){
+					return{
+						rank: 1, name: 'Coppia'
+					}
+				};
+				return{
+					rank: 0, name: `Carta Alta (${RANKS[vals[0] - 2]})`
+				};
+			}
+
+			function best5(cards){
+				if(cards.length === 5){
+					return evalHand(cards);
+				}
+				let best = {rank: -1, name: ''};
+				function combo(arr, k){
+					let res = [];
+					function c(s, start){
+						if(s.length === k){
+							res.push([...s]);
+							return;
+						}
+						for(let i = start; i <= arr.length-k+s.length; i++){
+							s.push(arr [i]);
+							c(s, i + 1);
+							s.pop();
+						}
+					}
+					c([], 0);
+					return res;
+				}
+				combo(cards, 5).forEach( h => {
+					let e = evalHand(h);
+					if(e.rank > best.rank){
+						best = e;
+					}
+				});
+				return best;
+			}
+
+			function aiDecide(stack, pot, bet, handRank){
+				if(handRank >= 6){
+					return 'raise';
+				}
+				if(handRank >= 4){
+					return Math.random() < 0.7 ? 'call': 'raise';
+				}
+				if(handRank >= 2){
+					return Math.random() < 0.6 ? 'call': 'fold';
+				}
+				return Math.random() < 0.3 ? 'call': 'fold';
+			}
+			let TH = {};
+
+			function initTexas(){
+				TH = {deck: makeDeck(), phase: 0, stack: 1000, pot: 0, currentBet: 20, playerBet: 0, board: [], hand: [], opponents: [{name: 'Elena', stack: 1000, folded: false, bet: 0},{name: 'Marco', stack: 1000, folded: false, bet: 0}]};
+				TH.hand = [TH.deck.pop(), TH.deck.pop()];
+				TH.opponents.forEach(o => {
+					o.cards = [TH.deck.pop(), TH.deck.pop()];
+					o.folded = false;
+					o.bet = 0;
+				});
+				TH.opponents [0].bet = 10;
+				TH.opponents [0].stack -= 10;
+				TH.opponents [1].bet = 20;
+				TH.opponents [1].stack -= 20;
+				TH.pot = 30;
+				TH.currentBet = 20;
+				TH.phase = 0;
+				TH.phaseNames = ['Pre-flop', 'Flop', 'Turn', 'River', 'Showdown'];
+				renderTexas();
+			}
+
+			function renderTexas(){
+				let oh = '';
+				TH.opponents.forEach(o => {
+					let cards = o.folded ? '<span class="folded-label">Folded</span>': `<div class="opp-cards">${miniCardHTML(null, false)}${miniCardHTML(null, false)}</div>`;
+					oh += `<div class="opponent-row"><span class="opp-name">${o.name}</span>${cards}<span class="opp-chips">${o.stack}</span></div>`;
+				});
+				document.getElementById('th-opponents').innerHTML = oh;
+				let bh = '';
+				for(let i = 0; i < 5; i++){
+					bh += i < TH.board.length ? cardHTML(TH.board [i]): `<div class="card back"></div>`;
+				}
+				document.getElementById('th-board').innerHTML = bh;
+				document.getElementById('th-hand').innerHTML = TH.hand.map(c => cardHTML(c)).join('');
+				document.getElementById('th-phase').textContent = TH.phaseNames [TH.phase] || 'Showdown';
+				document.getElementById('th-stack').textContent = TH.stack;
+				document.getElementById('th-pot').textContent = TH.pot;
+				document.getElementById('th-bet').textContent = TH.currentBet;
+				document.getElementById('th-call-btn').textContent = `Call ${TH.currentBet - TH.playerBet}`;
+				document.getElementById('th-raise-btn').textContent = `Raise ${document.getElementById('th-raise-slider').value}`;
+			}
+
+			function thAction(action){
+				if(action === 'fold'){
+					showResult('Hai foldato', 'Il piatto va agli avversari.');
+					TH.pot = 0;
+					return;
+				}
+				let callAmt = TH.currentBet - TH.playerBet;
+				if(action === 'call'){
+					TH.stack -= Math.min(callAmt, TH.stack);
+					TH.pot += callAmt;
+					TH.playerBet = TH.currentBet;
+				}
+				if(action === 'check'){}
+				if(action === 'raise'){
+					let r = parseInt(document.getElementById('th-raise-slider').value);
+					TH.stack -= r;
+					TH.pot += r;
+					TH.currentBet += r;
+					TH.playerBet = TH.currentBet;
+				}
+				TH.opponents.filter(o => !o.folded).forEach(o => {
+					let handEval = best5( [...(TH.board.length > 0 ? TH.board: []), o.cards [0], o.cards [1]]);
+					let dec = aiDecide(o.stack, TH.pot, TH.currentBet, handEval.rank);
+					if(dec === 'fold'){
+						o.folded = true;
+						showToast(`${o.name} ha foldato`);
+					}else if(dec === 'call'){
+						let a = TH.currentBet - o.bet;
+						o.stack -= Math.min(a, o.stack);
+						TH.pot += a;
+						o.bet = TH.currentBet;
+					}else{
+						let r = 40;
+						o.stack -= r;
+						TH.pot += r;
+						TH.currentBet += r;
+						o.bet = TH.currentBet;
+						showToast(`${o.name} alza di ${r}`);
+					}
+				});
+				thNextPhase();
+			}
+
+			function thNextPhase(){
+				TH.phase++;
+				TH.playerBet = 0;
+				TH.opponents.forEach(o => o.bet = 0);
+				if(TH.phase === 1){
+					TH.board.push(TH.deck.pop(), TH.deck.pop(), TH.deck.pop());
+				}else if(TH.phase === 2 || TH.phase === 3){
+					TH.board.push(TH.deck.pop());
+				}else if(TH.phase >= 4){
+					thShowdown();
+					return;
+				}
+				renderTexas();
+			}
+
+			function thShowdown(){
+				let allCards = [...TH.board,...TH.hand];
+				let myHand = best5(allCards);
+				let winners = ['Tu'];
+				let bestRank = myHand.rank;
+				TH.opponents.filter(o => !o.folded).forEach(o => {
+					let h = best5( [...TH.board,...o.cards]);
+					if(h.rank > bestRank){
+						bestRank = h.rank;
+						winners = [o.name];
+					}else if(h.rank === bestRank){
+						winners.push(o.name);
+					}
+				});
+				let oh = '';
+				TH.opponents.forEach(o => {
+					let cards = o.folded ? '<span class="folded-label">Folded</span>': `<div class="opp-cards">${miniCardHTML(o.cards[0], true)}${miniCardHTML(o.cards[1], true)}</div>`;
+					oh += `<div class="opponent-row"><span class="opp-name">${o.name}</span>${cards}<span class="opp-chips">${o.stack}</span></div>`;
+				});
+				document.getElementById('th-opponents').innerHTML = oh;
+				document.getElementById('th-phase').textContent = 'Showdown';
+				if(winners.includes('Tu')){
+					TH.stack += Math.floor(TH.pot/winners.length);
+					showResult('🏆 Hai vinto!', `Mano: ${myHand.name} — Piatto: ${TH.pot}`);
+				}else{
+					showResult('💸 Hai perso', `La tua mano: ${myHand.name} — Ha vinto: ${winners.join(', ')}`);
+				}
+				renderTexas();
+			}
+
+			let OM = {};
+
+			function initOmaha(){
+				OM = {deck: makeDeck(), phase: 0, stack: 1000, pot: 0, currentBet: 20, playerBet: 0, board: [], hand: [], opponents: [{name: 'Sofia', stack: 1000, folded: false, bet: 0},{name: 'Luca', stack: 1000, folded: false, bet: 0}]};
+				OM.hand = [OM.deck.pop(), OM.deck.pop(), OM.deck.pop(), OM.deck.pop()];
+				OM.opponents.forEach(o => {
+					o.cards = [OM.deck.pop(), OM.deck.pop(), OM.deck.pop(), OM.deck.pop()];
+					o.folded = false;
+				});
+				OM.opponents [0].bet = 10;
+				OM.opponents [0].stack -= 10;
+				OM.opponents [1].bet = 20;
+				OM.opponents [1].stack -= 20;
+				OM.pot = 30;
+				OM.currentBet = 20;
+				OM.phaseNames = ['Pre-flop', 'Flop', 'Turn', 'River', 'Showdown'];
+				renderOmaha();
+			}
+
+			function renderOmaha(){
+				let oh = '';
+				OM.opponents.forEach(o => {
+					let cards = o.folded ? '<span class="folded-label">Folded</span>': `<div class="opp-cards">${[0, 1, 2, 3].map(() => miniCardHTML(null, false)).join('')}</div>`;
+					oh += `<div class="opponent-row"><span class="opp-name">${o.name}</span>${cards}<span class="opp-chips">${o.stack}</span></div>`;
+				});
+				document.getElementById('om-opponents').innerHTML = oh;
+				let bh = '';
+				for(let i = 0; i < 5; i++){
+					bh += i < OM.board.length ? cardHTML(OM.board [i]): `<div class="card back"></div>`;
+				}
+				document.getElementById('om-board').innerHTML = bh;
+				document.getElementById('om-hand').innerHTML = OM.hand.map(c => cardHTML(c)).join('');
+				document.getElementById('om-phase').textContent = OM.phaseNames [OM.phase];
+				document.getElementById('om-stack').textContent = OM.stack;
+				document.getElementById('om-pot').textContent = OM.pot;
+				document.getElementById('om-bet').textContent = OM.currentBet;
+				document.getElementById('om-call-btn').textContent = `Call ${OM.currentBet - OM.playerBet}`;
+			}
+
+			function omAction(action){
+				if(action === 'fold'){
+					showResult('Hai foldato', 'Il piatto va agli avversari.');
+					return;
+				}
+				if(action === 'call'){
+					let c = OM.currentBet - OM.playerBet;
+					OM.stack -= Math.min(c, OM.stack);
+					OM.pot += c;
+					OM.playerBet = OM.currentBet;
+				}
+				if(action === 'raise'){
+					let r = parseInt(document.getElementById('om-raise-slider').value);
+					OM.stack -= r;
+					OM.pot += r;
+					OM.currentBet += r;
+					OM.playerBet = OM.currentBet;
+				}
+				OM.opponents.filter(o => !o.folded).forEach(o => {
+					let dec = Math.random() < 0.5 ? 'call': 'fold';
+					if(dec === 'fold'){
+						o.folded = true;
+						showToast(`${o.name} ha foldato`);
+					}else{
+						let a = OM.currentBet - o.bet;
+						o.stack -= Math.min(a, o.stack);
+						OM.pot += a;
+						o.bet = OM.currentBet;
+					}
+				});
+				OM.phase++;
+				OM.playerBet = 0;
+				if(OM.phase === 1){
+					OM.board.push(OM.deck.pop(), OM.deck.pop(), OM.deck.pop());
+				}else if(OM.phase === 2 || OM.phase === 3){
+					OM.board.push(OM.deck.pop());
+				}else if(OM.phase >= 4){
+					function omahaEval(hole, board){
+						let best ={
+							rank: -1
+						};
+						for(let hi = 0; hi < hole.length-1; hi++){
+							for(let hj = hi+1; hj < hole.length; hj++){
+								for(let bi = 0; bi < board.length-2; bi++){
+									for(let bj = bi+1; bj < board.length-1; bj++){
+										for(let bk = bj+1; bk < board.length; bk++){
+											let h = evalHand( [hole [hi], hole [hj], board [bi], board [bj], board [bk]]);
+											if(h.rank > best.rank){
+												best = h;
+											}
+										}
+									}
+								}
+							}
+						}
+						return best;
+					}
+					let my = omahaEval(OM.hand, OM.board);
+					let won = true;
+					OM.opponents.filter(o => !o.folded).forEach(o => {
+						let oh = omahaEval(o.cards, OM.board);
+						if(oh.rank >= my.rank){
+							won = false;
+						}
+					});
+					if(won){
+						OM.stack += OM.pot;
+						showResult('🏆 Hai vinto!', `Mano: ${my.name}`);
+					}else{
+						showResult('💸 Hai perso', `Mano: ${my.name}`);
+					}
+				}
+				renderOmaha();
+			}
+
+			let FD = {};
+
+			function init5Card(){
+				FD = {deck: makeDeck(), phase: 0, stack: 1000, pot: 30, hand: [], selected: [], opponents: [{name: 'Giulia', stack: 1000, folded: false},{name: 'Roberto', stack: 1000, folded: false}]};
+				for(let i = 0; i < 5; i++){
+					FD.hand.push(FD.deck.pop());
+				}
+				FD.opponents.forEach(o => {
+					o.cards = [];
+					for(let i = 0; i < 5; i++) o.cards.push(FD.deck.pop());
+					o.folded = false;
+				});
+				FD.selected = FD.hand.map(() => false);
+				renderFD();
+			}
+
+			function renderFD(){
+				let oh = '';
+				FD.opponents.forEach(o => {
+					let c = o.folded ? '<span class="folded-label">Folded</span>': `<div class="opp-cards">${[0, 1, 2, 3, 4].map(() => miniCardHTML(null, false)).join('')}</div>`;
+					oh += `<div class="opponent-row"><span class="opp-name">${o.name}</span>${c}<span class="opp-chips">${o.stack}</span></div>`;
+				});
+				document.getElementById('fd-opponents').innerHTML = oh;
+				let hh = '';
+				FD.hand.forEach((c, i) => {hh += `<div onclick="fdToggle(${i})">${cardHTML(c, false, FD.selected[i])}</div>`;});
+				document.getElementById('fd-hand').innerHTML = hh;
+				document.getElementById('fd-phase').textContent = FD.phase === 0 ? 'Prima puntata': 'Dopo lo scambio';
+				document.getElementById('fd-stack').textContent = FD.stack;
+				document.getElementById('fd-pot').textContent = FD.pot;
+				document.getElementById('fd-discard').textContent = FD.selected.filter(Boolean).length;
+			}
+
+			function fdToggle(i){
+				FD.selected [i] =!FD.selected [i];
+				renderFD();
+			}
+
+			function fdAction(action){
+				if(action === 'fold'){
+					showResult('Hai foldato', 'Il piatto va agli avversari.');
+					return;
+				}
+				if(action === 'bet50'){
+					FD.stack -= 50;
+					FD.pot += 50;
+				}
+				if(action === 'draw'){
+					FD.hand = FD.hand.map((c, i) => FD.selected [i] ? FD.deck.pop(): c);
+					FD.selected = FD.hand.map(() => false);
+					FD.phase = 1;
+					FD.opponents.filter(o => !o.folded).forEach(o => {
+						let h = evalHand(o.cards);
+						let discard = 0;
+						if(h.rank === 0){
+							discard = Math.floor(Math.random()*3) + 1;
+						}else if(h.rank === 1){
+							discard = Math.floor(Math.random()*2) + 1;
+						}
+						for(let i = 0; i < discard; i++){
+							if(FD.deck.length){
+								o.cards [i] = FD.deck.pop();
+							}
+						}
+					});
+					renderFD();
+					return;
+				}
+				if(FD.phase === 1){
+					let my = evalHand(FD.hand);
+					let won = true;
+					FD.opponents.filter(o => !o.folded).forEach(o => {
+						let oh = evalHand(o.cards);
+						if(oh.rank >= my.rank) won = false;
+					});
+					if(won){
+						FD.stack += FD.pot;
+						showResult('🏆 Hai vinto!', `Mano: ${my.name} — Piatto: ${FD.pot}`);
+					}else{
+						showResult('💸 Hai perso', `Mano: ${my.name}`);
+					}
+				}
+				renderFD();
+			}
+
+			let ST = {};
+
+			function init7Stud(){
+				ST = {deck: makeDeck(), street: 3, stack: 1000, pot: 15, hand: [], opponents: [{name: 'Anna', stack: 1000, folded: false, cards: []},{name: 'Paolo', stack: 1000, folded: false, cards: []}]};
+				for(let i = 0; i < 3; i++){
+					ST.hand.push({card: ST.deck.pop(), face: i === 2});
+				}
+				ST.opponents.forEach(o => {
+					for(let i = 0; i < 3; i++){
+						o.cards.push({card: ST.deck.pop(), face: i === 2});
+					}
+					o.folded = false;
+				});
+				renderStud();
+			}
+
+			function renderStud(){
+				let oh = '';
+				ST.opponents.forEach(o => {
+					let c = o.folded ? '<span class="folded-label">Folded</span>': `<div class="opp-cards">${o.cards.map(cc => cc.face ? miniCardHTML(cc.card, true) : miniCardHTML(null, false)).join('')}</div>`;
+					oh += `<div class="opponent-row"><span class="opp-name">${o.name}</span>${c}<span class="opp-chips">${o.stack}</span></div>`;
+				});
+				document.getElementById('st-opponents').innerHTML = oh;
+				let hh = ST.hand.map(cc => {
+					if(!cc.face){
+						return cardHTML(cc.card, true);
+					}
+					return `<div title="Scoperta">${cardHTML(cc.card)}</div>`;
+				}).join('');
+				document.getElementById('st-hand').innerHTML = hh;
+				document.getElementById('st-phase').textContent = `${ST.street}th Street`;
+				document.getElementById('st-stack').textContent = ST.stack;
+				document.getElementById('st-pot').textContent = ST.pot;
+				document.getElementById('st-street').textContent = ST.street;
+			}
+
+			function stAction(action){
+				if(action === 'fold'){
+					showResult('Hai foldato', 'Il piatto va agli avversari.');
+					return;
+				}
+				if(action === 'call'){
+					ST.stack -= 20;
+					ST.pot += 20;
+				}
+				if(action === 'raise'){
+					ST.stack -= 40;
+					ST.pot += 40;
+				}
+				ST.opponents.filter(o => !o.folded).forEach(o => {
+					if(Math.random() < 0.2){
+						o.folded = true;
+						showToast(`${o.name} ha foldato`);
+					}else{
+						ST.pot += 20;
+					}
+				});
+				ST.street++;
+				if(ST.street <= 7){
+					let face = ST.street < 7;
+					ST.hand.push({
+						card: ST.deck.pop(), face
+					});
+					ST.opponents.filter(o => !o.folded).forEach(o => o.cards.push({card: ST.deck.pop(), face}));
+				}
+				if(ST.street > 7){
+					let myCards = ST.hand.map(cc => cc.card);
+					let my = best5(myCards);
+					let won = true;
+					ST.opponents.filter(o => !o.folded).forEach(o => {
+						let oc = o.cards.map(cc => cc.card);
+						let oh = best5(oc);
+						if(oh.rank >= my.rank){
+							won = false;
+						}
+					});
+					if(won){
+						ST.stack += ST.pot;
+						showResult('🏆 Hai vinto!', `Mano: ${my.name}`);
+					}else{
+						showResult('💸 Hai perso', `Mano: ${my.name}`);
+					}
+				}
+				renderStud();
+			}
+
+			const VP_PAYTABLES = {jacks:{name: 'Jacks or Better', pays: [ [9, 'Royal Flush', 9], [8, 'Scala Colore', 50], [7, 'Poker', 25], [6, 'Full House', 9], [5, 'Colore', 6], [4, 'Scala', 4], [3, 'Tris', 3], [2, 'Doppia Coppia', 2], [1, 'Coppia J+', 1]]}, deuces:{name: 'Deuces Wild', pays: [ [9, 'Royal Flush Nat.', 800], [8, '5 Uguali', 200], [7, 'Royal Flush Wild', 25], [6, 'Scala Colore', 9], [7, 'Poker', 5], [5, 'Full House', 3], [5, 'Colore', 2], [4, 'Scala', 2], [3, 'Tris', 1]]}, double:{name: 'Double Bonus', pays: [ [9, 'Royal Flush', 800], [8, 'Scala Colore', 50], [7, '4 Assi', 160], [7, '4 Assi+', 160], [6, 'Poker', 50], [6, 'Full House', 9], [5, 'Colore', 7], [4, 'Scala', 5], [3, 'Tris', 3], [2, 'Doppia Coppia', 1], [1, 'Coppia J+', 1]]}, joker:{name: 'Joker Wild', pays: [ [9, 'Royal Flush Nat.', 800], [8, '5 Uguali', 200], [7, 'Royal Flush Wild', 100], [6, 'Scala Colore', 50], [5, 'Poker', 20], [4, 'Full House', 7], [3, 'Colore', 5], [2, 'Scala', 3], [1, 'Tris', 2]]}};
+
+			let VP = {credits: 100, bet: 5, hand: [], held: [], phase: 'deal', variant: 'jacks'};
+
+			function initVideo(){
+				VP.variant = document.getElementById('vp-variant').value;
+				VP.hand = [];
+				VP.held = [];
+				VP.phase = 'deal';
+				renderVPPaytable();
+				document.getElementById('vp-credits').textContent = VP.credits;
+				document.getElementById('vp-bet-disp').textContent = VP.bet;
+				document.getElementById('vp-won').textContent = '-';
+				document.getElementById('vp-msg').textContent = 'Premi Nuova per iniziare';
+				document.getElementById('vp-hand').innerHTML = '';
+				vpDeal();
+			}
+
+			function renderVPPaytable(){
+				let pt = VP_PAYTABLES [VP.variant];
+				let html = `<tr><th>${pt.name}</th><th class="align-right">x Puntata</th></tr>`;
+				pt.pays.forEach(( [rank, name, mult]) => {html += `<tr><td>${name}</td><td class="payout-val">${mult}x</td></tr>`;});
+				document.getElementById('vp-paytable').innerHTML = html;
+			}
+
+			function vpDeal(){
+				let useJoker = VP.variant === 'joker';
+				let d = makeDeck(useJoker ? 1: 0);
+				VP.hand = [];
+				for(let i = 0; i < 5; i++){
+					VP.hand.push(d.pop());
+				}
+				VP.held = VP.hand.map(() => false);
+				VP.phase = 'hold';
+				VP.credits -= VP.bet;
+				renderVP();
+				document.getElementById('vp-msg').textContent = 'Tocca le carte da tenere, poi Cambia';
+				document.getElementById('vp-won').textContent = '-';
+			}
+
+			function vpToggleHold(i){
+				if(VP.phase !== 'hold'){
+					return;
+				}
+				VP.held [i] =!VP.held [i];
+				renderVP();
+			}
+
+			function renderVP(){
+				let hh = '';
+				VP.hand.forEach((c, i) => {hh += `<div onclick="vpToggleHold(${i})">${cardHTML(c, false, false, VP.held[i])}</div>`;});
+				document.getElementById('vp-hand').innerHTML = hh;
+				document.getElementById('vp-credits').textContent = VP.credits;
+				document.getElementById('vp-bet-disp').textContent = VP.bet;
+			}
+
+			function vpDraw(){
+				if(VP.phase === 'hold'){
+					let d = makeDeck(VP.variant === 'joker' ? 1: 0);
+					for(let i = 0; i < 5; i++){
+						if(!VP.held [i]){
+							VP.hand [i] = d.pop();
+						}
+					}
+					VP.phase = 'result';
+					let result = evalHand(VP.hand);
+					let payout = vpPayout(result, VP.variant);
+					let won = payout*VP.bet;
+					VP.credits += won;
+					document.getElementById('vp-credits').textContent = VP.credits;
+					document.getElementById('vp-won').textContent = won > 0 ? `+${won}`: '0';
+					document.getElementById('vp-msg').textContent = won > 0 ? `${result.name} — Vinto ${won} crediti!`: `${result.name} — Nessuna vincita`;
+					renderVP();
+				}else{
+					vpDeal();
+				}
+			}
+
+			function vpPayout(result, variant){
+				let pt = VP_PAYTABLES [variant];
+				if(variant === 'jacks'){
+					if(result.rank === 9){
+						return 800;
+					}
+					if(result.rank === 8){
+						return 50;
+					}
+					if(result.rank === 7){
+						return 25;
+					}
+					if(result.rank === 6){
+						return 9;
+					}
+					if(result.rank === 5){
+						return 6;
+					}
+					if(result.rank === 4){
+						return 4;
+					}
+					if(result.rank === 3){
+						return 3;
+					}
+					if(result.rank === 2){
+						return 2;
+					}
+					if(result.rank === 1){
+						return 1;
+					}
+					return 0;
+				}
+				if(variant === 'deuces'){
+					if(result.rank === 9){
+						return 800;
+					}
+					if(result.rank === 8){
+						return 50;
+					}
+					if(result.rank === 7){
+						return 25;
+					}
+					if(result.rank === 6){
+						return 9;
+					}
+					if(result.rank === 3){
+						return 1;
+					}
+					return 0;
+				}
+				if(result.rank >= 6){
+					return 9;
+				}
+				if(result.rank === 5){
+					return 6;
+				}
+				if(result.rank === 4){
+					return 4;
+				}
+				if(result.rank === 3){
+					return 3;
+				}
+				if(result.rank === 2){
+					return 1;
+				}
+				if(result.rank === 1){
+					return 1;
+				}
+				return 0;
+			}
+
+			function vpChangeBet(d){
+				VP.bet = Math.max(1, Math.min(25, VP.bet + d));
+				document.getElementById('vp-bet-disp').textContent = VP.bet;
+			}
+
+			let CS = {};
+
+			function initCarib(){
+				CS = {deck: makeDeck(), stack: 1000, ante: 0, raise: 0, hand: [], dealer: [], phase: 'ante', revealed: false};
+				document.getElementById('cs-hand').innerHTML = '';
+				document.getElementById('cs-dealer').innerHTML = '';
+				document.getElementById('cs-phase').textContent = 'Piazza l\'ante';
+				document.getElementById('cs-stack').textContent = CS.stack;
+				document.getElementById('cs-ante').textContent = '0';
+				document.getElementById('cs-raise').textContent = '0';
+				document.getElementById('cs-actions').innerHTML = `<button class="btn btn-gold" onclick="csAnte(20)">Ante 20</button>
+						<button class="btn btn-gold" onclick="csAnte(50)">Ante 50</button>
+						<button class="btn btn-gold" onclick="csAnte(100)">Ante 100</button>`;
+			}
+
+			function csAnte(amount){
+				CS.ante = amount;
+				CS.stack -= amount;
+				CS.hand = [];
+				CS.dealer = [];
+				for(let i = 0; i < 5; i++){
+					CS.hand.push(CS.deck.pop());
+				}
+				for(let i = 0; i < 5; i++){
+					CS.dealer.push(CS.deck.pop());
+				}
+				CS.phase = 'decide';
+				document.getElementById('cs-hand').innerHTML = CS.hand.map(c => cardHTML(c)).join('');
+				let dh = cardHTML(CS.dealer [0]) + [1, 2, 3, 4].map(() => `<div class="card back"></div>`).join('');
+				document.getElementById('cs-dealer').innerHTML = dh;
+				document.getElementById('cs-phase').textContent = 'Call o Fold?';
+				document.getElementById('cs-stack').textContent = CS.stack;
+				document.getElementById('cs-ante').textContent = CS.ante;
+				document.getElementById('cs-actions').innerHTML = `<button class="btn btn-red" onclick="csFold()">Fold (perdi ante)</button>
+						<button class="btn btn-gold" onclick="csCall()">Call (x2 ante = ${CS.ante * 2})</button>`;
+			}
+
+			function csFold(){
+				showResult('Hai foldato', `Perdi l'ante di ${CS.ante}.`);
+				document.getElementById('cs-stack').textContent = CS.stack;
+				document.getElementById('cs-actions').innerHTML = '';
+			}
+
+			function csCall(){
+				CS.raise = CS.ante*2;
+				CS.stack -= CS.raise;
+				document.getElementById('cs-dealer').innerHTML = CS.dealer.map(c => cardHTML(c)).join('');
+				let dHand = evalHand(CS.dealer);
+				let qualifies = dHand.rank >= 1 ||(CS.dealer.some(c => c.r === 'A') && CS.dealer.some(c => c.r === 'K'));
+				let myHand = evalHand(CS.hand);
+				let payout = csPayoutMult(myHand);
+				let wonAnte = 0, wonRaise = 0;
+				if(!qualifies){
+					wonAnte = CS.ante;
+					wonRaise = 0;
+					CS.stack += CS.ante + CS.raise + wonAnte;
+					showResult('Banco non qualificato!', `Ante vince 1:1 (+${wonAnte}). Call restituito.`);
+				}else if(myHand.rank > dHand.rank){
+					wonAnte = CS.ante;
+					wonRaise = CS.raise*payout;
+					CS.stack += CS.ante + CS.raise + wonAnte + wonRaise;
+					showResult('🏆 Hai vinto!', `${myHand.name} — Ante +${wonAnte}, Call +${wonRaise}`);
+				}else if(myHand.rank === dHand.rank){
+					CS.stack += CS.ante + CS.raise;
+					showResult('Pareggio!', `${myHand.name} — Ante e Call restituite.`);
+				}else{
+					showResult('💸 Banco vince', `Banco: ${dHand.name} — Perdi ante ${CS.ante} e call ${CS.raise}.`);
+				}
+				document.getElementById('cs-stack').textContent = CS.stack;
+				document.getElementById('cs-actions').innerHTML = '';
+			}
+
+			function csPayoutMult(hand){
+				if(hand.rank === 9){
+					return 100;
+				}
+				if(hand.rank === 8){
+					return 50;
+				}
+				if(hand.rank === 7){
+					return 20;
+				}
+				if(hand.rank === 6){
+					return 7;
+				}
+				if(hand.rank === 5){
+					return 5;
+				}
+				if(hand.rank === 4){
+					return 4;
+				}
+				if(hand.rank === 3){
+					return 3;
+				}
+				if(hand.rank >= 1){
+					return 1;
+				}
+				return 1;
+			}
+
+			let TC = {};
+
+			function init3Card(){
+				TC = {deck: makeDeck(), stack: 1000, ante: 0, pp: 0, hand: [], dealer: [], phase: 'bet'};
+				document.getElementById('tc-hand').innerHTML = '';
+				document.getElementById('tc-dealer').innerHTML = '';
+				document.getElementById('tc-phase').textContent = 'Piazza Ante e/o Pair Plus';
+				document.getElementById('tc-stack').textContent = TC.stack;
+				document.getElementById('tc-ante').textContent = '0';
+				document.getElementById('tc-pp').textContent = '0';
+				document.getElementById('tc-actions').innerHTML = `<button class="btn btn-gold" onclick="tcBet('ante',20)">Ante +20</button>
+						<button class="btn btn-blue" onclick="tcBet('pp',20)">Pair+ +20</button>
+						<button class="btn btn-green" onclick="tcDeal()">Distribuisci</button>`;
+			}
+
+			function tcBet(type, amount){
+				if(TC.stack < amount){
+					showToast('Chips insufficienti!');
+					return;
+				}
+				TC [type] += amount;
+				TC.stack -= amount;
+				document.getElementById('tc-stack').textContent = TC.stack;
+				document.getElementById('tc-ante').textContent = TC.ante;
+				document.getElementById('tc-pp').textContent = TC.pp;
+			}
+
+			function tcDeal(){
+				if(TC.ante === 0 && TC.pp === 0){
+					showToast('Piazza almeno una scommessa!');
+					return;
+				}
+				TC.hand = [];
+				TC.dealer = [];
+				for(let i = 0; i < 3; i++){
+					TC.hand.push(TC.deck.pop());
+				}
+				for(let i = 0; i < 3; i++){
+					TC.dealer.push(TC.deck.pop());
+				}
+				document.getElementById('tc-hand').innerHTML = TC.hand.map(c => cardHTML(c)).join('');
+				document.getElementById('tc-dealer').innerHTML = '<div class="card back"></div><div class="card back"></div><div class="card back"></div>';
+				document.getElementById('tc-phase').textContent = 'Play o Fold?';
+				document.getElementById('tc-actions').innerHTML = `<button class="btn btn-red" onclick="tcFold()">Fold</button>
+						<button class="btn btn-gold" onclick="tcPlay()">Play (=${TC.ante})</button>`;
+			}
+
+			function tcFold(){
+				let pp = tc3HandEval(TC.hand);
+				let ppWin = tc3PairPlusPay(pp)*TC.pp;
+				TC.stack += ppWin;
+				showResult('Hai foldato', `Pair Plus: ${pp.name} → ${ppWin > 0 ? '+' + ppWin : 'nessuna vincita'}`);
+				document.getElementById('tc-stack').textContent = TC.stack;
+				document.getElementById('tc-actions').innerHTML = '';
+			}
+
+			function tcPlay(){
+				TC.stack -= TC.ante;
+				document.getElementById('tc-dealer').innerHTML = TC.dealer.map(c => cardHTML(c)).join('');
+				let myH = tc3HandEval(TC.hand);
+				let dH = tc3HandEval(TC.dealer);
+				let ppMult = tc3PairPlusPay(myH);
+				let ppWin = ppMult*TC.pp;
+				TC.stack += ppWin;
+				let dQualifies = dH.rank >= 1 || RANK_VAL [TC.dealer.reduce((best, c) => RANK_VAL [c.r] > RANK_VAL [best.r] ? c: best).r] >= 12;
+				let anteWin = 0;
+				if(!dQualifies){
+					TC.stack += TC.ante*2;
+					anteWin = TC.ante;
+					showResult('Banco non qualificato!', `Pair+: ${ppWin > 0 ? '+' + ppWin : '0'} — Ante restituita+vince!`);
+				}else if(myH.rank > dH.rank){
+					TC.stack += TC.ante*4;
+					anteWin = TC.ante*2;
+					showResult('🏆 Hai vinto!', `${myH.name} batte ${dH.name} — Ante +${anteWin}, PP +${ppWin}`);
+				}else if(myH.rank === dH.rank){
+					TC.stack += TC.ante*2;
+					showResult('Pareggio!', `Ante restituita. PP: +${ppWin}`);
+				}else{
+					showResult('💸 Hai perso', `${myH.name} vs ${dH.name} — PP: ${ppWin > 0 ? '+' + ppWin : 'nessuna'}`);
+				}
+				document.getElementById('tc-stack').textContent = TC.stack;
+				document.getElementById('tc-actions').innerHTML = '';
+			}
+
+			function tc3HandEval(cards){
+				let vals = cards.map(c => RANK_VAL [c.r]).sort((a, b) => b - a);
+				let suits = cards.map(c => c.s);
+				let isFlush = suits [0] === suits [1] && suits [1] === suits [2];
+				let isStraight = vals [0] - vals [2] === 2 && vals [0] - vals [1] === 1 ||(vals [0] === 14 && vals [1] === 3 && vals [2] === 2);
+				let counts = {};
+				vals.forEach(v => {
+					counts [v] =(counts [v] || 0) + 1;
+				});
+				let g = Object.values(counts).sort((a, b) => b - a);
+				if(isFlush && isStraight && vals [0] === 14){
+					return{rank: 6, name: 'Mini Royal'}};
+				if(isFlush && isStraight){
+					return{rank: 5, name: 'Scala Colore'}
+				};
+				if(g [0] === 3){
+					return{rank: 4, name: 'Tris'}
+				};
+				if(isStraight){
+					return{rank: 3, name: 'Scala'}
+				};
+				if(isFlush){
+					return{rank: 2, name: 'Colore'}
+				};
+				if(g [0] === 2){
+					return{rank: 1, name: 'Coppia'}
+				};
+				return{rank: 0, name: 'Carta Alta'};
+			}
+
+			function tc3PairPlusPay(hand){
+				if(hand.rank === 6){
+					return 40;
+				}
+				if(hand.rank === 5){
+					return 30;
+				}
+				if(hand.rank === 4){
+					return 30;
+				}
+				if(hand.rank === 3){
+					return 6;
+				}
+				if(hand.rank === 2){
+					return 4;
+				}
+				if(hand.rank === 1){
+					return 1;
+				}
+				return 0;
+			}
+			initTexas();
+			initOmaha();
+			init5Card();
+			init7Stud();
+			initVideo();
+			initCarib();
+			init3Card();
+		</script>
+	</body>
+</html>

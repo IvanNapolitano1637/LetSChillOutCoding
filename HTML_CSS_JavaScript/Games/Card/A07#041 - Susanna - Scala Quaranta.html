@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="it"><!--A07#041 - Susanna - Scala Quaranta-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Scala Quaranta</title>
+		<style>
+			:root{
+				--felt: #1a4a2e;
+				--felt-light: #225c39;
+				--felt-dark: #122e1d;
+				--gold: #c9a84c;
+				--gold-light: #e8c97a;
+				--cream: #f5f0e8;
+				--card-bg: #fdfaf4;
+				--card-border: #c8b89a;
+				--red: #c0392b;
+				--black: #1a1a1a;
+				--blue-suit: #1a3a6b;
+				--shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+				--shadow-card: 0 2px 8px rgba(0, 0, 0, 0.4);
+				--radius: 8px;
+				--font-main: 'Georgia', 'Times New Roman', serif;
+				--font-ui: 'Trebuchet MS', 'Verdana', sans-serif;
+			}
+			*,
+			*::before,
+			*::after{
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+			}
+			body{
+				background-color: var(--felt-dark);
+				background-image:
+					radial-gradient(ellipse at 30% 20%, rgba(34, 92, 57, 0.6) 0%, transparent 60%),
+					radial-gradient(ellipse at 70% 80%, rgba(18, 46, 29, 0.8) 0%, transparent 60%);
+				color: var(--cream);
+				font-family: var(--font-main);
+				min-height: 100vh;
+				overflow-x: hidden;
+				-webkit-user-select: none;
+				user-select: none;
+			}
+			#loading-screen{
+				position: fixed;
+				inset: 0;
+				background-color: var(--felt-dark);
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				z-index: 1000;
+				gap: 24px;
+			}
+			#loading-screen h1{
+				font-size: clamp(2rem, 8vw, 4rem);
+				color: var(--gold);
+				letter-spacing: 0.08em;
+				text-shadow: 0 2px 12px rgba(201, 168, 76, 0.5);
+			}
+			#loading-screen p{
+				color: var(--gold-light);
+				font-family: var(--font-ui);
+				font-size: 1rem;
+				opacity: 0.8;
+			}
+			.spinner{
+				width: 48px;
+				height: 48px;
+				border: 4px solid rgba(201, 168, 76, 0.2);
+				border-top-color: var(--gold);
+				border-radius: 50%;
+				animation: spin 0.8s linear infinite;
+			}
+			@keyframes spin{
+				to{
+					transform: rotate(360deg);
+				}
+			}
+			#game-wrapper{
+				display: none;
+				flex-direction: column;
+				min-height: 100vh;
+				padding: 8px;
+				gap: 8px;
+				max-width: 900px;
+				margin: 0 auto;
+			}
+			#game-wrapper.visible{
+				display: flex;
+			}
+			#header{
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				padding: 8px 12px;
+				background-color: rgba(0, 0, 0, 0.3);
+				border: 1px solid rgba(201, 168, 76, 0.3);
+				border-radius: var(--radius);
+			}
+			#header h2{
+				font-size: clamp(1rem, 4vw, 1.5rem);
+				color: var(--gold);
+				letter-spacing: 0.05em;
+			}
+			#score-board{
+				display: flex;
+				gap: 16px;
+				font-family: var(--font-ui);
+				font-size: clamp(0.7rem, 2.5vw, 0.9rem);
+			}
+			.score-item{
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 2px;
+			}
+			.score-label{
+				color: var(--gold-light);
+				opacity: 0.7;
+				font-size: 0.7em;
+				text-transform: uppercase;
+				letter-spacing: 0.1em;
+			}
+			.score-value{
+				color: var(--gold);
+				font-weight: bold;
+				font-size: 1.2em;
+			}
+			#btn-nuovo{
+				background-color: var(--gold);
+				color: var(--black);
+				border: none;
+				border-radius: 6px;
+				padding: 6px 14px;
+				font-family: var(--font-ui);
+				font-size: 0.8rem;
+				font-weight: bold;
+				cursor: pointer;
+				letter-spacing: 0.05em;
+				transition: background-color 0.15s, transform 0.1s;
+			}
+			#btn-nuovo:hover{
+				background-color: var(--gold-light);
+			}
+			#btn-nuovo:active{
+				transform: scale(0.96);
+			}
+			#opponent-area{
+				background-color: rgba(0, 0, 0, 0.2);
+				border: 1px solid rgba(201, 168, 76, 0.15);
+				border-radius: var(--radius);
+				padding: 10px;
+			}
+			.area-label{
+				font-family: var(--font-ui);
+				font-size: 0.7rem;
+				text-transform: uppercase;
+				letter-spacing: 0.15em;
+				color: var(--gold-light);
+				opacity: 0.6;
+				margin-bottom: 6px;
+			}
+			#opponent-hand{
+				display: flex;
+				flex-wrap: wrap;
+				gap: 4px;
+				min-height: 60px;
+			}
+			#table-area{
+				display: flex;
+				gap: 12px;
+				align-items: flex-start;
+				flex-wrap: wrap;
+			}
+			#deck-zone{
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 10px;
+				flex-shrink: 0;
+			}
+			#discard-zone{
+				flex: 1;
+				min-width: 200px;
+			}
+			#discard-label{
+				font-family: var(--font-ui);
+				font-size: 0.7rem;
+				text-transform: uppercase;
+				letter-spacing: 0.15em;
+				color: var(--gold-light);
+				opacity: 0.6;
+				margin-bottom: 6px;
+			}
+			#discard-pile{
+				display: flex;
+				flex-wrap: wrap;
+				gap: 4px;
+				min-height: 80px;
+				padding: 8px;
+				background-color: rgba(0, 0, 0, 0.15);
+				border: 1px dashed rgba(201, 168, 76, 0.2);
+				border-radius: var(--radius);
+			}
+			#melds-area{
+				display: flex;
+				gap: 10px;
+				flex-wrap: wrap;
+			}
+			#my-melds,
+			#opp-melds{
+				flex: 1;
+				min-width: 140px;
+			}
+			.meld-group{
+				display: flex;
+				flex-wrap: wrap;
+				gap: 2px;
+				background-color: rgba(0, 0, 0, 0.15);
+				border: 1px solid rgba(201, 168, 76, 0.2);
+				border-radius: 6px;
+				padding: 4px;
+				margin-bottom: 4px;
+				cursor: pointer;
+				transition: border-color 0.15s;
+			}
+			.meld-group.can-add{
+				border-color: var(--gold);
+				box-shadow: 0 0 8px rgba(201, 168, 76, 0.4);
+			}
+			#player-area{
+				background-color: rgba(0, 0, 0, 0.2);
+				border: 1px solid rgba(201, 168, 76, 0.25);
+				border-radius: var(--radius);
+				padding: 10px;
+			}
+			#player-hand{
+				display: flex;
+				flex-wrap: wrap;
+				gap: 4px;
+				min-height: 80px;
+			}
+			#actions-bar{
+				display: flex;
+				flex-wrap: wrap;
+				gap: 8px;
+				align-items: center;
+				justify-content: center;
+			}
+			.btn-action{
+				background-color: rgba(201, 168, 76, 0.15);
+				color: var(--gold-light);
+				border: 1px solid rgba(201, 168, 76, 0.4);
+				border-radius: 6px;
+				padding: 8px 16px;
+				font-family: var(--font-ui);
+				font-size: clamp(0.7rem, 2.5vw, 0.85rem);
+				cursor: pointer;
+				letter-spacing: 0.04em;
+				transition: background-color 0.15s, transform 0.1s, opacity 0.15s;
+			}
+			.btn-action:hover:not(:disabled){
+				background-color: rgba(201, 168, 76, 0.3);
+			}
+			.btn-action:active:not(:disabled){
+				transform: scale(0.95);
+			}
+			.btn-action:disabled{
+				opacity: 0.3;
+				cursor: not-allowed;
+			}
+			.btn-action.primary{
+				background-color: rgba(201, 168, 76, 0.35);
+				border-color: var(--gold);
+				color: var(--gold);
+				font-weight: bold;
+			}
+			#log-area{
+				background-color: rgba(0, 0, 0, 0.25);
+				border: 1px solid rgba(201, 168, 76, 0.15);
+				border-radius: var(--radius);
+				padding: 8px 12px;
+				max-height: 80px;
+				overflow-y: auto;
+			}
+			#log-area p{
+				font-family: var(--font-ui);
+				font-size: 0.75rem;
+				color: var(--cream);
+				opacity: 0.75;
+				line-height: 1.5;
+			}
+			.card{
+				width: 46px;
+				height: 66px;
+				background-color: var(--card-bg);
+				border: 1.5px solid var(--card-border);
+				border-radius: 5px;
+				box-shadow: var(--shadow-card);
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				font-family: var(--font-main);
+				font-size: 0.75rem;
+				font-weight: bold;
+				cursor: pointer;
+				transition: transform 0.12s, box-shadow 0.12s;
+				position: relative;
+				flex-shrink: 0;
+				overflow: hidden;
+			}
+			.card:hover{
+				transform: translateY(-6px);
+				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+			}
+			.card.selected{
+				transform: translateY(-10px);
+				box-shadow: 0 0 0 2px var(--gold), 0 8px 20px rgba(0, 0, 0, 0.5);
+			}
+			.card.red-suit{
+				color: var(--red);
+			}
+			.card.black-suit{
+				color: var(--black);
+			}
+			.card.blue-suit{
+				color: var(--blue-suit);
+			}
+			.card-corner-top{
+				position: absolute;
+				top: 3px;
+				left: 4px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				line-height: 1.1;
+			}
+			.card-corner-bottom{
+				position: absolute;
+				bottom: 3px;
+				right: 4px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				line-height: 1.1;
+				transform: rotate(180deg);
+			}
+			.card-corner-rank{
+				font-size: 0.65rem;
+				line-height: 1;
+			}
+			.card-corner-suit{
+				font-size: 0.58rem;
+				line-height: 1;
+			}
+			.card-center{
+				font-size: 1.4em;
+				line-height: 1;
+			}
+			.card-joker-center{
+				font-size: 1.5em;
+				line-height: 1;
+			}
+			#deck-count{
+				font-family: var(--font-ui);
+				font-size: 0.7rem;
+				color: var(--gold-light);
+				opacity: 0.7;
+			}
+			.card-back{
+				width: 46px;
+				height: 66px;
+				background: linear-gradient(135deg, #1a2a6c 25%, #b21f1f 50%, #1a2a6c 75%);
+				border: 1.5px solid #555;
+				border-radius: 5px;
+				box-shadow: var(--shadow-card);
+				flex-shrink: 0;
+				position: relative;
+				overflow: hidden;
+			}
+			.card-back::after{
+				content: '';
+				position: absolute;
+				inset: 3px;
+				border: 1.5px solid rgba(255, 255, 255, 0.15);
+				border-radius: 3px;
+			}
+			#deck-card{
+				cursor: pointer;
+				transition: transform 0.12s;
+			}
+			#deck-card:hover{
+				transform: scale(1.05);
+			}
+			#modal-overlay{
+				display: none;
+				position: fixed;
+				inset: 0;
+				background-color: rgba(0, 0, 0, 0.7);
+				z-index: 500;
+				align-items: center;
+				justify-content: center;
+			}
+			#modal-overlay.visible{
+				display: flex;
+			}
+			#modal-box{
+				background: linear-gradient(160deg, var(--felt-light), var(--felt-dark));
+				border: 2px solid var(--gold);
+				border-radius: 12px;
+				padding: 32px 40px;
+				text-align: center;
+				box-shadow: 0 8px 40px rgba(0, 0, 0, 0.8);
+				max-width: 90vw;
+			}
+			#modal-box h2{
+				font-size: clamp(1.4rem, 6vw, 2.2rem);
+				color: var(--gold);
+				margin-bottom: 12px;
+			}
+			#modal-box p{
+				font-family: var(--font-ui);
+				color: var(--cream);
+				opacity: 0.85;
+				margin-bottom: 24px;
+				font-size: 1rem;
+				line-height: 1.6;
+			}
+			#btn-modal-nuovo{
+				background-color: var(--gold);
+				color: var(--black);
+				border: none;
+				border-radius: 8px;
+				padding: 10px 28px;
+				font-family: var(--font-ui);
+				font-size: 1rem;
+				font-weight: bold;
+				cursor: pointer;
+				letter-spacing: 0.06em;
+				transition: background-color 0.15s;
+			}
+			#btn-modal-nuovo:hover{
+				background-color: var(--gold-light);
+			}
+			#turn-indicator{
+				text-align: center;
+				font-family: var(--font-ui);
+				font-size: 0.8rem;
+				letter-spacing: 0.12em;
+				text-transform: uppercase;
+				color: var(--gold-light);
+				opacity: 0.85;
+			}
+			@media (max-width: 480px){
+				.card,
+				.card-back{
+					width: 38px;
+					height: 55px;
+					font-size: 0.65rem;
+				}
+				.card-corner-rank{
+					font-size: 0.58rem;
+				}
+				.card-corner-suit{
+					font-size: 0.52rem;
+				}
+				.card-center{
+					font-size: 1.2em;
+				}
+				#btn-nuovo{
+					padding: 5px 10px;
+					font-size: 0.72rem;
+				}
+				#modal-box{
+					padding: 22px 20px;
+				}
+			}
+			@media (max-width: 360px){
+				.card,
+				.card-back{
+					width: 32px;
+					height: 47px;
+					font-size: 0.58rem;
+				}
+				.card-corner-rank{
+					font-size: 0.5rem;
+				}
+				.card-corner-suit{
+					font-size: 0.46rem;
+				}
+				.card-center{
+					font-size: 1em;
+				}
+			}
+			@keyframes deal-in{
+				from{
+					opacity: 0;
+					transform: translateY(-20px) scale(0.85);
+				}
+				to{
+					opacity: 1;
+					transform: translateY(0) scale(1);
+				}
+			}
+			.card.deal-anim{
+				animation: deal-in 0.2s ease-out;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="loading-screen">
+			<h1>♠ Scala Quaranta ♥</h1>
+			<div class="spinner"></div>
+			<p>Preparazione del mazzo…</p>
+		</div>
+		<div id="game-wrapper">
+			<header id="header">
+				<h2>♣ Scala Quaranta ♦</h2>
+				<div id="score-board">
+					<div class="score-item">
+						<span class="score-label">Tu</span>
+						<span class="score-value" id="score-player">0</span>
+					</div>
+					<div class="score-item">
+						<span class="score-label">IA</span>
+						<span class="score-value" id="score-ai">0</span>
+					</div>
+				</div>
+				<button id="btn-nuovo">Nuova partita</button>
+			</header>
+			<section id="opponent-area">
+				<div class="area-label">Mano dell'avversario (IA)</div>
+				<div id="opponent-hand"></div>
+			</section>
+			<section id="melds-area">
+				<div id="my-melds">
+					<div class="area-label">Le tue calate</div>
+				</div>
+				<div id="opp-melds">
+					<div class="area-label">Calate IA</div>
+				</div>
+			</section>
+			<section id="table-area">
+				<div id="deck-zone">
+					<div class="area-label">Mazzo</div>
+					<div class="card-back" id="deck-card" title="Pesca dal mazzo"></div>
+					<span id="deck-count" class="deck-count-label"></span>
+				</div>
+				<div id="discard-zone">
+					<div id="discard-label">Scarti</div>
+					<div id="discard-pile"></div>
+				</div>
+			</section>
+			<div id="turn-indicator">Il tuo turno</div>
+			<div id="actions-bar">
+				<button class="btn-action" id="btn-pesca-scarto" disabled>Pesca dallo scarto</button>
+				<button class="btn-action primary" id="btn-cala" disabled>Cala selezione</button>
+				<button class="btn-action" id="btn-aggiungi" disabled>Aggiungi a calata</button>
+				<button class="btn-action" id="btn-scarta" disabled>Scarta carta</button>
+			</div>
+			<section id="player-area">
+				<div class="area-label">La tua mano</div>
+				<div id="player-hand"></div>
+			</section>
+			<div id="log-area">
+				<p id="log-text">Benvenuto! Pesca una carta per iniziare.</p>
+			</div>
+		</div>
+		<div id="modal-overlay">
+			<div id="modal-box">
+				<h2 id="modal-title">Hai vinto!</h2>
+				<p id="modal-body">Complimenti! Hai completato la Scala Quaranta.</p>
+				<button id="btn-modal-nuovo">Nuova partita</button>
+			</div>
+		</div>
+		<script>
+			const SUITS = ['♠', '♥', '♦', '♣'];
+			const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+			const JOKER = '🃏';
+			const rankValue = r => {
+				if(r === 'A'){
+					return 11;
+				}
+				if( ['J', 'Q', 'K'].includes(r)){
+					return 10;
+				}
+				if(r === JOKER){
+					return 25;
+				}
+				return parseInt(r);
+			};
+			const suitClass = s => {
+				if(s === '♥' || s === '♦'){
+					return 'red-suit';
+				}
+				if(s === JOKER){
+					return 'blue-suit';
+				}
+				return 'black-suit';
+			};
+
+			let state = {};
+
+			function buildDeck(){
+				const deck = [];
+				for(let d = 0; d < 2; d++){
+					for(const s of SUITS){
+						for(const r of RANKS){
+							deck.push({rank: r, suit: s, id: `${r}${s}_${d}`});
+						}
+					}
+					deck.push({rank: JOKER, suit: JOKER, id: `JK_${d}a`});
+					deck.push({rank: JOKER, suit: JOKER, id: `JK_${d}b`});
+				}
+				return shuffle(deck);
+			}
+
+			function shuffle(arr){
+				const a = [...arr];
+				for(let i = a.length-1; i > 0; i--){
+					const j = Math.floor(Math.random()*(i + 1));
+					[a [i], a [j]] = [a [j], a [i]];
+				}
+				return a;
+			}
+
+			function initGame(){
+				const deck = buildDeck();
+				state = {deck, discard: [], playerHand: [], aiHand: [], playerMelds: [], aiMelds: [], playerHasCalato: false, aiHasCalato: false, selected: [], targetMeld: null, phase: 'draw', turn: 'player', playerScore: state.playerScore || 0, aiScore: state.aiScore || 0, round:(state.round || 0) + 1, gameOver: false, pescato: false,};
+				for(let i = 0; i < 13; i++){
+					state.playerHand.push(state.deck.pop());
+					state.aiHand.push(state.deck.pop());
+				}
+				state.discard.push(state.deck.pop());
+				render();
+				log('Nuova partita! Pesca una carta per iniziare.');
+				updateButtons();
+			}
+
+			function render(){
+				renderOpponentHand();
+				renderPlayerHand();
+				renderDiscard();
+				renderDeck();
+				renderMelds();
+				renderTurnIndicator();
+			}
+
+			function renderOpponentHand(){
+				const el = document.getElementById('opponent-hand');
+				el.innerHTML = '';
+				state.aiHand.forEach(() => {
+					const cb = document.createElement('div');
+					cb.className = 'card-back';
+					el.appendChild(cb);
+				});
+			}
+
+			function renderPlayerHand(){
+				const el = document.getElementById('player-hand');
+				el.innerHTML = '';
+				const lastIdx = state.playerHand.length - 1;
+				state.playerHand.forEach((card, i) => {
+					const animate = state.pescato && i === lastIdx;
+					const c = cardEl(card, animate);
+					if(state.selected.includes(i)){
+						c.classList.add('selected');
+					}
+					c.addEventListener('click',() => toggleSelect(i));
+					el.appendChild(c);
+				});
+			}
+
+			function renderDiscard(){
+				const el = document.getElementById('discard-pile');
+				el.innerHTML = '';
+				if(state.discard.length === 0){
+					el.textContent = '—';
+					return;
+				}
+				const visible = state.discard.slice(-10);
+				visible.forEach((card, idx) => {
+					const c = cardEl(card);
+					if(idx === visible.length - 1){
+						c.title = 'Pesca dallo scarto';
+						c.addEventListener('click',() => pescaDaScarto());
+					}
+					el.appendChild(c);
+				});
+			}
+
+			function renderDeck(){
+				document.getElementById('deck-count').textContent = `${state.deck.length} carte`;
+			}
+
+			function renderMelds(){
+				renderMeldGroup('my-melds', state.playerMelds, true);
+				renderMeldGroup('opp-melds', state.aiMelds, false);
+			}
+
+			function renderMeldGroup(containerId, melds, isPlayer){
+				const cont = document.getElementById(containerId);
+				const label = cont.querySelector('.area-label');
+				cont.innerHTML = '';
+				if(label){
+					cont.appendChild(label);
+				}
+				melds.forEach((meld, mi) => {
+					const grp = document.createElement('div');
+					grp.className = 'meld-group';
+					if(isPlayer && state.targetMeld === mi) grp.classList.add('can-add');
+					meld.forEach(card => grp.appendChild(cardEl(card)));
+					if(isPlayer){
+						grp.addEventListener('click',() => {
+							state.targetMeld =(state.targetMeld === mi) ? null: mi;
+							updateButtons();
+							renderMelds();
+						});
+					}
+					cont.appendChild(grp);
+				});
+			}
+
+			function renderTurnIndicator(){
+				const el = document.getElementById('turn-indicator');
+				if(state.turn === 'player'){
+					el.textContent = state.pescato ? '✦ Gioca o scarta una carta': '✦ Il tuo turno — pesca dal mazzo o dagli scarti';
+				}else{
+					el.textContent = '⏳ L\'IA sta giocando…';
+				}
+			}
+
+			function cardEl(card, animate){
+				const el = document.createElement('div');
+				const sc = suitClass(card.suit);
+				el.className = `card ${sc}${animate ? ' deal-anim' : ''}`;
+				el.dataset.id = card.id;
+				if(card.rank === JOKER){
+					el.innerHTML = `<span class="card-joker-center">${JOKER}</span>`;
+				}else{
+					el.innerHTML = `<div class="card-corner-top">` + `<span class="card-corner-rank">${card.rank}</span>` + `<span class="card-corner-suit">${card.suit}</span>` + `</div>` + `<span class="card-center">${card.suit}</span>` + `<div class="card-corner-bottom">` + `<span class="card-corner-rank">${card.rank}</span>` + `<span class="card-corner-suit">${card.suit}</span>` + `</div>`;
+				}
+				return el;
+			}
+
+			function toggleSelect(idx){
+				if(state.turn !== 'player' ||!state.pescato){
+					return;
+				}
+				const pos = state.selected.indexOf(idx);
+				if(pos === -1){
+					state.selected.push(idx);
+				}else{
+					state.selected.splice(pos, 1);
+				}
+				state.selected.sort((a, b) => a - b);
+				if(state.selected.length === 0){
+					state.targetMeld = null;
+				}
+				updateButtons();
+				renderPlayerHand();
+				renderMelds();
+			}
+
+			function pescaDalMazzo(){
+				if(state.turn !== 'player' || state.pescato || state.gameOver){
+					return;
+				}
+				if(state.deck.length === 0){
+					const top = state.discard.pop();
+					state.deck = shuffle(state.discard);
+					state.discard = [top];
+					log('Mazzo esaurito! Gli scarti sono stati rimescolati.');
+				}
+				const card = state.deck.pop();
+				state.playerHand.push(card);
+				state.pescato = true;
+				render();
+				log(`Hai pescato: ${card.rank}${card.suit !== JOKER ? card.suit : ''}`);
+				updateButtons();
+			}
+
+			function pescaDaScarto(){
+				if(state.turn !== 'player' || state.pescato || state.gameOver){
+					return;
+				}
+				if(state.discard.length === 0){
+					return;
+				}
+				const card = state.discard.pop();
+				state.playerHand.push(card);
+				state.pescato = true;
+				render();
+				log(`Hai preso dagli scarti: ${card.rank}${card.suit !== JOKER ? card.suit : ''}`);
+				updateButtons();
+			}
+
+			function rankIndex(r){
+				return RANKS.indexOf(r);
+			}
+
+			function isValidMeld(cards){
+				if(cards.length < 3){
+					return false;
+				}
+				const nonJolly = cards.filter(c => c.rank !== JOKER);
+				const jolly = cards.filter(c => c.rank === JOKER);
+				if(isTris(nonJolly, jolly, cards.length)){
+					return true;
+				}
+				if(isScala(nonJolly, jolly, cards.length)){
+					return true;
+				}
+				return false;
+			}
+
+			function isTris(nonJolly, jolly, total){
+				if(nonJolly.length === 0){
+					return total >= 3;
+				}
+				const val = nonJolly [0].rank;
+				if(!nonJolly.every(c => c.rank === val)){
+					return false;
+				}
+				const suits = nonJolly.map(c => c.suit);
+				const counts = {};
+				for(const s of suits){
+					counts [s] =(counts [s] || 0) + 1;
+				}
+				if(Object.values(counts).some(v => v > 2)){
+					return false;
+				}
+				return true;
+			}
+
+			function isScala(nonJolly, jolly, total){
+				if(nonJolly.length === 0){
+					return total >= 3;
+				}
+				const seme = nonJolly [0].suit;
+				if(!nonJolly.every(c => c.suit === seme)){
+					return false;
+				}
+				const sorted = [...nonJolly].sort((a, b) => rankIndex(a.rank) - rankIndex(b.rank));
+				let jollyLeft = jolly.length;
+				let gaps = 0;
+				for(let i = 1; i < sorted.length; i++){
+					const diff = rankIndex(sorted [i].rank) - rankIndex(sorted [i - 1].rank) - 1;
+					if(diff < 0){
+						return false;
+					}
+					gaps += diff;
+				}
+				return gaps <= jollyLeft;
+			}
+
+			function meldPoints(cards){
+				return cards.reduce((s, c) => s + rankValue(c.rank), 0);
+			}
+
+			function calaSelezione(){
+				if(state.turn !== 'player' ||!state.pescato || state.gameOver){
+					return;
+				}
+				const sel = state.selected.map(i => state.playerHand [i]);
+				if(!isValidMeld(sel)){
+					log('❌ Selezione non valida! Devi fare un tris, un poker o una scala.');
+					return;
+				}
+				const punti = meldPoints(sel);
+				if(!state.playerHasCalato && punti < 40){
+					log(`❌ La prima calata deve valere almeno 40 punti (la tua vale ${punti}).`);
+					return;
+				}
+				state.selected.sort((a, b) => b - a);
+				state.selected.forEach(i => state.playerHand.splice(i, 1));
+				state.playerMelds.push(sel);
+				state.selected = [];
+				state.playerHasCalato = true;
+				state.targetMeld = null;
+				log(`✅ Calata! ${sel.map(c => c.rank + (c.suit !== JOKER ? c.suit : '')).join(' ')} (${punti} pt)`);
+				render();
+				updateButtons();
+				checkWin();
+			}
+
+			function aggiungiACalata(){
+				if(state.turn !== 'player' ||!state.pescato || state.gameOver){
+					return;
+				}
+				if(!state.playerHasCalato){
+					log('❌ Devi prima calare almeno 40 punti.');
+					return;
+				}
+				if(state.targetMeld === null){
+					log('❌ Seleziona prima una calata (cliccaci sopra).');
+					return;
+				}
+				if(state.selected.length !== 1){
+					log('❌ Seleziona esattamente 1 carta da aggiungere.');
+					return;
+				}
+				const mi = state.targetMeld;
+				const ci = state.selected [0];
+				const card = state.playerHand [ci];
+				const testMeld = [...state.playerMelds [mi], card];
+				if(!isValidMeld(testMeld)){
+					log('❌ La carta non si adatta a quella calata.');
+					return;
+				}
+				state.playerMelds [mi] = testMeld;
+				state.playerHand.splice(ci, 1);
+				state.selected = [];
+				state.targetMeld = null;
+				log(`➕ Aggiunta ${card.rank}${card.suit !== JOKER ? card.suit : ''} alla calata.`);
+				render();
+				updateButtons();
+				checkWin();
+			}
+
+			function scartaCarta(){
+				if(state.turn !== 'player' ||!state.pescato || state.gameOver){
+					return;
+				}
+				if(state.selected.length !== 1){
+					log('❌ Seleziona esattamente 1 carta da scartare.');
+					return;
+				}
+				const idx = state.selected [0];
+				const card = state.playerHand.splice(idx, 1) [0];
+				state.discard.push(card);
+				state.selected = [];
+				state.targetMeld = null;
+				state.pescato = false;
+				log(`🗑 Scartato: ${card.rank}${card.suit !== JOKER ? card.suit : ''}`);
+				render();
+				updateButtons();
+				if(!checkWin()){
+					state.turn = 'ai';
+					renderTurnIndicator();
+					setTimeout(aiTurn, 900);
+				}
+			}
+
+			function checkWin(){
+				if(state.playerHand.length === 0 && state.playerHasCalato){
+					endGame('player');
+					return true;
+				}
+				if(state.aiHand.length === 0 && state.aiHasCalato){
+					endGame('ai');
+					return true;
+				}
+				return false;
+			}
+
+			function endGame(winner){
+				state.gameOver = true;
+				const playerPen = state.playerHand.reduce((s, c) => s + rankValue(c.rank), 0);
+				const aiPen = state.aiHand.reduce((s, c) => s + rankValue(c.rank), 0);
+				if(winner === 'player'){
+					state.playerScore += aiPen;
+					document.getElementById('modal-title').textContent = '🏆 Hai vinto!';
+					document.getElementById('modal-body').textContent = `Bravissimo! L'IA aveva ancora ${aiPen} punti in mano. Punteggio totale: Tu ${state.playerScore} – IA ${state.aiScore}.`;
+				}else{
+					state.aiScore += playerPen;
+					document.getElementById('modal-title').textContent = '😔 Ha vinto l\'IA';
+					document.getElementById('modal-body').textContent = `L'IA ha vinto il round. Avevi ancora ${playerPen} punti in mano. Punteggio totale: Tu ${state.playerScore} – IA ${state.aiScore}.`;
+				}
+				document.getElementById('score-player').textContent = state.playerScore;
+				document.getElementById('score-ai').textContent = state.aiScore;
+				document.getElementById('modal-overlay').classList.add('visible');
+			}
+
+			function aiTurn(){
+				if(state.gameOver){
+					return;
+				}
+				let pescato = false;
+				if(state.discard.length > 0){
+					const top = state.discard [state.discard.length - 1];
+					if(aiShouldTakeDiscard(top)){
+						state.aiHand.push(state.discard.pop());
+						log(`IA pesca dallo scarto.`);
+						pescato = true;
+					}
+				}
+				if(!pescato){
+					if(state.deck.length === 0){
+						const top = state.discard.pop();
+						state.deck = shuffle(state.discard);
+						state.discard = [top];
+					}
+					state.aiHand.push(state.deck.pop());
+					log(`IA pesca dal mazzo.`);
+				}
+				renderOpponentHand();
+				setTimeout(() => {
+					aiTryMeld();
+					aiTryAddToMelds();
+					aiDiscard();
+					render();
+					updateButtons();
+					if(!checkWin()){
+						state.turn = 'player';
+						state.pescato = false;
+						renderTurnIndicator();
+						updateButtons();
+						log('Tocca a te! Pesca una carta.');
+					}
+				}, 600);
+			}
+
+			function aiShouldTakeDiscard(card){
+				const hand = [...state.aiHand, card];
+				return findBestMeld(hand) !== null;
+			}
+
+			function aiTryMeld(){
+				let found = true;
+				while(found){
+					found = false;
+					const meld = findBestMeld(state.aiHand);
+					if(!meld){
+						break;
+					}
+					const pts = meldPoints(meld);
+					if(!state.aiHasCalato && pts < 40){
+						break;
+					}
+					meld.forEach(mc => {
+						const idx = state.aiHand.findIndex(c => c.id === mc.id);
+						if(idx !== -1){
+							state.aiHand.splice(idx, 1);
+						}
+					});
+					state.aiMelds.push(meld);
+					state.aiHasCalato = true;
+					log(`IA cala: ${meld.map(c => c.rank + (c.suit !== JOKER ? c.suit : '')).join(' ')}`);
+					found = true;
+				}
+			}
+
+			function aiTryAddToMelds(){
+				if(!state.aiHasCalato){
+					return;
+				}
+				let changed = true;
+				while(changed){
+					changed = false;
+					for(let mi = 0; mi < state.aiMelds.length; mi++){
+						for(let ci = 0; ci < state.aiHand.length; ci++){
+							const testMeld = [...state.aiMelds [mi], state.aiHand [ci]];
+							if(isValidMeld(testMeld)){
+								log(`IA aggiunge ${state.aiHand[ci].rank}${state.aiHand[ci].suit !== JOKER ? state.aiHand[ci].suit : ''} a una calata.`);
+								state.aiMelds [mi] = testMeld;
+								state.aiHand.splice(ci, 1);
+								changed = true;
+								break;
+							}
+						}
+						if(changed){
+							break;
+						}
+					}
+				}
+			}
+
+			function aiDiscard(){
+				if(state.aiHand.length === 0){
+					return;
+				}
+				let bestIdx = 0;
+				let bestScore = -Infinity;
+				state.aiHand.forEach((card, i) => {
+					let score = rankValue(card.rank);
+					const same = state.aiHand.filter((c, j) => j !== i && c.rank === card.rank).length;
+					score -= same*5;
+					if(score > bestScore){
+						bestScore = score;
+						bestIdx = i;
+					}
+				});
+				const discarded = state.aiHand.splice(bestIdx, 1) [0];
+				state.discard.push(discarded);
+				log(`IA scarta: ${discarded.rank}${discarded.suit !== JOKER ? discarded.suit : ''}`);
+			}
+
+			function findBestMeld(hand){
+				const byRank = {};
+				hand.forEach(c => {
+					if(c.rank === JOKER) return;
+					(byRank [c.rank] = byRank [c.rank] || []).push(c);
+				});
+				for(const rank in byRank){
+					if(byRank [rank].length >= 3){
+						return byRank [rank].slice(0, 3);
+					}
+				}
+				const bySuit = {};
+				hand.forEach(c => {
+					if(c.rank === JOKER) return;
+					(bySuit [c.suit] = bySuit [c.suit] || []).push(c);
+				});
+				for(const suit in bySuit){
+					const sorted = bySuit [suit].sort((a, b) => rankIndex(a.rank) - rankIndex(b.rank));
+					const seq = findLongestSeq(sorted);
+					if(seq && seq.length >= 3){
+						return seq;
+					}
+				}
+				return null;
+			}
+
+			function findLongestSeq(sorted){
+				if(sorted.length < 2){
+					return sorted.length === 1 ? null: null;
+				}
+				let best = [sorted [0]];
+				let cur = [sorted [0]];
+				for(let i = 1; i < sorted.length; i++){
+					const diff = rankIndex(sorted [i].rank) - rankIndex(sorted [i - 1].rank);
+					if(diff === 1){
+						cur.push(sorted [i]);
+					}else{
+						if(cur.length > best.length){
+							best = cur;
+						}
+						cur = [sorted [i]];
+					}
+				}
+				if(cur.length > best.length){
+					best = cur;
+				}
+				return best.length >= 3 ? best: null;
+			}
+
+			function updateButtons(){
+				const isPlayer = state.turn === 'player';
+				const hasPesc = state.pescato;
+				const hasSel = state.selected.length > 0;
+				const sel1 = state.selected.length === 1;
+				const muldSel = state.selected.length >= 3;
+				const hasTarget = state.targetMeld !== null;
+				const go = state.gameOver;
+				document.getElementById('btn-pesca-scarto').disabled = go ||!isPlayer || hasPesc || state.discard.length === 0;
+				document.getElementById('btn-cala').disabled = go ||!isPlayer ||!hasPesc ||!muldSel;
+				document.getElementById('btn-aggiungi').disabled = go ||!isPlayer ||!hasPesc ||!sel1 ||!hasTarget ||!state.playerHasCalato;
+				document.getElementById('btn-scarta').disabled = go ||!isPlayer ||!hasPesc ||!sel1;
+			}
+
+			function log(msg){
+				const el = document.getElementById('log-text');
+				el.textContent = msg;
+			}
+			document.getElementById('btn-nuovo').addEventListener('click',() => {
+				document.getElementById('modal-overlay').classList.remove('visible');
+				state.playerScore = state.playerScore || 0;
+				state.aiScore = state.aiScore || 0;
+				initGame();
+			});
+			document.getElementById('btn-modal-nuovo').addEventListener('click',() => {
+				document.getElementById('modal-overlay').classList.remove('visible');
+				initGame();
+			});
+			document.getElementById('btn-pesca-scarto').addEventListener('click', pescaDaScarto);
+			document.getElementById('btn-cala').addEventListener('click', calaSelezione);
+			document.getElementById('btn-aggiungi').addEventListener('click', aggiungiACalata);
+			document.getElementById('btn-scarta').addEventListener('click', scartaCarta);
+			document.getElementById('deck-card').addEventListener('click', pescaDalMazzo);
+			window.addEventListener('load',() => {
+				setTimeout(() => {
+					document.getElementById('loading-screen').style.display = 'none';
+					document.getElementById('game-wrapper').classList.add('visible');
+					initGame();
+				}, 800);
+			});
+		</script>
+	</body>
+</html>

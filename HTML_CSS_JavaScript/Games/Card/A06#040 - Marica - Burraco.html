@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="it"><!--A06#040 - Marica - Burraco-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>🃏 Burraco Italiano</title>
+		<style>
+			@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Josefin+Sans:wght@300;400;600&display=swap');
+			:root{
+				--border: #2e6b2e;
+				--gold: #d4a843;
+				--gold2: #f0c96a;
+				--cream: #f2ead8;
+				--red: #c0392b;
+				--red2: #e74c3c;
+				--accent: #3aaf5c;
+				--shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+				--cw: 48px;
+				--ch: 68px;
+				--radius: 6px;
+			}
+			*{
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+				-webkit-tap-highlight-color: transparent;
+			}
+			html, body{
+				width: 100%;
+				height: 100%;
+				overflow: hidden;
+			}
+			body{
+				background: radial-gradient(ellipse at 30% 20%, #1a3a1c 0%, #0d1a0f 60%, #080f09 100%);
+				font-family: 'Josefin Sans', sans-serif;
+				color: var(--cream);
+				display: flex;
+				flex-direction: column;
+				height: 100vh;
+				-webkit-user-select: none;
+				user-select: none;
+			}
+			#hdr{
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				padding: 8px 12px;
+				background: linear-gradient(90deg, rgba(13, 31, 15, 0.95), rgba(22, 58, 26, 0.9));
+				border-bottom: 1px solid var(--border);
+				flex-shrink: 0;
+			}
+			#hdr h1{
+				font-family: 'Cormorant Garamond', serif;
+				font-size: clamp(1.1rem, 4vw, 1.6rem);
+				color: var(--gold);
+				letter-spacing: 3px;
+				font-style: italic;
+			}
+			.score-box{
+				text-align: center;
+				min-width: 60px;
+			}
+			.score-box .sv{
+				font-family: 'Cormorant Garamond', serif;
+				font-size: 1.2rem;
+				color: var(--gold2);
+			}
+			.score-box .sl{
+				font-size: 0.55rem;
+				letter-spacing: 2px;
+				text-transform: uppercase;
+				color: rgba(242, 234, 216, 0.5);
+			}
+			#game{
+				display: flex;
+				flex-direction: column;
+				flex: 1;
+				overflow: hidden;
+				padding: 6px;
+				gap: 5px;
+			}
+			#opp-zone{
+				background: rgba(0, 0, 0, 0.25);
+				border: 1px solid var(--border);
+				border-radius: 10px;
+				padding: 6px 8px;
+				flex-shrink: 0;
+			}
+			.zone-label{
+				font-size: 0.6rem;
+				letter-spacing: 2px;
+				text-transform: uppercase;
+				color: rgba(242, 234, 216, 0.4);
+				margin-bottom: 4px;
+			}
+			#opp-hand-row{
+				display: flex;
+				gap: 2px;
+				align-items: center;
+				flex-wrap: nowrap;
+				overflow: hidden;
+				min-height: calc(var(--ch) + 4px);
+			}
+			.card-back-mini{
+				width: var(--cw);
+				height: var(--ch);
+				background: linear-gradient(145deg, #1a3a8a, #0f2060);
+				border-radius: var(--radius);
+				border: 1px solid rgba(255, 255, 255, 0.15);
+				flex-shrink: 0;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 1rem;
+				color: rgba(255, 255, 255, 0.1);
+			}
+			#center{
+				display: flex;
+				gap: 8px;
+				align-items: flex-start;
+				justify-content: center;
+				flex-shrink: 0;
+			}
+
+			.pile-area{
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 4px;
+			}
+			.pile-label{
+				font-size: 0.6rem;
+				letter-spacing: 2px;
+				text-transform: uppercase;
+				color: rgba(242, 234, 216, 0.4);
+			}
+			.draw-pile{
+				width: var(--cw);
+				height: var(--ch);
+				background: linear-gradient(145deg, #1a3a8a, #0f2060);
+				border-radius: var(--radius);
+				border: 2px solid rgba(255, 255, 255, 0.2);
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 1.4rem;
+				color: rgba(255, 255, 255, 0.3);
+				transition: transform 0.15s, box-shadow 0.15s;
+				box-shadow: var(--shadow);
+				position: relative;
+			}
+			.draw-pile::before{
+				content: '';
+				position: absolute;
+				inset: 2px;
+				border: 1px solid rgba(255, 255, 255, 0.08);
+				border-radius: 4px;
+			}
+			.draw-pile:hover{
+				transform: translateY(-3px);
+				box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+			}
+			.draw-pile .cnt{
+				position: absolute;
+				bottom: -18px;
+				left: 50%;
+				transform: translateX(-50%);
+				font-size: 0.6rem;
+				color: rgba(242, 234, 216, 0.4);
+				letter-spacing: 1px;
+				white-space: nowrap;
+			}
+			.discard-top{
+				width: var(--cw);
+				height: var(--ch);
+				border-radius: var(--radius);
+				border: 2px solid var(--border);
+				cursor: pointer;
+				box-shadow: var(--shadow);
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				font-size: 1.1rem;
+				font-weight: 700;
+				transition: transform 0.15s, border-color 0.15s;
+				position: relative;
+				background: linear-gradient(145deg, #fff, #f0e8d8);
+				color: #111;
+			}
+			.discard-top.red-c{
+				color: var(--red);
+			}
+			.discard-top:hover{
+				transform: translateY(-3px);
+				border-color: var(--gold);
+			}
+			.discard-top.empty{
+				background: rgba(0, 0, 0, 0.2);
+				color: rgba(242, 234, 216, 0.2);
+				font-size: 0.7rem;
+				cursor: default;
+			}
+			#melds-zone{
+				flex: 1;
+				overflow-y: auto;
+				background: rgba(0, 0, 0, 0.15);
+				border: 1px solid rgba(46, 107, 46, 0.3);
+				border-radius: 10px;
+				padding: 6px;
+			}
+			.meld-row{
+				display: flex;
+				gap: 3px;
+				align-items: center;
+				flex-wrap: wrap;
+				background: rgba(0, 0, 0, 0.2);
+				border-radius: 6px;
+				padding: 4px 6px;
+				margin-bottom: 4px;
+				border: 1px solid rgba(46, 107, 46, 0.3);
+				cursor: pointer;
+				transition: border-color 0.15s;
+			}
+			.meld-row:hover{
+				border-color: var(--gold);
+			}
+			.meld-row.selected-meld{
+				border-color: var(--gold);
+				background: rgba(212, 168, 67, 0.1);
+			}
+			.meld-tag{
+				font-size: 0.55rem;
+				letter-spacing: 1px;
+				text-transform: uppercase;
+				padding: 2px 5px;
+				border-radius: 3px;
+				margin-right: 4px;
+				flex-shrink: 0;
+			}
+			.tag-pure{
+				background: rgba(58, 175, 92, 0.25);
+				color: var(--accent);
+			}
+			.tag-impure{
+				background: rgba(212, 168, 67, 0.25);
+				color: var(--gold);
+			}
+			.tag-seq{
+				background: rgba(100, 149, 237, 0.25);
+				color: #6495ed;
+			}
+			#player-zone{
+				flex-shrink: 0;
+				overflow: visible;
+			}
+			#player-hand-scroll{
+				display: flex;
+				gap: 3px;
+				overflow-x: auto;
+				overflow-y: visible;
+				padding: 18px 2px 8px;
+				-ms-overflow-style: none;
+			}
+			#player-hand-scroll::-webkit-scrollbar{
+				display: none;
+			}
+			@supports (scrollbar-width: none){
+				#player-hand-scroll{
+					scrollbar-width: none;
+				}
+			}
+			.card{
+				width: var(--cw);
+				height: var(--ch);
+				background: linear-gradient(145deg, #fff, #f0e8d8);
+				border-radius: var(--radius);
+				border: 1px solid #ccc;
+				display: inline-flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				font-weight: 700;
+				cursor: pointer;
+				position: relative;
+				box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.5);
+				transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s;
+				flex-shrink: 0;
+				color: #111;
+			}
+			.card.red-c{
+				color: var(--red);
+			}
+			.card .cr{
+				font-size: 0.72rem;
+				position: absolute;
+				top: 3px;
+				left: 5px;
+				line-height: 1;
+			}
+			.card .cs{
+				font-size: 1rem;
+			}
+			.card .crb{
+				font-size: 0.72rem;
+				position: absolute;
+				bottom: 3px;
+				right: 5px;
+				line-height: 1;
+				transform: rotate(180deg);
+			}
+			.card.selected{
+				transform: translateY(-14px);
+				border-color: var(--gold);
+				box-shadow: 0 0 0 2px var(--gold), 2px 14px 20px rgba(0, 0, 0, 0.5);
+			}
+			.card.joker-c{
+				background: linear-gradient(135deg, #1a0040, #4a0080);
+				color: #fff;
+				border-color: #9b59b6;
+			}
+			.card.joker-c .cs{
+				font-size: 1.3rem;
+			}
+			.card.wild-two{
+				border-color: #9b59b6;
+				box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(155, 89, 182, 0.5);
+			}
+			.card.wild-two::after{
+				content: '★';
+				position: absolute;
+				bottom: 2px;
+				left: 50%;
+				transform: translateX(-50%);
+				font-size: 0.45rem;
+				color: #9b59b6;
+				line-height: 1;
+			}
+			#actions{
+				display: flex;
+				gap: 6px;
+				flex-wrap: wrap;
+				justify-content: center;
+				padding: 6px 0 4px;
+				flex-shrink: 0;
+			}
+			.btn{
+				padding: 8px 14px;
+				border: none;
+				border-radius: 6px;
+				font-family: 'Josefin Sans', sans-serif;
+				font-size: 0.72rem;
+				font-weight: 600;
+				letter-spacing: 1px;
+				text-transform: uppercase;
+				cursor: pointer;
+				transition: all 0.15s;
+			}
+			.btn:disabled{
+				opacity: 0.35;
+				cursor: not-allowed !important;
+				transform: none !important;
+			}
+			.btn-g{
+				background: linear-gradient(135deg, #1a5e30, #27ae60);
+				color: #fff;
+				box-shadow: 0 3px 10px rgba(39, 174, 96, 0.3);
+			}
+			.btn-g:hover:not(:disabled){
+				transform: translateY(-2px);
+				box-shadow: 0 5px 16px rgba(39, 174, 96, 0.4);
+			}
+			.btn-r{
+				background: linear-gradient(135deg, #8b1a0e, #c0392b);
+				color: #fff;
+				box-shadow: 0 3px 10px rgba(192, 57, 43, 0.3);
+			}
+			.btn-r:hover:not(:disabled){
+				transform: translateY(-2px);
+			}
+			.btn-gold{
+				background: linear-gradient(135deg, #8b6914, #d4a843);
+				color: #1a0e00;
+				font-weight: 700;
+				box-shadow: 0 3px 10px rgba(212, 168, 67, 0.3);
+			}
+			.btn-gold:hover:not(:disabled){
+				transform: translateY(-2px);
+				box-shadow: 0 5px 16px rgba(212, 168, 67, 0.4);
+			}
+			.btn-blue{
+				background: linear-gradient(135deg, #1a3a6b, #2471a3);
+				color: #fff;
+			}
+			.btn-blue:hover:not(:disabled){
+				transform: translateY(-2px);
+			}
+			.btn-ghost{
+				background: transparent;
+				border: 1px solid rgba(46, 107, 46, 0.5);
+				color: var(--cream);
+			}
+			.btn-ghost:hover:not(:disabled){
+				background: rgba(46, 107, 46, 0.2);
+			}
+			#status{
+				text-align: center;
+				font-size: 0.7rem;
+				letter-spacing: 1px;
+				color: rgba(242, 234, 216, 0.6);
+				padding: 2px 0;
+				flex-shrink: 0;
+				min-height: 18px;
+			}
+			#status span{
+				color: var(--gold2);
+			}
+			#overlay{
+				position: fixed;
+				inset: 0;
+				background: rgba(0, 0, 0, 0.85);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				z-index: 100;
+				-webkit-backdrop-filter: blur(4px);
+				backdrop-filter: blur(4px);
+			}
+			#overlay.hidden{
+				display: none;
+			}
+			.modal{
+				background: linear-gradient(145deg, #0f2a12, #1a3a1c);
+				border: 2px solid var(--gold);
+				border-radius: 16px;
+				padding: 28px 32px;
+				text-align: center;
+				max-width: 90vw;
+				box-shadow: 0 0 60px rgba(212, 168, 67, 0.3), var(--shadow);
+			}
+			.modal h2{
+				font-family: 'Cormorant Garamond', serif;
+				font-size: clamp(1.4rem, 5vw, 2rem);
+				color: var(--gold);
+				margin-bottom: 10px;
+			}
+			.modal p{
+				font-size: 0.85rem;
+				color: rgba(242, 234, 216, 0.8);
+				line-height: 1.6;
+				margin-bottom: 16px;
+			}
+			.modal-btns{
+				display: flex;
+				gap: 10px;
+				justify-content: center;
+				flex-wrap: wrap;
+			}
+			.pozzo-box{
+				display: flex;
+				align-items: center;
+				gap: 4px;
+				background: rgba(212, 168, 67, 0.12);
+				border: 1px solid rgba(212, 168, 67, 0.3);
+				border-radius: 6px;
+				padding: 3px 8px;
+				cursor: pointer;
+				transition: all 0.15s;
+				font-size: 0.7rem;
+				color: var(--gold2);
+			}
+			.pozzo-box:hover{
+				background: rgba(212, 168, 67, 0.22);
+			}
+			.pozzo-box .pc{
+				width: 28px;
+				height: 38px;
+				background: linear-gradient(145deg, #1a3a8a, #0f2060);
+				border-radius: 4px;
+				border: 1px solid rgba(255, 255, 255, 0.2);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 0.6rem;
+				color: rgba(255, 255, 255, 0.2);
+			}
+			#rules-panel{
+				position: fixed;
+				inset: 0;
+				background: rgba(0, 0, 0, 0.9);
+				z-index: 200;
+				display: none;
+				overflow-y: auto;
+				padding: 16px;
+			}
+			#rules-panel.open{
+				display: block;
+			}
+			.rules-inner{
+				max-width: 600px;
+				margin: 0 auto;
+				background: rgba(13, 31, 15, 0.98);
+				border: 1px solid var(--border);
+				border-radius: 12px;
+				padding: 20px;
+			}
+			.rules-inner h2{
+				font-family: 'Cormorant Garamond', serif;
+				color: var(--gold);
+				font-size: 1.5rem;
+				margin-bottom: 12px;
+			}
+			.rules-inner h3{
+				color: var(--accent);
+				font-size: 0.85rem;
+				margin: 12px 0 4px;
+				letter-spacing: 1px;
+				text-transform: uppercase;
+			}
+			.rules-inner p,
+			.rules-inner li{
+				font-size: 0.8rem;
+				color: rgba(242, 234, 216, 0.75);
+				line-height: 1.6;
+				margin-bottom: 4px;
+			}
+			.rules-inner ul{
+				padding-left: 18px;
+			}
+			#toast{
+				position: fixed;
+				bottom: 80px;
+				left: 50%;
+				transform: translateX(-50%) translateY(60px);
+				background: rgba(22, 58, 26, 0.97);
+				border: 1px solid var(--border);
+				color: var(--cream);
+				padding: 8px 20px;
+				border-radius: 20px;
+				font-size: 0.78rem;
+				transition: transform 0.3s;
+				z-index: 300;
+				white-space: nowrap;
+				max-width: 92vw;
+				text-align: center;
+				pointer-events: none;
+			}
+			#toast.show{
+				transform: translateX(-50%) translateY(0);
+			}
+			.turn-pill{
+				display: inline-block;
+				padding: 2px 10px;
+				border-radius: 20px;
+				font-size: 0.6rem;
+				letter-spacing: 1px;
+				text-transform: uppercase;
+				font-weight: 600;
+				margin-left: 6px;
+			}
+			.pill-you{
+				background: rgba(58, 175, 92, 0.25);
+				color: var(--accent);
+			}
+			.pill-opp{
+				background: rgba(192, 57, 43, 0.25);
+				color: var(--red2);
+			}
+			.hdr-controls{
+				display: flex;
+				gap: 10px;
+				align-items: center;
+			}
+			.btn-sm{
+				padding: 5px 8px;
+				font-size: 0.65rem;
+			}
+			.opp-zone-inner{
+				display: flex;
+				align-items: center;
+				gap: 8px;
+			}
+			.piles-col{
+				display: flex;
+				flex-direction: column;
+				gap: 6px;
+			}
+			.pile-area-mt{
+				margin-top: 4px;
+			}
+			.my-pozzo-mt{
+				margin-top: 4px;
+			}
+			.zone-label-mb{
+				margin-bottom: 4px;
+			}
+			.melds-you-mb{
+				margin-bottom: 6px;
+			}
+			.btn-pozzo-hidden{
+				display: none;
+			}
+			.btn-rules-close{
+				margin-bottom: 12px;
+			}
+			.opp-extra{
+				font-size: 0.7rem;
+				color: rgba(242, 234, 216, 0.4);
+				margin-left: 4px;
+			}
+			.discard-rank{
+				font-size: 0.7rem;
+			}
+			.discard-suit{
+				font-size: 1.1rem;
+			}
+			.discard-count{
+				font-size: 0.7rem;
+				opacity: 0.5;
+			}
+			.card-mini{
+				width: 30px;
+				height: 44px;
+				font-size: 0.55rem;
+				flex-shrink: 0;
+			}
+			.card-mini .cr{
+				font-size: 0.5rem;
+			}
+			.card-mini .cs{
+				font-size: 0.7rem;
+			}
+			.melds-empty{
+				font-size: 0.7rem;
+				color: rgba(242, 234, 216, 0.3);
+				padding: 4px;
+			}
+			@media(max-width:400px){
+				:root{
+					--cw: 40px;
+					--ch: 58px;
+				}
+				.btn{
+					padding: 7px 10px;
+					font-size: 0.65rem;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div id="hdr">
+			<h1>♣ Burraco</h1>
+			<div class="hdr-controls">
+				<div class="score-box">
+					<div class="sv" id="score-you">0</div>
+					<div class="sl">Tu</div>
+				</div>
+				<div class="score-box">
+					<div class="sv" id="score-opp">0</div>
+					<div class="sl">Avv.</div>
+				</div>
+				<button class="btn btn-ghost btn-sm" onclick="toggleRules()">Regole</button>
+				<button class="btn btn-ghost btn-sm" onclick="newGame()">Nuova</button>
+			</div>
+		</div>
+		<div id="game">
+			<div id="opp-zone">
+				<div class="zone-label">Avversario <span id="opp-turn-pill"></span></div>
+				<div class="opp-zone-inner">
+					<div id="opp-hand-row"></div>
+					<div class="pozzo-box" id="opp-pozzo" title="Pozzetto avversario">
+						<div class="pc" id="opp-pozzo-icon">11</div>
+						<span>Pozzetto</span>
+					</div>
+				</div>
+			</div>
+			<div id="center">
+				<!-- Piles -->
+				<div class="piles-col">
+					<div class="pile-area">
+						<div class="pile-label">Mazzo</div>
+						<div class="draw-pile" id="draw-pile" onclick="drawFromDeck()">🂠<span class="cnt" id="deck-count">0</span>
+						</div>
+					</div>
+					<div class="pile-area pile-area-mt">
+						<div class="pile-label">Scarti</div>
+						<div id="discard-pile" onclick="drawFromDiscard()"></div>
+					</div>
+					<div class="pozzo-box my-pozzo-mt" id="my-pozzo" title="Tuo pozzetto">
+						<div class="pc" id="my-pozzo-icon">11</div>
+						<span>Mio Pozzo</span>
+					</div>
+				</div>
+				<div id="melds-zone">
+					<div class="zone-label zone-label-mb">Giochi sul tavolo — clicca per aggiungere</div>
+					<div id="melds-you" class="melds-you-mb"></div>
+					<div class="zone-label zone-label-mb">Giochi avversario</div>
+					<div id="melds-opp"></div>
+				</div>
+			</div>
+			<div id="status">Inizia la partita</div>
+			<div id="player-zone">
+				<div class="zone-label">La tua mano — tocca per selezionare <span id="you-turn-pill"></span></div>
+				<div id="player-hand-scroll"></div>
+			</div>
+			<div id="actions">
+				<button class="btn btn-g" onclick="layMeld()" id="btn-meld">Gioca meld</button>
+				<button class="btn btn-blue" onclick="addToMeld()" id="btn-add">Aggiungi</button>
+				<button class="btn btn-r" onclick="discard()" id="btn-disc">Scarta</button>
+				<button class="btn btn-gold btn-pozzo-hidden" onclick="pickPozzo()" id="btn-pozzo">Prendi Pozzetto!</button>
+			</div>
+		</div>
+		<div id="rules-panel">
+			<div class="rules-inner">
+				<h2>📖 Regole del Burraco</h2>
+				<button class="btn btn-ghost btn-rules-close" onclick="toggleRules()">✕ Chiudi</button>
+				<h3>Obiettivo</h3>
+				<p>Segnare più punti dell'avversario calando carte sul tavolo e chiudendo la mano.</p>
+				<h3>Il Mazzo</h3>
+				<ul>
+					<li>2 mazzi da 52 carte + 2 jolly = 108 carte.</li>
+					<li>I <strong>due (2)</strong> e i <strong>jolly (🃏)</strong> sono matte (jolly).</li>
+				</ul>
+				<h3>Distribuzione</h3>
+				<ul>
+					<li>Ogni giocatore riceve 11 carte.</li>
+					<li>Due pozzetti da 11 carte ciascuno vengono messi sul tavolo.</li>
+					<li>Il resto è il mazzo di pesca.</li>
+				</ul>
+				<h3>Turno</h3>
+				<ul>
+					<li><strong>1. Pesca</strong>: 1 carta dal mazzo o tutta la pila degli scarti.</li>
+					<li><strong>2. Gioca (opzionale)</strong>: cala meld/sequenze o aggiunge carte a quelle esistenti.</li>
+					<li><strong>3. Scarta</strong>: 1 carta sul mazzo scarti. Se la mano è vuota, prendi il pozzetto.</li>
+				</ul>
+				<h3>Meld validi</h3>
+				<ul>
+					<li><strong>Gruppi (Tris/Poker)</strong>: 3 o più carte dello stesso valore (max 1 matta).</li>
+					<li><strong>Sequenze</strong>: 3 o più carte dello stesso seme in ordine (max 1 matta).</li>
+					<li>L'Asso può stare solo in A-2-3 o ... Q-K-A.</li>
+					<li>Non si può avere 2 matte consecutive in una sequenza.</li>
+				</ul>
+				<h3>Burraco</h3>
+				<ul>
+					<li>Un meld di 7+ carte è un <strong>Burraco</strong>.</li>
+					<li><strong>Puro</strong>: nessuna matta. Vale 200 punti.</li>
+					<li><strong>Semipuro</strong>: matta in coda. Vale 150 punti.</li>
+					<li><strong>Impuro</strong>: matta nel mezzo. Vale 100 punti.</li>
+				</ul>
+				<h3>Fine mano</h3>
+				<p>Si chiude quando si esaurisce la mano (dopo aver preso il pozzetto) e si scarta l'ultima carta. Chi chiude: +100 punti. Chi non ha preso il pozzetto: –100 punti.</p>
+				<h3>Punteggi carte</h3>
+				<ul>
+					<li>Jolly: 30 pt &nbsp;|&nbsp; 2 (matta): 20 pt</li>
+					<li>Asso: 15 pt &nbsp;|&nbsp; K, Q, J, 10: 10 pt</li>
+					<li>4–9: 5 pt &nbsp;|&nbsp; 3: 5 pt</li>
+				</ul>
+				<p>Le carte in mano alla fine sono sottratte. Le carte calate in meld sono aggiunte.</p>
+			</div>
+		</div>
+		<div id="overlay" class="hidden">
+			<div class="modal">
+				<h2 id="ov-title">Burraco!</h2>
+				<p id="ov-desc"></p>
+				<div class="modal-btns">
+					<button class="btn btn-g" id="ov-btn1" onclick="newGame()">Nuova Partita</button>
+					<button class="btn btn-ghost" id="ov-btn2" onclick="closeOverlay()">Continua</button>
+				</div>
+			</div>
+		</div>
+		<div id="toast"></div>
+		<script>
+			const SUITS = ['♠', '♥', '♦', '♣'];
+			const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+			const RANK_VAL = {A: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10, J: 11, Q: 12, K: 13};
+			const CARD_PTS = {A: 15, 2: 20, 3: 5, 4: 5, 5: 5, 6: 5, 7: 5, 8: 5, 9: 5, 10: 10, J: 10, Q: 10, K: 10, '🃏': 30};
+
+			let G = {};
+
+			function makeDeck(){
+				let d = [];
+				for(let m = 0; m < 2; m++){
+					for(let s of SUITS){
+						for(let r of RANKS){
+							d.push({r, s, id: Math.random()});
+						}
+					}
+					d.push({r: '🃏', s: '', joker: true, id: Math.random()});
+				}
+				return shuffle(d);
+			}
+
+			function shuffle(a){
+				let b = [...a];
+				for(let i = b.length-1; i > 0; i--){
+					let j = Math.floor(Math.random()*(i + 1));
+					[b [i], b [j]] = [b [j], b [i]];
+				}
+				return b;
+			}
+
+			function isWild(c){
+				return c.joker || c.r === '2';
+			}
+
+			function cardPts(c){
+				return c.joker ? 30: CARD_PTS [c.r] || 5;
+			}
+
+			function isRed(c){
+				return c.s === '♥' || c.s === '♦';
+			}
+
+			function validateMeld(cards){
+				if(cards.length < 3){
+					return{
+						valid: false, msg: 'Minimo 3 carte'
+					}
+				};
+				let wilds = cards.filter(isWild);
+				let reals = cards.filter(c => !isWild(c));
+				if(wilds.length > cards.length - 1){
+					return{
+						valid: false, msg: 'Troppe matte'
+					}
+				};
+				if(reals.length > 0){
+					let val = reals [0].r;
+					if(reals.every(c => c.r === val)){
+						if(wilds.length <= 1){
+							return{
+								valid: true, type: 'group'
+							}
+						};
+					}
+				}
+				return validateSeq(cards);
+			}
+
+			function validateSeq(cards){
+				let reals = cards.filter(c => !isWild(c));
+				let wilds = cards.filter(isWild);
+				if(reals.length === 0){
+					return{valid: false, msg: 'Solo matte'}
+				};
+				let suits = [...new Set(reals.map(c => c.s))];
+				if(suits.length > 1){
+					return{valid: false, msg: 'Semi diversi in sequenza'}
+				};
+				let rv = reals.map(c => RANK_VAL [c.r]).sort((a, b) => a - b);
+				let gaps = 0;
+				for(let i = 1; i < rv.length; i++){
+					let diff = rv [i] - rv [i - 1];
+					if(diff === 0){
+						return{valid: false, msg: 'Carta duplicata'}
+					};
+					gaps += diff - 1;
+				}
+				let span = rv [rv.length - 1] - rv [0] + 1;
+				if(span > 13){
+					return{
+						valid: false, msg: 'Sequenza troppo lunga'
+					}
+				};
+				if(wilds.length >= gaps && wilds.length <=(span - reals.length)){
+					return{valid: true, type: 'seq'};
+				}
+				return{valid: false, msg: 'Sequenza non valida'};
+			}
+
+			function meldIsBurraco(meld){
+				return meld.cards.length >= 7;
+			}
+
+			function meldIsPure(meld){
+				return meld.cards.every(c => !isWild(c));
+			}
+
+			function meldIsSemipure(meld){
+				let cards = [...meld.cards];
+				if(meld.type === 'seq'){
+					cards.sort((a, b) => {
+						if(isWild(a)){
+							return 1;
+						}
+						if(isWild(b)){
+							return -1;
+						}
+						return RANK_VAL [a.r] - RANK_VAL [b.r];
+					});
+				}
+				let wilds = cards.filter(isWild);
+				if(wilds.length !== 1){
+					return false;
+				}
+				return isWild(cards [0]) || isWild(cards [cards.length - 1]);
+			}
+
+			function burracoScore(meld){
+				if(meldIsPure(meld)){
+					return 200;
+				}
+				if(meldIsSemipure(meld)){
+					return 150;
+				}
+				return 100;
+			}
+
+			function newGame(){
+				closeOverlay();
+				let deck = makeDeck();
+				G = {deck, discard: [], yourHand: [], oppHand: [], yourPozzo: [], oppPozzo: [], yourTookPozzo: false, oppTookPozzo: false, yourMelds: [], oppMelds: [], selectedIdx: [], selectedMeldIdx: -1, drawnThisTurn: false, drawnFromDiscard: false, yourTurn: Math.random() < 0.5, scoreYou: G.scoreYou || 0, scoreOpp: G.scoreOpp || 0, gameOver: false};
+				for(let i = 0; i < 11; i++){
+					G.yourHand.push(deck.pop());
+				}
+				for(let i = 0; i < 11; i++){
+					G.yourPozzo.push(deck.pop());
+				}
+				for(let i = 0; i < 11; i++){
+					G.oppHand.push(deck.pop());
+				}
+				for(let i = 0; i < 11; i++){
+					G.oppPozzo.push(deck.pop());
+				}
+				G.discard.push(deck.pop());
+				sortHand(G.yourHand);
+				render();
+				if(!G.yourTurn){
+					setTimeout(aiTurn, 800);
+				}else{
+					toast('Tocca a te! Pesca una carta.');
+				}
+			}
+
+			function sortHand(hand){
+				hand.sort((a, b) => {
+					if(isWild(a) &&!isWild(b)){
+						return 1;
+					}
+					if(!isWild(a) && isWild(b)){
+						return -1;
+					}
+					if(a.s !== b.s){
+						return a.s < b.s ? -1: 1;
+					}
+					return RANK_VAL [a.r] - RANK_VAL [b.r];
+				});
+			}
+
+			function render(){
+				renderOppHand();
+				renderCenter();
+				renderMelds();
+				renderPlayerHand();
+				renderActions();
+				renderStatus();
+				document.getElementById('score-you').textContent = G.scoreYou;
+				document.getElementById('score-opp').textContent = G.scoreOpp;
+				document.getElementById('my-pozzo-icon').textContent = G.yourTookPozzo ? '✓': G.yourPozzo.length;
+				document.getElementById('opp-pozzo-icon').textContent = G.oppTookPozzo ? '✓': G.oppPozzo.length;
+				document.getElementById('my-pozzo').style.opacity = G.yourTookPozzo ? 0.4: 1;
+				document.getElementById('you-turn-pill').innerHTML = G.yourTurn ? '<span class="turn-pill pill-you">TUO TURNO</span>': '';
+				document.getElementById('opp-turn-pill').innerHTML =!G.yourTurn ? '<span class="turn-pill pill-opp">TURNO AVVERS.</span>': '';
+			}
+
+			function cardEl(c, idx, selected){
+				let joker = c.joker;
+				let isTwo =!joker && c.r === '2';
+				let cls = 'card' +(isRed(c) ? ' red-c': '') +(joker ? ' joker-c': '') +(isTwo ? ' wild-two': '') +(selected ? ' selected': '');
+				let rank = joker ? '🃏': c.r;
+				let suit = joker ? '': c.s;
+				return `<div class="${cls}" data-idx="${idx}" onclick="toggleCard(${idx})">
+						<span class="cr">${rank}</span>
+						<span class="cs">${joker ? '🃏' : suit}</span>
+						<span class="crb">${rank}</span>
+					</div>`;
+			}
+
+			function renderPlayerHand(){
+				let h = '';
+				G.yourHand.forEach((c, i) => {
+					h += cardEl(c, i, G.selectedIdx.includes(i));
+				});
+				document.getElementById('player-hand-scroll').innerHTML = h;
+			}
+
+			function renderOppHand(){
+				let h = '';
+				let n = G.oppHand.length;
+				for(let i = 0; i < Math.min(n, 15); i++){
+					h += `<div class="card-back-mini">🂠</div>`;
+				}
+				if(n > 15){
+					h += `<span class="opp-extra">+${n - 15}</span>`;
+				}
+				document.getElementById('opp-hand-row').innerHTML = h;
+			}
+
+			function renderCenter(){
+				document.getElementById('deck-count').textContent = G.deck.length;
+				let dp = document.getElementById('discard-pile');
+				if(G.discard.length === 0){
+					dp.className = 'discard-top empty';
+					dp.innerHTML = 'vuoto';
+				}else{
+					let top = G.discard [G.discard.length - 1];
+					let red = isRed(top) ? 'red-c': '';
+					let j = top.joker ? 'joker-c': '';
+					dp.className = `discard-top ${red} ${j}`.trim();
+					dp.innerHTML = `<span class="discard-rank">${top.r}</span>
+								<span class="discard-suit">${top.joker ? '🃏' : top.s}</span>
+								<span class="discard-count">${G.discard.length} scarti</span>`;
+				}
+			}
+
+			function renderMelds(){
+				let my = '', op = '';
+				G.yourMelds.forEach((meld, mi) => {
+					let tag = '';
+					if(meld.cards.length >= 7){
+						if(meldIsPure(meld)){
+							tag = '<span class="meld-tag tag-pure">Burraco Puro</span>';
+						}else if(meldIsSemipure(meld)){
+							tag = '<span class="meld-tag tag-impure">Semipuro</span>';
+						}else{
+							tag = '<span class="meld-tag tag-impure">Impuro</span>';
+						}
+					}else if(meld.type === 'seq'){
+						tag = '<span class="meld-tag tag-seq">Seq</span>';
+					}
+					let sel = G.selectedMeldIdx === mi ? 'selected-meld': '';
+					let cards = meld.cards.map(c => {
+						let cls = 'card' +(isRed(c) ? ' red-c': '') +(c.joker ? ' joker-c': '');
+						return `<div class="${cls} card-mini" title="${c.r}${c.s}">
+								<span class="cr">${c.joker ? '🃏' : c.r}</span>
+								<span class="cs">${c.joker ? '🃏' : c.s}</span>
+							</div>`;
+					}).join('');
+					my += `<div class="meld-row ${sel}" onclick="selectMeld(${mi})">${tag}${cards}</div>`;
+				});
+				G.oppMelds.forEach((meld, mi) => {
+					let tag = '';
+					if(meld.cards.length >= 7){
+						tag = meldIsPure(meld) ? '<span class="meld-tag tag-pure">Burraco Puro</span>': '<span class="meld-tag tag-impure">Burraco</span>';
+					}else if(meld.type === 'seq'){
+						tag = '<span class="meld-tag tag-seq">Seq</span>';
+					}
+					let cards = meld.cards.map(c => {
+						let cls = 'card' +(isRed(c) ? ' red-c': '') +(c.joker ? ' joker-c': '');
+						return `<div class="${cls} card-mini">
+								<span class="cr">${c.joker ? '🃏' : c.r}</span>
+								<span class="cs">${c.joker ? '🃏' : c.s}</span>
+							</div>`;
+					}).join('');
+					op += `<div class="meld-row">${tag}${cards}</div>`;
+				});
+				document.getElementById('melds-you').innerHTML = my || '<div class="melds-empty">Nessun gioco</div>';
+				document.getElementById('melds-opp').innerHTML = op || '<div class="melds-empty">Nessun gioco</div>';
+			}
+
+			function renderActions(){
+				let canPlay = G.yourTurn && G.drawnThisTurn &&!G.gameOver;
+				document.getElementById('btn-meld').disabled =!canPlay;
+				document.getElementById('btn-add').disabled =!canPlay || G.selectedMeldIdx < 0;
+				document.getElementById('btn-disc').disabled =!canPlay;
+				let showPozzo = G.yourTurn && G.drawnThisTurn && G.yourHand.length === 0 &&!G.yourTookPozzo && G.yourPozzo.length > 0;
+				document.getElementById('btn-pozzo').style.display = showPozzo ? 'inline-block': 'none';
+				document.getElementById('draw-pile').style.opacity =(G.yourTurn &&!G.drawnThisTurn &&!G.gameOver) ? 1: 0.5;
+			}
+
+			function renderStatus(){
+				let s = G.yourTurn ? `<span>Tuo turno</span> — ${G.drawnThisTurn ? 'Gioca o scarta' : 'Pesca una carta'}`: '<span>Turno avversario...</span>';
+				document.getElementById('status').innerHTML = s;
+			}
+
+			function toggleCard(idx){
+				if(!G.yourTurn || G.gameOver){
+					return;
+				}
+				if(!G.drawnThisTurn){
+					toast('Pesca una carta prima di selezionare');
+					return;
+				}
+				let pos = G.selectedIdx.indexOf(idx);
+				if(pos >= 0){
+					G.selectedIdx.splice(pos, 1);
+				}else{
+					G.selectedIdx.push(idx);
+				}
+				renderPlayerHand();
+				renderActions();
+			}
+
+			function selectMeld(mi){
+				if(!G.yourTurn){
+					return;
+				}
+				G.selectedMeldIdx = G.selectedMeldIdx === mi ? -1: mi;
+				render();
+			}
+
+			function drawFromDeck(){
+				if(!G.yourTurn || G.drawnThisTurn || G.gameOver){
+					return;
+				}
+				if(G.deck.length === 0){
+					toast('Mazzo esaurito!');
+					return;
+				}
+				G.yourHand.push(G.deck.pop());
+				G.drawnThisTurn = true;
+				G.drawnFromDiscard = false;
+				sortHand(G.yourHand);
+				G.selectedIdx = [];
+				toast('Carta pescata dal mazzo');
+				render();
+			}
+
+			function drawFromDiscard(){
+				if(!G.yourTurn || G.drawnThisTurn || G.gameOver){
+					return;
+				}
+				if(G.discard.length === 0){
+					toast('Nessuna carta negli scarti');
+					return;
+				}
+				let taken = G.discard.splice(0);
+				G.yourHand.push(...taken);
+				G.drawnThisTurn = true;
+				G.drawnFromDiscard = true;
+				sortHand(G.yourHand);
+				G.selectedIdx = [];
+				toast(`Presi ${taken.length} scarti!`);
+				render();
+			}
+
+			function layMeld(){
+				if(!G.yourTurn ||!G.drawnThisTurn || G.gameOver){
+					return;
+				}
+				if(G.selectedIdx.length < 3){
+					toast('Seleziona almeno 3 carte');
+					return;
+				}
+				let cards = G.selectedIdx.map(i => G.yourHand [i]);
+				let v = validateMeld(cards);
+				if(!v.valid){
+					toast('❌ ' + v.msg);
+					return;
+				}
+				G.selectedIdx.sort((a, b) => b - a).forEach(i => G.yourHand.splice(i, 1));
+				G.yourMelds.push({cards, type: v.type});
+				G.selectedIdx = [];
+				G.selectedMeldIdx = -1;
+				toast('✓ Meld calato!');
+				checkHandEmpty();
+				render();
+			}
+
+			function addToMeld(){
+				if(!G.yourTurn ||!G.drawnThisTurn || G.gameOver){
+					return;
+				}
+				if(G.selectedMeldIdx < 0){
+					toast('Seleziona un meld dal tavolo');
+					return;
+				}
+				if(G.selectedIdx.length === 0){
+					toast('Seleziona le carte da aggiungere');
+					return;
+				}
+				let meld = G.yourMelds [G.selectedMeldIdx];
+				let toAdd = G.selectedIdx.map(i => G.yourHand [i]);
+				let newCards = [...meld.cards,...toAdd];
+				let v = validateMeld(newCards);
+				if(!v.valid){
+					toast('❌ ' + v.msg);
+					return;
+				}
+				meld.cards = newCards;
+				G.selectedIdx.sort((a, b) => b - a).forEach(i => G.yourHand.splice(i, 1));
+				G.selectedIdx = [];
+				G.selectedMeldIdx = -1;
+				toast('✓ Carte aggiunte!');
+				checkHandEmpty();
+				render();
+			}
+
+			function discard(){
+				if(!G.yourTurn ||!G.drawnThisTurn || G.gameOver){
+					return;
+				}
+				if(G.selectedIdx.length !== 1){
+					toast('Seleziona esattamente 1 carta da scartare');
+					return;
+				}
+				let idx = G.selectedIdx [0];
+				let card = G.yourHand.splice(idx, 1) [0];
+				G.discard.push(card);
+				G.selectedIdx = [];
+				G.drawnThisTurn = false;
+				G.drawnFromDiscard = false;
+				if(G.yourHand.length === 0 &&!G.yourTookPozzo && G.yourPozzo.length > 0){
+					G.yourHand.push(...G.yourPozzo);
+					G.yourPozzo = [];
+					G.yourTookPozzo = true;
+					sortHand(G.yourHand);
+					render();
+					toast('🎁 Pozzetto preso automaticamente! (' + G.yourHand.length + ' carte)');
+					return;
+				}
+				if(G.yourHand.length === 0 && G.yourTookPozzo){
+					let hasBurraco = G.yourMelds.some(meldIsBurraco);
+					if(!hasBurraco){
+						G.yourHand.push(G.discard.pop());
+						G.drawnThisTurn = true;
+						render();
+						toast('❌ Serve almeno un Burraco per chiudere!');
+						return;
+					}
+					endHand(true);
+					return;
+				}
+				endYourTurn();
+			}
+
+			function pickPozzo(){
+				if(!G.yourTurn || G.yourHand.length !== 0 || G.yourTookPozzo){
+					return;
+				}
+				G.yourHand.push(...G.yourPozzo);
+				G.yourPozzo = [];
+				G.yourTookPozzo = true;
+				sortHand(G.yourHand);
+				G.selectedIdx = [];
+				toast('🎁 Pozzetto preso! (' + G.yourHand.length + ' carte)');
+				render();
+			}
+
+			function endYourTurn(){
+				G.yourTurn = false;
+				G.drawnThisTurn = false;
+				render();
+				setTimeout(aiTurn, 900);
+			}
+
+			function checkHandEmpty(){
+				if(G.yourHand.length === 0 &&!G.yourTookPozzo && G.yourPozzo.length > 0){
+					toast('Mano vuota! Scarta per prendere il pozzetto.');
+				}
+			}
+
+			function aiTurn(){
+				if(G.yourTurn || G.gameOver){
+					return;
+				}
+				aiDraw();
+				if(G.gameOver){ return; }
+				aiPlay();
+				aiAddToMelds();
+				aiDiscard();
+				if(G.oppHand.length === 0 &&!G.oppTookPozzo){
+					G.oppHand.push(...G.oppPozzo);
+					G.oppPozzo = [];
+					G.oppTookPozzo = true;
+					toast('Avversario prende il pozzetto!');
+				}
+				if(G.oppHand.length === 0 && G.oppTookPozzo){
+					let hasBurraco = G.oppMelds.some(meldIsBurraco);
+					if(hasBurraco){
+						endHand(false);
+						return;
+					}
+				}
+				G.yourTurn = true;
+				G.drawnThisTurn = false;
+				render();
+				toast('Tocca a te!');
+			}
+
+			function aiDraw(){
+				if(G.discard.length > 0){
+					let top = G.discard [G.discard.length - 1];
+					if(isWild(top) || aiCardUseful(top, G.oppHand)){
+						G.oppHand.push(...G.discard.splice(0));
+						return;
+					}
+				}
+				if(G.deck.length > 0){
+					G.oppHand.push(G.deck.pop());
+				}else if(G.discard.length > 0){
+					G.oppHand.push(...G.discard.splice(0));
+				}else{
+					G.gameOver = true;
+					render();
+					showOverlay('Pareggio — Stallo', 'Né il mazzo né gli scarti hanno carte. La mano termina in parità.', true);
+				}
+			}
+
+			function aiCardUseful(card, hand){
+				let reals = hand.filter(c => !isWild(c));
+				let sameRank = reals.filter(c => c.r === card.r).length;
+				if(sameRank >= 2){
+					return true;
+				}
+				let sameSuit = reals.filter(c => c.s === card.s);
+				let cv = RANK_VAL [card.r];
+				let neighbors = sameSuit.filter(c => Math.abs(RANK_VAL [c.r] - cv) <= 2);
+				return neighbors.length >= 2;
+			}
+
+			function aiPlay(){
+				let hand = G.oppHand;
+				let changed = true;
+				while(changed){
+					changed = false;
+					let byRank = {};
+					hand.filter(c => !isWild(c)).forEach(c => {
+						byRank [c.r] = byRank [c.r] || [];
+						byRank [c.r].push(c);
+					});
+					for(let r in byRank){
+						if(byRank [r].length >= 3){
+							let meld = byRank [r].slice(0, 4);
+							meld.forEach(c => hand.splice(hand.indexOf(c), 1));
+							G.oppMelds.push({cards: meld, type: 'group'});
+							changed = true;
+							break;
+						}
+					}
+					let bySuit = {};
+					hand.filter(c => !isWild(c)).forEach(c => {
+						bySuit [c.s] = bySuit [c.s] || [];
+						bySuit [c.s].push(c);
+					});
+					for(let s in bySuit){
+						let sorted = bySuit [s].sort((a, b) => RANK_VAL [a.r] - RANK_VAL [b.r]);
+						let seq = findSeq(sorted, hand.filter(isWild));
+						if(seq && seq.length >= 3){
+							seq.forEach(c => hand.splice(hand.indexOf(c), 1));
+							G.oppMelds.push({cards: seq, type: 'seq'});
+							changed = true;
+							break;
+						}
+					}
+				}
+			}
+
+			function findSeq(sorted, wilds){
+				if(sorted.length < 2){
+					return null;
+				}
+				let best = null;
+				for(let i = 0; i < sorted.length; i++){
+					let seq = [sorted [i]];
+					let wi = 0;
+					for(let j = i+1; j < sorted.length; j++){
+						let prev = RANK_VAL [seq [seq.length - 1].r];
+						let curr = RANK_VAL [sorted [j].r];
+						let gap = curr - prev - 1;
+						if(gap === 0){
+							continue;
+						}
+						if(gap <= wilds.length - wi && gap <= 2){
+							for(let g = 0; g < gap; g++){
+								seq.push(wilds [wi++]);
+							}
+							seq.push(sorted [j]);
+						}else{
+							break;
+						}
+					}
+					if(seq.length >=(best ? best.length: 3)){
+						best = seq;
+					}
+				}
+				return best;
+			}
+
+			function aiAddToMelds(){
+				let hand = G.oppHand;
+				G.oppMelds.forEach(meld => {
+					let again = true;
+					while(again){
+						again = false;
+						for(let i = hand.length-1; i >= 0; i--){
+							let c = hand [i];
+							let newCards = [...meld.cards, c];
+							if(validateMeld(newCards).valid){
+								meld.cards = newCards;
+								hand.splice(i, 1);
+								again = true;
+								break;
+							}
+						}
+					}
+				});
+			}
+
+			function aiDiscard(){
+				let hand = G.oppHand;
+				if(hand.length === 0){
+					return;
+				}
+				let byRank = {};
+				hand.forEach(c => {
+					byRank [c.r] = byRank [c.r] || [];
+					byRank [c.r].push(c);
+				});
+				let singles = hand.filter(c => !isWild(c) && byRank [c.r].length === 1);
+				singles.sort((a, b) => cardPts(a) - cardPts(b));
+				let card = singles [0] || hand.filter(c => !isWild(c)).sort((a, b) => cardPts(a) - cardPts(b)) [0] || hand [0];
+				hand.splice(hand.indexOf(card), 1);
+				G.discard.push(card);
+			}
+
+			function endHand(youClosed){
+				G.gameOver = true;
+				let yourBurr = G.yourMelds.filter(meldIsBurraco).reduce((s, m) => s + burracoScore(m), 0);
+				let oppBurr = G.oppMelds.filter(meldIsBurraco).reduce((s, m) => s + burracoScore(m), 0);
+				function meldPts(melds){
+					return melds.reduce((s, m) => s + m.cards.reduce((ss, c) => ss + cardPts(c), 0), 0);
+				}
+				let yourMeldPts = meldPts(G.yourMelds);
+				let oppMeldPts = meldPts(G.oppMelds);
+				function handDeduct(hand){
+					return hand.reduce((s, c) => s + cardPts(c), 0);
+				}
+				let yourHandDed = handDeduct(G.yourHand);
+				let oppHandDed = handDeduct(G.oppHand);
+				let yourPozzoPen = G.yourTookPozzo ? 0: 100;
+				let oppPozzoPen = G.oppTookPozzo ? 0: 100;
+				let yourClose = youClosed ? 100: 0;
+				let oppClose =!youClosed ? 100: 0;
+				let yourTotal = yourMeldPts + yourBurr + yourClose - yourHandDed - yourPozzoPen;
+				let oppTotal = oppMeldPts + oppBurr + oppClose - oppHandDed - oppPozzoPen;
+				G.scoreYou += yourTotal;
+				G.scoreOpp += oppTotal;
+				render();
+				let winner = yourTotal > oppTotal ? '🏆 Hai vinto la mano!': '💸 Ha vinto l\'avversario';
+				let desc = `
+			Tu: +${yourMeldPts} giochi, +${yourBurr} burrachi, +${yourClose} chiusura, -${yourHandDed} mano, -${yourPozzoPen} pozzetto = ${yourTotal} pt
+			Avv: +${oppMeldPts} giochi, +${oppBurr} burrachi, +${oppClose} chiusura, -${oppHandDed} mano, -${oppPozzoPen} pozzetto = ${oppTotal} pt
+			Punteggio: Tu ${G.scoreYou} — Avv ${G.scoreOpp}
+					`.trim();
+				showOverlay(winner, desc, true);
+			}
+
+			function toast(msg, ms = 2500){
+				let t = document.getElementById('toast');
+				t.textContent = msg;
+				t.classList.add('show');
+				clearTimeout(t._t);
+				t._t = setTimeout(() => t.classList.remove('show'), ms);
+			}
+
+			function showOverlay(title, desc, newBtn){
+				document.getElementById('ov-title').textContent = title;
+				document.getElementById('ov-desc').textContent = desc;
+				document.getElementById('ov-btn2').style.display = newBtn ? 'inline-block': 'none';
+				document.getElementById('overlay').classList.remove('hidden');
+			}
+
+			function closeOverlay(){
+				document.getElementById('overlay').classList.add('hidden');
+			}
+
+			function toggleRules(){
+				document.getElementById('rules-panel').classList.toggle('open');
+			}
+
+			showOverlay('♣ Burraco Italiano ♣', 'Gioca a Burraco contro l\'AI.\nMazzo doppio con jolly, burrachi puri e impuri, punteggio completo.\n\nFunziona offline al 100%.', false);
+			document.getElementById('ov-btn1').textContent = 'Inizia Partita';
+			document.getElementById('ov-btn1').onclick = newGame;
+		</script>
+	</body>
+</html>
