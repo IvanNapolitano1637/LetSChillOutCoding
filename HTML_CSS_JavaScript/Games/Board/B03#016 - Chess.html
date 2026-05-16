@@ -1607,7 +1607,7 @@
 					return;
 				}
 				const kPos = findKing(board, turn);
-				const inCheck = isSquareAttacked(board, kPos.r, kPos.c, turn === 'W' ? 'B' : 'W');
+				const inCheck = kPos ? isSquareAttacked(board, kPos.r, kPos.c, turn === 'W' ? 'B' : 'W') : false;
 				statusBtn.textContent = (turn === 'W' ? t('whiteMove') : t('blackMove')) + (inCheck ? t('check') : '');
 				statusBtn.style.background = turn === 'W' ? 'white' : 'black';
 				statusBtn.style.color = turn === 'W' ? 'black' : 'white';
@@ -1838,7 +1838,7 @@
 				const cells = boardEl.querySelectorAll('.square');
 				cells.forEach(c => c.remove());
 				const currentKing = findKing(board, turn);
-				const inCheck = (turn !== 'OVER') ? isSquareAttacked(board, currentKing.r, currentKing.c, turn === 'W' ? 'B' : 'W') : false;
+				const inCheck = (turn !== 'OVER' && currentKing) ? isSquareAttacked(board, currentKing.r, currentKing.c, turn === 'W' ? 'B' : 'W') : false;
 				for(let r = 0; r < 8; r++){
 					for(let c = 0; c < 8; c++){
 						const dr = playerColor === 'B' ? (7 - r) : r;
@@ -1887,10 +1887,13 @@
 						}
 					}
 				}
-				return {r:0, c:0};
+				return null;
 			}
 
 			function isSquareAttacked(b, row, col, attackerColor){
+				if(row === null || col === null){
+					return false;
+				}
 				for(let r = 0; r < 8; r++){
 					for(let c = 0; c < 8; c++){
 						const p = b[r][c];
@@ -1969,7 +1972,11 @@
 
 			function getSafeMoves(b, r, c){
 				const isW = b[r][c] === b[r][c].toUpperCase();
+				const oppKing = isW ? 'k' : 'K';
 				return getRawMoves(b, r, c).filter(m => {
+					if(b[m.r][m.c] === oppKing){
+						return false;
+					}
 					const tmp = b.map(row => [...row]);
 					if(m.enPassant){
 						tmp[r][m.c] = '';
@@ -1984,6 +1991,9 @@
 					tmp[m.r][m.c] = tmp[r][c];
 					tmp[r][c] = '';
 					const k = findKing(tmp, isW ? 'W' : 'B');
+					if(!k){
+						return false;
+					}
 					return !isSquareAttacked(tmp, k.r, k.c, isW ? 'B' : 'W');
 				});
 			}
@@ -2002,6 +2012,18 @@
 					}
 				}
 				const kPos = findKing(board, turn);
+				if(!kPos){
+					playSound('mate');
+					gameOverKey = 'checkmate';
+					gameOverVars = {w: turn === 'W' ? 'black' : 'white'};
+					const statusBtn = document.getElementById('statusBtn');
+					statusBtn.textContent = t('checkmate', {w: t(gameOverVars.w)});
+					statusBtn.style.background = "#e74c3c";
+					statusBtn.style.color = "white";
+					turn = 'OVER';
+					stopClockTick();
+					return;
+				}
 				const inCheck = isSquareAttacked(board, kPos.r, kPos.c, turn === 'W' ? 'B' : 'W');
 				const statusBtn = document.getElementById('statusBtn');
 				if(moves.length === 0){
@@ -2141,6 +2163,12 @@
 				pendingPromotion = null;
 				selected = null;
 				legalMoves = [];
+				turn = (turn === 'W') ? 'B' : 'W';
+				switchClock();
+				positionHistory.push(board.map(row => row.join('')).join('|'));
+				if(positionHistory.length > 12){
+					positionHistory.shift();
+				}
 				if(timerMode === 1){
 					if(playerColor === 'W'){
 						moveClockW = TIMER_MOVE[currentDiffIdx];
@@ -2151,7 +2179,11 @@
 				checkGameState();
 				drawBoard();
 				if(turn !== 'OVER'){
-					startClockTick();
+					if(turn !== playerColor){
+						setTimeout(pcMove, 600);
+					}else{
+						startClockTick();
+					}
 				}
 			}
 
@@ -2255,10 +2287,13 @@
 							}
 						}
 					}
-					return {r:0,c:0};
+					return null;
 				}
 
 				function isSquareAttacked(b, row, col, attackerColor){
+					if(row === null || col === null){
+						return false;
+					}
 					for(let r = 0; r < 8; r++){
 						for(let c = 0; c < 8; c++){
 							const p = b[r][c];
@@ -2275,7 +2310,11 @@
 
 				function getSafeMoves(b, r, c){
 					const isW = b[r][c] === b[r][c].toUpperCase();
+					const oppKing = isW ? 'k' : 'K';
 					return getRawMoves(b,r,c,false).filter(m=>{
+						if(b[m.r][m.c] === oppKing){
+							return false;
+						}
 						const tmp = b.map(row => [...row]);
 						if(m.enPassant){
 							tmp[r][m.c]='';
@@ -2283,6 +2322,9 @@
 						tmp[m.r][m.c] = tmp[r][c];
 						tmp[r][c]='';
 						const k = findKing(tmp,isW ? 'W' : 'B');
+						if(!k){
+							return false;
+						}
 						return !isSquareAttacked(tmp,k.r,k.c,isW ? 'B' : 'W');
 					});
 				}
@@ -2334,6 +2376,9 @@
 					}
 					if(allMoves.length === 0){
 						const king = findKing(b,color);
+						if(!king){
+							return maximizing ? -50000 : 50000;
+						}
 						return isSquareAttacked(b,king.r,king.c,color === 'W' ? 'B' : 'W') ? (maximizing ? -50000 : 50000):0;
 					}
 					if(maximizing){
