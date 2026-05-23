@@ -508,6 +508,69 @@
 			.card.deal-anim{
 				animation: deal-in 0.2s ease-out;
 			}
+			#score-round-label{
+				display: none;
+			}
+			#tournament-target-info{
+				display: none;
+				text-align: center;
+				font-family: var(--font-ui);
+				font-size: 0.72rem;
+				color: var(--gold-light);
+				opacity: 0.7;
+				padding: 2px 0;
+			}
+			#drawn-card-overlay{
+				position: fixed;
+				inset: 0;
+				background: rgba(0, 0, 0, 0.75);
+				z-index: 800;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				gap: 20px;
+			}
+			#drawn-card-overlay .drawn-label{
+				font-family: var(--font-ui);
+				color: var(--gold-light);
+				font-size: 1rem;
+				letter-spacing: 0.1em;
+				text-transform: uppercase;
+			}
+			#drawn-card-overlay .drawn-card-preview{
+				width: 80px;
+				height: 115px;
+				font-size: 1.2rem;
+				cursor: default;
+				transform: none;
+				box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+			}
+			#drawn-card-overlay .drawn-card-preview .card-joker-center{
+				font-size: 2.5em;
+			}
+			#drawn-card-overlay .drawn-card-preview .card-corner-rank{
+				font-size: 1rem;
+			}
+			#drawn-card-overlay .drawn-card-preview .card-corner-suit{
+				font-size: 0.9rem;
+			}
+			#drawn-card-overlay .drawn-card-preview .card-center{
+				font-size: 2.2em;
+			}
+			#drawn-card-overlay .btn-drawn-confirm{
+				background: var(--gold);
+				color: #111;
+				border: none;
+				border-radius: 8px;
+				padding: 10px 28px;
+				font-family: var(--font-ui);
+				font-size: 1rem;
+				font-weight: bold;
+				cursor: pointer;
+				letter-spacing: 0.05em;
+				margin-top: 8px;
+			}
 			#mode-screen{
 				display: flex;
 				position: fixed;
@@ -615,7 +678,7 @@
 						<span class="score-label">Tu</span>
 						<span class="score-value" id="score-player">0</span>
 					</div>
-					<div class="score-item" id="score-round-label" style="display:none">
+					<div class="score-item" id="score-round-label">
 						<span class="score-label">Manche</span>
 						<span class="score-value" id="score-round">1</span>
 					</div>
@@ -626,7 +689,7 @@
 				</div>
 				<button id="btn-nuovo">Nuova partita</button>
 			</header>
-			<div id="tournament-target-info" style="display:none; text-align:center; font-family:var(--font-ui); font-size:0.72rem; color:var(--gold-light); opacity:0.7; padding:2px 0;">
+			<div id="tournament-target-info">
 				Torneo — primo a <strong>200</strong> punti
 			</div>
 			<section id="opponent-area">
@@ -903,10 +966,6 @@
 				if(state.turn !== 'player' || state.pescato || state.gameOver){
 					return;
 				}
-				if(!state.playerHasCalato){
-					log('❌ Puoi pescare dal mazzo solo dopo aver aperto (almeno 40 punti calati).');
-					return;
-				}
 				if(state.deck.length === 0){
 					const top = state.discard.pop();
 					state.deck = shuffle(state.discard);
@@ -914,13 +973,42 @@
 					log('Mazzo esaurito! Gli scarti sono stati rimescolati.');
 				}
 				const card = state.deck.pop();
-				state.playerHand.push(card);
-				sortHand(state.playerHand);
-				state.selected = [];
-				state.pescato = true;
-				render();
-				log(`Hai pescato: ${card.rank}${card.suit !== JOKER ? card.suit : ''}`);
-				updateButtons();
+				showDrawnCard(card, () => {
+					state.playerHand.push(card);
+					sortHand(state.playerHand);
+					state.selected = [];
+					state.pescato = true;
+					render();
+					log(`Hai pescato: ${card.rank}${card.suit !== JOKER ? card.suit : ''}`);
+					updateButtons();
+				});
+			}
+
+			function showDrawnCard(card, onConfirm){
+				const overlay = document.createElement('div');
+				overlay.id = 'drawn-card-overlay';
+				const label = document.createElement('p');
+				label.className = 'drawn-label';
+				label.textContent = 'Carta pescata:';
+				const sc = suitClass(card.suit);
+				const cardDiv = document.createElement('div');
+				cardDiv.className = `card ${sc} drawn-card-preview`;
+				if(card.rank === JOKER){
+					cardDiv.innerHTML = `<span class="card-joker-center">${JOKER}</span>`;
+				}else{
+					cardDiv.innerHTML = `<div class="card-corner-top"><span class="card-corner-rank">${card.rank}</span><span class="card-corner-suit">${card.suit}</span></div><span class="card-center">${card.suit}</span><div class="card-corner-bottom"><span class="card-corner-rank">${card.rank}</span><span class="card-corner-suit">${card.suit}</span></div>`;
+				}
+				const btn = document.createElement('button');
+				btn.className = 'btn-drawn-confirm';
+				btn.textContent = 'Aggiungi alla mano';
+				btn.onclick = () => {
+					document.body.removeChild(overlay);
+					onConfirm();
+				};
+				overlay.appendChild(label);
+				overlay.appendChild(cardDiv);
+				overlay.appendChild(btn);
+				document.body.appendChild(overlay);
 			}
 
 			function pescaDaScarto(){
