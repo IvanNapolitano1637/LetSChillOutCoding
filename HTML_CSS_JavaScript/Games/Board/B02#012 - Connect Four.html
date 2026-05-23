@@ -176,17 +176,17 @@
 			}
 			.setup-btn{
 				flex: 1 1 auto;
-				padding: 9px 14px;
+				padding: 4px 6px;
 				border: 2px solid #ccc;
 				border-radius: 8px;
 				background: #f5f5f5;
 				cursor: pointer;
-				font-size: 0.95em;
+				font-size: 0.82em;
 				font-weight: bold;
 				display: inline-flex;
 				align-items: center;
 				justify-content: center;
-				gap: 6px;
+				gap: 4px;
 			}
 			.setup-btn:hover{
 				background: #e8e8e8;
@@ -774,6 +774,7 @@
 
 			function cycleLanguage(){
 				languageIndex = (languageIndex + 1)%(TITLES.length);
+				setupLangIndex = languageIndex;
 				updateLabels();
 			}
 
@@ -841,6 +842,14 @@
 
 			document.addEventListener("keydown", e => {
 				const num = parseInt(e.key);
+				if(document.getElementById("setupOverlay").classList.contains("visible")){
+					if(e.key.toLowerCase() === "l"){
+						setupLangIndex = (setupLangIndex + 1)%(TITLES.length);
+						languageIndex = setupLangIndex;
+						buildSetupPopup();
+					}
+					return;
+				}
 				if(num >= 1 && num <= COLUMN_NUMBER){
 					dropInColumn(num - 1);
 				}else if(e.key.toLowerCase() === "u"){
@@ -875,6 +884,8 @@
 			let setupPlayerColor = 'yellow';
 
 			function openSetupPopup(){
+				setupLangIndex = languageIndex;
+				setupDiffIndex = difficultyIndex;
 				buildSetupPopup();
 				document.getElementById("setupOverlay").classList.add("visible");
 			}
