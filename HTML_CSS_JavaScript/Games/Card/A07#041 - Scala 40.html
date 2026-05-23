@@ -508,9 +508,100 @@
 			.card.deal-anim{
 				animation: deal-in 0.2s ease-out;
 			}
+			#mode-screen{
+				display: flex;
+				position: fixed;
+				inset: 0;
+				background-color: var(--felt-dark);
+				background-image:
+					radial-gradient(ellipse at 30% 20%, rgba(34,92,57,0.6) 0%, transparent 60%),
+					radial-gradient(ellipse at 70% 80%, rgba(18,46,29,0.8) 0%, transparent 60%);
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				z-index: 900;
+				gap: 28px;
+			}
+			#mode-screen h1{
+				font-size: clamp(1.8rem, 7vw, 3rem);
+				color: var(--gold);
+				letter-spacing: 0.08em;
+				text-shadow: 0 2px 12px rgba(201,168,76,0.5);
+				text-align: center;
+			}
+			#mode-screen > p{
+				color: var(--gold-light);
+				font-family: var(--font-ui);
+				font-size: 0.95rem;
+				opacity: 0.8;
+			}
+			.mode-buttons{
+				display: flex;
+				flex-direction: column;
+				gap: 14px;
+				width: min(320px, 90vw);
+			}
+			.btn-mode{
+				background-color: rgba(201,168,76,0.12);
+				color: var(--gold-light);
+				border: 2px solid rgba(201,168,76,0.4);
+				border-radius: 10px;
+				padding: 16px 20px;
+				font-family: var(--font-ui);
+				font-size: 1rem;
+				font-weight: bold;
+				cursor: pointer;
+				letter-spacing: 0.05em;
+				transition: background-color 0.15s, border-color 0.15s, transform 0.1s;
+				text-align: left;
+				display: flex;
+				align-items: center;
+				gap: 14px;
+			}
+			.btn-mode:hover{
+				background-color: rgba(201,168,76,0.25);
+				border-color: var(--gold);
+				color: var(--gold);
+				transform: scale(1.02);
+			}
+			.mode-icon{
+				font-size: 1.8rem;
+				flex-shrink: 0;
+			}
+			.mode-text{
+				display: flex;
+				flex-direction: column;
+				gap: 3px;
+			}
+			.mode-desc{
+				font-size: 0.72rem;
+				opacity: 0.6;
+				font-weight: normal;
+				letter-spacing: 0.02em;
+			}
 		</style>
 	</head>
 	<body>
+		<div id="mode-screen">
+			<h1>♠ Scala Quaranta ♥</h1>
+			<p>Scegli la modalità di gioco</p>
+			<div class="mode-buttons">
+				<button class="btn-mode" id="btn-mode-single">
+					<span class="mode-icon">🃏</span>
+					<span class="mode-text">
+						Partita Singola
+						<span class="mode-desc">Una manche sola — vince chi svuota la mano</span>
+					</span>
+				</button>
+				<button class="btn-mode" id="btn-mode-tournament">
+					<span class="mode-icon">🏆</span>
+					<span class="mode-text">
+						Torneo
+						<span class="mode-desc">Più manche — primo a 200 punti vince il torneo</span>
+					</span>
+				</button>
+			</div>
+		</div>
 		<div id="loading-screen">
 			<h1>♠ Scala Quaranta ♥</h1>
 			<div class="spinner"></div>
@@ -524,6 +615,10 @@
 						<span class="score-label">Tu</span>
 						<span class="score-value" id="score-player">0</span>
 					</div>
+					<div class="score-item" id="score-round-label" style="display:none">
+						<span class="score-label">Manche</span>
+						<span class="score-value" id="score-round">1</span>
+					</div>
 					<div class="score-item">
 						<span class="score-label">IA</span>
 						<span class="score-value" id="score-ai">0</span>
@@ -531,6 +626,9 @@
 				</div>
 				<button id="btn-nuovo">Nuova partita</button>
 			</header>
+			<div id="tournament-target-info" style="display:none; text-align:center; font-family:var(--font-ui); font-size:0.72rem; color:var(--gold-light); opacity:0.7; padding:2px 0;">
+				Torneo — primo a <strong>200</strong> punti
+			</div>
 			<section id="opponent-area">
 				<div class="area-label">Mano dell'avversario (IA)</div>
 				<div id="opponent-hand"></div>
@@ -578,8 +676,10 @@
 		</div>
 		<script>
 			const SUITS = ['♠', '♥', '♦', '♣'];
-			const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+			const RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
 			const JOKER = '🃏';
+			let gameMode = 'single';
+			const TOURNAMENT_TARGET = 200;
 			const rankValue = r => {
 				if(r === 'A'){
 					return 11;
@@ -627,6 +727,25 @@
 				return a;
 			}
 
+			function sortHand(hand){
+				hand.sort((a, b) => {
+					if(a.rank === JOKER && b.rank === JOKER){
+						return 0;
+					}
+					if(a.rank === JOKER){
+						return 1;
+					}
+					if(b.rank === JOKER){
+						return -1;
+					}
+					const ri = rankIndex(a.rank) - rankIndex(b.rank);
+					if(ri !== 0){
+						return ri;
+					}
+					return SUITS.indexOf(a.suit) - SUITS.indexOf(b.suit);
+				});
+			}
+
 			function initGame(){
 				const deck = buildDeck();
 				state = {deck, discard: [], playerHand: [], aiHand: [], playerMelds: [], aiMelds: [], playerHasCalato: false, aiHasCalato: false, selected: [], targetMeld: null, phase: 'draw', turn: 'player', playerScore: state.playerScore || 0, aiScore: state.aiScore || 0, round:(state.round || 0) + 1, gameOver: false, pescato: false,};
@@ -634,10 +753,25 @@
 					state.playerHand.push(state.deck.pop());
 					state.aiHand.push(state.deck.pop());
 				}
+				sortHand(state.playerHand);
 				state.discard.push(state.deck.pop());
 				render();
+				updateScoreHeader();
 				log('Nuova partita! Pesca una carta per iniziare.');
 				updateButtons();
+			}
+
+			function updateScoreHeader(){
+				document.getElementById('score-player').textContent = state.playerScore;
+				document.getElementById('score-ai').textContent = state.aiScore;
+				if(gameMode === 'tournament'){
+					document.getElementById('score-round-label').style.display = '';
+					document.getElementById('score-round').textContent = state.round;
+					document.getElementById('tournament-target-info').style.display = '';
+				}else{
+					document.getElementById('score-round-label').style.display = 'none';
+					document.getElementById('tournament-target-info').style.display = 'none';
+				}
 			}
 
 			function render(){
@@ -769,6 +903,10 @@
 				if(state.turn !== 'player' || state.pescato || state.gameOver){
 					return;
 				}
+				if(!state.playerHasCalato){
+					log('❌ Puoi pescare dal mazzo solo dopo aver aperto (almeno 40 punti calati).');
+					return;
+				}
 				if(state.deck.length === 0){
 					const top = state.discard.pop();
 					state.deck = shuffle(state.discard);
@@ -777,6 +915,8 @@
 				}
 				const card = state.deck.pop();
 				state.playerHand.push(card);
+				sortHand(state.playerHand);
+				state.selected = [];
 				state.pescato = true;
 				render();
 				log(`Hai pescato: ${card.rank}${card.suit !== JOKER ? card.suit : ''}`);
@@ -792,6 +932,8 @@
 				}
 				const card = state.discard.pop();
 				state.playerHand.push(card);
+				sortHand(state.playerHand);
+				state.selected = [];
 				state.pescato = true;
 				render();
 				log(`Hai preso dagli scarti: ${card.rank}${card.suit !== JOKER ? card.suit : ''}`);
@@ -963,15 +1105,44 @@
 				const aiPen = state.aiHand.reduce((s, c) => s + rankValue(c.rank), 0);
 				if(winner === 'player'){
 					state.playerScore += aiPen;
-					document.getElementById('modal-title').textContent = '🏆 Hai vinto!';
-					document.getElementById('modal-body').textContent = `Bravissimo! L'IA aveva ancora ${aiPen} punti in mano. Punteggio totale: Tu ${state.playerScore} – IA ${state.aiScore}.`;
 				}else{
 					state.aiScore += playerPen;
-					document.getElementById('modal-title').textContent = '😔 Ha vinto l\'IA';
-					document.getElementById('modal-body').textContent = `L'IA ha vinto il round. Avevi ancora ${playerPen} punti in mano. Punteggio totale: Tu ${state.playerScore} – IA ${state.aiScore}.`;
 				}
 				document.getElementById('score-player').textContent = state.playerScore;
 				document.getElementById('score-ai').textContent = state.aiScore;
+				if(gameMode === 'tournament'){
+					const playerWonTournament = state.playerScore >= TOURNAMENT_TARGET;
+					const aiWonTournament = state.aiScore >= TOURNAMENT_TARGET;
+					if(playerWonTournament || aiWonTournament){
+						if(playerWonTournament){
+							document.getElementById('modal-title').textContent = '🏆 Hai vinto il Torneo!';
+							document.getElementById('modal-body').textContent = `Complimenti! Hai raggiunto ${state.playerScore} punti in ${state.round} manche e vinto il torneo. IA: ${state.aiScore} pt.`;
+						}else{
+							document.getElementById('modal-title').textContent = '😔 L\'IA ha vinto il Torneo';
+							document.getElementById('modal-body').textContent = `L'IA ha raggiunto ${state.aiScore} punti in ${state.round} manche. Tu: ${state.playerScore} pt.`;
+						}
+						document.getElementById('btn-modal-nuovo').textContent = 'Nuovo Torneo';
+						document.getElementById('modal-overlay').classList.add('visible');
+						return;
+					}
+					if(winner === 'player'){
+						document.getElementById('modal-title').textContent = `✅ Manche ${state.round} — Hai vinto!`;
+						document.getElementById('modal-body').textContent = `L'IA aveva ${aiPen} punti in mano. Punteggio torneo: Tu ${state.playerScore} – IA ${state.aiScore} (obiettivo: ${TOURNAMENT_TARGET} pt). Prossima manche!`;
+					}else{
+						document.getElementById('modal-title').textContent = `❌ Manche ${state.round} — Ha vinto l'IA`;
+						document.getElementById('modal-body').textContent = `Avevi ${playerPen} punti in mano. Punteggio torneo: Tu ${state.playerScore} – IA ${state.aiScore} (obiettivo: ${TOURNAMENT_TARGET} pt). Prossima manche!`;
+					}
+					document.getElementById('btn-modal-nuovo').textContent = 'Prossima manche ▶';
+				}else{
+					if(winner === 'player'){
+						document.getElementById('modal-title').textContent = '🏆 Hai vinto!';
+						document.getElementById('modal-body').textContent = `Bravissimo! L'IA aveva ancora ${aiPen} punti in mano. Punteggio: Tu ${state.playerScore} – IA ${state.aiScore}.`;
+					}else{
+						document.getElementById('modal-title').textContent = '😔 Ha vinto l\'IA';
+						document.getElementById('modal-body').textContent = `L'IA ha vinto. Avevi ancora ${playerPen} punti in mano. Punteggio: Tu ${state.playerScore} – IA ${state.aiScore}.`;
+					}
+					document.getElementById('btn-modal-nuovo').textContent = 'Nuova partita';
+				}
 				document.getElementById('modal-overlay').classList.add('visible');
 			}
 
@@ -1158,24 +1329,46 @@
 			}
 			document.getElementById('btn-nuovo').addEventListener('click',() => {
 				document.getElementById('modal-overlay').classList.remove('visible');
-				state.playerScore = state.playerScore || 0;
-				state.aiScore = state.aiScore || 0;
-				initGame();
+				state.playerScore = 0;
+				state.aiScore = 0;
+				state.round = 0;
+				document.getElementById('game-wrapper').classList.remove('visible');
+				document.getElementById('mode-screen').style.display = 'flex';
 			});
 			document.getElementById('btn-modal-nuovo').addEventListener('click',() => {
 				document.getElementById('modal-overlay').classList.remove('visible');
-				initGame();
+				if(gameMode === 'tournament' && state.playerScore < TOURNAMENT_TARGET && state.aiScore < TOURNAMENT_TARGET){
+					initGame();
+				}else{
+					state.playerScore = 0;
+					state.aiScore = 0;
+					state.round = 0;
+					document.getElementById('game-wrapper').classList.remove('visible');
+					document.getElementById('mode-screen').style.display = 'flex';
+				}
 			});
 			document.getElementById('btn-pesca-scarto').addEventListener('click', pescaDaScarto);
 			document.getElementById('btn-cala').addEventListener('click', calaSelezione);
 			document.getElementById('btn-aggiungi').addEventListener('click', aggiungiACalata);
 			document.getElementById('btn-scarta').addEventListener('click', scartaCarta);
 			document.getElementById('deck-card').addEventListener('click', pescaDalMazzo);
+			document.getElementById('btn-mode-single').addEventListener('click', () => {
+				gameMode = 'single';
+				state = {};
+				document.getElementById('mode-screen').style.display = 'none';
+				document.getElementById('game-wrapper').classList.add('visible');
+				initGame();
+			});
+			document.getElementById('btn-mode-tournament').addEventListener('click', () => {
+				gameMode = 'tournament';
+				state = {};
+				document.getElementById('mode-screen').style.display = 'none';
+				document.getElementById('game-wrapper').classList.add('visible');
+				initGame();
+			});
 			window.addEventListener('load',() => {
 				setTimeout(() => {
 					document.getElementById('loading-screen').style.display = 'none';
-					document.getElementById('game-wrapper').classList.add('visible');
-					initGame();
 				}, 800);
 			});
 		</script>

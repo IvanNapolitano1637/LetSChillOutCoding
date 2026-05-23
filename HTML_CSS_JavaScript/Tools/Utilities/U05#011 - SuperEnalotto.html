@@ -241,7 +241,9 @@
 			setData();
 			setInterval(() => {
 				let nuovaData = getDataString();
-				if(dataProssimaEstrazione !== nuovaData) setData();
+				if(dataProssimaEstrazione !== nuovaData){
+					setData();
+				}
 			}, 60000);
 		</script>
 	</body>
