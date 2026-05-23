@@ -210,7 +210,7 @@ III. Questa versione ha esattamente gli stessi pulsanti della versione "II" ma q
 
 IIII. Qui per ogni componente ci sono cinque possibili scelte per un totale di centoventicinque colori di sfondo. Poi ci sono sei pulsanti. Uno per rendere lo sfondo bianco, uno per renderlo nero, due per aumentare e diminuire tutte e tre le componenti di una unità e ciò anche qui è consentito solo se tutti e tre hanno la possibilità di muoversi, poi c'è un pulsante per far selezionare un colore a caso e poi uno per tornare all'indice con le cinque pagine.
 
-IIIII. In questa sottopagina c'è un cerchio dove si può selezionare un colore con il puntatore, poi ci sono sette slider e più giù dieci pulsanti. Il primo slider fa ruotare il cursore di un angolo arbitrario lasciandolo sempre alla stessa distanza dal centro. Il secondo ne lascia l'angolo invariato e ne muta il raggio. Il terzo serve a variarne la luminosità e parte dal nero per arrivare al bianco. Quarto, quinto e sesto servono a variare rosso, verde e blue. Il settimo ha la stessa funzione del terzo con la differenza che al terzo è associato un valore espresso in percentuale mentre al settimo un valore numerico compreso tra zero e duecentocinquantacinque. Forse ne eliminerò uno dei due in futuro, vedremo. I primi otto pulsanti sono per gli stessi otto colori delle versioni II e III, poi c'è quello per il colore casuale, poi quello per tornare al menù.
+IIIII. In questa sottopagina c'è un cerchio dove si può selezionare un colore con il puntatore, poi ci sono sette slider e più giù dieci pulsanti. Il primo slider fa ruotare il cursore di un angolo arbitrario lasciandolo sempre alla stessa distanza dal centro. Il secondo ne lascia l'angolo invariato e ne muta il raggio. Il terzo serve a variarne la luminosità e parte dal nero per arrivare al bianco. Quarto, quinto e sesto servono a variare rosso, verde e blue. Il settimo ha la stessa funzione del terzo con la differenza che al terzo è associato un valore espresso in percentuale mentre al settimo un valore numerico compreso tra zero e duecentocinquantacinque. Forse ne eliminerò uno dei due in futuro, vedremo, comunque penso di no. I primi otto pulsanti sono per gli stessi otto colori delle versioni II e III, poi c'è quello per il colore casuale, poi quello per tornare al menù.
 
 ### Backgammon.html ###
 <span style="background-color: #FF0000; color: white; padding: 2px 6px; border-radius: 4px;color: #FFFF00;">**Dodici lingue**</span>
@@ -270,7 +270,7 @@ Come la precedente è inutile ma l'ho trovata un'idea carina. Finge di controlla
 ### Vibrations Explorer.html ###
 <span style="background-color: #012169; color: white; padding: 2px 6px; border-radius: 4px;color: #FFFFFF;">**Inglese**</span>
 
-Altra pagina inutile, fatta fare per gioco. Con questa si possono avvertire delle vibrazioni periodiche. Ci sono anche quattro loop preimpostati. Il primo simula il battico cardiaco, il secondo l'SOS, il terzo un battito accelerato ed il quarto è più lieve ma sempre rapido e costante. Ovviamente le vibrazioni possono essere avvertite solo da smartphone. Da pc si possono vedere solo le luci rosse nella sezione in partenza nera.
+Altra pagina inutile, fatta fare per gioco. Con questa si possono avvertire delle vibrazioni periodiche. Ci sono anche quattro loop preimpostati. Il primo simula il battico cardiaco, il secondo l'SOS, il terzo un battito accelerato ed il quarto è più lieve ma sempre rapido e costante. Ovviamente le vibrazioni possono essere avvertite solo da smartphone. Da pc si possono vedere solo le luci rosse nella sezione in partenza nera. Non mi convincono la presenza di un cuore e la differenza tra nome della pagina e scritta in alto al centro dentro di essa. Devo valutare se uniformarle ed eventualmente quale modificare.
 
 ### Image Editor.html ###
 <span style="background-color: #FF0000; color: white; padding: 2px 6px; border-radius: 4px;color: #FFFF00;">**Dodici lingue**</span>
@@ -280,7 +280,7 @@ Permette di caricare un'immagine, modificarne i colori e salvare il risultato. I
 ### Centomila miliardi di poesie.html ###
 <span style="background-color: #008c45; color: white; padding: 2px 6px; border-radius: 4px;color: #FFFFFF;">**Italiano**</span>
 
-Voleva essere una versione italiana dell'opera francese di Raymond Queneau del 1961 ma non è venuta molto bene. Ho fatto fare tutto a delle IA, non ci ho lavorato molto di persona. Potrei rimetterci mano un giorno. Le rime ci sono, funzionano, paiono corrette ma il senso spesso mi pare mancare. A me non comunicano molto quelli che mi sono capitati tra i centomila miliardi di possibili sonetti.
+Voleva essere una versione italiana dell'opera francese di Raymond Queneau del 1961 ma non è venuta molto bene. Ho fatto fare tutto a delle IA, non ci ho lavorato molto di persona. Potrei rimetterci mano un giorno. Le rime ci sono, funzionano, paiono corrette ma il senso spesso mi pare mancare. A me non comunicano molto quelli che mi sono capitati tra i centomila miliardi di possibili sonetti. Magari un giorno mi studio per bene cos'è un sonetto e come comporne uno e forse mi metto a scrivere io i centoquaranta versi. Molto molto difficile ma non impossibile. 
 
 ### Puzzle.html ###
 <span style="background-color: #FF0000; color: white; padding: 2px 6px; border-radius: 4px;color: #FFFF00;">**Dodici lingue**</span>
