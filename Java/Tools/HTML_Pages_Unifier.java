@@ -51,7 +51,6 @@ public class HTML_Pages_Unifier{
 		StringBuilder jsDataBuilder = new StringBuilder();
 		StringBuilder htmlMenuBuilder = new StringBuilder();
 
-		// Mappa delle sottocartelle per ciascuna cartella principale
 		Map<String, String[]> subFolderMap = new LinkedHashMap<>();
 		subFolderMap.put("Games", new String[]{"Board", "Card", "Math", "Puzzle"});
 		subFolderMap.put("Tools", new String[]{"Clocks", "Lab", "Utilities"});
@@ -82,8 +81,16 @@ public class HTML_Pages_Unifier{
 			}
 			htmlMenuBuilder.append("</div></div>");
 		}
+
+		File documentationFile = new File("Documentazione.html");
+		if(documentationFile.exists() && documentationFile.isFile()){
+			processFile(documentationFile, "Documentation", jsDataBuilder, new StringBuilder());
+			String docKey = "Documentation_Documentazione_html";
+			htmlMenuBuilder.append("<a class='doc-link' href='#' onclick=\"openPage('").append(docKey).append("'); return false;\">Documentazione</a>");
+		}
+
 		generateFinalHtml(htmlMenuBuilder.toString(), jsDataBuilder.toString());
-	}
+	}	
 
 	private static void processFile(File file, String folderName, StringBuilder jsDataBuilder, StringBuilder htmlMenuBuilder){
 		try{
@@ -532,6 +539,19 @@ public class HTML_Pages_Unifier{
 				font-family: monospace;
 				font-size: 0.9rem;
 				color: var(--accent);
+			}
+		
+			.doc-link{
+				color: var(--accent);
+				text-decoration: underline;
+				cursor: pointer;
+				display: inline-block;
+				margin-top: 15px;
+				font-size: 0.95rem;
+			}
+		
+			.doc-link:hover{
+				color: var(--text-main);
 			}
 		</style>
 	</head>
