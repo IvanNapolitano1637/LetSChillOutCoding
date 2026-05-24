@@ -269,6 +269,76 @@
 			.note{
 				color: var(--ink-light);
 			}
+			.esempio-card{
+				margin-top: 20px;
+				border: none;
+				border-left: 3px solid var(--accent);
+				border-radius: 0 8px 8px 0;
+				background: var(--bg2);
+				overflow: hidden;
+				transition: box-shadow 0.2s;
+			}
+			.esempio-card:hover{
+				box-shadow: 0 2px 12px rgba(139,47,201,0.10);
+			}
+			.esempio-card summary{
+				display: flex;
+				align-items: center;
+				gap: 12px;
+				padding: 12px 20px;
+				cursor: pointer;
+				list-style: none;
+				background: transparent;
+				-webkit-user-select: none;
+				user-select: none;
+				transition: background 0.15s;
+			}
+			.esempio-card summary::-webkit-details-marker{
+				display: none;
+			}
+			.esempio-card summary:hover{
+				background: rgba(139,47,201,0.06);
+			}
+			.esempio-card[open] summary{
+				border-bottom: 1px solid var(--rule);
+			}
+			.esempio-card .esempio-label{
+				font-family: 'Playfair Display', Georgia, serif;
+				font-size: 0.95rem;
+				font-weight: 700;
+				color: var(--ink);
+				flex: 1;
+			}
+			.esempio-card .esempio-icon{
+				width: 22px;
+				height: 22px;
+				border-radius: 50%;
+				background: var(--accent);
+				color: #fff;
+				font-size: 11px;
+				font-weight: 700;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				flex-shrink: 0;
+				transition: transform 0.2s;
+			}
+			.esempio-card[open] .esempio-icon{
+				transform: rotate(180deg);
+			}
+			.esempio-card .esempio-body{
+				padding: 20px 20px 20px 20px;
+				font-size: 14.5px;
+				color: var(--ink-light);
+				line-height: 1.7;
+				background: var(--bg);
+			}
+			.esempio-body p{
+				margin-bottom: 10px;
+			}
+			.esempio-body p:last-child{
+				margin-bottom: 0;
+			}
 			.kbd{
 				background: var(--bg2);
 				padding: 1px 5px;
@@ -344,60 +414,60 @@
 				<p class="note">In questo <a href="https://github.com/IvanNapolitano1637/LetSChillOutCoding/tree/main/HTML_CSS_JavaScript" target="_blank" rel="noopener noreferrer">link</a> puoi trovare cartelle con alcune sottocartelle, ed i file <strong>index.html</strong> e <strong>Documentazione.html</strong> esterni ad esse. Vediamo la struttura:</p>
 				<div class="tree-wrap">
 					<pre>
-	.
-	└──HTML_CSS_JavaScript
-		├──Games
-		│	├──Board
-		│	│	├──Eight Queens.html
-		│	│	├──Connect Four.html
-		│	│	├──Chess.html
-		│	│	├──Checkers.html
-		│	│	├──Backgammon.html
-		│	│	├──Go.html
-		│	│	└──Gioco dell'oca.html
-		│	├──Card
-		│	│	├──Solitario carte napoletane.html
-		│	│	├──Klondike.html
-		│	│	├──Spider.html
-		│	│	├──FreeCell.html
-		│	│	├──Poker.html
-		│	│	├──Burraco.html
-		│	│	└──Scala 40.html
-		│	├──Math
-		│	│	├──Game of Life.html
-		│	│	├──Tower of Hanoi.html
-		│	│	└──Modular Matching.html
-		│	└──Puzzle
-		│		├──Fifteen.html
-		│		├──Puzzle.html
-		│		└──Rubik's Cube.html
-		├──Tools
-		│	├──Clocks
-		│	│	├──Binary Clock.html
-		│	│	├──24h Clock.html
-		│	│	├──Orbit Clock.html
-		│	│	├──Strange Clock.html
-		│	│	├──World Time Zones.html
-		│	│	├──Digital Clock.html
-		│	│	├──Analog Clock.html
-		│	│	└──Seven-Segment Digital Clock.html
-		│	├──Lab
-		│	│	├──Alpha-Numeric Converter.html
-		│	│	├──Sintetizzatore Fonetico Vocali Italiane.html
-		│	│	├──Animated Radial Menu.html
-		│	│	├──Sensore Impronta Digitale.html
-		│	│	├──Vibrations Explorer.html
-		│	│	├──Image Editor.html
-		│	│	└──Centomila miliardi di poesie.html
-		│	└──Utilities
-		│		├──Colors Pro.html
-		│		├──Some Maths.html
-		│		├──Sounds.html
-		│		├──Days.html
-		│		├──SuperEnalotto.html
-		│		└──Colors Hub.html
-		├──index.html
-		└──Documentazione.html
+.
+└──HTML_CSS_JavaScript
+├──Games
+│  ├──Board
+│  │  ├──Eight Queens.html
+│  │  ├──Connect Four.html
+│  │  ├──Chess.html
+│  │  ├──Checkers.html
+│  │  ├──Backgammon.html
+│  │  ├──Go.html
+│  │  └──Gioco dell'oca.html
+│  ├──Card
+│  │  ├──Solitario carte napoletane.html
+│  │  ├──Klondike.html
+│  │  ├──Spider.html
+│  │  ├──FreeCell.html
+│  │  ├──Poker.html
+│  │  ├──Burraco.html
+│  │  └──Scala 40.html
+│  ├──Math
+│  │  ├──Game of Life.html
+│  │  ├──Tower of Hanoi.html
+│  │  └──Modular Matching.html
+│  └──Puzzle
+│    ├──Fifteen.html
+│    ├──Puzzle.html
+│    └──Rubik's Cube.html
+├──Tools
+│  ├──Clocks
+│  │  ├──Binary Clock.html
+│  │  ├──24h Clock.html
+│  │  ├──Orbit Clock.html
+│  │  ├──Strange Clock.html
+│  │  ├──World Time Zones.html
+│  │  ├──Digital Clock.html
+│  │  ├──Analog Clock.html
+│  │  └──Seven-Segment Digital Clock.html
+│  ├──Lab
+│  │  ├──Alpha-Numeric Converter.html
+│  │  ├──Sintetizzatore Fonetico Vocali Italiane.html
+│  │  ├──Animated Radial Menu.html
+│  │  ├──Sensore Impronta Digitale.html
+│  │  ├──Vibrations Explorer.html
+│  │  ├──Image Editor.html
+│  │  └──Centomila miliardi di poesie.html
+│  └──Utilities
+│    ├──Colors Pro.html
+│    ├──Some Maths.html
+│    ├──Sounds.html
+│    ├──Days.html
+│    ├──SuperEnalotto.html
+│    └──Colors Hub.html
+├──index.html
+└──Documentazione.html
 					</pre>
 				</div>
 				<p class="note">L'ordine che segue è quello di creazione, dato dal secondo dei quattro codici di cui sopra.</p>
@@ -516,7 +586,42 @@
 					<span class="badge badge-12">Dodici lingue</span>
 					<strong>Games, Math</strong>
 					<div class="page-body">
-						<p>Gioco matematico, un po' tecnico, roba di artimentica modulare, campi finiti. Ne ho fatto anche una versione in Java, anche meglio di questa qui. Si sceglie un numerio primo <strong>p</strong>, di base si parte con il trentasette, poi bisogna trovare tutte le coppie di inversi modulo p. La pagina mostra quante coppie sono state trovate ed il numero di errori fatti. Permette di evidenziare i doppi e gli opposti dei numeri già matchati così da trovare facilmente altre coppie. Se giochi da pc c'è anche la possibilità di barare azzerando il conteggio degli errori. Permette di scegliere anche un numero non primo ma lo sconglierei, ci sarebbero divisori dello zero che sono privi di inversi. In questi giorni conto di espandere questa guida affinché possa essere usato anche dagli ignoranti in materia, i più.</p>
+						<p>Gioco matematico, un po' tecnico, roba di artimentica modulare, campi finiti. Ne ho fatto anche una versione in Java, anche meglio di questa qui. Si sceglie un numerio primo <strong>p</strong>, di base si parte con il trentasette, poi bisogna trovare tutte le coppie di inversi modulo p. La pagina mostra quante coppie sono state trovate ed il numero di errori fatti. Permette di evidenziare i doppi e gli opposti dei numeri già matchati così da trovare facilmente altre coppie. Se giochi da pc c'è anche la possibilità di barare azzerando il conteggio degli errori. Permette di scegliere anche un numero non primo ma lo sconglierei, ci sarebbero divisori dello zero che sono privi di inversi.</p></br>
+						<details class="esempio-card">
+							<summary><span class="esempio-label">Esempio con 17</span><span class="esempio-icon">▼</span></summary>
+							<div class="esempio-body">
+								<p>Scegliamo come primo il numero <strong>17</strong>. Dobbiamo trovare tutte le coppie di numeri da uno a sedici che moltiplicati diano uno modulo diciassette. Uno modulo diciassette rappresenta l'insieme di tutti i numeri che divisi per diciassette danno resto uno. Ad esempio: 1, 1 + 17 = 18, 1 + 2×17 = 35, 1 + 3×17 = 52, 1 + 4×17 = 69, ...</p></br>
+								<p>Come per ogni scelta possbile abbiamo sempre <i>gratis</i> le due coppie "1×1" e "(p - 1)×(p - 1)" che in questo caso è "16×16".</p></br>
+								<p>Dato che "1 = 1 + 17 = 18" ricordando le tabelline abbiamo già trovato delle coppie di inversi: "2×9", "9×2", "3×6", "6×3".</p></br>
+								<p>Usiamo ora gli opposti, vediamo come funzionano. Dato che <strong>a×b = (-a)×(-b)</strong> da "2×9" e da "3×6" abbiamo subito "(-2)×(-9) = (17 - 2)×(17 - 9) = 15×8 e (-3)×(-6) = (17 - 3)×(17 - 6) = 14×11"</p></br>
+								<p>Proviamo adesso un'altra tecnica, spostiamo un fattore e facciamo una piccola equivalenza. Dato che abbiamo la coppia "(14,11)" ma ci manca ancora l'inverso di sette possiamo spostare il fattore due dal quattordici all'undici.</p></br>
+								<p>Dato che ci verrà un numero troppo grande possiamo rimpicciolirlo sottraendo il diciassette che qui vale come lo zero.</p></br>
+								<p>14×11 = (7×2)×11 = 7×(2×11) = 7×22 = 7×(22 - 17) = 7×5</p></br>
+								<p>Siamo a buon punto. Mancano quattro numeri, quindi due coppie. Cerchiamo l'inverso di quattro.</p></br>
+								<p>Sappiamo che "2×9 = 1". Per ottenere da qui l'inverso di quattro spostiamo nuovamente un fattore come abbiamo fatto per il sette a partire dal quattordici. Sfruttiamo la regola <strong>a×b = (a×c)×(b/c)</strong> che vale per qualsiasi terna di numeri (a, b, c) ed in qualsiasi modulo a patto che "c" non sia zero o un suo divisore per quel particolare modulo scelto. Qui sarà solo un po' più strano perché siamo meno (o <i>per niente</i>) abituati a questo tipo di matematica.</p></br>
+								<p>2×9 = (2×2)×(9/2) = 4×(9/2) = 4×[(9 + 17)/2] = 4×(26/2) = 4×13</p></br>
+								<p>È vero, funziona, 4×13 = 3×17 + 1 = 1</p></br>
+								<p>Ora come numeri mancano solo "10" e "12" ed essendo gli ultimi due non possono che essere l'uno l'inverso dell'altro. Infatti se guardiamo i loro opposti sono 5 e 7 che erano già matchati e poi "10×12 = 7×17 + 1".</p></br>
+								<p>Abbiamo finito: (1,1), (2,9), (3,6), (4,13), (5,7), (6,3), (7,5), (8,15), (9,2), (10,12), (11,14), (12,11), (13,4), (14,11), (15,8), (16,16).</p>
+							</div>
+						</details>
+						<details class="esempio-card">
+							<summary><span class="esempio-label">Esempio con 37</span><span class="esempio-icon">▼</span></summary>
+							<div class="esempio-body">
+								<p>Scegliamo come primo il numero <strong>37</strong>. Qui vado un po' più spedito perché do per scontato ti sia un po' più chiara la cosa.</p></br>
+								<p>In partenza abbiamo già (1×1) e (36×36).</p></br>
+								<p>1 + 37 = 38 = 2×19 = (37 - 2)×(37 - 19) = 35×18</p></br>
+								<p>35×18 = 2×3×3×5×7 = (2×3×5)×(3×7) = 30×21 = (37 - 30)×(37 - 21) = 7×16</p></br>
+								<p>7×16 = 7×2×8 = 14×8 = (37 - 14)×(37 - 8) = 23×29</p></br>
+								<p>30×21 = 10×3×21 = 10×63 = 10×(63 - 37) = 10×26 = (37 - 10)×(37 - 26) = 27×11</p></br>
+								<p>10×26 = 10×2×13 = 20×13 = (37 - 20)×(37 - 13) = 17×24</p></br>
+								<p>27×11 = 9×3×11 = 9×33 = (37 - 9)×(37 - 33) = 28×4</p></br>
+								<p>17×24 = 17×2×12 = 34×12 = (37 - 34)×(37 - 12) = 3×25</p></br>
+								<p>3×25 = 3×5×5 = 15×5 = (37 - 15)×(37 - 5) = 22×32</p></br>
+								<p>12×34 = 6×2×34 = 6×68 = 6×(68 - 37) = 6×31</p></br>
+								<p>Abbiamo finito: (1, 1), (2, 19), (3, 25), (4, 28), (5, 15), (6, 31), (7, 16), (8, 14), (9, 33), (10, 26), (11, 27), (12, 34), (13, 20), (14, 8), (15, 5), (16, 7), (17, 24), (18, 35), (19, 2), (20, 13), (21, 30), (22, 32), (23, 29), (24, 17), (25, 3), (26, 10), (27, 11), (28, 4), (29, 23), (30, 21), (31, 6), (32, 22), (33, 9), (34, 12), (35, 18), (36, 36).</p>
+							</div>
+						</details>
 					</div>
 				</div>
 				<div class="page-entry">
