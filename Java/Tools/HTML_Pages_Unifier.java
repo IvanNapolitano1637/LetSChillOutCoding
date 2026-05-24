@@ -86,7 +86,7 @@ public class HTML_Pages_Unifier{
 		if(documentationFile.exists() && documentationFile.isFile()){
 			processFile(documentationFile, "Documentation", jsDataBuilder, new StringBuilder());
 			String docKey = "Documentation_Documentazione_html";
-			htmlMenuBuilder.append("<a class='doc-link' href='#' onclick=\"openPage('").append(docKey).append("'); return false;\">Documentazione</a>");
+			htmlMenuBuilder.append("<a class='doc-link' href='#' onclick=\"openPage('").append(docKey).append("'); return false;\">Info</a>");
 		}
 
 		generateFinalHtml(htmlMenuBuilder.toString(), jsDataBuilder.toString());
