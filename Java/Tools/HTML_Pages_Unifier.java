@@ -3,11 +3,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 
-//Codice per creare un unico file HTML con all'interno tutte le pagine che stanno nelle cartelle "Games" e "Tools".
+//Codice per creare un unico file HTML con all'interno tutte le pagine che stanno nelle cartelle "Games" e "Tools" più un nuovo file parallelo ad esse.
 //La cartella "Games" contiene quattro sottocartelle: "Board", "Card", "Math" e "Puzzle".
 //La cartella "Tools" contiene tre sottocartelle: "Clocks", "Lab" e "Utilities".
 //Codice creato da Gemini e Claude lunedì nove febbraio duemilaventisei dopo un altro tentativo fatto con Gemini due giorni prima.
-//Ho fatto varie altre modifiche. L'ultima mercoledì sei maggio duemilaventisei.
+//Ho fatto varie altre modifiche. L'ultima domenica ventiquattro maggio duemilaventisei.
 //Il numero di pagine cresce sempre più e stanno per arrivarne diverse altre.
 //Da mettere nella cartella in cui ci sono: "Games" e "Tools".
 //Da compilare e lanciare lì da terminale.
