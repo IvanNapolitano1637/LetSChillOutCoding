@@ -44,8 +44,7 @@
 				content: '';
 				position: absolute;
 				inset: 0;
-				background: repeating-linear-gradient(-45deg, transparent, transparent 18px,
-						rgba(255, 255, 255, 0.03) 18px, rgba(255, 255, 255, 0.03) 19px);
+				background: repeating-linear-gradient(-45deg, transparent, transparent 18px, rgba(255, 255, 255, 0.03) 18px, rgba(255, 255, 255, 0.03) 19px);
 			}
 			header .inner{
 				max-width: 780px;
@@ -210,16 +209,38 @@
 				opacity: 0.65;
 			}
 			.id-grid{
-				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-				gap: 14px;
 				margin: 24px 0;
+				border: 1px solid var(--rule);
+				border-radius: 10px;
+				overflow: hidden;
 			}
 			.id-card{
+				border-bottom: 1px solid var(--rule);
+			}
+			.id-card:last-child{
+				border-bottom: none;
+			}
+			.id-card summary{
+				display: flex;
+				align-items: center;
+				gap: 14px;
+				padding: 13px 18px;
+				cursor: pointer;
 				background: var(--bg2);
-				border: 1px solid var(--rule);
-				border-radius: 8px;
-				padding: 14px 16px;
+				list-style: none;
+				transition: background 0.15s;
+				-webkit-user-select: none;
+				user-select: none;
+			}
+			.id-card summary::-webkit-details-marker{
+				display: none;
+			}
+			.id-card summary:hover{
+				background: var(--rule);
+			}
+			.id-card[open] summary{
+				background: var(--bg2);
+				border-bottom: 1px solid var(--rule);
 			}
 			.id-card .id-label{
 				font-size: 10px;
@@ -227,12 +248,23 @@
 				letter-spacing: 0.18em;
 				color: var(--accent);
 				font-weight: 700;
-				margin-bottom: 4px;
+				flex: 1;
+			}
+			.id-card .id-chevron{
+				font-size: 11px;
+				color: var(--ink-light);
+				transition: transform 0.2s;
+				opacity: 0.5;
+			}
+			.id-card[open] .id-chevron{
+				transform: rotate(180deg);
 			}
 			.id-card .id-desc{
 				font-size: 14px;
 				color: var(--ink-light);
-				line-height: 1.5;
+				line-height: 1.6;
+				padding: 14px 18px;
+				background: var(--bg);
 			}
 			.note{
 				color: var(--ink-light);
@@ -286,22 +318,22 @@
 				<p>I codici sono scritti esclusivamente in inglese con un'unica eccezione di cui parlerò quando tratterò di quella specifica pagina. Alcune pagine sono solo in italiano, in gran parte hanno il nome in inglese, alcune sono in dodici lingue (Inglese, Italiano, Francese, Spagnolo, Tedesco, Portoghese, Romeno, Ucraino, Greco, Latino, Cinese, Giapponese), poche prive di lingue. Qualcuna è solo italiana perché o non trovo abbia senso in altre lingue oppure perché ancora non l'ho fatta tradurre nelle altre undici ma un giorno conto di farlo. Di ogni pagina sono segnalati il numero di lingue e la sezione.</p>
 				<p>Ogni pagina ha quattro identificativi:</p>
 				<div class="id-grid">
-					<div class="id-card">
-						<div class="id-label">Nome</div>
+					<details class="id-card">
+						<summary><span class="id-label">Nome</span><span class="id-chevron">▼</span></summary>
 						<div class="id-desc">Un suo nome che appare anche nel file index.html ed è l'unico che davvero deve contare per te.</div>
-					</div>
-					<div class="id-card">
-						<div class="id-label">Codice numerico</div>
+					</details>
+					<details class="id-card">
+						<summary><span class="id-label">Codice numerico</span><span class="id-chevron">▼</span></summary>
 						<div class="id-desc">È semplicemente un numero progressivo per ricordarmi quale ho fatto prima e quale dopo, qual è stata la prima pagina, quale l'ultima e cose così. Non è troppo sensato. Si basa solo sulla "nascita" della pagina ma molte sono state cambiate/stravolte nel tempo. Non tutte contemporaneamente, non tutte allo stesso modo.</div>
-					</div>
-					<div class="id-card">
-						<div class="id-label">Codice alfanumerico</div>
+					</details>
+					<details class="id-card">
+						<summary><span class="id-label">Codice alfanumerico</span><span class="id-chevron">▼</span></summary>
 						<div class="id-desc">Quasi identico al precedente per tipologia e funzione con l'unica differenza che oltre al numero è associata anche una lettera che indica la categoria cui appartiene la pagina ed ogni lettera ha numeri che partono da uno.</div>
-					</div>
-					<div class="id-card">
-						<div class="id-label">Nome umano</div>
+					</details>
+					<details class="id-card">
+						<summary><span class="id-label">Nome umano</span><span class="id-chevron">▼</span></summary>
 						<div class="id-desc">Questo mi serve per chiamare le pagine in modo rapido e veloce, usando una sola parola. Una pagina contiene cinque sottopagine ed anche ciascuna di esse ha il proprio nome umano. Qualche scelta ha una logica, un criterio, altre no. Non farti troppe domande su perché io abbia chiamato la pagina prorpio così, magari come te. Potresti non poterci mai arrivare. Potrei non saperti dare nemmeno io una spiegazione valida. O la spiegazione potrebbe non piacerti.</div>
-					</div>
+					</details>
 				</div>
 				<p>Questi quattro identificativi si trovano come commento nel secondo rigo di ciascuna pagina ad esclusione di quella complessiva. Per passare da queste pagine al file index.html utilizzo una classe Java presente nella repo. Se stai leggendo queste righe è facile tu mi conosca — chiedi di persona o su WhatsApp 😄</p>
 				<p>Ci sono anche dei giochi ed in nessuna pagina è presente alcuna pubblicità e quasi certamente non ce ne saranno mai. Funzionano tutte anche senza connessione internet. Ogni file è autonomo e sufficiente a se stesso. Con alcuni giochi si può giocare anche contro la macchina ma ancora mai con altri utenti umani.</p>
