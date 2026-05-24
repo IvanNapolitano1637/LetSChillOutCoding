@@ -1620,15 +1620,25 @@ document.addEventListener('keydown', function(e) {
 						}
 					}
 				}else{
-					const EXPERT_DEPTH = 8;
-					const colOrder = [3, 2, 4, 1, 5, 0, 6];
+					const EXPERT_DEPTH = 9;
+					ttHash = 0;
+					for(let r = 0; r < ROW_NUMBER; r++){
+						for(let c = 0; c < COLUMN_NUMBER; c++){
+							if(grid[r][c] !== -1) ttHashUpdate(r, c, grid[r][c]);
+						}
+					}
+					TT.clear();
 					let bestScore = -Infinity;
-					for(let i = 0; i < colOrder.length; i++){
-						let c = colOrder[i];
-						let r = getAvailableRow(c);
+					for(let i = 0; i < COL_ORDER.length; i++){
+						const c = COL_ORDER[i];
+						const r = getAvailableRow(c);
 						if(r !== -1){
 							grid[r][c] = 1;
-							let score = minimaxExpert(grid, EXPERT_DEPTH, false, -Infinity, Infinity);
+							moves.push({r, c});
+							ttHashUpdate(r, c, 1);
+							const score = minimaxExpert(EXPERT_DEPTH - 1, false, -Infinity, Infinity, r, c);
+							ttHashUpdate(r, c, 1);
+							moves.pop();
 							grid[r][c] = -1;
 							if(score > bestScore){
 								bestScore = score;
@@ -1718,6 +1728,55 @@ document.addEventListener('keydown', function(e) {
 				return score;
 			}
 
+			const ZobristTable = (() => {
+				const t = [];
+				let s = 1234567891;
+				const rnd = () => { s = Math.imul(s, 1664525) + 1013904223 | 0; return (s >>> 0); };
+				for(let r = 0; r < 6; r++){
+					t[r] = [];
+					for(let c = 0; c < 7; c++){
+						t[r][c] = [rnd() * 0x100000000 + rnd(), rnd()*0x100000000 + rnd()];
+					}
+				}
+				return t;
+			})();
+
+			let ttHash = 0;
+			const TT = new Map();
+
+			function ttHashUpdate(r, c, player){
+				ttHash ^= ZobristTable[r][c][player];
+			}
+
+			function checkCellWin(r, c){
+				const p = grid[r][c];
+				if(p === -1){
+					return false;
+				}
+				const dirs = [[0,1],[1,0],[1,1],[1,-1]];
+				for(const [dr,dc] of dirs){
+					let cnt = 1;
+					for(let s = 1; s < 4; s++){
+						const nr = r + dr*s, nc = c + dc*s;
+						if(nr < 0 || nr >= ROW_NUMBER || nc < 0|| nc >= COLUMN_NUMBER||grid[nr][nc] !== p){
+							break;
+						}
+						cnt++;
+					}
+					for(let s = 1; s < 4; s++){
+						const nr = r - dr*s, nc = c - dc*s;
+						if(nr < 0|| nr >= ROW_NUMBER || nc < 0 || nc >= COLUMN_NUMBER || grid[nr][nc] !== p){
+							break;
+						}
+						cnt++;
+					}
+					if(cnt >= 4){
+						return true;
+					}
+				}
+				return false;
+			}
+
 			function scoreWindowExpert(w, piece){
 				const opp = piece === 1 ? 0 : 1;
 				const pieceCount = w.filter(x => x === piece).length;
@@ -1744,85 +1803,108 @@ document.addEventListener('keydown', function(e) {
 			function evaluateBoardExpert(){
 				let score = 0;
 				for(let r = 0; r < ROW_NUMBER; r++){
-					score += ((grid[r][3] === 1) ? 6 : 0);
-					score -= ((grid[r][3] === 0) ? 6 : 0);
+					score += ((grid[r][3] === 1) ? 6 : 0) - ((grid[r][3] === 0) ? 6 : 0);
 					score += ((grid[r][2] === 1 || grid[r][4] === 1) ? 3 : 0);
 					score -= ((grid[r][2] === 0 || grid[r][4] === 0) ? 3 : 0);
 				}
 				for(let r = 0; r < ROW_NUMBER; r++){
 					for(let c = 0; c <= COLUMN_NUMBER - 4; c++){
-						const w = [grid[r][c], grid[r][c+1], grid[r][c+2], grid[r][c+3]];
-						score += scoreWindowExpert(w, 1);
+						score += scoreWindowExpert([grid[r][c],grid[r][c+1],grid[r][c+2],grid[r][c+3]], 1);
 					}
 				}
 				for(let c = 0; c < COLUMN_NUMBER; c++){
 					for(let r = 0; r <= ROW_NUMBER - 4; r++){
-						const w = [grid[r][c], grid[r+1][c], grid[r+2][c], grid[r+3][c]];
-						score += scoreWindowExpert(w, 1);
+						score += scoreWindowExpert([grid[r][c],grid[r+1][c],grid[r+2][c],grid[r+3][c]], 1);
 					}
 				}
 				for(let r = 0; r <= ROW_NUMBER - 4; r++){
 					for(let c = 0; c <= COLUMN_NUMBER - 4; c++){
-						const w = [grid[r][c], grid[r+1][c+1], grid[r+2][c+2], grid[r+3][c+3]];
-						score += scoreWindowExpert(w, 1);
+						score += scoreWindowExpert([grid[r][c],grid[r+1][c+1],grid[r+2][c+2],grid[r+3][c+3]], 1);
 					}
 				}
 				for(let r = 3; r < ROW_NUMBER; r++){
 					for(let c = 0; c <= COLUMN_NUMBER - 4; c++){
-						const w = [grid[r][c], grid[r-1][c+1], grid[r-2][c+2], grid[r-3][c+3]];
-						score += scoreWindowExpert(w, 1);
+						score += scoreWindowExpert([grid[r][c],grid[r-1][c+1],grid[r-2][c+2],grid[r-3][c+3]], 1);
 					}
 				}
 				return score;
 			}
 
-			function minimaxExpert(board, depth, isMaximizing, alpha, beta){
-				let result = checkBoardHard();
-				if(result === 1){
-					return 100000 + depth;
+			function countAvailable(){
+				let n = 0;
+				for(let c = 0; c < COLUMN_NUMBER; c++){
+					if(grid[0][c] === -1){
+						n++;
+					}
 				}
-				if(result === 0){
-					return -100000 - depth;
+				return n;
+			}
+
+			const COL_ORDER = [3, 2, 4, 1, 5, 0, 6];
+			const EXACT = 0, LOWER = 1, UPPER = 2;
+
+			function minimaxExpert(depth, isMaximizing, alpha, beta, lastR, lastC){
+				if(lastR !== -1 && checkCellWin(lastR, lastC)){
+					const winner = grid[lastR][lastC];
+					return winner === 1 ? (100000 + depth) : (-100000 - depth);
 				}
 				if(depth === 0 || moves.length === ROW_NUMBER*COLUMN_NUMBER){
 					return evaluateBoardExpert();
 				}
-				const colOrder = [3, 2, 4, 1, 5, 0, 6];
-				if(isMaximizing){
-					let maxEval = -Infinity;
-					for(let i = 0; i < colOrder.length; i++){
-						let c = colOrder[i];
-						let r = getAvailableRow(c);
-						if(r !== -1){
-							board[r][c] = 1;
-							let ev = minimaxExpert(board, depth - 1, false, alpha, beta);
-							board[r][c] = -1;
-							maxEval = (ev > maxEval) ? ev : maxEval;
-							alpha = (ev > alpha) ? ev : alpha;
-							if(beta <= alpha){
-								break;
-							}
-						}
+				const ttKey = ttHash^(depth*0x9e3779b9)^(isMaximizing ? 0 : 0xdeadbeef);
+				const cached = TT.get(ttKey);
+				if(cached !== undefined && cached.depth >= depth){
+					if(cached.flag === EXACT){
+						return cached.score;
 					}
-					return maxEval;
-				}else{
-					let minEval = Infinity;
-					for(let i = 0; i < colOrder.length; i++){
-						let c = colOrder[i];
-						let r = getAvailableRow(c);
-						if(r !== -1){
-							board[r][c] = 0;
-							let ev = minimaxExpert(board, depth - 1, true, alpha, beta);
-							board[r][c] = -1;
-							minEval = (ev < minEval) ? ev : minEval;
-							beta = (ev < beta) ? ev : beta;
-							if(beta <= alpha){
-								break;
-							}
-						}
+					if(cached.flag === LOWER && cached.score >= beta){
+						return cached.score;
 					}
-					return minEval;
+					if(cached.flag === UPPER && cached.score <= alpha){
+						return cached.score;
+					}
 				}
+				const origAlpha = alpha;
+				let bestScore = isMaximizing ? -Infinity : Infinity;
+				for(let i = 0; i < COL_ORDER.length; i++){
+					const c = COL_ORDER[i];
+					const r = getAvailableRow(c);
+					if(r === -1){
+						continue;
+					}
+					const player = isMaximizing ? 1 : 0;
+					grid[r][c] = player;
+					moves.push({r, c});
+					ttHashUpdate(r, c, player);
+					const ev = minimaxExpert(depth - 1, !isMaximizing, alpha, beta, r, c);
+					ttHashUpdate(r, c, player);
+					moves.pop();
+					grid[r][c] = -1;
+					if(isMaximizing){
+						if(ev > bestScore){
+							bestScore = ev;
+						}
+						if(ev > alpha){
+							alpha = ev;
+						}
+					}else{
+						if(ev < bestScore){
+							bestScore = ev;
+						}
+						if(ev < beta){
+							beta = ev;
+						}
+					}
+					if(beta <= alpha){
+						break;
+					}
+				}
+				const flag = bestScore <= origAlpha ? UPPER : bestScore >= beta ? LOWER : EXACT;
+				if(TT.size > 500000){
+					TT.clear();
+				}
+				TT.set(ttKey, { score: bestScore, depth, flag });
+				return bestScore;
 			}
 
 			function checkBoardHard(){
@@ -1871,10 +1953,6 @@ document.addEventListener('keydown', function(e) {
 						const winner = moveYellow ? YELLOW_LABEL[languageIndex] : RED_LABEL[languageIndex];
 						document.body.style.background = moveYellow ? "#FFFFCC" : "#FFCCCC";
 						setTimeout(() => alert(WINNING_MESSAGE[languageIndex] + winner + "!"), 100);
-					}else if(numberOfMoves === ROW_NUMBER * COLUMN_NUMBER){
-						goOn = false;
-						document.body.style.background = "#e0e0e0";
-						setTimeout(() => alert(DRAW_MESSAGE[languageIndex]), 100);
 					}
 					if(goOn){
 						moveYellow = !moveYellow;
@@ -39890,7 +39968,7 @@ document.addEventListener('keydown', function(e) {
 					<span class="badge badge-it">Italiano</span>
 					<strong>Games, Card</strong>
 					<div class="page-body">
-						<p>Scala 40. Non ci so giocare e non posso essere sicuro vada tutto bene. L'ho vista ancora poco.</p>
+						<p>Scala 40. Da alcuni feedback avuti pare ci siano molti errori, molte regole non rispettate. Questo mi fa sorgere molti dubbi anche su altri giochi a me ignoti come Backgammon e Go.</p>
 					</div>
 				</div>
 			</section>
