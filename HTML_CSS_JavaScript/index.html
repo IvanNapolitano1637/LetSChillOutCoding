@@ -1953,6 +1953,10 @@ document.addEventListener('keydown', function(e) {
 						const winner = moveYellow ? YELLOW_LABEL[languageIndex] : RED_LABEL[languageIndex];
 						document.body.style.background = moveYellow ? "#FFFFCC" : "#FFCCCC";
 						setTimeout(() => alert(WINNING_MESSAGE[languageIndex] + winner + "!"), 100);
+					}else if(numberOfMoves === ROW_NUMBER*COLUMN_NUMBER){
+						goOn = false;
+						document.body.style.background = "#e0e0e0";
+						setTimeout(() => alert(DRAW_MESSAGE[languageIndex]), 100);
 					}
 					if(goOn){
 						moveYellow = !moveYellow;
