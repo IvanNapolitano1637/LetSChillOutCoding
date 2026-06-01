@@ -2261,6 +2261,7 @@ document.addEventListener('keydown', function(e) {
 				grid-template-rows: repeat(8, var(--sq-size));
 				border: 4px solid #34495e;
 				box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+				-webkit-user-select: none;
 				user-select: none;
 				position: relative;
 			}
@@ -2857,12 +2858,120 @@ document.addEventListener('keydown', function(e) {
 					font-size: 0.9rem;
 				}
 			}
+			.overlay-section h3{
+				color: #bdc3c7;
+				font-size: 0.85rem;
+				margin: 0;
+				letter-spacing: 1px;
+				text-transform: uppercase;
+			}
+			.overlay-load-grid{
+				max-width: 320px;
+			}
+			#lbl-load-game{
+				color: #bdc3c7;
+				font-size: 0.85rem;
+				margin: 0;
+				letter-spacing: 1px;
+				text-transform: uppercase;
+			}
+			.timer-info-line{
+				font-size: 0.62rem;
+				opacity: 0.6;
+				text-align: center;
+				min-height: 1.1em;
+				margin-top: 2px;
+			}
+			#start-hint{
+				font-size: 0.72rem;
+				color: #7f8c8d;
+				margin: 0;
+				text-align: center;
+			}
+			.clocks-vs{
+				font-size: 0.7rem;
+				opacity: 0.5;
+				flex-shrink: 0;
+			}
+			.spacer-10{
+				height: 10px;
+				flex-shrink: 0;
+			}
+			#logTitle{
+				font-weight: bold;
+				border-bottom: 2px solid var(--status-color);
+				margin-bottom: 10px;
+				color: var(--status-color);
+			}
+			#statusBtn{
+				background: white;
+				color: black;
+			}
+			#diffBtn{
+				background: #c0392b;
+			}
+			#btnLang{
+				background: #555;
+			}
+			#toggleLogBtn{
+				background: #e67e22;
+			}
+			#undoBtn{
+				background: #95a5a6;
+			}
+			#resetBtn{
+				background: #8e44ad;
+			}
+			#restartBtn{
+				background: #636e72;
+				color: white;
+				font-size: 1.2rem;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				line-height: 1;
+			}
+			.save-slot-btn.slot-empty{
+				background: var(--save-empty);
+			}
+			.save-slot-btn.slot-full{
+				background: var(--save-full);
+			}
+			.save-label{
+				text-align: center;
+				font-size: 0.7rem;
+				font-weight: bold;
+				margin-bottom: 5px;
+				color: #bdc3c7;
+			}
+			.odiff-0{
+				background: #27ae60;
+			}
+			.odiff-1{
+				background: #2980b9;
+			}
+			.odiff-2{
+				background: #c0392b;
+			}
+			.odiff-3{
+				background: #4a235a;
+			}
+			.del-btn.del-btn--visible{
+				display: flex;
+			}
+			.save-slot-btn.slot-disabled{
+				opacity: 0.45;
+				cursor: default;
+			}
+			.help-section-divider{
+				margin-top: 16px;
+			}
 		</style>
 	</head>
 	<body>
 		<div id="help-modal-overlay">
 			<div id="help-modal">
-				<button id="help-close-btn" onclick="closeHelp()">✕</button>
+				<button id="help-close-btn" onclick="closeHelp()" title="Close">✕</button>
 				<h2 id="help-title">⌨ Keyboard Shortcuts</h2>
 				<div id="help-body"></div>
 			</div>
@@ -2871,11 +2980,11 @@ document.addEventListener('keydown', function(e) {
 			<h2 id="colorOverlayTitle">♟ Choose Your Color ♟</h2>
 			<div class="overlay-section">
 				<div class="color-choices">
-					<button class="color-choice-btn" id="btn-white" onclick="selectColor('W')">
+					<button class="color-choice-btn" id="btn-white" onclick="selectColor('W')" title="White">
 						<span class="piece-icon">♔</span>
 						<span id="lbl-white">White</span>
 					</button>
-					<button class="color-choice-btn" id="btn-black" onclick="selectColor('B')">
+					<button class="color-choice-btn" id="btn-black" onclick="selectColor('B')" title="Black">
 						<span class="piece-icon">♚</span>
 						<span id="lbl-black">Black</span>
 					</button>
@@ -2885,10 +2994,10 @@ document.addEventListener('keydown', function(e) {
 			<div class="overlay-section">
 				<h3 id="lbl-difficulty">Difficulty</h3>
 				<div class="diff-choices">
-					<button class="diff-choice-btn" id="odiff-0" style="background:#27ae60;" onclick="selectOverlayDiff(0)"></button>
-					<button class="diff-choice-btn" id="odiff-1" style="background:#2980b9;" onclick="selectOverlayDiff(1)"></button>
-					<button class="diff-choice-btn" id="odiff-2" style="background:#c0392b;" onclick="selectOverlayDiff(2)"></button>
-					<button class="diff-choice-btn" id="odiff-3" style="background:#4a235a;" onclick="selectOverlayDiff(3)"></button>
+					<button class="diff-choice-btn odiff-0" id="odiff-0" onclick="selectOverlayDiff(0)" title="Easy"></button>
+					<button class="diff-choice-btn odiff-1" id="odiff-1" onclick="selectOverlayDiff(1)" title="Medium"></button>
+					<button class="diff-choice-btn odiff-2" id="odiff-2" onclick="selectOverlayDiff(2)" title="Hard"></button>
+					<button class="diff-choice-btn odiff-3" id="odiff-3" onclick="selectOverlayDiff(3)" title="Expert"></button>
 				</div>
 			</div>
 			<hr class="overlay-divider">
@@ -2900,15 +3009,24 @@ document.addEventListener('keydown', function(e) {
 			<div class="overlay-section timer-section">
 				<h3 id="lbl-timermode">⏱ Timer</h3>
 				<div class="timer-mode-choices">
-					<button class="timer-mode-btn selected-timer" id="otimer-0" onclick="selectTimerMode(0)"></button>
-					<button class="timer-mode-btn" id="otimer-1" onclick="selectTimerMode(1)"></button>
+					<button class="timer-mode-btn selected-timer" id="otimer-0" onclick="selectTimerMode(0)" title="Timer Off"></button>
+					<button class="timer-mode-btn" id="otimer-1" onclick="selectTimerMode(1)" title="Timer On"></button>
 				</div>
-				<div id="timer-info-line" style="font-size:0.62rem;opacity:0.6;text-align:center;min-height:1.1em;margin-top:2px;"></div>
+				<div id="timer-info-line" class="timer-info-line"></div>
 			</div>
 			<hr class="overlay-divider">
-			<p id="start-hint" style="font-size:0.72rem;color:#7f8c8d;margin:0;text-align:center;"></p>
-			<button id="startBtn" onclick="startGame()"></button>
-			<div style="height:10px;flex-shrink:0;"></div>
+			<div class="overlay-section" id="overlay-load-section">
+				<h3 id="lbl-load-game"></h3>
+				<div class="save-grid overlay-load-grid">
+					<div class="slot-wrapper"><button id="oslot-0" class="save-slot-btn slot-empty" onclick="overlayLoadSlot(0)" title="Slot 1"></button></div>
+					<div class="slot-wrapper"><button id="oslot-1" class="save-slot-btn slot-empty" onclick="overlayLoadSlot(1)" title="Slot 2"></button></div>
+					<div class="slot-wrapper"><button id="oslot-2" class="save-slot-btn slot-empty" onclick="overlayLoadSlot(2)" title="Slot 3"></button></div>
+				</div>
+			</div>
+			<hr class="overlay-divider">
+			<p id="start-hint"></p>
+			<button id="startBtn" onclick="startGame()" title="Start">START</button>
+			<div class="spacer-10"></div>
 		</div>
 		<div id="clocksBar" class="clocks-bar">
 			<div class="clock-box" id="clockWhite">
@@ -2916,7 +3034,7 @@ document.addEventListener('keydown', function(e) {
 				<div id="clockTimeWhite">—</div>
 				<div class="clock-move-limit" id="clockMoveWhite"></div>
 			</div>
-			<div style="font-size:0.7rem; opacity:0.5; flex-shrink:0;">vs</div>
+			<div class="clocks-vs">vs</div>
 			<div class="clock-box" id="clockBlack">
 				<div class="clock-label" id="clockLabelBlack">BLACK</div>
 				<div id="clockTimeBlack">—</div>
@@ -2927,46 +3045,46 @@ document.addEventListener('keydown', function(e) {
 			<div id="board" class="board">
 				<div id="promotion-overlay">
 					<div class="promotion-box">
-						<button class="promo-choice" onclick="selectPromotion('Q')">♕</button>
-						<button class="promo-choice" onclick="selectPromotion('R')">♖</button>
-						<button class="promo-choice" onclick="selectPromotion('B')">♗</button>
-						<button class="promo-choice" onclick="selectPromotion('N')">♘</button>
+						<button class="promo-choice" onclick="selectPromotion('Q')" title="Queen">♕</button>
+						<button class="promo-choice" onclick="selectPromotion('R')" title="Rook">♖</button>
+						<button class="promo-choice" onclick="selectPromotion('B')" title="Bishop">♗</button>
+						<button class="promo-choice" onclick="selectPromotion('N')" title="Knight">♘</button>
 					</div>
 				</div>
 			</div>
 			<div class="info-panel" id="logContainer">
-				<div id="logTitle" style="font-weight: bold; border-bottom: 2px solid var(--status-color); margin-bottom: 10px; color: var(--status-color);">LOG MOVES</div>
+				<div id="logTitle">LOG MOVES</div>
 				<div id="moveLog"></div>
 			</div>
 		</div>		
 		<div class="controls">
 			<div class="row-1">
-				<button id="statusBtn" class="no-click" style="background: white; color: black;">White to move</button>
-				<button id="diffBtn" onclick="cycleDifficulty()" style="background: #c0392b;">Level: Hard</button>
-				<button id="btnLang" onclick="nextLang()" style="background: #555;"></button>
+				<button id="statusBtn" class="no-click" title="Status">White to move</button>
+				<button id="diffBtn" onclick="cycleDifficulty()" title="Difficulty">Level: Hard</button>
+				<button id="btnLang" onclick="nextLang()" title="Language"></button>
 			</div>
 			<div class="row-2">
-				<button id="toggleLogBtn" onclick="toggleLog()" style="background: #e67e22;">Show Log</button>
-				<button id="undoBtn" onclick="undoMove()" style="background: #95a5a6;">Undo</button>
-				<button id="resetBtn" onclick="restartSame()" style="background: #8e44ad;">Restart</button>
-				<button id="restartBtn" onclick="resetGame()" style="background: #636e72; color: white; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; line-height: 1;">⟳</button>
+				<button id="toggleLogBtn" onclick="toggleLog()">Show Log</button>
+				<button id="undoBtn" onclick="undoMove()">Undo</button>
+				<button id="resetBtn" onclick="restartSame()">Restart</button>
+				<button id="restartBtn" onclick="resetGame()" title="New Game">⟳</button>
 			</div>
 			<div class="save-section">
-				<div style="text-align: center; font-size: 0.7rem; font-weight: bold; margin-bottom: 5px; color: #bdc3c7;">
+				<div class="save-label">
 					<span id="saveInfo">You have up to three slots to save your game.<br/>Once a slot is occupied, you can load, overwrite, or delete its data. Choose wisely.</span>
 				</div>
 				<div class="save-grid">
 					<div class="slot-wrapper">
-						<button id="slot-0" class="save-slot-btn" onclick="handleSlot(0)" style="background: var(--save-empty);">Slot 1<br><span class="slot-date">Empty</span></button>
-						<button id="del-0" class="del-btn" onclick="deleteSlot(0)">✖</button>
+						<button id="slot-0" class="save-slot-btn slot-empty" onclick="handleSlot(0)" title="Slot 1">Slot 1<br><span class="slot-date">Empty</span></button>
+						<button id="del-0" class="del-btn" onclick="deleteSlot(0)" title="Delete slot 1">✖</button>
 					</div>
 					<div class="slot-wrapper">
-						<button id="slot-1" class="save-slot-btn" onclick="handleSlot(1)" style="background: var(--save-empty);">Slot 2<br><span class="slot-date">Empty</span></button>
-						<button id="del-1" class="del-btn" onclick="deleteSlot(1)">✖</button>
+						<button id="slot-1" class="save-slot-btn slot-empty" onclick="handleSlot(1)" title="Slot 2">Slot 2<br><span class="slot-date">Empty</span></button>
+						<button id="del-1" class="del-btn" onclick="deleteSlot(1)" title="Delete slot 2">✖</button>
 					</div>
 					<div class="slot-wrapper">
-						<button id="slot-2" class="save-slot-btn" onclick="handleSlot(2)" style="background: var(--save-empty);">Slot 3<br><span class="slot-date">Empty</span></button>
-						<button id="del-2" class="del-btn" onclick="deleteSlot(2)">✖</button>
+						<button id="slot-2" class="save-slot-btn slot-empty" onclick="handleSlot(2)" title="Slot 3">Slot 3<br><span class="slot-date">Empty</span></button>
+						<button id="del-2" class="del-btn" onclick="deleteSlot(2)" title="Delete slot 3">✖</button>
 					</div>
 				</div>
 			</div>
@@ -3860,13 +3978,13 @@ document.addEventListener('keydown', function(e) {
 					const del = document.getElementById(\`del-\${i}\`);
 					if(saved){
 						const data = JSON.parse(saved);
-						btn.style.background = 'var(--save-full)';
+						btn.classList.replace('slot-empty','slot-full');
 						btn.innerHTML = t('slot') + ' ' + (i + 1) + '<br><span class="slot-date">' + data.timestamp + '</span>';
-						del.style.display = 'flex';
+						del.classList.add('del-btn--visible');
 					}else{
-						btn.style.background = 'var(--save-empty)';
+						btn.classList.replace('slot-full','slot-empty');
 						btn.innerHTML = t('slot') + ' ' + (i + 1) + '<br><span class="slot-date">' + t('empty') + '</span>';
-						del.style.display = 'none';
+						del.classList.remove('del-btn--visible');
 					}
 				}
 			}
@@ -3896,12 +4014,7 @@ document.addEventListener('keydown', function(e) {
 			function saveToSlot(i){
 				const now = new Date();
 				const timeStr = \`\${now.getDate()}/\${now.getMonth()+1} \${now.getHours()}:\${now.getMinutes().toString().padStart(2,'0')}\`;
-				const gameState = {
-					board, moved, enPassantTarget, history, currentDiffIdx, turn, lastMove,
-					logHtml: document.getElementById('moveLog').innerHTML,
-					timestamp: timeStr,
-					timerMode, clockW, clockB, moveClockW, moveClockB
-				};
+				const gameState = {board, moved, enPassantTarget, history, currentDiffIdx, turn, lastMove, logHtml: document.getElementById('moveLog').innerHTML, timestamp: timeStr, timerMode, clockW, clockB, moveClockW, moveClockB, playerColor, currentLangIndex};
 				localStorage.setItem(\`chess_slot_\${i}\`, JSON.stringify(gameState));
 				updateSaveUI();
 			}
@@ -3919,7 +4032,14 @@ document.addEventListener('keydown', function(e) {
 				currentDiffIdx = gs.currentDiffIdx;
 				turn = gs.turn;
 				lastMove = gs.lastMove;
+				if(gs.playerColor){
+					playerColor = gs.playerColor;
+				}
+				if(gs.currentLangIndex !== undefined){
+					currentLangIndex = gs.currentLangIndex;
+				}
 				document.getElementById('moveLog').innerHTML = gs.logHtml;
+				document.getElementById('color-select-overlay').style.display = 'none';
 				const btn = document.getElementById('diffBtn');
 				btn.textContent = levelName(currentDiffIdx);
 				btn.style.background = LEVELS[currentDiffIdx].color;
@@ -3937,6 +4057,18 @@ document.addEventListener('keydown', function(e) {
 					renderClocks();
 				}else{
 					document.getElementById('clocksBar').classList.remove('active');
+				}
+				updateLangUI();
+				if(playerColor === 'B'){
+					document.querySelectorAll('.promo-choice')[0].textContent = '♛';
+					document.querySelectorAll('.promo-choice')[1].textContent = '♜';
+					document.querySelectorAll('.promo-choice')[2].textContent = '♝';
+					document.querySelectorAll('.promo-choice')[3].textContent = '♞';
+				}else{
+					document.querySelectorAll('.promo-choice')[0].textContent = '♕';
+					document.querySelectorAll('.promo-choice')[1].textContent = '♖';
+					document.querySelectorAll('.promo-choice')[2].textContent = '♗';
+					document.querySelectorAll('.promo-choice')[3].textContent = '♘';
 				}
 				checkGameState();
 				drawBoard();
@@ -4015,6 +4147,43 @@ document.addEventListener('keydown', function(e) {
 			let pendingPlayerColor = null;
 			let gameOverKey = null;
 			let gameOverVars = {};
+
+			function overlayLoadSlot(i){
+				const savedData = localStorage.getItem(\`chess_slot_\${i}\`);
+				if(!savedData){
+					return;
+				}
+				loadFromSlot(i);
+			}
+
+			function updateOverlaySlots(){
+				const loadLabels = {en:'Load Game',it:'Carica Partita',fr:'Charger Partie',es:'Cargar Partida',de:'Spiel laden',pt:'Carregar Jogo',ro:'Încarcă Joc',uk:'Завантажити',el:'Φόρτωση',la:'Onus Ludi',zh:'加载游戏',ja:'ゲームを読込'};
+				const lang = LANG_KEYS[currentLangIndex];
+				const lbl = document.getElementById('lbl-load-game');
+				if(lbl){
+					lbl.textContent = loadLabels[lang] || 'Load Game';
+				}
+				const emptyLabels = {en:'Empty',it:'Vuoto',fr:'Vide',es:'Vacío',de:'Leer',pt:'Vazio',ro:'Gol',uk:'Порожньо',el:'Κενό',la:'Vacuum',zh:'空',ja:'空'};
+				for(let i = 0; i < 3; i++){
+					const saved = localStorage.getItem(\`chess_slot_\${i}\`);
+					const btn = document.getElementById(\`oslot-\${i}\`);
+					if(!btn){
+						continue;
+					}
+					if(saved){
+						const data = JSON.parse(saved);
+						btn.classList.replace('slot-empty','slot-full');
+						btn.classList.remove('slot-disabled');
+						btn.innerHTML = t('slot') + ' ' + (i+1) + '<br><span class="slot-date">' + data.timestamp + '</span>';
+						btn.disabled = false;
+					}else{
+						btn.classList.replace('slot-full','slot-empty');
+						btn.classList.add('slot-disabled');
+						btn.innerHTML = t('slot') + ' ' + (i+1) + '<br><span class="slot-date">' + (emptyLabels[lang]||'Empty') + '</span>';
+						btn.disabled = true;
+					}
+				}
+			}
 
 			function selectColor(color){
 				pendingPlayerColor = color;
@@ -4546,7 +4715,8 @@ document.addEventListener('keydown', function(e) {
 				}
 
 				function evaluateBoard(b){
-					let score=0;
+					let score = 0;
+					let wBishops = 0, bBishops = 0;
 					for(let r = 0; r < 8; r++){
 						for(let c = 0; c < 8; c++){
 							const p = b[r][c];
@@ -4555,13 +4725,14 @@ document.addEventListener('keydown', function(e) {
 							}
 							const isBlack = p === p.toLowerCase();
 							const type = p.toLowerCase();
-							let value = PIECE_VALUES[type]||0;
+							let value = PIECE_VALUES[type] || 0;
 							if(type === 'p'){
 								value += isBlack ? PAWN_TABLE_WHITE[r][c] : PAWN_TABLE_WHITE[7-r][c];
 							}else if(type === 'n'){
 								value += isBlack ? KNIGHT_TABLE[r][c] : KNIGHT_TABLE[7-r][c];
 							}else if(type === 'b'){
 								value += isBlack ? BISHOP_TABLE[r][c] : BISHOP_TABLE[7-r][c];
+								isBlack ? bBishops++ : wBishops++;
 							}else if(type === 'r'){
 								value += isBlack ? ROOK_TABLE[r][c] : ROOK_TABLE[7-r][c];
 							}else if(type === 'q'){
@@ -4569,34 +4740,113 @@ document.addEventListener('keydown', function(e) {
 							}else if(type === 'k'){
 								value += isBlack ? KING_TABLE_MIDDLE[r][c] : KING_TABLE_MIDDLE[7-r][c];
 							}
-							score += isBlack?value:-value;
+							score += isBlack ? value : -value;
 						}
+					}
+					if(wBishops >= 2){
+						score -= 30;
+					}
+					if(bBishops >= 2){
+						score += 30;
 					}
 					return score;
 				}
 
-				function minimax(b, depth, alpha, beta, maximizing){
-					if(depth === 0){
-						return evaluateBoard(b);
+				function scoreMoveOrder(b, move){
+					const victim = b[move.tR][move.tC];
+					if(!victim){
+						return 0;
+					}
+					const attacker = b[move.fR][move.fC];
+					const vVal = PIECE_VALUES[victim.toLowerCase()] || 0;
+					const aVal = PIECE_VALUES[attacker.toLowerCase()] || 0;
+					return 10000 + vVal - aVal;
+				}
+
+				function orderMoves(b, moves){
+					return moves.slice().sort((a, b_) => scoreMoveOrder(b, b_) - scoreMoveOrder(b, a));
+				}
+
+				function quiescence(b, alpha, beta, maximizing){
+					const stand = evaluateBoard(b);
+					if(maximizing){
+						if(stand >= beta){
+							return beta;
+						}
+						if(stand > alpha){
+							alpha = stand;
+						}
+					}else{
+						if(stand <= alpha){
+							return alpha;
+						}
+						if(stand < beta){
+							beta = stand;
+						}
 					}
 					const color = maximizing ? 'B' : 'W';
-					let allMoves=[];
+					let captures = [];
 					for(let r = 0; r < 8; r++){
 						for(let c = 0; c < 8; c++){
 							const p = b[r][c];
-							if(!p||(maximizing ? (p !== p.toLowerCase()) : (p !== p.toUpperCase()))){
+							if(!p || (maximizing ? p !== p.toLowerCase() : p !== p.toUpperCase())){
 								continue;
 							}
-							getSafeMoves(b,r,c).forEach(m => allMoves.push({fR:r,fC:c,tR:m.r,tC:m.c,special:m}));
+							getSafeMoves(b, r, c).forEach(m => {
+								if(b[m.r][m.c]){
+									captures.push({fR:r,fC:c,tR:m.r,tC:m.c,special:m});
+								}
+							});
+						}
+					}
+					captures = orderMoves(b, captures);
+					for(const move of captures){
+						const tmp = b.map(row => [...row]);
+						tmp[move.tR][move.tC] = tmp[move.fR][move.fC];
+						tmp[move.fR][move.fC] = '';
+						const ev = quiescence(tmp, alpha, beta, !maximizing);
+						if(maximizing){
+							if(ev > alpha){
+								alpha = ev;
+							}
+							if(alpha >= beta){
+								return beta;
+							}
+						}else{
+							if(ev < beta){
+								beta = ev;
+							}
+							if(beta <= alpha){
+								return alpha;
+							}
+						}
+					}
+					return maximizing ? alpha : beta;
+				}
+
+				function minimax(b, depth, alpha, beta, maximizing){
+					if(depth === 0){
+						return quiescence(b, alpha, beta, maximizing);
+					}
+					const color = maximizing ? 'B' : 'W';
+					let allMoves = [];
+					for(let r = 0; r < 8; r++){
+						for(let c = 0; c < 8; c++){
+							const p = b[r][c];
+							if(!p || (maximizing ? p !== p.toLowerCase() : p !== p.toUpperCase())){
+								continue;
+							}
+							getSafeMoves(b, r, c).forEach(m => allMoves.push({fR:r,fC:c,tR:m.r,tC:m.c,special:m}));
 						}
 					}
 					if(allMoves.length === 0){
-						const king = findKing(b,color);
+						const king = findKing(b, color);
 						if(!king){
 							return maximizing ? -50000 : 50000;
 						}
-						return isSquareAttacked(b,king.r,king.c,color === 'W' ? 'B' : 'W') ? (maximizing ? -50000 : 50000):0;
+						return isSquareAttacked(b, king.r, king.c, color === 'W' ? 'B' : 'W') ? (maximizing ? -50000 : 50000) : 0;
 					}
+					allMoves = orderMoves(b, allMoves);
 					if(maximizing){
 						let maxEval = -Infinity;
 						for(const move of allMoves){
@@ -4605,9 +4855,13 @@ document.addEventListener('keydown', function(e) {
 								const tmp = b.map(row => [...row]);
 								tmp[move.tR][move.tC] = isPromo ? choice : tmp[move.fR][move.fC];
 								tmp[move.fR][move.fC] = '';
-								const ev = minimax(tmp,depth - 1,alpha,beta,false);
-								maxEval = Math.max(maxEval,ev);
-								alpha=Math.max(alpha,ev);
+								const ev = minimax(tmp, depth - 1, alpha, beta, false);
+								if(ev > maxEval){
+									maxEval = ev;
+								}
+								if(ev > alpha){
+									alpha = ev;
+								}
 								if(beta <= alpha){
 									break;
 								}
@@ -4623,11 +4877,15 @@ document.addEventListener('keydown', function(e) {
 							const isPromo = b[move.fR][move.fC] === 'P' && move.tR === 0;
 							for(const choice of (isPromo ? ['Q','N','R','B'] : [null])){
 								const tmp = b.map(row => [...row]);
-								tmp[move.tR][move.tC] = isPromo ? choice:tmp[move.fR][move.fC];
+								tmp[move.tR][move.tC] = isPromo ? choice : tmp[move.fR][move.fC];
 								tmp[move.fR][move.fC] = '';
-								const ev = minimax(tmp,depth - 1,alpha,beta,true);
-								minEval = Math.min(minEval,ev);
-								beta = Math.min(beta,ev);
+								const ev = minimax(tmp, depth - 1, alpha, beta, true);
+								if(ev < minEval){
+									minEval = ev;
+								}
+								if(ev < beta){
+									beta = ev;
+								}
 								if(beta <= alpha){
 									break;
 								}
@@ -4652,7 +4910,7 @@ document.addEventListener('keydown', function(e) {
 							}
 							const isPc = pcColor === 'B' ? p === p.toLowerCase() : p === p.toUpperCase();
 							if(isPc){
-								getSafeMoves(boardState,r,c).forEach(m => allMoves.push({fR:r,fC:c,tR:m.r,tC:m.c,special:m}));
+								getSafeMoves(boardState, r, c).forEach(m => allMoves.push({fR:r,fC:c,tR:m.r,tC:m.c,special:m}));
 							}
 						}
 					}
@@ -4660,6 +4918,8 @@ document.addEventListener('keydown', function(e) {
 						self.postMessage({noMoves:true});
 						return;
 					}
+					allMoves = orderMoves(boardState, allMoves);
+					const startMax = pcColor === 'B';
 					let bestValue = -Infinity;
 					let bestMoves = [];
 					for(const m of allMoves){
@@ -4668,26 +4928,25 @@ document.addEventListener('keydown', function(e) {
 						for(const choice of promoChoices){
 							const tmp = boardState.map(row => [...row]);
 							tmp[m.tR][m.tC] = isPromo ? choice : tmp[m.fR][m.fC];
-							tmp[m.fR][m.fC]='';
-							const startMax = pcColor === 'B' ? false : true;
-							let v = minimax(tmp,depth - 1, -Infinity,Infinity,startMax);
-							if(pcColor==='W'){
+							tmp[m.fR][m.fC] = '';
+							let v = minimax(tmp, depth - 1, -Infinity, Infinity, !startMax);
+							if(pcColor === 'W'){
 								v = -v;
 							}
 							const posKey = tmp.map(row => row.join('')).join('|');
 							const repetitions = positionHistory.filter(h => h === posKey).length;
 							if(repetitions >= 1){
-								v -= 30*repetitions;
+								v -= 40*repetitions;
 							}
 							if(v > bestValue){
 								bestValue = v;
-								bestMoves=[{move:m,promo:choice}];
+								bestMoves = [{move:m, promo:choice}];
 							}else if(v === bestValue){
-								bestMoves.push({move:m,promo:choice});
+								bestMoves.push({move:m, promo:choice});
 							}
 						}
 					}
-					const chosen = bestMoves[Math.floor(Math.random()*bestMoves.length)];
+					const chosen = bestMoves[Math.floor((Math.random())*(bestMoves.length))];
 					self.postMessage({chosen});
 				};
 			\`;
@@ -4864,7 +5123,7 @@ document.addEventListener('keydown', function(e) {
 					html += row('U', t('helpU'));
 					html += row('R', t('helpR'));
 				}
-				html += \`<div class="help-section-title" style="margin-top:16px">─</div>\`;
+				html += \`<div class="help-section-title help-section-divider">─</div>\`;
 				html += row('?', t('helpQuestion'));
 				document.getElementById('help-body').innerHTML = html;
 			}
@@ -4945,6 +5204,7 @@ document.addEventListener('keydown', function(e) {
 					const btn = document.createElement('button');
 					btn.className = 'flag-grid-btn';
 					btn.innerHTML = svg;
+					btn.title = LANG_KEYS[i];
 					btn.onclick = () => selectOverlayLang(i);
 					btn.id = 'oflag-' + i;
 					grid.appendChild(btn);
@@ -4981,8 +5241,10 @@ document.addEventListener('keydown', function(e) {
 					document.getElementById('statusBtn').textContent = t('whiteMove');
 				}
 				for(let i = 0; i < 4; i++){
-					document.getElementById('odiff-' + i).textContent = levelName(i);
-					document.getElementById('odiff-' + i).classList.toggle('selected-diff', i === currentDiffIdx);
+					const dbtn = document.getElementById('odiff-' + i);
+					dbtn.textContent = levelName(i);
+					dbtn.title = levelName(i);
+					dbtn.classList.toggle('selected-diff', i === currentDiffIdx);
 				}
 				buildFlagGrid();
 				for(let i = 0; i < FLAGS_SVG.length; i++){
@@ -4992,6 +5254,7 @@ document.addEventListener('keydown', function(e) {
 					}
 				}
 				updateTimerOverlayLabels();
+				updateOverlaySlots();
 			}
 		<\/script>
 	<script>
