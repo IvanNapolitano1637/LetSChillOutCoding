@@ -4603,398 +4603,415 @@ document.addEventListener('keydown', function(e) {
 				}
 			}
 
-			const WORKER_SRC = \`
-				const PIECE_VALUES = {'p':100,'n':320,'b':330,'r':500,'q':900,'k':20000};
-				const PAWN_TABLE_WHITE = [[0,0,0,0,0,0,0,0],[50,50,50,50,50,50,50,50],[10,10,20,30,30,20,10,10],[5,5,10,25,25,10,5,5],[0,0,0,20,20,0,0,0],[5,-5,-10,0,0,-10,-5,5],[5,10,10,-20,-20,10,10,5],[0,0,0,0,0,0,0,0]];
-				const KNIGHT_TABLE = [[-50,-40,-30,-30,-30,-30,-40,-50],[-40,-20,0,0,0,0,-20,-40],[-30,0,10,15,15,10,0,-30],[-30,5,15,20,20,15,5,-30],[-30,0,15,20,20,15,0,-30],[-30,5,10,15,15,10,5,-30],[-40,-20,0,5,5,0,-20,-40],[-50,-40,-30,-30,-30,-30,-40,-50]];
-				const BISHOP_TABLE = [[-20,-10,-10,-10,-10,-10,-10,-20],[-10,0,0,0,0,0,0,-10],[-10,0,5,10,10,5,0,-10],[-10,5,5,10,10,5,5,-10],[-10,0,10,10,10,10,0,-10],[-10,10,10,10,10,10,10,-10],[-10,5,0,0,0,0,5,-10],[-20,-10,-10,-10,-10,-10,-10,-20]];
-				const ROOK_TABLE = [[0,0,0,0,0,0,0,0],[5,10,10,10,10,10,10,5],[-5,0,0,0,0,0,0,-5],[-5,0,0,0,0,0,0,-5],[-5,0,0,0,0,0,0,-5],[-5,0,0,0,0,0,0,-5],[-5,0,0,0,0,0,0,-5],[0,0,0,5,5,0,0,0]];
-				const QUEEN_TABLE = [[-20,-10,-10,-5,-5,-10,-10,-20],[-10,0,0,0,0,0,0,-10],[-10,0,5,5,5,5,0,-10],[-5,0,5,5,5,5,0,-5],[0,0,5,5,5,5,0,-5],[-10,5,5,5,5,5,0,-10],[-10,0,5,0,0,0,0,-10],[-20,-10,-10,-5,-5,-10,-10,-20]];
-				const KING_TABLE_MIDDLE = [[-30,-40,-40,-50,-50,-40,-40,-30],[-30,-40,-40,-50,-50,-40,-40,-30],[-30,-40,-40,-50,-50,-40,-40,-30],[-30,-40,-40,-50,-50,-40,-40,-30],[-20,-30,-30,-40,-40,-30,-30,-20],[-10,-20,-20,-20,-20,-20,-20,-10],[20,20,0,0,0,0,20,20],[20,30,10,0,0,10,30,20]];
-				let enPassantTarget = null;
-				function getRawMoves(b, r, c, includeCastling){
-					if(includeCastling === undefined){
-						includeCastling = false;
+			const AI_PV  = [0,0,0,0,0,0,0,0,50,50,50,50,50,50,50,50,10,10,20,30,30,20,10,10,5,5,10,25,25,10,5,5,0,0,0,20,20,0,0,0,5,-5,-10,0,0,-10,-5,5,5,10,10,-20,-20,10,10,5,0,0,0,0,0,0,0,0];
+			const AI_KN  = [-50,-40,-30,-30,-30,-30,-40,-50,-40,-20,0,0,0,0,-20,-40,-30,0,10,15,15,10,0,-30,-30,5,15,20,20,15,5,-30,-30,0,15,20,20,15,0,-30,-30,5,10,15,15,10,5,-30,-40,-20,0,5,5,0,-20,-40,-50,-40,-30,-30,-30,-30,-40,-50];
+			const AI_BI  = [-20,-10,-10,-10,-10,-10,-10,-20,-10,0,0,0,0,0,0,-10,-10,0,5,10,10,5,0,-10,-10,5,5,10,10,5,5,-10,-10,0,10,10,10,10,0,-10,-10,10,10,10,10,10,10,-10,-10,5,0,0,0,0,5,-10,-20,-10,-10,-10,-10,-10,-10,-20];
+			const AI_RK  = [0,0,0,0,0,0,0,0,5,10,10,10,10,10,10,5,-5,0,0,0,0,0,0,-5,-5,0,0,0,0,0,0,-5,-5,0,0,0,0,0,0,-5,-5,0,0,0,0,0,0,-5,-5,0,0,0,0,0,0,-5,0,0,0,5,5,0,0,0];
+			const AI_QN  = [-20,-10,-10,-5,-5,-10,-10,-20,-10,0,0,0,0,0,0,-10,-10,0,5,5,5,5,0,-10,-5,0,5,5,5,5,0,-5,0,0,5,5,5,5,0,-5,-10,5,5,5,5,5,0,-10,-10,0,5,0,0,0,0,-10,-20,-10,-10,-5,-5,-10,-10,-20];
+			const AI_KG  = [-30,-40,-40,-50,-50,-40,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30,-20,-30,-30,-40,-40,-30,-30,-20,-10,-20,-20,-20,-20,-20,-20,-10,20,20,0,0,0,0,20,20,20,30,10,0,0,10,30,20];
+			const AI_PIECE_CODE = {P:0,N:1,B:2,R:3,Q:4,K:5,p:6,n:7,b:8,r:9,q:10,k:11};
+			const AI_PIECE_VALUES = {'p':100,'n':320,'b':330,'r':500,'q':900,'k':20000};
+			const AI_PST = (() => {
+				const tables = [];
+				for(let i = 0; i < 12; i++) tables.push(new Int16Array(64));
+				const bases = [AI_PV,AI_KN,AI_BI,AI_RK,AI_QN,AI_KG];
+				const vals = [100,320,330,500,900,20000];
+				for(let t = 0; t < 6; t++){
+					for(let sq = 0; sq < 64; sq++){
+						const r = sq>>3, c = sq&7;
+						tables[t][sq] = vals[t] + bases[t][(7 - r)*8 + c];
+						tables[t+6][sq] = vals[t] + bases[t][r*8 + c];
 					}
-					let m = [];
-					const piece = b[r][c];
-					const p = piece.toLowerCase();
-					const isW = piece === piece.toUpperCase();
-					const dirs = {'r':[[1,0],[-1,0],[0,1],[0,-1]],'b':[[1,1],[1,-1],[-1,1],[-1,-1]],'q':[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]],'n':[[2,1],[2,-1],[-2,1],[-2,-1],[1,2],[1,-2],[-1,2],[-1,-2]],'k':[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]]};
-					if(p === 'p'){
-						let d = isW ? -1 : 1;
-						if(r + d >= 0 && r + d < 8 && !b[r+d][c]){
-							m.push({r:r+d,c:c});
-							if(((isW && r === 6)||(!isW && r === 1)) && !b[r + 2*d][c]){
-								m.push({r:r + 2*d,c:c});
+				}
+				return tables;
+			})();
+			const AI_TT_SIZE = 1<<19;
+			const AI_TT = new Array(AI_TT_SIZE);
+			const AI_ZK = (() => {const k=[]; for(let i = 0; i < 768; i++) k.push(Math.floor(Math.random()*0x100000000)>>>0); return k;})();
+			const AI_RD = [[1,0],[-1,0],[0,1],[0,-1]];
+			const AI_BD = [[1,1],[1,-1],[-1,1],[-1,-1]];
+			const AI_QD = [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
+			const AI_ND = [[2,1],[2,-1],[-2,1],[-2,-1],[1,2],[1,-2],[-1,2],[-1,-2]];
+			const AI_KD = [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
+			let ai_ep = null;
+
+			function ai_boardHash(b){
+				let h=0;
+				for(let r = 0; r < 8; r++){
+					for(let c = 0; c < 8; c++){
+						const p = b[r][c];
+						if(p){
+							h^=AI_ZK[AI_PIECE_CODE[p]*64 + r*8 + c];
+						}
+					}
+				}
+				return h;
+			}
+
+			function ai_copyBoard(b){
+				const t = [];
+				for(let r = 0; r < 8; r++){
+					t.push([...b[r]]);
+				}
+				return t;
+			}
+
+			function ai_rawMoves(b, r, c){
+				const piece = b[r][c], p = piece.toLowerCase(), isW = piece === piece.toUpperCase();
+				const m = [];
+				if(p === 'p'){
+					const d = isW ? -1 : 1, nr1 = r + d;
+					if(nr1 >= 0 && nr1 < 8 &&! b[nr1][c]){
+						m.push({r:nr1,c});
+						const nr2 = r + 2*d;
+						if(((isW&&r === 6)||(!isW&&r === 1))&&!b[nr2][c]){
+							m.push({r:nr2,c});
+						}
+					}
+					for(const dc of[-1,1]){
+						const nc = c + dc, nr = r + d;
+						if(nr >= 0 && nr < 8 && nc >= 0 && nc < 8){
+							if(b[nr][nc] && (isW ? b[nr][nc] === b[nr][nc].toLowerCase() : b[nr][nc] === b[nr][nc].toUpperCase())){
+								m.push({r:nr,c:nc});
+							}
+							if(!b[nr][nc] && ai_ep && ai_ep.r === nr && ai_ep.c === nc){
+								m.push({r:nr,c:nc,enPassant:true});
 							}
 						}
-						for(let dc of [-1,1]){
-							let nr = r + d, nc = c + dc;
-							if(nr >= 0 && nr < 8 && nc >= 0 && nc < 8){
-								if(b[nr][nc]&&(isW ? b[nr][nc] === b[nr][nc].toLowerCase() : b[nr][nc] === b[nr][nc].toUpperCase())){
+					}
+				}else if(p === 'n'){
+					for(const[dr,dc]of AI_ND){
+						const nr = r + dr, nc = c + dc;
+						if(nr >= 0 && nr < 8 && nc >= 0 && nc < 8 && (!b[nr][nc]||(isW ? b[nr][nc] === b[nr][nc].toLowerCase() : b[nr][nc] === b[nr][nc].toUpperCase()))){
+							m.push({r:nr,c:nc});
+						}
+					}
+				}else if(p === 'k'){
+					for(const[dr,dc]of AI_KD){
+						const nr = r + dr, nc = c + dc;
+						if(nr >= 0 && nr < 8 && nc >= 0 && nc < 8 && (!b[nr][nc]||(isW ? b[nr][nc] === b[nr][nc].toLowerCase() : b[nr][nc] === b[nr][nc].toUpperCase()))){
+							m.push({r:nr,c:nc});
+						}
+					}
+				}else{
+					const dirs = p === 'r' ? AI_RD : p === 'b' ? AI_BD : AI_QD;
+					for(const[dr,dc]of dirs){
+						let nr = r + dr, nc = c + dc;
+						while(nr >= 0 && nr < 8 && nc >= 0 && nc < 8){
+							if(!b[nr][nc]){
+								m.push({r:nr,c:nc});
+							}else{
+								if(isW ? b[nr][nc] === b[nr][nc].toLowerCase() : b[nr][nc] === b[nr][nc].toUpperCase()){
 									m.push({r:nr,c:nc});
 								}
-								if(!b[nr][nc] && enPassantTarget && enPassantTarget.r === nr && enPassantTarget.c === nc){
-									m.push({r:nr,c:nc,enPassant:true});
-								}
+								break;
 							}
-						}
-					}else if(dirs[p]){
-						for(let [dr,dc] of dirs[p]){
-							let nr = r + dr, nc = c + dc;
-							while(nr >= 0 && nr < 8 && nc >= 0 && nc < 8){
-								if(!b[nr][nc]){
-									m.push({r:nr,c:nc});
-								}else{
-									if(isW ? b[nr][nc] === b[nr][nc].toLowerCase() : b[nr][nc] === b[nr][nc].toUpperCase()){
-										m.push({r:nr,c:nc});
-									}
-									break;
-								}
-								if(p === 'n' || p === 'k'){
-									break;
-								}
-								nr += dr;
-								nc += dc;
-							}
+							nr += dr;
+							nc += dc;
 						}
 					}
-					return m;
 				}
+				return m;
+			}
 
-				function findKing(b, color){
-					const target = color === 'W'?'K':'k';
-					for(let r = 0; r < 8; r++){
-						for(let c = 0; c < 8; c++){
-							if(b[r][c] === target){
-								return {r,c};
-							}
+			function ai_isAttacked(b, row, col, attackerColor){
+				for(let r = 0; r < 8; r++){
+					for(let c = 0; c < 8; c++){
+						const p = b[r][c];
+						if(!p || (attackerColor === 'W' ? p !== p.toUpperCase() : p !== p.toLowerCase())){
+							continue;
+						}
+						if(ai_rawMoves(b,r,c).some(m => m.r === row && m.c === col)){
+							return true;
 						}
 					}
-					return null;
 				}
+				return false;
+			}
 
-				function isSquareAttacked(b, row, col, attackerColor){
-					if(row === null || col === null){
+			function ai_findKing(b, color){
+				const t = color === 'W' ? 'K' : 'k';
+				for(let r = 0; r < 8; r++){
+					for(let c = 0; c < 8; c++){
+						if(b[r][c] === t){
+							return {r,c};
+						}
+					}
+				}
+				return null;
+			}
+
+			function ai_safeMoves(b, r, c){
+				const isW = b[r][c] === b[r][c].toUpperCase(), oppKing = isW ? 'k' : 'K';
+				return ai_rawMoves(b,r,c).filter(m => {
+					if(b[m.r][m.c] === oppKing){
 						return false;
 					}
-					for(let r = 0; r < 8; r++){
-						for(let c = 0; c < 8; c++){
-							const p = b[r][c];
-							if(!p || (attackerColor==='W' ? p !== p.toUpperCase() : p !== p.toLowerCase())){
-								continue;
+					const tmp = ai_copyBoard(b);
+					if(m.enPassant){
+						tmp[r][m.c] = '';
+					}
+					tmp[m.r][m.c] = tmp[r][c];
+					tmp[r][c] = '';
+					const k = ai_findKing(tmp,isW ? 'W' : 'B');
+					return k &&! ai_isAttacked(tmp,k.r,k.c,isW ? 'B' : 'W');
+				});
+			}
+
+			function ai_evaluate(b){
+				let score = 0, wB = 0, bB = 0;
+				for(let r = 0; r < 8; r++){
+					for(let c = 0; c < 8; c++){
+						const p = b[r][c];
+						if(!p){
+							continue;
+						}
+						const isBlack = p === p.toLowerCase(), pc = AI_PIECE_CODE[p], val = AI_PST[pc][r*8 + c];
+						if(isBlack){
+							score += val;
+							if(p === 'b'){
+								bB++;
 							}
-							if(getRawMoves(b,r,c,false).some(m => m.r === row && m.c === col)){
-								return true;
+						}else{
+							score -= val;
+							if(p === 'B'){
+								wB++;
 							}
 						}
 					}
-					return false;
 				}
-
-				function getSafeMoves(b, r, c){
-					const isW = b[r][c] === b[r][c].toUpperCase();
-					const oppKing = isW ? 'k' : 'K';
-					return getRawMoves(b,r,c,false).filter(m=>{
-						if(b[m.r][m.c] === oppKing){
-							return false;
-						}
-						const tmp = b.map(row => [...row]);
-						if(m.enPassant){
-							tmp[r][m.c]='';
-						}
-						tmp[m.r][m.c] = tmp[r][c];
-						tmp[r][c]='';
-						const k = findKing(tmp,isW ? 'W' : 'B');
-						if(!k){
-							return false;
-						}
-						return !isSquareAttacked(tmp,k.r,k.c,isW ? 'B' : 'W');
-					});
+				if(wB >= 2){
+					score -= 30;
 				}
+				if(bB >= 2){
+					score += 30;
+				}
+				return score;
+			}
 
-				function evaluateBoard(b){
-					let score = 0;
-					let wBishops = 0, bBishops = 0;
-					for(let r = 0; r < 8; r++){
-						for(let c = 0; c < 8; c++){
-							const p = b[r][c];
-							if(!p){
-								continue;
-							}
-							const isBlack = p === p.toLowerCase();
-							const type = p.toLowerCase();
-							let value = PIECE_VALUES[type] || 0;
-							if(type === 'p'){
-								value += isBlack ? PAWN_TABLE_WHITE[r][c] : PAWN_TABLE_WHITE[7-r][c];
-							}else if(type === 'n'){
-								value += isBlack ? KNIGHT_TABLE[r][c] : KNIGHT_TABLE[7-r][c];
-							}else if(type === 'b'){
-								value += isBlack ? BISHOP_TABLE[r][c] : BISHOP_TABLE[7-r][c];
-								isBlack ? bBishops++ : wBishops++;
-							}else if(type === 'r'){
-								value += isBlack ? ROOK_TABLE[r][c] : ROOK_TABLE[7-r][c];
-							}else if(type === 'q'){
-								value += isBlack ? QUEEN_TABLE[r][c] : QUEEN_TABLE[7-r][c];
-							}else if(type === 'k'){
-								value += isBlack ? KING_TABLE_MIDDLE[r][c] : KING_TABLE_MIDDLE[7-r][c];
-							}
-							score += isBlack ? value : -value;
-						}
+			function ai_scoreMove(b, mv){
+				const v = b[mv.tR][mv.tC];
+				if(!v){
+					return 0;
+				}
+				return 10000 + (AI_PIECE_VALUES[v.toLowerCase()] || 0) - (AI_PIECE_VALUES[b[mv.fR][mv.fC].toLowerCase()] || 0);
+			}
+
+			function ai_orderMoves(b, moves){
+				return moves.slice().sort((a,z) => ai_scoreMove(b,z) - ai_scoreMove(b,a));
+			}
+
+			function ai_quiescence(b, alpha, beta, maximizing){
+				const stand = ai_evaluate(b);
+				if(maximizing){
+					if(stand >= beta){
+						return beta;
 					}
-					if(wBishops >= 2){
-						score -= 30;
+					if(stand > alpha){
+						alpha = stand;
 					}
-					if(bBishops >= 2){
-						score += 30;
+				}else{
+					if(stand <= alpha){
+						return alpha;
 					}
-					return score;
-				}
-
-				function scoreMoveOrder(b, move){
-					const victim = b[move.tR][move.tC];
-					if(!victim){
-						return 0;
+					if(stand < beta){
+						beta = stand;
 					}
-					const attacker = b[move.fR][move.fC];
-					const vVal = PIECE_VALUES[victim.toLowerCase()] || 0;
-					const aVal = PIECE_VALUES[attacker.toLowerCase()] || 0;
-					return 10000 + vVal - aVal;
 				}
-
-				function orderMoves(b, moves){
-					return moves.slice().sort((a, b_) => scoreMoveOrder(b, b_) - scoreMoveOrder(b, a));
+				let caps = [];
+				for(let r = 0; r < 8; r++){
+					for(let c = 0; c < 8; c++){
+						const p = b[r][c];
+						if(!p || (maximizing ? p !== p.toLowerCase() : p !== p.toUpperCase())){
+							continue;
+						}
+						ai_safeMoves(b,r,c).forEach(m => {if(b[m.r][m.c]){caps.push({fR:r,fC:c,tR:m.r,tC:m.c,special:m});}});
+					}
 				}
-
-				function quiescence(b, alpha, beta, maximizing){
-					const stand = evaluateBoard(b);
+				caps = ai_orderMoves(b,caps);
+				for(const mv of caps){
+					const capVal=AI_PIECE_VALUES[(b[mv.tR][mv.tC]||'').toLowerCase()]||0;
+					if(maximizing && stand + capVal + 200 < alpha){
+						continue;
+					}
+					if(!maximizing && stand - capVal - 200 > beta){
+						continue;
+					}
+					const tmp = ai_copyBoard(b);
+					tmp[mv.tR][mv.tC] = tmp[mv.fR][mv.fC];
+					tmp[mv.fR][mv.fC] = '';
+					const ev = ai_quiescence(tmp,alpha,beta,!maximizing);
 					if(maximizing){
-						if(stand >= beta){
+						if(ev > alpha){
+							alpha = ev;
+						}
+						if(alpha >= beta){
 							return beta;
 						}
-						if(stand > alpha){
-							alpha = stand;
-						}
 					}else{
-						if(stand <= alpha){
+						if(ev < beta){
+							beta = ev;
+						}
+						if(beta <= alpha){
 							return alpha;
 						}
-						if(stand < beta){
-							beta = stand;
-						}
 					}
-					const color = maximizing ? 'B' : 'W';
-					let captures = [];
-					for(let r = 0; r < 8; r++){
-						for(let c = 0; c < 8; c++){
-							const p = b[r][c];
-							if(!p || (maximizing ? p !== p.toLowerCase() : p !== p.toUpperCase())){
-								continue;
-							}
-							getSafeMoves(b, r, c).forEach(m => {
-								if(b[m.r][m.c]){
-									captures.push({fR:r,fC:c,tR:m.r,tC:m.c,special:m});
-								}
-							});
-						}
+				}
+				return maximizing ? alpha : beta;
+			}
+
+			function ai_minimax(b, depth, alpha, beta, maximizing){
+				const origAlpha = alpha;
+				const hash = ai_boardHash(b), ttIdx = hash & (AI_TT_SIZE - 1), tte = AI_TT[ttIdx];
+				if(tte && tte.hash === hash && tte.depth >= depth){
+					if(tte.flag === 0){
+						return tte.score;
 					}
-					captures = orderMoves(b, captures);
-					for(const move of captures){
-						const tmp = b.map(row => [...row]);
-						tmp[move.tR][move.tC] = tmp[move.fR][move.fC];
-						tmp[move.fR][move.fC] = '';
-						const ev = quiescence(tmp, alpha, beta, !maximizing);
+					if(tte.flag === 1 && tte.score > alpha){
+						alpha = tte.score;
+					}
+					if(tte.flag === 2 && tte.score < beta){
+						beta = tte.score;
+					}
+					if(alpha >= beta){
+						return tte.score;
+					}
+				}
+				if(depth === 0){
+					return ai_quiescence(b,alpha,beta,maximizing);
+				}
+				const color = maximizing ? 'B' : 'W';
+				let allMoves = [];
+				for(let r = 0; r < 8; r++){
+					for(let c = 0; c < 8; c++){
+						const p = b[r][c];
+						if(!p || (maximizing ? p !== p.toLowerCase() : p !== p.toUpperCase())){
+							continue;
+						}
+						ai_safeMoves(b,r,c).forEach(m => allMoves.push({fR:r,fC:c,tR:m.r,tC:m.c,special:m}));
+					}
+				}
+				if(!allMoves.length){
+					const k = ai_findKing(b,color);
+					if(!k){
+						return maximizing ? -50000 : 50000;
+					}
+					return ai_isAttacked(b,k.r,k.c,color === 'W' ? 'B' : 'W') ? (maximizing ? -50000 : 50000) : 0;
+				}
+				allMoves = ai_orderMoves(b,allMoves);
+				let bestScore = maximizing ? -Infinity : Infinity;
+				for(const mv of allMoves){
+					const isPromo = maximizing ? (b[mv.fR][mv.fC] === 'p' && mv.tR === 7) : (b[mv.fR][mv.fC] === 'P' && mv.tR === 0);
+					for(const choice of (isPromo ? (maximizing?['q','n','r','b'] : ['Q','N','R','B']) : [null])){
+						const tmp = ai_copyBoard(b);
+						tmp[mv.tR][mv.tC] = isPromo ? choice : tmp[mv.fR][mv.fC];
+						tmp[mv.fR][mv.fC] = '';
+						const ev = ai_minimax(tmp,depth - 1,alpha,beta,!maximizing);
 						if(maximizing){
+							if(ev > bestScore){
+								bestScore = ev;
+							}
 							if(ev > alpha){
 								alpha = ev;
 							}
-							if(alpha >= beta){
-								return beta;
-							}
 						}else{
+							if(ev < bestScore){
+								bestScore = ev;
+							}
 							if(ev < beta){
 								beta = ev;
 							}
-							if(beta <= alpha){
-								return alpha;
-							}
+						}
+						if(beta <= alpha){
+							break;
 						}
 					}
-					return maximizing ? alpha : beta;
-				}
-
-				function minimax(b, depth, alpha, beta, maximizing){
-					if(depth === 0){
-						return quiescence(b, alpha, beta, maximizing);
-					}
-					const color = maximizing ? 'B' : 'W';
-					let allMoves = [];
-					for(let r = 0; r < 8; r++){
-						for(let c = 0; c < 8; c++){
-							const p = b[r][c];
-							if(!p || (maximizing ? p !== p.toLowerCase() : p !== p.toUpperCase())){
-								continue;
-							}
-							getSafeMoves(b, r, c).forEach(m => allMoves.push({fR:r,fC:c,tR:m.r,tC:m.c,special:m}));
-						}
-					}
-					if(allMoves.length === 0){
-						const king = findKing(b, color);
-						if(!king){
-							return maximizing ? -50000 : 50000;
-						}
-						return isSquareAttacked(b, king.r, king.c, color === 'W' ? 'B' : 'W') ? (maximizing ? -50000 : 50000) : 0;
-					}
-					allMoves = orderMoves(b, allMoves);
-					if(maximizing){
-						let maxEval = -Infinity;
-						for(const move of allMoves){
-							const isPromo = b[move.fR][move.fC] === 'p' && move.tR === 7;
-							for(const choice of (isPromo ? ['q','n','r','b'] : [null])){
-								const tmp = b.map(row => [...row]);
-								tmp[move.tR][move.tC] = isPromo ? choice : tmp[move.fR][move.fC];
-								tmp[move.fR][move.fC] = '';
-								const ev = minimax(tmp, depth - 1, alpha, beta, false);
-								if(ev > maxEval){
-									maxEval = ev;
-								}
-								if(ev > alpha){
-									alpha = ev;
-								}
-								if(beta <= alpha){
-									break;
-								}
-							}
-							if(beta <= alpha){
-								break;
-							}
-						}
-						return maxEval;
-					}else{
-						let minEval = Infinity;
-						for(const move of allMoves){
-							const isPromo = b[move.fR][move.fC] === 'P' && move.tR === 0;
-							for(const choice of (isPromo ? ['Q','N','R','B'] : [null])){
-								const tmp = b.map(row => [...row]);
-								tmp[move.tR][move.tC] = isPromo ? choice : tmp[move.fR][move.fC];
-								tmp[move.fR][move.fC] = '';
-								const ev = minimax(tmp, depth - 1, alpha, beta, true);
-								if(ev < minEval){
-									minEval = ev;
-								}
-								if(ev < beta){
-									beta = ev;
-								}
-								if(beta <= alpha){
-									break;
-								}
-							}
-							if(beta <= alpha){
-								break;
-							}
-						}
-						return minEval;
+					if(beta <= alpha){
+						break;
 					}
 				}
-
-				self.onmessage = function(e){
-					const {boardState, enPassant, depth, pcColor, positionHistory} = e.data;
-					enPassantTarget = enPassant;
-					let allMoves = [];
-					for(let r = 0; r < 8; r++){
-						for(let c = 0; c < 8; c++){
-							const p = boardState[r][c];
-							if(!p){
-								continue;
-							}
-							const isPc = pcColor === 'B' ? p === p.toLowerCase() : p === p.toUpperCase();
-							if(isPc){
-								getSafeMoves(boardState, r, c).forEach(m => allMoves.push({fR:r,fC:c,tR:m.r,tC:m.c,special:m}));
-							}
-						}
-					}
-					if(allMoves.length === 0){
-						self.postMessage({noMoves:true});
-						return;
-					}
-					allMoves = orderMoves(boardState, allMoves);
-					const startMax = pcColor === 'B';
-					let bestValue = -Infinity;
-					let bestMoves = [];
-					for(const m of allMoves){
-						const isPromo = (pcColor === 'B') ? (boardState[m.fR][m.fC] === 'p' && m.tR === 7) : (boardState[m.fR][m.fC] === 'P' && m.tR === 0);
-						const promoChoices = isPromo ? (pcColor === 'B' ? ['q','n','r','b'] : ['Q','N','R','B']) : [null];
-						for(const choice of promoChoices){
-							const tmp = boardState.map(row => [...row]);
-							tmp[m.tR][m.tC] = isPromo ? choice : tmp[m.fR][m.fC];
-							tmp[m.fR][m.fC] = '';
-							let v = minimax(tmp, depth - 1, -Infinity, Infinity, !startMax);
-							if(pcColor === 'W'){
-								v = -v;
-							}
-							const posKey = tmp.map(row => row.join('')).join('|');
-							const repetitions = positionHistory.filter(h => h === posKey).length;
-							if(repetitions >= 1){
-								v -= 40*repetitions;
-							}
-							if(v > bestValue){
-								bestValue = v;
-								bestMoves = [{move:m, promo:choice}];
-							}else if(v === bestValue){
-								bestMoves.push({move:m, promo:choice});
-							}
-						}
-					}
-					const chosen = bestMoves[Math.floor((Math.random())*(bestMoves.length))];
-					self.postMessage({chosen});
-				};
-			\`;
-
-			let _aiWorker = null;
-
-			function getAiWorker(){
-				if(_aiWorker){
-					_aiWorker.terminate();
-				}
-				const blob = new Blob([WORKER_SRC], {type: 'application/javascript'});
-				_aiWorker = new Worker(URL.createObjectURL(blob));
-				return _aiWorker;
+				const flag = bestScore <= origAlpha ? 2 : bestScore >= beta ? 1 : 0;
+				AI_TT[ttIdx] = {hash,depth,score:bestScore,flag};
+				return bestScore;
 			}
+
+			function ai_computeMove(boardState, enPassant, depth, pcColor, positionHistory){
+				ai_ep = enPassant;
+				AI_TT.fill(undefined);
+				let allMoves=[];
+				for(let r = 0; r < 8; r++){
+					for(let c = 0; c < 8; c++){
+						const p = boardState[r][c];
+						if(!p){
+							continue;
+						}
+						const isPc = pcColor === 'B' ? p === p.toLowerCase() : p === p.toUpperCase();
+						if(isPc){
+							ai_safeMoves(boardState,r,c).forEach(m => allMoves.push({fR:r,fC:c,tR:m.r,tC:m.c,special:m}));
+						}
+					}
+				}
+				if(!allMoves.length){
+					return null;
+				}
+				allMoves = ai_orderMoves(boardState,allMoves);
+				const startMax = pcColor === 'B';
+				let bestValue = -Infinity, bestMoves = [];
+				for(const m of allMoves){
+					const isPromo = (pcColor === 'B') ? (boardState[m.fR][m.fC] === 'p' && m.tR === 7) : (boardState[m.fR][m.fC] === 'P' && m.tR === 0);
+					const promoChoices = isPromo ? (pcColor === 'B' ? ['q','n','r','b'] : ['Q','N','R','B']) : [null];
+					for(const choice of promoChoices){
+						const tmp = boardState.map(row => [...row]);
+						tmp[m.tR][m.tC] = isPromo ? choice : tmp[m.fR][m.fC];
+						tmp[m.fR][m.fC] = '';
+						let v = ai_minimax(tmp,depth-1,-Infinity,Infinity,!startMax);
+						if(pcColor==='W'){
+							v = -v;
+						}
+						const posKey = tmp.map(row => row.join('')).join('|');
+						const reps = positionHistory.filter(h => h === posKey).length;
+						if(reps >= 1){
+							v -= 40*reps;
+						}
+						if(v > bestValue){
+							bestValue = v;
+							bestMoves = [{move:m,promo:choice}];
+						}else if(v === bestValue){
+							bestMoves.push({move:m,promo:choice});
+						}
+					}
+				}
+				return bestMoves[Math.floor(Math.random()*bestMoves.length)]||null;
+			}
+
+			let _aiPending = false;
 
 			function pcMove(){
 				const pcColor = playerColor === 'W' ? 'B' : 'W';
-				if(turn !== pcColor || turn === 'OVER'){
+				if(turn !== pcColor || turn === 'OVER' || _aiPending){
 					return;
 				}
-				const worker = getAiWorker();
-				worker.onmessage = function(e){
-					worker.terminate();
-					_aiWorker = null;
+				_aiPending = true;
+				const boardSnap = board.map(row => [...row]);
+				const epSnap = enPassantTarget ? {...enPassantTarget} : null;
+				const depth = LEVELS[currentDiffIdx].val;
+				const posSnap = [...positionHistory];
+				setTimeout(function(){
+					if(turn !== pcColor || turn === 'OVER'){
+						_aiPending = false;
+						return;
+					}
+					const chosen = ai_computeMove(boardSnap, epSnap, depth, pcColor, posSnap);
+					_aiPending = false;
 					if(turn !== pcColor || turn === 'OVER'){
 						return;
 					}
-					if(e.data.noMoves){
+					if(!chosen){
 						return;
 					}
-					const {chosen} = e.data;
-					if(chosen){
-						const bestPromo = chosen.promo || (pcColor === 'B' ? 'q' : 'Q');
-						executeMove(chosen.move.fR, chosen.move.fC, chosen.move.tR, chosen.move.tC, chosen.move.special, bestPromo);
-					}
-				};
-				worker.onerror = function(err){
-					console.error('AI Worker error:', err);
-					worker.terminate();
-					_aiWorker = null;
-				};
-				worker.postMessage({
-					boardState: board.map(row => [...row]),
-					enPassant: enPassantTarget ? {...enPassantTarget} : null,
-					depth: LEVELS[currentDiffIdx].val,
-					pcColor: pcColor,
-					positionHistory: [...positionHistory]
-				});
+					const bestPromo = chosen.promo || (pcColor === 'B' ? 'q' : 'Q');
+					executeMove(chosen.move.fR, chosen.move.fC, chosen.move.tR, chosen.move.tC, chosen.move.special, bestPromo);
+				}, 0);
 			}
 
 			function handleClick(r, c){
