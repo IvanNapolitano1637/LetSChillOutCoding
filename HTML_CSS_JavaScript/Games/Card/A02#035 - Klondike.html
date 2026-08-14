@@ -195,9 +195,16 @@
 				justify-content: center;
 			}
 			.slot.foundation .suit-hint{
-				font-size: calc(var(--cw) * 0.44);
-				opacity: 0.25;
+				font-size: calc(var(--cw) * 0.52);
+				opacity: 0.65;
 				pointer-events: none;
+				text-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+			}
+			.slot.foundation .suit-hint.red-suit{
+				color: #ff5555;
+			}
+			.slot.foundation .suit-hint.black-suit{
+				color: #f0f0f0;
 			}
 			.spacer{
 				width: var(--cw);
@@ -538,10 +545,10 @@
 				<div class="slot" id="stock"></div>
 				<div class="slot" id="waste"></div>
 				<div class="spacer"></div>
-				<div class="slot foundation" id="f0"><span class="suit-hint">♥</span></div>
-				<div class="slot foundation" id="f1"><span class="suit-hint">♦</span></div>
-				<div class="slot foundation" id="f2"><span class="suit-hint">♣</span></div>
-				<div class="slot foundation" id="f3"><span class="suit-hint">♠</span></div>
+				<div class="slot foundation" id="f0"><span class="suit-hint red-suit">♥</span></div>
+				<div class="slot foundation" id="f1"><span class="suit-hint red-suit">♦</span></div>
+				<div class="slot foundation" id="f2"><span class="suit-hint black-suit">♣</span></div>
+				<div class="slot foundation" id="f3"><span class="suit-hint black-suit">♠</span></div>
 			</div>
 			<div id="tableau">
 				<div class="tableau-col" id="t0"></div>
@@ -710,7 +717,6 @@
 			}
 
 			function newGame(){
-				document.getElementById('winOverlay').classList.remove('show');
 				document.getElementById('modeOverlay').classList.add('show');
 			}
 
@@ -1007,9 +1013,8 @@
 					fresh.id = 'f' + f;
 					fresh.className = 'slot foundation';
 					const hint = document.createElement('span');
-					hint.className = 'suit-hint';
+					hint.className = 'suit-hint ' + (isRed(SUITS[f]) ? 'red-suit' : 'black-suit');
 					hint.textContent = SUITS[f];
-					hint.style.cssText = 'opacity:0.25;pointer-events:none;';
 					fresh.appendChild(hint);
 					if(foundations[f].length > 0){
 						const top = foundations[f][foundations[f].length - 1];

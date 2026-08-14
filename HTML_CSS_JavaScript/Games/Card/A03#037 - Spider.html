@@ -301,6 +301,21 @@
 				border-radius: 6px;
 				position: relative;
 			}
+			.column-slot.empty{
+				border: 2px dashed rgba(201, 168, 76, 0.55);
+				background: rgba(201, 168, 76, 0.08);
+				box-shadow: 0 0 10px rgba(201, 168, 76, 0.15) inset;
+			}
+			.column-slot.empty::after{
+				content: '+';
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				font-size: calc(var(--cw) * 0.5);
+				color: rgba(201, 168, 76, 0.55);
+				pointer-events: none;
+			}
 			.card{
 				position: absolute;
 				width: 100%;
@@ -876,7 +891,7 @@
 				const gap = isMob ? 3 : 10;
 				const hPad = isMob ? 4 : 20;
 				const rawCw = Math.floor((W - hPad*2 - gap*9)/10);
-				const cw = isMob ? Math.max(28, rawCw) : Math.max(40, Math.min(rawCw, 65));
+				const cw = isMob ? Math.max(28, rawCw) : Math.max(46, Math.min(rawCw, 82));
 				const ch = Math.round(cw*1.56);
 				const fdOff = Math.max(10, Math.round(cw*0.22));
 				const r = document.documentElement.style;
@@ -957,10 +972,10 @@
 				for(let col = 0; col < 10; col++){
 					const colEl = document.createElement('div');
 					colEl.className = 'column';
-					const slot = document.createElement('div');
-					slot.className = 'column-slot';
-					slot.dataset.col = col;
 					const cards = tableau[col];
+					const slot = document.createElement('div');
+					slot.className = 'column-slot' + (cards.length === 0 ? ' empty' : '');
+					slot.dataset.col = col;
 					const fdCount = cards.filter(c => !c.faceUp).length;
 					const fuCount = cards.length - fdCount;
 					const usedByFD = fdCount*FD;

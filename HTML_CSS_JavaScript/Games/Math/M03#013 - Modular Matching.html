@@ -136,6 +136,7 @@
 				-ms-user-select: none;
 				user-select: none;
 				-webkit-tap-highlight-color: transparent;
+				touch-action: manipulation;
 				border-radius: 8px;
 				border: 1px solid #ccc;
 				transition: all 0.2s ease, background-color 0.4s ease;
@@ -458,6 +459,9 @@
 
 				function handleCellClick(cell){
 					if(cell.classList.contains('matched')){
+						return;
+					}
+					if(selectedCells.length >= 2){
 						return;
 					}
 					cell.classList.add('revealed');
