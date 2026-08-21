@@ -95,7 +95,7 @@ public class ModInverseGame extends JFrame{
         computeTotalPairs();
         scoreLabel = new JLabel(SCORE_LABEL_NAME + "0/" + totalPairs);
         scoreLabel.setFont(new Font(NAME_FONT, STYLE_FONT, SIZE_FONT));
-        errorsLabel = new JLabel(ERROR_LABEL_NAME + "0");
+        errorsLabel = new JLabel(ERROR_LABEL_NAME + "0/" + maxNumberOfErrors);
         errorsLabel.setFont(new Font(NAME_FONT, STYLE_FONT, SIZE_FONT));
         highlightButton = new JButton(HIGHLIGHT_BUTTON_NAME);
         highlightButton.setFont(new Font(NAME_FONT, STYLE_FONT, SIZE_FONT));
@@ -262,7 +262,7 @@ public class ModInverseGame extends JFrame{
                 }else{
                     maxNumberOfErrors++;
                 }
-                errorsLabel.setText(ERROR_LABEL_NAME + errors);
+                errorsLabel.setText(ERROR_LABEL_NAME + errors + "/" + maxNumberOfErrors);
             }
             if(score == totalPairs){
                 JOptionPane.showMessageDialog(this, MESSAGE_TO_THE_WINNER, NAME_OF_THE_MESSAGE_DIALOG_FOR_YHE_WINNER, JOptionPane.INFORMATION_MESSAGE);
@@ -275,8 +275,8 @@ public class ModInverseGame extends JFrame{
                 firstSelected.setBackground(defaultColor);
             }
             consecutiveMatches = 0;
-            errorsLabel.setText(ERROR_LABEL_NAME + ++errors);
-            if(errors > maxNumberOfErrors){
+            errorsLabel.setText(ERROR_LABEL_NAME + ++errors + "/" + maxNumberOfErrors);
+            if(errors >= maxNumberOfErrors){
                 JOptionPane.showMessageDialog(this, MESSAGE_TO_THE_LOSER, NAME_OF_THE_MESSAGE_DIALOG_FOR_YHE_LOSER, JOptionPane.INFORMATION_MESSAGE);
                 resetGame();
             }
@@ -393,7 +393,7 @@ public class ModInverseGame extends JFrame{
         consecutiveMatches = 0;
         maxNumberOfErrors = INITIAL_MAX_NUMBER_OF_ERRORS;
         scoreLabel.setText(SCORE_LABEL_NAME + "0/" + totalPairs);
-        errorsLabel.setText(ERROR_LABEL_NAME + "0");
+        errorsLabel.setText(ERROR_LABEL_NAME + "0/" + maxNumberOfErrors);
         highlightActive = false;
         highlightButton.setBackground(defaultColor);
         updateLegend();
@@ -545,13 +545,13 @@ public class ModInverseGame extends JFrame{
     	}
     	configureButton.setText(CONFIGURE_BUTTON_NAME + sb.toString());
     	scoreLabel.setText(SCORE_LABEL_NAME + score + "/" + totalPairs);
-    	errorsLabel.setText(ERROR_LABEL_NAME + errors);
+    	errorsLabel.setText(ERROR_LABEL_NAME + errors + "/" + maxNumberOfErrors);
     	highlightButton.setBackground(highlightActive ? ACTIVE_COLOR : defaultColor);
     	updateHighlightColors();
     	checkOppositeNumbers();
     }
 
     public static void main(String[] args){
-        SwingUtilities.invokeLater(() -> new ModInverseGame(97, 10000));
+        SwingUtilities.invokeLater(() -> new ModInverseGame(97, 5));
     }
 }
