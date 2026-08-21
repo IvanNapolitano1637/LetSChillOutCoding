@@ -256,11 +256,15 @@ public class ModInverseGame extends JFrame{
             score++;
             scoreLabel.setText(SCORE_LABEL_NAME + score + "/" + totalPairs);
             consecutiveMatches++;
-            if(consecutiveMatches%3 == 0){
+            if(consecutiveMatches >= 3){
                 if(errors > 0){
                     errors--;
+                    consecutiveMatches = 0;
                 }else{
-                    maxNumberOfErrors++;
+                    if(consecutiveMatches >= 5){
+                        maxNumberOfErrors++;
+                        consecutiveMatches = 0;
+                    }
                 }
                 errorsLabel.setText(ERROR_LABEL_NAME + errors + "/" + maxNumberOfErrors);
             }

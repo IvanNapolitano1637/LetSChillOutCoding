@@ -494,12 +494,15 @@
 						}
 						correctStreak++;
 						if(correctStreak >= 3){
-							correctStreak = 0;
 							if(currentErrors > 0){
 								currentErrors--;
 								document.getElementById('errors').textContent = currentErrors;
+								correctStreak = 0;
 							}else{
-								document.getElementById('maxErrors').textContent = ++maxNumberOfErrors;
+								if(correctStreak >= 5){
+									document.getElementById('maxErrors').textContent = ++maxNumberOfErrors;
+									correctStreak = 0;
+								}
 							}
 						}
 						checkWin();
