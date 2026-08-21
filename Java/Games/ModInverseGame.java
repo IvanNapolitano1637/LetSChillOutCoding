@@ -10,7 +10,8 @@ import java.util.List;
 public class ModInverseGame extends JFrame{
     private static final long serialVersionUID = 5273103038785747040L;
     private final int MOD;
-    private final int MAX_NUMBER_OF_ERRORS;
+    private int maxNumberOfErrors;
+    private final int INITIAL_MAX_NUMBER_OF_ERRORS;
     private final static Color ACTIVE_COLOR = Color.YELLOW;
     private final static Color NEXT_BASE_COLOR = Color.CYAN;
     private final static Color TO_DO_SOON_COLOR = Color.ORANGE;
@@ -63,12 +64,14 @@ public class ModInverseGame extends JFrame{
     private Color defaultColor;
     private int[] BASES = {2,3};
     private int errors = 0;
+    private int consecutiveMatches = 0;
     private boolean skipConfigureOnInit = false;
     private static final boolean USE_FILE_CHOOSER = false;
 
     public ModInverseGame(int mod, int maxErrors){
         this.MOD = mod;
-        this.MAX_NUMBER_OF_ERRORS = maxErrors;
+        this.maxNumberOfErrors = maxErrors;
+        this.INITIAL_MAX_NUMBER_OF_ERRORS = maxErrors;
         this.buttons = new JButton[MOD - 1];
         this.skipConfigureOnInit = false;
         initUI();
@@ -76,7 +79,8 @@ public class ModInverseGame extends JFrame{
 
     public ModInverseGame(int mod, int maxErrors, int[] loadedBases){
         this.MOD = mod;
-        this.MAX_NUMBER_OF_ERRORS = maxErrors;
+        this.maxNumberOfErrors = maxErrors;
+        this.INITIAL_MAX_NUMBER_OF_ERRORS = maxErrors;
         this.BASES = (loadedBases != null) ? loadedBases.clone() : this.BASES;
         this.buttons = new JButton[MOD - 1];
         this.skipConfigureOnInit = true;
@@ -251,6 +255,15 @@ public class ModInverseGame extends JFrame{
             firstSelected.setText(firstValue + "×" + value);
             score++;
             scoreLabel.setText(SCORE_LABEL_NAME + score + "/" + totalPairs);
+            consecutiveMatches++;
+            if(consecutiveMatches%3 == 0){
+                if(errors > 0){
+                    errors--;
+                }else{
+                    maxNumberOfErrors++;
+                }
+                errorsLabel.setText(ERROR_LABEL_NAME + errors);
+            }
             if(score == totalPairs){
                 JOptionPane.showMessageDialog(this, MESSAGE_TO_THE_WINNER, NAME_OF_THE_MESSAGE_DIALOG_FOR_YHE_WINNER, JOptionPane.INFORMATION_MESSAGE);
             }
@@ -261,8 +274,9 @@ public class ModInverseGame extends JFrame{
             if(!firstSelected.getBackground().equals(DONE_COLOR)){
                 firstSelected.setBackground(defaultColor);
             }
+            consecutiveMatches = 0;
             errorsLabel.setText(ERROR_LABEL_NAME + ++errors);
-            if(errors > MAX_NUMBER_OF_ERRORS){
+            if(errors > maxNumberOfErrors){
                 JOptionPane.showMessageDialog(this, MESSAGE_TO_THE_LOSER, NAME_OF_THE_MESSAGE_DIALOG_FOR_YHE_LOSER, JOptionPane.INFORMATION_MESSAGE);
                 resetGame();
             }
@@ -376,6 +390,8 @@ public class ModInverseGame extends JFrame{
         firstValue = -1;
         score = 0;
         errors = 0;
+        consecutiveMatches = 0;
+        maxNumberOfErrors = INITIAL_MAX_NUMBER_OF_ERRORS;
         scoreLabel.setText(SCORE_LABEL_NAME + "0/" + totalPairs);
         errorsLabel.setText(ERROR_LABEL_NAME + "0");
         highlightActive = false;
@@ -442,6 +458,8 @@ public class ModInverseGame extends JFrame{
         out.writeObject(MOD);
         out.writeObject(score);
         out.writeObject(errors);
+        out.writeObject(maxNumberOfErrors);
+        out.writeObject(consecutiveMatches);
         out.writeObject(BASES);
         out.writeObject(highlightActive);
         out.writeObject(checkOppositeNumbers.isSelected());
@@ -481,6 +499,8 @@ public class ModInverseGame extends JFrame{
         int loadedMod = (Integer) in.readObject();
         int loadedScore = (Integer) in.readObject();
         int loadedErrors = (Integer) in.readObject();
+        int loadedMaxErrors = (Integer) in.readObject();
+        int loadedConsecutiveMatches = (Integer) in.readObject();
         int[] loadedBases = (int[]) in.readObject();
         boolean loadedHighlight = (Boolean) in.readObject();
         boolean loadedCheckOpposite = (Boolean) in.readObject();
@@ -488,19 +508,22 @@ public class ModInverseGame extends JFrame{
         String[] states = (String[]) in.readObject();
         if(loadedMod != MOD){
             SwingUtilities.invokeLater(() ->{
-                ModInverseGame newGame = new ModInverseGame(loadedMod, MAX_NUMBER_OF_ERRORS, loadedBases);
-                newGame.applyLoadedState(loadedScore, loadedErrors, loadedHighlight, loadedCheckOpposite, texts, states, loadedBases);
+                ModInverseGame newGame = new ModInverseGame(loadedMod, maxNumberOfErrors, loadedBases);
+                newGame.applyLoadedState(loadedScore, loadedErrors, loadedMaxErrors, loadedConsecutiveMatches, loadedHighlight, loadedCheckOpposite, texts, states, loadedBases);
             });
             dispose();
         }else{
-            applyLoadedState(loadedScore, loadedErrors, loadedHighlight, loadedCheckOpposite, texts, states, loadedBases);
+            applyLoadedState(loadedScore, loadedErrors, loadedMaxErrors, loadedConsecutiveMatches, loadedHighlight, loadedCheckOpposite, texts, states, loadedBases);
         }
     }
 
-    private void applyLoadedState(int loadedScore, int loadedErrors, boolean loadedHighlight, boolean loadedCheckOpposite,
+    private void applyLoadedState(int loadedScore, int loadedErrors, int loadedMaxErrors, int loadedConsecutiveMatches,
+            boolean loadedHighlight, boolean loadedCheckOpposite,
             String[] texts, String[] states, int[] loadedBases){
     	score = loadedScore;
     	errors = loadedErrors;
+    	maxNumberOfErrors = loadedMaxErrors;
+    	consecutiveMatches = loadedConsecutiveMatches;
     	highlightActive = loadedHighlight;
     	checkOppositeNumbers.setSelected(loadedCheckOpposite);
     	if(loadedBases != null){

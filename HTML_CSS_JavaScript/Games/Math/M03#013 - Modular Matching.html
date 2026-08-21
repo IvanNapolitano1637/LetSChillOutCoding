@@ -393,7 +393,7 @@
 			document.addEventListener('DOMContentLoaded',() => {
 				let P = 37;
 				const GRID = document.getElementById('gameGrid');
-				const MAX_NUMBER_OF_ERRORS = 5;
+				let maxNumberOfErrors = 5;
 				//const MAX_NUMBER_OF_ERRORS = 86400;
 				let currentErrors = 0;
 				let correctStreak = 0;
@@ -435,6 +435,7 @@
 					GRID.innerHTML = '';
 					currentErrors = 0;
 					correctStreak = 0;
+					maxNumberOfErrors = 5;
 					pairsFound = 0;
 					selectedCells = [];
 					let processed = new Set();
@@ -449,7 +450,7 @@
 					}
 					maxPairs = totalPairs;
 					document.getElementById('errors').textContent = '0';
-					document.getElementById('maxErrors').textContent = MAX_NUMBER_OF_ERRORS;
+					document.getElementById('maxErrors').textContent = maxNumberOfErrors;
 					document.getElementById('matches').textContent = '0';
 					document.getElementById('maxMatches').textContent = maxPairs;
 					const fontSize = P > 50 ? "0.9em" : "1.1em";
@@ -497,6 +498,8 @@
 							if(currentErrors > 0){
 								currentErrors--;
 								document.getElementById('errors').textContent = currentErrors;
+							}else{
+								document.getElementById('maxErrors').textContent = ++maxNumberOfErrors;
 							}
 						}
 						checkWin();
@@ -510,7 +513,7 @@
 							cell1.classList.remove('revealed', 'error-flash');
 							cell2.classList.remove('revealed', 'error-flash');
 						}, 400);
-						if(currentErrors >= MAX_NUMBER_OF_ERRORS){
+						if(currentErrors >= maxNumberOfErrors){
 							setTimeout(() => { alert(t("maxErrors")); initGame(); }, 100);
 						}
 					}
