@@ -453,16 +453,53 @@
 					document.getElementById('maxErrors').textContent = maxNumberOfErrors;
 					document.getElementById('matches').textContent = '0';
 					document.getElementById('maxMatches').textContent = maxPairs;
-					const fontSize = P > 50 ? "0.9em" : "1.1em";
 					for(let i = 1; i < P; i++){
 						const cell = document.createElement('div');
 						cell.classList.add('cell');
-						cell.style.fontSize = fontSize;
 						cell.dataset.number = i;
 						cell.innerText = i;
 						cell.onclick = () => handleCellClick(cell);
 						GRID.appendChild(cell);
 					}
+					fitGrid(P - 1);
+				}
+
+				function fitGrid(cellCount){
+					if(cellCount <= 0){
+						return;
+					}
+					const header = document.querySelector('.header');
+					const cells = Array.from(document.querySelectorAll('.cell'));
+					if(cells.length === 0){
+						return;
+					}
+					cells.forEach(cell => {
+						cell.style.height = '';
+						cell.style.width = '';
+						cell.style.aspectRatio = '';
+						cell.style.fontSize = '';
+					});
+					const gap = parseFloat(getComputedStyle(GRID).rowGap) || 8;
+					const cols = getComputedStyle(GRID).gridTemplateColumns.trim().split(/\s+/).length;
+					const rows = Math.ceil(cellCount/cols);
+					const naturalCellSize = cells[0].getBoundingClientRect().width;
+					const headerHeight = header.getBoundingClientRect().height;
+					const bottomMargin = 20;
+					const availHeight = window.innerHeight - headerHeight - bottomMargin;
+					const naturalTotalHeight = rows*naturalCellSize + gap*(rows - 1);
+					if(naturalTotalHeight <= availHeight){
+						return;
+					}
+					const minCellHeight = 22;
+					let cellHeight = (availHeight - gap*(rows - 1))/rows;
+					cellHeight = Math.max(cellHeight, minCellHeight);
+					const fontSize = Math.max(8, Math.min(18, cellHeight*0.34));
+					cells.forEach(cell => {
+						cell.style.width = naturalCellSize + 'px';
+						cell.style.aspectRatio = 'auto';
+						cell.style.height = cellHeight + 'px';
+						cell.style.fontSize = fontSize + 'px';
+					});
 				}
 
 				function handleCellClick(cell){
@@ -627,6 +664,13 @@
 
 				initGame();
 				updateUI();
+
+				let resizeTimeout;
+
+				window.addEventListener('resize', () => {
+					clearTimeout(resizeTimeout);
+					resizeTimeout = setTimeout(() => fitGrid(P - 1), 150);
+				});
 			});
 		</script>
 	</body>
