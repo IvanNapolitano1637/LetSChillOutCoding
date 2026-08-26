@@ -21419,6 +21419,7 @@ document.addEventListener('keydown', function(e) {
 						cell.style.aspectRatio = '';
 						cell.style.fontSize = '';
 					});
+					chooseColumnCount(cellCount);
 					const gap = parseFloat(getComputedStyle(GRID).rowGap) || 8;
 					const cols = getComputedStyle(GRID).gridTemplateColumns.trim().split(/\\s+/).length;
 					const rows = Math.ceil(cellCount/cols);
@@ -21440,6 +21441,34 @@ document.addEventListener('keydown', function(e) {
 						cell.style.height = cellHeight + 'px';
 						cell.style.fontSize = fontSize + 'px';
 					});
+				}
+
+				function chooseColumnCount(cellCount){
+					GRID.style.gridTemplateColumns = '';
+					GRID.style.width = '';
+					GRID.style.maxWidth = '';
+					const DESKTOP_BREAKPOINT = 700;
+					if(window.innerWidth < DESKTOP_BREAKPOINT){
+						return;
+					}
+					const CELL_WIDTH = 85;
+					const gap = parseFloat(getComputedStyle(GRID).rowGap) || 8;
+					const sideMargin = 40;
+					const availWidth = Math.min(window.innerWidth - sideMargin, 1800);
+					const maxColsByWidth = Math.max(1, Math.floor((availWidth + gap)/(CELL_WIDTH + gap)));
+					const maxCols = Math.min(cellCount, maxColsByWidth);
+					let chosenCols = maxCols;
+					for(let cols = maxCols; cols >= 1; cols--){
+						const rows = Math.ceil(cellCount/cols);
+						if(cols <= rows*2){
+							chosenCols = cols;
+							break;
+						}
+					}
+					const gridWidth = chosenCols*CELL_WIDTH + gap*(chosenCols - 1);
+					GRID.style.gridTemplateColumns = \`repeat(\${chosenCols}, \${CELL_WIDTH}px)\`;
+					GRID.style.width = gridWidth + 'px';
+					GRID.style.maxWidth = 'none';
 				}
 
 				function handleCellClick(cell){
