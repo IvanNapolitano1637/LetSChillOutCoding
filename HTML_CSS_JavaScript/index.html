@@ -21434,7 +21434,11 @@ document.addEventListener('keydown', function(e) {
 					const minCellHeight = 22;
 					let cellHeight = (availHeight - gap*(rows - 1))/rows;
 					cellHeight = Math.max(cellHeight, minCellHeight);
-					const fontSize = Math.max(8, Math.min(18, cellHeight*0.34));
+					const fontSizeByHeight = cellHeight*0.45;
+					const targetCharCount = 11;
+					const avgCharWidthRatio = 0.55; 
+					const fontSizeByWidth = (naturalCellSize*0.9)/(targetCharCount*avgCharWidthRatio);
+					const fontSize = Math.max(8, Math.min(18, fontSizeByHeight, fontSizeByWidth));
 					cells.forEach(cell => {
 						cell.style.width = naturalCellSize + 'px';
 						cell.style.aspectRatio = 'auto';
