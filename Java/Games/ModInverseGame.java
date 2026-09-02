@@ -17,6 +17,7 @@ public class ModInverseGame extends JFrame{
     private final static Color TO_DO_SOON_COLOR = Color.ORANGE;
     private final static Color DONE_COLOR = Color.GREEN;
     private final static Color TO_DO_BY_OPPOSITE_COLOR = Color.MAGENTA;
+    private final static Color TO_DO_BOTH_COLOR = Color.BLUE;
     private final String NAME_FONT = "Arial";
     private final int STYLE_FONT = Font.BOLD;
     private final int SIZE_FONT = 16;
@@ -171,6 +172,9 @@ public class ModInverseGame extends JFrame{
         if(c.equals(TO_DO_BY_OPPOSITE_COLOR)){
             return "TO_DO_BY_OPPOSITE";
         }
+        if(c.equals(TO_DO_BOTH_COLOR)){
+            return "TO_DO_BOTH";
+        }
         return "DEFAULT";
     }
 
@@ -181,6 +185,7 @@ public class ModInverseGame extends JFrame{
             case "NEXT_BASE": return NEXT_BASE_COLOR;
             case "TO_DO_SOON": return TO_DO_SOON_COLOR;
             case "TO_DO_BY_OPPOSITE": return TO_DO_BY_OPPOSITE_COLOR;
+            case "TO_DO_BOTH": return TO_DO_BOTH_COLOR;
             default: return defaultColor;
         }
     }
@@ -196,8 +201,11 @@ public class ModInverseGame extends JFrame{
                     int val_2 = (int) latterButton.getClientProperty("value");
                     if(val_1 + val_2 == MOD){
                         if(firstButton.getBackground().equals(DONE_COLOR)){
-                            if(latterButton.getBackground().equals(defaultColor)){
+                            Color currentColor = latterButton.getBackground();
+                            if(currentColor.equals(defaultColor)){
                                 latterButton.setBackground(TO_DO_BY_OPPOSITE_COLOR);
+                            }else if(currentColor.equals(TO_DO_SOON_COLOR) || currentColor.equals(NEXT_BASE_COLOR)){
+                                latterButton.setBackground(TO_DO_BOTH_COLOR);
                             }
                         }
                     }
@@ -205,10 +213,11 @@ public class ModInverseGame extends JFrame{
             }
         }else{
             for(JButton btn : buttons){
-                if(btn.getBackground().equals(TO_DO_BY_OPPOSITE_COLOR)){
+                if(btn.getBackground().equals(TO_DO_BY_OPPOSITE_COLOR) || btn.getBackground().equals(TO_DO_BOTH_COLOR)){
                     btn.setBackground(defaultColor);
                 }
             }
+            updateHighlightColors();
         }
     }
 
