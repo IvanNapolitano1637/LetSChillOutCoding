@@ -562,6 +562,7 @@
 							setAsMatched(cell1, num1, num2);
 							setAsMatched(cell2, num2, num1);
 						}
+						updateHighlights();
 						correctStreak++;
 						if(correctStreak >= 3){
 							if(currentErrors > 0){
@@ -599,7 +600,6 @@
 					cell.dataset.inverse = n2;
 					cell.innerHTML = (n1 === n2) ? `${n1} = ${n1}⁻¹` : `${n1} = ${n2}⁻¹`;
 					matchedNumbersCount++;
-					updateHighlights();
 				}
 
 				function checkWin(){
@@ -639,7 +639,7 @@
 					});
 				}
 
-				document.getElementById('btnUpdateP').addEventListener('click',() => {
+				document.getElementById('btnUpdateP').addEventListener('click', (e) => {
 					const pVal = parseInt(document.getElementById('pVal').value);
 					if(isNaN(pVal) || pVal < 2){
 						alert(t("invalidP"));
@@ -669,7 +669,8 @@
 					updateHighlights();
 				}
 
-				document.getElementById('btnDouble').addEventListener('click',() => {
+				document.getElementById('btnDouble').addEventListener('click', (e) => {
+					e.preventDefault();
 					highlightDouble();
 				});
 
@@ -680,7 +681,8 @@
 					updateHighlights();
 				}
 
-				document.getElementById('btnOpposite').addEventListener('click',() => {
+				document.getElementById('btnOpposite').addEventListener('click', (e) => {
+					e.preventDefault();
 					highlightOpposite();
 				});
 
