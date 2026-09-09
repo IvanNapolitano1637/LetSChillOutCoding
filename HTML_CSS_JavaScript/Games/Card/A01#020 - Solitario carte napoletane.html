@@ -10,10 +10,20 @@
 				--bg-color: #1a5c2a;
 				--bg-felt: radial-gradient(ellipse at center, #237832 0%, #1a5c2a 60%, #143f1e 100%);
 				--card-ivory: #fdf6e3;
+				--card-width: clamp(36px, 11.2vw, 85px);
+				--card-height: clamp(59px, 18.5vw, 140px);
+				--gap: clamp(2px, 1vw, 15px);
+				--reveal: clamp(22px, 6.5vw, 34px);
+			}
+			body.mode-5{
 				--card-width: clamp(40px, 13vw, 85px);
 				--card-height: clamp(66px, 21vw, 140px);
 				--gap: clamp(2px, 1.2vw, 15px);
-				--reveal: clamp(22px, 6.5vw, 34px);
+			}
+			body.mode-6{
+				--card-width: clamp(36px, 11.2vw, 85px);
+				--card-height: clamp(59px, 18.5vw, 140px);
+				--gap: clamp(2px, 1vw, 15px);
 				--font-val: clamp(9px, 3vw, 16px);
 				--suit-D: #8a5600;
 				--suit-C: #8b0000;
@@ -379,9 +389,10 @@
 								<span class="kbd">V</span> 
 								<span class="kbd">B</span> 
 								<span class="kbd">N</span> 
-								<span class="kbd">M</span>
+								<span class="kbd">M</span> 
+								<span class="kbd" id="help-comma-key">,</span>
 							</td>
-							<td>Seleziona Colonna (1-5)</td>
+							<td id="help-col-range">Seleziona Colonna (1-6)</td>
 						</tr>
 						<tr>
 							<td>
@@ -394,7 +405,7 @@
 						</tr>
 						<tr>
 							<td><span class="kbd">Q</span></td>
-							<td>Pesca nuova carta dal mazzo</td>
+							<td>Pesca nuova carta dal mazzo (rigiro pozzetto: <span id="help-recycle-rule">massimo due giri</span>)</td>
 						</tr>
 						<tr>
 							<td><span class="kbd">W</span></td>
@@ -417,10 +428,35 @@
 				<button class="help-close" onclick="toggleHelp()">Chiudi</button>
 			</div>
 		</div>
+		<div class="help-overlay" id="redeal-overlay">
+			<div class="help-box">
+				<h2>🂠 Pozzetto esaurito</h2>
+				<p style="font-size:13px; line-height:1.5; margin:0 0 20px; text-align:center;">
+					Hai girato tutte le carte del pozzetto. Vuoi rigirarlo un'ultima volta (seconda ed ultima volta) oppure continuare usando solo le carte già scartate?
+				</p>
+				<div class="game-controls" style="margin-bottom:0;">
+					<button class="btn-action" onclick="chooseRedeal()">Rigira pozzetto</button>
+					<button class="btn-action" onclick="chooseWasteOnly()">Usa solo gli scarti</button>
+				</div>
+			</div>
+		</div>
+		<div class="help-overlay open" id="rule-overlay">
+			<div class="help-box">
+				<h2>🂡 Scegli la regola</h2>
+				<p style="font-size:13px; line-height:1.5; margin:0 0 20px; text-align:center;">
+					Questo solitario ha due varianti. Scegli quella con cui vuoi giocare questa partita.
+				</p>
+				<div class="game-controls" style="margin-bottom:0; flex-direction:column; align-items:center;">
+					<button class="btn-action" onclick="selectRule('classic')" style="width:100%; max-width:280px;">Regola Classica<br><span style="font-size:10px; font-weight:400; text-transform:none; letter-spacing:0;">5 colonne · pozzetto illimitato</span></button>
+					<button class="btn-action" onclick="selectRule('new')" style="width:100%; max-width:280px; margin-top:10px;">Regola Nuova<br><span style="font-size:10px; font-weight:400; text-transform:none; letter-spacing:0;">6 colonne · pozzetto rigirabile una sola volta</span></button>
+				</div>
+			</div>
+		</div>
 		<h1>Solitario carte napoletane</h1>
 		<div class="game-controls">
 			<button class="btn-action" onclick="initGame()">Nuova Partita</button>
 			<button id="btn-undo" class="btn-undo" onclick="undoMove()" disabled>↩ Annulla</button>
+			<button class="btn-action" onclick="location.reload()">Cambia Regola</button>
 		</div>
 		<div class="top-row">
 			<div class="deck-area">
@@ -434,13 +470,7 @@
 				<div class="foundation-slot" data-fslot="3" onclick="handleFoundationSlotClick(3)">A</div>
 			</div>
 		</div>
-		<div class="tableau" id="tableau">
-			<div class="column" id="col-0" onclick="handleEmptyColumnClick(0)"></div>
-			<div class="column" id="col-1" onclick="handleEmptyColumnClick(1)"></div>
-			<div class="column" id="col-2" onclick="handleEmptyColumnClick(2)"></div>
-			<div class="column" id="col-3" onclick="handleEmptyColumnClick(3)"></div>
-			<div class="column" id="col-4" onclick="handleEmptyColumnClick(4)"></div>
-		</div>
+		<div class="tableau" id="tableau"></div>
 		<script>
 			const SUITS = ['S', 'C', 'D', 'B'];
 			const IS_MULTIPLE_SELECTION_POSSIBLE = false;
@@ -502,10 +532,55 @@
 			let deckData = [];
 			let selection = null;
 			let history = [];
+			let recycleCount = 0;
+			let wasteOnlyMode = false;
+			let NUM_COLS = 6;
+			let UNLIMITED_RECYCLE = false;
+
+			function selectRule(rule){
+				if(rule === 'classic'){
+					NUM_COLS = 5;
+					UNLIMITED_RECYCLE = true;
+					document.body.classList.remove('mode-6');
+					document.body.classList.add('mode-5');
+				}else{
+					NUM_COLS = 6;
+					UNLIMITED_RECYCLE = false;
+					document.body.classList.remove('mode-5');
+					document.body.classList.add('mode-6');
+				}
+				document.getElementById('rule-overlay').classList.remove('open');
+				const commaKey = document.getElementById('help-comma-key');
+				if(commaKey){
+					commaKey.style.display = (NUM_COLS === 6) ? '' : 'none';
+				}
+				const colRange = document.getElementById('help-col-range');
+				if(colRange){
+					colRange.textContent = `Seleziona Colonna (1-${NUM_COLS})`;
+				}
+				const recycleNote = document.getElementById('help-recycle-rule');
+				if(recycleNote){
+					recycleNote.textContent = UNLIMITED_RECYCLE ? 'illimitato' : 'massimo due giri';
+				}
+				buildTableau();
+				initGame();
+			}
+
+			function buildTableau(){
+				const tableau = document.getElementById('tableau');
+				tableau.innerHTML = '';
+				for(let i = 0; i < NUM_COLS; i++){
+					const col = document.createElement('div');
+					col.className = 'column';
+					col.id = `col-${i}`;
+					col.setAttribute('onclick', `handleEmptyColumnClick(${i})`);
+					tableau.appendChild(col);
+				}
+			}
 
 			function captureState(){
 				const cols = [];
-				for(let i = 0; i < 5; i++){
+				for(let i = 0; i < NUM_COLS; i++){
 					const col = document.getElementById(`col-${i}`);
 					cols.push(Array.from(col.querySelectorAll('.card')).map(c => ({
 						suit: c.dataset.suit,
@@ -522,7 +597,9 @@
 					cols: JSON.parse(JSON.stringify(cols)),
 					waste: JSON.parse(JSON.stringify(waste)),
 					deck: JSON.parse(JSON.stringify(deckData)),
-					foundation: JSON.parse(JSON.stringify(foundationSlots))
+					foundation: JSON.parse(JSON.stringify(foundationSlots)),
+					recycleCount: recycleCount,
+					wasteOnlyMode: wasteOnlyMode
 				};
 			}
 
@@ -550,7 +627,9 @@
 			function restoreState(state){
 				deckData = state.deck;
 				foundationSlots = state.foundation;
-				for(let i = 0; i < 5; i++){
+				recycleCount = state.recycleCount || 0;
+				wasteOnlyMode = !!state.wasteOnlyMode;
+				for(let i = 0; i < NUM_COLS; i++){
 					const col = document.getElementById(`col-${i}`);
 					col.innerHTML = '';
 					state.cols[i].forEach(cd => addCard(col, cd, cd.faceUp));
@@ -577,6 +656,9 @@
 				deckData = [];
 				selection = null;
 				history = [];
+				recycleCount = 0;
+				wasteOnlyMode = false;
+				document.getElementById('redeal-overlay').classList.remove('open');
 				document.getElementById('btn-undo').disabled = true;
 				document.getElementById('btn-undo').style.opacity = '0.5';
 				document.getElementById('btn-undo').style.cursor = 'not-allowed';
@@ -591,10 +673,10 @@
 					}
 				}
 				deckData.sort(() => Math.random() - 0.5);
-				for(let i = 0; i < 5; i++){
+				for(let i = 0; i < NUM_COLS; i++){
 					const col = document.getElementById(`col-${i}`);
 					col.innerHTML = '';
-					const count = 5 - i;
+					const count = NUM_COLS - i;
 					for(let j = 0; j < count; j++){
 						addCard(col, deckData.pop(), j === count - 1);
 					}
@@ -1197,23 +1279,72 @@
 					const emptyCol = findEmptyColumn();
 					const cardData = deckData.pop();
 					addCard(emptyCol || waste, cardData, true);
-				}else{
-					const wasteCards = Array.from(waste.children);
-					if(wasteCards.length === 0){
+					updateDeckUI();
+					return;
+				}
+				if(UNLIMITED_RECYCLE){
+					const wasteCardsUnl = Array.from(waste.children);
+					if(wasteCardsUnl.length === 0){
 						alert("Nessuna carta rimasta nel mazzo o negli scarti!");
 						return;
 					}
 					pushHistory();
-					wasteCards.reverse().forEach(c =>
+					wasteCardsUnl.reverse().forEach(c =>
 						deckData.push({ suit: c.dataset.suit, value: parseInt(c.dataset.value) })
 					);
 					waste.innerHTML = '';
+					updateDeckUI();
+					return;
 				}
+				if(wasteOnlyMode){
+					return;
+				}
+				const wasteCards = Array.from(waste.children);
+				if(wasteCards.length === 0){
+					alert("Nessuna carta rimasta nel mazzo o negli scarti!");
+					return;
+				}
+				if(recycleCount === 0){
+					openRedealChoice();
+					return;
+				}
+				wasteOnlyMode = true;
+				updateDeckUI();
+			}
+
+			function openRedealChoice(){
+				document.getElementById('redeal-overlay').classList.add('open');
+			}
+
+			function closeRedealChoice(){
+				document.getElementById('redeal-overlay').classList.remove('open');
+			}
+
+			function chooseRedeal(){
+				closeRedealChoice();
+				const waste = document.getElementById('waste');
+				const wasteCards = Array.from(waste.children);
+				if(wasteCards.length === 0){
+					return;
+				}
+				pushHistory();
+				wasteCards.reverse().forEach(c =>
+					deckData.push({ suit: c.dataset.suit, value: parseInt(c.dataset.value) })
+				);
+				waste.innerHTML = '';
+				recycleCount++;
+				updateDeckUI();
+			}
+
+			function chooseWasteOnly(){
+				closeRedealChoice();
+				pushHistory();
+				wasteOnlyMode = true;
 				updateDeckUI();
 			}
 
 			function findEmptyColumn(){
-				for(let i = 0; i < 5; i++){
+				for(let i = 0; i < NUM_COLS; i++){
 					const col = document.getElementById(`col-${i}`);
 					if(col.children.length === 0){
 						return col;
@@ -1257,14 +1388,20 @@
 				const d = document.getElementById('deck');
 				if(deckData.length > 0){
 					d.className = 'deck-slot card back';
+					d.style.cursor = '';
 					if(CARD_BACK_IMAGE){
 						d.innerHTML = `<img src="${CARD_BACK_IMAGE}" alt="dorso carta" draggable="false" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:3;">`;
 					}else{
 						d.innerHTML = '';
 					}
+				}else if(wasteOnlyMode){
+					d.className = 'deck-slot';
+					d.innerHTML = '✗';
+					d.style.cursor = 'default';
 				}else{
 					d.className = 'deck-slot';
 					d.innerHTML = '⟳';
+					d.style.cursor = '';
 				}
 			}
 
@@ -1274,14 +1411,13 @@
 				}
 			}
 
-			initGame();
-
 			const KEY_MAP = {
 				'c': () => triggerColumn(0),
 				'v': () => triggerColumn(1),
 				'b': () => triggerColumn(2),
 				'n': () => triggerColumn(3),
 				'm': () => triggerColumn(4),
+				',': () => triggerColumn(5),
 				'u': () => triggerFoundation(0),
 				'i': () => triggerFoundation(1),
 				'o': () => triggerFoundation(2),
