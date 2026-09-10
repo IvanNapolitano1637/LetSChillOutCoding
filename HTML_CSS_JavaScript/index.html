@@ -10282,7 +10282,7 @@ document.addEventListener('keydown', function(e) {
 				clearSelection();
 				if(deckData.length > 0){
 					pushHistory();
-					const emptyCol = findEmptyColumn();
+					const emptyCol = UNLIMITED_RECYCLE ? findEmptyColumn() : null;
 					const cardData = deckData.pop();
 					addCard(emptyCol || waste, cardData, true);
 					updateDeckUI();
