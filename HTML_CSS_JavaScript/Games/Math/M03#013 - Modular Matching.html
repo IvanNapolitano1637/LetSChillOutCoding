@@ -17,10 +17,19 @@
 			body{
 				font-family: 'Segoe UI', sans-serif;
 				margin: 0;
+				min-height: 100vh;
 				background-color: #fafafa;
 				display: flex;
 				flex-direction: column;
 				align-items: center;
+			}
+			.grid-wrapper{
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				width: 100%;
+				flex: 1;
 			}
 			.header{
 				position: sticky;
@@ -35,8 +44,9 @@
 			.controls{
 				margin-top: 10px;
 				display: flex;
-				gap: 10px;
+				gap: 10px 20px;
 				justify-content: center;
+				align-items: center;
 				flex-wrap: wrap;
 				padding: 0 10px;
 			}
@@ -93,11 +103,9 @@
 				justify-content: center;
 			}
 			.button-group{
-				width: 100%;
 				display: flex;
 				justify-content: center;
 				gap: 8px;
-				margin-top: 10px;
 			}
 			.color-success{
 				color: #4caf50;
@@ -265,11 +273,11 @@
 	</head>
 	<body lang="en">
 		<div class="header">
-			<div class="stats-container">
-				<b><span id="txt-matches">Pairs</span>: <span id="matches" class="color-success">0</span>/<span id="maxMatches">18</span></b>
-				<b><span id="txt-errors">Errors</span>: <span id="errors" class="color-error">0</span>/<span id="maxErrors">5</span></b>
-			</div>
 			<div class="controls">
+				<div class="stats-container">
+					<b><span id="txt-matches">Pairs</span>: <span id="matches" class="color-success">0</span>/<span id="maxMatches">18</span></b>
+					<b><span id="txt-errors">Errors</span>: <span id="errors" class="color-error">0</span>/<span id="maxErrors">5</span></b>
+				</div>
 				<div class="p-input-group">
 					<label for="pVal" id="labelP">P = </label>
 					<input type="number" id="pVal" value="37" min="3" max="101">
@@ -282,6 +290,9 @@
 				</div>
 			</div>
 		</div>
+		<div class="grid-wrapper">
+			<div class="grid" id="gameGrid"></div>
+		</div>
 		<div id="helpOverlay" role="dialog" aria-modal="true" onclick="if(event.target===this){closeHelp();}">
 			<div id="helpBox">
 				<button id="helpCloseBtn" onclick="closeHelp()" aria-label="Close">✕</button>
@@ -289,7 +300,6 @@
 				<table id="helpTable"></table>
 			</div>
 		</div>
-		<div class="grid" id="gameGrid"></div>
 		<script>
 			const FLAGS_SVG = [
 				'<svg class="flag-svg" viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#s)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>', // UK
@@ -711,8 +721,17 @@
 				updateUI();
 
 				let resizeTimeout;
+				let lastResizeWidth = window.innerWidth;
+				let lastResizeHeight = window.innerHeight;
 
 				window.addEventListener('resize', () => {
+					const newWidth = window.innerWidth;
+					const newHeight = window.innerHeight;
+					if(newWidth === lastResizeWidth && Math.abs(newHeight - lastResizeHeight) < 150){
+						return;
+					}
+					lastResizeWidth = newWidth;
+					lastResizeHeight = newHeight;
 					clearTimeout(resizeTimeout);
 					resizeTimeout = setTimeout(() => fitGrid(P - 1), 150);
 				});
