@@ -21246,8 +21246,13 @@ document.addEventListener('keydown', function(e) {
 				white-space: nowrap;
 			}
 			.revealed{
+				background-color: var(--reveal-color);
 				transform: scale(1.05);
-				box-shadow: 0 0 0 3px var(--reveal-color) inset;
+			}
+			.cell.highlight-double.revealed,
+			.cell.highlight-opposite.revealed,
+			.cell.highlight-both.revealed{
+				background-color: var(--reveal-color);
 			}
 			.error-flash{
 				animation: shake 0.3s;
@@ -21483,6 +21488,7 @@ document.addEventListener('keydown', function(e) {
 				let maxPairs = 0;
 				let showDoubles = false;
 				let showOpposites = false;
+				let cellsByNumber = new Map();
 
 				function gcd(a, b){
 					return b === 0 ? a : gcd(b, a%b);
@@ -21533,13 +21539,17 @@ document.addEventListener('keydown', function(e) {
 					document.getElementById('maxErrors').textContent = maxNumberOfErrors;
 					document.getElementById('matches').textContent = '0';
 					document.getElementById('maxMatches').textContent = maxPairs;
+					cellsByNumber = new Map();
 					for(let i = 1; i < P; i++){
 						const cell = document.createElement('div');
 						cell.classList.add('cell');
 						cell.dataset.number = i;
+						cell.dataset.isDouble = 'false';
+						cell.dataset.isOpposite = 'false';
 						cell.innerText = i;
 						cell.onclick = () => handleCellClick(cell);
 						GRID.appendChild(cell);
+						cellsByNumber.set(i, cell);
 					}
 					fitGrid(P - 1);
 				}
@@ -21642,7 +21652,10 @@ document.addEventListener('keydown', function(e) {
 							setAsMatched(cell1, num1, num2);
 							setAsMatched(cell2, num2, num1);
 						}
-						updateHighlights();
+						registerMatchedNumber(num1);
+						if(num2 !== num1){
+							registerMatchedNumber(num2);
+						}
 						correctStreak++;
 						if(correctStreak >= 3){
 							if(currentErrors > 0){
@@ -21680,6 +21693,7 @@ document.addEventListener('keydown', function(e) {
 					cell.dataset.inverse = n2;
 					cell.innerHTML = (n1 === n2) ? \`\${n1} = \${n1}⁻¹\` : \`\${n1} = \${n2}⁻¹\`;
 					matchedNumbersCount++;
+					applyCellAppearance(cell);
 				}
 
 				function checkWin(){
@@ -21688,35 +21702,45 @@ document.addEventListener('keydown', function(e) {
 					}
 				}
 
-				function updateHighlights(){
+				function applyCellAppearance(cell){
 					const HIGHLIGHT_CLASSES = ['highlight-double', 'highlight-opposite', 'highlight-both'];
-					const cells = Array.from(document.querySelectorAll('.cell'));
-					const matchedNumbers = cells.filter(c => c.classList.contains('matched')).map(c => parseInt(c.dataset.number));
-					cells.forEach(cell => {
-						if(cell.classList.contains('matched')){
-							cell.classList.remove(...HIGHLIGHT_CLASSES);
-							return;
-						}
-						const val = parseInt(cell.dataset.number);
-						const isDouble = showDoubles && matchedNumbers.some(m =>(m*2) === val);
-						const isOpposite = showOpposites && matchedNumbers.some(m =>(m + val) === P);
-						let target = null;
-						if(isDouble && isOpposite){
-							target = 'highlight-both';
-						}else if(isDouble){
-							target = 'highlight-double';
-						}else if(isOpposite){
-							target = 'highlight-opposite';
-						}
-						HIGHLIGHT_CLASSES.forEach(cls => {
-							if(cls !== target && cell.classList.contains(cls)){
-								cell.classList.remove(cls);
-							}
-						});
-						if(target && !cell.classList.contains(target)){
-							cell.classList.add(target);
+					if(cell.classList.contains('matched')){
+						cell.classList.remove(...HIGHLIGHT_CLASSES);
+						return;
+					}
+					const isDouble = showDoubles && cell.dataset.isDouble === 'true';
+					const isOpposite = showOpposites && cell.dataset.isOpposite === 'true';
+					let target = null;
+					if(isDouble && isOpposite){
+						target = 'highlight-both';
+					}else if(isDouble){
+						target = 'highlight-double';
+					}else if(isOpposite){
+						target = 'highlight-opposite';
+					}
+					HIGHLIGHT_CLASSES.forEach(cls => {
+						if(cls !== target && cell.classList.contains(cls)){
+							cell.classList.remove(cls);
 						}
 					});
+					if(target && !cell.classList.contains(target)){
+						cell.classList.add(target);
+					}
+				}
+
+				function registerMatchedNumber(n){
+					const doubleValue = n*2;
+					const doubleCell = cellsByNumber.get(doubleValue);
+					if(doubleCell && doubleCell.dataset.isDouble !== 'true'){
+						doubleCell.dataset.isDouble = 'true';
+						applyCellAppearance(doubleCell);
+					}
+					const oppositeValue = P - n;
+					const oppositeCell = cellsByNumber.get(oppositeValue);
+					if(oppositeCell && oppositeCell.dataset.isOpposite !== 'true'){
+						oppositeCell.dataset.isOpposite = 'true';
+						applyCellAppearance(oppositeCell);
+					}
 				}
 
 				document.getElementById('btnUpdateP').addEventListener('click', (e) => {
@@ -21736,7 +21760,7 @@ document.addEventListener('keydown', function(e) {
 				function highlightDouble(){
 					showDoubles = !showDoubles;
 					document.getElementById('btnDouble').classList.toggle('active', showDoubles);
-					updateHighlights();
+					cellsByNumber.forEach(applyCellAppearance);
 				}
 
 				document.getElementById('btnDouble').addEventListener('click', (e) => {
@@ -21747,7 +21771,7 @@ document.addEventListener('keydown', function(e) {
 				function highlightOpposite(){
 					showOpposites = !showOpposites;
 					document.getElementById('btnOpposite').classList.toggle('active', showOpposites);
-					updateHighlights();
+					cellsByNumber.forEach(applyCellAppearance);
 				}
 
 				document.getElementById('btnOpposite').addEventListener('click', (e) => {
