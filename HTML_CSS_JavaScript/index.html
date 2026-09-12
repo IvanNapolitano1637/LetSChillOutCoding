@@ -21246,18 +21246,12 @@ document.addEventListener('keydown', function(e) {
 				white-space: nowrap;
 			}
 			.revealed{
-				background-color: var(--reveal-color);
-				color: white;
 				transform: scale(1.05);
-			}
-			.cell.highlight-double.revealed,
-			.cell.highlight-opposite.revealed,
-			.cell.highlight-both.revealed{
-				background-color: var(--reveal-color);
+				box-shadow: 0 0 0 3px var(--reveal-color) inset;
 			}
 			.error-flash{
-				background-color: var(--error-color) !important;
 				animation: shake 0.3s;
+				box-shadow: 0 0 0 3px var(--error-color) inset;
 			}
 			@keyframes shake{
 				0%, 100%{
@@ -21739,19 +21733,9 @@ document.addEventListener('keydown', function(e) {
 					initGame();
 				});
 
-				function updateBtnColors(){
-					const bd = document.getElementById('btnDouble');
-					const bo = document.getElementById('btnOpposite');
-					bd.style.background = showDoubles ? 'var(--color-double)' : '';
-					bd.style.borderColor = showDoubles ? '#ccb200' : '';
-					bo.style.background = showOpposites ? 'var(--color-opposite)' : '';
-					bo.style.borderColor = showOpposites ? '#7c52cc' : '';
-				}
-
 				function highlightDouble(){
 					showDoubles = !showDoubles;
 					document.getElementById('btnDouble').classList.toggle('active', showDoubles);
-					updateBtnColors();
 					updateHighlights();
 				}
 
@@ -21763,7 +21747,6 @@ document.addEventListener('keydown', function(e) {
 				function highlightOpposite(){
 					showOpposites = !showOpposites;
 					document.getElementById('btnOpposite').classList.toggle('active', showOpposites);
-					updateBtnColors();
 					updateHighlights();
 				}
 
