@@ -442,13 +442,13 @@
 		</div>
 		<div class="help-overlay open" id="rule-overlay">
 			<div class="help-box">
-				<h2>🂡 Scegli la regola</h2>
+				<h2>🂡 Scegli la versione</h2>
 				<p style="font-size:13px; line-height:1.5; margin:0 0 20px; text-align:center;">
 					Questo solitario ha due varianti. Scegli quella con cui vuoi giocare questa partita.
 				</p>
 				<div class="game-controls" style="margin-bottom:0; flex-direction:column; align-items:center;">
-					<button class="btn-action" onclick="selectRule('classic')" style="width:100%; max-width:280px;">Regola Classica<br><span style="font-size:10px; font-weight:400; text-transform:none; letter-spacing:0;">5 colonne · pozzetto illimitato</span></button>
-					<button class="btn-action" onclick="selectRule('new')" style="width:100%; max-width:280px; margin-top:10px;">Regola Nuova<br><span style="font-size:10px; font-weight:400; text-transform:none; letter-spacing:0;">6 colonne · pozzetto rigirabile una sola volta</span></button>
+					<button class="btn-action" onclick="selectRule('v1')" style="width:100%; max-width:280px;">Versione 1<br><span style="font-size:10px; font-weight:400; text-transform:none; letter-spacing:0;">5 colonne · pozzetto illimitato</span></button>
+					<button class="btn-action" onclick="selectRule('v2')" style="width:100%; max-width:280px; margin-top:10px;">Versione 2<br><span style="font-size:10px; font-weight:400; text-transform:none; letter-spacing:0;">6 colonne · pozzetto rigirabile una sola volta</span></button>
 				</div>
 			</div>
 		</div>
@@ -456,7 +456,7 @@
 		<div class="game-controls">
 			<button class="btn-action" onclick="initGame()">Nuova Partita</button>
 			<button id="btn-undo" class="btn-undo" onclick="undoMove()" disabled>↩ Annulla</button>
-			<button class="btn-action" onclick="location.reload()">Cambia Regola</button>
+			<button class="btn-action" onclick="location.reload()">Cambia Versione</button>
 		</div>
 		<div class="top-row">
 			<div class="deck-area">
@@ -538,7 +538,7 @@
 			let UNLIMITED_RECYCLE = false;
 
 			function selectRule(rule){
-				if(rule === 'classic'){
+				if(rule === 'v1'){
 					NUM_COLS = 5;
 					UNLIMITED_RECYCLE = true;
 					document.body.classList.remove('mode-6');
