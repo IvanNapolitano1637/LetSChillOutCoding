@@ -147,7 +147,7 @@
 				touch-action: manipulation;
 				border-radius: 8px;
 				border: 1px solid #ccc;
-				transition: all 0.2s ease, background-color 0.4s ease;
+				transition: transform 0.15s ease;
 				text-align: center;
 				line-height: 1.2;
 			}
@@ -170,13 +170,8 @@
 				white-space: nowrap;
 			}
 			.revealed{
-				background-color: var(--reveal-color);
+				background-color: var(--reveal-color) !important;
 				transform: scale(1.05);
-			}
-			.cell.highlight-double.revealed,
-			.cell.highlight-opposite.revealed,
-			.cell.highlight-both.revealed{
-				background-color: var(--reveal-color);
 			}
 			.error-flash{
 				animation: shake 0.3s;
@@ -300,6 +295,10 @@
 			</div>
 		</div>
 		<script>
+			//HO TROVATO UN BUG.
+			//A VOLTE DA CELLULARE I COLORI LAMPEGGIANO. CAMBIANO PIÙ VOLTE INVECE DI UNA SOLA.
+			//PER ORA L'HO RISOLTO ELIMINANDO UN EFFETTO DI TRANSIZIONE TRA UN COLORE E L'ALTRO.
+			//UN GIORNO MAGARI LO RISOLVERÒ MODIFICANDO LA LOGICA INTERNA.
 			const FLAGS_SVG = [
 				'<svg class="flag-svg" viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#s)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>', // UK
 				//'<svg class="flag-svg" viewBox="0 0 7410 3900"><rect width="7410" height="3900" fill="#b22234"/><path d="M0 300h7410M0 900h7410M0 1500h7410M0 2100h7410M0 2700h7410M0 3300h7410" stroke="#fff" stroke-width="300"/><rect width="2964" height="2100" fill="#3c3b6e"/><path d="M247 175l247 759-646-469h798l-646 469z" fill="#fff" transform="scale(.2)"/></svg>', // US
@@ -413,10 +412,7 @@
 				let showDoubles = false;
 				let showOpposites = false;
 				let cellsByNumber = new Map();
-
-				function gcd(a, b){
-					return b === 0 ? a : gcd(b, a%b);
-				}
+				let isBoardLocked = false;
 
 				function isPrime(num){
 					for(let i = 2, s = Math.sqrt(num); i <= s; i++){
@@ -448,6 +444,7 @@
 					maxNumberOfErrors = 5;
 					pairsFound = 0;
 					selectedCells = [];
+					isBoardLocked = false;
 					let processed = new Set();
 					let totalPairs = 0;
 					for(let i = 1; i < P; i++){
@@ -550,6 +547,9 @@
 				}
 
 				function handleCellClick(cell){
+					if(isBoardLocked){
+						return;
+					}
 					if(cell.classList.contains('matched')){
 						return;
 					}
@@ -559,6 +559,7 @@
 					cell.classList.add('revealed');
 					selectedCells.push(cell);
 					if(selectedCells.length === 2){
+						isBoardLocked = true;
 						setTimeout(checkMatch, 300);
 					}
 				}
@@ -576,10 +577,12 @@
 							setAsMatched(cell1, num1, num2);
 							setAsMatched(cell2, num2, num1);
 						}
-						registerMatchedNumber(num1);
+						let updatedCells = new Set();
+						registerMatchedNumber(num1, updatedCells);
 						if(num2 !== num1){
-							registerMatchedNumber(num2);
+							registerMatchedNumber(num2, updatedCells);
 						}
+						updatedCells.forEach(applyCellAppearance);
 						correctStreak++;
 						if(correctStreak >= 3){
 							if(currentErrors > 0){
@@ -594,6 +597,8 @@
 							}
 						}
 						checkWin();
+						selectedCells = [];
+						isBoardLocked = false;
 					}else{
 						correctStreak = 0;
 						currentErrors++;
@@ -603,21 +608,21 @@
 						setTimeout(() => {
 							cell1.classList.remove('revealed', 'error-flash');
 							cell2.classList.remove('revealed', 'error-flash');
+							selectedCells = [];
+							isBoardLocked = false;
 						}, 400);
 						if(currentErrors >= maxNumberOfErrors){
 							setTimeout(() => { alert(t("maxErrors")); initGame(); }, 100);
 						}
 					}
-					selectedCells = [];
 				}
 
 				function setAsMatched(cell, n1, n2){
+					cell.classList.remove('revealed', 'highlight-double', 'highlight-opposite', 'highlight-both');
 					cell.classList.add('matched');
-					cell.classList.remove('revealed');
 					cell.dataset.inverse = n2;
 					cell.innerHTML = (n1 === n2) ? `${n1} = ${n1}⁻¹` : `${n1} = ${n2}⁻¹`;
 					matchedNumbersCount++;
-					applyCellAppearance(cell);
 				}
 
 				function checkWin(){
@@ -627,43 +632,46 @@
 				}
 
 				function applyCellAppearance(cell){
-					const HIGHLIGHT_CLASSES = ['highlight-double', 'highlight-opposite', 'highlight-both'];
 					if(cell.classList.contains('matched')){
-						cell.classList.remove(...HIGHLIGHT_CLASSES);
+						cell.classList.remove('highlight-double', 'highlight-opposite', 'highlight-both');
 						return;
 					}
 					const isDouble = showDoubles && cell.dataset.isDouble === 'true';
 					const isOpposite = showOpposites && cell.dataset.isOpposite === 'true';
-					let target = null;
+					let targetClass = null;
 					if(isDouble && isOpposite){
-						target = 'highlight-both';
+						targetClass = 'highlight-both';
 					}else if(isDouble){
-						target = 'highlight-double';
+						targetClass = 'highlight-double';
 					}else if(isOpposite){
-						target = 'highlight-opposite';
+						targetClass = 'highlight-opposite';
 					}
-					HIGHLIGHT_CLASSES.forEach(cls => {
-						if(cls !== target && cell.classList.contains(cls)){
+					['highlight-double', 'highlight-opposite', 'highlight-both'].forEach(cls => {
+						if(cls !== targetClass){
 							cell.classList.remove(cls);
 						}
 					});
-					if(target && !cell.classList.contains(target)){
-						cell.classList.add(target);
+					if(targetClass && !cell.classList.contains(targetClass)){
+						cell.classList.add(targetClass);
 					}
 				}
 
-				function registerMatchedNumber(n){
-					const doubleValue = n*2;
+				function registerMatchedNumber(n, updatedCells){
+					const doubleValue = n * 2;
 					const doubleCell = cellsByNumber.get(doubleValue);
 					if(doubleCell && doubleCell.dataset.isDouble !== 'true'){
 						doubleCell.dataset.isDouble = 'true';
-						applyCellAppearance(doubleCell);
+						if(updatedCells){
+							updatedCells.add(doubleCell);
+						}
 					}
 					const oppositeValue = P - n;
 					const oppositeCell = cellsByNumber.get(oppositeValue);
 					if(oppositeCell && oppositeCell.dataset.isOpposite !== 'true'){
 						oppositeCell.dataset.isOpposite = 'true';
-						applyCellAppearance(oppositeCell);
+						if(updatedCells){
+							updatedCells.add(oppositeCell);
+						}
 					}
 				}
 
