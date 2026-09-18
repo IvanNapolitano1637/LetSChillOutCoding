@@ -167,6 +167,10 @@ public class HTML_Pages_Unifier{
 				-ms-user-select: none;
 				user-select: none;
 			}
+
+			body.viewer-active{
+				animation-play-state: paused;
+			}
 			
 			@keyframes gradientBG {
 				0% {
@@ -400,6 +404,34 @@ public class HTML_Pages_Unifier{
 				#kb-hint-btn{
 					display: none;
 				}
+		
+				body.viewer-active{
+					animation: none !important;
+					background-position: 50% 50% !important;
+				}
+		
+				#viewer{
+					background: #141419 !important;
+					-webkit-backdrop-filter: none !important;
+					backdrop-filter: none !important;
+					transition: none !important;
+				}
+		
+				#viewer.viewer-show{
+					animation: none !important;
+					transform: none !important;
+					opacity: 1 !important;
+				}
+		
+				#iframe-container{
+					isolation: isolate;
+					contain: paint;
+				}
+		
+				iframe{
+					transform: none !important;
+					will-change: auto !important;
+				}
 			}
 		
 			#kb-hint-btn:hover{
@@ -609,9 +641,17 @@ public class HTML_Pages_Unifier{
 				document.getElementById('app-title').innerText = data.name;
 				const viewer = document.getElementById('viewer');
 				const frame = document.getElementById('app-frame');
-				viewer.style.display = 'flex';
-				viewer.classList.add('viewer-show');
+				document.body.classList.add('viewer-active');
 				document.body.style.overflow = 'hidden';
+				viewer.style.opacity = '1';
+				viewer.style.display = 'flex';
+				viewer.classList.remove('viewer-show');
+				if(DESKTOP){
+					viewer.classList.add('viewer-show');
+					viewer.addEventListener('animationend', () => {
+						viewer.classList.remove('viewer-show');
+					}, { once: true });
+				}
 				frame.srcdoc = data.content;
 				frame.onload = function() {
 					frame.focus();
@@ -629,14 +669,21 @@ public class HTML_Pages_Unifier{
 		
 			function closePage(){
 				const viewer = document.getElementById('viewer');
-				viewer.style.opacity = '0';
-				setTimeout(() => {
+				const frame = document.getElementById('app-frame');
+				const finishClose = () => {
 					viewer.style.display = 'none';
 					viewer.style.opacity = '1';
 					viewer.classList.remove('viewer-show');
+					document.body.classList.remove('viewer-active');
 					document.body.style.overflow = '';
-					document.getElementById('app-frame').srcdoc = '';
-				}, 300);
+					frame.srcdoc = '';
+				};
+				if(DESKTOP){
+					viewer.style.opacity = '0';
+					setTimeout(finishClose, 300);
+				}else{
+					finishClose();
+				}
 				currentKey = null;
 			}
 		
