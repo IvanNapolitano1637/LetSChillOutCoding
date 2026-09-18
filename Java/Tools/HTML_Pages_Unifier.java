@@ -7,7 +7,7 @@ import java.util.*;
 //La cartella "Games" contiene quattro sottocartelle: "Board", "Card", "Math" e "Puzzle".
 //La cartella "Tools" contiene tre sottocartelle: "Clocks", "Lab" e "Utilities".
 //Codice creato da Gemini e Claude lunedì nove febbraio duemilaventisei dopo un altro tentativo fatto con Gemini due giorni prima.
-//Ho fatto varie altre modifiche. L'ultima domenica ventiquattro maggio duemilaventisei.
+//Ho fatto varie altre modifiche. L'ultima venerdì diciotto settembre duemilaventisei.
 //Il numero di pagine cresce sempre più e stanno per arrivarne diverse altre.
 //Da mettere nella cartella in cui ci sono: "Games" e "Tools".
 //Da compilare e lanciare lì da terminale.
