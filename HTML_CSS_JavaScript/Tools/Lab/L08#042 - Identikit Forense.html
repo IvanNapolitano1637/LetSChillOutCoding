@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="it"><!--L08#042 - Salvatore - Identikit Forense-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>Identikit Forense</title>
+		<style>
+			*{
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+			}
+			body{
+				font-family: 'Courier New', monospace;
+				background: #1a1a1a;
+				color: #e0e0e0;
+				min-height: 100vh;
+				padding: 10px;
+			}
+			header{
+				text-align: center;
+				padding: 10px;
+				border-bottom: 2px solid #444;
+				margin-bottom: 15px;
+			}
+			header h1{
+				font-size: 1.5em;
+				letter-spacing: 3px;
+				color: #ffcc00;
+			}
+			header p{
+				font-size: 0.85em;
+				color: #999;
+				margin-top: 4px;
+			}
+			.container{
+				display: flex;
+				flex-wrap: wrap;
+				gap: 15px;
+				max-width: 1200px;
+				margin: 0 auto;
+			}
+			.face-panel{
+				flex: 1 1 360px;
+				background: #2a2a2a;
+				border: 2px solid #444;
+				border-radius: 8px;
+				padding: 15px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+			.face-panel svg{
+				width: 100%;
+				max-width: 420px;
+				height: auto;
+				background: radial-gradient(circle at 50% 40%, #e8e8e8, #b0b0b0);
+				border: 1px solid #555;
+				border-radius: 4px;
+			}
+			.suspect-name{
+				margin-top: 10px;
+				font-size: 1.1em;
+				color: #ffcc00;
+				letter-spacing: 2px;
+				text-align: center;
+			}
+			.controls{
+				flex: 1 1 360px;
+				background: #2a2a2a;
+				border: 2px solid #444;
+				border-radius: 8px;
+				padding: 15px;
+				max-height: 85vh;
+				overflow-y: auto;
+			}
+			.controls::-webkit-scrollbar{
+				width: 8px;
+			}
+			.controls::-webkit-scrollbar-thumb{
+				background: #555;
+				border-radius: 4px;
+			}
+			.section{
+				margin-bottom: 15px;
+				padding-bottom: 10px;
+				border-bottom: 1px dashed #444;
+			}
+			.section h3{
+				color: #ffcc00;
+				font-size: 0.95em;
+				margin-bottom: 8px;
+				letter-spacing: 1px;
+			}
+			.control-row{
+				display: flex;
+				align-items: center;
+				margin-bottom: 6px;
+				gap: 8px;
+			}
+			.control-row label{
+				flex: 0 0 110px;
+				font-size: 0.85em;
+				color: #ccc;
+			}
+			.control-row input[type="range"]{
+				flex: 1;
+				min-width: 0;
+			}
+			.control-row input[type="color"]{
+				width: 40px;
+				height: 28px;
+				border: none;
+				background: none;
+				cursor: pointer;
+			}
+			.control-row select{
+				flex: 1;
+				background: #333;
+				color: #e0e0e0;
+				border: 1px solid #555;
+				padding: 4px;
+				border-radius: 3px;
+				font-family: inherit;
+			}
+			.val{
+				flex: 0 0 35px;
+				text-align: right;
+				font-size: 0.8em;
+				color: #888;
+			}
+			.buttons{
+				display: flex;
+				flex-wrap: wrap;
+				gap: 8px;
+				margin-top: 10px;
+			}
+			button{
+				flex: 1 1 100px;
+				padding: 10px;
+				background: #444;
+				color: #ffcc00;
+				border: 1px solid #666;
+				border-radius: 4px;
+				cursor: pointer;
+				font-family: inherit;
+				font-size: 0.9em;
+				letter-spacing: 1px;
+				transition: background 0.2s;
+			}
+			button:hover, button:active{
+				background: #555;
+			}
+			button.primary{
+				background: #8a6d00;
+				color: #fff;
+			}
+			button.primary:hover{
+				background: #a88500;
+			}
+			@media(max-width: 700px){
+				header h1{
+					font-size: 1.2em;
+				}
+				.control-row label{
+					flex: 0 0 90px;
+					font-size: 0.78em;
+				}
+				.controls{
+					max-height: none;
+				}
+				body{
+					padding: 5px;
+				}
+			}
+		</style>
+	</head>
+	<body>
+	<header>
+		<h1>🕵️ IDENTIKIT FORENSE</h1>
+		<p>Ricostruzione fisionomica del sospettato</p>
+	</header>
+	<div class="container">
+		<div class="face-panel">
+			<svg id="face" viewBox="0 0 400 520" xmlns="http://www.w3.org/2000/svg"></svg>
+			<div class="suspect-name" id="suspectName">SOSPETTO #0000</div>
+			<div class="buttons">
+				<button onclick="randomize()">🎲 CASUALE</button>
+				<button onclick="resetAll()">↺ RESET</button>
+				<button onclick="newName()">🔀 NOME</button>
+			</div>
+			<div class="buttons">
+				<button class="primary" onclick="exportPNG()">💾 SALVA PNG</button>
+				<button class="primary" onclick="exportSVG()">💾 SALVA SVG</button>
+			</div>
+		</div>
+		<div class="controls">
+			<div class="section">
+				<h3>VISO</h3>
+				<div class="control-row">
+					<label>Forma</label>
+					<select id="faceShape" onchange="update()">
+						<option value="0">Ovale</option>
+						<option value="1">Tondo</option>
+						<option value="2">Squadrato</option>
+						<option value="3">Lungo</option>
+						<option value="4">A cuore</option>
+						<option value="5">Diamante</option>
+						<option value="6">Triangolare (mascella larga)</option>
+						<option value="7">Rettangolare</option>
+					</select>
+				</div>
+				<div class="control-row">
+					<label>Larghezza</label>
+					<input type="range" id="faceWidth" min="70" max="130" value="100" oninput="update()">
+					<span class="val" id="faceWidthV">100</span>
+				</div>
+				<div class="control-row">
+					<label>Altezza</label>
+					<input type="range" id="faceHeight" min="80" max="125" value="100" oninput="update()">
+					<span class="val" id="faceHeightV">100</span>
+				</div>
+				<div class="control-row">
+					<label>Colore pelle</label>
+					<input type="color" id="skinColor" value="#e8b890" oninput="update()">
+				</div>
+				<div class="control-row">
+					<label>Età</label>
+					<input type="range" id="age" min="18" max="85" value="35" oninput="update()">
+					<span class="val" id="ageV">35</span>
+				</div>
+				<div class="control-row">
+					<label>Magro/Grasso</label>
+					<input type="range" id="chubbiness" min="-30" max="30" value="0" oninput="update()">
+					<span class="val" id="chubbinessV">0</span>
+				</div>
+			</div>
+			<div class="section">
+				<h3>OCCHI</h3>
+				<div class="control-row">
+					<label>Forma</label>
+					<select id="eyeShape" onchange="update()">
+						<option value="0">Standard</option>
+						<option value="1">A mandorla</option>
+						<option value="2">Cadenti</option>
+						<option value="3">Sollevati</option>
+						<option value="4">Stretti</option>
+					</select>
+				</div>
+				<div class="control-row">
+					<label>Distanza</label>
+					<input type="range" id="eyeDist" min="70" max="130" value="100" oninput="update()">
+					<span class="val" id="eyeDistV">100</span>
+				</div>
+				<div class="control-row">
+					<label>Dimensione</label>
+					<input type="range" id="eyeSize" min="70" max="130" value="100" oninput="update()">
+					<span class="val" id="eyeSizeV">100</span>
+				</div>
+				<div class="control-row">
+					<label>Altezza</label>
+					<input type="range" id="eyeHeight" min="85" max="115" value="100" oninput="update()">
+					<span class="val" id="eyeHeightV">100</span>
+				</div>
+				<div class="control-row">
+					<label>Pupilla</label>
+					<input type="range" id="pupilSize" min="50" max="150" value="100" oninput="update()">
+					<span class="val" id="pupilSizeV">100</span>
+				</div>
+				<div class="control-row">
+					<label>Colore occhi</label>
+					<input type="color" id="eyeColor" value="#6b4423" oninput="update()">
+				</div>
+			</div>
+			<div class="section">
+				<h3>SOPRACCIGLIA</h3>
+				<div class="control-row">
+					<label>Spessore</label>
+					<input type="range" id="browThick" min="1" max="10" value="4" oninput="update()">
+					<span class="val" id="browThickV">4</span>
+				</div>
+				<div class="control-row">
+					<label>Inclinazione</label>
+					<input type="range" id="browAngle" min="-25" max="25" value="0" oninput="update()">
+					<span class="val" id="browAngleV">0</span>
+				</div>
+				<div class="control-row">
+					<label>Colore</label>
+					<input type="color" id="browColor" value="#3a2820" oninput="update()">
+				</div>
+			</div>
+			<div class="section">
+				<h3>NASO</h3>
+				<div class="control-row">
+					<label>Lunghezza</label>
+					<input type="range" id="noseLen" min="75" max="130" value="100" oninput="update()">
+					<span class="val" id="noseLenV">100</span>
+				</div>
+				<div class="control-row">
+					<label>Larghezza</label>
+					<input type="range" id="noseWidth" min="70" max="140" value="100" oninput="update()">
+					<span class="val" id="noseWidthV">100</span>
+				</div>
+				<div class="control-row">
+					<label>Stile</label>
+					<select id="noseStyle" onchange="update()">
+						<option value="0">Dritto</option>
+						<option value="1">Aquilino</option>
+						<option value="2">A bottoncino</option>
+						<option value="3">Largo</option>
+						<option value="4">Storto</option>
+					</select>
+				</div>
+			</div>
+			<div class="section">
+				<h3>BOCCA</h3>
+				<div class="control-row">
+					<label>Larghezza</label>
+					<input type="range" id="mouthWidth" min="60" max="140" value="100" oninput="update()">
+					<span class="val" id="mouthWidthV">100</span>
+				</div>
+				<div class="control-row">
+					<label>Sorriso</label>
+					<input type="range" id="smile" min="-100" max="100" value="0" oninput="update()">
+					<span class="val" id="smileV">0</span>
+				</div>
+				<div class="control-row">
+					<label>Labbra</label>
+					<input type="range" id="lipSize" min="50" max="160" value="100" oninput="update()">
+					<span class="val" id="lipSizeV">100</span>
+				</div>
+				<div class="control-row">
+					<label>Colore labbra</label>
+					<input type="color" id="lipColor" value="#b86858" oninput="update()">
+				</div>
+			</div>
+			<div class="section">
+				<h3>CAPELLI</h3>
+				<div class="control-row">
+					<label>Stile</label>
+					<select id="hairStyle" onchange="update()">
+						<option value="0">Calvo</option>
+						<option value="1" selected>Corti</option>
+						<option value="2">Medi</option>
+						<option value="3">Lunghi</option>
+						<option value="4">Ricci</option>
+						<option value="5">Raccolti</option>
+						<option value="6">Moicano</option>
+						<option value="7">Rigati lateralmente</option>
+						<option value="8">Rasati</option>
+						<option value="9">Afro</option>
+						<option value="10">Con frangia</option>
+					</select>
+				</div>
+				<div class="control-row">
+					<label>Colore</label>
+					<input type="color" id="hairColor" value="#3a2820" oninput="update()">
+				</div>
+				<div class="control-row">
+					<label>Entrate</label>
+					<input type="range" id="baldness" min="0" max="100" value="0" oninput="update()">
+					<span class="val" id="baldnessV">0</span>
+				</div>
+			</div>
+			<div class="section">
+				<h3>BARBA / PELI</h3>
+				<div class="control-row">
+					<label>Stile</label>
+					<select id="beardStyle" onchange="update()">
+						<option value="0">Nessuna</option>
+						<option value="1">Pizzetto</option>
+						<option value="2">Corta (3 giorni)</option>
+						<option value="3">Folta</option>
+						<option value="4">Baffi</option>
+						<option value="5">Basette lunghe</option>
+						<option value="6">Barba alla Lenin</option>
+						<option value="7">Pizzetto e baffi</option>
+						<option value="8">Barba a collare</option>
+					</select>
+				</div>
+				<div class="control-row">
+					<label>Colore</label>
+					<input type="color" id="beardColor" value="#3a2820" oninput="update()">
+				</div>
+			</div>
+			<div class="section">
+				<h3>DETTAGLI</h3>
+				<div class="control-row">
+					<label>Orecchie</label>
+					<input type="range" id="earSize" min="70" max="140" value="100" oninput="update()">
+					<span class="val" id="earSizeV">100</span>
+				</div>
+				<div class="control-row">
+					<label>Nei</label>
+					<input type="range" id="moles" min="0" max="5" value="0" step="1" oninput="update()">
+					<span class="val" id="molesV">0</span>
+				</div>
+				<div class="control-row">
+					<label>Rughe</label>
+					<input type="range" id="wrinkles" min="0" max="100" value="0" oninput="update()">
+					<span class="val" id="wrinklesV">0</span>
+				</div>
+				<div class="control-row">
+					<label>Lentiggini</label>
+					<input type="range" id="freckles" min="0" max="100" value="0" oninput="update()">
+					<span class="val" id="frecklesV">0</span>
+				</div>
+				<div class="control-row">
+					<label>Cicatrice</label>
+					<select id="scar" onchange="update()">
+						<option value="0">Nessuna</option>
+						<option value="1">Guancia sinistra</option>
+						<option value="2">Guancia destra</option>
+						<option value="3">Sopracciglio sinistro</option>
+						<option value="4">Sopracciglio destro</option>
+						<option value="5">Mento</option>
+					</select>
+				</div>
+				<div class="control-row">
+					<label>Occhiali</label>
+					<select id="glasses" onchange="update()">
+						<option value="0">Nessuno</option>
+						<option value="1">Tondi</option>
+						<option value="2">Quadrati</option>
+						<option value="3">Da sole</option>
+						<option value="4">Aviator</option>
+						<option value="5">Ovali</option>
+						<option value="6">Senza montatura</option>
+					</select>
+				</div>
+			</div>
+		</div>
+	</div>
+		<script>
+			const defaults = {
+				faceShape: 0, faceWidth: 100, faceHeight: 100, skinColor: "#e8b890", age: 35, chubbiness: 0,
+				eyeShape: 0, eyeDist: 100, eyeSize: 100, eyeHeight: 100, eyeColor: "#6b4423",
+				browThick: 4, browAngle: 0, browColor: "#3a2820",
+				noseLen: 100, noseWidth: 100, noseStyle: 0,
+				mouthWidth: 100, smile: 0, lipSize: 100, lipColor: "#b86858",
+				hairStyle: 1, hairColor: "#3a2820", baldness: 0,
+				beardStyle: 0, beardColor: "#3a2820",
+				earSize: 100, moles: 0, wrinkles: 0, glasses: 0, pupilSize: 100, freckles: 0, scar: 0
+			};
+			let state = {...defaults};
+			let suspectCode = Math.floor(Math.random()*9999).toString().padStart(4, '0');
+			const firstNames = ["MARIO","LUIGI","GIUSEPPE","ANTONIO","FRANCO","ROBERTO","MARCO","GIOVANNI","CARLO","PAOLO","ANDREA","STEFANO","ALESSANDRO","LUCA","VINCENZO","SALVATORE","DOMENICO","PIETRO","MATTEO","NICOLA"];
+			const lastNames = ["ROSSI","RUSSO","FERRARI","ESPOSITO","BIANCHI","ROMANO","COLOMBO","RICCI","MARINO","GRECO","BRUNO","GALLO","CONTI","DE LUCA","MANCINI","COSTA","GIORDANO","RIZZO","LOMBARDI","MORETTI"];
+
+			function newName(){
+				const f = firstNames[Math.floor(Math.random()*firstNames.length)];
+				const l = lastNames[Math.floor(Math.random()*lastNames.length)];
+				suspectCode = Math.floor(Math.random()*9999).toString().padStart(4, '0');
+				document.getElementById('suspectName').textContent = `SOSPETTO: ${f} ${l} #${suspectCode}`;
+			}
+
+			function getVal(id){
+				const el = document.getElementById(id);
+				if(el.type === 'color'){
+					return el.value;
+				}
+				if(el.type === 'select-one'){
+					return el.value.charAt(0) === '#' ? el.value : parseInt(el.value);
+				}
+				return parseFloat(el.value);
+			}
+
+			function readState(){
+				for(const k in defaults){
+					state[k] = getVal(k);
+					const vEl = document.getElementById(k + 'V');
+					if(vEl){
+						vEl.textContent = state[k];
+					}
+				}
+			}
+
+			function darken(hex, amount){
+				const n = parseInt(hex.slice(1), 16);
+				let r = Math.max(0, (n >> 16) - amount);
+				let g = Math.max(0, ((n >> 8) & 0xff) - amount);
+				let b = Math.max(0, (n & 0xff) - amount);
+				return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+			}
+
+			function lighten(hex, amount){
+				const n = parseInt(hex.slice(1), 16);
+				let r = Math.min(255, (n >> 16) + amount);
+				let g = Math.min(255, ((n >> 8) & 0xff) + amount);
+				let b = Math.min(255, (n & 0xff) + amount);
+				return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+			}
+
+			function mix(hex1, hex2, t){
+				const a = parseInt(hex1.slice(1), 16);
+				const b = parseInt(hex2.slice(1), 16);
+				const r = Math.round(((a >> 16)*(1-t)) + ((b >> 16)*t));
+				const g = Math.round((((a >> 8) & 0xff)*(1-t)) + (((b >> 8) & 0xff)*t));
+				const bl = Math.round(((a & 0xff)*(1-t)) + ((b & 0xff)*t));
+				return '#' + ((r << 16) | (g << 8) | bl).toString(16).padStart(6, '0');
+			}
+
+			let _seed = 1;
+
+			function rnd(){
+				_seed = (_seed + 0x6D2B79F5) | 0;
+				let t = Math.imul(_seed ^ (_seed >>> 15), 1 | _seed);
+				t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+				return ((t ^ (t >>> 14)) >>> 0)/4294967296;
+			}
+
+			function buildFace(){
+				_seed = parseInt(suspectCode, 10) + 1;
+				const s = state;
+				const cx = 200, cy = 270;
+				const w = 130*(s.faceWidth/100);
+				const h = 170*(s.faceHeight/100);
+				const chub = s.chubbiness;
+				const wChub = w + chub*0.8;
+				const hChub = h - chub*0.3;
+				const skinBase = s.skinColor;
+				const skinDark = darken(skinBase, 35);
+				const skinMid = darken(skinBase, 15);
+				const skinLight = lighten(skinBase, 20);
+				let facePath;
+				switch (s.faceShape){
+					case 0:
+						facePath = `M ${cx-wChub} ${cy-hChub*0.3} Q ${cx-wChub} ${cy-hChub} ${cx} ${cy-hChub} Q ${cx+wChub} ${cy-hChub} ${cx+wChub} ${cy-hChub*0.3} Q ${cx+wChub} ${cy+hChub*0.7} ${cx} ${cy+hChub} Q ${cx-wChub} ${cy+hChub*0.7} ${cx-wChub} ${cy-hChub*0.3} Z`;
+						break;
+					case 1:
+						facePath = `M ${cx-wChub} ${cy} A ${wChub} ${hChub} 0 1 1 ${cx+wChub} ${cy} A ${wChub} ${hChub} 0 1 1 ${cx-wChub} ${cy} Z`;
+						break;
+					case 2:
+						facePath = `M ${cx-wChub} ${cy-hChub*0.3} Q ${cx-wChub} ${cy-hChub} ${cx} ${cy-hChub} Q ${cx+wChub} ${cy-hChub} ${cx+wChub} ${cy-hChub*0.3} L ${cx+wChub*0.95} ${cy+hChub*0.6} Q ${cx+wChub*0.5} ${cy+hChub} ${cx} ${cy+hChub} Q ${cx-wChub*0.5} ${cy+hChub} ${cx-wChub*0.95} ${cy+hChub*0.6} Z`;
+						break;
+					case 3:
+						facePath = `M ${cx-wChub*0.9} ${cy-hChub*0.5} Q ${cx-wChub*0.9} ${cy-hChub} ${cx} ${cy-hChub} Q ${cx+wChub*0.9} ${cy-hChub} ${cx+wChub*0.9} ${cy-hChub*0.5} L ${cx+wChub*0.85} ${cy+hChub*0.7} Q ${cx+wChub*0.4} ${cy+hChub*1.05} ${cx} ${cy+hChub*1.05} Q ${cx-wChub*0.4} ${cy+hChub*1.05} ${cx-wChub*0.85} ${cy+hChub*0.7} Z`;
+						break;
+					case 4:
+						facePath = `M ${cx-wChub} ${cy-hChub*0.3} Q ${cx-wChub} ${cy-hChub} ${cx} ${cy-hChub} Q ${cx+wChub} ${cy-hChub} ${cx+wChub} ${cy-hChub*0.3} Q ${cx+wChub*0.95} ${cy+hChub*0.3} ${cx} ${cy+hChub*1.05} Q ${cx-wChub*0.95} ${cy+hChub*0.3} ${cx-wChub} ${cy-hChub*0.3} Z`;
+						break;
+					case 6:
+						facePath = `M ${cx-wChub*0.8} ${cy-hChub*0.4} Q ${cx-wChub*0.8} ${cy-hChub} ${cx} ${cy-hChub} Q ${cx+wChub*0.8} ${cy-hChub} ${cx+wChub*0.8} ${cy-hChub*0.4} L ${cx+wChub} ${cy+hChub*0.5} Q ${cx+wChub*0.6} ${cy+hChub} ${cx} ${cy+hChub} Q ${cx-wChub*0.6} ${cy+hChub} ${cx-wChub} ${cy+hChub*0.5} Z`;
+						break;
+					case 7:
+						facePath = `M ${cx-wChub*0.92} ${cy-hChub*0.6} Q ${cx-wChub*0.92} ${cy-hChub} ${cx} ${cy-hChub} Q ${cx+wChub*0.92} ${cy-hChub} ${cx+wChub*0.92} ${cy-hChub*0.6} L ${cx+wChub*0.92} ${cy+hChub*0.75} Q ${cx+wChub*0.92} ${cy+hChub} ${cx+wChub*0.5} ${cy+hChub} L ${cx-wChub*0.5} ${cy+hChub} Q ${cx-wChub*0.92} ${cy+hChub} ${cx-wChub*0.92} ${cy+hChub*0.75} Z`;
+						break;
+					case 5:
+						facePath = `M ${cx} ${cy-hChub} Q ${cx+wChub*0.7} ${cy-hChub*0.5} ${cx+wChub} ${cy} Q ${cx+wChub*0.7} ${cy+hChub*0.6} ${cx} ${cy+hChub} Q ${cx-wChub*0.7} ${cy+hChub*0.6} ${cx-wChub} ${cy} Q ${cx-wChub*0.7} ${cy-hChub*0.5} ${cx} ${cy-hChub} Z`;
+						break;
+				}
+				const defs = `
+					<defs>
+						<radialGradient id="skinGrad" cx="50%" cy="35%" r="70%">
+							<stop offset="0%" style="stop-color:${skinLight}"/>
+							<stop offset="55%" style="stop-color:${skinBase}"/>
+							<stop offset="100%" style="stop-color:${skinDark}"/>
+						</radialGradient>
+						<radialGradient id="cheekL" cx="50%" cy="50%" r="50%">
+							<stop offset="0%" style="stop-color:${mix(skinBase, '#c07070', 0.35)};stop-opacity:0.55"/>
+							<stop offset="100%" style="stop-color:${skinBase};stop-opacity:0"/>
+						</radialGradient>
+						<radialGradient id="cheekR" cx="50%" cy="50%" r="50%">
+							<stop offset="0%" style="stop-color:${mix(skinBase, '#c07070', 0.35)};stop-opacity:0.55"/>
+							<stop offset="100%" style="stop-color:${skinBase};stop-opacity:0"/>
+						</radialGradient>
+						<radialGradient id="chinShadow" cx="50%" cy="0%" r="80%">
+							<stop offset="0%" style="stop-color:${skinDark};stop-opacity:0.7"/>
+							<stop offset="100%" style="stop-color:${skinDark};stop-opacity:0"/>
+						</radialGradient>
+						<linearGradient id="sideShadowL" x1="0%" y1="0%" x2="100%" y2="0%">
+							<stop offset="0%" style="stop-color:${skinDark};stop-opacity:0.55"/>
+							<stop offset="100%" style="stop-color:${skinDark};stop-opacity:0"/>
+						</linearGradient>
+						<linearGradient id="sideShadowR" x1="100%" y1="0%" x2="0%" y2="0%">
+							<stop offset="0%" style="stop-color:${skinDark};stop-opacity:0.55"/>
+							<stop offset="100%" style="stop-color:${skinDark};stop-opacity:0"/>
+						</linearGradient>
+						<radialGradient id="irisGrad" cx="50%" cy="50%" r="50%">
+							<stop offset="0%" style="stop-color:${lighten(s.eyeColor, 30)}"/>
+							<stop offset="60%" style="stop-color:${s.eyeColor}"/>
+							<stop offset="100%" style="stop-color:${darken(s.eyeColor, 40)}"/>
+						</radialGradient>
+						<linearGradient id="lipGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+							<stop offset="0%" style="stop-color:${lighten(s.lipColor, 20)}"/>
+							<stop offset="50%" style="stop-color:${s.lipColor}"/>
+							<stop offset="100%" style="stop-color:${darken(s.lipColor, 25)}"/>
+						</linearGradient>
+						<linearGradient id="hairGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+							<stop offset="0%" style="stop-color:${lighten(s.hairColor, 15)}"/>
+							<stop offset="50%" style="stop-color:${s.hairColor}"/>
+							<stop offset="100%" style="stop-color:${darken(s.hairColor, 25)}"/>
+						</linearGradient>
+						<filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+							<feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+							<feOffset dx="0" dy="2" result="offsetblur"/>
+							<feComponentTransfer>
+								<feFuncA type="linear" slope="0.4"/>
+							</feComponentTransfer>
+							<feMerge>
+								<feMergeNode/>
+								<feMergeNode in="SourceGraphic"/>
+							</feMerge>
+						</filter>
+						<filter id="faceBlur">
+							<feGaussianBlur stdDeviation="3"/>
+						</filter>
+						<mask id="baldMask">
+							<rect x="0" y="0" width="400" height="520" fill="white"/>
+							<ellipse cx="${cx}" cy="${cy-hChub*0.85}" rx="${wChub * (s.baldness/100) * 0.95}" ry="${hChub * 0.28 * (s.baldness/100)}" fill="black"/>
+						</mask>
+					</defs>
+				`;
+				let wrinkles = '';
+				const wrinkleIntensity = Math.max(0, (s.age - 35)/40) + (s.wrinkles/100);
+				if(wrinkleIntensity > 0){
+					const intensity = Math.min(1, wrinkleIntensity);
+					const strokeW = 0.8 + intensity*1.5;
+					const col = darken(skinBase, 35);
+					for(let i = 0; i < 3; i++){
+						const y = cy - hChub*0.7 + i*9;
+						wrinkles += `<path d="M ${cx-wChub*0.55} ${y} Q ${cx} ${y-2} ${cx+wChub*0.55} ${y}" stroke="${col}" stroke-width="${strokeW}" fill="none" opacity="${intensity*0.5}"/>`;
+					}
+					if(intensity > 0.3){
+						wrinkles += `<g opacity="${intensity*0.55}"><path d="M ${cx-wChub*0.9} ${cy-hChub*0.1} l -10 -5 M ${cx-wChub*0.9} ${cy-hChub*0.05} l -12 0 M ${cx-wChub*0.9} ${cy} l -10 5" stroke="${col}" stroke-width="${strokeW*0.7}" fill="none"/><path d="M ${cx+wChub*0.9} ${cy-hChub*0.1} l 10 -5 M ${cx+wChub*0.9} ${cy-hChub*0.05} l 12 0 M ${cx+wChub*0.9} ${cy} l 10 5" stroke="${col}" stroke-width="${strokeW*0.7}" fill="none"/></g>`;
+					}
+					if(intensity > 0.2){
+						wrinkles += `<g opacity="${intensity*0.55}"><path d="M ${cx-wChub*0.22} ${cy+hChub*0.05} Q ${cx-wChub*0.32} ${cy+hChub*0.35} ${cx-wChub*0.28} ${cy+hChub*0.55}" stroke="${col}" stroke-width="${strokeW}" fill="none"/><path d="M ${cx+wChub*0.22} ${cy+hChub*0.05} Q ${cx+wChub*0.32} ${cy+hChub*0.35} ${cx+wChub*0.28} ${cy+hChub*0.55}" stroke="${col}" stroke-width="${strokeW}" fill="none"/></g>`;
+					}
+					if(intensity > 0.4){
+						wrinkles += `<g opacity="${intensity*0.4}"><path d="M ${cx-wChub*0.35} ${cy-hChub*0.05} Q ${cx-wChub*0.22} ${cy+hChub*0.02} ${cx-wChub*0.1} ${cy-hChub*0.05}" stroke="${col}" stroke-width="${strokeW*0.6}" fill="none"/><path d="M ${cx+wChub*0.1} ${cy-hChub*0.05} Q ${cx+wChub*0.22} ${cy+hChub*0.02} ${cx+wChub*0.35} ${cy-hChub*0.05}" stroke="${col}" stroke-width="${strokeW*0.6}" fill="none"/></g>`;
+					}
+				}
+				const earW = 16*(s.earSize/100);
+				const earH = 30*(s.earSize/100);
+				const earY = cy - hChub*0.1;
+				const ears = `
+					<g filter="url(#softShadow)">
+						<ellipse cx="${cx-wChub-earW*0.3}" cy="${earY}" rx="${earW}" ry="${earH}" fill="url(#skinGrad)" stroke="${skinDark}" stroke-width="0.8"/>
+						<path d="M ${cx-wChub-earW*0.3} ${earY-earH*0.55} Q ${cx-wChub+earW*0.15} ${earY-earH*0.1} ${cx-wChub-earW*0.1} ${earY+earH*0.2} Q ${cx-wChub-earW*0.4} ${earY+earH*0.4} ${cx-wChub-earW*0.3} ${earY+earH*0.55}" stroke="${darken(skinBase, 45)}" stroke-width="1" fill="none"/>
+						<ellipse cx="${cx+wChub+earW*0.3}" cy="${earY}" rx="${earW}" ry="${earH}" fill="url(#skinGrad)" stroke="${skinDark}" stroke-width="0.8"/>
+						<path d="M ${cx+wChub+earW*0.3} ${earY-earH*0.55} Q ${cx+wChub-earW*0.15} ${earY-earH*0.1} ${cx+wChub+earW*0.1} ${earY+earH*0.2} Q ${cx+wChub+earW*0.4} ${earY+earH*0.4} ${cx+wChub+earW*0.3} ${earY+earH*0.55}" stroke="${darken(skinBase, 45)}" stroke-width="1" fill="none"/>
+					</g>
+				`;
+				const eyeY = cy - hChub*0.2*(s.eyeHeight/100);
+				const eyeSpacing = 48*(s.eyeDist/100);
+				const eyeW = 20*(s.eyeSize/100);
+				const eyeH = 11*(s.eyeSize/100);
+				let eyePathL, eyePathR;
+				switch (s.eyeShape){
+					case 0:
+						eyePathL = `M ${cx-eyeSpacing-eyeW} ${eyeY} Q ${cx-eyeSpacing} ${eyeY-eyeH*1.1} ${cx-eyeSpacing+eyeW} ${eyeY} Q ${cx-eyeSpacing} ${eyeY+eyeH*0.7} ${cx-eyeSpacing-eyeW} ${eyeY} Z`;
+						eyePathR = `M ${cx+eyeSpacing-eyeW} ${eyeY} Q ${cx+eyeSpacing} ${eyeY-eyeH*1.1} ${cx+eyeSpacing+eyeW} ${eyeY} Q ${cx+eyeSpacing} ${eyeY+eyeH*0.7} ${cx+eyeSpacing-eyeW} ${eyeY} Z`;
+						break;
+					case 1:
+						eyePathL = `M ${cx-eyeSpacing-eyeW*1.1} ${eyeY} Q ${cx-eyeSpacing} ${eyeY-eyeH*0.9} ${cx-eyeSpacing+eyeW*1.1} ${eyeY} Q ${cx-eyeSpacing} ${eyeY+eyeH*0.6} ${cx-eyeSpacing-eyeW*1.1} ${eyeY} Z`;
+						eyePathR = `M ${cx+eyeSpacing-eyeW*1.1} ${eyeY} Q ${cx+eyeSpacing} ${eyeY-eyeH*0.9} ${cx+eyeSpacing+eyeW*1.1} ${eyeY} Q ${cx+eyeSpacing} ${eyeY+eyeH*0.6} ${cx+eyeSpacing-eyeW*1.1} ${eyeY} Z`;
+						break;
+					case 2:
+						eyePathL = `M ${cx-eyeSpacing-eyeW} ${eyeY-eyeH*0.2} Q ${cx-eyeSpacing} ${eyeY-eyeH*0.9} ${cx-eyeSpacing+eyeW} ${eyeY+eyeH*0.3} Q ${cx-eyeSpacing} ${eyeY+eyeH*0.7} ${cx-eyeSpacing-eyeW} ${eyeY-eyeH*0.2} Z`;
+						eyePathR = `M ${cx+eyeSpacing-eyeW} ${eyeY+eyeH*0.3} Q ${cx+eyeSpacing} ${eyeY-eyeH*0.9} ${cx+eyeSpacing+eyeW} ${eyeY-eyeH*0.2} Q ${cx+eyeSpacing} ${eyeY+eyeH*0.7} ${cx+eyeSpacing-eyeW} ${eyeY+eyeH*0.3} Z`;
+						break;
+					case 3:
+						eyePathL = `M ${cx-eyeSpacing-eyeW} ${eyeY+eyeH*0.3} Q ${cx-eyeSpacing} ${eyeY-eyeH*0.9} ${cx-eyeSpacing+eyeW} ${eyeY-eyeH*0.2} Q ${cx-eyeSpacing} ${eyeY+eyeH*0.7} ${cx-eyeSpacing-eyeW} ${eyeY+eyeH*0.3} Z`;
+						eyePathR = `M ${cx+eyeSpacing-eyeW} ${eyeY-eyeH*0.2} Q ${cx+eyeSpacing} ${eyeY-eyeH*0.9} ${cx+eyeSpacing+eyeW} ${eyeY+eyeH*0.3} Q ${cx+eyeSpacing} ${eyeY+eyeH*0.7} ${cx+eyeSpacing-eyeW} ${eyeY-eyeH*0.2} Z`;
+						break;
+					case 4:
+						eyePathL = `M ${cx-eyeSpacing-eyeW*1.1} ${eyeY} Q ${cx-eyeSpacing} ${eyeY-eyeH*0.5} ${cx-eyeSpacing+eyeW*1.1} ${eyeY} Q ${cx-eyeSpacing} ${eyeY+eyeH*0.4} ${cx-eyeSpacing-eyeW*1.1} ${eyeY} Z`;
+						eyePathR = `M ${cx+eyeSpacing-eyeW*1.1} ${eyeY} Q ${cx+eyeSpacing} ${eyeY-eyeH*0.5} ${cx+eyeSpacing+eyeW*1.1} ${eyeY} Q ${cx+eyeSpacing} ${eyeY+eyeH*0.4} ${cx+eyeSpacing-eyeW*1.1} ${eyeY} Z`;
+						break;
+				}
+				const defs2 = `
+					<filter id="skinTex" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" seed="${parseInt(suspectCode,10)%50}"/><feColorMatrix type="matrix" values="0 0 0 0 0.3	0 0 0 0 0.18	0 0 0 0 0.12	0 0 0 0.9 -0.35"/></filter>
+					<clipPath id="faceClip"><path d="${facePath}"/></clipPath>
+					<clipPath id="eyeClipL"><path d="${eyePathL}"/></clipPath>
+					<clipPath id="eyeClipR"><path d="${eyePathR}"/></clipPath>
+					<radialGradient id="scleraGrad" cx="50%" cy="50%" r="60%"><stop offset="55%" stop-color="#f4efe8"/><stop offset="100%" stop-color="#c4b0a6"/></radialGradient>
+					<pattern id="hairStrands" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(${(s.hairStyle===4||s.hairStyle===9)?0:75})"><line x1="0" y1="0" x2="0" y2="5" stroke="${darken(s.hairColor,45)}" stroke-width="0.9" opacity="0.55"/><line x1="2.5" y1="0" x2="2.5" y2="5" stroke="${lighten(s.hairColor,45)}" stroke-width="0.6" opacity="0.4"/></pattern>
+					<filter id="hairWarp" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.03 0.08" numOctaves="2" seed="2" result="w"/><feDisplacementMap in="SourceGraphic" in2="w" scale="7"/></filter>
+				`;
+				const fib = (ex) => {
+					let f = '';
+					for(let k = 0; k < 18; k++){
+						const a = k*Math.PI/9;
+						f += `<line x1="${(ex+Math.cos(a)*eyeH*0.36).toFixed(1)}" y1="${(eyeY+Math.sin(a)*eyeH*0.36).toFixed(1)}" x2="${(ex+Math.cos(a)*eyeH*0.88).toFixed(1)}" y2="${(eyeY+Math.sin(a)*eyeH*0.88).toFixed(1)}" stroke="${lighten(s.eyeColor,55)}" stroke-width="0.6" opacity="0.35"/>`;
+					}
+					return f;
+				};
+				const eyeOne = (ex, path, clip, dir) => `
+					<ellipse cx="${ex}" cy="${eyeY-eyeH*0.5}" rx="${eyeW*1.25}" ry="${eyeH*1.1}" fill="${skinDark}" opacity="0.22" filter="url(#faceBlur)"/>
+					<path d="${path}" fill="url(#scleraGrad)"/>
+					<g clip-path="url(#${clip})">
+						<circle cx="${ex}" cy="${eyeY}" r="${eyeH*0.9}" fill="url(#irisGrad)"/>
+						<circle cx="${ex}" cy="${eyeY}" r="${eyeH*0.9}" fill="none" stroke="${darken(s.eyeColor,70)}" stroke-width="${eyeH*0.16}"/>
+						${fib(ex)}
+						<circle cx="${ex}" cy="${eyeY}" r="${eyeH*0.32*(s.pupilSize/100)}" fill="#0a0a0a"/>
+						<circle cx="${ex-eyeH*0.25}" cy="${eyeY-eyeH*0.3}" r="${eyeH*0.16}" fill="white" opacity="0.95"/>
+						<circle cx="${ex+eyeH*0.3}" cy="${eyeY+eyeH*0.3}" r="${eyeH*0.07}" fill="white" opacity="0.55"/>
+						<ellipse cx="${ex}" cy="${eyeY-eyeH*0.8}" rx="${eyeW*1.2}" ry="${eyeH*0.5}" fill="#000" opacity="0.3" filter="url(#faceBlur)"/>
+					</g>
+					<path d="${path}" fill="none" stroke="${darken(skinBase,60)}" stroke-width="0.9"/>
+					<path d="M ${ex-eyeW} ${eyeY} Q ${ex} ${eyeY-eyeH*1.1} ${ex+eyeW} ${eyeY}" stroke="${darken(skinBase,80)}" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+					<path d="M ${ex-eyeW*0.95} ${eyeY-eyeH*0.6} Q ${ex} ${eyeY-eyeH*1.9} ${ex+eyeW*0.95} ${eyeY-eyeH*0.55}" stroke="${darken(skinBase,40)}" stroke-width="1" fill="none" opacity="0.55"/>
+					<ellipse cx="${ex+dir*eyeW*0.92}" cy="${eyeY+eyeH*0.08}" rx="2" ry="1.4" fill="#d9928a" opacity="0.8"/>
+					<path d="M ${ex-eyeW*0.8} ${eyeY+eyeH*0.9} Q ${ex} ${eyeY+eyeH*1.7} ${ex+eyeW*0.8} ${eyeY+eyeH*0.9}" stroke="${skinDark}" stroke-width="2.5" fill="none" opacity="0.2" filter="url(#faceBlur)"/>
+					<path d="M ${ex-eyeW*0.9} ${eyeY-eyeH*0.3} l -1.5 -2 M ${ex-eyeW*0.5} ${eyeY-eyeH*0.8} l -0.5 -2.5 M ${ex} ${eyeY-eyeH*1.05} l 0 -2.5 M ${ex+eyeW*0.5} ${eyeY-eyeH*0.8} l 0.5 -2.5 M ${ex+eyeW*0.9} ${eyeY-eyeH*0.3} l 1.5 -2" stroke="${darken(skinBase,70)}" stroke-width="0.7" fill="none"/>
+				`;
+				const eyes = eyeOne(cx-eyeSpacing, eyePathL, 'eyeClipL', 1) + eyeOne(cx+eyeSpacing, eyePathR, 'eyeClipR', -1);
+				const browY = eyeY - eyeH - 8;
+				const browAngle = s.browAngle;
+				const browT = s.browThick;
+				const brows = `
+					<path d="M ${cx-eyeSpacing-eyeW*1.1} ${browY+browAngle*0.3+browT*0.3} Q ${cx-eyeSpacing-eyeW*0.3} ${browY-browT*0.8-browAngle*0.2} ${cx-eyeSpacing+eyeW*0.5} ${browY-browAngle*0.3-browT*0.4} Q ${cx-eyeSpacing+eyeW*0.8} ${browY-browAngle*0.3} ${cx-eyeSpacing+eyeW*0.9} ${browY-browAngle*0.3+browT*0.2} Q ${cx-eyeSpacing} ${browY+browT*0.5-browAngle*0.1} ${cx-eyeSpacing-eyeW*1.1} ${browY+browAngle*0.3+browT*0.3} Z" fill="${s.browColor}" opacity="0.6"/>
+					<path d="M ${cx+eyeSpacing+eyeW*1.1} ${browY+browAngle*0.3+browT*0.3} Q ${cx+eyeSpacing+eyeW*0.3} ${browY-browT*0.8-browAngle*0.2} ${cx+eyeSpacing-eyeW*0.5} ${browY-browAngle*0.3-browT*0.4} Q ${cx+eyeSpacing-eyeW*0.8} ${browY-browAngle*0.3} ${cx+eyeSpacing-eyeW*0.9} ${browY-browAngle*0.3+browT*0.2} Q ${cx+eyeSpacing} ${browY+browT*0.5-browAngle*0.1} ${cx+eyeSpacing+eyeW*1.1} ${browY+browAngle*0.3+browT*0.3} Z" fill="${s.browColor}" opacity="0.6"/>
+				`;
+				let browHairs = '';
+				for(const sd of [-1, 1]){
+					for(let i = 0; i < 34; i++){
+						const t = i/33;
+						const x = cx + sd * (eyeSpacing + eyeW*1.1 - t*eyeW*2.0);
+						const y = browY + browAngle*0.3*(1-2*t) + browT*0.3 - browT*0.8*Math.sin(Math.PI*t) + (rnd()-0.5)*browT*0.5;
+						const len = 3 + rnd()*3 + browT*0.3;
+						browHairs += `<line x1="${x.toFixed(1)}" y1="${y.toFixed(1)}" x2="${(x+sd*len*0.8).toFixed(1)}" y2="${(y-len*(0.15+0.6*t)).toFixed(1)}" stroke="${rnd()>0.5?darken(s.browColor,15):s.browColor}" stroke-width="0.9" stroke-linecap="round" opacity="0.85"/>`;
+					}
+				}
+				const noseTop = cy - hChub*0.15;
+				const noseLen = 65*(s.noseLen/100);
+				const noseW = 22*(s.noseWidth/100);
+				const noseBot = noseTop + noseLen;
+				let nose;
+				const noseShadow = darken(skinBase, 40);
+				const noseHighlight = lighten(skinBase, 15);
+				switch (s.noseStyle){
+					case 0:
+						nose = `<path d="M ${cx-3} ${noseTop} L ${cx-noseW} ${noseBot}" stroke="${noseShadow}" stroke-width="1.2" fill="none" opacity="0.6"/><path d="M ${cx+3} ${noseTop} L ${cx+noseW} ${noseBot}" stroke="${noseShadow}" stroke-width="1.2" fill="none" opacity="0.6"/><path d="M ${cx-noseW} ${noseBot} Q ${cx-noseW*0.5} ${noseBot+6} ${cx} ${noseBot+4} Q ${cx+noseW*0.5} ${noseBot+6} ${cx+noseW} ${noseBot}" fill="${skinBase}" stroke="${noseShadow}" stroke-width="1"/><ellipse cx="${cx-noseW*0.55}" cy="${noseBot+3}" rx="3.5" ry="2.2" fill="${darken(skinBase, 65)}" opacity="0.7"/><ellipse cx="${cx+noseW*0.55}" cy="${noseBot+3}" rx="3.5" ry="2.2" fill="${darken(skinBase, 65)}" opacity="0.7"/><path d="M ${cx} ${noseTop+5} L ${cx} ${noseBot-3}" stroke="${noseHighlight}" stroke-width="2" opacity="0.4" stroke-linecap="round"/>`;
+						break;
+					case 1:
+						nose = `<path d="M ${cx-2} ${noseTop} Q ${cx-noseW*1.4} ${noseTop+noseLen*0.45} ${cx-noseW} ${noseBot}" stroke="${noseShadow}" stroke-width="1.3" fill="none" opacity="0.7"/><path d="M ${cx+2} ${noseTop} Q ${cx+noseW*0.5} ${noseTop+noseLen*0.45} ${cx+noseW} ${noseBot}" stroke="${noseShadow}" stroke-width="1.3" fill="none" opacity="0.7"/><path d="M ${cx-noseW} ${noseBot} Q ${cx-noseW*0.5} ${noseBot+6} ${cx} ${noseBot+4} Q ${cx+noseW*0.5} ${noseBot+6} ${cx+noseW} ${noseBot}" fill="${skinBase}" stroke="${noseShadow}" stroke-width="1"/><ellipse cx="${cx-noseW*0.55}" cy="${noseBot+3}" rx="3.5" ry="2.2" fill="${darken(skinBase, 65)}" opacity="0.7"/><ellipse cx="${cx+noseW*0.55}" cy="${noseBot+3}" rx="3.5" ry="2.2" fill="${darken(skinBase, 65)}" opacity="0.7"/>`;
+						break;
+					case 2:
+						nose = `<path d="M ${cx-2} ${noseTop} Q ${cx-noseW*0.6} ${noseBot} ${cx} ${noseBot+3} Q ${cx+noseW*0.6} ${noseBot} ${cx+2} ${noseTop}" stroke="${noseShadow}" stroke-width="1.2" fill="none" opacity="0.6"/><ellipse cx="${cx-noseW*0.35}" cy="${noseBot+2}" rx="2.8" ry="1.8" fill="${darken(skinBase, 65)}" opacity="0.7"/><ellipse cx="${cx+noseW*0.35}" cy="${noseBot+2}" rx="2.8" ry="1.8" fill="${darken(skinBase, 65)}" opacity="0.7"/><path d="M ${cx} ${noseTop+3} Q ${cx} ${noseBot-2} ${cx} ${noseBot}" stroke="${noseHighlight}" stroke-width="2.5" opacity="0.35" stroke-linecap="round"/>`;
+						break;
+					case 3:
+						nose = `<path d="M ${cx-3} ${noseTop} L ${cx-noseW*1.4} ${noseBot}" stroke="${noseShadow}" stroke-width="1.3" fill="none" opacity="0.6"/><path d="M ${cx+3} ${noseTop} L ${cx+noseW*1.4} ${noseBot}" stroke="${noseShadow}" stroke-width="1.3" fill="none" opacity="0.6"/><path d="M ${cx-noseW*1.4} ${noseBot} Q ${cx-noseW*0.7} ${noseBot+8} ${cx} ${noseBot+5} Q ${cx+noseW*0.7} ${noseBot+8} ${cx+noseW*1.4} ${noseBot}" fill="${skinBase}" stroke="${noseShadow}" stroke-width="1"/><ellipse cx="${cx-noseW*0.8}" cy="${noseBot+4}" rx="4.5" ry="2.8" fill="${darken(skinBase, 65)}" opacity="0.7"/><ellipse cx="${cx+noseW*0.8}" cy="${noseBot+4}" rx="4.5" ry="2.8" fill="${darken(skinBase, 65)}" opacity="0.7"/>`;
+						break;
+					case 4:
+						nose = `<path d="M ${cx-2} ${noseTop} Q ${cx-noseW*0.5} ${noseTop+noseLen*0.5} ${cx-noseW*1.2} ${noseBot}" stroke="${noseShadow}" stroke-width="1.3" fill="none" opacity="0.7"/><path d="M ${cx+2} ${noseTop} Q ${cx+noseW*0.3} ${noseTop+noseLen*0.5} ${cx+noseW*0.8} ${noseBot}" stroke="${noseShadow}" stroke-width="1.3" fill="none" opacity="0.7"/><path d="M ${cx-noseW*1.2} ${noseBot} Q ${cx-noseW*0.3} ${noseBot+6} ${cx-noseW*0.2} ${noseBot+4} Q ${cx+noseW*0.4} ${noseBot+6} ${cx+noseW*0.8} ${noseBot}" fill="${skinBase}" stroke="${noseShadow}" stroke-width="1"/><ellipse cx="${cx-noseW*0.7}" cy="${noseBot+3}" rx="3.5" ry="2.2" fill="${darken(skinBase, 65)}" opacity="0.7"/><ellipse cx="${cx+noseW*0.3}" cy="${noseBot+3}" rx="3.5" ry="2.2" fill="${darken(skinBase, 65)}" opacity="0.7"/>`;
+						break;
+				}
+				const noseUnderShadow = `<ellipse cx="${cx}" cy="${noseBot+8}" rx="${noseW*1.2}" ry="4" fill="${noseShadow}" opacity="0.3" filter="url(#faceBlur)"/>`;
+				const mouthY = cy + hChub*0.38;
+				const mouthW = 38*(s.mouthWidth/100);
+				const lipH = 9*(s.lipSize/100);
+				const sm = s.smile/100;
+				const yC = -sm*9;
+				const yM = sm*3;
+				const yQ = 2*yM - yC;
+				const mouth = `
+					<ellipse cx="${cx}" cy="${mouthY+lipH*1.5}" rx="${mouthW*0.7}" ry="3" fill="${darken(skinBase, 35)}" opacity="0.35" filter="url(#faceBlur)"/>
+					<path d="M ${cx-mouthW} ${mouthY+yC} Q ${cx-mouthW*0.5} ${mouthY-lipH*0.3+(yC+(yM-yC)*0.55)} ${cx-mouthW*0.15} ${mouthY-lipH*0.2+(yC+(yM-yC)*0.85)} L ${cx} ${mouthY-lipH*0.5+yM} L ${cx+mouthW*0.15} ${mouthY-lipH*0.2+(yC+(yM-yC)*0.85)} Q ${cx+mouthW*0.5} ${mouthY-lipH*0.3+(yC+(yM-yC)*0.55)} ${cx+mouthW} ${mouthY+yC} Q ${cx} ${mouthY+yQ+lipH*0.3} ${cx-mouthW} ${mouthY+yC} Z" fill="url(#lipGrad)" stroke="${darken(s.lipColor, 40)}" stroke-width="0.8"/>
+					<path d="M ${cx-mouthW} ${mouthY+yC} Q ${cx} ${mouthY+yQ+lipH*0.3} ${cx+mouthW} ${mouthY+yC} Q ${cx+mouthW*0.5} ${mouthY+yM+lipH*1.3} ${cx} ${mouthY+yM+lipH*1.4} Q ${cx-mouthW*0.5} ${mouthY+yM+lipH*1.3} ${cx-mouthW} ${mouthY+yC} Z" fill="url(#lipGrad)" stroke="${darken(s.lipColor, 40)}" stroke-width="0.8"/>
+					<path d="M ${cx-mouthW} ${mouthY+yC} Q ${cx} ${mouthY+yQ} ${cx+mouthW} ${mouthY+yC}" stroke="${darken(s.lipColor, 60)}" stroke-width="1.2" fill="none"/>
+					<path d="M ${cx-mouthW*0.4} ${mouthY+yM+lipH*0.8} Q ${cx} ${mouthY+yQ+lipH*1.1} ${cx+mouthW*0.4} ${mouthY+yM+lipH*0.8}" stroke="${lighten(s.lipColor, 40)}" stroke-width="1.5" fill="none" opacity="0.5" stroke-linecap="round"/>
+				`;
+				let hair = '';
+				const baldFactor = s.baldness/100;
+				if(s.hairStyle !== 0){
+					const hairColor = s.hairColor;
+					const hairDark = darken(hairColor, 30);
+					let hairContent = '';
+					switch(s.hairStyle){
+						case 1:
+							hairContent = `<path d="M ${cx-wChub-3} ${cy-hChub*0.3} Q ${cx-wChub-5} ${cy-hChub-12} ${cx} ${cy-hChub-17} Q ${cx+wChub+5} ${cy-hChub-12} ${cx+wChub+3} ${cy-hChub*0.3} Q ${cx+wChub} ${cy-hChub*0.8} ${cx} ${cy-hChub*0.85} Q ${cx-wChub} ${cy-hChub*0.8} ${cx-wChub-3} ${cy-hChub*0.3} Z" fill="url(#hairGrad)" stroke="${hairDark}" stroke-width="0.8"/>`;
+							break;
+						case 2:
+							hairContent = `<path d="M ${cx-wChub-8} ${cy-hChub*0.1} Q ${cx-wChub-10} ${cy-hChub-17} ${cx} ${cy-hChub-22} Q ${cx+wChub+10} ${cy-hChub-17} ${cx+wChub+8} ${cy-hChub*0.1} Q ${cx+wChub+5} ${cy-hChub*0.5} ${cx+wChub-5} ${cy-hChub*0.3} Q ${cx} ${cy-hChub*0.7} ${cx-wChub+5} ${cy-hChub*0.3} Q ${cx-wChub-5} ${cy-hChub*0.5} ${cx-wChub-8} ${cy-hChub*0.1} Z" fill="url(#hairGrad)" stroke="${hairDark}" stroke-width="0.8"/>`;
+							break;
+						case 3:
+							hairContent = `<path d="M ${cx-wChub-10} ${cy+hChub*0.3} Q ${cx-wChub-15} ${cy-hChub-17} ${cx} ${cy-hChub-24} Q ${cx+wChub+15} ${cy-hChub-17} ${cx+wChub+10} ${cy+hChub*0.3} L ${cx+wChub+5} ${cy+hChub*0.3} Q ${cx+wChub+3} ${cy-hChub*0.4} ${cx+wChub-10} ${cy-hChub*0.3} Q ${cx} ${cy-hChub*0.65} ${cx-wChub+10} ${cy-hChub*0.3} Q ${cx-wChub-3} ${cy-hChub*0.4} ${cx-wChub-5} ${cy+hChub*0.3} Z" fill="url(#hairGrad)" stroke="${hairDark}" stroke-width="0.8"/>`;
+							break;
+						case 4:
+							let curls = `<path d="M ${cx-wChub-2} ${cy-hChub*0.3} Q ${cx-wChub-3} ${cy-hChub-4} ${cx} ${cy-hChub-6} Q ${cx+wChub+3} ${cy-hChub-4} ${cx+wChub+2} ${cy-hChub*0.3} Q ${cx+wChub*0.9} ${cy-hChub*0.75} ${cx} ${cy-hChub*0.82} Q ${cx-wChub*0.9} ${cy-hChub*0.75} ${cx-wChub-2} ${cy-hChub*0.3} Z" fill="url(#hairGrad)" stroke="${hairDark}" stroke-width="0.8"/>`;
+							for(let i = 0; i < 20; i++){
+								const ang = Math.PI*1.1 + (i/19)*Math.PI*0.8;
+								const x = cx + Math.cos(ang)*(wChub + 3);
+								const y = cy + Math.sin(ang)*(hChub + 3);
+								curls += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(10 + rnd()*5).toFixed(1)}" fill="url(#hairGrad)" stroke="${hairDark}" stroke-width="0.8"/>`;
+							}
+							hairContent = curls;
+							break;
+						case 5:
+							hairContent = `<path d="M ${cx-wChub-3} ${cy-hChub*0.3} Q ${cx-wChub-5} ${cy-hChub-12} ${cx} ${cy-hChub-17} Q ${cx+wChub+5} ${cy-hChub-12} ${cx+wChub+3} ${cy-hChub*0.3} Q ${cx+wChub} ${cy-hChub*0.8} ${cx} ${cy-hChub*0.85} Q ${cx-wChub} ${cy-hChub*0.8} ${cx-wChub-3} ${cy-hChub*0.3} Z" fill="url(#hairGrad)" stroke="${hairDark}" stroke-width="0.8"/><ellipse cx="${cx}" cy="${cy-hChub-20}" rx="24" ry="17" fill="url(#hairGrad)" stroke="${hairDark}" stroke-width="0.8"/>`;
+							break;
+						case 6:
+							hairContent = `<path d="M ${cx-wChub*0.3} ${cy-hChub*0.5} Q ${cx-wChub*0.3} ${cy-hChub-32} ${cx} ${cy-hChub-37} Q ${cx+wChub*0.3} ${cy-hChub-32} ${cx+wChub*0.3} ${cy-hChub*0.5} Q ${cx} ${cy-hChub*0.7} ${cx-wChub*0.3} ${cy-hChub*0.5} Z" fill="url(#hairGrad)" stroke="${hairDark}" stroke-width="0.8"/>`;
+							break;
+						case 7:
+							hairContent = `<path d="M ${cx-wChub-5} ${cy-hChub*0.2} Q ${cx-wChub-7} ${cy-hChub-15} ${cx-wChub*0.3} ${cy-hChub-20} Q ${cx+wChub+5} ${cy-hChub-15} ${cx+wChub+3} ${cy-hChub*0.3} Q ${cx+wChub} ${cy-hChub*0.8} ${cx} ${cy-hChub*0.85} Q ${cx-wChub} ${cy-hChub*0.8} ${cx-wChub-5} ${cy-hChub*0.2} Z" fill="url(#hairGrad)" stroke="${hairDark}" stroke-width="0.8"/><path d="M ${cx-wChub*0.3} ${cy-hChub-18} Q ${cx-wChub*0.5} ${cy-hChub*0.3} ${cx-wChub*0.8} ${cy-hChub*0.1}" stroke="${hairDark}" stroke-width="1.5" fill="none" opacity="0.6"/>`;
+							break;
+						case 8:
+							hairContent = `<path d="M ${cx-wChub-2} ${cy-hChub*0.3} Q ${cx-wChub-3} ${cy-hChub-6} ${cx} ${cy-hChub-8} Q ${cx+wChub+3} ${cy-hChub-6} ${cx+wChub+2} ${cy-hChub*0.3} Q ${cx+wChub} ${cy-hChub*0.88} ${cx} ${cy-hChub*0.9} Q ${cx-wChub} ${cy-hChub*0.88} ${cx-wChub-2} ${cy-hChub*0.3} Z" fill="url(#hairGrad)" opacity="0.85" stroke="${hairDark}" stroke-width="0.5"/>`;
+							break;
+						case 9:
+							let afro = `<path d="M ${cx-wChub-2} ${cy-hChub*0.3} Q ${cx-wChub-3} ${cy-hChub-4} ${cx} ${cy-hChub-6} Q ${cx+wChub+3} ${cy-hChub-4} ${cx+wChub+2} ${cy-hChub*0.3} Q ${cx+wChub*0.9} ${cy-hChub*0.75} ${cx} ${cy-hChub*0.82} Q ${cx-wChub*0.9} ${cy-hChub*0.75} ${cx-wChub-2} ${cy-hChub*0.3} Z" fill="url(#hairGrad)"/>`;
+							for(let i = 0; i < 30; i++){
+								const ang = Math.PI*0.95 + (i/29)*Math.PI*1.1;
+								afro += `<circle cx="${(cx + Math.cos(ang) * (wChub + 14)).toFixed(1)}" cy="${(cy - hChub*0.2 + Math.sin(ang) * (hChub + 14)).toFixed(1)}" r="${(16 + rnd()*7).toFixed(1)}" fill="url(#hairGrad)" stroke="${hairDark}" stroke-width="0.8"/>`;
+							}
+							hairContent = afro;
+							break;
+						case 10:
+							hairContent = `<path d="M ${cx-wChub-3} ${cy-hChub*0.3} Q ${cx-wChub-5} ${cy-hChub-12} ${cx} ${cy-hChub-17} Q ${cx+wChub+5} ${cy-hChub-12} ${cx+wChub+3} ${cy-hChub*0.3} Q ${cx+wChub*0.5} ${cy-hChub*0.42} ${cx} ${cy-hChub*0.48} Q ${cx-wChub*0.5} ${cy-hChub*0.42} ${cx-wChub-3} ${cy-hChub*0.3} Z" fill="url(#hairGrad)" stroke="${hairDark}" stroke-width="0.8"/>`;
+							break;
+					}
+					hairContent += `<g filter="url(#hairWarp)" opacity="0.9">${hairContent.split('url(#hairGrad)').join('url(#hairStrands)')}</g>`;
+					if(baldFactor > 0.05){
+						hair = `<g mask="url(#baldMask)">${hairContent}</g>`;
+						const recede = wChub*baldFactor*0.8;
+						hair += `<path d="M ${cx-recede} ${cy-hChub*0.75} Q ${cx} ${cy-hChub*0.6} ${cx+recede} ${cy-hChub*0.75}" stroke="${hairDark}" stroke-width="0.8" fill="none" opacity="0.5"/>`;
+					}else{
+						hair = hairContent;
+					}
+				}else if(baldFactor > 0.5){
+					hair = `<ellipse cx="${cx}" cy="${cy-hChub*0.7}" rx="${wChub*0.7}" ry="${hChub*0.35}" fill="${lighten(skinBase, 25)}" opacity="0.4"/><ellipse cx="${cx-wChub*0.2}" cy="${cy-hChub*0.8}" rx="${wChub*0.3}" ry="${hChub*0.15}" fill="${lighten(skinBase, 40)}" opacity="0.5"/>`;
+				}
+				let beard = '';
+				const beardCol = s.beardColor;
+				const beardDark = darken(beardCol, 20);
+				switch(s.beardStyle){
+					case 1:
+						beard = `<path d="M ${cx-mouthW*0.7} ${mouthY+lipH*1.2} Q ${cx} ${mouthY+lipH*1.2+28} ${cx+mouthW*0.7} ${mouthY+lipH*1.2} Q ${cx} ${mouthY+lipH*1.2+18} ${cx-mouthW*0.7} ${mouthY+lipH*1.2} Z" fill="${beardCol}" opacity="0.85"/>`;
+						break;
+					case 2:
+						beard = `<path d="M ${cx-wChub*0.75} ${cy+hChub*0.2} Q ${cx-wChub*0.85} ${cy+hChub*0.7} ${cx} ${cy+hChub*0.95} Q ${cx+wChub*0.85} ${cy+hChub*0.7} ${cx+wChub*0.75} ${cy+hChub*0.2} Q ${cx+wChub*0.4} ${cy+hChub*0.5} ${cx} ${cy+hChub*0.55} Q ${cx-wChub*0.4} ${cy+hChub*0.5} ${cx-wChub*0.75} ${cy+hChub*0.2} Z" fill="${beardCol}" opacity="0.45"/>`;
+						for(let i = 0; i < 40; i++){
+							const ang = rnd()*Math.PI*2;
+							const dist = rnd();
+							const bx = cx + Math.cos(ang)*wChub*0.7*dist;
+							const by = cy + hChub*0.3 + Math.abs(Math.sin(ang))*hChub*0.5*dist;
+							beard += `<line x1="${bx}" y1="${by}" x2="${bx+rnd()*2-1}" y2="${by+1.5+rnd()}" stroke="${beardDark}" stroke-width="0.4" opacity="0.5"/>`;
+						}
+						break;
+					case 3:
+						beard = `<path d="M ${cx-wChub*0.85} ${cy+hChub*0.1} Q ${cx-wChub*0.95} ${cy+hChub*0.8} ${cx} ${cy+hChub*1.15} Q ${cx+wChub*0.95} ${cy+hChub*0.8} ${cx+wChub*0.85} ${cy+hChub*0.1} Q ${cx+wChub*0.5} ${cy+hChub*0.6} ${cx} ${cy+hChub*0.65} Q ${cx-wChub*0.5} ${cy+hChub*0.6} ${cx-wChub*0.85} ${cy+hChub*0.1} Z" fill="${beardCol}" stroke="${beardDark}" stroke-width="0.8"/>`;
+						for(let i = 0; i < 80; i++){
+							const ang = rnd()*Math.PI*2;
+							const dist = rnd();
+							const bx = cx + Math.cos(ang)*wChub*0.8*dist;
+							const by = cy + hChub*0.2 + Math.abs(Math.sin(ang))*hChub*0.8*dist;
+							beard += `<line x1="${bx}" y1="${by}" x2="${bx+rnd()*2-1}" y2="${by+2+rnd()}" stroke="${beardDark}" stroke-width="0.5" opacity="0.4"/>`;
+						}
+						break;
+					case 4:
+						beard = `<path d="M ${cx-mouthW*0.9} ${mouthY-lipH*0.3} Q ${cx-mouthW*0.5} ${mouthY+lipH*0.8} ${cx} ${mouthY+lipH*0.3} Q ${cx+mouthW*0.5} ${mouthY+lipH*0.8} ${cx+mouthW*0.9} ${mouthY-lipH*0.3} Q ${cx+mouthW*0.5} ${mouthY-lipH*0.1} ${cx} ${mouthY-lipH*0.5} Q ${cx-mouthW*0.5} ${mouthY-lipH*0.1} ${cx-mouthW*0.9} ${mouthY-lipH*0.3} Z" fill="${beardCol}"/>`;
+						break;
+					case 7:
+						beard = `<path d="M ${cx-mouthW*0.9} ${mouthY-lipH*0.3} Q ${cx-mouthW*0.5} ${mouthY+lipH*0.8} ${cx} ${mouthY+lipH*0.3} Q ${cx+mouthW*0.5} ${mouthY+lipH*0.8} ${cx+mouthW*0.9} ${mouthY-lipH*0.3} Q ${cx+mouthW*0.5} ${mouthY-lipH*0.1} ${cx} ${mouthY-lipH*0.5} Q ${cx-mouthW*0.5} ${mouthY-lipH*0.1} ${cx-mouthW*0.9} ${mouthY-lipH*0.3} Z" fill="${beardCol}"/><path d="M ${cx-mouthW*0.5} ${mouthY+lipH*1.5} Q ${cx} ${mouthY+lipH*1.5+30} ${cx+mouthW*0.5} ${mouthY+lipH*1.5} Q ${cx} ${mouthY+lipH*1.5+16} ${cx-mouthW*0.5} ${mouthY+lipH*1.5} Z" fill="${beardCol}" opacity="0.9"/>`;
+						break;
+					case 8:
+						beard = `<path d="M ${cx-wChub*0.92} ${cy-hChub*0.1} Q ${cx-wChub*0.95} ${cy+hChub*0.8} ${cx} ${cy+hChub*1.02} Q ${cx+wChub*0.95} ${cy+hChub*0.8} ${cx+wChub*0.92} ${cy-hChub*0.1}" fill="none" stroke="${beardCol}" stroke-width="9" stroke-linecap="round" opacity="0.9"/>`;
+						break;
+					case 5:
+						beard = `<path d="M ${cx-wChub-5} ${cy-hChub*0.2} L ${cx-wChub+5} ${cy-hChub*0.2} L ${cx-wChub+10} ${cy+hChub*0.4} L ${cx-wChub} ${cy+hChub*0.5} Z" fill="${beardCol}"/><path d="M ${cx+wChub+5} ${cy-hChub*0.2} L ${cx+wChub-5} ${cy-hChub*0.2} L ${cx+wChub-10} ${cy+hChub*0.4} L ${cx+wChub} ${cy+hChub*0.5} Z" fill="${beardCol}"/>`;
+						break;
+					case 6:
+						beard = `<path d="M ${cx-wChub*0.6} ${cy+hChub*0.4} Q ${cx-wChub*0.7} ${cy+hChub*0.9} ${cx} ${cy+hChub*1.05} Q ${cx+wChub*0.7} ${cy+hChub*0.9} ${cx+wChub*0.6} ${cy+hChub*0.4} Q ${cx} ${cy+hChub*0.55} ${cx-wChub*0.6} ${cy+hChub*0.4} Z" fill="${beardCol}" stroke="${beardDark}" stroke-width="0.8"/>`;
+						break;
+				}
+				let moles = '';
+				const molePositions = [[cx-wChub*0.5, cy-hChub*0.2], [cx+wChub*0.6, cy-hChub*0.4], [cx-wChub*0.3, cy+hChub*0.2], [cx+wChub*0.4, cy+hChub*0.1], [cx-wChub*0.7, cy+hChub*0.3]];
+				for(let i = 0; i < Math.min(s.moles, molePositions.length); i++){
+					moles += `<circle cx="${molePositions[i][0]}" cy="${molePositions[i][1]}" r="2.5" fill="${darken(skinBase, 70)}"/><circle cx="${molePositions[i][0]-0.5}" cy="${molePositions[i][1]-0.5}" r="0.8" fill="${darken(skinBase, 40)}" opacity="0.6"/>`;
+				}
+				let freck = '';
+				for(let i = 0; i < Math.round(s.freckles*0.5); i++){
+					const fx = cx + (rnd()*2-1)*wChub*0.6, fy = cy - hChub*0.08 + rnd()*hChub*0.22;
+					freck += `<circle cx="${fx.toFixed(1)}" cy="${fy.toFixed(1)}" r="${(0.8+rnd()*0.8).toFixed(1)}" fill="${darken(skinBase, 55)}" opacity="0.55"/>`;
+				}
+				const scarPos = {1:[cx-wChub*0.55, cy-hChub*0.05, 1], 2:[cx+wChub*0.55, cy-hChub*0.05, -1], 3:[cx-eyeSpacing-2, browY-9, 1], 4:[cx+eyeSpacing+2, browY-9, -1], 5:[cx+wChub*0.15, cy+hChub*0.62, -1]}[s.scar];
+				let scar = '';
+				if(scarPos){
+					const [sx, sy, d] = scarPos;
+					scar = `<path d="M ${sx} ${sy} l ${d*12} ${s.scar>=3&&s.scar<5?20:24}" stroke="#a05555" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.8"/><path d="M ${sx+d*4} ${sy+5} l 5 -2 M ${sx+d*7} ${sy+11} l 5 -2 M ${sx+d*10} ${sy+17} l 5 -2" stroke="#7a3a3a" stroke-width="0.9" fill="none" opacity="0.7"/>`;
+				}
+				let glasses = '';
+				if(s.glasses > 0){
+					const gCol = "#1a1a1a";
+					const gW = eyeW + 6;
+					const gH = eyeH + 5;
+					switch(s.glasses){
+						case 1:
+							glasses = `<circle cx="${cx-eyeSpacing}" cy="${eyeY}" r="${gW}" fill="none" stroke="${gCol}" stroke-width="2.5"/><circle cx="${cx+eyeSpacing}" cy="${eyeY}" r="${gW}" fill="none" stroke="${gCol}" stroke-width="2.5"/><line x1="${cx-eyeSpacing+gW}" y1="${eyeY}" x2="${cx+eyeSpacing-gW}" y2="${eyeY}" stroke="${gCol}" stroke-width="2.5"/><line x1="${cx-eyeSpacing-gW}" y1="${eyeY}" x2="${cx-wChub-earW*0.3}" y2="${eyeY-3}" stroke="${gCol}" stroke-width="2"/><line x1="${cx+eyeSpacing+gW}" y1="${eyeY}" x2="${cx+wChub+earW*0.3}" y2="${eyeY-3}" stroke="${gCol}" stroke-width="2"/>`;
+							break;
+						case 2:
+							glasses = `<rect x="${cx-eyeSpacing-gW}" y="${eyeY-gH}" width="${gW*2}" height="${gH*2}" fill="none" stroke="${gCol}" stroke-width="2.5" rx="3"/><rect x="${cx+eyeSpacing-gW}" y="${eyeY-gH}" width="${gW*2}" height="${gH*2}" fill="none" stroke="${gCol}" stroke-width="2.5" rx="3"/><line x1="${cx-eyeSpacing+gW}" y1="${eyeY}" x2="${cx+eyeSpacing-gW}" y2="${eyeY}" stroke="${gCol}" stroke-width="2.5"/><line x1="${cx-eyeSpacing-gW}" y1="${eyeY}" x2="${cx-wChub-earW*0.3}" y2="${eyeY-3}" stroke="${gCol}" stroke-width="2"/><line x1="${cx+eyeSpacing+gW}" y1="${eyeY}" x2="${cx+wChub+earW*0.3}" y2="${eyeY-3}" stroke="${gCol}" stroke-width="2"/>`;
+							break;
+						case 3:
+							glasses = `<path d="M ${cx-eyeSpacing-gW} ${eyeY-gH} L ${cx-eyeSpacing+gW} ${eyeY-gH} L ${cx-eyeSpacing+gW*0.8} ${eyeY+gH} L ${cx-eyeSpacing-gW*0.8} ${eyeY+gH} Z" fill="#111" fill-opacity="0.75" stroke="${gCol}" stroke-width="2"/><path d="M ${cx+eyeSpacing-gW} ${eyeY-gH} L ${cx+eyeSpacing+gW} ${eyeY-gH} L ${cx+eyeSpacing+gW*0.8} ${eyeY+gH} L ${cx+eyeSpacing-gW*0.8} ${eyeY+gH} Z" fill="#111" fill-opacity="0.75" stroke="${gCol}" stroke-width="2"/><line x1="${cx-eyeSpacing+gW}" y1="${eyeY}" x2="${cx+eyeSpacing-gW}" y2="${eyeY}" stroke="${gCol}" stroke-width="2.5"/><line x1="${cx-eyeSpacing-gW}" y1="${eyeY}" x2="${cx-wChub-earW*0.3}" y2="${eyeY-3}" stroke="${gCol}" stroke-width="2"/><line x1="${cx+eyeSpacing+gW}" y1="${eyeY}" x2="${cx+wChub+earW*0.3}" y2="${eyeY-3}" stroke="${gCol}" stroke-width="2"/>`;
+							break;
+						case 5:
+						case 6:{
+							const rim = s.glasses === 5;
+							const lens = (ex) => `<ellipse cx="${ex}" cy="${eyeY}" rx="${gW*1.15}" ry="${gH*0.85}" fill="${rim?'none':'#aaccee'}" fill-opacity="${rim?0:0.25}" stroke="${gCol}" stroke-width="${rim?2.5:0.9}"/>`;
+							glasses = lens(cx-eyeSpacing) + lens(cx+eyeSpacing) + `<line x1="${cx-eyeSpacing+gW*1.15}" y1="${eyeY}" x2="${cx+eyeSpacing-gW*1.15}" y2="${eyeY}" stroke="${gCol}" stroke-width="${rim?2.5:1}"/><line x1="${cx-eyeSpacing-gW*1.15}" y1="${eyeY}" x2="${cx-wChub-earW*0.3}" y2="${eyeY-3}" stroke="${gCol}" stroke-width="${rim?2:1}"/><line x1="${cx+eyeSpacing+gW*1.15}" y1="${eyeY}" x2="${cx+wChub+earW*0.3}" y2="${eyeY-3}" stroke="${gCol}" stroke-width="${rim?2:1}"/>`;
+							break;
+						}
+						case 4:
+							glasses = `<path d="M ${cx-eyeSpacing-gW} ${eyeY-gH*0.5} Q ${cx-eyeSpacing-gW} ${eyeY+gH} ${cx-eyeSpacing} ${eyeY+gH*1.1} Q ${cx-eyeSpacing+gW} ${eyeY+gH} ${cx-eyeSpacing+gW} ${eyeY-gH*0.5} Z" fill="#88aacc" fill-opacity="0.5" stroke="${gCol}" stroke-width="2"/><path d="M ${cx+eyeSpacing-gW} ${eyeY-gH*0.5} Q ${cx+eyeSpacing-gW} ${eyeY+gH} ${cx+eyeSpacing} ${eyeY+gH*1.1} Q ${cx+eyeSpacing+gW} ${eyeY+gH} ${cx+eyeSpacing+gW} ${eyeY-gH*0.5} Z" fill="#88aacc" fill-opacity="0.5" stroke="${gCol}" stroke-width="2"/><line x1="${cx-eyeSpacing+gW}" y1="${eyeY-gH*0.3}" x2="${cx+eyeSpacing-gW}" y2="${eyeY-gH*0.3}" stroke="${gCol}" stroke-width="2"/><line x1="${cx-eyeSpacing-gW}" y1="${eyeY-gH*0.3}" x2="${cx-wChub-earW*0.3}" y2="${eyeY-3}" stroke="${gCol}" stroke-width="2"/><line x1="${cx+eyeSpacing+gW}" y1="${eyeY-gH*0.3}" x2="${cx+wChub+earW*0.3}" y2="${eyeY-3}" stroke="${gCol}" stroke-width="2"/>`;
+							break;
+					}
+				}
+				const neck = `
+					<path d="M ${cx-wChub*0.35} ${cy+hChub*0.95} L ${cx-wChub*0.42} ${cy+hChub*1.35} L ${cx+wChub*0.42} ${cy+hChub*1.35} L ${cx+wChub*0.35} ${cy+hChub*0.95} Z" fill="url(#skinGrad)" stroke="${skinDark}" stroke-width="0.8"/>
+					<ellipse cx="${cx}" cy="${cy+hChub*1.02}" rx="${wChub*0.4}" ry="6" fill="${skinDark}" opacity="0.4" filter="url(#faceBlur)"/>
+				`;
+				return `
+					${defs}${defs2}
+					${neck}
+					${ears}
+					<path d="${facePath}" fill="url(#skinGrad)" stroke="${skinDark}" stroke-width="1.2"/>
+					<path d="${facePath}" fill="url(#sideShadowL)" opacity="0.6"/>
+					<path d="${facePath}" fill="url(#sideShadowR)" opacity="0.6"/>
+					<g clip-path="url(#faceClip)">
+						<ellipse cx="${cx}" cy="${cy-hChub*0.62}" rx="${wChub*0.55}" ry="${hChub*0.18}" fill="${skinLight}" opacity="0.35" filter="url(#faceBlur)"/>
+						<ellipse cx="${cx}" cy="${noseTop+noseLen*0.5}" rx="${noseW*0.35}" ry="${noseLen*0.45}" fill="${lighten(skinBase,35)}" opacity="0.3" filter="url(#faceBlur)"/>
+						<ellipse cx="${cx-noseW*1.7}" cy="${noseTop+noseLen*0.4}" rx="4" ry="${noseLen*0.4}" fill="${skinDark}" opacity="0.2" filter="url(#faceBlur)"/>
+						<ellipse cx="${cx+noseW*1.7}" cy="${noseTop+noseLen*0.4}" rx="4" ry="${noseLen*0.4}" fill="${skinDark}" opacity="0.2" filter="url(#faceBlur)"/>
+						<ellipse cx="${cx-wChub*0.55}" cy="${cy-hChub*0.02}" rx="${wChub*0.22}" ry="${hChub*0.07}" fill="${skinLight}" opacity="0.3" filter="url(#faceBlur)"/>
+						<ellipse cx="${cx+wChub*0.55}" cy="${cy-hChub*0.02}" rx="${wChub*0.22}" ry="${hChub*0.07}" fill="${skinLight}" opacity="0.3" filter="url(#faceBlur)"/>
+						<ellipse cx="${cx-wChub*0.9}" cy="${cy-hChub*0.4}" rx="${wChub*0.14}" ry="${hChub*0.25}" fill="${skinDark}" opacity="0.25" filter="url(#faceBlur)"/>
+						<ellipse cx="${cx+wChub*0.9}" cy="${cy-hChub*0.4}" rx="${wChub*0.14}" ry="${hChub*0.25}" fill="${skinDark}" opacity="0.25" filter="url(#faceBlur)"/>
+						<rect x="0" y="0" width="400" height="520" filter="url(#skinTex)" opacity="0.55"/>
+					</g>
+					<ellipse cx="${cx}" cy="${cy+hChub*0.85}" rx="${wChub*0.7}" ry="${hChub*0.2}" fill="url(#chinShadow)" opacity="0.5"/>
+					<ellipse cx="${cx-wChub*0.55}" cy="${cy+hChub*0.05}" rx="${wChub*0.25}" ry="${hChub*0.15}" fill="url(#cheekL)"/>
+					<ellipse cx="${cx+wChub*0.55}" cy="${cy+hChub*0.05}" rx="${wChub*0.25}" ry="${hChub*0.15}" fill="url(#cheekR)"/>
+					${wrinkles}
+					${hair}
+					${noseUnderShadow}
+					${eyes}
+					${brows}
+					${browHairs}
+					${nose}
+					${mouth}
+					<ellipse cx="${cx-mouthW-1}" cy="${mouthY+yC}" rx="3" ry="2.5" fill="${skinDark}" opacity="0.35" filter="url(#faceBlur)"/><ellipse cx="${cx+mouthW+1}" cy="${mouthY+yC}" rx="3" ry="2.5" fill="${skinDark}" opacity="0.35" filter="url(#faceBlur)"/>
+					${beard}
+					${moles}
+					${freck}
+					${scar}
+					${glasses}
+				`;
+			}
+
+			function update(){
+				readState();
+				document.getElementById('face').innerHTML = buildFace();
+			}
+
+			function randomize(){
+				const rand = (min, max) => Math.floor(Math.random()*(max - min + 1)) + min;
+				const skinTones = ["#f1c27d","#e8b890","#e0ac69","#c68642","#8d5524","#f5d0a9","#d4a373","#a67b5b","#6b4423"];
+				const hairColors = ["#3a2820","#1a1a1a","#8b4513","#d4a017","#a52a2a","#c0c0c0","#ffffff","#b87333"];
+				const beardColors = ["#3a2820","#1a1a1a","#8b4513","#c0c0c0","#ffffff","#a52a2a"];
+				document.getElementById('faceShape').value = rand(0,7);
+				document.getElementById('faceWidth').value = rand(80,125);
+				document.getElementById('faceHeight').value = rand(85,120);
+				document.getElementById('skinColor').value = skinTones[rand(0, skinTones.length-1)];
+				document.getElementById('age').value = rand(18,80);
+				document.getElementById('chubbiness').value = rand(-20, 20);
+				document.getElementById('eyeShape').value = rand(0,4);
+				document.getElementById('eyeDist').value = rand(80,120);
+				document.getElementById('eyeSize').value = rand(80,120);
+				document.getElementById('eyeHeight').value = rand(90,110);
+				document.getElementById('eyeColor').value = ["#6b4423","#3a5f8a","#4a7a4a","#2b2b2b","#8a7a5a","#7a8a9a","#5b3a8a","#2e8b8b"][rand(0,7)];
+				document.getElementById('pupilSize').value = rand(70,130);
+				document.getElementById('freckles').value = rand(0,3) === 0 ? rand(10,80) : 0;
+				document.getElementById('scar').value = rand(0,4) === 0 ? rand(1,5) : 0;
+				document.getElementById('browThick').value = rand(2,8);
+				document.getElementById('browAngle').value = rand(-15,15);
+				document.getElementById('browColor').value = hairColors[rand(0, hairColors.length-1)];
+				document.getElementById('noseLen').value = rand(85,115);
+				document.getElementById('noseWidth').value = rand(80,125);
+				document.getElementById('noseStyle').value = rand(0,4);
+				document.getElementById('mouthWidth').value = rand(80,120);
+				document.getElementById('smile').value = rand(-60,80);
+				document.getElementById('lipSize').value = rand(70,130);
+				document.getElementById('lipColor').value = ["#b86858","#a05040","#c07060","#9a5545"][rand(0,3)];
+				document.getElementById('hairStyle').value = rand(0,10);
+				document.getElementById('hairColor').value = hairColors[rand(0, hairColors.length-1)];
+				document.getElementById('baldness').value = rand(0,60);
+				document.getElementById('beardStyle').value = rand(0,8);
+				document.getElementById('beardColor').value = beardColors[rand(0, beardColors.length-1)];
+				document.getElementById('earSize').value = rand(85,125);
+				document.getElementById('moles').value = rand(0,3);
+				document.getElementById('wrinkles').value = rand(0, 60);
+				document.getElementById('glasses').value = rand(0,6);
+				newName();
+				update();
+			}
+
+			function resetAll(){
+				for(const k in defaults){
+					const el = document.getElementById(k);
+					if(el){
+						el.value = defaults[k];
+					}
+				}
+				update();
+			}
+
+			function serializeFace(withBg){
+				const clone = document.getElementById('face').cloneNode(true);
+				clone.setAttribute('width', '400');
+				clone.setAttribute('height', '520');
+				clone.removeAttribute('id');
+				if(withBg){
+					clone.insertAdjacentHTML('afterbegin', '<rect x="0" y="0" width="400" height="520" fill="#c8c8c8"/>');
+				}
+				return new XMLSerializer().serializeToString(clone);
+			}
+
+			function exportPNG(){
+				const svgData = serializeFace(false);
+				const svgBlob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+				const url = URL.createObjectURL(svgBlob);
+				const img = new Image();
+				img.onload = function(){
+					const canvas = document.createElement('canvas');
+					canvas.width = 800; canvas.height = 1040;
+					const ctx = canvas.getContext('2d');
+					const grad = ctx.createRadialGradient(400, 400, 50, 400, 400, 600);
+					grad.addColorStop(0, '#e8e8e8');
+					grad.addColorStop(1, '#b0b0b0');
+					ctx.fillStyle = grad;
+					ctx.fillRect(0,0,800,1040);
+					ctx.drawImage(img, 0, 0, 800, 1040);
+					URL.revokeObjectURL(url);
+					const link = document.createElement('a');
+					link.download = `identikit_${suspectCode}.png`;
+					link.href = canvas.toDataURL('image/png');
+					link.click();
+				};
+				img.src = url;
+			}
+
+			function exportSVG(){
+				const svgData = serializeFace(true);
+				const blob = new Blob([svgData], {type: 'image/svg+xml'});
+				const link = document.createElement('a');
+				link.download = `identikit_${suspectCode}.svg`;
+				link.href = URL.createObjectURL(blob);
+				link.click();
+				setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+			}
+
+			newName();
+			update();
+		</script>
+	</body>
+</html>
