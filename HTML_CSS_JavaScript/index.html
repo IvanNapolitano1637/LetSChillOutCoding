@@ -9482,11 +9482,12 @@ document.addEventListener('keydown', function(e) {
 			<div class="help-box">
 				<h2>🂡 Scegli la versione</h2>
 				<p style="font-size:13px; line-height:1.5; margin:0 0 20px; text-align:center;">
-					Questo solitario ha due varianti. Scegli quella con cui vuoi giocare questa partita.
+					Questo solitario ha tre varianti. Scegli quella con cui vuoi giocare questa partita.
 				</p>
 				<div class="game-controls" style="margin-bottom:0; flex-direction:column; align-items:center;">
-					<button class="btn-action" onclick="selectRule('v1')" style="width:100%; max-width:280px;">Versione 1<br><span style="font-size:10px; font-weight:400; text-transform:none; letter-spacing:0;">5 colonne · pozzetto illimitato</span></button>
-					<button class="btn-action" onclick="selectRule('v2')" style="width:100%; max-width:280px; margin-top:10px;">Versione 2<br><span style="font-size:10px; font-weight:400; text-transform:none; letter-spacing:0;">6 colonne · pozzetto rigirabile una sola volta</span></button>
+					<button class="btn-action" onclick="selectRule('v1')" style="width:100%; max-width:280px;">Versione 1</button>
+					<button class="btn-action" onclick="selectRule('v2')" style="width:100%; max-width:280px; margin-top:10px;">Versione 2</button>
+					<button class="btn-action" onclick="selectRule('v3')" style="width:100%; max-width:280px; margin-top:10px;">Versione 3</button>
 				</div>
 			</div>
 		</div>
@@ -9574,16 +9575,30 @@ document.addEventListener('keydown', function(e) {
 			let wasteOnlyMode = false;
 			let NUM_COLS = 6;
 			let UNLIMITED_RECYCLE = false;
+			let AUTO_FILL_EMPTY = false;
+			let LOSE_ON_STUCK_WASTE = false;
+			let gameOver = false;
 
 			function selectRule(rule){
 				if(rule === 'v1'){
 					NUM_COLS = 5;
 					UNLIMITED_RECYCLE = true;
+					AUTO_FILL_EMPTY = true;
+					LOSE_ON_STUCK_WASTE = false;
 					document.body.classList.remove('mode-6');
 					document.body.classList.add('mode-5');
+				}else if(rule === 'v2'){
+					NUM_COLS = 6;
+					UNLIMITED_RECYCLE = true;
+					AUTO_FILL_EMPTY = false;
+					LOSE_ON_STUCK_WASTE = false;
+					document.body.classList.remove('mode-5');
+					document.body.classList.add('mode-6');
 				}else{
 					NUM_COLS = 6;
 					UNLIMITED_RECYCLE = false;
+					AUTO_FILL_EMPTY = false;
+					LOSE_ON_STUCK_WASTE = true;
 					document.body.classList.remove('mode-5');
 					document.body.classList.add('mode-6');
 				}
@@ -9649,7 +9664,7 @@ document.addEventListener('keydown', function(e) {
 			}
 
 			function undoMove(){
-				if(history.length === 0){
+				if(gameOver || history.length === 0){
 					return;
 				}
 				clearSelection();
@@ -9696,6 +9711,7 @@ document.addEventListener('keydown', function(e) {
 				history = [];
 				recycleCount = 0;
 				wasteOnlyMode = false;
+				gameOver = false;
 				document.getElementById('redeal-overlay').classList.remove('open');
 				document.getElementById('btn-undo').disabled = true;
 				document.getElementById('btn-undo').style.opacity = '0.5';
@@ -10117,6 +10133,9 @@ document.addEventListener('keydown', function(e) {
 			}
 
 			function handleCardClick(card){
+				if(gameOver){
+					return;
+				}
 				if(card.dataset.faceUp === "false"){
 					return;
 				}
@@ -10180,6 +10199,9 @@ document.addEventListener('keydown', function(e) {
 			}
 
 			function handleEmptyColumnClick(idx){
+				if(gameOver){
+					return;
+				}
 				const col = document.getElementById(\`col-\${idx}\`);
 				if(selection && col.children.length === 0){
 					moveSelectionToColumn(col);
@@ -10206,7 +10228,7 @@ document.addEventListener('keydown', function(e) {
 
 			function handleFoundationSlotClick(fslotIdx){
 				clearHighlights();
-				if(!selection){
+				if(gameOver || !selection){
 					return;
 				}
 				if(selection.cards.length > 1){
@@ -10249,6 +10271,7 @@ document.addEventListener('keydown', function(e) {
 				refreshColumnZIndex(origin);
 				revealTopCard(origin);
 				checkWin();
+				checkWasteLoss();
 			}
 	
 			function refreshColumnZIndex(col){
@@ -10286,6 +10309,7 @@ document.addEventListener('keydown', function(e) {
 				refreshColumnZIndex(destCol);
 				refreshColumnZIndex(origin);
 				revealTopCard(origin);
+				checkWasteLoss();
 			}
 
 			function refreshFoundationPointerEvents(slot){
@@ -10310,11 +10334,21 @@ document.addEventListener('keydown', function(e) {
 			}
 
 			function handleDeckClick(){
+				if(gameOver){
+					return;
+				}
 				const waste = document.getElementById('waste');
 				clearSelection();
 				if(deckData.length > 0){
+					if(LOSE_ON_STUCK_WASTE && recycleCount >= 1){
+						const topWaste = waste.lastElementChild;
+						if(topWaste && topWaste.classList.contains('card') && !canPlaceCard(topWaste)){
+							alert('Non puoi pescare la carta successiva: quella scoperta non può essere piazzata.');
+							return;
+						}
+					}
 					pushHistory();
-					const emptyCol = UNLIMITED_RECYCLE ? findEmptyColumn() : null;
+					const emptyCol = AUTO_FILL_EMPTY ? findEmptyColumn() : null;
 					const cardData = deckData.pop();
 					addCard(emptyCol || waste, cardData, true);
 					updateDeckUI();
@@ -10348,6 +10382,7 @@ document.addEventListener('keydown', function(e) {
 				}
 				wasteOnlyMode = true;
 				updateDeckUI();
+				checkWasteLoss();
 			}
 
 			function openRedealChoice(){
@@ -10379,6 +10414,50 @@ document.addEventListener('keydown', function(e) {
 				pushHistory();
 				wasteOnlyMode = true;
 				updateDeckUI();
+				checkWasteLoss();
+			}
+
+			function canPlaceCard(card){
+				syncFoundationFromDOM();
+				const suit = card.dataset.suit;
+				const value = parseInt(card.dataset.value);
+				const onFoundation = foundationSlots.some(fs =>
+					(fs.suit === null && value === 1) || (fs.suit === suit && value === fs.value + 1)
+				);
+				if(onFoundation){
+					return true;
+				}
+				for(let i = 0; i < NUM_COLS; i++){
+					const col = document.getElementById(\`col-\${i}\`);
+					const last = col.lastElementChild;
+					if(!last){
+						return true;
+					}
+					if(parseInt(last.dataset.value) === value + 1 && last.dataset.suit !== suit){
+						return true;
+					}
+				}
+				return false;
+			}
+
+			function checkWasteLoss(){
+				if(!LOSE_ON_STUCK_WASTE || !wasteOnlyMode || gameOver){
+					return;
+				}
+				const last = document.getElementById('waste').lastElementChild;
+				if(!last || !last.classList.contains('card')){
+					return;
+				}
+				if(canPlaceCard(last)){
+					return;
+				}
+				gameOver = true;
+				clearSelection();
+				const undoBtn = document.getElementById('btn-undo');
+				undoBtn.disabled = true;
+				undoBtn.style.opacity = '0.5';
+				undoBtn.style.cursor = 'not-allowed';
+				setTimeout(() => alert('Partita persa! La carta in cima agli scarti non può essere presa.'), 100);
 			}
 
 			function findEmptyColumn(){
@@ -40687,7 +40766,7 @@ document.addEventListener('keydown', function(e) {
 					<span class="badge badge-it">Italiano</span>
 					<strong>Games, Card</strong>
 					<div class="page-body">
-						<p>Versione digitale di un gioco che faccio da molti anni con le carte napoletane, avrò iniziato da bambino. Non sono nemmeno sicuro le regole siano esatte. Qualcuna potrei averla modificata, qualcuna inventata. Potrei essere l'unico a giocare a "questa versione". Di recente ho aggiunto una seconda versione dello stesso gioco. C'è anche un pulsante per iniziare una nuova partita, uno per annullare tutte le mosse fino a tornare all'inizio della partita ed un terzo pulsante per cambiare versione. Le differenze tra le due versioni sono due. Il numero di colonne ed il fatto di poter ricominciare ad utilizzare il mazzo degli scarti una sola volta oppure ad libitum.</p>
+						<p>Versione digitale di un gioco che faccio da molti anni con le carte napoletane, avrò iniziato da bambino. Non sono nemmeno sicuro le regole siano esatte. Qualcuna potrei averla modificata, qualcuna inventata. Potrei essere l'unico a giocare alla prima di queste tre versioni e non so quanto possa essere diffusa la terza. La seconda è una sorta di versione intermedia tra le altre due. C'è anche un pulsante per iniziare una nuova partita, uno per annullare tutte le mosse fino a tornare all'inizio della partita ed un terzo pulsante per cambiare versione. Le differenze tra le tre versioni sono le seguenti. Nella prima versione ci sono cinque colonne e si può rigirare il mazzetto un numero arbitrrario di volte. Nella seconda versione ci sono sei colonne. Nella terza ci sono sempre sei colonne ma al secondo giro si deve decidere una delle due direzioni possibili (secondo giro del mazzetto normale o usando gli scarti, andando in direzione opposta) e nel momento in cui non si riesce a piazzare una delle carte pescate la partita sarà persa.</p>
 					</div>
 				</div>
 				<div class="page-entry">
