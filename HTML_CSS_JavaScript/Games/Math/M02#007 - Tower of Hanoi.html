@@ -265,7 +265,7 @@
 				es:[["R","Reiniciar la partida"],["S","Ver la solución automática"],["L","Cambiar idioma"],["?","Mostrar / ocultar esta ayuda"],["F5","Guardar partida (ranura 1)"],["F9","Cargar partida (ranura 1)"]],
 				de:[["R","Spiel neu starten"],["S","Automatische Lösung ansehen"],["L","Sprache wechseln"],["?","Hilfe anzeigen / ausblenden"],["F5","Spiel speichern (Slot 1)"],["F9","Spiel laden (Slot 1)"]],
 				pt:[["R","Reiniciar o jogo"],["S","Ver a solução automática"],["L","Mudar idioma"],["?","Mostrar / ocultar esta ajuda"],["F5","Salvar jogo (slot 1)"],["F9","Carregar jogo (slot 1)"]],
-				ro:[["R","Repornește jocul"],["S","Urmărește soluția automată"],["L","Schimbă limba"],["?","Afișează / ascunde această ajutor"],["F5","Salvează jocul (slot 1)"],["F9","Încarcă jocul (slot 1)"]],
+				ro:[["R","Repornește jocul"],["S","Urmărește soluția automată"],["L","Schimbă limba"],["?","Afișează / ascunde acest ajutor"],["F5","Salvează jocul (slot 1)"],["F9","Încarcă jocul (slot 1)"]],
 				uk:[["R","Перезапустити гру"],["S","Переглянути автоматичне рішення"],["L","Змінити мову"],["?","Показати / приховати цю довідку"],["F5","Зберегти гру (слот 1)"],["F9","Завантажити гру (слот 1)"]],
 				el:[["R","Επανεκκίνηση παιχνιδιού"],["S","Δείτε την αυτόματη λύση"],["L","Αλλαγή γλώσσας"],["?","Εμφάνιση / απόκρυψη βοήθειας"],["F5","Αποθήκευση (θέση 1)"],["F9","Φόρτωση (θέση 1)"]],
 				la:[["R","Ludum restitue"],["S","Solutionem automaticam vide"],["L","Linguam muta"],["?","Auxilium ostende / absconde"],["F5","Serva ludum (theca 1)"],["F9","Onus ludum (theca 1)"]],
@@ -302,6 +302,7 @@
 			}
 
 			function applyTranslation(){
+				document.documentElement.lang = LANG_KEYS[currentLangIndex];
 				document.getElementById("langBtn").innerHTML = FLAGS_SVG[currentLangIndex];
 				document.getElementById("restartBtn").textContent = "⟳";
 				document.getElementById("demoBtn").textContent = tr("demo");
@@ -309,7 +310,7 @@
 				document.getElementById("saveBtn").title = tr("save");
 				document.getElementById("loadBtn").title = tr("load");
 				const select = document.getElementById("disksNumber");
-				const current = select.value;
+				const current = numberOfDisks;
 				select.innerHTML = "";
 				for(let i = 1; i <= 10; i++){
 					let opt = document.createElement("option");
@@ -346,7 +347,7 @@
 			const WIDTH = 36*UNIT;
 			const PAGE_WIDTH = 3.5*UNIT;
 			const BASE_HEIGHT = 2.5*UNIT;
-			const DISK_INCREASE = 3*UNIT;
+			const DISK_INCREASE = 2.5*UNIT;
 			const DISK_BASE_LENGTH = 12*UNIT;
 			const DISK_HEIGHT = (DESKTOP ? 5 : 8)*UNIT;
 			const UPPER_MARGIN = 4*UNIT, UPPER_PAGE_MARGIN = 2*UNIT, LOWER_MARGIN = 2*UNIT;
@@ -370,10 +371,13 @@
 				universe = document.getElementById("universe");
 				context = universe.getContext("2d");
 				const handleInteraction = (e) => {
+					if(!e.touches && e.button !== 0){
+						return;
+					}
 					const rect = universe.getBoundingClientRect();
 					const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-					const scaleX = universe.width/rect.width;
-					cursorX = (clientX - rect.left)*scaleX;
+					const scaleX = universe.width/universe.clientWidth;
+					cursorX = (clientX - rect.left - universe.clientLeft)*scaleX;
 					selectTowerClick();
 					if(e.touches){
 						e.preventDefault();
@@ -469,7 +473,7 @@
 			}
 
 			function selectTowerClick(){
-				if(wan){
+				if(wan || demo){
 					return;
 				}
 				let towerIdx = -1;
@@ -580,6 +584,9 @@
 			}
 
 			document.addEventListener("keydown", e => {
+				if(e.ctrlKey || e.metaKey || e.altKey){
+					return;
+				}
 				if(e.key.toLowerCase() === "r"){
 					resetGame();
 				}else if(e.key.toLowerCase() === "s"){
