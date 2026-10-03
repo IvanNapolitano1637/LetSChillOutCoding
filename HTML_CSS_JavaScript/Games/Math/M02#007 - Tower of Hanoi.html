@@ -9,6 +9,8 @@
 				--accent-color: #4a90e2;
 				--button-hover: #357abd;
 				--panel-bg: rgba(255, 255, 255, 0.85);
+				--ui-font-size: 16px;
+				--ui-height: 42px;
 			}
 			body{
 				font-family: 'Segoe UI', Tahoma, sans-serif;
@@ -27,22 +29,30 @@
 			}
 			.top-bar{
 				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
 				align-items: center;
 				gap: 10px;
 				margin-bottom: 15px;
+				max-width: 100%;
 			}
 			.stats{
 				background: var(--panel-bg);
-				padding: 10px 25px;
+				box-sizing: border-box;
+				height: var(--ui-height);
+				padding: 0 20px;
 				border-radius: 50px;
+				font-family: inherit;
 				font-weight: bold;
-				font-size: 1.2em;
+				font-size: var(--ui-font-size);
+				line-height: 1;
+				white-space: nowrap;
 				box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 				color: #333;
 				display: flex;
 				align-items: center;
 			}
-			.stats span{
+			.stats span + span{
 				margin-left: 8px;
 			}
 			canvas{
@@ -82,9 +92,17 @@
 				background: var(--panel-bg);
 				border: 1px solid rgba(255,255,255,0.5);
 				box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+				box-sizing: border-box;
+				font-family: inherit;
 				font-weight: bold;
-				height: 40px;
-				max-width: 110px;
+				font-size: var(--ui-font-size);
+				color: #333;
+				height: var(--ui-height);
+				padding: 0 16px;
+				border-radius: 50px;
+				width: auto;
+				max-width: none;
+				text-overflow: clip;
 			}
 			button{
 				background-color: var(--accent-color);
@@ -110,13 +128,26 @@
 				-webkit-tap-highlight-color: transparent;
 			}
 			@media screen and (max-width: 600px){
+				body{
+					padding: 10px;
+				}
+				:root{
+					--ui-font-size: 15px;
+					--ui-height: 40px;
+				}
+				.top-bar{
+					gap: 8px;
+				}
+				.stats{
+					padding: 0 14px;
+				}
+				select{
+					padding: 0 10px;
+				}
 				.controls{
 					padding: 8px 10px;
 					gap: 6px;
-				}
-				select{
-					max-width: 90px;
-					font-size: 12px;
+					flex-wrap: wrap;
 				}
 				button{
 					font-size: 13px;
