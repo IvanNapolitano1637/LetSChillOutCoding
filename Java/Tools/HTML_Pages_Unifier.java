@@ -4,10 +4,10 @@ import java.nio.file.*;
 import java.util.*;
 
 //Codice per creare un unico file HTML con all'interno tutte le pagine che stanno nelle cartelle "Games" e "Tools" più un nuovo file parallelo ad esse.
-//La cartella "Games" contiene quattro sottocartelle: "Board", "Card", "Math" e "Puzzle".
+//La cartella "Games" contiene cinque sottocartelle: "Arcade", "Board", "Card", "Math" e "Puzzle".
 //La cartella "Tools" contiene tre sottocartelle: "Clocks", "Lab" e "Utilities".
 //Codice creato da Gemini e Claude lunedì nove febbraio duemilaventisei dopo un altro tentativo fatto con Gemini due giorni prima.
-//Ho fatto varie altre modifiche. L'ultima venerdì diciotto settembre duemilaventisei.
+//Ho fatto varie altre modifiche. L'ultima martedì tredici ottobre duemilaventisei.
 //Il numero di pagine cresce sempre più e stanno per arrivarne diverse altre.
 //Da mettere nella cartella in cui ci sono: "Games" e "Tools".
 //Da compilare e lanciare lì da terminale.
@@ -19,6 +19,7 @@ public class HTML_Pages_Unifier{
 	static {
 		Map<String, String> tempMap = new HashMap<>();
 		tempMap.put("Games","🎮");
+		tempMap.put("Arcade","🕹️");
 		tempMap.put("Board","♟️");
 		tempMap.put("Card","🃏");
 		tempMap.put("Math","🔢");
@@ -52,7 +53,7 @@ public class HTML_Pages_Unifier{
 		StringBuilder htmlMenuBuilder = new StringBuilder();
 
 		Map<String, String[]> subFolderMap = new LinkedHashMap<>();
-		subFolderMap.put("Games", new String[]{"Board", "Card", "Math", "Puzzle"});
+		subFolderMap.put("Games", new String[]{"Arcade", "Board", "Card", "Math", "Puzzle"});
 		subFolderMap.put("Tools", new String[]{"Clocks", "Lab", "Utilities"});
 
 		for(String folderName : FOLDERS){
@@ -693,6 +694,7 @@ public class HTML_Pages_Unifier{
 				  shortcuts: [
 				    { key: 'G', desc: 'Toggle Games section' },
 				    { key: 'T', desc: 'Toggle Tools section' },
+				    { key: 'R', desc: 'Toggle Arcade subsection' },
 				    { key: 'B', desc: 'Toggle Board subsection' },
 				    { key: 'A', desc: 'Toggle Card subsection' },
 				    { key: 'M', desc: 'Toggle Math subsection' },
@@ -711,6 +713,7 @@ public class HTML_Pages_Unifier{
 				  shortcuts: [
 				    { key: 'G', desc: 'Apri/chiudi sezione Games' },
 				    { key: 'T', desc: 'Apri/chiudi sezione Tools' },
+				    { key: 'R', desc: 'Apri/chiudi sottosezione Arcade' },
 				    { key: 'B', desc: 'Apri/chiudi sottosezione Board' },
 				    { key: 'A', desc: 'Apri/chiudi sottosezione Card' },
 				    { key: 'M', desc: 'Apri/chiudi sottosezione Math' },
@@ -728,6 +731,7 @@ public class HTML_Pages_Unifier{
 				  shortcuts: [
 				    { key: 'G', desc: 'Afficher/masquer la section Games' },
 				    { key: 'T', desc: 'Afficher/masquer la section Tools' },
+				    { key: 'R', desc: 'Afficher/masquer la sous-section Arcade' },
 				    { key: 'B', desc: 'Afficher/masquer la sous-section Board' },
 				    { key: 'A', desc: 'Afficher/masquer la sous-section Card' },
 				    { key: 'M', desc: 'Afficher/masquer la sous-section Math' },
@@ -745,6 +749,7 @@ public class HTML_Pages_Unifier{
 				  shortcuts: [
 				    { key: 'G', desc: 'Mostrar/ocultar secci\u00f3n Games' },
 				    { key: 'T', desc: 'Mostrar/ocultar secci\u00f3n Tools' },
+				    { key: 'R', desc: 'Mostrar/ocultar subsecci\u00f3n Arcade' },
 				    { key: 'B', desc: 'Mostrar/ocultar subsecci\u00f3n Board' },
 				    { key: 'A', desc: 'Mostrar/ocultar subsecci\u00f3n Card' },
 				    { key: 'M', desc: 'Mostrar/ocultar subsecci\u00f3n Math' },
@@ -762,6 +767,7 @@ public class HTML_Pages_Unifier{
 				  shortcuts: [
 				    { key: 'G', desc: 'Abschnitt Games ein-/ausblenden' },
 				    { key: 'T', desc: 'Abschnitt Tools ein-/ausblenden' },
+				    { key: 'R', desc: 'Unterabschnitt Arcade ein-/ausblenden' },
 				    { key: 'B', desc: 'Unterabschnitt Board ein-/ausblenden' },
 				    { key: 'A', desc: 'Unterabschnitt Card ein-/ausblenden' },
 				    { key: 'M', desc: 'Unterabschnitt Math ein-/ausblenden' },
@@ -779,6 +785,7 @@ public class HTML_Pages_Unifier{
 				  shortcuts: [
 				    { key: 'G', desc: 'Mostrar/ocultar se\u00e7\u00e3o Games' },
 				    { key: 'T', desc: 'Mostrar/ocultar se\u00e7\u00e3o Tools' },
+				    { key: 'R', desc: 'Mostrar/ocultar subse\u00e7\u00e3o Arcade' },
 				    { key: 'B', desc: 'Mostrar/ocultar subse\u00e7\u00e3o Board' },
 				    { key: 'A', desc: 'Mostrar/ocultar subse\u00e7\u00e3o Card' },
 				    { key: 'M', desc: 'Mostrar/ocultar subse\u00e7\u00e3o Math' },
@@ -796,6 +803,7 @@ public class HTML_Pages_Unifier{
 				  shortcuts: [
 				    { key: 'G', desc: 'Arat\u0103/ascunde sec\u021biunea Games' },
 				    { key: 'T', desc: 'Arat\u0103/ascunde sec\u021biunea Tools' },
+				    { key: 'R', desc: 'Arat\u0103/ascunde subsec\u021biunea Arcade' },
 				    { key: 'B', desc: 'Arat\u0103/ascunde subsec\u021biunea Board' },
 				    { key: 'A', desc: 'Arat\u0103/ascunde subsec\u021biunea Card' },
 				    { key: 'M', desc: 'Arat\u0103/ascunde subsec\u021biunea Math' },
@@ -813,6 +821,7 @@ public class HTML_Pages_Unifier{
 				  shortcuts: [
 				    { key: 'G', desc: '\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u0438/\u0441\u0445\u043e\u0432\u0430\u0442\u0438 \u0440\u043e\u0437\u0434\u0456\u043b Games' },
 				    { key: 'T', desc: '\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u0438/\u0441\u0445\u043e\u0432\u0430\u0442\u0438 \u0440\u043e\u0437\u0434\u0456\u043b Tools' },
+				    { key: 'R', desc: '\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u0438/\u0441\u0445\u043e\u0432\u0430\u0442\u0438 \u043f\u0456\u0434\u0440\u043e\u0437\u0434\u0456\u043b Arcade' },
 				    { key: 'B', desc: '\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u0438/\u0441\u0445\u043e\u0432\u0430\u0442\u0438 \u043f\u0456\u0434\u0440\u043e\u0437\u0434\u0456\u043b Board' },
 				    { key: 'A', desc: '\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u0438/\u0441\u0445\u043e\u0432\u0430\u0442\u0438 \u043f\u0456\u0434\u0440\u043e\u0437\u0434\u0456\u043b Card' },
 				    { key: 'M', desc: '\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u0438/\u0441\u0445\u043e\u0432\u0430\u0442\u0438 \u043f\u0456\u0434\u0440\u043e\u0437\u0434\u0456\u043b Math' },
@@ -830,6 +839,7 @@ public class HTML_Pages_Unifier{
 				  shortcuts: [
 				    { key: 'G', desc: '\u0395\u03bc\u03c6\u03ac\u03bd\u03b9\u03c3\u03b7/\u03b1\u03c0\u03cc\u03ba\u03c1\u03c5\u03c8\u03b7 \u03b5\u03bd\u03cc\u03c4\u03b7\u03c4\u03b1\u03c2 Games' },
 				    { key: 'T', desc: '\u0395\u03bc\u03c6\u03ac\u03bd\u03b9\u03c3\u03b7/\u03b1\u03c0\u03cc\u03ba\u03c1\u03c5\u03c8\u03b7 \u03b5\u03bd\u03cc\u03c4\u03b7\u03c4\u03b1\u03c2 Tools' },
+				    { key: 'R', desc: '\u0395\u03bc\u03c6\u03ac\u03bd\u03b9\u03c3\u03b7/\u03b1\u03c0\u03cc\u03ba\u03c1\u03c5\u03c8\u03b7 \u03c5\u03c0\u03bf\u03b5\u03bd\u03cc\u03c4\u03b7\u03c4\u03b1\u03c2 Arcade' },
 				    { key: 'B', desc: '\u0395\u03bc\u03c6\u03ac\u03bd\u03b9\u03c3\u03b7/\u03b1\u03c0\u03cc\u03ba\u03c1\u03c5\u03c8\u03b7 \u03c5\u03c0\u03bf\u03b5\u03bd\u03cc\u03c4\u03b7\u03c4\u03b1\u03c2 Board' },
 				    { key: 'A', desc: '\u0395\u03bc\u03c6\u03ac\u03bd\u03b9\u03c3\u03b7/\u03b1\u03c0\u03cc\u03ba\u03c1\u03c5\u03c8\u03b7 \u03c5\u03c0\u03bf\u03b5\u03bd\u03cc\u03c4\u03b7\u03c4\u03b1\u03c2 Card' },
 				    { key: 'M', desc: '\u0395\u03bc\u03c6\u03ac\u03bd\u03b9\u03c3\u03b7/\u03b1\u03c0\u03cc\u03ba\u03c1\u03c5\u03c8\u03b7 \u03c5\u03c0\u03bf\u03b5\u03bd\u03cc\u03c4\u03b7\u03c4\u03b1\u03c2 Math' },
@@ -848,6 +858,7 @@ public class HTML_Pages_Unifier{
 				  shortcuts: [
 				    { key: 'G', desc: 'Ostende/occlude sectionem Games' },
 				    { key: 'T', desc: 'Ostende/occlude sectionem Tools' },
+				    { key: 'R', desc: 'Ostende/occlude subsectionem Arcade' },
 				    { key: 'B', desc: 'Ostende/occlude subsectionem Board' },
 				    { key: 'A', desc: 'Ostende/occlude subsectionem Card' },
 				    { key: 'M', desc: 'Ostende/occlude subsectionem Math' },
@@ -865,6 +876,7 @@ public class HTML_Pages_Unifier{
 				  shortcuts: [
 				    { key: 'G', desc: '\u663e\u793a/\u9690\u85cf Games \u533a\u57df' },
 				    { key: 'T', desc: '\u663e\u793a/\u9690\u85cf Tools \u533a\u57df' },
+				    { key: 'R', desc: '\u663e\u793a/\u9690\u85cf Arcade \u5b50\u533a\u57df' },
 				    { key: 'B', desc: '\u663e\u793a/\u9690\u85cf Board \u5b50\u533a\u57df' },
 				    { key: 'A', desc: '\u663e\u793a/\u9690\u85cf Card \u5b50\u533a\u57df' },
 				    { key: 'M', desc: '\u663e\u793a/\u9690\u85cf Math \u5b50\u533a\u57df' },
@@ -882,6 +894,7 @@ public class HTML_Pages_Unifier{
 				  shortcuts: [
 				    { key: 'G', desc: 'Games \u30bb\u30af\u30b7\u30e7\u30f3\u3092\u958b\u9589' },
 				    { key: 'T', desc: 'Tools \u30bb\u30af\u30b7\u30e7\u30f3\u3092\u958b\u9589' },
+				    { key: 'R', desc: 'Arcade \u30b5\u30d6\u30bb\u30af\u30b7\u30e7\u30f3\u3092\u958b\u9589' },
 				    { key: 'B', desc: 'Board \u30b5\u30d6\u30bb\u30af\u30b7\u30e7\u30f3\u3092\u958b\u9589' },
 				    { key: 'A', desc: 'Card \u30b5\u30d6\u30bb\u30af\u30b7\u30e7\u30f3\u3092\u958b\u9589' },
 				    { key: 'M', desc: 'Math \u30b5\u30d6\u30bb\u30af\u30b7\u30e7\u30f3\u3092\u958b\u9589' },
@@ -950,6 +963,9 @@ public class HTML_Pages_Unifier{
 					}
 					if(e.key.toLowerCase() === 't'){
 						toggleSection('grid-tools');
+					}
+					if(e.key.toLowerCase() === 'r'){
+						toggleSection('grid-arcade');
 					}
 					if(e.key.toLowerCase() === 'b'){
 						toggleSection('grid-board');
