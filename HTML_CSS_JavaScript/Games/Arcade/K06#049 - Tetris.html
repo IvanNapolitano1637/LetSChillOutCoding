@@ -34,12 +34,12 @@
 			.b{
 				position: absolute;
 				pointer-events: auto;
-				width: 70px;
-				height: 70px;
+				width: var(--s, 70px);
+				height: var(--s, 70px);
 				border-radius: 50%;
 				border: 2px solid rgba(255, 255, 255, .5);
 				color: #fff;
-				font: bold 26px sans-serif;
+				font: bold calc(var(--s, 70px)*.37) sans-serif;
 				display: flex;
 				align-items: center;
 				justify-content: center;
@@ -51,36 +51,36 @@
 			}
 			#bl{
 				left: calc(8px + env(safe-area-inset-left, 0px));
-				bottom: calc(86px + env(safe-area-inset-bottom, 0px))
+				bottom: calc(var(--s, 70px) + 16px + env(safe-area-inset-bottom, 0px))
 			}
 			#br{
-				left: calc(90px + env(safe-area-inset-left, 0px));
-				bottom: calc(86px + env(safe-area-inset-bottom, 0px))
+				left: calc(var(--s, 70px) + 20px + env(safe-area-inset-left, 0px));
+				bottom: calc(var(--s, 70px) + 16px + env(safe-area-inset-bottom, 0px))
 			}
 			#bd{
-				left: calc(49px + env(safe-area-inset-left, 0px));
+				left: calc(8px + (var(--s, 70px) + 12px)/2 + env(safe-area-inset-left, 0px));
 				bottom: calc(8px + env(safe-area-inset-bottom, 0px))
 			}
 			#bk{
-				right: calc(90px + env(safe-area-inset-right, 0px));
-				bottom: calc(86px + env(safe-area-inset-bottom, 0px))
+				right: calc(var(--s, 70px) + 20px + env(safe-area-inset-right, 0px));
+				bottom: calc(var(--s, 70px) + 16px + env(safe-area-inset-bottom, 0px))
 			}
 			#bc{
 				right: calc(8px + env(safe-area-inset-right, 0px));
-				bottom: calc(86px + env(safe-area-inset-bottom, 0px))
+				bottom: calc(var(--s, 70px) + 16px + env(safe-area-inset-bottom, 0px))
 			}
 			#bx{
-				right: calc(49px + env(safe-area-inset-right, 0px));
+				right: calc(8px + (var(--s, 70px) + 12px)/2 + env(safe-area-inset-right, 0px));
 				bottom: calc(8px + env(safe-area-inset-bottom, 0px))
 			}
 			#bh{
 				left: 50%;
 				transform: translateX(-50%);
 				bottom: calc(8px + env(safe-area-inset-bottom, 0px));
-				width: 84px;
-				height: 52px;
-				border-radius: 26px;
-				font-size: 15px;
+				width: calc(var(--s, 70px)*1.2);
+				height: calc(var(--s, 70px)*.75);
+				border-radius: 999px;
+				font-size: calc(var(--s, 70px)*.21);
 				font-family: "Courier New", monospace
 			}
 			.ib{
@@ -125,7 +125,16 @@
 				const cv = document.getElementById('c'), g = cv.getContext('2d');
 				const R = Math.random;
 				const coarse = matchMedia('(pointer:coarse)').matches || 'ontouchstart' in window;
-				let W, H, DPR, port, cell, bx, by;
+				let W, H, DPR, port, cell, bx, by, PW, X0, X1;
+
+				function insets(){
+					const d = document.createElement('div');
+					d.style.cssText = 'position:fixed;left:0;top:0;visibility:hidden;pointer-events:none;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)';
+					document.body.appendChild(d);
+					const c = getComputedStyle(d), r = {t: parseFloat(c.paddingTop)||0, b: parseFloat(c.paddingBottom)||0};
+					d.remove();
+					return r
+				}
 
 				function layout(){
 					DPR = Math.min(devicePixelRatio || 1, 2);
@@ -134,16 +143,29 @@
 					cv.width = W*DPR;
 					cv.height = H*DPR;
 					port = H > W*1.1;
+					const ins = insets();
+					let s = 70;
 					if(port){
-						const hh = 84, ch = coarse ? 172 : 0;
-						cell = Math.max(8, Math.floor(Math.min((W - 16)/10, (H - hh - ch - 10)/20)));
+						s = Math.max(48, Math.min(70, Math.floor((W - 56)/4)));
+						const hh = ins.t + 46, ch = coarse ? 2*s + 28 + ins.b : 8 + ins.b;
+						cell = Math.max(8, Math.floor(Math.min((H - hh - ch)/20, (W - 2*48 - 12)/10)));
 						bx = Math.floor((W - cell*10)/2);
 						by = hh + Math.max(0, Math.floor((H - hh - ch - cell*20)/2));
+						PW = bx - 8;
+						X0 = 4;
+						X1 = bx + cell*10 + 4;
 					}else{
 						cell = Math.max(8, Math.floor(Math.min((H - 16)/20, (W - 60)/18.4)));
 						bx = Math.floor((W - cell*10)/2);
 						by = Math.floor((H - cell*20)/2);
+						PW = Math.max(70, Math.round(cell*4.2));
+						X0 = bx - PW - 14;
+						X1 = bx + cell*10 + 14;
+						if(coarse){
+							s = Math.max(44, Math.min(64, Math.floor((X0 - 26)/2)));
+						}
 					}
+					document.documentElement.style.setProperty('--s', s + 'px');
 				}
 
 				addEventListener('resize', layout);
@@ -724,38 +746,22 @@
 					g.lineWidth = 2;
 					g.strokeRect(bx - 1, by - 1, bw + 2, bh + 2);
 					const q = queue || [], sc = String(score || 0).padStart(6, '0'), hs = String(hi).padStart(6, '0');
-					if(port){
-						txt('PUNTI ' + sc + '  LIV ' + (level || 1) + '	LINEE ' + (lines || 0), bx + bw / 2, Math.max(18, fs + 6), Math.max(12, Math.min(16, cell * .5)), 'center', '#fff');
-						box(bx, 26, 54, 50, 'HOLD', 9);
-						if(holdT >= 0 && st !== 'title'){
-							mini(holdT, bx + 27, 26 + 36, 11, canHold ? 1 : .4);
-						}
-						const nx0 = bx + bw - 3*58 + 4;
-						for(let i = 0; i < 3; i++){
-							box(nx0 + i*58, 26, 54, 50, i ? '' : 'NEXT', 9);
-							if(q.length && st !== 'title'){
-								mini(q[i], nx0 + i*58 + 27, 26 + 36, i ? 10 : 11)
-							}
-						}
-						txt('REC', (bx + 54 + nx0)/2, 44, 11, 'center', '#8890c0');
-						txt(hs, (bx + 54 + nx0)/2, 62, 15, 'center', '#fff');
-					}else{
-						const pw = Math.max(70, Math.round(cell*4.2)), x0 = bx - pw - 14, x1 = bx + bw + 14, mc = Math.round(cell*.75);
-						box(x0, by, pw, cell*3.4, 'HOLD', fs);
-						if(holdT >= 0 && st !== 'title'){
-							mini(holdT, x0 + pw/2, by + cell*2.2, mc, canHold ? 1 : .4);
-						}
-						[['PUNTI', sc], ['RECORD', hs], ['LIVELLO', String(level || 1)], ['LINEE', String(lines || 0)]].forEach((s, i) => {
-							const y = by + cell*5 + i*cell*2.4;
-							txt(s[0], x0, y, fs, 'left', '#8890c0');
-							txt(s[1], x0, y + cell*.95, fs*1.4, 'left', '#fff');
-						});
-						const sh = cell*2.9;
-						for(let i = 0; i < 5; i++){
-							box(x1, by + i*sh, pw, sh - 4, i ? '' : 'NEXT', fs);
-							if(q.length && st !== 'title'){
-								mini(q[i], x1 + pw/2, by + i*sh + sh*.58, i ? mc*.85 : mc)
-							}
+					const pw = PW, x0 = X0, x1 = X1, mc = Math.max(5, Math.min(Math.round(cell*.75), Math.floor((pw - 8)/4)));
+					const fl = port ? Math.min(fs, Math.max(8, Math.floor(pw/4.6))) : fs, fv = port ? Math.min(fl*1.4, pw/3.9) : fs*1.4;
+					const hbh = port ? Math.min(cell*3.4, pw*.9) : cell*3.4, sh = port ? Math.min(pw*1.25, bh/5, cell*3.4) : cell*2.9;
+					box(x0, by, pw, hbh, 'HOLD', fl);
+					if(holdT >= 0 && st !== 'title'){
+						mini(holdT, x0 + pw/2, by + hbh*.62, mc, canHold ? 1 : .4);
+					}
+					[['PUNTI', sc], ['RECORD', hs], ['LIVELLO', String(level || 1)], ['LINEE', String(lines || 0)]].forEach((r, i) => {
+						const y = by + hbh + (port ? cell*1.5 : cell*1.6) + i*cell*2.4;
+						txt(r[0], x0, y, fl, 'left', '#8890c0');
+						txt(r[1], x0, y + cell*.95, fv, 'left', '#fff');
+					});
+					for(let i = 0; i < 5; i++){
+						box(x1, by + i*sh, pw, sh - 4, i ? '' : 'NEXT', fl);
+						if(q.length && st !== 'title'){
+							mini(q[i], x1 + pw/2, by + i*sh + sh*.58, i ? mc*.85 : mc)
 						}
 					}
 					if(msg && st === 'play'){
