@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang = "it"><!--U10#053 - Raffaella - Fisica-->
+	<head>
+		<meta charset = "utf-8">
+		<meta name = "viewport" content="width=device-width, initial-scale=1">
+		<title>Fisica: definizioni, simboli e leggi</title>
+		<style>
+		:root{
+			--bg: #f6f7f9;
+			--ink: #1b2330;
+			--mut: #5a6577;
+			--acc: #1f5f8b;
+			--box: #e8eef5;
+			--line: #c9d3df
+		}
+		@media(prefers-color-scheme:dark){
+			:root{
+				--bg: #161a21;
+				--ink: #e6e9ee;
+				--mut: #9aa5b6;
+				--acc: #7fb8e6;
+				--box: #212835;
+				--line: #344052
+			}
+		}
+		*{
+			box-sizing: border-box
+		}
+		html{
+			-webkit-text-size-adjust: 100%
+		}
+		body{
+			margin: 0;
+			font: 16px/1.55 Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+			background: var(--bg);
+			color: var(--ink)
+		}
+		header, nav, main{
+			max-width: 800px;
+			margin: 0 auto;
+			padding-left: 14px;
+			padding-right: 14px
+		}
+		header{
+			padding-top: 16px
+		}
+		h1{
+			margin: 0 0 .2em;
+			font-size: 1.5em;
+			line-height: 1.25
+		}
+		h2{
+			font-size: 1.15em;
+			margin: 18px 0 4px;
+			color: var(--acc)
+		}
+		nav{
+			display: flex;
+			flex-wrap: wrap;
+			gap: 6px;
+			padding-top: 10px;
+			padding-bottom: 6px
+		}
+		main{
+			padding-bottom: 60px
+		}
+		#q{
+			width: 100%;
+			font: inherit;
+			padding: 9px 12px;
+			margin: 6px 0 4px;
+			border: 1px solid var(--line);
+			border-radius: 6px;
+			background: var(--bg);
+			color: var(--ink)
+		}
+		.btn{
+			font: inherit;
+			font-size: 14px;
+			background: var(--box);
+			color: var(--ink);
+			border: 1px solid var(--line);
+			border-radius: 6px;
+			padding: 6px 10px;
+			cursor: pointer
+		}
+		.btn.on{
+			background: var(--acc);
+			color: var(--bg);
+			border-color: var(--acc)
+		}
+		.btn:focus-visible, summary:focus-visible, #q:focus-visible{
+			outline: 3px solid var(--acc);
+			outline-offset: 2px
+		}
+		details{
+			border: 1px solid var(--line);
+			border-radius: 8px;
+			margin: 10px 0
+		}
+		summary{
+			cursor: pointer;
+			padding: 11px 14px;
+			font-weight: bold;
+			color: var(--acc)
+		}
+		.in{
+			padding: 0 14px 6px
+		}
+		.r{
+			padding: 8px 0;
+			border-top: 1px solid var(--line)
+		}
+		.r b, .r span, .r small{
+			display: block
+		}
+		.f{
+			background: var(--box);
+			border-radius: 5px;
+			padding: 4px 8px;
+			margin: 4px 0;
+			overflow-x: auto;
+			font-family: 'Cambria Math', 'Segoe UI Symbol', Georgia, serif
+		}
+		.r small{
+			color: var(--mut);
+			font-size: .9em
+		}
+		.mut{
+			color: var(--mut)
+		}
+		</style>
+	</head>
+	<body>
+		<header>
+			<h1>⚛️ Fisica: definizioni, simboli e leggi</h1>
+			<div style = "opacity:.7">Raccolta per sezioni e sottosezioni — funziona offline</div>
+		</header>
+		<nav id = nav></nav>
+		<main>
+			<input type = search id = q placeholder = "Cerca in tutta la raccolta (nome, formula, simbolo)…">
+			<button class = btn id = apri>Apri tutto</button>
+			<button class = btn id = chiudi>Chiudi tutto</button>
+			<div id = ct></div>
+		</main>
+		<script>
+			const $ = id => document.getElementById(id);
+			const F = [
+				[
+					'Unità e simboli',
+					[
+						[
+							'Sistema Internazionale: grandezze fondamentali',
+							[
+								[
+									'Lunghezza',
+									'metro (m)',
+									'Distanza percorsa dalla luce nel vuoto in 1/299 792 458 s.'
+								],
+								[
+									'Massa',
+									'kilogrammo (kg)',
+									'Definito fissando il valore della costante di Planck h.'
+								],
+								[
+									'Tempo',
+									'secondo (s)',
+									'Definito dalla frequenza di una transizione del cesio-133.'
+								],
+								[
+									'Corrente elettrica',
+									'ampere (A)',
+									'Definita fissando il valore della carica elementare e.'
+								],
+								[
+									'Temperatura',
+									'kelvin (K)',
+									'Definita fissando il valore della costante di Boltzmann k_B.'
+								],
+								[
+									'Quantità di sostanza',
+									'mole (mol)',
+									'Contiene N_A = 6,022·10²³ entità elementari.'
+								],
+								[
+									'Intensità luminosa',
+									'candela (cd)',
+									'Intensità di una sorgente in una direzione data.'
+								]
+							]
+						],
+						[
+							'Unità derivate',
+							[
+								[
+									'Forza',
+									'N = kg·m/s²',
+									'newton'
+								],
+								[
+									'Energia, lavoro, calore',
+									'J = N·m',
+									'joule'
+								],
+								[
+									'Potenza',
+									'W = J/s',
+									'watt'
+								],
+								[
+									'Pressione',
+									'Pa = N/m²',
+									'pascal'
+								],
+								[
+									'Frequenza',
+									'Hz = s⁻¹',
+									'hertz'
+								],
+								[
+									'Carica elettrica',
+									'C = A·s',
+									'coulomb'
+								],
+								[
+									'Tensione elettrica',
+									'V = J/C',
+									'volt'
+								],
+								[
+									'Resistenza',
+									'Ω = V/A',
+									'ohm'
+								],
+								[
+									'Capacità',
+									'F = C/V',
+									'farad'
+								],
+								[
+									'Flusso magnetico',
+									'Wb = V·s',
+									'weber'
+								],
+								[
+									'Induzione magnetica',
+									'T = Wb/m²',
+									'tesla'
+								],
+								[
+									'Induttanza',
+									'H = Wb/A',
+									'henry'
+								],
+								[
+									'Attività di una sorgente radioattiva',
+									'Bq = s⁻¹',
+									'becquerel'
+								]
+							]
+						],
+						[
+							'Prefissi',
+							[
+								[
+									'Multipli',
+									'T 10¹² · G 10⁹ · M 10⁶ · k 10³ · h 10² · da 10',
+									'tera, giga, mega, kilo, etto, deca.'
+								],
+								[
+									'Sottomultipli',
+									'd 10⁻¹ · c 10⁻² · m 10⁻³ · μ 10⁻⁶ · n 10⁻⁹ · p 10⁻¹² · f 10⁻¹⁵',
+									'deci, centi, milli, micro, nano, pico, femto.'
+								]
+							]
+						],
+						[
+							'Simboli greci',
+							[
+								[
+									'Δ, δ',
+									'',
+									'Variazione finita (Δ) o piccola (δ) di una grandezza.'
+								],
+								[
+									'α, β, γ',
+									'',
+									'Angoli; α anche accelerazione angolare; γ anche fattore di Lorentz e rapporto c_p/c_v.'
+								],
+								[
+									'ε',
+									'',
+									'Forza elettromotrice; ε₀ permittività del vuoto; emissività.'
+								],
+								[
+									'η',
+									'',
+									'Rendimento; viscosità.'
+								],
+								[
+									'θ, φ',
+									'',
+									'Angoli; φ anche fase.'
+								],
+								[
+									'λ',
+									'',
+									'Lunghezza d\'onda; costante di decadimento; coefficiente di dilatazione lineare.'
+								],
+								[
+									'μ',
+									'',
+									'Coefficiente d\'attrito; μ₀ permeabilità magnetica; densità lineare.'
+								],
+								[
+									'ν',
+									'',
+									'Frequenza (anche f).'
+								],
+								[
+									'ρ',
+									'',
+									'Densità; resistività elettrica.'
+								],
+								[
+									'σ',
+									'',
+									'Densità superficiale di carica; costante di Stefan-Boltzmann.'
+								],
+								[
+									'τ',
+									'',
+									'Momento di una forza; costante di tempo.'
+								],
+								[
+									'Φ',
+									'',
+									'Flusso del campo elettrico o magnetico.'
+								],
+								[
+									'ω',
+									'',
+									'Velocità angolare o pulsazione, ω = 2πf.'
+								],
+								[
+									'Ω',
+									'',
+									'Ohm; angolo solido.'
+								]
+							]
+						],
+						[
+							'Simboli delle grandezze',
+							[
+								[
+									's, x, l, h, r',
+									'',
+									'Posizione, spazio, lunghezza, altezza, raggio (m).'
+								],
+								[
+									't, T',
+									'',
+									't tempo (s); T periodo (s) oppure temperatura (K).'
+								],
+								[
+									'v, a',
+									'',
+									'Velocità (m/s) e accelerazione (m/s²).'
+								],
+								[
+									'm, V, ρ',
+									'',
+									'Massa (kg), volume (m³), densità (kg/m³).'
+								],
+								[
+									'F, p, P',
+									'',
+									'Forza (N); p quantità di moto o pressione; P potenza (W) o peso.'
+								],
+								[
+									'E, U, L, Q',
+									'',
+									'Energia, energia potenziale, lavoro, calore (J).'
+								],
+								[
+									'q, I, R',
+									'',
+									'Carica (C), corrente (A), resistenza (Ω).'
+								],
+								[
+									'E, B',
+									'',
+									'Campo elettrico (N/C = V/m); campo magnetico (T).'
+								],
+								[
+									'C, L, f, n',
+									'',
+									'Capacità (F), induttanza (H), frequenza (Hz); n moli o indice di rifrazione.'
+								]
+							]
+						]
+					]
+				],
+				[
+					'Meccanica',
+					[
+						[
+							'Cinematica',
+							[
+								[
+									'Velocità media',
+									'v = Δs/Δt',
+									'Spostamento diviso intervallo di tempo (m/s).'
+								],
+								[
+									'Velocità istantanea',
+									'v = ds/dt',
+									'Derivata della posizione rispetto al tempo.'
+								],
+								[
+									'Accelerazione',
+									'a = dv/dt',
+									'Derivata della velocità (m/s²).'
+								],
+								[
+									'Moto rettilineo uniforme',
+									's = s₀ + vt',
+									'Velocità costante, accelerazione nulla.'
+								],
+								[
+									'Moto uniformemente accelerato',
+									'v = v₀ + at; s = s₀ + v₀t + ½at²; v² = v₀² + 2aΔs',
+									'Accelerazione costante.'
+								],
+								[
+									'Caduta libera',
+									'g ≈ 9,81 m/s²',
+									'Accelerazione di gravità vicino alla superficie terrestre.'
+								],
+								[
+									'Moto parabolico',
+									'x = v₀cosθ·t; y = v₀sinθ·t − ½gt²',
+									'Lancio con velocità v₀ e angolo θ.'
+								],
+								[
+									'Gittata e quota massima',
+									'R = v₀²sin2θ/g; h = v₀²sin²θ/(2g)',
+									'Valide per lancio da terra, senza attrito dell\'aria.'
+								],
+								[
+									'Moto circolare uniforme',
+									'ω = 2π/T = 2πf; v = ωr; a_c = v²/r = ω²r',
+									'Accelerazione centripeta diretta verso il centro.'
+								]
+							]
+						],
+						[
+							'Dinamica',
+							[
+								[
+									'Primo principio (inerzia)',
+									'ΣF = 0 ⇒ v = costante',
+									'Senza forze risultanti, un corpo mantiene quiete o moto rettilineo uniforme.'
+								],
+								[
+									'Secondo principio',
+									'F = ma (= dp/dt)',
+									'La forza risultante è massa per accelerazione.'
+								],
+								[
+									'Terzo principio',
+									'F₁₂ = −F₂₁',
+									'Azione e reazione: stessa intensità, verso opposto, su corpi diversi.'
+								],
+								[
+									'Forza peso',
+									'P = mg',
+									'Forza gravitazionale vicino alla Terra.'
+								],
+								[
+									'Attrito',
+									'F_s ≤ μ_s·N; F_d = μ_d·N',
+									'N è la forza normale; μ_s statico, μ_d dinamico.'
+								],
+								[
+									'Forza elastica (Hooke)',
+									'F = −kx',
+									'k costante elastica (N/m), x deformazione.'
+								],
+								[
+									'Forza centripeta',
+									'F = mv²/r',
+									'Forza necessaria a mantenere un moto circolare.'
+								],
+								[
+									'Piano inclinato',
+									'a = g(sinθ − μ_d cosθ)',
+									'Discesa con attrito dinamico, angolo θ.'
+								]
+							]
+						],
+						[
+							'Lavoro, energia, potenza',
+							[
+								[
+									'Lavoro',
+									'L = F·s·cosθ',
+									'θ è l\'angolo tra forza e spostamento (J).'
+								],
+								[
+									'Energia cinetica',
+									'E_c = ½mv²',
+									'Energia del moto.'
+								],
+								[
+									'Teorema dell\'energia cinetica',
+									'L = ΔE_c',
+									'Il lavoro totale è la variazione di energia cinetica.'
+								],
+								[
+									'Energia potenziale gravitazionale',
+									'U = mgh',
+									'Vicino alla superficie terrestre.'
+								],
+								[
+									'Energia potenziale elastica',
+									'U = ½kx²',
+									'Molla deformata di x.'
+								],
+								[
+									'Conservazione dell\'energia meccanica',
+									'E_c + U = costante',
+									'Vale se agiscono solo forze conservative.'
+								],
+								[
+									'Potenza',
+									'P = L/t = F·v',
+									'Lavoro per unità di tempo (W).'
+								],
+								[
+									'Rendimento',
+									'η = L_utile/L_totale',
+									'Numero tra 0 e 1.'
+								]
+							]
+						],
+						[
+							'Quantità di moto e urti',
+							[
+								[
+									'Quantità di moto',
+									'p = mv',
+									'Grandezza vettoriale (kg·m/s).'
+								],
+								[
+									'Impulso',
+									'J = FΔt = Δp',
+									'Teorema dell\'impulso.'
+								],
+								[
+									'Conservazione di p',
+									'Σp = costante',
+									'Vale in un sistema isolato.'
+								],
+								[
+									'Urto elastico',
+									'Σp e ΣE_c costanti',
+									'Si conservano quantità di moto ed energia cinetica.'
+								],
+								[
+									'Urto completamente anelastico',
+									'v = (m₁v₁ + m₂v₂)/(m₁ + m₂)',
+									'I corpi restano uniti; si conserva solo p.'
+								],
+								[
+									'Centro di massa',
+									'x_cm = Σmᵢxᵢ/Σmᵢ',
+									'Punto che si muove come se tutta la massa vi fosse concentrata.'
+								]
+							]
+						],
+						[
+							'Gravitazione',
+							[
+								[
+									'Legge di gravitazione universale',
+									'F = G·m₁m₂/r²',
+									'G = 6,674·10⁻¹¹ N·m²/kg².'
+								],
+								[
+									'Accelerazione di gravità',
+									'g = GM/R²',
+									'M e R massa e raggio del pianeta.'
+								],
+								[
+									'Energia potenziale gravitazionale',
+									'U = −GMm/r',
+									'Zero all\'infinito.'
+								],
+								[
+									'Velocità di fuga',
+									'v = √(2GM/R)',
+									'Velocità minima per allontanarsi all\'infinito.'
+								],
+								[
+									'Velocità orbitale circolare',
+									'v = √(GM/r)',
+									'Orbita circolare di raggio r.'
+								],
+								[
+									'Leggi di Keplero',
+									'T² = 4π²a³/(GM)',
+									'1) orbite ellittiche con il Sole in un fuoco; 2) aree uguali in tempi uguali; 3) T² proporzionale ad a³.'
+								]
+							]
+						],
+						[
+							'Rotazioni e statica',
+							[
+								[
+									'Momento di una forza',
+									'τ = r·F·sinθ',
+									'Prodotto vettoriale r × F (N·m).'
+								],
+								[
+									'Momento d\'inerzia',
+									'I = Σmᵢrᵢ²',
+									'Anello MR²; disco ½MR²; sfera piena ²⁄₅MR²; asta per il centro ML²/12.'
+								],
+								[
+									'Seconda legge per rotazioni',
+									'τ = Iα',
+									'Analoga di F = ma.'
+								],
+								[
+									'Momento angolare',
+									'L = Iω (= r × p)',
+									'Si conserva se il momento esterno è nullo.'
+								],
+								[
+									'Energia cinetica rotazionale',
+									'E = ½Iω²',
+									''
+								],
+								[
+									'Teorema di Huygens-Steiner',
+									'I = I_cm + Md²',
+									'd distanza tra assi paralleli.'
+								],
+								[
+									'Equilibrio di un corpo rigido',
+									'ΣF = 0; Στ = 0',
+									'Risultante delle forze e momento risultante nulli.'
+								],
+								[
+									'Leva',
+									'F₁b₁ = F₂b₂',
+									'b braccio della forza.'
+								]
+							]
+						],
+						[
+							'Fluidi',
+							[
+								[
+									'Densità e pressione',
+									'ρ = m/V; p = F/S',
+									'Pressione in pascal.'
+								],
+								[
+									'Legge di Stevino',
+									'p = p₀ + ρgh',
+									'Pressione alla profondità h.'
+								],
+								[
+									'Principio di Pascal',
+									'',
+									'La pressione applicata a un fluido incomprimibile si trasmette invariata in ogni punto.'
+								],
+								[
+									'Principio di Archimede',
+									'F_A = ρ_fluido·V_imm·g',
+									'Spinta verso l\'alto pari al peso del fluido spostato.'
+								],
+								[
+									'Equazione di continuità',
+									'S₁v₁ = S₂v₂',
+									'Portata costante per un fluido incomprimibile.'
+								],
+								[
+									'Teorema di Bernoulli',
+									'p + ½ρv² + ρgh = costante',
+									'Fluido ideale in moto stazionario.'
+								],
+								[
+									'Legge di Torricelli',
+									'v = √(2gh)',
+									'Velocità di efflusso da un foro a profondità h.'
+								],
+								[
+									'Legge di Stokes',
+									'F = 6πηrv',
+									'Resistenza viscosa su una sfera lenta.'
+								]
+							]
+						]
+					]
+				],
+				[
+					'Oscillazioni e onde',
+					[
+						[
+							'Moto armonico',
+							[
+								[
+									'Legge oraria',
+									'x(t) = A·cos(ωt + φ)',
+									'A ampiezza, φ fase iniziale.'
+								],
+								[
+									'Velocità e accelerazione',
+									'v = −Aω·sin(ωt + φ); a = −ω²x',
+									'L\'accelerazione è proporzionale e opposta allo spostamento.'
+								],
+								[
+									'Sistema massa-molla',
+									'ω = √(k/m); T = 2π√(m/k)',
+									''
+								],
+								[
+									'Pendolo semplice',
+									'T = 2π√(L/g)',
+									'Per piccole oscillazioni.'
+								],
+								[
+									'Energia dell\'oscillatore',
+									'E = ½kA²',
+									'Costante, senza attriti.'
+								]
+							]
+						],
+						[
+							'Onde',
+							[
+								[
+									'Velocità di un\'onda',
+									'v = λf = λ/T',
+									'Lunghezza d\'onda per frequenza.'
+								],
+								[
+									'Onda armonica',
+									'y = A·sin(kx − ωt); k = 2π/λ',
+									'k numero d\'onda.'
+								],
+								[
+									'Velocità su una corda',
+									'v = √(F/μ)',
+									'F tensione, μ massa per unità di lunghezza.'
+								],
+								[
+									'Velocità del suono in aria',
+									'v ≈ 343 m/s',
+									'A 20 °C.'
+								],
+								[
+									'Intensità',
+									'I = P/S',
+									'Potenza per unità di superficie (W/m²).'
+								],
+								[
+									'Livello sonoro',
+									'β = 10·log₁₀(I/I₀)',
+									'In decibel; I₀ = 10⁻¹² W/m².'
+								],
+								[
+									'Effetto Doppler',
+									'f\' = f·(v ± v_o)/(v ∓ v_s)',
+									'Segno alto: osservatore o sorgente che si avvicinano.'
+								],
+								[
+									'Interferenza',
+									'Δ = nλ (costruttiva); Δ = (n + ½)λ (distruttiva)',
+									'Δ differenza di cammino.'
+								],
+								[
+									'Onde stazionarie su corda fissa',
+									'f_n = n·v/(2L)',
+									'n = 1, 2, 3, …'
+								],
+								[
+									'Battimenti',
+									'f_b = |f₁ − f₂|',
+									''
+								]
+							]
+						]
+					]
+				],
+				[
+					'Termodinamica',
+					[
+						[
+							'Temperatura e calore',
+							[
+								[
+									'Scale di temperatura',
+									'T(K) = t(°C) + 273,15',
+									''
+								],
+								[
+									'Dilatazione lineare e volumica',
+									'ΔL = λL₀ΔT; ΔV = βV₀ΔT',
+									'β ≈ 3λ per i solidi.'
+								],
+								[
+									'Calore e capacità termica',
+									'Q = mcΔT; C = mc',
+									'c calore specifico.'
+								],
+								[
+									'Calore latente',
+									'Q = mL',
+									'Passaggi di stato a temperatura costante.'
+								],
+								[
+									'Conduzione',
+									'Φ = k·S·ΔT/d',
+									'Legge di Fourier.'
+								],
+								[
+									'Irraggiamento',
+									'P = εσST⁴',
+									'σ = 5,670·10⁻⁸ W/(m²·K⁴), legge di Stefan-Boltzmann.'
+								],
+								[
+									'Legge di Wien',
+									'λ_max·T = 2,898·10⁻³ m·K',
+									'Lunghezza d\'onda del massimo di emissione.'
+								]
+							]
+						],
+						[
+							'Gas',
+							[
+								[
+									'Boyle',
+									'pV = costante',
+									'A temperatura costante.'
+								],
+								[
+									'Charles',
+									'V/T = costante',
+									'A pressione costante.'
+								],
+								[
+									'Gay-Lussac',
+									'p/T = costante',
+									'A volume costante.'
+								],
+								[
+									'Gas perfetto',
+									'pV = nRT = Nk_BT',
+									'R = 8,314 J/(mol·K); k_B = 1,381·10⁻²³ J/K.'
+								],
+								[
+									'Energia cinetica media',
+									'⟨E_c⟩ = (3/2)k_BT',
+									'Per particella.'
+								],
+								[
+									'Velocità quadratica media',
+									'v_rms = √(3k_BT/m)',
+									''
+								],
+								[
+									'Energia interna (monoatomico)',
+									'U = (3/2)nRT',
+									''
+								]
+							]
+						],
+						[
+							'Principi della termodinamica',
+							[
+								[
+									'Principio zero',
+									'',
+									'Due corpi in equilibrio termico con un terzo lo sono tra loro.'
+								],
+								[
+									'Primo principio',
+									'ΔU = Q − L',
+									'L lavoro compiuto dal sistema; conservazione dell\'energia.'
+								],
+								[
+									'Secondo principio',
+									'',
+									'Kelvin: non si converte tutto il calore in lavoro con una sola sorgente. Clausius: il calore non passa spontaneamente da freddo a caldo.'
+								],
+								[
+									'Rendimento di una macchina',
+									'η = L/Q_ass = 1 − Q_ced/Q_ass',
+									''
+								],
+								[
+									'Rendimento di Carnot',
+									'η = 1 − T_f/T_c',
+									'Massimo tra due sorgenti, temperature in kelvin.'
+								],
+								[
+									'Entropia',
+									'ΔS = Q_rev/T; S = k_B·ln W',
+									'Per un sistema isolato ΔS ≥ 0.'
+								],
+								[
+									'Terzo principio',
+									'',
+									'Lo zero assoluto non è raggiungibile con un numero finito di operazioni.'
+								],
+								[
+									'Trasformazioni dei gas perfetti',
+									'isobara L = pΔV; isocora L = 0; isoterma L = nRT·ln(V_f/V_i); adiabatica Q = 0, pV^γ = cost.',
+									'γ = c_p/c_v; c_p − c_v = R.'
+								]
+							]
+						]
+					]
+				],
+				[
+					'Elettromagnetismo',
+					[
+						[
+							'Elettrostatica',
+							[
+								[
+									'Carica elementare',
+									'e = 1,602·10⁻¹⁹ C',
+									'La carica è quantizzata e si conserva.'
+								],
+								[
+									'Legge di Coulomb',
+									'F = k·q₁q₂/r²',
+									'k = 1/(4πε₀) ≈ 8,99·10⁹ N·m²/C².'
+								],
+								[
+									'Campo elettrico',
+									'E = F/q; E = kq/r²',
+									'Il secondo vale per una carica puntiforme.'
+								],
+								[
+									'Potenziale ed energia',
+									'V = kq/r; U = kq₁q₂/r',
+									'Differenza di potenziale ΔV = L/q.'
+								],
+								[
+									'Teorema di Gauss',
+									'Φ(E) = Q_int/ε₀',
+									'ε₀ = 8,854·10⁻¹² F/m.'
+								],
+								[
+									'Campo uniforme tra due piani',
+									'E = σ/ε₀ = V/d',
+									''
+								],
+								[
+									'Condensatore piano',
+									'C = Q/V = ε₀S/d',
+									'Con dielettrico: C = κε₀S/d.'
+								],
+								[
+									'Energia di un condensatore',
+									'U = ½CV²',
+									''
+								],
+								[
+									'Condensatori in serie e parallelo',
+									'1/C = Σ1/Cᵢ; C = ΣCᵢ',
+									'Serie e parallelo rispettivamente.'
+								]
+							]
+						],
+						[
+							'Corrente continua',
+							[
+								[
+									'Intensità di corrente',
+									'I = ΔQ/Δt',
+									'Ampere.'
+								],
+								[
+									'Prima legge di Ohm',
+									'V = RI',
+									''
+								],
+								[
+									'Seconda legge di Ohm',
+									'R = ρl/S',
+									'ρ resistività, l lunghezza, S sezione.'
+								],
+								[
+									'Potenza ed effetto Joule',
+									'P = VI = RI²',
+									''
+								],
+								[
+									'Resistenze in serie e parallelo',
+									'R = ΣRᵢ; 1/R = Σ1/Rᵢ',
+									'Serie e parallelo rispettivamente.'
+								],
+								[
+									'Leggi di Kirchhoff',
+									'ΣI = 0 (nodi); ΣV = 0 (maglie)',
+									'Conservazione della carica e dell\'energia.'
+								],
+								[
+									'Generatore reale',
+									'V = ε − rI',
+									'r resistenza interna.'
+								],
+								[
+									'Circuito RC',
+									'τ = RC; q(t) = Q(1 − e^(−t/RC))',
+									'Carica del condensatore.'
+								]
+							]
+						],
+						[
+							'Magnetismo',
+							[
+								[
+									'Forza di Lorentz',
+									'F = q·v × B; F = qvB·sinθ',
+									'Perpendicolare a v e B.'
+								],
+								[
+									'Forza su un filo',
+									'F = BIl·sinθ',
+									''
+								],
+								[
+									'Raggio di curvatura',
+									'r = mv/(qB)',
+									'Carica che entra perpendicolarmente a B.'
+								],
+								[
+									'Campo di un filo rettilineo',
+									'B = μ₀I/(2πr)',
+									'μ₀ = 4π·10⁻⁷ T·m/A.'
+								],
+								[
+									'Campo al centro di una spira',
+									'B = μ₀I/(2R)',
+									''
+								],
+								[
+									'Solenoide',
+									'B = μ₀nI',
+									'n spire per unità di lunghezza.'
+								],
+								[
+									'Teorema di Ampère',
+									'∮B·dl = μ₀I',
+									''
+								],
+								[
+									'Gauss per il magnetismo',
+									'∮B·dS = 0',
+									'Non esistono monopoli magnetici.'
+								]
+							]
+						],
+						[
+							'Induzione e correnti alternate',
+							[
+								[
+									'Flusso magnetico',
+									'Φ(B) = B·S·cosθ',
+									'Weber.'
+								],
+								[
+									'Legge di Faraday-Neumann-Lenz',
+									'ε = −dΦ/dt',
+									'Il segno meno è la legge di Lenz: l\'effetto si oppone alla causa.'
+								],
+								[
+									'Autoinduzione',
+									'ε = −L·dI/dt',
+									'L solenoide: μ₀n²V.'
+								],
+								[
+									'Energia di un induttore',
+									'U = ½LI²',
+									''
+								],
+								[
+									'Trasformatore',
+									'V₁/V₂ = N₁/N₂',
+									'N numero di spire.'
+								],
+								[
+									'Valori efficaci',
+									'V_eff = V₀/√2',
+									'Per grandezze sinusoidali.'
+								],
+								[
+									'Reattanze',
+									'X_L = ωL; X_C = 1/(ωC)',
+									''
+								],
+								[
+									'Impedenza RLC serie',
+									'Z = √(R² + (X_L − X_C)²)',
+									''
+								],
+								[
+									'Risonanza',
+									'f₀ = 1/(2π√(LC))',
+									''
+								]
+							]
+						],
+						[
+							'Equazioni di Maxwell e onde elettromagnetiche',
+							[
+								[
+									'Gauss per E',
+									'∮E·dS = Q/ε₀',
+									''
+								],
+								[
+									'Gauss per B',
+									'∮B·dS = 0',
+									''
+								],
+								[
+									'Faraday',
+									'∮E·dl = −dΦ(B)/dt',
+									''
+								],
+								[
+									'Ampère-Maxwell',
+									'∮B·dl = μ₀(I + ε₀dΦ(E)/dt)',
+									''
+								],
+								[
+									'Velocità della luce',
+									'c = 1/√(μ₀ε₀) = 299 792 458 m/s',
+									'E = cB nell\'onda.'
+								],
+								[
+									'Spettro elettromagnetico',
+									'',
+									'Onde radio, microonde, infrarosso, visibile (circa 380–750 nm), ultravioletto, raggi X, raggi γ.'
+								]
+							]
+						]
+					]
+				],
+				[
+					'Ottica',
+					[
+						[
+							'Ottica geometrica',
+							[
+								[
+									'Riflessione',
+									'θᵢ = θᵣ',
+									'Angolo di incidenza uguale a quello di riflessione.'
+								],
+								[
+									'Indice di rifrazione',
+									'n = c/v',
+									''
+								],
+								[
+									'Legge di Snell',
+									'n₁·sinθ₁ = n₂·sinθ₂',
+									''
+								],
+								[
+									'Angolo limite',
+									'sinθ_L = n₂/n₁',
+									'Con n₁ > n₂ oltre θ_L c\'è riflessione totale.'
+								],
+								[
+									'Equazione dei punti coniugati',
+									'1/p + 1/q = 1/f',
+									'p distanza oggetto, q distanza immagine.'
+								],
+								[
+									'Ingrandimento',
+									'G = −q/p',
+									''
+								],
+								[
+									'Specchio sferico',
+									'f = R/2',
+									''
+								],
+								[
+									'Lente sottile',
+									'1/f = (n − 1)(1/R₁ − 1/R₂)',
+									'Potere diottrico D = 1/f (diottrie).'
+								]
+							]
+						],
+						[
+							'Ottica ondulatoria',
+							[
+								[
+									'Doppia fenditura',
+									'd·sinθ = mλ',
+									'Massimi; sullo schermo y = mλL/d.'
+								],
+								[
+									'Diffrazione da una fenditura',
+									'a·sinθ = mλ',
+									'Minimi, m = ±1, ±2, …'
+								],
+								[
+									'Reticolo di diffrazione',
+									'd·sinθ = mλ',
+									'd passo del reticolo.'
+								],
+								[
+									'Legge di Malus',
+									'I = I₀cos²θ',
+									'Polarizzatore.'
+								],
+								[
+									'Angolo di Brewster',
+									'tanθ_B = n₂/n₁',
+									'La luce riflessa è polarizzata.'
+								],
+								[
+									'Criterio di Rayleigh',
+									'θ_min = 1,22·λ/D',
+									'Potere risolutivo di un\'apertura circolare.'
+								]
+							]
+						]
+					]
+				],
+				[
+					'Relatività',
+					[
+						[
+							'Relatività ristretta',
+							[
+								[
+									'Postulati',
+									'',
+									'Le leggi fisiche sono uguali in tutti i riferimenti inerziali; c è la stessa per tutti gli osservatori.'
+								],
+								[
+									'Fattore di Lorentz',
+									'γ = 1/√(1 − v²/c²)',
+									''
+								],
+								[
+									'Dilatazione dei tempi',
+									'Δt = γ·Δt₀',
+									'Δt₀ tempo proprio.'
+								],
+								[
+									'Contrazione delle lunghezze',
+									'L = L₀/γ',
+									'L₀ lunghezza propria.'
+								],
+								[
+									'Trasformazioni di Lorentz',
+									'x\' = γ(x − vt); t\' = γ(t − vx/c²)',
+									''
+								],
+								[
+									'Composizione delle velocità',
+									'u = (u\' + v)/(1 + u\'v/c²)',
+									''
+								],
+								[
+									'Quantità di moto ed energia',
+									'p = γmv; E = γmc²; E² = (pc)² + (mc²)²',
+									''
+								],
+								[
+									'Equivalenza massa-energia',
+									'E₀ = mc²',
+									'Energia a riposo.'
+								]
+							]
+						],
+						[
+							'Relatività generale',
+							[
+								[
+									'Principio di equivalenza',
+									'',
+									'Gravità e accelerazione sono localmente indistinguibili.'
+								],
+								[
+									'Equazioni di campo',
+									'G_μν + Λg_μν = (8πG/c⁴)T_μν',
+									'La materia e l\'energia curvano lo spazio-tempo.'
+								],
+								[
+									'Raggio di Schwarzschild',
+									'r_s = 2GM/c²',
+									'Raggio dell\'orizzonte degli eventi di un buco nero.'
+								]
+							]
+						]
+					]
+				],
+				[
+					'Fisica quantistica',
+					[
+						[
+							'Quanti e onde di materia',
+							[
+								[
+									'Quanto di energia',
+									'E = hf',
+									'h = 6,626·10⁻³⁴ J·s; ħ = h/2π.'
+								],
+								[
+									'Effetto fotoelettrico',
+									'E_c,max = hf − W',
+									'W lavoro di estrazione.'
+								],
+								[
+									'Effetto Compton',
+									'Δλ = (h/mc)(1 − cosθ)',
+									''
+								],
+								[
+									'Lunghezza d\'onda di de Broglie',
+									'λ = h/p',
+									''
+								],
+								[
+									'Principio di indeterminazione',
+									'Δx·Δp ≥ ħ/2; ΔE·Δt ≥ ħ/2',
+									'Heisenberg.'
+								],
+								[
+									'Equazione di Schrödinger',
+									'iħ·∂ψ/∂t = Ĥψ',
+									'|ψ|² densità di probabilità.'
+								]
+							]
+						],
+						[
+							'Atomo',
+							[
+								[
+									'Livelli dell\'idrogeno (Bohr)',
+									'Eₙ = −13,6 eV/n²',
+									'Raggio rₙ = n²a₀, a₀ = 5,29·10⁻¹¹ m.'
+								],
+								[
+									'Emissione e assorbimento',
+									'hf = E_i − E_f',
+									''
+								],
+								[
+									'Numeri quantici',
+									'n, l, m_l, m_s',
+									'Principale, orbitale, magnetico, di spin.'
+								],
+								[
+									'Principio di esclusione di Pauli',
+									'',
+									'Due elettroni non hanno gli stessi quattro numeri quantici.'
+								],
+								[
+									'Particella in una scatola',
+									'Eₙ = n²h²/(8mL²)',
+									''
+								],
+								[
+									'Oscillatore armonico quantistico',
+									'Eₙ = (n + ½)ħω',
+									''
+								]
+							]
+						]
+					]
+				],
+				[
+					'Nucleare e particelle',
+					[
+						[
+							'Fisica nucleare',
+							[
+								[
+									'Numeri atomici',
+									'A = Z + N',
+									'Z protoni, N neutroni, A numero di massa.'
+								],
+								[
+									'Unità di massa atomica',
+									'1 u = 1,661·10⁻²⁷ kg',
+									'Equivale a circa 931,5 MeV/c².'
+								],
+								[
+									'Energia di legame',
+									'E = Δm·c²',
+									'Δm difetto di massa.'
+								],
+								[
+									'Decadimento radioattivo',
+									'N(t) = N₀·e^(−λt)',
+									'λ costante di decadimento.'
+								],
+								[
+									'Tempo di dimezzamento',
+									'T½ = ln2/λ',
+									''
+								],
+								[
+									'Attività',
+									'A = λN',
+									'Becquerel.'
+								],
+								[
+									'Tipi di decadimento',
+									'',
+									'α (nucleo di elio), β⁻ ed β⁺ (elettrone o positrone più neutrino), γ (fotone).'
+								],
+								[
+									'Fissione e fusione',
+									'',
+									'Spezzare un nucleo pesante o unire nuclei leggeri libera energia.'
+								]
+							]
+						],
+						[
+							'Interazioni e particelle',
+							[
+								[
+									'Interazioni fondamentali',
+									'',
+									'Gravitazionale, elettromagnetica, nucleare forte, nucleare debole.'
+								],
+								[
+									'Quark',
+									'u, d, c, s, t, b',
+									'Costituenti di protoni e neutroni (protone uud, neutrone udd).'
+								],
+								[
+									'Leptoni',
+									'e, μ, τ e neutrini',
+									''
+								],
+								[
+									'Bosoni',
+									'γ, W±, Z, gluoni, H',
+									'Mediatori delle interazioni e bosone di Higgs.'
+								]
+							]
+						]
+					]
+				],
+				[
+					'Costanti fisiche',
+					[
+						[
+							'Costanti fondamentali',
+							[
+								[
+									'Velocità della luce',
+									'c = 299 792 458 m/s',
+									'Valore esatto.'
+								],
+								[
+									'Costante di Planck',
+									'h = 6,62607015·10⁻³⁴ J·s',
+									'Valore esatto.'
+								],
+								[
+									'Carica elementare',
+									'e = 1,602176634·10⁻¹⁹ C',
+									'Valore esatto.'
+								],
+								[
+									'Costante di Boltzmann',
+									'k_B = 1,380649·10⁻²³ J/K',
+									'Valore esatto.'
+								],
+								[
+									'Numero di Avogadro',
+									'N_A = 6,02214076·10²³ mol⁻¹',
+									'Valore esatto.'
+								],
+								[
+									'Costante dei gas',
+									'R = 8,314 J/(mol·K)',
+									'R = N_A·k_B.'
+								],
+								[
+									'Costante di gravitazione',
+									'G = 6,674·10⁻¹¹ N·m²/kg²',
+									'Valore misurato.'
+								],
+								[
+									'Permittività del vuoto',
+									'ε₀ = 8,854·10⁻¹² F/m',
+									''
+								],
+								[
+									'Permeabilità del vuoto',
+									'μ₀ ≈ 1,257·10⁻⁶ T·m/A',
+									''
+								],
+								[
+									'Costante di Stefan-Boltzmann',
+									'σ = 5,670·10⁻⁸ W/(m²·K⁴)',
+									''
+								]
+							]
+						],
+						[
+							'Altri valori utili',
+							[
+								[
+									'Accelerazione di gravità normale',
+									'g = 9,80665 m/s²',
+									'Valore convenzionale.'
+								],
+								[
+									'Massa dell\'elettrone',
+									'mₑ = 9,109·10⁻³¹ kg',
+									''
+								],
+								[
+									'Massa del protone',
+									'mₚ = 1,673·10⁻²⁷ kg',
+									''
+								],
+								[
+									'Massa del neutrone',
+									'mₙ = 1,675·10⁻²⁷ kg',
+									''
+								],
+								[
+									'Elettronvolt',
+									'1 eV = 1,602·10⁻¹⁹ J',
+									''
+								],
+								[
+									'Atmosfera normale',
+									'1 atm = 101 325 Pa',
+									''
+								],
+								[
+									'Raggio di Bohr',
+									'a₀ = 5,292·10⁻¹¹ m',
+									''
+								]
+							]
+						]
+					]
+				]
+			];
+			let cur = 0;
+			const mk = (tag, cls, txt) => {
+				const e = document.createElement(tag);
+				if(cls){
+					e.className = cls;
+				}
+				if(txt){
+					e.textContent = txt;
+				}
+				return e;
+			};
+			F.forEach((s, i) => {
+				const b = mk('button', 'btn', s[0]);
+				b.onclick = () => go(i);
+				$('nav').append(b);
+			});
+			function go(i){
+				cur = i;
+				$('q').value = '';
+				draw();
+			}
+			function draw(){
+				const q = $('q').value.trim().toLowerCase();
+				[...$('nav').children].forEach((b, j) => b.classList.toggle('on', !q && j == cur));
+				$('ct').textContent = '';
+				let n = 0;
+				F.forEach((s, i) => {
+					if(!q && i != cur){
+						return;
+					}
+					const box = mk('div');
+					s[1].forEach(([st, rows], j) => {
+						const f = rows.filter(r => !q || r.join(' ').toLowerCase().includes(q));
+						if(!f.length){
+							return;
+						}
+						n += f.length;
+						const d = mk('details');
+						d.open = !!q || j == 0;
+						d.append(mk('summary', '', st));
+						const w = mk('div', 'in');
+						f.forEach(r => {
+							const e = mk('div', 'r');
+							e.append(mk('b', '', r[0]));
+							if(r[1]){
+								e.append(mk('span', 'f', r[1]));
+							}
+							if(r[2]){
+								e.append(mk('small', '', r[2]));
+							}
+							w.append(e);
+						});
+						d.append(w);
+						box.append(d);
+					});
+					if(box.children.length){
+						if(q){
+							$('ct').append(mk('h2', '', s[0]));
+						}
+						$('ct').append(box);
+					}
+				});
+				if(!n){
+					$('ct').append(mk('p', 'mut', 'Nessun risultato.'));
+				}
+			}
+			$('q').oninput = draw;
+			$('apri').onclick = () => document.querySelectorAll('details').forEach(d => d.open = true);
+			$('chiudi').onclick = () => document.querySelectorAll('details').forEach(d => d.open = false);
+			go(0);
+		</script>
+	</body>
+</html>
