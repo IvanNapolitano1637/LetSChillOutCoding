@@ -69,7 +69,8 @@
 			max-width: 1200px;
 			margin: auto
 		}
-		section[hidden]{
+		section[hidden],
+		.card[hidden]{
 			display: none
 		}
 		.card{
@@ -327,32 +328,70 @@
 			font-size: 9px
 			}
 		}
+		#phl{
+			max-height: 190px;
+			overflow-y: auto;
+			border: 1px solid var(--bd);
+			border-radius: 8px;
+			margin: 6px 0
+		}
+		#phl .g{
+			font-size: 11px;
+			opacity: .6;
+			padding: 4px 8px;
+			text-transform: uppercase;
+			letter-spacing: .04em
+		}
+		#phl button{
+			display: block;
+			width: 100%;
+			text-align: left;
+			border: 0;
+			border-top: 1px solid var(--bd);
+			background: transparent;
+			color: var(--fg);
+			padding: 6px 8px;
+			font: inherit;
+			font-size: 14px;
+			cursor: pointer
+		}
+		#phl button.on{
+			background: var(--ac);
+			color: #fff
+		}
 		@media(max-width:700px){
+			#phl button{
+				font-size: 11px;
+				padding: 4px 8px
+			}
+			#phl .g{
+				font-size: 9px
+			}
 			#ov{
-			align-items: flex-end;
-			padding: 0
+				align-items: flex-end;
+				padding: 0
 			}
 			#det{
-			border-radius: 16px 16px 0 0;
-			max-height: 90vh
+				border-radius: 16px 16px 0 0;
+				max-height: 90vh
 			}
 			.dg{
-			grid-template-columns: 1fr
+				grid-template-columns: 1fr
 			}
 			#pt{
-			grid-template-columns: repeat(18, 40px)
+				grid-template-columns: repeat(18, 40px)
 			}
 			.el{
-			min-height: 44px
+				min-height: 44px
 			}
 			.el i{
-			display: none
+				display: none
 			}
 			.el b{
-			font-size: 14px
+				font-size: 14px
 			}
 			h1{
-			font-size: 19px
+				font-size: 19px
 			}
 		}
 		</style>
@@ -372,7 +411,8 @@
 			</section>
 			<section id = s1 hidden></section>
 			<section id = s2 hidden>
-				<div class = card>
+				<div id = tnav style = "margin:6px 0"></div>
+				<div class = card id = t0>
 					<h3>Massa molare e moli</h3>
 					<p>Scrivi una formula (anche con parentesi): <code>H<sub>2</sub>O</code>, <code>Ca(OH)<sub>2</sub></code>, <code>Al<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub></code>… (digita i numeri normalmente: H2O)</p>
 					<input type = text id = fm value = "H2O">
@@ -380,11 +420,21 @@
 					<div id = ex style = "margin:6px 0"></div>
 					<div id = fo></div>
 				</div>
-				<div class = card>
+				<div class = card id = t1 hidden>
 					<h3>Scala del pH</h3>
 					<input type = range id = ph min = 0 max = 14 step = .1 value = 7 style = "width:100%">
 					<div id = phbar></div>
 					<div id = phr style = "margin-top:6px"></div>
+					<hr style = "border:0;border-top:1px solid var(--bd);margin:14px 0">
+					<h3>Calcola il pH di una soluzione</h3>
+					<p style = "margin:4px 0">Scrivi la formula (es. HCl, NaOH, CH3COOH, NH4Cl) o scegli dalla lista, poi la concentrazione (25 °C).</p>
+					<input type = text id = phf placeholder = "Formula o nome…" autocomplete = off autocapitalize = off spellcheck = false style = "width:100%;max-width:380px;font-size:16px">
+					<div id = phl></div>
+					<span id = phk style = "display:none"> K<sub>a</sub>/K<sub>b</sub> = <input type = number id = phkv step = any min = 0 value = 0.00001 style = "width:110px"></span>
+					<div style = "margin:8px 0">
+						Concentrazione <input type = number id = phc step = any min = 0 value = 0.1 style = "width:120px"> mol/L
+					</div>
+					<div id = phout></div>
 				</div>
 			</section>
 			<section id = s3 hidden>
@@ -599,6 +649,7 @@
 				82: 'Pesante e tossico: vecchie tubature, batterie auto.',
 				92: 'Combustibile delle centrali nucleari; radioattivo.'
 			};
+
 			Object.assign(F, {
 				3: 'Batterie agli ioni di litio di smartphone e auto elettriche; leghe leggere.',
 				4: 'Leghe rame-berillio per molle e utensili antiscintilla; finestre per raggi X.',
@@ -691,6 +742,7 @@
 				117: 'Sintetico; ottenuto bombardando il berkelio.',
 				118: 'Il più pesante elemento noto; sintetico e instabile.'
 			});
+
 			Object.assign(OV, {
 				41: '[Kr] 4d⁴ 5s¹',
 				44: '[Kr] 4d⁷ 5s¹',
@@ -706,6 +758,7 @@
 				96: '[Rn] 5f⁷ 6d¹ 7s²',
 				103: '[Rn] 5f¹⁴ 7s² 7p¹'
 			});
+
 			const SUPD = '⁰¹²³⁴⁵⁶⁷⁸⁹', KL = 'KLMNOPQ';
 			let vw = 'b';
 
@@ -717,10 +770,7 @@
 						o.push(...subs(c));
 					}else{
 						const m = t.match(/^(\d[spdf])(.*)$/);
-						o.push([
-							m[1],
-							+[...m[2]].map(c => SUPD.indexOf(c)).join('')
-						]);
+						o.push([m[1], +[...m[2]].map(c => SUPD.indexOf(c)).join('')]);
 					}
 				});
 				return o;
@@ -735,13 +785,13 @@
 			}
 
 			function bohr(z){
-				const sh = shells(z), nn = Math.max(0, Math.round(E[z - 1].m) - z), R0 = 24, st = Math.min(24, (148 - R0) / sh.length), dr = sh.length > 5 ? 3 : 4;
+				const sh = shells(z), nn = Math.max(0, Math.round(E[z - 1].m) - z), R0 = 24, st = Math.min(24, (148 - R0)/sh.length), dr = sh.length > 5 ? 3 : 4;
 				let s = `<svg viewBox = "0 0 320 320" role = "img" aria-label = "Modello di Bohr"><circle cx = 160 cy = 160 r = ${R0} fill = "#f59e0b"/><text x = 160 y = 156 text-anchor = middle font-size = 11 fill = "#111">${z}p⁺</text><text x = 160 y = 170 text-anchor = middle font-size = 11 fill = "#111">${nn}n⁰</text>`;
 				sh.forEach((n, i) => {
-					const r = R0 + st * (i + 1) - st * 0.3;
+					const r = R0 + st*(i + 1) - st*0.3;
 					s += `<circle cx = 160 cy = 160 r = ${r} fill = none stroke = currentColor opacity = .25 /><g><animateTransform attributeName = transform type = rotate from = "${i % 2 ? 360 : 0} 160 160" to = "${i % 2 ? 0 : 360} 160 160" dur = ${10 + i * 6}s repeatCount = indefinite />`;
 					for(let k = 0; k < n; k++){
-						const a = 2 * Math.PI * k / n - Math.PI / 2;
+						const a = 2*Math.PI*k/n - Math.PI/2;
 						s += `<circle cx = ${(160 + r * Math.cos(a)).toFixed(1)} cy = ${(160 + r * Math.sin(a)).toFixed(1)} r = ${dr} fill = "#3b82f6"/>`;
 					}
 					s += '</g>';
@@ -816,6 +866,24 @@
 				b.onclick = () => go(i);
 				document.getElementById('nav').append(b);
 			});
+
+			const tools = ['Massa molare e moli', 'Scala del pH'];
+			tools.forEach((t, i) => {
+				const b = document.createElement('button');
+				b.className = 'btn';
+				b.textContent = t;
+				b.style.margin = '2px';
+				b.onclick = () => tool(i);
+				document.getElementById('tnav').append(b);
+			});
+
+			function tool(i){
+				tools.forEach((_, j) => {
+					document.getElementById('t' + j).hidden = i != j;
+					document.getElementById('tnav').children[j].classList.toggle('on', i == j);
+				});
+			}
+			tool(0);
 
 			function go(i){
 				nav.forEach((_, j) => {
@@ -1003,7 +1071,7 @@
 							i++;
 							const n = num();
 							for(const e in s){
-								r[e] = (r[e] || 0) + s[e] * n;
+								r[e] = (r[e] || 0) + s[e]*n;
 							}
 						}else if(ch == ')'){
 							return r;
@@ -1034,12 +1102,12 @@
 					if(ks.some(e => !(e in M))){
 						throw 0;
 					}
-					const mm = ks.reduce((a, e) => a + M[e] * c[e], 0), n = g / mm;
+					const mm = ks.reduce((a, e) => a + M[e]*c[e], 0), n = g/mm;
 					let rows = '';
 					ks.forEach(e => {
-						rows += '<tr><td>' + e + ' × ' + c[e] + '</td><td>' + (M[e] * c[e] / mm * 100).toFixed(2) + ' %</td></tr>';
+						rows += '<tr><td>' + e + ' × ' + c[e] + '</td><td>' + (M[e]*c[e]/mm*100).toFixed(2) + ' %</td></tr>';
 					});
-					o.innerHTML = '<table class="k">' + '<tr><td>Massa molare</td><td><b>' + mm.toFixed(3) + ' g/mol</b></td></tr>' + '<tr><td>Moli in ' + (g || 0) + ' g</td><td>' + n.toPrecision(4) + ' mol</td></tr>' + '<tr><td>Molecole/particelle</td><td>' + (n * 6.022e+23).toExponential(3) + '</td></tr>' + rows + '</table>';
+					o.innerHTML = '<table class="k">' + '<tr><td>Massa molare</td><td><b>' + mm.toFixed(3) + ' g/mol</b></td></tr>' + '<tr><td>Moli in ' + (g || 0) + ' g</td><td>' + n.toPrecision(4) + ' mol</td></tr>' + '<tr><td>Molecole/particelle</td><td>' + (n*6.022e+23).toExponential(3) + '</td></tr>' + rows + '</table>';
 				} catch(e){
 					o.innerHTML = 'Formula non valida (usa maiuscole/minuscole corrette, es. NaCl, ' + fsub('Ca(OH)2') + ').';
 				}
@@ -1072,16 +1140,232 @@
 
 			document.getElementById('ph').oninput = phu;
 			phu();
-			let qn = 0, qs = 0, qa = 0;
+
+			const SUP = {'0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻'};
+
+			function kf(k){
+				const [m, e] = k.toExponential(1).split('e');
+				return m.replace('.', ',') + '·10' + String(+e).split('').map(c => SUP[c]).join('');
+			}
+
+			const SOL = [];
+
+			function add(g, f, nm, t, k, o){
+				SOL.push(Object.assign({g, f, nm, t, k}, o || {}));
+			}
+
+			add('Acidi forti', 'HCl', 'acido cloridrico', 'a', null, {n: 1});
+			add('Acidi forti', 'HBr', 'acido bromidrico', 'a', null, {n: 1});
+			add('Acidi forti', 'HI', 'acido iodidrico', 'a', null, {n: 1});
+			add('Acidi forti', 'HNO3', 'acido nitrico', 'a', null, {n: 1});
+			add('Acidi forti', 'HClO4', 'acido perclorico', 'a', null, {n: 1});
+			add('Acidi forti', 'H2SO4', 'acido solforico', 'a', 0.012, {sp: 1, kl: 'Ka₂'});
+			add('Acidi deboli', 'CH3COOH', 'acido acetico', 'a', 1.8e-5, {al: ['hc2h3o2', 'hac']});
+			add('Acidi deboli', 'HCOOH', 'acido formico', 'a', 1.8e-4);
+			add('Acidi deboli', 'HF', 'acido fluoridrico', 'a', 6.8e-4);
+			add('Acidi deboli', 'HNO2', 'acido nitroso', 'a', 4.5e-4);
+			add('Acidi deboli', 'C6H5COOH', 'acido benzoico', 'a', 6.3e-5);
+			add('Acidi deboli', 'C6H8O7', 'acido citrico', 'a', 7.4e-4, {poly: 1, kl: 'Ka₁'});
+			add('Acidi deboli', 'H2CO3', 'acido carbonico', 'a', 4.3e-7, {poly: 1, kl: 'Ka₁'});
+			add('Acidi deboli', 'H3PO4', 'acido fosforico', 'a', 7.1e-3, {poly: 1, kl: 'Ka₁'});
+			add('Acidi deboli', 'H2S', 'acido solfidrico', 'a', 9.1e-8, {poly: 1, kl: 'Ka₁'});
+			add('Acidi deboli', 'HClO', 'acido ipocloroso', 'a', 3.0e-8);
+			add('Acidi deboli', 'HCN', 'acido cianidrico', 'a', 6.2e-10);
+			add('Basi forti', 'LiOH', 'idrossido di litio', 'b', null, {n: 1});
+			add('Basi forti', 'NaOH', 'idrossido di sodio, soda caustica', 'b', null, {n: 1});
+			add('Basi forti', 'KOH', 'idrossido di potassio', 'b', null, {n: 1});
+			add('Basi forti', 'Ca(OH)2', 'idrossido di calcio', 'b', null, {n: 2, sol: 0.02});
+			add('Basi forti', 'Ba(OH)2', 'idrossido di bario', 'b', null, {n: 2, sol: 0.2});
+			add('Basi deboli', 'NH3', 'ammoniaca', 'b', 1.8e-5, {al: ['nh4oh']});
+			add('Basi deboli', 'CH3NH2', 'metilammina', 'b', 4.4e-4);
+			add('Basi deboli', '(CH3)2NH', 'dimetilammina', 'b', 5.4e-4);
+			add('Basi deboli', 'C5H5N', 'piridina', 'b', 1.7e-9);
+			add('Basi deboli', 'C6H5NH2', 'anilina', 'b', 4.3e-10);
+			['NaCl', 'KCl', 'NaBr', 'KBr', 'NaNO3', 'KNO3', 'Na2SO4', 'K2SO4', 'CaCl2'].forEach(f => add('Sali', f, 'sale neutro', 'n', null));
+			add('Sali', 'NH4Cl', 'cloruro di ammonio', 'a', 5.6e-10, {kl: 'Ka di NH₄⁺'});
+			add('Sali', 'NH4NO3', 'nitrato di ammonio', 'a', 5.6e-10, {kl: 'Ka di NH₄⁺'});
+			add('Sali', '(NH4)2SO4', 'solfato di ammonio', 'a', 5.6e-10, {kl: 'Ka di NH₄⁺', n: 2});
+			add('Sali', 'CH3COONa', 'acetato di sodio', 'b', 5.6e-10, {kl: 'Kb di CH₃COO⁻'});
+			add('Sali', 'CH3COOK', 'acetato di potassio', 'b', 5.6e-10, {kl: 'Kb di CH₃COO⁻'});
+			add('Sali', 'HCOONa', 'formiato di sodio', 'b', 5.6e-11, {kl: 'Kb di HCOO⁻'});
+			add('Sali', 'C6H5COONa', 'benzoato di sodio', 'b', 1.6e-10, {kl: 'Kb di C₆H₅COO⁻'});
+			add('Sali', 'NaF', 'fluoruro di sodio', 'b', 1.5e-11, {kl: 'Kb di F⁻'});
+			add('Sali', 'NaNO2', 'nitrito di sodio', 'b', 2.2e-11, {kl: 'Kb di NO₂⁻'});
+			add('Sali', 'NaClO', 'ipoclorito di sodio', 'b', 3.3e-7, {kl: 'Kb di ClO⁻'});
+			add('Sali', 'NaCN', 'cianuro di sodio', 'b', 1.6e-5, {kl: 'Kb di CN⁻'});
+			add('Sali', 'KCN', 'cianuro di potassio', 'b', 1.6e-5, {kl: 'Kb di CN⁻'});
+			add('Sali', 'Na2CO3', 'carbonato di sodio', 'b', 2.1e-4, {kl: 'Kb di CO₃²⁻'});
+			add('Sali', 'K2CO3', 'carbonato di potassio', 'b', 2.1e-4, {kl: 'Kb di CO₃²⁻'});
+			add('Sali', 'Na3PO4', 'fosfato di sodio', 'b', 2.1e-2, {kl: 'Kb di PO₄³⁻'});
+			add('Sali', 'NaHCO3', 'bicarbonato di sodio (anfotero)', 'x', null, {ph: 8.35});
+			add('Altro', '', 'acido forte generico (monoprotico)', 'a', null, {n: 1});
+			add('Altro', '', 'base forte generica (monoidrossilica)', 'b', null, {n: 1});
+			add('Altro', '', 'acido debole: inserisci Ka', 'a', 0, {cu: 1});
+			add('Altro', '', 'base debole: inserisci Kb', 'b', 0, {cu: 1});
+
+			const SUBD = '₀₁₂₃₄₅₆₇₈₉';
+			const nrm = t => t.replace(/[₀-₉]/g, c => SUBD.indexOf(c)).replace(/\s+/g, '').toLowerCase();
+			const lab = o => (o.f ? '<b>' + fsub(o.f) + '</b> — ' : '') + o.nm;
+			const klab = o => o.kl || (o.t == 'a' ? 'Ka' : 'Kb');
+			const kfind = q => SOL.findIndex(o => o.f && (nrm(o.f) == q || (o.al || []).includes(q)));
+			let cur = 0, lastCur = 0;
+
+			function phList(){
+				const q = nrm(document.getElementById('phf').value), L = document.getElementById('phl');
+				L.innerHTML = '';
+				let last = '', cnt = 0;
+				SOL.forEach((o, i) => {
+					if(q && !(o.f && nrm(o.f).includes(q)) && !o.nm.toLowerCase().includes(q) && !(o.al || []).some(a => a.includes(q))){
+						return;
+					}
+					if(o.g != last){
+						const g = document.createElement('div');
+						g.className = 'g';
+						g.textContent = o.g;
+						L.append(g);
+						last = o.g;
+					}
+					const b = document.createElement('button');
+					b.type = 'button';
+					b.className = i == cur ? 'on' : '';
+					b.innerHTML = lab(o) + (o.k !== null && !o.cu ? ' · ' + klab(o) + ' = ' + kf(o.k) : '');
+					b.onclick = () => {
+						cur = i;
+						phList();
+						phCalc();
+					};
+					L.append(b);
+					cnt++;
+				});
+				if(!cnt){
+					L.innerHTML = '<div class = g>Nessuna voce trovata</div>';
+				}
+				return cnt;
+			}
+
+			function solveLog(f){
+				let lo = -16, hi = 3;
+				for(let i = 0; i < 200; i++){
+					const m = (lo + hi)/2;
+					if(f(Math.pow(10, m)) < 0){
+						lo = m;
+					}else{
+						hi = m;
+					}
+				}
+				return Math.pow(10, (lo + hi)/2);
+			}
+
+			function phCalc(){
+				const out = document.getElementById('phout');
+				if(cur === null){
+					document.getElementById('phk').style.display = 'none';
+					out.innerHTML = `Formula non presente nell'elenco. Prova un'altra formula, oppure scegli «acido debole» o «base debole» dalla lista e inserisci Ka o Kb.`;
+					return;
+				}
+				const o = SOL[cur], C = +document.getElementById('phc').value, Kw = 1e-14, n = o.n || 1;
+				document.getElementById('phk').style.display = o.cu ? 'inline' : 'none';
+				const K = o.cu ? +document.getElementById('phkv').value : o.k;
+				if(!(C > 0) || (o.cu && !(K > 0))){
+					out.innerHTML = 'Inserisci una concentrazione positiva' + (o.cu ? ' e una costante di dissociazione positiva' : '') + '.';
+					return;
+				}
+				let h, oh, alpha = null;
+				if(o.t == 'n' || o.t == 'x'){
+					const p = o.t == 'n' ? 7 : o.ph;
+					h = Math.pow(10, -p);
+					oh = Math.pow(10, p - 14);
+				}else{
+					// x = [H⁺] (acidi) o [OH⁻] (basi): bilancio di carica x = Kw/x + contributo del soluto
+					let f;
+					if(o.sp){
+						f = x => x - Kw/x - C*(x + 2*K)/(x + K);
+					}else if(K === null){
+						f = x => x - Kw/x - n*C;
+					}else{
+						f = x => x - Kw/x - K*n*C (K + x);
+					}
+					const x = solveLog(f);
+					h = o.t == 'a' ? x : Kw/x;
+					oh = o.t == 'a' ? Kw/x : x;
+					if(K !== null && !o.sp){
+						alpha = (o.t == 'a' ? h - oh : oh - h)/(n*C)*100;
+					}
+				}
+				const pH = -Math.log10(h), pOH = -Math.log10(oh);
+				let h2 = '<div style = "margin-bottom:4px">' + lab(o) + ' · ' + C + ' mol/L</div>';
+				h2 += '<table class = k><tr><td>pH</td><td><b>' + pH.toFixed(2) + '</b> — ' + (pH < 6.95 ? 'acido' : pH > 7.05 ? 'basico' : 'neutro') + '</td></tr>';
+				h2 += '<tr><td>pOH</td><td>' + pOH.toFixed(2) + '</td></tr>';
+				h2 += '<tr><td>[H⁺]</td><td>' + h.toExponential(2) + ' mol/L</td></tr>';
+				h2 += '<tr><td>[OH⁻]</td><td>' + oh.toExponential(2) + ' mol/L</td></tr>';
+				if(K !== null && o.t != 'n' && o.t != 'x'){
+					h2 += '<tr><td>' + klab(o) + '</td><td>' + kf(K) + '</td></tr>';
+				}
+				if(alpha !== null){
+					h2 += '<tr><td>' + (o.g == 'Sali' ? 'Idrolisi' : 'Dissociazione') + '</td><td>' + (alpha >= 10 ? alpha.toFixed(1) : alpha.toPrecision(2)) + ' %</td></tr>';
+				}
+				h2 += '</table>';
+				const note = t => h2 += '<div class = ex>' + t + '</div>';
+				if(o.t == 'n'){
+					note(`Sale di un acido forte e di una base forte: non reagisce con l'acqua, quindi il pH resta 7 a qualsiasi concentrazione.`);
+				}
+				if(o.t == 'x'){
+					note('NaHCO₃ è anfotero: pH ≈ (pKa₁ + pKa₂)/2 ≈ 8,3, quasi indipendente dalla concentrazione.');
+				}
+				if(o.g == 'Sali' && (o.t == 'a' || o.t == 'b')){
+					note('Sale che idrolizza: lo ione indicato reagisce con l\'acqua e sposta il pH.');
+				}
+				if(o.sp){
+					note('H₂SO₄: la 1ª dissociazione è completa, la 2ª è parziale.');
+				}
+				if(o.poly){
+					note('Acido poliprotico: si considera solo la 1ª dissociazione, di solito prevalente.');
+				}
+				if(o.sol && C > o.sol){
+					note('Oltre circa ' + o.sol + ' mol/L questo idrossido non si scioglie del tutto: il calcolo non è valido.');
+				}
+				if(C > 1){
+					note(`Oltre 1 mol/L il modello ideale diventa poco accurato (conta l'attività degli ioni, non la concentrazione).`);
+				}
+				out.innerHTML = h2;
+				document.getElementById('ph').value = Math.min(14, Math.max(0, pH));
+				phu();
+			}
+
+			document.getElementById('phf').oninput = () => {
+				const q = nrm(document.getElementById('phf').value), cnt = phList();
+				const i = q ? kfind(q) : -1;
+				if(i >= 0){
+					cur = i;
+					phList();
+				}else if(q && !cnt){
+					if(cur !== null){
+						lastCur = cur;
+					}
+					cur = null;
+				}else if(cur === null){
+					cur = lastCur;
+					phList();
+				}
+				phCalc();
+			};
+
+			document.getElementById('phc').oninput = document.getElementById('phkv').oninput = phCalc;
+
+			phList();
+			phCalc();
+
+			let qn = 0, qs = 0, qa = 0, used = [];
 			const R = a => a[Math.floor(Math.random()*a.length)];
 
 			function newQ(){
 				qn = qn + 1;
 				if(qn > 10){
-					document.getElementById('qz').innerHTML = `<h3>Punteggio: ${qs}/10</h3><button class = btn onclick = "qn = 0;qs = 0;newQ()">Rigioca</button>`;
+					document.getElementById('qz').innerHTML = `<h3>Punteggio: ${qs}/10</h3><button class = btn onclick = "qn = 0;qs = 0;used = [];newQ()">Rigioca</button>`;
 					return;
 				}
-				const e = R(E.slice(0, 103)), t = R([0, 1, 2, 3]);
+				const e = R(E.slice(0, 103).filter(x => !used.includes(x.z))), t = R([0, 1, 2, 3]);
+				used.push(e.z);
 				let q, ok, pool;
 				if(t == 0){
 					q = `Qual è il simbolo di <b>${e.n}</b>?`;
