@@ -726,7 +726,8 @@
 				const $ = id => document.getElementById(id);
 				const scoreEl = $('score'), bestEl = $('best');
 				const wallsBtn = $('walls'), pauseBtn = $('pause');
-				let cell = 30, snake, dir, queue, food, score, state = 'ready', timer = null, walls = true;
+				let cell = 30, snake, dir, queue, food, score, state = 'ready', timer = null, walls = true, lastTick = 0;
+				const EARLY = 0.5;
 				const DIRS = {up: {x: 0, y: -1}, down: {x: 0, y: 1}, left: {x: -1, y: 0}, right: {x: 1, y: 0}};
 				const bestKey = () => 'snake-best-' + (walls ? 'muri' : 'liberi');
 
@@ -798,6 +799,7 @@
 					if(state === 'over' || state === 'won' || state === 'ready'){
 						reset();
 					}
+					lastTick = performance.now();
 					state = 'playing';
 					overlay.classList.add('hidden');
 					pauseBtn.textContent = 'Pausa';
@@ -842,6 +844,7 @@
 				}
 
 				function tick(){
+					lastTick = performance.now();
 					if(queue.length){
 						dir = queue.shift();
 					}
@@ -894,6 +897,13 @@
 					}
 					if(queue.length < 3){
 						queue.push(d);
+						if(state === 'playing' && queue.length === 1 && performance.now() - lastTick >= delay()*EARLY){
+							clearTimeout(timer);
+							tick();
+							if(state === 'playing'){
+								schedule();
+							}
+						}
 					}
 				}
 
@@ -1000,7 +1010,7 @@
 					}
 					const t = e.changedTouches[0];
 					const dx = t.clientX - t0.x, dy = t.clientY - t0.y;
-					if(Math.max(Math.abs(dx), Math.abs(dy)) < 22){
+					if(Math.max(Math.abs(dx), Math.abs(dy)) < 12){
 						return;
 					}
 					turn(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up'));
@@ -1278,7 +1288,7 @@ document.addEventListener('keydown', function(e) {
 					"#..........................#",
 					"############################"
 				];
-				const W = 28, H = 31, T = 16, S = 2, TUN = 14;
+				const W = 28, H = 31, T = 16, S = 2, TUN = 14, CORNER = 0.5;
 				const DIRS = [[0, -1], [-1, 0], [0, 1], [1, 0]];
 				const GH = [
 					{c: '#ff0000', sc: [25, -2], sx: 13, sy: 11, rel: 0},// Blinky
@@ -1475,6 +1485,14 @@ document.addEventListener('keydown', function(e) {
 				}
 
 				function movePac(dt){
+					if(pac.ox || pac.oy){
+						const k = Math.exp(-18*dt);
+						pac.ox *= k;
+						pac.oy *= k;
+						if(Math.abs(pac.ox) + Math.abs(pac.oy) < 0.01){
+							pac.ox = pac.oy = 0;
+						}
+					}
 					let left = 7.6*dt;
 					while(left > 1e-9){
 						if(!pac.dx && !pac.dy){
@@ -1495,10 +1513,24 @@ document.addEventListener('keydown', function(e) {
 				function input(i){
 					const d = DIRS[i];
 					pac.want = d;
-					if(state === 'play' && (pac.dx || pac.dy) && d[0] === -pac.dx && d[1] === -pac.dy){
+					window.focus();
+					if(state !== 'play' || !(pac.dx || pac.dy)){
+						return;
+					}
+					if(d[0] === -pac.dx && d[1] === -pac.dy){
 						flip(pac);
 						pac.fx = d[0];
 						pac.fy = d[1];
+					}else if((d[0] !== pac.dx || d[1] !== pac.dy) && pac.p <= CORNER){
+						const c = cell(pac.x + d[0], pac.y + d[1]);
+						if(c !== '#' && c !== '-'){
+							pac.ox = (pac.dx - d[0])*pac.p;
+							pac.oy = (pac.dy - d[1])*pac.p;
+							pac.dx = d[0];
+							pac.dy = d[1];
+							pac.fx = d[0];
+							pac.fy = d[1];
+						}
 					}
 				}
 
@@ -1754,7 +1786,7 @@ document.addEventListener('keydown', function(e) {
 							}
 						}
 					}
-					const px = (pac.x + pac.dx*pac.p + .5)*T, py = (pac.y + pac.dy*pac.p + .5)*T;
+					const px = (pac.x + pac.dx*pac.p + (pac.ox || 0) + .5)*T, py = (pac.y + pac.dy*pac.p + (pac.oy || 0) + .5)*T;
 					const moving = state === 'play' && (pac.dx || pac.dy);
 					const a = state === 'dying' ? Math.min(Math.PI, stT/1.2*Math.PI) : moving ? .05 + .6*Math.abs(Math.sin(t*13)) : .3;
 					if(state !== 'dying' || a < Math.PI){
@@ -1831,8 +1863,12 @@ document.addEventListener('keydown', function(e) {
 				window.addEventListener('keydown', e => {
 					if(e.key in KEYS){
 						e.preventDefault();
+						if(e.repeat && state === 'play'){
+							return;
+						}
 						if(state === 'title' || state === 'over'){
 							newGame();
+							input(KEYS[e.key]);
 						}else if(!paused){
 							input(KEYS[e.key]);
 						}
@@ -1859,7 +1895,7 @@ document.addEventListener('keydown', function(e) {
 						return;
 					}
 					const t = e.changedTouches[0], dx = t.clientX - t0.x, dy = t.clientY - t0.y;
-					if(Math.max(Math.abs(dx), Math.abs(dy)) < 20){
+					if(Math.max(Math.abs(dx), Math.abs(dy)) < 12){
 						return;
 					}
 					input(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 3 : 1) : (dy > 0 ? 2 : 0));
@@ -1870,7 +1906,10 @@ document.addEventListener('keydown', function(e) {
 
 				document.querySelectorAll('.pad button').forEach(b => b.addEventListener('pointerdown', e => {
 					e.preventDefault();
-					if(!paused && state !== 'title' && state !== 'over'){
+					if(state === 'title' || state === 'over'){
+						newGame();
+						input(+b.dataset.d);
+					}else if(!paused){
 						input(+b.dataset.d);
 					}
 				}));
@@ -2137,6 +2176,21 @@ document.addEventListener('keydown', function(e) {
 				let state = 'title', paused = false, stT = 0, score = 0, best = 0, lives = 3, level = 1, nextLife = 1500;
 				let inv, alive, ox, oy, dir, frame, acc, px, pb, eb, shields, ufo, ufoT, fireT, expl, pops, tt = 0;
 				const keys = {L: false, R: false, F: false};
+				const tap = {L: false, R: false};
+				let hDir = 0, fireBuf = 0;
+
+				function press(k){
+					keys[k] = true;
+					if(k === 'L'){
+						tap.L = true;
+						hDir = -1;
+					}else if(k === 'R'){
+						tap.R = true;
+						hDir = 1;
+					}else if(k === 'F'){
+						fireBuf = .15;
+					}
+				}
 
 				try{
 					best = parseInt(localStorage.getItem('invaders-best')) || 0;
@@ -2321,6 +2375,10 @@ document.addEventListener('keydown', function(e) {
 
 				function update(dt){
 					tt += dt;
+					if(state !== 'play'){
+						tap.L = tap.R = false;
+						fireBuf = 0;
+					}
 					pops = pops.filter(p => (p.t -= dt) > 0);
 					expl = expl.filter(e => (e.t -= dt) > 0);
 					if(state === 'dying'){
@@ -2345,8 +2403,13 @@ document.addEventListener('keydown', function(e) {
 					if(state !== 'play'){
 						return;
 					}
-					px = Math.max(10, Math.min(W - 10, px + ((keys.R ? 1 : 0) - (keys.L ? 1 : 0))*90*dt));
-					if(keys.F && !pb){
+					const gl = keys.L || tap.L, gr = keys.R || tap.R;
+					const mv = (gl && gr) ? hDir : (gr ? 1 : (gl ? -1 : 0));
+					tap.L = tap.R = false;
+					px = Math.max(10, Math.min(W - 10, px + mv*90*dt));
+					fireBuf = Math.max(0, fireBuf - dt);
+					if((keys.F || fireBuf > 0) && !pb){
+						fireBuf = 0;
 						pb = {x: px, y: PY - 1};
 						beep(880, .07);
 					}
@@ -2539,9 +2602,12 @@ document.addEventListener('keydown', function(e) {
 						e.preventDefault();
 						if(state === 'title' || state === 'over'){
 							newGame();
-							return;
 						}
-						keys[KM[e.key]] = true;
+						if(e.repeat){
+							keys[KM[e.key]] = true;
+						}else{
+							press(KM[e.key]);
+						}
 					}else if(e.key === 'p' || e.key === 'P'){
 						setPause(!paused);
 					}else if(e.key === 'Enter'){
@@ -2560,7 +2626,7 @@ document.addEventListener('keydown', function(e) {
 							b.setPointerCapture(e.pointerId);
 						}catch(x){
 						}
-						keys[k] = true;
+						press(k);
 						b.classList.add('on');
 					};
 					const off = () => {

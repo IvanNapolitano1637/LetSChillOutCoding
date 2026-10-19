@@ -226,7 +226,7 @@
 					"#..........................#",
 					"############################"
 				];
-				const W = 28, H = 31, T = 16, S = 2, TUN = 14;
+				const W = 28, H = 31, T = 16, S = 2, TUN = 14, CORNER = 0.5;
 				const DIRS = [[0, -1], [-1, 0], [0, 1], [1, 0]];
 				const GH = [
 					{c: '#ff0000', sc: [25, -2], sx: 13, sy: 11, rel: 0},// Blinky
@@ -423,6 +423,14 @@
 				}
 
 				function movePac(dt){
+					if(pac.ox || pac.oy){
+						const k = Math.exp(-18*dt);
+						pac.ox *= k;
+						pac.oy *= k;
+						if(Math.abs(pac.ox) + Math.abs(pac.oy) < 0.01){
+							pac.ox = pac.oy = 0;
+						}
+					}
 					let left = 7.6*dt;
 					while(left > 1e-9){
 						if(!pac.dx && !pac.dy){
@@ -443,10 +451,24 @@
 				function input(i){
 					const d = DIRS[i];
 					pac.want = d;
-					if(state === 'play' && (pac.dx || pac.dy) && d[0] === -pac.dx && d[1] === -pac.dy){
+					window.focus();
+					if(state !== 'play' || !(pac.dx || pac.dy)){
+						return;
+					}
+					if(d[0] === -pac.dx && d[1] === -pac.dy){
 						flip(pac);
 						pac.fx = d[0];
 						pac.fy = d[1];
+					}else if((d[0] !== pac.dx || d[1] !== pac.dy) && pac.p <= CORNER){
+						const c = cell(pac.x + d[0], pac.y + d[1]);
+						if(c !== '#' && c !== '-'){
+							pac.ox = (pac.dx - d[0])*pac.p;
+							pac.oy = (pac.dy - d[1])*pac.p;
+							pac.dx = d[0];
+							pac.dy = d[1];
+							pac.fx = d[0];
+							pac.fy = d[1];
+						}
 					}
 				}
 
@@ -702,7 +724,7 @@
 							}
 						}
 					}
-					const px = (pac.x + pac.dx*pac.p + .5)*T, py = (pac.y + pac.dy*pac.p + .5)*T;
+					const px = (pac.x + pac.dx*pac.p + (pac.ox || 0) + .5)*T, py = (pac.y + pac.dy*pac.p + (pac.oy || 0) + .5)*T;
 					const moving = state === 'play' && (pac.dx || pac.dy);
 					const a = state === 'dying' ? Math.min(Math.PI, stT/1.2*Math.PI) : moving ? .05 + .6*Math.abs(Math.sin(t*13)) : .3;
 					if(state !== 'dying' || a < Math.PI){
@@ -779,8 +801,12 @@
 				window.addEventListener('keydown', e => {
 					if(e.key in KEYS){
 						e.preventDefault();
+						if(e.repeat && state === 'play'){
+							return;
+						}
 						if(state === 'title' || state === 'over'){
 							newGame();
+							input(KEYS[e.key]);
 						}else if(!paused){
 							input(KEYS[e.key]);
 						}
@@ -807,7 +833,7 @@
 						return;
 					}
 					const t = e.changedTouches[0], dx = t.clientX - t0.x, dy = t.clientY - t0.y;
-					if(Math.max(Math.abs(dx), Math.abs(dy)) < 20){
+					if(Math.max(Math.abs(dx), Math.abs(dy)) < 12){
 						return;
 					}
 					input(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 3 : 1) : (dy > 0 ? 2 : 0));
@@ -818,7 +844,10 @@
 
 				document.querySelectorAll('.pad button').forEach(b => b.addEventListener('pointerdown', e => {
 					e.preventDefault();
-					if(!paused && state !== 'title' && state !== 'over'){
+					if(state === 'title' || state === 'over'){
+						newGame();
+						input(+b.dataset.d);
+					}else if(!paused){
 						input(+b.dataset.d);
 					}
 				}));

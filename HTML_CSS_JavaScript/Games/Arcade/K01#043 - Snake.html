@@ -235,7 +235,8 @@
 				const $ = id => document.getElementById(id);
 				const scoreEl = $('score'), bestEl = $('best');
 				const wallsBtn = $('walls'), pauseBtn = $('pause');
-				let cell = 30, snake, dir, queue, food, score, state = 'ready', timer = null, walls = true;
+				let cell = 30, snake, dir, queue, food, score, state = 'ready', timer = null, walls = true, lastTick = 0;
+				const EARLY = 0.5;
 				const DIRS = {up: {x: 0, y: -1}, down: {x: 0, y: 1}, left: {x: -1, y: 0}, right: {x: 1, y: 0}};
 				const bestKey = () => 'snake-best-' + (walls ? 'muri' : 'liberi');
 
@@ -307,6 +308,7 @@
 					if(state === 'over' || state === 'won' || state === 'ready'){
 						reset();
 					}
+					lastTick = performance.now();
 					state = 'playing';
 					overlay.classList.add('hidden');
 					pauseBtn.textContent = 'Pausa';
@@ -351,6 +353,7 @@
 				}
 
 				function tick(){
+					lastTick = performance.now();
 					if(queue.length){
 						dir = queue.shift();
 					}
@@ -403,6 +406,13 @@
 					}
 					if(queue.length < 3){
 						queue.push(d);
+						if(state === 'playing' && queue.length === 1 && performance.now() - lastTick >= delay()*EARLY){
+							clearTimeout(timer);
+							tick();
+							if(state === 'playing'){
+								schedule();
+							}
+						}
 					}
 				}
 
@@ -509,7 +519,7 @@
 					}
 					const t = e.changedTouches[0];
 					const dx = t.clientX - t0.x, dy = t.clientY - t0.y;
-					if(Math.max(Math.abs(dx), Math.abs(dy)) < 22){
+					if(Math.max(Math.abs(dx), Math.abs(dy)) < 12){
 						return;
 					}
 					turn(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up'));
