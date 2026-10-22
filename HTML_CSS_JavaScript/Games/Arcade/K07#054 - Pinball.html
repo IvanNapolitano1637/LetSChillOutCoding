@@ -83,6 +83,10 @@
 				flex: 0.5;
 				font-size: 13px;
 			}
+			#bar #bp{
+				flex: 0.6;
+				font-size: 13px;
+			}
 			@media(min-width: 700px){
 				#bar button{
 					height: 44px;
@@ -102,6 +106,7 @@
 		<div id="bar">
 			<button id="bl">◀ SINISTRO</button>
 			<button id="bn">SCUOTI</button>
+			<button id="bp">PAUSA</button>
 			<button id="bf">LANCIO</button>
 			<button id="br">DESTRO ▶</button>
 		</div>
@@ -236,6 +241,7 @@
 				}
 
 				function newGame(){
+					setPause(false);
 					score = 0;
 					balls = 3;
 					lights = [0, 0, 0];
@@ -258,7 +264,7 @@
 				}
 
 				function nudge(d){
-					if(st !== 'play' || tilt || cap > 0){
+					if(paused || st !== 'play' || tilt || cap > 0){
 						return;
 					}
 					B.vx += d*160;
@@ -720,6 +726,21 @@
 					g.strokeRect(0, 0, 400, 740);
 				}
 
+				function setPause(v){
+					if(v === paused || (v && st === 'over')){
+						return;
+					}
+					paused = v;
+					$('bp').textContent = v ? 'RIPRENDI' : 'PAUSA';
+					if(v){
+						charging = false;
+						if(st === 'ready'){
+							power = 0;
+							B.y = 690;
+						}
+					}
+				}
+
 				function draw(){
 					g.clearRect(0, 0, 400, 740);
 					drawBackground();
@@ -741,6 +762,16 @@
 						g.fillStyle = '#d0f0ff';
 						g.fillText('Tieni premuto LANCIO e rilascia', 190, 520);
 					}
+					if(paused){
+						g.fillStyle = 'rgba(0,0,20,.7)';
+						g.fillRect(0, 0, 400, 740);
+						g.fillStyle = '#ffe070';
+						g.font = 'bold 36px Tahoma';
+						g.fillText('PAUSA', 200, 350);
+						g.fillStyle = '#d0f0ff';
+						g.font = '14px Tahoma';
+						g.fillText('Premi P, Esc o tocca per riprendere', 200, 385);
+					}
 					if(st === 'over'){
 						g.fillStyle = 'rgba(0,0,0,.65)';
 						g.fillRect(40, 300, 320, 120);
@@ -753,9 +784,15 @@
 					}
 				}
 
-				let last = 0;
+				let last = 0, paused = false;
 
 				function loop(t){
+					if(paused){
+						last = t;
+						draw();
+						requestAnimationFrame(loop);
+						return;
+					}
 					const dt = Math.min(.033, (t - last)/1000 || .016);
 					last = t;
 					T += dt;
@@ -814,6 +851,9 @@
 				}
 
 				const fl = (i, v) => {
+					if(v && paused){
+						return;
+					}
 					if(v && !FL[i].on && !tilt){
 						i ? lights.push(lights.shift()) : lights.unshift(lights.pop());
 						beep(250, .04);
@@ -821,6 +861,9 @@
 					FL[i].on = FL[i + 2].on = !!v;
 				};
 				const lDn = () => {
+					if(paused){
+						return;
+					}
 					if(st === 'over'){
 						newGame();
 						return;
@@ -838,6 +881,12 @@
 				bind($('br'), () => fl(1, 1), () => fl(1, 0));
 				bind($('bf'), lDn, lUp);
 				bind($('bn'), () => nudge(0), () => {});
+				bind($('bp'), () => setPause(!paused), () => {});
+				cv.addEventListener('pointerdown', () => {
+					if(paused){
+						setPause(false);
+					}
+				});
 
 				const K = {KeyZ: 0, ArrowLeft: 0, ShiftLeft: 0, KeyM: 1, ArrowRight: 1, Slash: 1, ShiftRight: 1};
 
@@ -857,6 +906,11 @@
 					}else if(e.code === 'ArrowUp'){
 						e.preventDefault();
 						nudge(0);
+					}else if(e.code === 'KeyP' || e.code === 'Escape'){
+						e.preventDefault();
+						if(!e.repeat){
+							setPause(!paused);
+						}
 					}else if(e.code === 'F2'){
 						e.preventDefault();
 						newGame();
@@ -872,6 +926,12 @@
 				});
 
 				document.addEventListener('contextmenu', e => e.preventDefault());
+				document.addEventListener('visibilitychange', () => {
+					if(document.hidden){
+						setPause(true);
+					}
+				});
+				addEventListener('blur', () => setPause(true));
 
 				updHud();
 				requestAnimationFrame(loop);
