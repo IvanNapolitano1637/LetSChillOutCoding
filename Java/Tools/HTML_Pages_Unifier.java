@@ -4,10 +4,10 @@ import java.nio.file.*;
 import java.util.*;
 
 //Codice per creare un unico file HTML con all'interno tutte le pagine che stanno nelle cartelle "Games" e "Tools" più un nuovo file parallelo ad esse.
-//La cartella "Games" contiene cinque sottocartelle: "Arcade", "Board", "Card", "Math" e "Puzzle".
+//La cartella "Games" contiene cinque sottocartelle: "Arcade", "Board", "Card", "Math and Logic" e "Puzzle".
 //La cartella "Tools" contiene tre sottocartelle: "Clocks", "Lab" e "Utilities".
 //Codice creato da Gemini e Claude lunedì nove febbraio duemilaventisei dopo un altro tentativo fatto con Gemini due giorni prima.
-//Ho fatto varie altre modifiche. L'ultima martedì tredici ottobre duemilaventisei.
+//Ho fatto varie altre modifiche. L'ultima venerdì ventitré ottobre duemilaventisei.
 //Il numero di pagine cresce sempre più e stanno per arrivarne diverse altre.
 //Da mettere nella cartella in cui ci sono: "Games" e "Tools".
 //Da compilare e lanciare lì da terminale.
@@ -22,7 +22,7 @@ public class HTML_Pages_Unifier{
 		tempMap.put("Arcade","🕹️");
 		tempMap.put("Board","♟️");
 		tempMap.put("Card","🃏");
-		tempMap.put("Math","🔢");
+		tempMap.put("Math and Logic","🧮");
 		tempMap.put("Puzzle","🧩");
 		tempMap.put("Tools","🛠️");
 		tempMap.put("Clocks","🕰️");
@@ -53,7 +53,7 @@ public class HTML_Pages_Unifier{
 		StringBuilder htmlMenuBuilder = new StringBuilder();
 
 		Map<String, String[]> subFolderMap = new LinkedHashMap<>();
-		subFolderMap.put("Games", new String[]{"Arcade", "Board", "Card", "Math", "Puzzle"});
+		subFolderMap.put("Games", new String[]{"Arcade", "Board", "Card", "Math and Logic", "Puzzle"});
 		subFolderMap.put("Tools", new String[]{"Clocks", "Lab", "Utilities"});
 
 		for(String folderName : FOLDERS){
@@ -697,7 +697,7 @@ public class HTML_Pages_Unifier{
 				    { key: 'R', desc: 'Toggle Arcade subsection' },
 				    { key: 'B', desc: 'Toggle Board subsection' },
 				    { key: 'A', desc: 'Toggle Card subsection' },
-				    { key: 'M', desc: 'Toggle Math subsection' },
+				    { key: 'M', desc: 'Toggle Math and Logic subsection' },
 				    { key: 'P', desc: 'Toggle Puzzle subsection' },
 				    { key: 'U', desc: 'Toggle Utilities subsection' },
 				    { key: 'L', desc: 'Toggle Lab subsection' },
@@ -716,7 +716,7 @@ public class HTML_Pages_Unifier{
 				    { key: 'R', desc: 'Apri/chiudi sottosezione Arcade' },
 				    { key: 'B', desc: 'Apri/chiudi sottosezione Board' },
 				    { key: 'A', desc: 'Apri/chiudi sottosezione Card' },
-				    { key: 'M', desc: 'Apri/chiudi sottosezione Math' },
+				    { key: 'M', desc: 'Apri/chiudi sottosezione Math and Logic' },
 				    { key: 'P', desc: 'Apri/chiudi sottosezione Puzzle' },
 				    { key: 'U', desc: 'Apri/chiudi sottosezione Utilities' },
 				    { key: 'L', desc: 'Apri/chiudi sottosezione Lab' },
@@ -734,7 +734,7 @@ public class HTML_Pages_Unifier{
 				    { key: 'R', desc: 'Afficher/masquer la sous-section Arcade' },
 				    { key: 'B', desc: 'Afficher/masquer la sous-section Board' },
 				    { key: 'A', desc: 'Afficher/masquer la sous-section Card' },
-				    { key: 'M', desc: 'Afficher/masquer la sous-section Math' },
+				    { key: 'M', desc: 'Afficher/masquer la sous-section Math and Logic' },
 				    { key: 'P', desc: 'Afficher/masquer la sous-section Puzzle' },
 				    { key: 'U', desc: 'Afficher/masquer la sous-section Utilities' },
 				    { key: 'L', desc: 'Afficher/masquer la sous-section Lab' },
@@ -752,7 +752,7 @@ public class HTML_Pages_Unifier{
 				    { key: 'R', desc: 'Mostrar/ocultar subsecci\u00f3n Arcade' },
 				    { key: 'B', desc: 'Mostrar/ocultar subsecci\u00f3n Board' },
 				    { key: 'A', desc: 'Mostrar/ocultar subsecci\u00f3n Card' },
-				    { key: 'M', desc: 'Mostrar/ocultar subsecci\u00f3n Math' },
+				    { key: 'M', desc: 'Mostrar/ocultar subsecci\u00f3n Math and Logic' },
 				    { key: 'P', desc: 'Mostrar/ocultar subsecci\u00f3n Puzzle' },
 				    { key: 'U', desc: 'Mostrar/ocultar subsecci\u00f3n Utilities' },
 				    { key: 'L', desc: 'Mostrar/ocultar subsecci\u00f3n Lab' },
@@ -770,7 +770,7 @@ public class HTML_Pages_Unifier{
 				    { key: 'R', desc: 'Unterabschnitt Arcade ein-/ausblenden' },
 				    { key: 'B', desc: 'Unterabschnitt Board ein-/ausblenden' },
 				    { key: 'A', desc: 'Unterabschnitt Card ein-/ausblenden' },
-				    { key: 'M', desc: 'Unterabschnitt Math ein-/ausblenden' },
+				    { key: 'M', desc: 'Unterabschnitt Math and Logic ein-/ausblenden' },
 				    { key: 'P', desc: 'Unterabschnitt Puzzle ein-/ausblenden' },
 				    { key: 'U', desc: 'Unterabschnitt Utilities ein-/ausblenden' },
 				    { key: 'L', desc: 'Unterabschnitt Lab ein-/ausblenden' },
@@ -788,7 +788,7 @@ public class HTML_Pages_Unifier{
 				    { key: 'R', desc: 'Mostrar/ocultar subse\u00e7\u00e3o Arcade' },
 				    { key: 'B', desc: 'Mostrar/ocultar subse\u00e7\u00e3o Board' },
 				    { key: 'A', desc: 'Mostrar/ocultar subse\u00e7\u00e3o Card' },
-				    { key: 'M', desc: 'Mostrar/ocultar subse\u00e7\u00e3o Math' },
+				    { key: 'M', desc: 'Mostrar/ocultar subse\u00e7\u00e3o Math and Logic' },
 				    { key: 'P', desc: 'Mostrar/ocultar subse\u00e7\u00e3o Puzzle' },
 				    { key: 'U', desc: 'Mostrar/ocultar subse\u00e7\u00e3o Utilities' },
 				    { key: 'L', desc: 'Mostrar/ocultar subse\u00e7\u00e3o Lab' },
@@ -806,7 +806,7 @@ public class HTML_Pages_Unifier{
 				    { key: 'R', desc: 'Arat\u0103/ascunde subsec\u021biunea Arcade' },
 				    { key: 'B', desc: 'Arat\u0103/ascunde subsec\u021biunea Board' },
 				    { key: 'A', desc: 'Arat\u0103/ascunde subsec\u021biunea Card' },
-				    { key: 'M', desc: 'Arat\u0103/ascunde subsec\u021biunea Math' },
+				    { key: 'M', desc: 'Arat\u0103/ascunde subsec\u021biunea Math and Logic' },
 				    { key: 'P', desc: 'Arat\u0103/ascunde subsec\u021biunea Puzzle' },
 				    { key: 'U', desc: 'Arat\u0103/ascunde subsec\u021biunea Utilities' },
 				    { key: 'L', desc: 'Arat\u0103/ascunde subsec\u021biunea Lab' },
@@ -824,7 +824,7 @@ public class HTML_Pages_Unifier{
 				    { key: 'R', desc: '\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u0438/\u0441\u0445\u043e\u0432\u0430\u0442\u0438 \u043f\u0456\u0434\u0440\u043e\u0437\u0434\u0456\u043b Arcade' },
 				    { key: 'B', desc: '\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u0438/\u0441\u0445\u043e\u0432\u0430\u0442\u0438 \u043f\u0456\u0434\u0440\u043e\u0437\u0434\u0456\u043b Board' },
 				    { key: 'A', desc: '\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u0438/\u0441\u0445\u043e\u0432\u0430\u0442\u0438 \u043f\u0456\u0434\u0440\u043e\u0437\u0434\u0456\u043b Card' },
-				    { key: 'M', desc: '\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u0438/\u0441\u0445\u043e\u0432\u0430\u0442\u0438 \u043f\u0456\u0434\u0440\u043e\u0437\u0434\u0456\u043b Math' },
+				    { key: 'M', desc: '\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u0438/\u0441\u0445\u043e\u0432\u0430\u0442\u0438 \u043f\u0456\u0434\u0440\u043e\u0437\u0434\u0456\u043b Math and Logic' },
 				    { key: 'P', desc: '\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u0438/\u0441\u0445\u043e\u0432\u0430\u0442\u0438 \u043f\u0456\u0434\u0440\u043e\u0437\u0434\u0456\u043b Puzzle' },
 				    { key: 'U', desc: '\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u0438/\u0441\u0445\u043e\u0432\u0430\u0442\u0438 \u043f\u0456\u0434\u0440\u043e\u0437\u0434\u0456\u043b Utilities' },
 				    { key: 'L', desc: '\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u0438/\u0441\u0445\u043e\u0432\u0430\u0442\u0438 \u043f\u0456\u0434\u0440\u043e\u0437\u0434\u0456\u043b Lab' },
@@ -842,7 +842,7 @@ public class HTML_Pages_Unifier{
 				    { key: 'R', desc: '\u0395\u03bc\u03c6\u03ac\u03bd\u03b9\u03c3\u03b7/\u03b1\u03c0\u03cc\u03ba\u03c1\u03c5\u03c8\u03b7 \u03c5\u03c0\u03bf\u03b5\u03bd\u03cc\u03c4\u03b7\u03c4\u03b1\u03c2 Arcade' },
 				    { key: 'B', desc: '\u0395\u03bc\u03c6\u03ac\u03bd\u03b9\u03c3\u03b7/\u03b1\u03c0\u03cc\u03ba\u03c1\u03c5\u03c8\u03b7 \u03c5\u03c0\u03bf\u03b5\u03bd\u03cc\u03c4\u03b7\u03c4\u03b1\u03c2 Board' },
 				    { key: 'A', desc: '\u0395\u03bc\u03c6\u03ac\u03bd\u03b9\u03c3\u03b7/\u03b1\u03c0\u03cc\u03ba\u03c1\u03c5\u03c8\u03b7 \u03c5\u03c0\u03bf\u03b5\u03bd\u03cc\u03c4\u03b7\u03c4\u03b1\u03c2 Card' },
-				    { key: 'M', desc: '\u0395\u03bc\u03c6\u03ac\u03bd\u03b9\u03c3\u03b7/\u03b1\u03c0\u03cc\u03ba\u03c1\u03c5\u03c8\u03b7 \u03c5\u03c0\u03bf\u03b5\u03bd\u03cc\u03c4\u03b7\u03c4\u03b1\u03c2 Math' },
+				    { key: 'M', desc: '\u0395\u03bc\u03c6\u03ac\u03bd\u03b9\u03c3\u03b7/\u03b1\u03c0\u03cc\u03ba\u03c1\u03c5\u03c8\u03b7 \u03c5\u03c0\u03bf\u03b5\u03bd\u03cc\u03c4\u03b7\u03c4\u03b1\u03c2 Math and Logic' },
 				    { key: 'P', desc: '\u0395\u03bc\u03c6\u03ac\u03bd\u03b9\u03c3\u03b7/\u03b1\u03c0\u03cc\u03ba\u03c1\u03c5\u03c8\u03b7 \u03c5\u03c0\u03bf\u03b5\u03bd\u03cc\u03c4\u03b7\u03c4\u03b1\u03c2 Puzzle' },
 				    { key: 'U', desc: '\u0395\u03bc\u03c6\u03ac\u03bd\u03b9\u03c3\u03b7/\u03b1\u03c0\u03cc\u03ba\u03c1\u03c5\u03c8\u03b7 \u03c5\u03c0\u03bf\u03b5\u03bd\u03cc\u03c4\u03b7\u03c4\u03b1\u03c2 Utilities' },
 				    { key: 'L', desc: '\u0395\u03bc\u03c6\u03ac\u03bd\u03b9\u03c3\u03b7/\u03b1\u03c0\u03cc\u03ba\u03c1\u03c5\u03c8\u03b7 \u03c5\u03c0\u03bf\u03b5\u03bd\u03cc\u03c4\u03b7\u03c4\u03b1\u03c2 Lab' },
@@ -861,7 +861,7 @@ public class HTML_Pages_Unifier{
 				    { key: 'R', desc: 'Ostende/occlude subsectionem Arcade' },
 				    { key: 'B', desc: 'Ostende/occlude subsectionem Board' },
 				    { key: 'A', desc: 'Ostende/occlude subsectionem Card' },
-				    { key: 'M', desc: 'Ostende/occlude subsectionem Math' },
+				    { key: 'M', desc: 'Ostende/occlude subsectionem Math and Logic' },
 				    { key: 'P', desc: 'Ostende/occlude subsectionem Puzzle' },
 				    { key: 'U', desc: 'Ostende/occlude subsectionem Utilities' },
 				    { key: 'L', desc: 'Ostende/occlude subsectionem Lab' },
@@ -879,7 +879,7 @@ public class HTML_Pages_Unifier{
 				    { key: 'R', desc: '\u663e\u793a/\u9690\u85cf Arcade \u5b50\u533a\u57df' },
 				    { key: 'B', desc: '\u663e\u793a/\u9690\u85cf Board \u5b50\u533a\u57df' },
 				    { key: 'A', desc: '\u663e\u793a/\u9690\u85cf Card \u5b50\u533a\u57df' },
-				    { key: 'M', desc: '\u663e\u793a/\u9690\u85cf Math \u5b50\u533a\u57df' },
+				    { key: 'M', desc: '\u663e\u793a/\u9690\u85cf Math and Logic \u5b50\u533a\u57df' },
 				    { key: 'P', desc: '\u663e\u793a/\u9690\u85cf Puzzle \u5b50\u533a\u57df' },
 				    { key: 'U', desc: '\u663e\u793a/\u9690\u85cf Utilities \u5b50\u533a\u57df' },
 				    { key: 'L', desc: '\u663e\u793a/\u9690\u85cf Lab \u5b50\u533a\u57df' },
@@ -897,7 +897,7 @@ public class HTML_Pages_Unifier{
 				    { key: 'R', desc: 'Arcade \u30b5\u30d6\u30bb\u30af\u30b7\u30e7\u30f3\u3092\u958b\u9589' },
 				    { key: 'B', desc: 'Board \u30b5\u30d6\u30bb\u30af\u30b7\u30e7\u30f3\u3092\u958b\u9589' },
 				    { key: 'A', desc: 'Card \u30b5\u30d6\u30bb\u30af\u30b7\u30e7\u30f3\u3092\u958b\u9589' },
-				    { key: 'M', desc: 'Math \u30b5\u30d6\u30bb\u30af\u30b7\u30e7\u30f3\u3092\u958b\u9589' },
+				    { key: 'M', desc: 'Math and Logic \u30b5\u30d6\u30bb\u30af\u30b7\u30e7\u30f3\u3092\u958b\u9589' },
 				    { key: 'P', desc: 'Puzzle \u30b5\u30d6\u30bb\u30af\u30b7\u30e7\u30f3\u3092\u958b\u9589' },
 				    { key: 'U', desc: 'Utilities \u30b5\u30d6\u30bb\u30af\u30b7\u30e7\u30f3\u3092\u958b\u9589' },
 				    { key: 'L', desc: 'Lab \u30b5\u30d6\u30bb\u30af\u30b7\u30e7\u30f3\u3092\u958b\u9589' },
@@ -974,7 +974,7 @@ public class HTML_Pages_Unifier{
 						toggleSection('grid-card');
 					}
 					if(e.key.toLowerCase() === 'm'){
-						toggleSection('grid-math');
+						toggleSection('grid-math-and-logic');
 					}
 					if(e.key.toLowerCase() === 'p'){
 						toggleSection('grid-puzzle');
