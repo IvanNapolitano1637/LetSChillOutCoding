@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="it"><!--K09#057 - Nunzio - Biliardo-->
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+		<title>Biliardo</title>
+		<style>
+			*{
+				box-sizing: border-box;
+			}
+			html, body{
+				margin: 0;
+				background: radial-gradient(circle at 30% 0, #2b3558, #141826 70%) fixed;
+				color: #eef;
+				font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+				user-select: none;
+				-webkit-user-select: none;
+			}
+			body{
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 8px;
+				min-height: 100vh;
+				padding: 8px 6px 14px;
+			}
+			h1{
+				margin: 0;
+				font-size: 22px;
+				letter-spacing: 3px;
+				font-weight: 800;
+				color: #cfe0ff;
+				text-shadow: 0 2px 8px rgba(0, 0, 0, .5);
+			}
+			canvas{
+				width: 100%;
+				max-width: calc((100vh - 210px)*2);
+				height: auto;
+				touch-action: none;
+				display: block;
+				border-radius: 14px;
+				box-shadow: 0 10px 30px rgba(0, 0, 0, .6);
+			}
+			#st{
+				font-size: 15px;
+				font-weight: 600;
+				text-align: center;
+				min-height: 22px;
+				color: #ffd479;
+			}
+			#tray{
+				display: flex;
+				gap: 4px;
+				min-height: 22px;
+				flex-wrap: wrap;
+				justify-content: center;
+			}
+			.chip{
+				width: 22px;
+				height: 22px;
+				border-radius: 50%;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 11px;
+				font-weight: 700;
+				color: #fff;
+				text-shadow: 0 0 3px #000;
+				box-shadow: 0 1px 3px rgba(0, 0, 0, .6);
+			}
+			#bar{
+				display: flex;
+				gap: 8px;
+				align-items: center;
+				flex-wrap: wrap;
+				justify-content: center;
+			}
+			#bar span{
+				font-weight: 600;
+				color: #cfe0ff;
+			}
+			button{
+				font-size: 14px;
+				font-weight: 600;
+				font-family: inherit;
+				border: 0;
+				border-radius: 10px;
+				padding: 10px 14px;
+				background: #35406a;
+				color: #fff;
+				box-shadow: 0 2px 0 #1b2240;
+				cursor: pointer;
+			}
+			button:active{
+				transform: translateY(2px);
+				box-shadow: none;
+			}
+			button.on{
+				background: #e8a317;
+				color: #222;
+			}
+			#go{
+				background: #2a9d5c;
+				box-shadow: 0 2px 0 #14603a;
+				font-size: 16px;
+				padding: 10px 22px;
+			}
+			#pw{
+				width: min(40vw, 240px);
+				accent-color: #e8a317;
+				height: 28px;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>BILIARDO</h1>
+		<div id="st"></div>
+		<div id="tray"></div>
+		<canvas id="c" width="1600" height="800"></canvas>
+		<div id="bar">
+			<button id="m1">1 giocatore</button><button id="m2">2 giocatori</button><button id="ng">Nuova partita</button>
+			<span>Potenza</span><input id="pw" type="range" min="5" max="100" value="55"><button id="go">TIRA</button>
+		</div>
+		<script>
+			const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+			ctx.scale(2, 2);
+			const W = 800, H = 400, R = 9, L = 30, T = 30, RT = 770, B = 370;
+			const PK = [[24, 24, 22], [776, 24, 22], [24, 376, 22], [776, 376, 22], [400, 16, 27], [400, 384, 27]];
+			const COL = ['#fff', '#f5c400', '#1f4fd8', '#d62828', '#6a2c91', '#f26b1d', '#1b7a3d', '#7a1f1f', '#111'];
+			const grp = n => n >= 1 && n <= 7 ? 's' : n >= 9 ? 'r' : 'e';
+			const $ = id => document.getElementById(id);
+			let balls, turn, groups, mode = 1, phase, msg, shot, ang = Math.PI, mx = 300, my = 200, cpuWait = false, winner = -1, pend = null;
+
+			function newGame(){
+				const nums = [1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15].sort(() => Math.random() - .5);
+				balls = [{n: 0, x: 200, y: 200, vx: 0, vy: 0, in: false}];
+				let k = 0;
+				for(let r = 0; r < 5; r++){
+					for(let i = 0; i <= r; i++){
+						const n = (r === 2 && i === 1) ? 8 : nums[k++];
+						balls.push({n, x: 560 + r * R * 1.74, y: 200 + (i - r/2)*(2*R + .3), vx: 0, vy: 0, in: false});
+					}
+				}
+				turn = 0;
+				groups = [null, null];
+				phase = 'aim';
+				winner = -1;
+				shot = null;
+				ang = Math.PI;
+				msg = 'Inizia il Giocatore 1';
+				info();
+				cpuCheck();
+			}
+
+			const mine = t => balls.filter(b => !b.in && b.n && groups[t] && grp(b.n) === groups[t]).length;
+			const human = () => mode === 2 || turn === 0;
+			const pname = t => mode === 1 ? (t ? 'CPU' : 'Tu') : 'Giocatore ' + (t + 1);
+
+			function tray(){
+				const t = $('tray');
+				t.innerHTML = '';
+				for(const b of balls){
+					if(b.in && b.n){
+						const s = document.createElement('span'), c = COL[b.n > 8 ? b.n - 8 : b.n];
+						s.className = 'chip';
+						s.style.background = b.n > 8 ? 'linear-gradient(#fff 28%,' + c + ' 28%,' + c + ' 72%,#fff 72%)' : c;
+						s.textContent = b.n;
+						t.appendChild(s);
+					}
+				}
+			}
+
+			function info(){
+				const g = t => groups[t] ? (groups[t] === 's' ? 'Piene' : 'Mezze') + ' (' + mine(t) + ')' : '-';
+				tray();
+				$('st').textContent = (winner >= 0 ? '' : 'Turno: ' + pname(turn) + ' | ') + pname(0) + ': ' + g(0) + ' · ' + pname(1) + ': ' + g(1) + ' — ' + msg;
+			}
+
+			function shoot(a, p){
+				const c = balls[0], v = 3 + p*.21;
+				c.vx = Math.cos(a)*v;
+				c.vy = Math.sin(a)*v;
+				shot = {pot: [], first: null, cue: false, clear: groups[turn] && mine(turn) === 0};
+				phase = 'move';
+			}
+
+			function step(){
+				for(let s = 0; s < 6; s++){
+					for(const b of balls){
+						if(!b.in){
+							b.x += b.vx/6;
+							b.y += b.vy/6;
+						}
+					}
+					for(let i = 0; i < balls.length; i++){
+						const a = balls[i];
+						if(a.in){
+							continue;
+						}
+						for(let j = i + 1; j < balls.length; j++){
+							const b = balls[j];
+							if(b.in){
+								continue;
+							}
+							let dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy);
+							if(d < 2 * R && d > 0){
+								const nx = dx/d, ny = dy/d, o = 2*R - d;
+								a.x -= nx*o/2;
+								a.y -= ny*o/2;
+								b.x += nx*o/2;
+								b.y += ny*o/2;
+								const dv = (a.vx - b.vx)*nx + (a.vy - b.vy)*ny;
+								if(dv > 0){
+									const im = dv*.97;
+									a.vx -= im*nx;
+									a.vy -= im*ny;
+									b.vx += im*nx;
+									b.vy += im*ny;
+									if(shot && shot.first === null){
+										if(a.n === 0){
+											shot.first = b.n;
+										}else if(b.n === 0){
+											shot.first = a.n;
+										}
+									}
+								}
+							}
+						}
+						for(const p of PK){
+							if(Math.hypot(a.x - p[0], a.y - p[1]) < p[2]){
+								a.in = true;
+								a.vx = a.vy = 0;
+								if(a.n === 0){
+									shot.cue = true;
+								}else{
+									shot.pot.push(a.n);
+								}
+								break;
+							}
+						}
+						if(a.in){
+							continue;
+						}
+						if(a.x < L + R){
+							a.x = L + R;
+							a.vx = Math.abs(a.vx)*.8;
+						}
+						if(a.x > RT - R){
+							a.x = RT - R;
+							a.vx = -Math.abs(a.vx)*.8;
+						}
+						if(a.y < T + R){
+							a.y = T + R;
+							a.vy = Math.abs(a.vy)*.8;
+						}
+						if(a.y > B - R){
+							a.y = B - R;
+							a.vy = -Math.abs(a.vy)*.8;
+						}
+					}
+				}
+				let mv = false;
+				for(const b of balls){
+					if(!b.in){
+						let sp = Math.hypot(b.vx, b.vy);
+						if(sp > 0){
+							sp = Math.max(0, sp*.989 - .012);
+						}
+						if(sp < .06){
+							b.vx = b.vy = 0;
+						}else{
+							const f = sp/Math.hypot(b.vx, b.vy);
+							b.vx *= f;
+							b.vy *= f;
+							mv = true;
+						}
+					}
+				}
+				if(!mv){
+					endShot();
+				}
+			}
+
+			function endShot(){
+				const me = turn, op = 1 - me, pot = shot.pot;
+				let foul = false, m = '';
+				if(!groups[me] && !shot.cue){
+					const f = pot.find(n => n !== 8);
+					if(f && !pot.includes(8)){
+						groups[me] = grp(f);
+						groups[op] = groups[me] === 's' ? 'r' : 's';
+					}
+				}
+				if(shot.first === null){
+					foul = true;
+					m = 'Fallo: nessuna palla colpita. ';
+				}else if(shot.clear){
+					if(shot.first !== 8){
+						foul = true;
+						m = 'Fallo: dovevi colpire la 8. ';
+					}
+				}else if(groups[me]){
+					if(grp(shot.first) !== groups[me]){
+						foul = true;
+						m = 'Fallo: palla sbagliata. ';
+					}
+				}else if(shot.first === 8){
+					foul = true;
+					m = 'Fallo: palla 8. ';
+				}
+				if(shot.cue){
+					foul = true;
+					m += 'Bianca in buca. ';
+				}
+				if(pot.includes(8)){
+					winner = (shot.clear && !foul) ? me : op;
+					phase = 'over';
+					msg = (winner === me ? 'Buca la 8 correttamente: ' : 'Buca la 8 troppo presto: ') + 'vince ' + pname(winner) + '!';
+					info();
+					return;
+				}
+				const own = pot.some(n => groups[me] && grp(n) === groups[me]);
+				if(shot.cue){
+					const c = balls[0];
+					c.in = false;
+					c.x = 200;
+					c.y = 200;
+				}
+				if(foul){
+					turn = op;
+					phase = 'place';
+					msg = m + pname(op) + ' piazza la bianca.';
+				}else if(own || (pot.length && !pot.includes(8) && groups[me] && groups[me] === grp(pot[0]))){
+					phase = 'aim';
+					msg = 'Bella! Tira ancora.';
+				}else{
+					turn = op;
+					phase = 'aim';
+					msg = 'Tocca a ' + pname(op) + '.';
+				}
+				shot = null;
+				info();
+				cpuCheck();
+			}
+
+			function legal(n){
+				if(!groups[turn]){
+					return n !== 8;
+				}
+				return mine(turn) === 0 ? n === 8 : grp(n) === groups[turn];
+			}
+
+			function clear(x1, y1, x2, y2, ig){
+				const dx = x2 - x1, dy = y2 - y1, l2 = dx*dx + dy*dy || 1;
+				for(const b of balls){
+					if(b.in || b.n === 0 || b === ig){
+						continue;
+					}
+					let t = Math.max(0, Math.min(1, ((b.x - x1)*dx + (b.y - y1)*dy)/l2));
+					if(Math.hypot(b.x - x1 - dx*t, b.y - y1 - dy*t) < 2*R - 1){
+						return false;
+					}
+				}
+				return true;
+			}
+
+			function okPos(x, y){
+				if(x < L + R || x > RT - R || y < T + R || y > B - R){
+					return false;
+				}
+				return !balls.some(b => !b.in && b.n && Math.hypot(b.x - x, b.y - y) < 2*R + 1);
+			}
+
+			function cpuCheck(){
+				if(mode === 1 && turn === 1 && (phase === 'aim' || phase === 'place') && !cpuWait && winner < 0){
+					cpuWait = true;
+					setTimeout(cpuPlay, 900);
+				}
+			}
+
+			function cpuPlay(){
+				cpuWait = false;
+				if(winner >= 0 || turn !== 1){
+					return;
+				}
+				const c = balls[0];
+				if(phase === 'place'){
+					let x, y, k = 0;
+					do{
+						x = L + R + Math.random()*(RT - L - 2*R);
+						y = T + R + Math.random()*(B - T - 2*R);
+					}while(!okPos(x, y) && k++ < 500);
+					c.x = x;
+					c.y = y;
+					c.in = false;
+					phase = 'aim';
+				}
+				let best = null;
+				for(const t of balls){
+					if(t.in || !t.n || !legal(t.n)){
+						continue;
+					}
+					for(const p of PK){
+						const px = p[0] + (400 - p[0])*.04, py = p[1] + (200 - p[1])*.06, dx = px - t.x, dy = py - t.y, d = Math.hypot(dx, dy), ux = dx/d, uy = dy/d;
+						const gx = t.x - ux*2*R, gy = t.y - uy*2*R, qx = gx - c.x, qy = gy - c.y, cd = Math.hypot(qx, qy), dot = (qx*ux + qy*uy)/cd;
+						if(dot < .4 || !clear(c.x, c.y, gx, gy, t) || !clear(t.x, t.y, px, py, t)){
+							continue;
+						}
+						const sc = cd + d - dot*200;
+						if(!best || sc < best.sc){
+							best = {sc, a: Math.atan2(qy, qx), pw: Math.min(100, 30 + (cd + d)/8)};
+						}
+					}
+				}
+				if(!best){
+					let nt = null, nd = 1e9;
+					for(const t of balls){
+						if(!t.in && t.n && legal(t.n)){
+							const d = Math.hypot(t.x - c.x, t.y - c.y);
+							if(d < nd){
+								nd = d;
+								nt = t;
+							}
+						}
+					}
+					best = {a: nt ? Math.atan2(nt.y - c.y, nt.x - c.x) : 0, pw: 65};
+				}
+				ang = best.a + (Math.random() - .5)*.035;
+				shoot(ang, best.pw);
+			}
+
+			const bg = document.createElement('canvas');
+			bg.width = 1600;
+			bg.height = 800;
+			(function(){
+				const c = bg.getContext('2d');
+				c.scale(2, 2);
+				let seed = 7;
+				const rnd = () => (seed = (seed*16807)%2147483647)/2147483647;
+				let g = c.createLinearGradient(0, 0, 0, H);
+				g.addColorStop(0, '#8f572a');
+				g.addColorStop(.5, '#6b3d1a');
+				g.addColorStop(1, '#4a2810');
+				c.fillStyle = g;
+				c.fillRect(0, 0, W, H);
+				for(let i = 0; i < 170; i++){
+					c.strokeStyle = 'rgba(' + (rnd() < .5 ? '0,0,0' : '255,200,140') + ',' + (.04 + rnd()*.07) + ')';
+					c.lineWidth = .5 + rnd();
+					const y = rnd()*H;
+					c.beginPath();
+					c.moveTo(0, y);
+					c.bezierCurveTo(200, y + rnd()*6 - 3, 600, y + rnd()*6 - 3, W, y + rnd()*6 - 3);
+					c.stroke();
+				}
+				c.strokeStyle = 'rgba(255,220,170,.4)';
+				c.lineWidth = 2;
+				c.strokeRect(1.5, 1.5, W - 3, H - 3);
+				c.strokeStyle = 'rgba(0,0,0,.5)';
+				c.strokeRect(18.5, 18.5, W - 37, H - 37);
+				g = c.createRadialGradient(W/2, H/2, 40, W/2, H/2, W*.6);
+				g.addColorStop(0, '#169552');
+				g.addColorStop(1, '#09522e');
+				c.fillStyle = g;
+				c.fillRect(20, 20, W - 40, H - 40);
+				for(let i = 0; i < 3500; i++){
+					c.fillStyle = 'rgba(255,255,255,' + rnd()*.045 + ')';
+					c.fillRect(20 + rnd()*(W - 40), 20 + rnd()*(H - 40), 1, 1);
+				}
+				c.strokeStyle = '#0a5a33';
+				c.lineWidth = 10;
+				c.strokeRect(25, 25, W - 50, H - 50);
+				c.strokeStyle = 'rgba(255,255,255,.14)';
+				c.lineWidth = 1.5;
+				c.strokeRect(30.5, 30.5, W - 61, H - 61);
+				c.strokeStyle = 'rgba(0,0,0,.4)';
+				c.lineWidth = 2;
+				c.strokeRect(20, 20, W - 40, H - 40);
+				c.strokeStyle = 'rgba(255,255,255,.25)';
+				c.lineWidth = 1;
+				c.beginPath();
+				c.moveTo(200, T + 4);
+				c.lineTo(200, B - 4);
+				c.stroke();
+				c.beginPath();
+				c.arc(200, 200, 48, Math.PI/2, Math.PI*1.5);
+				c.stroke();
+				c.fillStyle = 'rgba(255,255,255,.4)';
+				c.beginPath();
+				c.arc(560, 200, 2.5, 0, 7);
+				c.fill();
+				for(const p of PK){
+					const r = p[2]*.78;
+					c.fillStyle = '#2b190b';
+					c.beginPath();
+					c.arc(p[0], p[1], r + 5, 0, 7);
+					c.fill();
+					c.strokeStyle = '#b8924f';
+					c.lineWidth = 1.5;
+					c.stroke();
+					c.fillStyle = '#030303';
+					c.beginPath();
+					c.arc(p[0], p[1], r, 0, 7);
+					c.fill();
+				}
+				c.fillStyle = '#f1e3c4';
+				const dm = (x, y) => {
+					c.beginPath();
+					c.moveTo(x, y - 3.5);
+					c.lineTo(x + 3.5, y);
+					c.lineTo(x, y + 3.5);
+					c.lineTo(x - 3.5, y);
+					c.fill();
+				};
+				for(let i = 1; i < 8; i++){
+					if(i !== 4){
+						const x = L + (RT - L)*i/8;
+						dm(x, 10);
+						dm(x, H - 10);
+					}
+				}
+				for(let i = 1; i < 4; i++){
+					const y = T + (B - T)*i/4;
+					dm(10, y);
+					dm(W - 10, y);
+				}
+			})();
+
+			function ball(b, x, y, gh){
+				ctx.save();
+				ctx.translate(x, y);
+				if(gh){
+					ctx.globalAlpha = .5;
+				}
+				if(!gh){
+					ctx.fillStyle = 'rgba(0,0,0,.35)';
+					ctx.beginPath();
+					ctx.ellipse(2, 3, R, R*.88, 0, 0, 7);
+					ctx.fill();
+				}
+				ctx.beginPath();
+				ctx.arc(0, 0, R, 0, 7);
+				ctx.save();
+				ctx.clip();
+				const c = COL[b.n > 8 ? b.n - 8 : b.n];
+				ctx.fillStyle = b.n > 8 ? '#f8f8f8' : c;
+				ctx.fillRect(-R, -R, 2*R, 2*R);
+				if(b.n > 8){
+					ctx.fillStyle = c;
+					ctx.fillRect(-R, -4.6, 2*R, 9.2);
+				}
+				if(b.n){
+					ctx.fillStyle = '#fff';
+					ctx.beginPath();
+					ctx.arc(0, 0, 4.4, 0, 7);
+					ctx.fill();
+					ctx.fillStyle = '#000';
+					ctx.font = 'bold 6px sans-serif';
+					ctx.textAlign = 'center';
+					ctx.textBaseline = 'middle';
+					ctx.fillText(b.n, 0, .5);
+				}
+				const g = ctx.createRadialGradient(-3, -3.5, .5, 0, 0, R);
+				g.addColorStop(0, 'rgba(255,255,255,.7)');
+				g.addColorStop(.3, 'rgba(255,255,255,0)');
+				g.addColorStop(.75, 'rgba(0,0,0,.12)');
+				g.addColorStop(1, 'rgba(0,0,0,.5)');
+				ctx.fillStyle = g;
+				ctx.fillRect(-R, -R, 2*R, 2*R);
+				ctx.restore();
+				ctx.fillStyle = 'rgba(255,255,255,.9)';
+				ctx.beginPath();
+				ctx.ellipse(-3, -4, 2.2, 1.4, -.7, 0, 7);
+				ctx.fill();
+				ctx.restore();
+			}
+
+			function draw(){
+				ctx.drawImage(bg, 0, 0, W, H);
+				for(const b of balls){
+					if(!b.in){
+						ball(b, b.x, b.y);
+					}
+				}
+				const c = balls[0];
+				if(phase === 'place' && human()){
+					ball(c, mx, my, true);
+					ctx.fillStyle = '#fff';
+					ctx.font = '12px sans-serif';
+					ctx.textAlign = 'center';
+					ctx.fillText('Tocca per piazzare la bianca', 400, 200);
+				}
+				if(phase === 'aim' && !c.in){
+					const dx = Math.cos(ang), dy = Math.sin(ang);
+					let x = c.x, y = c.y, hit = null;
+					for(let i = 0; i < 500; i++){
+						x += dx*3;
+						y += dy*3;
+						if(x < L + R || x > RT - R || y < T + R || y > B - R){
+							break;
+						}
+						hit = balls.find(b => !b.in && b.n && Math.hypot(b.x - x, b.y - y) < 2*R);
+						if(hit){
+							break;
+						}
+					}
+					ctx.strokeStyle = 'rgba(255,255,255,.65)';
+					ctx.setLineDash([5, 5]);
+					ctx.lineWidth = 1.5;
+					ctx.beginPath();
+					ctx.moveTo(c.x + dx*R, c.y + dy*R);
+					ctx.lineTo(x, y);
+					ctx.stroke();
+					ctx.setLineDash([]);
+					ctx.strokeStyle = '#fff';
+					ctx.lineWidth = 1.5;
+					ctx.beginPath();
+					ctx.arc(x, y, R, 0, 7);
+					ctx.stroke();
+					if(hit){
+						const nx = hit.x - x, ny = hit.y - y, n = Math.hypot(nx, ny);
+						ctx.strokeStyle = 'rgba(255,230,80,.85)';
+						ctx.lineWidth = 2;
+						ctx.beginPath();
+						ctx.moveTo(hit.x, hit.y);
+						ctx.lineTo(hit.x + nx/n*45, hit.y + ny/n*45);
+						ctx.stroke();
+					}
+					const pull = 14 + $('pw').value*.35, L0 = -pull - 250, L1 = -pull - 4;
+					ctx.save();
+					ctx.translate(c.x, c.y);
+					ctx.rotate(ang);
+					ctx.fillStyle = 'rgba(0,0,0,.28)';
+					ctx.beginPath();
+					ctx.moveTo(L1, -1.5 + 3);
+					ctx.lineTo(L0, -3.8 + 4);
+					ctx.lineTo(L0, 3.8 + 4);
+					ctx.lineTo(L1, 1.5 + 3);
+					ctx.fill();
+					const g = ctx.createLinearGradient(L0, 0, L1, 0);
+					g.addColorStop(0, '#1f1209');
+					g.addColorStop(.3, '#3a2410');
+					g.addColorStop(.32, '#c9a064');
+					g.addColorStop(1, '#f0d9a8');
+					ctx.fillStyle = g;
+					ctx.beginPath();
+					ctx.moveTo(L1, -1.6);
+					ctx.lineTo(L0, -3.8);
+					ctx.lineTo(L0, 3.8);
+					ctx.lineTo(L1, 1.6);
+					ctx.fill();
+					ctx.fillStyle = '#b3202a';
+					ctx.fillRect(L0 + 70, -3.3, 4, 6.6);
+					ctx.fillRect(L0 + 80, -3.2, 2, 6.4);
+					ctx.fillStyle = '#e8f1ff';
+					ctx.fillRect(L1, -1.6, 4, 3.2);
+					ctx.fillStyle = '#3b6fb6';
+					ctx.fillRect(L1 + 4, -1.6, 3, 3.2);
+					ctx.restore();
+				}
+				if(phase === 'over'){
+					ctx.fillStyle = 'rgba(0,0,0,.65)';
+					ctx.fillRect(0, 140, W, 120);
+					ctx.fillStyle = '#fff';
+					ctx.font = 'bold 26px sans-serif';
+					ctx.textAlign = 'center';
+					ctx.fillText('Vince ' + pname(winner) + '!', 400, 200);
+					ctx.font = '14px sans-serif';
+					ctx.fillStyle = '#ffd479';
+					ctx.fillText('Premi "Nuova partita"', 400, 228);
+				}
+			}
+
+			function pos(e){
+				const r = cv.getBoundingClientRect();
+				return [(e.clientX - r.left)/r.width*W, (e.clientY - r.top)/r.height*H];
+			}
+
+			function setAim(e){
+				const [x, y] = pos(e);
+				mx = x;
+				my = y;
+				if(phase === 'aim' && human()){
+					const c = balls[0];
+					ang = Math.atan2(y - c.y, x - c.x);
+				}
+			}
+
+			cv.addEventListener('pointerdown', setAim);
+			cv.addEventListener('pointermove', setAim);
+			cv.addEventListener('pointerup', e => {
+				if(phase === 'place' && human()){
+					setAim(e);
+					if(okPos(mx, my)){
+						const c = balls[0];
+						c.x = mx;
+						c.y = my;
+						c.in = false;
+						phase = 'aim';
+						msg = 'Mira e premi TIRA.';
+						info();
+					}
+				}
+			});
+
+			function go(){
+				if(phase === 'aim' && human() && !balls[0].in){
+					shoot(ang, +$('pw').value);
+				}
+			}
+
+			$('go').onclick = go;
+			$('ng').onclick = newGame;
+
+			function setMode(m){
+				mode = m;
+				$('m1').className = m === 1 ? 'on' : '';
+				$('m2').className = m === 2 ? 'on' : '';
+				newGame();
+			}
+
+			$('m1').onclick = () => setMode(1);
+			$('m2').onclick = () => setMode(2);
+			addEventListener('keydown', e => {
+				if(e.key === 'ArrowLeft'){
+					ang -= .01;
+				}else if(e.key === 'ArrowRight'){
+					ang += .01;
+				}else if(e.key === 'ArrowUp'){
+					$('pw').value = +$('pw').value + 5;
+				}else if(e.key === 'ArrowDown'){
+					$('pw').value = +$('pw').value - 5;
+				}else if(e.key === ' '){
+					e.preventDefault();
+					go();
+				}
+			});
+			setMode(1);
+			(function loop(){
+				if(phase === 'move'){
+					step();
+				}
+				draw();
+				requestAnimationFrame(loop);
+			})();
+		</script>
+	</body>
+</html>

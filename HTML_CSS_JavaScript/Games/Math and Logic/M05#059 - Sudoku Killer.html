@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="it"><!--M05#059 - Domenico - Sudoku Killer-->
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+		<title>Sudoku Killer</title>
+		<style>
+			:root{
+				--w: max(290px, min(96vw, 520px, calc(100vh - 310px)));
+				--s: calc(var(--w)/9);
+			}
+			*{
+				box-sizing: border-box;
+				-webkit-tap-highlight-color: transparent;
+			}
+			html, body{
+				margin: 0;
+				background: radial-gradient(circle at 30% 0, #2b3558, #141826 70%) fixed;
+				color: #eef;
+				font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+				user-select: none;
+				-webkit-user-select: none;
+				touch-action: manipulation;
+			}
+			body{
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 10px;
+				padding: 10px 0 22px;
+				min-height: 100vh;
+			}
+			h1{
+				margin: 0;
+				font-size: 22px;
+				letter-spacing: 3px;
+				font-weight: 800;
+				color: #cfe0ff;
+				text-shadow: 0 2px 8px rgba(0, 0, 0, .5);
+			}
+			#top{
+				display: flex;
+				gap: 8px;
+				align-items: center;
+				justify-content: space-between;
+				width: var(--w);
+			}
+			select, button{
+				font-size: 14px;
+				font-weight: 600;
+				font-family: inherit;
+				border: 0;
+				border-radius: 10px;
+				padding: 10px 12px;
+				background: #35406a;
+				color: #fff;
+				box-shadow: 0 2px 0 #1b2240;
+				cursor: pointer;
+			}
+			button:active{
+				transform: translateY(2px);
+				box-shadow: none;
+			}
+			button.on{
+				background: #e8a317;
+				color: #222;
+			}
+			#tm{
+				font-variant-numeric: tabular-nums;
+				font-size: 18px;
+				font-weight: 700;
+				color: #cfe0ff;
+				min-width: 56px;
+				text-align: right;
+			}
+			#bd{
+				display: grid;
+				grid-template-columns: repeat(9, minmax(0, 1fr));
+				grid-template-rows: repeat(9, minmax(0, 1fr));
+				width: var(--w);
+				height: var(--w);
+				border: 3px solid #1d2748;
+				border-radius: 10px;
+				overflow: hidden;
+				background: #fff;
+				box-shadow: 0 10px 30px rgba(0, 0, 0, .55);
+			}
+			.cell{
+				position: relative;
+				min-width: 0;
+				min-height: 0;
+				overflow: hidden;
+				background: var(--cc, #fff);
+				border: 1px solid #c5cde0;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			.cell.r3{
+				border-right: 2px solid #1d2748;
+			}
+			.cell.b3{
+				border-bottom: 2px solid #1d2748;
+			}
+			.cell::after{
+				content: "";
+				position: absolute;
+				inset: 0;
+				pointer-events: none;
+			}
+			.cell.peer::after{
+				background: rgba(60, 110, 200, .13);
+			}
+			.cell.same::after{
+				background: rgba(60, 110, 200, .30);
+			}
+			.cell.sel::after{
+				background: rgba(60, 110, 200, .50);
+			}
+			.cell.wr::after{
+				background: rgba(220, 38, 38, .4);
+			}
+			.v{
+				position: relative;
+				z-index: 1;
+				line-height: 1;
+				font-size: calc(var(--s)*.6);
+				font-weight: 600;
+				color: #2563eb;
+			}
+			.cell.err .v{
+				color: #dc2626;
+			}
+			.nt{
+				position: absolute;
+				inset: 0;
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				grid-template-rows: repeat(3, 1fr);
+				font-size: calc(var(--s)*.24);
+				color: #556;
+				z-index: 1;
+				line-height: 1;
+			}
+			.nt span{
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			#pad{
+				display: grid;
+				grid-template-columns: repeat(9, minmax(0, 1fr));
+				gap: 4px;
+				width: var(--w);
+			}
+			#pad button{
+				position: relative;
+				padding: 0;
+				height: calc(var(--s)*1.2);
+				font-size: calc(var(--s)*.55);
+				border-radius: 8px;
+				background: #46549b;
+			}
+			#pad button small{
+				position: absolute;
+				right: 3px;
+				bottom: 1px;
+				font-size: calc(var(--s)*.2);
+				opacity: .75;
+				font-weight: 500;
+			}
+			#pad button:disabled{
+				opacity: .25;
+			}
+			#tools{
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(68px, 1fr));
+				gap: 6px;
+				width: var(--w);
+			}
+			#tools button{
+				padding: 10px 2px;
+				font-size: 13px;
+			}
+			#msg{
+				min-height: 24px;
+				font-size: 16px;
+				font-weight: 600;
+				color: #ffd479;
+				text-align: center;
+				width: var(--w);
+			}
+			.cg{
+				position: absolute;
+				inset: 4px;
+				border: 0 dashed #4a5578;
+				z-index: 1;
+				pointer-events: none;
+			}
+			.sm{
+				position: absolute;
+				left: 1px;
+				top: 0;
+				z-index: 3;
+				font-size: max(11px, calc(var(--s)*.3));
+				font-weight: 800;
+				color: #141b3a;
+				line-height: 1.05;
+				background: var(--cc, #fff);
+				padding: 1px 3px 1px 2px;
+				border-radius: 0 0 5px 0;
+			}
+			.nt{
+				padding-top: calc(var(--s)*.3);
+				padding-bottom: calc(var(--s)*.14);
+				grid-template-rows: repeat(3, minmax(0, 1fr));
+				font-size: calc(var(--s)*.19);
+			}
+			.v{
+				margin: calc(var(--s)*.12) 0 0 calc(var(--s)*.08);
+			}
+		</style>
+	</head>
+	<body>
+		<h1>SUDOKU KILLER</h1>
+		<div id="top">
+			<select id="lv">
+				<option value="1">Facile</option>
+				<option value="2" selected>Medio</option>
+				<option value="3">Difficile</option>
+			</select>
+			<button id="nw">Nuova partita</button><span id="tm">00:00</span>
+		</div>
+		<div id="bd"></div>
+		<div id="pad"></div>
+		<div id="tools"><button id="nt">Note: NO</button><button id="un">Annulla</button><button id="er">Cancella</button><button id="hn">Aiuto</button><button id="ck">Verifica</button></div>
+		<div id="msg"></div>
+		<script>
+			const $ = id => document.getElementById(id), bx = i => ((i/9|0)/3|0)*3 + ((i%9)/3|0), NL = 4e5;
+			const CB = [];
+
+			for(let k = 0; k <= 9; k++){
+				CB.push({});
+			}
+
+			(function f(k, d, sum, mask){
+				if(k > 0){
+					(CB[k][sum] = CB[k][sum] || []).push(mask);
+				}
+				if(k >= 9){
+					return;
+				}
+				for(let v = d; v < 10; v++){
+					f(k + 1, v + 1, sum + v, mask | 1 << v);
+				}
+			})(0, 1, 0, 0);
+
+			function solve(co, cg, limit, rand, init){
+				const g = Array(81).fill(0), R = Array(9).fill(0), C = Array(9).fill(0), B = Array(9).fill(0);
+				const cs = cg ? cg.map(() => 0) : 0, cn = cg ? cg.map(() => 0) : 0, cm = cg ? cg.map(() => 0) : 0;
+				let cnt = 0, nodes = 0, sol = null, sol2 = null;
+				const pc = m => {let n = 0; while(m){m &= m - 1; n++;} return n;};
+				function put(i, v){
+					g[i] = v;
+					R[i/9|0] ^= 1 << v;
+					C[i % 9] ^= 1 << v;
+					B[bx(i)] ^= 1 << v;
+					if(cg){
+						const k = co[i];
+						cs[k] += v;
+						cn[k]++;
+						cm[k] ^= 1 << v;
+					}
+				}
+				function out(i, v){
+					g[i] = 0;
+					R[i/9|0] ^= 1 << v;
+					C[i%9] ^= 1 << v;
+					B[bx(i)] ^= 1 << v;
+					if(cg){
+						const k = co[i];
+						cs[k] -= v;
+						cn[k]--;
+						cm[k] ^= 1 << v;
+					}
+				}
+				function cand(i){
+					let m = 1022 & ~(R[i/9|0]|C[i%9]|B[bx(i)]);
+					if(cg){
+						const k = co[i], left = cg[k].cells.length - cn[k] - 1, rem = cg[k].sum - cs[k], lst = CB[left + 1] && CB[left + 1][rem];
+						m &= ~cm[k];
+						let ok = 0;
+						if(lst){
+							for(const c of lst){
+								if(!(c & cm[k])){
+									ok |= c;
+								}
+							}
+						}
+						m &= ok;
+					}
+					return m;
+				}
+				function rec(){
+					if(cnt >= limit || nodes > NL){
+						return;
+					}
+					nodes++;
+					let bi = -1, bm = 0, bc = 10;
+					for(let i = 0; i < 81; i++){
+						if (!g[i]){
+							const m = cand(i), c = pc(m);
+							if(c < bc){
+								bc = c;
+								bi = i;
+								bm = m;
+								if(c < 2){
+									break;
+								}
+							}
+						}
+					}
+					if(bi < 0){
+						cnt++;
+						if(!sol){
+							sol = g.slice();
+						}else if(!sol2){
+							sol2 = g.slice();
+						}
+						return;
+					}
+					if(!bc){
+						return;
+					}
+					const vs = [];
+					for(let v = 1; v < 10; v++){
+						if(bm >> v & 1){
+							vs.push(v);
+						}
+					}
+					if(rand){
+						vs.sort(() => Math.random() - .5);
+					}
+					for(const v of vs){
+						put(bi, v);
+						rec();
+						out(bi, v);
+						if(cnt >= limit || nodes > NL){
+							return;
+						}
+					}
+				}
+				if(init){
+					for(let i = 0; i < 81; i++){
+						if(init[i]){
+							put(i, init[i]);
+						}
+					}
+				}
+				rec();
+				return {cnt, sol, sol2, to: nodes > NL};
+			}
+
+			const nbr = c => {
+				const r = c/9|0, k = c%9, a = [];
+				if(r > 0){
+					a.push(c - 9);
+				}
+				if(r < 8){
+					a.push(c + 9);
+				}
+				if(k > 0){
+					a.push(c - 1);
+				}
+				if(k < 8){
+					a.push(c + 1);
+				}
+				return a;
+			};
+
+			function conn(cs){
+				if(cs.length < 2){
+					return true;
+				}
+				const st = new Set(cs), seen = new Set([cs[0]]), k = [cs[0]];
+				while(k.length){
+					const c = k.pop();
+					for(const n of nbr(c)){
+						if(st.has(n) && !seen.has(n)){
+							seen.add(n);
+							k.push(n);
+						}
+					}
+				}
+				return seen.size === cs.length;
+			}
+
+			function splitCage(cages, q, sol){
+				const cs = q.cells, n = cs.length;
+				let a = null;
+				for(let t = 0; t < 15 && !a; t++){
+					const k = Math.max(1, Math.min(n - 1, Math.round(n/2))), part = [cs[Math.random()*n|0]];
+					while(part.length < k){
+						const fr = [];
+						for(const c of part){
+							for(const m of nbr(c)){
+								if(cs.includes(m) && !part.includes(m)){
+									fr.push(m);
+								}
+							}
+						}
+						if(!fr.length){
+							break;
+						}
+						part.push(fr[Math.random()*fr.length|0]);
+					}
+					const rest = cs.filter(c => !part.includes(c));
+					if(rest.length && conn(rest)){
+						a = part;
+					}
+				}
+				if(!a){
+					const lf = cs.filter(c => conn(cs.filter(x => x !== c)));
+					a = [lf[Math.random()*lf.length|0]];
+				}
+				q.cells = cs.filter(c => !a.includes(c));
+				q.sum = q.cells.reduce((t, c) => t + sol[c], 0);
+				cages.push({cells: a, sum: a.reduce((t, c) => t + sol[c], 0)});
+			}
+
+			function gen1(mn, mx, maxS){
+				const sol = solve(null, null, 1, true).sol, asg = Array(81).fill(-1);
+				let cages = [];
+				const ord = [...Array(81).keys()].sort(() => Math.random() - .5);
+				for(const s of ord){
+					if(asg[s] >= 0){
+						continue;
+					}
+					const cells = [s], id = cages.length;
+					asg[s] = id;
+					const t = mn + (Math.random()*(mx - mn + 1)|0);
+					while(cells.length < t){
+						const fr = [];
+						for(const c of cells){
+							for(const n of nbr(c)){
+								if(asg[n] < 0 && !cells.some(x => sol[x] === sol[n])){
+									fr.push(n);
+								}
+							}
+						}
+						if(!fr.length){
+							break;
+						}
+						const n = fr[Math.random()*fr.length | 0];
+						asg[n] = id;
+						cells.push(n);
+					}
+					cages.push({cells});
+				}
+				for(const q of cages.slice()){
+					if(q.cells.length !== 1){
+						continue;
+					}
+					const c = q.cells[0], opts = [];
+					for(const n of nbr(c)){
+						const p = cages[asg[n]];
+						if(p !== q && p.cells.length < mx && !p.cells.some(x => sol[x] === sol[c])){
+							opts.push(p);
+						}
+					}
+					if(opts.length){
+						const p = opts[Math.random()*opts.length|0];
+						p.cells.push(c);
+						asg[c] = cages.indexOf(p);
+						q.cells = [];
+					}
+				}
+				cages = cages.filter(q => q.cells.length);
+				cages.forEach(q => q.sum = q.cells.reduce((a, c) => a + sol[c], 0));
+				const mk = () => {const co = Array(81); cages.forEach((q, k) => q.cells.forEach(c => co[c] = k)); return co;}, t0 = Date.now();
+				for(let it = 0; it < 500; it++){
+					const r = solve(mk(), cages, 2, false);
+					if(r.cnt === 1 && !r.to){
+						break;
+					}
+					let picks = [];
+					if(r.sol2){
+						const d = new Set();
+						for(let i = 0; i < 81; i++){
+							if(r.sol[i] !== r.sol2[i]){
+								d.add(i);
+							}
+						}
+						picks = cages.filter(q => q.cells.length > 1 && q.cells.some(c => d.has(c)));
+					}
+					if(!picks.length){
+						picks = cages.filter(q => q.cells.length > 2);
+					}
+					if(!picks.length){
+						picks = cages.filter(q => q.cells.length > 1);
+					}
+					if(!picks.length){
+						break;
+					}
+					const m = Date.now() - t0 > 6000 ? 3 : 1;
+					for(let z = 0; z < m; z++){
+						let pool = picks.filter(q => q.cells.length > 1);
+						if(!pool.length){
+							break;
+						}
+						const big = pool.filter(q => q.cells.length > 2);
+						if(big.length){
+							pool = big;
+						}
+						const q = pool[Math.random()*pool.length | 0], add = q.cells.length === 2 ? 2 : q.cells.length === 3 ? 1 : 0;
+						if(cages.filter(c => c.cells.length === 1).length + add > maxS){
+							return null;
+						}
+						splitCage(cages, q, sol);
+					}
+				}
+				return {sol, cages, co: mk()};
+			}
+
+			function gen(mn, mx, maxS){
+				const T = Date.now();
+				let r;
+				do{
+					r = gen1(mn, mx, Date.now() - T > 3000 ? 99 : maxS);
+				}while(!r);
+				return r;
+			}
+
+			let sol, cages, co, val, nts, sel = -1, noteMode = false, hist = [], t0, timer, done = false;
+			const bd = $('bd'), cells = [];
+
+			for(let i = 0; i < 81; i++){
+				const d = document.createElement('div');
+				d.className = 'cell';
+				d.innerHTML = '<div class="cg"></div><b class="sm"></b><div class="v"></div>';
+				d.onpointerdown = () => {
+					sel = i;
+					render()
+				};
+				bd.appendChild(d);
+				cells.push(d);
+			}
+
+			for(let n = 1; n <= 9; n++){
+				const b = document.createElement('button');
+				b.id = 'p' + n;
+				b.textContent = n;
+				b.onclick = () => setNum(n);
+				$('pad').appendChild(b);
+			}
+
+			const PAL = ['#ffe6e6', '#e3f0ff', '#e6f7e1', '#fff3d1', '#efe5ff', '#dff5f2'];
+
+			function setup(){
+				const cc = Array(cages.length).fill(-1);
+				for(let k = 0; k < cages.length; k++){
+					const u = new Set();
+					for(const c of cages[k].cells){
+						for(const n of nbr(c)){
+							if(co[n] !== k && cc[co[n]] >= 0){
+								u.add(cc[co[n]]);
+							}
+						}
+					}
+					let x = 0;
+					while(u.has(x)){
+						x++;
+					}
+					cc[k] = x%PAL.length;
+				}
+				for(let i = 0; i < 81; i++){
+					const d = cells[i], cg = d.firstChild, k = co[i], q = cages[k], r = i/9|0, c = i%9;
+					d.style.setProperty('--cc', PAL[cc[k]]);
+					const diff = j => co[j] !== k ? '1.5px' : '0';
+					cg.style.borderTopWidth = r > 0 ? diff(i - 9) : '1.5px'; cg.style.borderBottomWidth = r < 8 ? diff(i + 9) : '1.5px';
+					cg.style.borderLeftWidth = c > 0 ? diff(i - 1) : '1.5px'; cg.style.borderRightWidth = c < 8 ? diff(i + 1) : '1.5px';
+					d.children[1].textContent = Math.min(...q.cells) === i ? q.sum : ''
+				}
+			}
+
+			function newGame() {
+				$('msg').textContent = 'Generazione... (il livello difficile può richiedere qualche secondo)';
+				clearInterval(timer);
+				setTimeout(() => {
+					const l = +$('lv').value, r = gen(l === 1 ? 2 : l === 2 ? 3 : 4, l === 1 ? 3 : l === 2 ? 4 : 5, l === 1 ? 6 : l === 2 ? 5 : 4);
+					sol = r.sol;
+					cages = r.cages;
+					co = r.co;
+					val = Array(81).fill(0);
+					nts = Array(81).fill(0);
+					hist = [];
+					sel = -1;
+					done = false;
+					setup();
+					$('msg').textContent = '';
+					t0 = Date.now();
+					timer = setInterval(() => {
+						const s = (Date.now() - t0)/1000|0;
+						$('tm').textContent = String(s/60|0).padStart(2, '0') + ':' + String(s%60).padStart(2, '0')}, 1000);
+						render();
+				}, 30);
+			}
+
+			function push(){
+				hist.push([val.slice(), nts.slice()]);
+				if(hist.length > 200){
+					hist.shift();
+				}
+			}
+
+			function peers(i, j){
+				return i !== j && ((i/9|0) === (j/9|0) || i%9 === j%9 || bx(i) === bx(j));
+			}
+
+			function setNum(n){
+				if(sel < 0 || done){
+					return;
+				}
+				push();
+				if(noteMode && !val[sel]){
+					nts[sel] ^= 1 << n;
+				}else{
+					if(val[sel] === n){
+						val[sel] = 0;
+					}else{
+						val[sel] = n;
+						nts[sel] = 0;
+						for(let j = 0; j < 81; j++){
+							if(peers(sel, j)){
+								nts[j] &= ~(1 << n);
+							}
+						}
+					}
+				}
+				render();
+				check();
+			}
+
+			function check(){
+				if(val.every((v, i) => v === sol[i])){
+					done = true;
+					clearInterval(timer);
+					$('msg').textContent = 'Complimenti, hai risolto il Killer Sudoku!';
+				}
+			}
+
+			function bad(i){
+				const v = val[i];
+				if(!v){
+					return false;
+				}
+				for(let j = 0; j < 81; j++){
+					if(peers(i, j) && val[j] === v){
+						return true;
+					}
+				}
+				const q = cages[co[i]];
+				let s = 0, f = true;
+				for(const j of q.cells){
+					if(j !== i && val[j] === v){
+						return true;
+					}
+					if(val[j]){
+						s += val[j];
+					}else{
+						f = false;
+					}
+				}
+				return s > q.sum || (f && s !== q.sum);
+			}
+
+			function render(){
+				const sv = sel >= 0 ? val[sel] : 0, cnt = Array(10).fill(0);
+				for(let i = 0; i < 81; i++){
+					const d = cells[i], v = val[i];
+					let c = 'cell' + (i%9%3 === 2 && i%9 < 8 ? ' r3' : '') + ((i/9|0)%3 === 2 && i < 72 ? ' b3' : '');
+					if(v){
+						cnt[v]++;
+					}
+					if(i === sel){
+						c += ' sel';
+					}else if(sel >= 0 && peers(sel, i)){
+						c += ' peer';
+					}
+					if(sv && v === sv && i !== sel){
+						c += ' same';
+					}
+					if(bad(i)){
+						c += ' err';
+					}
+					d.className = c;
+					const e = d.lastChild;
+					if(v){
+						e.className = 'v';
+						e.textContent = v;
+					}else if(nts[i]){
+						e.className = 'nt';
+						let h = '';
+						for(let n = 1; n <= 9; n++){
+							h += '<span>' + (nts[i] >> n & 1 ? n : '') + '</span>';
+						}
+						e.innerHTML = h;	
+					}else{
+						e.className = 'v';
+						e.textContent = '';
+					}
+				}
+				for(let n = 1; n <= 9; n++){
+					$('p' + n).disabled = cnt[n] >= 9;
+				}
+			}
+
+			$('nw').onclick = newGame;
+			$('nt').onclick = () => {
+				noteMode = !noteMode;
+				$('nt').textContent = 'Note: ' + (noteMode ? 'SI' : 'NO');
+				$('nt').className = noteMode ? 'on' : ''
+			};
+			$('un').onclick = () => {
+				if(hist.length && !done){
+					[val, nts] = hist.pop();
+					render();
+				}
+			};
+			$('er').onclick = () => {
+				if(sel >= 0 && !done){
+					push();
+					val[sel] = 0;
+					nts[sel] = 0;
+					render();
+				}
+			};
+			$('hn').onclick = () => {
+				if(done){
+					return;
+				}
+				let i = sel;
+				if(i < 0 || val[i] === sol[i]){
+					const e = [];
+					for(let k = 0; k < 81; k++){
+						if(val[k] !== sol[k]){
+							e.push(k);
+						}
+					}
+					if(!e.length){
+						return;
+					}
+					i = e[Math.random()*e.length|0];
+				}
+				push();
+				sel = i;
+				val[i] = sol[i];
+				nts[i] = 0;
+				for(let j = 0; j < 81; j++){
+					if(peers(i, j)){
+						nts[j] &= ~(1 << sol[i]);
+					}
+				}
+				render();
+				check();
+			};
+			$('ck').onclick = () => {
+				if(done){
+					return;
+				}
+				let n = 0;
+				for(let i = 0; i < 81; i++){
+					if(val[i] && val[i] !== sol[i]){
+						n++;
+						cells[i].classList.add('wr');
+					}
+				}
+				$('msg').textContent = n ? n + (n > 1 ? ' numeri sbagliati' : ' numero sbagliato') : 'Nessun errore finora!';
+				setTimeout(() => {if(!done){$('msg').textContent = '';} render();}, 1800);
+			};
+			addEventListener('keydown', e => {
+				if(e.key >= '1' && e.key <= '9'){
+					setNum(+e.key);
+				}else if(e.key === 'Backspace' || e.key === 'Delete' || e.key === '0'){
+					$('er').click();
+				}else if(e.key === 'n' || e.key === 'N'){
+					$('nt').click();
+				}else if((e.ctrlKey || e.metaKey) && e.key === 'z'){
+					e.preventDefault();
+					$('un').click();
+				}else if(e.key.startsWith('Arrow')){
+					e.preventDefault();
+					if(sel < 0){
+						sel = 40;
+					}else{
+						const r = sel/9|0, c = sel%9;
+						sel = e.key === 'ArrowUp' ? ((r + 8)%9)*9 + c : e.key === 'ArrowDown' ? ((r + 1)%9)*9 + c : e.key === 'ArrowLeft' ? r*9 + (c + 8)%9 : r*9 + (c + 1)%9;
+					}
+					render();
+				}
+			});
+			newGame();
+		</script>
+	</body>
+</html>
