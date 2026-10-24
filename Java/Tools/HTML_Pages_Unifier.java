@@ -7,7 +7,7 @@ import java.util.*;
 //La cartella "Games" contiene cinque sottocartelle: "Arcade", "Board", "Card", "Math and Logic" e "Puzzle".
 //La cartella "Tools" contiene tre sottocartelle: "Clocks", "Lab" e "Utilities".
 //Codice creato da Gemini e Claude lunedì nove febbraio duemilaventisei dopo un altro tentativo fatto con Gemini due giorni prima.
-//Ho fatto varie altre modifiche. L'ultima venerdì ventitré ottobre duemilaventisei.
+//Ho fatto varie altre modifiche. L'ultima sabato ventiquattro ottobre duemilaventisei.
 //Il numero di pagine cresce sempre più e stanno per arrivarne diverse altre.
 //Da mettere nella cartella in cui ci sono: "Games" e "Tools".
 //Da compilare e lanciare lì da terminale.
@@ -37,6 +37,17 @@ public class HTML_Pages_Unifier{
 			document.addEventListener('keydown', function(e) {
 				if(e.key === 'Escape'){
 					window.parent.postMessage('CLOSE_REQUEST', '*');
+				}
+			});
+			document.addEventListener('click', function(e) {
+				const target = e.target.closest('a');
+				if (target && target.getAttribute('href') && target.getAttribute('href').startsWith('#')) {
+					e.preventDefault();
+					const id = target.getAttribute('href').substring(1);
+					const element = document.getElementById(id);
+					if (element) {
+						element.scrollIntoView({ behavior: 'smooth' });
+					}
 				}
 			});
 			</script>
@@ -627,7 +638,6 @@ public class HTML_Pages_Unifier{
 				const el = document.getElementById(sectionId);
 				const header = el.previousElementSibling;
 				const isOpen = el.style.display !== 'none' && el.style.display !== '';
-				// section-body usa display:block, grid usa display:grid
 				const openDisplay = el.classList.contains('grid') ? 'grid' : 'block';
 				el.style.display = isOpen ? 'none' : openDisplay;
 				header.classList.toggle('open', !isOpen);
@@ -707,7 +717,6 @@ public class HTML_Pages_Unifier{
 				    { key: 'Esc', desc: 'Close open app or this popup' }
 				  ]
 				},
-				//{ lang: 'EN', flag: '<svg class="flag-svg" viewBox="0 0 7410 3900"><rect width="7410" height="3900" fill="#b22234"/><path d="M0 300h7410M0 900h7410M0 1500h7410M0 2100h7410M0 2700h7410M0 3300h7410" stroke="#fff" stroke-width="300"/><rect width="2964" height="2100" fill="#3c3b6e"/><path d="M247 175l247 759-646-469h798l-646 469z" fill="#fff" transform="scale(.2)"/></svg>',
 				{ lang: 'IT', flag: '<svg viewBox="0 0 3 2"><rect width="1" height="2" fill="#008d46"/><rect width="1" height="2" x="1" fill="#f4f5f0"/><rect width="1" height="2" x="2" fill="#d2232c"/></svg>',
 				  msg: 'Premi <kbd>?</kbd> in un\u2019app per aprire un pop-up con tutte le scorciatoie da tastiera disponibili per quella pagina.',
 				  shortcuts: [
@@ -817,7 +826,7 @@ public class HTML_Pages_Unifier{
 				  ]
 				},
 				{ lang: 'UA', flag: '<svg viewBox="0 0 3 2"><rect width="3" height="1" fill="#0057b7"/><rect width="3" height="1" y="1" fill="#ffd700"/></svg>',
-				  msg: '\u041d\u0430\u0442\u0438\u0441\u043d\u0456\u0442\u044c <kbd>?</kbd> \u0432\u0441\u0435\u0440\u0435\u0434\u0438\u043d\u0456 \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u0438, \u0449\u043e\u0431 \u0432\u0456\u0434\u043a\u0440\u0438\u0442\u0438 \u0441\u043f\u043b\u0438\u0432\u0430\u044e\u0447\u0435 \u0432\u0456\u043a\u043d\u043e \u0437 \u0443\u0441\u0456\u043c\u0430 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u043c\u0438 \u043a\u043e\u043c\u0431\u0456\u043d\u0430\u0446\u0456\u044f\u043c\u0438 \u043a\u043b\u0430\u0432\u0456\u0448.',
+				  msg: '\u041d\u0430\u0442\u0438\u0441\u043d\u0456\u0442\u044c <kbd>?</kbd> \u0432\u0441\u0435\u0440\u0435\u0434\u043d\u0456 \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u0438, \u0449\u043e\u0431 \u0432\u0456\u0434\u043a\u0440\u0438\u0442\u0438 \u0441\u043f\u043b\u0438\u0432\u0430\u044e\u0447\u0435 \u0432\u0456\u043a\u043d\u043e \u0437 \u0443\u0441\u0456\u043c\u0430 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0438\u043c\u0438 \u043a\u043e\u043c\u0431\u0456\u043d\u0430\u0446\u0456\u044f\u043c\u0438 \u043a\u043b\u0430\u0432\u0456\u0448.',
 				  shortcuts: [
 				    { key: 'G', desc: '\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u0438/\u0441\u0445\u043e\u0432\u0430\u0442\u0438 \u0440\u043e\u0437\u0434\u0456\u043b Games' },
 				    { key: 'T', desc: '\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u0438/\u0441\u0445\u043e\u0432\u0430\u0442\u0438 \u0440\u043e\u0437\u0434\u0456\u043b Tools' },
@@ -852,7 +861,6 @@ public class HTML_Pages_Unifier{
 				    { key: 'Esc', desc: '\u039a\u03bb\u03b5\u03af\u03c3\u03b9\u03bc\u03bf \u03b1\u03bd\u03bf\u03b9\u03c7\u03c4\u03ae\u03c2 \u03b5\u03c6\u03b1\u03c1\u03bc\u03bf\u03b3\u03ae\u03c2 \u03ae \u03c4\u03bf\u03c5 pop-up' }
 				  ]
 				},
-				//{ lang: 'LA', flag '<svg class="flag-svg" viewBox="0 0 1 1"><rect width="0.5" height="1" fill="#ffe000"/><rect x="0.5" width="0.5" height="1" fill="#fff"/></svg>',
 				{ lang: 'LA', flag: '<svg viewBox="0 0 3 2"><rect width="3" height="2" fill="#800000"/><path d="M0.5,0.5 L2.5,0.5 L2.5,1.5 L0.5,1.5 Z" fill="none" stroke="#FFD700" stroke-width="0.1"/><text x="1.5" y="1.15" font-family="serif" font-weight="bold" font-size="0.4" fill="#FFD700" text-anchor="middle">SPQR</text></svg>',
 				  msg: 'Preme <kbd>?</kbd> intra applicationem ut fenestram cum omnibus compendiis claviaturarum aperias.',
 				  shortcuts: [
