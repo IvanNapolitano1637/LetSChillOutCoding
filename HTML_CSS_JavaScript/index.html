@@ -48941,65 +48941,122 @@ document.addEventListener('click', function(e) {
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Dammi sei numeri!</title>
 		<style>
+			*{
+				box-sizing: border-box;
+				-webkit-tap-highlight-color: transparent;
+			}
 			body{
-				font-family: sans-serif;
-				padding: 20px;
-				line-height: 1.6;
+				margin: 0;
+				padding: 16px;
+				min-height: 100vh;
+				font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+				line-height: 1.4;
+				background: linear-gradient(160deg, #2e7d32 0%, #43A038 55%, #66bb6a 100%);
+				background-attachment: fixed;
 				-webkit-user-select: none;
 				-ms-user-select: none;
 				user-select: none;
 			}
 			.container{
-				max-width: 500px;
-				margin: auto;
-				background: #f4f4f4;
-				padding: 20px;
-				border-radius: 10px;
-				border: 2px solid #2e7d32;
+				max-width: 460px;
+				margin: 0 auto;
+				background: #fff;
+				padding: 20px 18px 22px 18px;
+				border-radius: 18px;
+				box-shadow: 0 10px 30px rgba(0,0,0,0.30);
+			}
+			h1{
+				margin: 0 0 4px 0;
+				text-align: center;
+				font-size: 1.6em;
+				color: #2e7d32;
+				letter-spacing: 0.5px;
+			}
+			h1 span{
+				color: #FA9619;
+			}
+			.fit{
+				display: block;
+				white-space: nowrap;
+				overflow: hidden;
+			}
+			#info-data{
+				font-size: 0.85em;
+				color: #555;
+				text-align: center;
+				font-style: italic;
+				margin-bottom: 14px;
+			}
+			.blocco{
+				background: #f3f7f3;
+				border: 1px solid #dbe7db;
+				border-radius: 14px;
+				padding: 12px;
+				margin-bottom: 12px;
+			}
+			label{
+				display: block;
+				font-weight: 700;
+				color: #2e7d32;
+				margin-bottom: 6px;
 			}
 			output{
 				display: block;
 				background: #FA9619;
-				color: white;
-				padding: 5px 10px;
-				border-radius: 5px;
+				color: #fff;
+				padding: 6px 10px;
+				border-radius: 8px;
 				font-weight: bold;
-				margin-bottom: 5px;
+				font-size: 0.9em;
+				margin-bottom: 8px;
 			}
-			input[type="number"], input[type="text"], textarea{
+			input[type="number"], textarea{
 				width: 100%;
-				box-sizing: border-box;
-				padding: 8px;
+				padding: 10px;
 				margin-bottom: 10px;
-				border: 1px solid #ccc;
-				border-radius: 4px;
+				border: 1px solid #c5d3c5;
+				border-radius: 8px;
+				font-size: 1em;
+				font-family: inherit;
+				background: #fff;
+				-webkit-user-select: text;
+				user-select: text;
+			}
+			input[type="number"]:focus, textarea:focus{
+				outline: none;
+				border-color: #43A038;
+				box-shadow: 0 0 0 3px rgba(67,160,56,0.25);
+			}
+			textarea{
+				resize: none;
 			}
 			button{
-				background-color: #43A038;
-				color: white;
+				display: block;
+				width: 100%;
+				background: linear-gradient(#4caf50, #2e7d32);
+				color: #fff;
 				border: none;
-				padding: 10px 15px;
-				border-radius: 5px;
+				padding: 12px 15px;
+				border-radius: 10px;
 				cursor: pointer;
 				font-weight: bold;
-				margin-bottom: 15px;
+				font-size: 1em;
+				box-shadow: 0 3px 0 #1b5e20;
 			}
 			button:hover{
-				background-color: #2e7d32;
+				filter: brightness(1.08);
+			}
+			button:active{
+				transform: translateY(2px);
+				box-shadow: 0 1px 0 #1b5e20;
 			}
 			.btn-pulisci{
-				background-color: #d32f2f;
-				margin-top: 20px;
-				width: 100%;
+				background: linear-gradient(#e53935, #b71c1c);
+				box-shadow: 0 3px 0 #7f1010;
+				margin-top: 4px;
 			}
-			.btn-pulisci:hover{
-				background-color: #b71c1c;
-			}
-			#info-data{
-				font-size: 0.9em;
-				color: #333;
-				margin-bottom: 10px;
-				font-style: italic;
+			.btn-pulisci:active{
+				box-shadow: 0 1px 0 #7f1010;
 			}
 			.reset-link{
 				font-size: 0.8em;
@@ -49007,38 +49064,127 @@ document.addEventListener('click', function(e) {
 				text-decoration: underline;
 				cursor: pointer;
 				display: block;
-				margin-top: -5px;
-				margin-bottom: 10px;
+				margin: -4px 0 10px 0;
 			}
 			.reset-link:hover{
 				color: #0d47a1;
 			}
-			*{
-				-webkit-tap-highlight-color: transparent;
+			#popup-overlay{
+				display: none;
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: rgba(0,0,0,0.65);
+				z-index: 1000;
+				align-items: center;
+				justify-content: center;
+				padding: 12px;
+			}
+			#popup-overlay.aperto{
+				display: flex;
+			}
+			#popup-box{
+				background: #fff;
+				border-radius: 18px;
+				width: 100%;
+				max-width: 440px;
+				max-height: 94vh;
+				overflow-y: auto;
+				padding: 16px 14px 16px 14px;
+				box-shadow: 0 12px 40px rgba(0,0,0,0.55);
+				border-top: 6px solid #FA9619;
+			}
+			#popup-titolo{
+				margin: 0 0 2px 0;
+				color: #2e7d32;
+				font-size: 1.25em;
+				text-align: center;
+			}
+			#popup-sottotitolo{
+				text-align: center;
+				font-size: 0.8em;
+				color: #777;
+				font-style: italic;
+				margin-bottom: 8px;
+			}
+			.riga-numero{
+				display: flex;
+				align-items: center;
+				gap: 12px;
+				padding: 8px 6px;
+				border-bottom: 1px solid #eee;
+			}
+			.riga-numero:last-of-type{
+				border-bottom: none;
+			}
+			.pallina{
+				flex: 0 0 auto;
+				width: 48px;
+				height: 48px;
+				border-radius: 50%;
+				background: radial-gradient(circle at 30% 28%, #ffd180, #FA9619 55%, #e07b00);
+				color: #fff;
+				font-weight: bold;
+				font-size: 1.3em;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+				box-shadow: 0 3px 6px rgba(0,0,0,0.25);
+			}
+			.significato{
+				flex: 1 1 auto;
+				min-width: 0;
+			}
+			.nome{
+				font-size: 1.05em;
+				font-weight: 700;
+				color: #222;
+			}
+			.trad{
+				font-size: 0.85em;
+				color: #666;
+			}
+			#popup-chiudi{
+				margin-top: 12px;
 			}
 		</style>
 	</head>
-	<body style="background-color:#43A038;">
+	<body>
 		<div class="container">
-			<div id="info-data">Caricamento data prossima estrazione...</div>
+			<h1>Super<span>Enalotto</span></h1>
+			<div id="info-data" class="fit">Caricamento data prossima estrazione...</div>
 			<form id="lottoForm">
-				<label for="numeroIninput">Sestina da indice numerico:</label>
-				<output>Inserisci un numero da 1 a 622.614.630</output>
-				<input type="number" id="numeroIninput" value="1" min="1" max="622614630"/>
-				<button type="button" onclick="gestisciAzione('getSestinaDaNumero')">Genera Sestina →</button>
-				<input type="text" id="sestinaDaNumero" readonly placeholder="Sestina generata">
-				<label for="inputTestuale">Sestina basata su testo(Seed):</label>
-				<output>Scrivi una frase per la tua sestina personalizzata</output>
-				<textarea id="inputTestuale" rows="3" placeholder="Es: Voglio vincere oggi!"></textarea>
-				<span class="reset-link" onclick="resetUserFingerprint()">Cambia la mia impronta fortunata</span>
-				<button type="button" onclick="gestisciAzione('getSestina')">Genera da testo →</button>
-				<input type="text" id="sestinaDaTesto" readonly placeholder="Sestina generata">
-				<label>Sestina completamente casuale:</label>
-				<output>Lascia decidere alla fortuna</output>
-				<button type="button" onclick="gestisciAzione('getSestinaACaso')">Sestina Casuale →</button>
-				<input type="text" id="sestinaCasuale" readonly placeholder="Sestina generata">
+				<div class="blocco">
+					<label for="numeroIninput">Sestina da indice numerico</label>
+					<output class="fit">Inserisci un numero da 1 a 622.614.630</output>
+					<input type="number" id="numeroIninput" value="1" min="1" max="622614630"/>
+					<button type="button" onclick="gestisciAzione('getSestinaDaNumero')">Genera Sestina</button>
+				</div>
+				<div class="blocco">
+					<label for="inputTestuale">Sestina basata su testo (Seed)</label>
+					<output class="fit">Scrivi una frase per la tua sestina personalizzata</output>
+					<textarea id="inputTestuale" rows="3" placeholder="Es: Voglio vincere oggi!"></textarea>
+					<span class="reset-link" onclick="resetUserFingerprint()">Cambia la mia impronta fortunata</span>
+					<button type="button" onclick="gestisciAzione('getSestina')">Genera da testo</button>
+				</div>
+				<div class="blocco">
+					<label>Sestina completamente casuale</label>
+					<output class="fit">Lascia decidere alla fortuna</output>
+					<button type="button" onclick="gestisciAzione('getSestinaACaso')">Sestina Casuale</button>
+				</div>
 				<button type="button" class="btn-pulisci" onclick="pulisciCampi()">Pulisci Tutto</button>
 			</form>
+		</div>
+		<div id="popup-overlay" onclick="chiudiPopup(event)">
+			<div id="popup-box" role="dialog" aria-modal="true" aria-labelledby="popup-titolo">
+				<h2 id="popup-titolo" class="fit"></h2>
+				<div id="popup-sottotitolo" class="fit">Numeri e significati nella smorfia napoletana</div>
+				<div id="popup-numeri"></div>
+				<button type="button" id="popup-chiudi" onclick="chiudiPopup()">Chiudi</button>
+			</div>
 		</div>
 		<script>
 			//(90*89*88*87*86*85)/(1*2*3*4*5*6) = 89*11*87*43*17*10 = 622.614.630
@@ -49046,6 +49192,7 @@ document.addEventListener('click', function(e) {
 			const TOT_COMBINAZIONI = 622614630;
 			const INDICI = [1,2520708,5041415,7562122,10082829,12603536,15124243,17644950,20165657,22686364,25207071,27727778,30248485,32769192,35289899,37810606,40331313,42852020,45372727,47893434,50414141,52934848,55455555,57976262,60496969,63017676,65538383,68059090,70579797,73100504,75621211,78141918,80662625,83183332,85704039,88224746,90745453,93266160,95786867,98307574,100828281,103348988,105869695,108390402,110911109,113431816,115952523,118473230,120993937,123514644,126035351,128556058,131076765,133597472,136118179,138638886,141159593,143680300,146201007,148721714,151242421,153763128,156283835,158804542,161325249,163845956,166366663,168887370,171408077,173928784,176449491,178970198,181490905,184011612,186532319,189053026,191573733,194094440,196615147,199135854,201656561,204177268,206697975,209218682,211739389,214260096,216780803,219301510,221822217,224342924,226863631,229384338,231905045,234425752,236946459,239467166,241987873,244508580,247029287,249549994,252070701,254591408,257112115,259632822,262153529,264674236,267194943,269715650,272236357,274757064,277277771,279798478,282319185,284839892,287360599,289881306,292402013,294922720,297443427,299964134,302484841,305005548,307526255,310046962,312567669,315088376,317609083,320129790,322650497,325171204,327691911,330212618,332733325,335254032,337774739,340295446,342816153,345336860,347857567,350378274,352898981,355419688,357940395,360461102,362981809,365502516,368023223,370543930,373064637,375585344,378106051,380626758,383147465,385668172,388188879,390709586,393230293,395751000,398271707,400792414,403313121,405833828,408354535,410875242,413395949,415916656,418437363,420958070,423478777,425999484,428520191,431040898,433561605,436082312,438603019,441123726,443644433,446165140,448685847,451206554,453727261,456247968,458768675,461289382,463810089,466330796,468851503,471372210,473892917,476413624,478934331,481455038,483975745,486496452,489017159,491537866,494058573,496579280,499099987,501620694,504141401,506662108,509182815,511703522,514224229,516744936,519265643,521786350,524307057,526827764,529348471,531869178,534389885,536910592,539431299,541952006,544472713,546993420,549514127,552034834,554555541,557076248,559596955,562117662,564638369,567159076,569679783,572200490,574721197,577241904,579762611,582283318,584804025,587324732,589845439,592366146,594886853,597407560,599928267,602448974,604969681,607490388,610011095,612531802,615052509,617573216,620093923,622614630];
 			const ALCUNE_SESTINE = ["1,2,3,4,5,6","1,3,5,48,50,58","1,4,10,19,41,76","1,5,17,20,49,77","1,6,29,32,77,82","1,8,10,29,41,66","1,9,24,27,38,44","1,11,14,26,57,80","1,12,40,74,82,83","1,14,35,58,61,73","1,16,43,46,70,82","1,19,24,28,37,53","1,21,62,79,87,89","1,25,31,37,85,90","1,29,39,41,67,71","1,35,41,56,61,81","1,46,51,53,65,90","2,3,21,43,50,69","2,4,31,34,35,56","2,6,7,11,40,70","2,7,15,41,46,53","2,8,31,53,65,76","2,10,16,29,41,59","2,11,44,56,60,77","2,13,32,60,66,86","2,15,33,49,54,62","2,17,47,70,74,83","2,20,30,31,42,72","2,23,32,39,49,56","2,27,29,32,38,84","2,31,55,62,72,82","2,39,43,46,50,63","2,69,79,81,86,90","3,5,10,16,27,45","3,6,18,34,53,70","3,7,34,55,67,69","3,9,15,22,54,84","3,10,36,49,72,79","3,12,24,45,62,84","3,14,22,29,60,63","3,16,25,41,51,89","3,18,38,39,42,49","3,21,29,63,67,80","3,24,37,47,51,76","3,28,39,70,76,81","3,33,65,68,73,87","3,43,46,49,62,90","4,5,16,31,32,72","4,6,28,30,35,40","4,8,10,12,28,64","4,9,23,29,73,90","4,11,13,47,63,77","4,12,38,71,87,89","4,14,34,40,63,90","4,16,40,65,85,90","4,19,23,30,79,87","4,21,54,65,68,79","4,25,30,32,48,77","4,29,37,43,63,82","4,35,39,51,81,87","4,46,47,54,56,77","5,6,27,33,45,79","5,8,9,34,60,86","5,9,22,40,46,89","5,11,13,25,38,65","5,12,37,49,57,79","5,14,33,37,42,87","5,16,39,45,49,64","5,19,22,41,67,68","5,21,50,65,77,85","5,25,29,33,56,75","5,29,35,74,75,85","5,35,38,40,44,46","5,45,60,77,86,88","6,7,28,52,77,78","6,9,12,32,41,83","6,10,30,32,49,64","6,12,20,49,88,90","6,14,18,45,75,76","6,16,21,37,57,77","6,18,31,33,55,90","6,21,25,27,57,64","6,24,30,50,53,88","6,28,32,41,52,85","6,33,42,48,57,87","6,42,45,48,69,89","7,8,17,47,56,79","7,9,40,46,49,78","7,11,23,27,34,71","7,13,18,28,74,77","7,15,18,44,59,64","7,17,24,26,61,70","7,19,40,48,51,83","7,22,36,69,83,90","7,26,27,72,82,88","7,30,40,52,78,88","7,36,64,66,74,85","7,50,77,79,85,86","8,10,13,33,46,56","8,11,35,37,49,82","8,13,27,34,47,76","8,15,27,56,63,70","8,17,36,60,79,87","8,20,25,27,68,90","8,23,26,56,66,85","8,26,45,58,75,80","8,31,39,68,80,86","8,38,46,65,72,86","8,58,64,80,84,90","9,11,23,46,75,84","9,13,18,50,72,85","9,15,19,25,40,84","9,17,24,46,47,62","9,19,41,64,73,89","9,22,38,41,57,80","9,26,28,49,76,90","9,30,42,43,76,87","9,37,38,49,55,61","9,51,55,64,67,73","10,12,18,50,57,82","10,14,16,60,79,82","10,16,19,34,51,68","10,18,27,72,73,76","10,21,22,45,62,88","10,24,27,46,47,69","10,28,29,31,53,68","10,33,36,67,69,81","10,41,52,61,66,79","11,12,21,36,44,72","11,14,19,30,80,89","11,16,22,29,48,56","11,18,32,37,77,81","11,21,25,63,73,84","11,24,31,57,62,65","11,28,33,49,57,84","11,33,44,56,69,76","11,42,47,82,83,89","12,13,26,31,59,80","12,15,26,49,81,84","12,17,35,38,40,43","12,20,24,27,55,76","12,23,25,52,69,77","12,26,42,62,67,71","12,31,37,64,74,88","12,38,43,61,68,74","12,57,62,64,75,87","13,15,40,53,72,76","13,18,19,46,58,89","13,20,35,48,54,56","13,23,38,55,56,63","13,27,34,41,68,83","13,32,37,41,52,66","13,39,61,74,85,86","14,15,18,28,35,57","14,17,23,40,62,71","14,19,39,43,77,88","14,22,35,79,80,86","14,26,27,37,43,84","14,30,39,47,69,70","14,36,58,59,65,79","14,50,61,73,74,80","15,17,33,57,60,73","15,20,23,32,70,85","15,23,24,69,73,86","15,26,40,60,67,84","15,31,36,44,55,78","15,38,41,55,64,79","15,56,63,70,79,81","16,19,21,74,76,84","16,21,47,65,73,89","16,25,28,36,43,55","16,29,34,56,58,61","16,35,36,54,77,81","16,45,54,72,80,83","17,19,24,27,50,51","17,21,62,69,74,76","17,25,31,37,39,60","17,29,39,40,62,77","17,35,41,54,57,64","17,46,50,78,86,90","18,20,29,37,72,77","18,23,31,45,50,80","18,27,28,40,51,76","18,31,52,56,72,88","18,39,41,59,70,78","18,66,73,83,86,89","19,22,48,53,65,90","19,26,33,61,68,76","19,30,57,78,79,83","19,37,48,76,82,90","19,53,61,68,75,83","20,23,34,41,68,76","20,27,30,56,61,62","20,32,33,36,67,80","20,39,47,52,56,71","21,22,23,52,68,73","21,25,33,37,67,82","21,29,42,46,47,86","21,35,45,51,66,90","21,46,60,63,74,84","22,24,51,73,83,85","22,28,60,73,76,90","22,34,45,51,58,65","22,44,51,59,67,79","23,25,36,41,73,84","23,29,47,69,75,84","23,35,52,73,82,83","23,47,53,61,66,79","24,27,33,36,73,82","24,32,35,59,61,64","24,39,55,57,58,71","25,26,29,79,81,86","25,30,44,70,82,90","25,37,40,58,69,87","25,51,68,69,80,86","26,30,41,45,53,78","26,36,70,79,82,89","26,51,53,58,77,88","27,31,46,47,58,82","27,38,59,61,70,84","27,62,64,77,80,83","28,34,40,46,58,83","28,43,67,77,78,80","29,32,34,38,77,78","29,39,49,75,76,77","30,31,34,42,52,71","30,37,76,77,84,90","30,55,61,67,74,84","31,38,40,55,72,89","31,56,58,71,78,89","32,39,60,79,82,87","33,34,41,49,52,85","33,44,45,64,87,89","34,38,41,50,51,85","34,56,62,66,89,90","35,45,58,71,74,89","36,42,43,50,79,82","37,40,47,54,66,86","38,40,42,45,65,77","39,40,58,69,73,80","40,42,57,71,79,89","41,46,55,66,82,84","42,55,68,82,84,85","44,50,55,57,71,76","46,52,76,80,86,90","49,52,57,66,73,86","53,59,61,66,68,84","85,86,87,88,89,90"];
+			const SMORFIA = ["","L'Italia","'A piccerella (la bambina)","'A jatta (il gatto)","'O puorco (il maiale)","'A mano (la mano)","Chella che guarda 'nterra (organo sessuale femminile)","'O vascio (il vaso)","'A Maronna (la Madonna)","'A figliata (la prole)","'E fasule (i fagioli)","'E suricille (i topolini)","'O surdato (il soldato)","Sant'Antonio","'O mbriaco (l'ubriaco)","'O guaglione (il ragazzo)","'O culo (il sedere)","'A disgrazia (la disgrazia)","'O sanghe (il sangue)","'A resata (la risata)","'A festa (la festa)","'A femmena annura (la donna nuda)","'O pazzo (il pazzo)","'O scemo (lo scemo)","'E gguardie (le guardie)","Natale","Nanninella (la bambina)","'O cantero (il vaso da notte)","'E zzizze (il seno)","'O pate d''e criature (il padre dei bambini)","'E palle d''o tenente (le palle del tenente)","'O padrone 'e casa (il padrone di casa)","'O capitone (il capitone)","Ll'anne 'e Cristo (gli anni di Cristo)","'A capa (la testa)","L'aucelluzzo (l'uccellino)","'E castagnelle (le nacchere)","'O monaco (il monaco)","'E mmazzate (le botte)","'A funa 'nganna (la corda al collo)","'A paposcia (l'ernia)","'O curtiello (il coltello)","'O ccafè (il caffè)","'Onna pereta fore 'o balcone (la donna al balcone)","'E ccancelle (le carceri)","'O vino buono (il vino buono)","'E denare (i denari)","'O muorto (il morto)","'O muorto che parla (il morto che parla)","'O piezzo 'e carne (il pezzo di carne)","'O ppane (il pane)","'O ciardino (il giardino)","'A mamma (la mamma)","'O viecchio (il vecchio)","'O cappiello (il cappello)","'A museca (la musica)","'A caruta (la caduta)","'O scartellato (il gobbo)","'O paccotto (il regalo)","'E pile (i peli)","Se lamenta (si lamenta)","'O cacciatore (il cacciatore)","'O muorto acciso (il morto ammazzato)","'A sposa (la sposa)","'A sciammeria (la marsina)","'O chianto (il pianto)","'E doje zetelle (le due zitelle)","'O totaro int'à 'o tianiello (il totano nel tegamino)","'A zuppa cotta (la zuppa cotta)","Sottosopra (sottosopra)","'O palazzo (il palazzo)","L'ommo 'e merda (l'uomo meschino)","Maraviglia (la meraviglia)","'O spitale (l'ospedale)","'A rotta (la grotta)","Pullecenella (Pulcinella)","'A funtana (la fontana)","'E riavulille (i diavoletti)","'A bella figliola (la bella ragazza)","'O mariuolo (il ladro)","'A vocca (la bocca)","'E sciure (i fiori)","'A tavula 'mbandita (la tavola imbandita)","'O maletiempo (il maltempo)","'A chiesa (la chiesa)","L'aneme 'o priatorio (le anime del purgatorio)","'A puteca (la bottega)","'E perucchie (i pidocchi)","'E casecavalle (i caciocavalli)","'A vecchia (la vecchia)","'A paura (la paura)"];
 			let dataProssimaEstrazione = "";
 
 			function getUserFingerprint(){
@@ -49069,10 +49216,71 @@ document.addEventListener('click', function(e) {
 			}
 
 			function gestisciAzione(funzioneNome){
-				const outputs = ["sestinaDaNumero", "sestinaDaTesto", "sestinaCasuale"];
-				outputs.forEach(id => document.getElementById(id).value = "");
 				window[funzioneNome]();
 			}
+
+			function mostraPopup(titolo, sestina){
+				document.getElementById("popup-titolo").innerText = titolo;
+				const contenitore = document.getElementById("popup-numeri");
+				contenitore.innerHTML = "";
+				sestina.forEach(n => {
+					const testo = SMORFIA[n] || "";
+					const m = testo.match(/^(.*?)\\s*\\((.*)\\)$/);
+					const nomeTesto = m ? m[1] : testo;
+					const tradTesto = m ? m[2] : "";
+					const riga = document.createElement("div");
+					riga.className = "riga-numero";
+					const pallina = document.createElement("div");
+					pallina.className = "pallina";
+					pallina.textContent = n;
+					const significato = document.createElement("div");
+					significato.className = "significato";
+					const nome = document.createElement("div");
+					nome.className = "nome fit";
+					nome.textContent = nomeTesto;
+					significato.appendChild(nome);
+					if(tradTesto){
+						const trad = document.createElement("div");
+						trad.className = "trad fit";
+						trad.textContent = tradTesto.charAt(0).toUpperCase() + tradTesto.slice(1);
+						significato.appendChild(trad);
+					}
+					riga.appendChild(pallina);
+					riga.appendChild(significato);
+					contenitore.appendChild(riga);
+				});
+				document.getElementById("popup-overlay").classList.add("aperto");
+				adattaTesti();
+			}
+
+			function adattaTesti(){
+				document.querySelectorAll(".fit").forEach(el => {
+					if(!el.dataset.max){
+						el.dataset.max = parseFloat(getComputedStyle(el).fontSize);
+					}
+					let size = parseFloat(el.dataset.max);
+					el.style.fontSize = size + "px";
+					while(el.scrollWidth > el.clientWidth + 1 && size > 8){
+						size -= 0.5;
+						el.style.fontSize = size + "px";
+					}
+				});
+			}
+
+			window.addEventListener("resize", adattaTesti);
+
+			function chiudiPopup(evento){
+				if(evento && evento.target !== document.getElementById("popup-overlay")){
+					return;
+				}
+				document.getElementById("popup-overlay").classList.remove("aperto");
+			}
+
+			document.addEventListener("keydown", function(e){
+				if(e.key === "Escape"){
+					chiudiPopup();
+				}
+			});
 
 			function getSestinaToString(sestina){
 				return sestina.map(n => n.toString().padStart(2, ' ')).join(' ');
@@ -49114,7 +49322,7 @@ document.addEventListener('click', function(e) {
 				if(isNaN(val) || val < 1){
 					val = 1;
 				}
-				document.getElementById("sestinaDaNumero").value = getSestinaToString(getEnnesimaSestina(val));
+				mostraPopup("Sestina n. " + val.toLocaleString("it-IT"), getEnnesimaSestina(val));
 			}
 
 			function isDataEstrazione(data){
@@ -49143,6 +49351,7 @@ document.addEventListener('click', function(e) {
 			function setData(){
 				dataProssimaEstrazione = getDataString();
 				document.getElementById("info-data").innerText = "Prossima estrazione stimata: " + dataProssimaEstrazione;
+				adattaTesti();
 			}
 
 			function getSestina(){
@@ -49158,23 +49367,22 @@ document.addEventListener('click', function(e) {
 						hash = ((hash << 5) - hash) + stringaCombinata.charCodeAt(i);
 						hash = Math.abs(hash%TOT_COMBINAZIONI);
 					}
-					document.getElementById("sestinaDaTesto").value = getSestinaToString(getEnnesimaSestina(hash || 1));
+					mostraPopup("La tua sestina da testo", getEnnesimaSestina(hash || 1));
 				}
 			}
 
 			function getSestinaACaso(){
 				const randomIdx = Math.floor(Math.random()*TOT_COMBINAZIONI) + 1;
-				document.getElementById("sestinaCasuale").value = getSestinaToString(getEnnesimaSestina(randomIdx));
+				mostraPopup("Sestina casuale", getEnnesimaSestina(randomIdx));
 			}
 
 			function pulisciCampi(){
 				document.getElementById("lottoForm").reset();
-				document.getElementById("sestinaDaNumero").value = "";
-				document.getElementById("sestinaDaTesto").value = "";
-				document.getElementById("sestinaCasuale").value = "";
+				chiudiPopup();
 			}
 
 			setData();
+			window.addEventListener("load", adattaTesti);
 			setInterval(() => {
 				let nuovaData = getDataString();
 				if(dataProssimaEstrazione !== nuovaData){
@@ -57088,7 +57296,7 @@ document.addEventListener('click', function(e) {
 					<span class="badge badge-it">Italiano</span>
 					<strong>Tools, Utilities</strong>
 					<div class="page-body">
-						<p>Fornisce sestine da giocare al SuperEnalotto. Sia prendendo in input un numero ordinale, sia prendendo in input un testo, sia completamente a caso. Quando la sestina parte da un testo scritto dall'utente ci sono tre cose da considerare. La prima è che l'input viene considerato come semplice sequenza di caratteri, non viene valutato l'aspetto semantico. Sostituire un termine con un sinonimo può portare ad una sestina completamente diversa. La seconda è che ad input uguale corrisponde una determinata sestina solo finché non arrivano le diciannove del giorno della settimana con la successiva estrazione, poi sarà completamente diversa. La terza è che anche nello stesso momento anche con lo stesso input si possono avere output diversi mutando dispositivo o impronta. Questa pagina è l'unica il cui codice è scritto in italiano seppur con qualche "schifezza" in factoryMethod e predicati. Credo che sia una pagina che non avrebbe senso tradurre in altre lingue se quei paesi non hanno questo tipo di lotteria con questi stessi numeri.</p>
+						<p>Fornisce sestine da giocare al SuperEnalotto. Sia prendendo in input un numero ordinale, sia prendendo in input un testo, sia completamente a caso. Quando la sestina parte da un testo scritto dall'utente ci sono tre cose da considerare. La prima è che l'input viene considerato come semplice sequenza di caratteri, non viene valutato l'aspetto semantico. Sostituire un termine con un sinonimo può portare ad una sestina completamente diversa. La seconda è che ad input uguale corrisponde una determinata sestina solo finché non arrivano le diciannove del giorno della settimana con la successiva estrazione, poi sarà completamente diversa. La terza è che anche nello stesso momento anche con lo stesso input si possono avere output diversi mutando dispositivo o impronta. Ho fatto dire anche a che corrispondono nella smorfia napoletana i numeri usciti. Questa pagina è l'unica il cui codice è scritto in italiano seppur con qualche "schifezza" in factoryMethod e predicati. Credo che sia una pagina che non avrebbe senso tradurre in altre lingue se quei paesi non hanno questo tipo di lotteria con questi stessi numeri.</p>
 					</div>
 				</div>
 				<div class="page-entry" id="pag-12">
