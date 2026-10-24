@@ -6,8 +6,21 @@
 		<title>Sudoku Killer</title>
 		<style>
 			:root{
+				--n: 9;
+				--b: 3;
+				--pc: 9;
+				--ph: 1.2;
+				--vf: .6;
+				--nfs: calc(var(--s)*.27);
+				--nls: calc(var(--s)*.2);
+				--np: calc(var(--s)*.06) calc(var(--s)*.04);
+				--ls: 0em;
+				--lfs: max(11px, calc(var(--s)*.3));
+				--cgd: block;
 				--w: max(290px, min(96vw, 520px, calc(100vh - 310px)));
-				--s: calc(var(--w)/9);
+				--bw: var(--w);
+				--wh: var(--w);
+				--s: calc(var(--bw)/var(--n));
 			}
 			*{
 				box-sizing: border-box;
@@ -40,7 +53,8 @@
 			}
 			#top{
 				display: flex;
-				gap: 8px;
+				flex-wrap: wrap;
+				gap: 6px;
 				align-items: center;
 				justify-content: space-between;
 				width: var(--w);
@@ -65,6 +79,10 @@
 				background: #e8a317;
 				color: #222;
 			}
+			#top button{
+				padding: 10px 9px;
+				font-size: 13px;
+			}
 			#tm{
 				font-variant-numeric: tabular-nums;
 				font-size: 18px;
@@ -73,16 +91,60 @@
 				min-width: 56px;
 				text-align: right;
 			}
+			.dd{
+				position: relative;
+			}
+			.dd > button::after{
+				content: "\25BE";
+				margin-left: 6px;
+				font-size: 12px;
+			}
+			.dm{
+				display: none;
+				position: absolute;
+				left: 0;
+				top: calc(100% + 4px);
+				min-width: 100%;
+				z-index: 50;
+				background: #35406a;
+				border-radius: 10px;
+				overflow: hidden;
+				box-shadow: 0 8px 24px rgba(0, 0, 0, .6);
+			}
+			.dm.open{
+				display: block;
+			}
+			.dm div{
+				padding: 11px 14px;
+				font-size: 14px;
+				font-weight: 600;
+				white-space: nowrap;
+				cursor: pointer;
+			}
+			.dm div:hover{
+				background: #46549b;
+			}
+			.dm div.cur{
+				background: #e8a317;
+				color: #222;
+			}
 			#bd{
 				display: grid;
-				grid-template-columns: repeat(9, minmax(0, 1fr));
-				grid-template-rows: repeat(9, minmax(0, 1fr));
-				width: var(--w);
-				height: var(--w);
+				grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+				grid-template-rows: repeat(var(--n), minmax(0, 1fr));
+				width: var(--bw);
+				height: var(--bw);
 				border: 3px solid #1d2748;
 				border-radius: 10px;
 				overflow: hidden;
 				background: #fff;
+			}
+			#bw{
+				width: var(--w);
+				height: var(--wh);
+				overflow: auto;
+				overscroll-behavior: contain;
+				border-radius: 10px;
 				box-shadow: 0 10px 30px rgba(0, 0, 0, .55);
 			}
 			.cell{
@@ -124,9 +186,10 @@
 				position: relative;
 				z-index: 1;
 				line-height: 1;
-				font-size: calc(var(--s)*.6);
+				font-size: calc(var(--s)*var(--vf));
 				font-weight: 600;
 				color: #2563eb;
+				margin: calc(var(--s)*.12) 0 0 calc(var(--s)*.08);
 			}
 			.cell.err .v{
 				color: #dc2626;
@@ -135,12 +198,20 @@
 				position: absolute;
 				inset: 0;
 				display: grid;
-				grid-template-columns: repeat(3, 1fr);
-				grid-template-rows: repeat(3, 1fr);
-				font-size: calc(var(--s)*.24);
-				color: #556;
+				grid-template-columns: repeat(var(--b), minmax(0, 1fr));
+				grid-template-rows: repeat(var(--b), minmax(0, 1fr));
+				padding: var(--np);
+				font-size: var(--nfs);
+				letter-spacing: var(--ls);
+				white-space: nowrap;
+				font-weight: 800;
+				color: #0d1b6e;
 				z-index: 1;
 				line-height: 1;
+			}
+			.sm:not(:empty) ~ .nt{
+				padding-top: calc(var(--lfs)*1.05 + 2px);
+				font-size: var(--nls);
 			}
 			.nt span{
 				display: flex;
@@ -149,38 +220,32 @@
 			}
 			#pad{
 				display: grid;
-				grid-template-columns: repeat(9, minmax(0, 1fr));
+				grid-template-columns: repeat(var(--pc), minmax(0, 1fr));
 				gap: 4px;
 				width: var(--w);
 			}
 			#pad button{
 				position: relative;
 				padding: 0;
-				height: calc(var(--s)*1.2);
-				font-size: calc(var(--s)*.55);
+				height: calc(var(--w)/var(--pc)*var(--ph));
+				font-size: calc(var(--w)/var(--pc)*.5);
 				border-radius: 8px;
 				background: #46549b;
-			}
-			#pad button small{
-				position: absolute;
-				right: 3px;
-				bottom: 1px;
-				font-size: calc(var(--s)*.2);
-				opacity: .75;
-				font-weight: 500;
 			}
 			#pad button:disabled{
 				opacity: .25;
 			}
 			#tools{
 				display: grid;
-				grid-template-columns: repeat(auto-fit, minmax(68px, 1fr));
-				gap: 6px;
+				grid-template-columns: repeat(5, minmax(0, 1fr));
+				gap: 4px;
 				width: var(--w);
 			}
 			#tools button{
-				padding: 10px 2px;
-				font-size: 13px;
+				padding: 10px 0;
+				font-size: clamp(11px, calc(var(--w)*.034), 13px);
+				white-space: nowrap;
+				overflow: hidden;
 			}
 			#msg{
 				min-height: 24px;
@@ -193,6 +258,7 @@
 			.cg{
 				position: absolute;
 				inset: 4px;
+				display: var(--cgd);
 				border: 0 dashed #4a5578;
 				z-index: 1;
 				pointer-events: none;
@@ -202,7 +268,7 @@
 				left: 1px;
 				top: 0;
 				z-index: 3;
-				font-size: max(11px, calc(var(--s)*.3));
+				font-size: var(--lfs);
 				font-weight: 800;
 				color: #141b3a;
 				line-height: 1.05;
@@ -210,61 +276,105 @@
 				padding: 1px 3px 1px 2px;
 				border-radius: 0 0 5px 0;
 			}
-			.nt{
-				padding-top: calc(var(--s)*.3);
-				padding-bottom: calc(var(--s)*.14);
-				grid-template-rows: repeat(3, minmax(0, 1fr));
-				font-size: calc(var(--s)*.19);
-			}
-			.v{
-				margin: calc(var(--s)*.12) 0 0 calc(var(--s)*.08);
-			}
 		</style>
 	</head>
 	<body>
 		<h1>SUDOKU KILLER</h1>
 		<div id="top">
-			<select id="lv">
-				<option value="1">Facile</option>
-				<option value="2" selected>Medio</option>
-				<option value="3">Difficile</option>
-			</select>
-			<button id="nw">Nuova partita</button><span id="tm">00:00</span>
+			<div class="dd">
+				<button id="lv" type="button" data-v="2">Medio</button>
+				<div class="dm">
+					<div data-v="1">Facile</div>
+					<div data-v="2">Medio</div>
+					<div data-v="3">Difficile</div>
+				</div>
+			</div>
+			<div class="dd">
+				<button id="sz" type="button" data-v="9">9×9</button>
+				<div class="dm">
+					<div data-v="9">9×9</div>
+					<div data-v="16">16×16</div>
+				</div>
+			</div>
+			<button id="nw">Nuova partita</button>
+			<span id="tm">00:00</span>
 		</div>
-		<div id="bd"></div>
+		<div id="bw"><div id="bd"></div></div>
 		<div id="pad"></div>
 		<div id="tools"><button id="nt">Note: NO</button><button id="un">Annulla</button><button id="er">Cancella</button><button id="hn">Aiuto</button><button id="ck">Verifica</button></div>
 		<div id="msg"></div>
 		<script>
-			const $ = id => document.getElementById(id), bx = i => ((i/9|0)/3|0)*3 + ((i%9)/3|0), NL = 4e5;
-			const CB = [];
+			const $ = id => document.getElementById(id);
+			let N = 9, BS = 3, NN = 81, ALL = 1022, NL = 4e5, RW = [], CL = [], BXA = [], CB = [];
 
-			for(let k = 0; k <= 9; k++){
-				CB.push({});
+			function geo(n){
+				N = n;
+				BS = n === 9 ? 3 : 4;
+				NN = n*n;
+				ALL = (1 << (n + 1)) - 2;
+				NL = n === 9 ? 4e5 : 1500;
+				RW = [];
+				CL = [];
+				BXA = [];
+				for(let i = 0; i < NN; i++){
+					RW.push(i/N|0);
+					CL.push(i%N);
+					BXA.push(((i/N|0)/BS|0)*BS + ((i%N)/BS|0));
+				}
+				CB = [];
+				const K = n === 9 ? 9 : 6;
+				for(let k = 0; k <= K; k++){
+					CB.push({});
+				}
+				(function f(k, d, sum, mask){
+					if(k > 0){
+						(CB[k][sum] = CB[k][sum] || []).push(mask);
+					}
+					if(k >= K){
+						return;
+					}
+					for(let v = d; v <= N; v++){
+						f(k + 1, v + 1, sum + v, mask | 1 << v);
+					}
+				})(0, 1, 0, 0);
+				const st = document.documentElement.style;
+				document.querySelector('meta[name=viewport]').content = n === 9 ? 'width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no' : 'width=device-width,initial-scale=1';
+				st.setProperty('--n', N);
+				st.setProperty('--b', BS);
+				st.setProperty('--pc', n === 9 ? 9 : 8);
+				st.setProperty('--ph', n === 9 ? 1.2 : .95);
+				st.setProperty('--vf', n === 9 ? .6 : .5);
+				st.setProperty('--nfs', n === 9 ? 'calc(var(--s)*.27)' : 'calc((var(--s) - 5px)/4*.88)');
+				st.setProperty('--nls', n === 9 ? 'calc(var(--s)*.2)' : 'calc((var(--s) - 5px - (var(--lfs)*1.05 + 2px))/4*.88)');
+				st.setProperty('--np', n === 9 ? 'calc(var(--s)*.06) calc(var(--s)*.04)' : '1px');
+				st.setProperty('--ls', n === 9 ? '0em' : '-.07em');
+				st.setProperty('--w', n === 9 ? 'max(290px, min(96vw, 520px, calc(100vh - 310px)))' : 'max(290px, min(96vw, var(--bw)))');
+				st.setProperty('--bw', n === 9 ? 'var(--w)' : 'max(' + (innerWidth <= 700 ? 840 : 600) + 'px, min(96vw, 900px, calc(100vh - 340px)))');
+				st.setProperty('--wh', n === 9 ? 'var(--w)' : 'min(var(--bw), max(var(--w), calc(100vh - 340px)))');
+				st.setProperty('--lfs', n === 9 ? 'max(11px, calc(var(--s)*.3))' : 'calc(var(--s)*.2)');
+				st.setProperty('--cgd', n === 9 ? 'block' : 'none');
 			}
 
-			(function f(k, d, sum, mask){
-				if(k > 0){
-					(CB[k][sum] = CB[k][sum] || []).push(mask);
+			geo(9);
+
+			const pc = m => {
+				let n = 0;
+				while(m){
+					m &= m - 1;
+					n++;
 				}
-				if(k >= 9){
-					return;
-				}
-				for(let v = d; v < 10; v++){
-					f(k + 1, v + 1, sum + v, mask | 1 << v);
-				}
-			})(0, 1, 0, 0);
+				return n;
+			};
 
 			function solve(co, cg, limit, rand, init){
-				const g = Array(81).fill(0), R = Array(9).fill(0), C = Array(9).fill(0), B = Array(9).fill(0);
+				const g = Array(NN).fill(0), R = Array(N).fill(0), C = Array(N).fill(0), B = Array(N).fill(0);
 				const cs = cg ? cg.map(() => 0) : 0, cn = cg ? cg.map(() => 0) : 0, cm = cg ? cg.map(() => 0) : 0;
 				let cnt = 0, nodes = 0, sol = null, sol2 = null;
-				const pc = m => {let n = 0; while(m){m &= m - 1; n++;} return n;};
 				function put(i, v){
 					g[i] = v;
-					R[i/9|0] ^= 1 << v;
-					C[i % 9] ^= 1 << v;
-					B[bx(i)] ^= 1 << v;
+					R[RW[i]] ^= 1 << v;
+					C[CL[i]] ^= 1 << v;
+					B[BXA[i]] ^= 1 << v;
 					if(cg){
 						const k = co[i];
 						cs[k] += v;
@@ -274,9 +384,9 @@
 				}
 				function out(i, v){
 					g[i] = 0;
-					R[i/9|0] ^= 1 << v;
-					C[i%9] ^= 1 << v;
-					B[bx(i)] ^= 1 << v;
+					R[RW[i]] ^= 1 << v;
+					C[CL[i]] ^= 1 << v;
+					B[BXA[i]] ^= 1 << v;
 					if(cg){
 						const k = co[i];
 						cs[k] -= v;
@@ -285,7 +395,7 @@
 					}
 				}
 				function cand(i){
-					let m = 1022 & ~(R[i/9|0]|C[i%9]|B[bx(i)]);
+					let m = ALL & ~(R[RW[i]]|C[CL[i]]|B[BXA[i]]);
 					if(cg){
 						const k = co[i], left = cg[k].cells.length - cn[k] - 1, rem = cg[k].sum - cs[k], lst = CB[left + 1] && CB[left + 1][rem];
 						m &= ~cm[k];
@@ -306,8 +416,8 @@
 						return;
 					}
 					nodes++;
-					let bi = -1, bm = 0, bc = 10;
-					for(let i = 0; i < 81; i++){
+					let bi = -1, bm = 0, bc = N + 1;
+					for(let i = 0; i < NN; i++){
 						if (!g[i]){
 							const m = cand(i), c = pc(m);
 							if(c < bc){
@@ -333,7 +443,7 @@
 						return;
 					}
 					const vs = [];
-					for(let v = 1; v < 10; v++){
+					for(let v = 1; v <= N; v++){
 						if(bm >> v & 1){
 							vs.push(v);
 						}
@@ -351,7 +461,7 @@
 					}
 				}
 				if(init){
-					for(let i = 0; i < 81; i++){
+					for(let i = 0; i < NN; i++){
 						if(init[i]){
 							put(i, init[i]);
 						}
@@ -361,18 +471,38 @@
 				return {cnt, sol, sol2, to: nodes > NL};
 			}
 
-			const nbr = c => {
-				const r = c/9|0, k = c%9, a = [];
-				if(r > 0){
-					a.push(c - 9);
+			function patternGrid(){
+				const shuf = a => a.sort(() => Math.random() - .5);
+				const sh = () => {
+					const o = [];
+					for(const a of shuf([...Array(BS).keys()])){
+						for(const b of shuf([...Array(BS).keys()])){
+							o.push(a*BS + b);
+						}
+					}
+					return o;
+				};
+				const rows = sh(), cols = sh(), dg = shuf([...Array(N).keys()].map(x => x + 1)), f = [];
+				for(let r = 0; r < N; r++){
+					for(let c = 0; c < N; c++){
+						f.push(dg[(BS*(rows[r]%BS) + (rows[r]/BS|0) + cols[c])%N]);
+					}
 				}
-				if(r < 8){
-					a.push(c + 9);
+				return f;
+			}
+
+			const nbr = c => {
+				const r = c/N|0, k = c%N, a = [];
+				if(r > 0){
+					a.push(c - N);
+				}
+				if(r < N - 1){
+					a.push(c + N);
 				}
 				if(k > 0){
 					a.push(c - 1);
 				}
-				if(k < 8){
+				if(k < N - 1){
 					a.push(c + 1);
 				}
 				return a;
@@ -429,9 +559,9 @@
 			}
 
 			function gen1(mn, mx, maxS){
-				const sol = solve(null, null, 1, true).sol, asg = Array(81).fill(-1);
+				const sol = N === 9 ? solve(null, null, 1, true).sol : patternGrid(), asg = Array(NN).fill(-1);
 				let cages = [];
-				const ord = [...Array(81).keys()].sort(() => Math.random() - .5);
+				const ord = [...Array(NN).keys()].sort(() => Math.random() - .5);
 				for(const s of ord){
 					if(asg[s] >= 0){
 						continue;
@@ -477,7 +607,7 @@
 				}
 				cages = cages.filter(q => q.cells.length);
 				cages.forEach(q => q.sum = q.cells.reduce((a, c) => a + sol[c], 0));
-				const mk = () => {const co = Array(81); cages.forEach((q, k) => q.cells.forEach(c => co[c] = k)); return co;}, t0 = Date.now();
+				const mk = () => {const co = Array(NN); cages.forEach((q, k) => q.cells.forEach(c => co[c] = k)); return co;}, t0 = Date.now();
 				for(let it = 0; it < 500; it++){
 					const r = solve(mk(), cages, 2, false);
 					if(r.cnt === 1 && !r.to){
@@ -486,7 +616,7 @@
 					let picks = [];
 					if(r.sol2){
 						const d = new Set();
-						for(let i = 0; i < 81; i++){
+						for(let i = 0; i < NN; i++){
 							if(r.sol[i] !== r.sol2[i]){
 								d.add(i);
 							}
@@ -502,7 +632,7 @@
 					if(!picks.length){
 						break;
 					}
-					const m = Date.now() - t0 > 6000 ? 3 : 1;
+					const m = N === 9 ? (Date.now() - t0 > 6000 ? 3 : 1) : (r.to ? 6 : 1);
 					for(let z = 0; z < m; z++){
 						let pool = picks.filter(q => q.cells.length > 1);
 						if(!pool.length){
@@ -526,37 +656,43 @@
 				const T = Date.now();
 				let r;
 				do{
-					r = gen1(mn, mx, Date.now() - T > 3000 ? 99 : maxS);
+					r = gen1(mn, mx, Date.now() - T > (N === 9 ? 3000 : 5000) ? 999 : maxS);
 				}while(!r);
 				return r;
 			}
 
-			let sol, cages, co, val, nts, sel = -1, noteMode = false, hist = [], t0, timer, done = false;
+			let sol, cages, co, val, nts, sel = -1, noteMode = false, hist = [], t0, timer, done = false, gt, kb = '', kt;
 			const bd = $('bd'), cells = [];
 
-			for(let i = 0; i < 81; i++){
-				const d = document.createElement('div');
-				d.className = 'cell';
-				d.innerHTML = '<div class="cg"></div><b class="sm"></b><div class="v"></div>';
-				d.onpointerdown = () => {
-					sel = i;
-					render()
-				};
-				bd.appendChild(d);
-				cells.push(d);
+			function build(){
+				bd.innerHTML = '';
+				$('pad').innerHTML = '';
+				cells.length = 0;
+				for(let i = 0; i < NN; i++){
+					const d = document.createElement('div');
+					d.className = 'cell';
+					d.innerHTML = '<div class="cg"></div><b class="sm"></b><div class="v"></div>';
+					d.onclick = () => {
+						sel = i;
+						render()
+					};
+					bd.appendChild(d);
+					cells.push(d);
+				}
+				for(let n = 1; n <= N; n++){
+					const b = document.createElement('button');
+					b.id = 'p' + n;
+					b.textContent = n;
+					b.onclick = () => setNum(n);
+					$('pad').appendChild(b);
+				}
 			}
+			build();
 
-			for(let n = 1; n <= 9; n++){
-				const b = document.createElement('button');
-				b.id = 'p' + n;
-				b.textContent = n;
-				b.onclick = () => setNum(n);
-				$('pad').appendChild(b);
-			}
-
-			const PAL = ['#ffe6e6', '#e3f0ff', '#e6f7e1', '#fff3d1', '#efe5ff', '#dff5f2'];
+			const PAL9 = ['#ffe6e6', '#e3f0ff', '#e6f7e1', '#fff3d1', '#efe5ff', '#dff5f2'], PAL16 = ['#f6b8b8', '#b3d3f7', '#b9e5ad', '#f7de93', '#d3bdf3', '#95ddd3', '#f5b0d3', '#cfcfcf'];
 
 			function setup(){
+				const PAL = N === 9 ? PAL9 : PAL16;
 				const cc = Array(cages.length).fill(-1);
 				for(let k = 0; k < cages.length; k++){
 					const u = new Set();
@@ -573,37 +709,63 @@
 					}
 					cc[k] = x%PAL.length;
 				}
-				for(let i = 0; i < 81; i++){
-					const d = cells[i], cg = d.firstChild, k = co[i], q = cages[k], r = i/9|0, c = i%9;
+				for(let i = 0; i < NN; i++){
+					const d = cells[i], cg = d.firstChild, k = co[i], q = cages[k], r = i/N|0, c = i%N;
 					d.style.setProperty('--cc', PAL[cc[k]]);
 					const diff = j => co[j] !== k ? '1.5px' : '0';
-					cg.style.borderTopWidth = r > 0 ? diff(i - 9) : '1.5px'; cg.style.borderBottomWidth = r < 8 ? diff(i + 9) : '1.5px';
-					cg.style.borderLeftWidth = c > 0 ? diff(i - 1) : '1.5px'; cg.style.borderRightWidth = c < 8 ? diff(i + 1) : '1.5px';
+					cg.style.borderTopWidth = r > 0 ? diff(i - N) : '1.5px'; cg.style.borderBottomWidth = r < N - 1 ? diff(i + N) : '1.5px';
+					cg.style.borderLeftWidth = c > 0 ? diff(i - 1) : '1.5px'; cg.style.borderRightWidth = c < N - 1 ? diff(i + 1) : '1.5px';
 					d.children[1].textContent = Math.min(...q.cells) === i ? q.sum : ''
 				}
 			}
 
 			function newGame() {
-				$('msg').textContent = 'Generazione... (il livello difficile può richiedere qualche secondo)';
+				$('msg').textContent = 'Generazione... (i livelli più difficili e il 16×16 possono richiedere qualche secondo)';
 				clearInterval(timer);
-				setTimeout(() => {
-					const l = +$('lv').value, r = gen(l === 1 ? 2 : l === 2 ? 3 : 4, l === 1 ? 3 : l === 2 ? 4 : 5, l === 1 ? 6 : l === 2 ? 5 : 4);
+				clearTimeout(gt);
+				gt = setTimeout(() => {
+					const z = +$('sz').dataset.v;
+					if(z !== N){
+						geo(z);
+						build();
+					}
+					const l = +$('lv').dataset.v, P = N === 9 ? [[2, 3, 6], [3, 4, 5], [4, 5, 4]] : [[2, 3, 90], [3, 4, 75], [4, 5, 62]], p = P[l - 1], r = gen(p[0], p[1], p[2]);
 					sol = r.sol;
 					cages = r.cages;
 					co = r.co;
-					val = Array(81).fill(0);
-					nts = Array(81).fill(0);
+					val = Array(NN).fill(0);
+					nts = Array(NN).fill(0);
 					hist = [];
 					sel = -1;
 					done = false;
 					setup();
+					$('bw').scrollLeft = 0;
+					$('bw').scrollTop = 0;
 					$('msg').textContent = '';
+					$('tm').textContent = '00:00';
 					t0 = Date.now();
 					timer = setInterval(() => {
 						const s = (Date.now() - t0)/1000|0;
 						$('tm').textContent = String(s/60|0).padStart(2, '0') + ':' + String(s%60).padStart(2, '0')}, 1000);
-						render();
+					render();
 				}, 30);
+			}
+
+			function reveal(){
+				if(sel < 0){
+					return;
+				}
+				const w = $('bw'), a = cells[sel].getBoundingClientRect(), b = w.getBoundingClientRect();
+				if(a.left < b.left){
+					w.scrollLeft -= b.left - a.left;
+				}else if(a.right > b.right){
+					w.scrollLeft += a.right - b.right;
+				}
+				if(a.top < b.top){
+					w.scrollTop -= b.top - a.top;
+				}else if(a.bottom > b.bottom){
+					w.scrollTop += a.bottom - b.bottom;
+				}
 			}
 
 			function push(){
@@ -614,7 +776,7 @@
 			}
 
 			function peers(i, j){
-				return i !== j && ((i/9|0) === (j/9|0) || i%9 === j%9 || bx(i) === bx(j));
+				return i !== j && (RW[i] === RW[j] || CL[i] === CL[j] || BXA[i] === BXA[j]);
 			}
 
 			function setNum(n){
@@ -630,7 +792,7 @@
 					}else{
 						val[sel] = n;
 						nts[sel] = 0;
-						for(let j = 0; j < 81; j++){
+						for(let j = 0; j < NN; j++){
 							if(peers(sel, j)){
 								nts[j] &= ~(1 << n);
 							}
@@ -654,7 +816,7 @@
 				if(!v){
 					return false;
 				}
-				for(let j = 0; j < 81; j++){
+				for(let j = 0; j < NN; j++){
 					if(peers(i, j) && val[j] === v){
 						return true;
 					}
@@ -675,10 +837,10 @@
 			}
 
 			function render(){
-				const sv = sel >= 0 ? val[sel] : 0, cnt = Array(10).fill(0);
-				for(let i = 0; i < 81; i++){
+				const sv = sel >= 0 ? val[sel] : 0, cnt = Array(N + 1).fill(0);
+				for(let i = 0; i < NN; i++){
 					const d = cells[i], v = val[i];
-					let c = 'cell' + (i%9%3 === 2 && i%9 < 8 ? ' r3' : '') + ((i/9|0)%3 === 2 && i < 72 ? ' b3' : '');
+					let c = 'cell' + (CL[i]%BS === BS - 1 && CL[i] < N - 1 ? ' r3' : '') + (RW[i]%BS === BS - 1 && RW[i] < N - 1 ? ' b3' : '');
 					if(v){
 						cnt[v]++;
 					}
@@ -701,19 +863,60 @@
 					}else if(nts[i]){
 						e.className = 'nt';
 						let h = '';
-						for(let n = 1; n <= 9; n++){
+						for(let n = 1; n <= N; n++){
 							h += '<span>' + (nts[i] >> n & 1 ? n : '') + '</span>';
 						}
-						e.innerHTML = h;	
+						e.innerHTML = h;
 					}else{
 						e.className = 'v';
 						e.textContent = '';
 					}
 				}
-				for(let n = 1; n <= 9; n++){
-					$('p' + n).disabled = cnt[n] >= 9;
+				for(let n = 1; n <= N; n++){
+					$('p' + n).disabled = cnt[n] >= N;
 				}
 			}
+
+			const closeDD = () => document.querySelectorAll('.dm').forEach(m => m.classList.remove('open'));
+			function dd(id, fn){
+				const b = $(id), m = b.nextElementSibling;
+				const mark = () => {
+					for(const o of m.children){
+						o.className = o.dataset.v === b.dataset.v ? 'cur' : '';
+					}
+				};
+				mark();
+				b.onclick = e => {
+					e.stopPropagation();
+					const op = m.classList.contains('open');
+					closeDD();
+					if(!op){
+						m.classList.add('open');
+					}
+				};
+				for(const o of m.children){
+					o.onclick = e => {
+						e.stopPropagation();
+						closeDD();
+						if(o.dataset.v !== b.dataset.v){
+							b.dataset.v = o.dataset.v;
+							b.textContent = o.textContent;
+							mark();
+							fn();
+						}
+					};
+				}
+			}
+
+			dd('lv', newGame);
+
+			dd('sz', newGame);
+
+			document.addEventListener('pointerdown', e => {
+				if(!e.target.closest('.dd')){
+					closeDD();
+				}
+			});
 
 			$('nw').onclick = newGame;
 			$('nt').onclick = () => {
@@ -742,7 +945,7 @@
 				let i = sel;
 				if(i < 0 || val[i] === sol[i]){
 					const e = [];
-					for(let k = 0; k < 81; k++){
+					for(let k = 0; k < NN; k++){
 						if(val[k] !== sol[k]){
 							e.push(k);
 						}
@@ -756,12 +959,13 @@
 				sel = i;
 				val[i] = sol[i];
 				nts[i] = 0;
-				for(let j = 0; j < 81; j++){
+				for(let j = 0; j < NN; j++){
 					if(peers(i, j)){
 						nts[j] &= ~(1 << sol[i]);
 					}
 				}
 				render();
+				reveal();
 				check();
 			};
 			$('ck').onclick = () => {
@@ -769,7 +973,7 @@
 					return;
 				}
 				let n = 0;
-				for(let i = 0; i < 81; i++){
+				for(let i = 0; i < NN; i++){
 					if(val[i] && val[i] !== sol[i]){
 						n++;
 						cells[i].classList.add('wr');
@@ -778,10 +982,43 @@
 				$('msg').textContent = n ? n + (n > 1 ? ' numeri sbagliati' : ' numero sbagliato') : 'Nessun errore finora!';
 				setTimeout(() => {if(!done){$('msg').textContent = '';} render();}, 1800);
 			};
+
+			function digit(k){
+				clearTimeout(kt);
+				if(kb === '1' && k <= '6'){
+					kb = '';
+					setNum(10 + +k);
+					return;
+				}
+				if(kb){
+					kb = '';
+					setNum(1);
+				}
+				if(k === '0'){
+					$('er').click();
+				}else if(k === '1'){
+					kb = '1';
+					kt = setTimeout(() => {
+						kb = '';
+						setNum(1);
+					}, 600);
+				}else{
+					setNum(+k);
+				}
+			}
+
 			addEventListener('keydown', e => {
-				if(e.key >= '1' && e.key <= '9'){
-					setNum(+e.key);
-				}else if(e.key === 'Backspace' || e.key === 'Delete' || e.key === '0'){
+				if(/^[0-9]$/.test(e.key) && !e.ctrlKey && !e.metaKey){
+					if(N === 9){
+						if(e.key === '0'){
+							$('er').click();
+						}else{
+							setNum(+e.key);
+						}
+					}else{
+						digit(e.key);
+					}
+				}else if(e.key === 'Backspace' || e.key === 'Delete'){
 					$('er').click();
 				}else if(e.key === 'n' || e.key === 'N'){
 					$('nt').click();
@@ -791,14 +1028,16 @@
 				}else if(e.key.startsWith('Arrow')){
 					e.preventDefault();
 					if(sel < 0){
-						sel = 40;
+						sel = (N >> 1)*N + (N >> 1);
 					}else{
-						const r = sel/9|0, c = sel%9;
-						sel = e.key === 'ArrowUp' ? ((r + 8)%9)*9 + c : e.key === 'ArrowDown' ? ((r + 1)%9)*9 + c : e.key === 'ArrowLeft' ? r*9 + (c + 8)%9 : r*9 + (c + 1)%9;
+						const r = sel/N|0, c = sel%N;
+						sel = e.key === 'ArrowUp' ? ((r + N - 1)%N)*N + c : e.key === 'ArrowDown' ? ((r + 1)%N)*N + c : e.key === 'ArrowLeft' ? r*N + (c + N - 1)%N : r*N + (c + 1)%N;
 					}
 					render();
+					reveal();
 				}
 			});
+
 			newGame();
 		</script>
 	</body>
