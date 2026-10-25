@@ -239,6 +239,11 @@
 					<output class="fit">Lascia decidere alla fortuna</output>
 					<button type="button" onclick="gestisciAzione('getSestinaACaso')">Sestina Casuale</button>
 				</div>
+				<div class="blocco">
+					<label>Smorfia napoletana</label>
+					<output class="fit">Tutti i novanta numeri e i loro significati</output>
+					<button type="button" onclick="gestisciAzione('mostraSmorfiaCompleta')">Vedi i 90 numeri</button>
+				</div>
 				<button type="button" class="btn-pulisci" onclick="pulisciCampi()">Pulisci Tutto</button>
 			</form>
 		</div>
@@ -314,7 +319,16 @@
 					contenitore.appendChild(riga);
 				});
 				document.getElementById("popup-overlay").classList.add("aperto");
+				document.getElementById("popup-box").scrollTop = 0;
 				adattaTesti();
+			}
+
+			function mostraSmorfiaCompleta(){
+				const tutti = [];
+				for(let n = 1; n <= 90; n++){
+					tutti.push(n);
+				}
+				mostraPopup("La smorfia napoletana: i 90 numeri", tutti);
 			}
 
 			function adattaTesti(){

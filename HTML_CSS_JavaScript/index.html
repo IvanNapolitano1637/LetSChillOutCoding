@@ -49175,6 +49175,11 @@ document.addEventListener('click', function(e) {
 					<output class="fit">Lascia decidere alla fortuna</output>
 					<button type="button" onclick="gestisciAzione('getSestinaACaso')">Sestina Casuale</button>
 				</div>
+				<div class="blocco">
+					<label>Smorfia napoletana</label>
+					<output class="fit">Tutti i novanta numeri e i loro significati</output>
+					<button type="button" onclick="gestisciAzione('mostraSmorfiaCompleta')">Vedi i 90 numeri</button>
+				</div>
 				<button type="button" class="btn-pulisci" onclick="pulisciCampi()">Pulisci Tutto</button>
 			</form>
 		</div>
@@ -49250,7 +49255,16 @@ document.addEventListener('click', function(e) {
 					contenitore.appendChild(riga);
 				});
 				document.getElementById("popup-overlay").classList.add("aperto");
+				document.getElementById("popup-box").scrollTop = 0;
 				adattaTesti();
+			}
+
+			function mostraSmorfiaCompleta(){
+				const tutti = [];
+				for(let n = 1; n <= 90; n++){
+					tutti.push(n);
+				}
+				mostraPopup("La smorfia napoletana: i 90 numeri", tutti);
 			}
 
 			function adattaTesti(){
@@ -57296,7 +57310,7 @@ document.addEventListener('click', function(e) {
 					<span class="badge badge-it">Italiano</span>
 					<strong>Tools, Utilities</strong>
 					<div class="page-body">
-						<p>Fornisce sestine da giocare al SuperEnalotto. Sia prendendo in input un numero ordinale, sia prendendo in input un testo, sia completamente a caso. Quando la sestina parte da un testo scritto dall'utente ci sono tre cose da considerare. La prima è che l'input viene considerato come semplice sequenza di caratteri, non viene valutato l'aspetto semantico. Sostituire un termine con un sinonimo può portare ad una sestina completamente diversa. La seconda è che ad input uguale corrisponde una determinata sestina solo finché non arrivano le diciannove del giorno della settimana con la successiva estrazione, poi sarà completamente diversa. La terza è che anche nello stesso momento anche con lo stesso input si possono avere output diversi mutando dispositivo o impronta. Ho fatto dire anche a che corrispondono nella smorfia napoletana i numeri usciti. Questa pagina è l'unica il cui codice è scritto in italiano seppur con qualche "schifezza" in factoryMethod e predicati. Credo che sia una pagina che non avrebbe senso tradurre in altre lingue se quei paesi non hanno questo tipo di lotteria con questi stessi numeri.</p>
+						<p>Fornisce sestine da giocare al SuperEnalotto. Sia prendendo in input un numero ordinale, sia prendendo in input un testo, sia completamente a caso. Quando la sestina parte da un testo scritto dall'utente ci sono tre cose da considerare. La prima è che l'input viene considerato come semplice sequenza di caratteri, non viene valutato l'aspetto semantico. Sostituire un termine con un sinonimo può portare ad una sestina completamente diversa. La seconda è che ad input uguale corrisponde una determinata sestina solo finché non arrivano le diciannove del giorno della settimana con la successiva estrazione, poi sarà completamente diversa. La terza è che anche nello stesso momento anche con lo stesso input si possono avere output diversi mutando dispositivo o impronta. Ho fatto dire anche a che corrispondono nella smorfia napoletana i numeri usciti ed ho aggiunto un pop-up per vedere i significati di tutti e novanta i numeri. Questa pagina è l'unica il cui codice è scritto in italiano seppur con qualche "schifezza" in factoryMethod e predicati. Credo che sia una pagina che non avrebbe senso tradurre in altre lingue se quei paesi non hanno questo tipo di lotteria con questi stessi numeri.</p>
 					</div>
 				</div>
 				<div class="page-entry" id="pag-12">
