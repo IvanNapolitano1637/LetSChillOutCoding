@@ -211,13 +211,9 @@
 			const DIVISION_WIDTH = UNIT;
 			const BORDER_WIDTH = 4*UNIT;
 			const MARGIN_DIM = 2*UNIT;
-			const SIDE = 20*UNIT;
-			const IDS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "0"];
-			const WIDTH = (4*SIDE) + (5*DIVISION_WIDTH) + (2*BORDER_WIDTH) + (MARGIN_DIM);
-			const HEIGHT = (4*SIDE) + (5*DIVISION_WIDTH) + (2*BORDER_WIDTH) + (MARGIN_DIM);
+			let N = 4, SIDE, BOARD_DIM, WIDTH, HEIGHT, tiles = [];
 			let cursorX, cursorY, r1 = 3, c1 = 3, counterMoves = 0, gameFinished, begun = false, isSolving = false;
 			document.documentElement.style.setProperty('--unit', UNIT + 'px');
-			document.documentElement.style.setProperty('--side', SIDE + 'px');
 			document.documentElement.style.setProperty('--border-color', BORDER_COLOR);
 			const FLAGS_SVG = [
 				'<svg class="flag-svg" viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#s)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg>', // UK
@@ -239,40 +235,40 @@
 			const TRANSLATIONS = {
 				en: { shuffle:"Shuffle", solve:"Solve", wait:"Wait...", solved:"Solved in ", moves:" moves!", tooComplex:"Too complex...",
 					helpTitle:"Keyboard Shortcuts", helpHint:"Press ? to close",
-					helpShortcuts:[["↑","Move tile down (into blank)"],["↓","Move tile up (into blank)"],["←","Move tile right (into blank)"],["→","Move tile left (into blank)"],["R","Shuffle / restart"],["S","Auto-solve"],["L","Next language"],["?","Show / hide this help"]] },
+					helpShortcuts:[["↑","Move tile down (into blank)"],["↓","Move tile up (into blank)"],["←","Move tile right (into blank)"],["→","Move tile left (into blank)"],["R","Shuffle / restart"],["S","Auto-solve"],["L","Next language"],["G","Switch grid (4×4 / 5×5)"],["?","Show / hide this help"]] },
 				it: { shuffle:"Mescola", solve:"Risolvi", wait:"Aspetta...", solved:"Risolto in ", moves:" mosse!", tooComplex:"Troppo complesso...",
 					helpTitle:"Scorciatoie da Tastiera", helpHint:"Premi ? per chiudere",
-					helpShortcuts:[["↑","Sposta il tassello in basso"],["↓","Sposta il tassello in alto"],["←","Sposta il tassello a destra"],["→","Sposta il tassello a sinistra"],["R","Mescola / ricomincia"],["S","Risoluzione automatica"],["L","Lingua successiva"],["?","Mostra / nascondi questa guida"]] },
+					helpShortcuts:[["↑","Sposta il tassello in basso"],["↓","Sposta il tassello in alto"],["←","Sposta il tassello a destra"],["→","Sposta il tassello a sinistra"],["R","Mescola / ricomincia"],["S","Risoluzione automatica"],["L","Lingua successiva"],["G","Cambia schema (4×4 / 5×5)"],["?","Mostra / nascondi questa guida"]] },
 				fr: { shuffle:"Mélanger", solve:"Résoudre", wait:"Patientez...", solved:"Résolu en ", moves:" coups!", tooComplex:"Trop complexe...",
 					helpTitle:"Raccourcis Clavier", helpHint:"Appuyez sur ? pour fermer",
-					helpShortcuts:[["↑","Déplacer la tuile vers le bas"],["↓","Déplacer la tuile vers le haut"],["←","Déplacer la tuile vers la droite"],["→","Déplacer la tuile vers la gauche"],["R","Mélanger / recommencer"],["S","Résolution automatique"],["L","Langue suivante"],["?","Afficher / masquer cette aide"]] },
+					helpShortcuts:[["↑","Déplacer la tuile vers le bas"],["↓","Déplacer la tuile vers le haut"],["←","Déplacer la tuile vers la droite"],["→","Déplacer la tuile vers la gauche"],["R","Mélanger / recommencer"],["S","Résolution automatique"],["L","Langue suivante"],["G","Changer la grille (4×4 / 5×5)"],["?","Afficher / masquer cette aide"]] },
 				es: { shuffle:"Mezclar", solve:"Resolver", wait:"Espera...", solved:"Resuelto en ", moves:" movimientos!", tooComplex:"Demasiado complejo...",
 					helpTitle:"Atajos de Teclado", helpHint:"Pulsa ? para cerrar",
-					helpShortcuts:[["↑","Mover ficha hacia abajo"],["↓","Mover ficha hacia arriba"],["←","Mover ficha hacia la derecha"],["→","Mover ficha hacia la izquierda"],["R","Mezclar / reiniciar"],["S","Resolución automática"],["L","Siguiente idioma"],["?","Mostrar / ocultar esta ayuda"]] },
+					helpShortcuts:[["↑","Mover ficha hacia abajo"],["↓","Mover ficha hacia arriba"],["←","Mover ficha hacia la derecha"],["→","Mover ficha hacia la izquierda"],["R","Mezclar / reiniciar"],["S","Resolución automática"],["L","Siguiente idioma"],["G","Cambiar tablero (4×4 / 5×5)"],["?","Mostrar / ocultar esta ayuda"]] },
 				de: { shuffle:"Mischen", solve:"Lösen", wait:"Warte...", solved:"Gelöst in ", moves:" Zügen!", tooComplex:"Zu komplex...",
 					helpTitle:"Tastaturkürzel", helpHint:"? drücken zum Schließen",
-					helpShortcuts:[["↑","Stein nach unten schieben"],["↓","Stein nach oben schieben"],["←","Stein nach rechts schieben"],["→","Stein nach links schieben"],["R","Mischen / neu starten"],["S","Automatisch lösen"],["L","Nächste Sprache"],["?","Hilfe ein-/ausblenden"]] },
+					helpShortcuts:[["↑","Stein nach unten schieben"],["↓","Stein nach oben schieben"],["←","Stein nach rechts schieben"],["→","Stein nach links schieben"],["R","Mischen / neu starten"],["S","Automatisch lösen"],["L","Nächste Sprache"],["G","Raster wechseln (4×4 / 5×5)"],["?","Hilfe ein-/ausblenden"]] },
 				pt: { shuffle:"Embaralhar", solve:"Resolver", wait:"Aguarde...", solved:"Resolvido em ", moves:" movimentos!", tooComplex:"Complexo demais...",
 					helpTitle:"Atalhos de Teclado", helpHint:"Prima ? para fechar",
-					helpShortcuts:[["↑","Mover peça para baixo"],["↓","Mover peça para cima"],["←","Mover peça para a direita"],["→","Mover peça para a esquerda"],["R","Embaralhar / reiniciar"],["S","Resolução automática"],["L","Próximo idioma"],["?","Mostrar / ocultar esta ajuda"]] },
+					helpShortcuts:[["↑","Mover peça para baixo"],["↓","Mover peça para cima"],["←","Mover peça para a direita"],["→","Mover peça para a esquerda"],["R","Embaralhar / reiniciar"],["S","Resolução automática"],["L","Próximo idioma"],["G","Mudar tabuleiro (4×4 / 5×5)"],["?","Mostrar / ocultar esta ajuda"]] },
 				ro: { shuffle:"Amestecă", solve:"Rezolvă", wait:"Așteaptă...", solved:"Rezolvat în ", moves:" mutări!", tooComplex:"Prea complex...",
 					helpTitle:"Comenzi Rapide", helpHint:"Apăsați ? pentru a închide",
-					helpShortcuts:[["↑","Mută piesa în jos"],["↓","Mută piesa în sus"],["←","Mută piesa la dreapta"],["→","Mută piesa la stânga"],["R","Amestecă / repornește"],["S","Rezolvare automată"],["L","Limba următoare"],["?","Arată / ascunde ajutorul"]] },
+					helpShortcuts:[["↑","Mută piesa în jos"],["↓","Mută piesa în sus"],["←","Mută piesa la dreapta"],["→","Mută piesa la stânga"],["R","Amestecă / repornește"],["S","Rezolvare automată"],["L","Limba următoare"],["G","Schimbă tabla (4×4 / 5×5)"],["?","Arată / ascunde ajutorul"]] },
 				uk: { shuffle:"Перемішати", solve:"Вирішити", wait:"Зачекайте...", solved:"Вирішено за ", moves:" ходів!", tooComplex:"Занадто складно...",
 					helpTitle:"Клавіатурні Скорочення", helpHint:"Натисніть ? щоб закрити",
-					helpShortcuts:[["↑","Зсунути плитку вниз"],["↓","Зсунути плитку вгору"],["←","Зсунути плитку вправо"],["→","Зсунути плитку вліво"],["R","Перемішати / перезапустити"],["S","Автовирішення"],["L","Наступна мова"],["?","Показати / приховати довідку"]] },
+					helpShortcuts:[["↑","Зсунути плитку вниз"],["↓","Зсунути плитку вгору"],["←","Зсунути плитку вправо"],["→","Зсунути плитку вліво"],["R","Перемішати / перезапустити"],["S","Автовирішення"],["L","Наступна мова"],["G","Змінити поле (4×4 / 5×5)"],["?","Показати / приховати довідку"]] },
 				el: { shuffle:"Ανακάτεμα", solve:"Επίλυση", wait:"Περιμένετε...", solved:"Λύθηκε σε ", moves:" κινήσεις!", tooComplex:"Πολύ πολύπλοκο...",
 					helpTitle:"Συντομεύσεις Πληκτρολογίου", helpHint:"Πατήστε ? για κλείσιμο",
-					helpShortcuts:[["↑","Μετακίνηση πλακιδίου κάτω"],["↓","Μετακίνηση πλακιδίου πάνω"],["←","Μετακίνηση πλακιδίου δεξιά"],["→","Μετακίνηση πλακιδίου αριστερά"],["R","Ανακάτεμα / επανεκκίνηση"],["S","Αυτόματη επίλυση"],["L","Επόμενη γλώσσα"],["?","Εμφάνιση / απόκρυψη βοήθειας"]] },
+					helpShortcuts:[["↑","Μετακίνηση πλακιδίου κάτω"],["↓","Μετακίνηση πλακιδίου πάνω"],["←","Μετακίνηση πλακιδίου δεξιά"],["→","Μετακίνηση πλακιδίου αριστερά"],["R","Ανακάτεμα / επανεκκίνηση"],["S","Αυτόματη επίλυση"],["L","Επόμενη γλώσσα"],["G","Αλλαγή πλέγματος (4×4 / 5×5)"],["?","Εμφάνιση / απόκρυψη βοήθειας"]] },
 				la: { shuffle:"Misce", solve:"Solve", wait:"Expecta...", solved:"Solutum in ", moves:" motibus!", tooComplex:"Nimis complexum...",
 					helpTitle:"Claves Auxiliares", helpHint:"Preme ? ad claudendum",
-					helpShortcuts:[["↑","Move tesseram deorsum"],["↓","Move tesseram sursum"],["←","Move tesseram dextrorsum"],["→","Move tesseram sinistrorsum"],["R","Misce / renoua"],["S","Solve automatice"],["L","Muta linguam"],["?","Ostende / absconde auxilium"]] },
+					helpShortcuts:[["↑","Move tesseram deorsum"],["↓","Move tesseram sursum"],["←","Move tesseram dextrorsum"],["→","Move tesseram sinistrorsum"],["R","Misce / renoua"],["S","Solve automatice"],["L","Muta linguam"],["G","Muta tabulam (4×4 / 5×5)"],["?","Ostende / absconde auxilium"]] },
 				zh: { shuffle:"打乱", solve:"求解", wait:"请稍候...", solved:"用 ", moves:" 步解决！", tooComplex:"太复杂了...",
 					helpTitle:"键盘快捷键", helpHint:"按 ? 关闭",
-					helpShortcuts:[["↑","向下移动方块"],["↓","向上移动方块"],["←","向右移动方块"],["→","向左移动方块"],["R","打乱 / 重新开始"],["S","自动求解"],["L","切换语言"],["?","显示 / 隐藏帮助"]] },
+					helpShortcuts:[["↑","向下移动方块"],["↓","向上移动方块"],["←","向右移动方块"],["→","向左移动方块"],["R","打乱 / 重新开始"],["S","自动求解"],["L","切换语言"],["G","切换棋盘 (4×4 / 5×5)"],["?","显示 / 隐藏帮助"]] },
 				ja: { shuffle:"シャッフル", solve:"解く", wait:"お待ちください...", solved:"", moves:" 手で解けた！", tooComplex:"複雑すぎます...",
 					helpTitle:"キーボードショートカット", helpHint:"? を押して閉じる",
-					helpShortcuts:[["↑","タイルを下に移動"],["↓","タイルを上に移動"],["←","タイルを右に移動"],["→","タイルを左に移動"],["R","シャッフル / リスタート"],["S","自動解決"],["L","次の言語"],["?","このヘルプを表示 / 非表示"]] }
+					helpShortcuts:[["↑","タイルを下に移動"],["↓","タイルを上に移動"],["←","タイルを右に移動"],["→","タイルを左に移動"],["R","シャッフル / リスタート"],["S","自動解決"],["L","次の言語"],["G","盤面を切替 (4×4 / 5×5)"],["?","このヘルプを表示 / 非表示"]] }
 			};
 			let currentLangIndex = 0;
 
@@ -288,7 +284,9 @@
 				}
 				document.getElementById("shuffleBtn").innerHTML = t("shuffle");
 				const solveBtn = document.getElementById("solveBtn");
-				if(!solveBtn.disabled){
+				if(isSolving){
+					solveBtn.innerHTML = t("wait");
+				}else if(!solveBtn.disabled){
 					solveBtn.innerHTML = t("solve");
 				}
 				buildHelpModal();
@@ -324,44 +322,58 @@
 					shuffleTiles();
 				}else if(e.key.toLowerCase() === "l"){
 					nextLanguage();
+				}else if(e.key.toLowerCase() === "g"){
+					nextGrid();
 				}else if(e.key.toLowerCase() === "s"){
 					solve();
 				}else if(e.key === "ArrowUp"){
 					e.preventDefault();
-					if(r1 < 3){
-						cursorX = (c1*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
-						cursorY = ((r1 + 1)*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
-						select();
-					}
+					tryMove(r1 + 1, c1);
 				}else if(e.key === "ArrowDown"){
 					e.preventDefault();
-					if(r1 > 0){
-						cursorX = (c1*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
-						cursorY = ((r1 - 1)*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
-						select();
-					}
+					tryMove(r1 - 1, c1);
 				}else if(e.key === "ArrowLeft"){
 					e.preventDefault();
-					if(c1 < 3){
-						cursorX = ((c1 + 1)*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
-						cursorY = (r1*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
-						select();
-					}
+					tryMove(r1, c1 + 1);
 				}else if(e.key === "ArrowRight"){
 					e.preventDefault();
-					if(c1 > 0){
-						cursorX = ((c1 - 1)*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
-						cursorY = (r1*(SIDE + DIVISION_WIDTH)) + BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + SIDE/2;
-						select();
-					}
+					tryMove(r1, c1 - 1);
 				}
 			});
 
+			function setGeometry(){
+				SIDE = (N === 4 ? 20 : 16)*UNIT;
+				BOARD_DIM = (N*SIDE) + ((N + 1)*DIVISION_WIDTH) + (2*BORDER_WIDTH);
+				WIDTH = BOARD_DIM + MARGIN_DIM;
+				HEIGHT = BOARD_DIM + MARGIN_DIM;
+				document.documentElement.style.setProperty('--side', SIDE + 'px');
+			}
+
+			function cellOffset(index){
+				return BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + (index*(SIDE + DIVISION_WIDTH));
+			}
+
+			function nextGrid(){
+				if(isSolving){
+					return;
+				}
+				N = (N === 4) ? 5 : 4;
+				drawBoard();
+			}
+
+			function gridLabel(){
+				const other = (N === 4) ? 5 : 4;
+				return "↔ " + other + "×" + other;
+			}
+
 			function drawBoard(){
 				const container = document.getElementById("Fifteen");
-				for(let i = 0; i < 16; i++){
+				container.querySelectorAll(".tile-container").forEach(el => el.remove());
+				setGeometry();
+				tiles = new Array(N*N).fill(0);
+				for(let i = 0; i < N*N; i++){
 					const div = document.createElement("div");
-					div.id = IDS[i];
+					div.id = "cell" + i;
 					div.className = "tile-container";
 					container.appendChild(div);
 				}
@@ -371,16 +383,16 @@
 				if(board.getContext("2d")){
 					let ctx = board.getContext("2d");
 					ctx.fillStyle = BORDER_COLOR;
-					ctx.fillRect(MARGIN_DIM, MARGIN_DIM, (SIDE*4) + (DIVISION_WIDTH*5) + (BORDER_WIDTH*2), (SIDE*4) + (DIVISION_WIDTH*5) + (BORDER_WIDTH*2));
+					ctx.fillRect(MARGIN_DIM, MARGIN_DIM, BOARD_DIM, BOARD_DIM);
 					ctx.fillStyle = FRAME_COLOR;
-					ctx.fillRect(MARGIN_DIM + BORDER_WIDTH, MARGIN_DIM + BORDER_WIDTH, (SIDE*4) + (DIVISION_WIDTH*5), (SIDE*4) + (DIVISION_WIDTH*5));
+					ctx.fillRect(MARGIN_DIM + BORDER_WIDTH, MARGIN_DIM + BORDER_WIDTH, BOARD_DIM - (2*BORDER_WIDTH), BOARD_DIM - (2*BORDER_WIDTH));
 				}
 				const handleInput = (e) => {
 					const rect = board.getBoundingClientRect();
 					const clientX = e.touches ? e.touches[0].clientX : e.clientX;
 					const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-					cursorX = clientX - rect.left;
-					cursorY = clientY - rect.top;
+					cursorX = (clientX - rect.left)*(board.width/rect.width);
+					cursorY = (clientY - rect.top)*(board.height/rect.height);
 					select();
 				};
 				board.onclick = handleInput;
@@ -399,17 +411,17 @@
 				}
 				const container = document.createElement("div");
 				container.id = "controls";
-				const boardWidth = (SIDE*4) + (DIVISION_WIDTH*5) + (BORDER_WIDTH*2);
 				const boardStartX = MARGIN_DIM;
-				const boardBottomY = MARGIN_DIM + boardWidth;
+				const boardBottomY = MARGIN_DIM + BOARD_DIM;
 				container.style.left = boardStartX + "px";
 				container.style.top = (boardBottomY + (UNIT*5)) + "px";
-				container.style.width = boardWidth + "px";
+				container.style.width = BOARD_DIM + "px";
 				container.style.gap = UNIT + "px";
 				const btnData = [
-					{id: "shuffleBtn", txt: t("shuffle"), click: "shuffleTiles()"},
-					{id: "langBtn", txt: FLAGS_SVG[currentLangIndex], click: "nextLanguage()"},
-					{id: "solveBtn", txt: t("solve"), click: "solve()"}
+					{id: "shuffleBtn", txt: t("shuffle"), click: "shuffleTiles()", compact: false},
+					{id: "solveBtn", txt: t("solve"), click: "solve()", compact: false},
+					{id: "langBtn", txt: FLAGS_SVG[currentLangIndex], click: "nextLanguage()", compact: true},
+					{id: "gridBtn", txt: gridLabel(), click: "nextGrid()", compact: true}
 				];
 				btnData.forEach(b => {
 					let btn = document.createElement("button");
@@ -417,7 +429,13 @@
 					btn.className = "game-btn";
 					btn.innerHTML = b.txt;
 					btn.setAttribute("onclick", b.click);
-					btn.style.padding = (UNIT*1.5) + "px 0";
+					btn.style.minWidth = "0";
+					if(b.compact){
+						btn.style.flex = "0 0 " + (UNIT*16) + "px";
+						btn.style.padding = (UNIT*1.5) + "px 0";
+					}else{
+						btn.style.padding = (UNIT*1.5) + "px 0";
+					}
 					btn.style.fontSize = (UNIT*3.2) + "px";
 					btn.style.boxShadow = `0px ${UNIT/2}px 0px rgba(0,0,0,0.1)`;
 					container.appendChild(btn);
@@ -425,41 +443,43 @@
 				document.getElementById("Fifteen").appendChild(container);
 			}
 
-			function drawTile(row, column, tile){
-				let val = parseInt(tile, 16);
+			function drawTile(row, column, val){
 				let board = document.getElementById("board");
 				let ctx = board.getContext("2d");
-				let color = (tile === "0") ? BORDER_COLOR : (((val + Math.floor((val - 1)/4))%2 === 1) ? COLOR_1 : COLOR_2);
-				let posX = BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + (column*(SIDE + DIVISION_WIDTH));
-				let posY = BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM + (row*(SIDE + DIVISION_WIDTH));
+				let goalRow = Math.floor((val - 1)/N), goalCol = (val - 1)%N;
+				let color = (val === 0) ? BORDER_COLOR : (((goalRow + goalCol)%2 === 0) ? COLOR_1 : COLOR_2);
+				let posX = cellOffset(column);
+				let posY = cellOffset(row);
 				ctx.fillStyle = color;
 				ctx.fillRect(posX, posY, SIDE, SIDE);
-				let targetId = ((row*4 + column + 1)%16).toString(16);
-				const el = document.getElementById(targetId);
+				tiles[row*N + column] = val;
+				const el = document.getElementById("cell" + (row*N + column));
 				if(el){
-					el.textContent = (tile === "0") ? "" : val;
+					el.textContent = (val === 0) ? "" : val;
 					el.style.left = posX + "px";
 					el.style.top = posY + "px";
 				}
 			}
 
-			function swapTiles(t1, t2){
-				const el1 = document.getElementById(t1), el2 = document.getElementById(t2);
-				let v1 = el1.textContent, v2 = el2.textContent;
-				let idx1 = (parseInt(t1, 16) + 15)%16, idx2 = (parseInt(t2, 16) + 15)%16;
-				drawTile(Math.floor(idx1/4), idx1%4, (v2 === "" ? "0" : parseInt(v2).toString(16)));
-				drawTile(Math.floor(idx2/4), idx2%4, (v1 === "" ? "0" : parseInt(v1).toString(16)));
+			function swapTiles(i1, i2){
+				let v1 = tiles[i1], v2 = tiles[i2];
+				drawTile(Math.floor(i1/N), i1%N, v2);
+				drawTile(Math.floor(i2/N), i2%N, v1);
 				begun = true;
 			}
 
 			function select(){
+				let r = Math.floor((cursorY - (BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM))/(SIDE + DIVISION_WIDTH));
+				let c = Math.floor((cursorX - (BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM))/(SIDE + DIVISION_WIDTH));
+				tryMove(r, c);
+			}
+
+			function tryMove(r, c){
 				if(gameFinished || isSolving){
 					return;
 				}
-				let r = Math.floor((cursorY - (BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM))/(SIDE + DIVISION_WIDTH));
-				let c = Math.floor((cursorX - (BORDER_WIDTH + DIVISION_WIDTH + MARGIN_DIM))/(SIDE + DIVISION_WIDTH));
-				if(r >= 0 && r < 4 && c >= 0 && c < 4 && (Math.abs(r - r1) + Math.abs(c - c1)) === 1){
-					swapTiles(((4*r + c + 1)%16).toString(16), ((4*r1 + c1 + 1)%16).toString(16));
+				if(r >= 0 && r < N && c >= 0 && c < N && (Math.abs(r - r1) + Math.abs(c - c1)) === 1){
+					swapTiles(r*N + c, r1*N + c1);
 					r1 = r;
 					c1 = c;
 					counterMoves++;
@@ -472,8 +492,8 @@
 			}
 
 			function checkWin(){
-				for(let i = 0; i < 15; i++){
-					if(document.getElementById(((i + 1)%16).toString(16)).textContent !== String(i + 1)){
+				for(let i = 0; i < N*N - 1; i++){
+					if(tiles[i] !== i + 1){
 						return false;
 					}
 				}
@@ -481,33 +501,43 @@
 			}
 
 			function shuffleTiles(){
+				if(isSolving){
+					return;
+				}
 				gameFinished = false;
 				document.body.style.background = BACKGROUND_COLOR;
-				let s = "123456789abcdef0".split('');
+				let s = [];
+				for(let i = 1; i < N*N; i++){
+					s.push(i);
+				}
+				s.push(0);
 				do{
 					for(let i = s.length - 1; i > 0; i--){
 						const j = Math.floor(Math.random()*(i + 1));
 						[s[i], s[j]] = [s[j], s[i]];
 					}
 				}while(!isSolvable(s));
-				s.forEach((id, i) => drawTile(Math.floor(i/4), i%4, id));
-				let zIdx = s.indexOf("0");
-				r1 = Math.floor(zIdx/4);
-				c1 = zIdx%4;
+				s.forEach((v, i) => drawTile(Math.floor(i/N), i%N, v));
+				let zIdx = s.indexOf(0);
+				r1 = Math.floor(zIdx/N);
+				c1 = zIdx%N;
 				counterMoves = 0;
 				begun = false;
 			}
 
 			function isSolvable(a){
 				let inv = 0, zR = 0;
-				for(let i = 0; i < 16; i++){
-					if(a[i] === "0"){
-						zR = Math.floor(i/4);
+				for(let i = 0; i < a.length; i++){
+					if(a[i] === 0){
+						zR = Math.floor(i/N);
 						continue;
 					}
-					for(let j = i + 1; j < 16; j++){
-						inv += (a[j] !== "0" && parseInt(a[i], 16) > parseInt(a[j], 16)) ? 1 : 0;
+					for(let j = i + 1; j < a.length; j++){
+						inv += (a[j] !== 0 && a[i] > a[j]) ? 1 : 0;
 					}
+				}
+				if(N%2 === 1){
+					return inv%2 === 0;
 				}
 				return (zR%2 === 0) ? (inv%2 !== 0) : (inv%2 === 0);
 			}
@@ -520,13 +550,12 @@
 				btn.innerHTML = t("wait");
 				btn.disabled = true;
 				isSolving = true;
-				let state = [];
-				for(let i = 0; i < 16; i++){
-					let val = document.getElementById(((i + 1)%16).toString(16)).textContent;
-					state.push(val === "" ? 0 : parseInt(val));
-				}
+				let state = tiles.slice();
 				setTimeout(() => {
-					let path = getFastPath(state);
+					let path = (N === 4) ? getFastPath(state.slice()) : null;
+					if(!path){
+						path = solveLayered(state);
+					}
 					if(path){
 						animate(path);
 					}else{
@@ -538,11 +567,11 @@
 
 			function getHeuristic(s){
 				let d = 0;
-				for(let i = 0; i < 16; i++){
+				for(let i = 0; i < s.length; i++){
 					if(s[i] === 0){
 						continue;
 					}
-					d += Math.abs(Math.floor(i/4) - Math.floor((s[i] - 1)/4)) + Math.abs((i%4) - ((s[i] - 1)%4));
+					d += Math.abs(Math.floor(i/N) - Math.floor((s[i] - 1)/N)) + Math.abs((i%N) - ((s[i] - 1)%N));
 				}
 				return d;
 			}
@@ -568,18 +597,18 @@
 				if(h === 0){
 					return "FOUND";
 				}
-				let min = Infinity, r = Math.floor(z/4), c = z%4;
+				let min = Infinity, r = Math.floor(z/N), c = z%N;
 				let moves = [];
 				if(r > 0 && prev !== "D"){
-					moves.push({d: "U", i: z - 4 });
+					moves.push({d: "U", i: z - N });
 				}
-				if(r < 3 && prev !== "U"){
-					moves.push({d: "D", i: z + 4 });
+				if(r < N - 1 && prev !== "U"){
+					moves.push({d: "D", i: z + N });
 				}
 				if(c > 0 && prev !== "R"){
 					moves.push({d: "L", i: z - 1 });
 				}
-				if(c < 3 && prev !== "L"){
+				if(c < N - 1 && prev !== "L"){
 					moves.push({d: "R", i: z + 1 });
 				}
 				for(let m of moves){
@@ -598,8 +627,120 @@
 				return min;
 			}
 
+			function solveLayered(state){
+				let s = state.slice(), path = [], locked = new Array(N*N).fill(false);
+				let top = 0, left = 0;
+				function applyMove(d){
+					let z = s.indexOf(0);
+					let n = z + (d === "U" ? -N : d === "D" ? N : d === "L" ? -1 : 1);
+					s[z] = s[n];
+					s[n] = 0;
+					path.push(d);
+				}
+				function neighbours(z){
+					let list = [];
+					if(z >= N){
+						list.push({d: "U", i: z - N});
+					}
+					if(z < N*(N - 1)){
+						list.push({d: "D", i: z + N});
+					}
+					if(z%N > 0){
+						list.push({d: "L", i: z - 1});
+					}
+					if(z%N < N - 1){
+						list.push({d: "R", i: z + 1});
+					}
+					return list;
+				}
+				function keyOf(z, p){
+					let k = z;
+					for(let x of p){
+						k = k*(N*N) + x;
+					}
+					return k;
+				}
+				function placeTiles(cells){
+					let vals = cells.map(c => c + 1);
+					let queue = [{z: s.indexOf(0), p: vals.map(v => s.indexOf(v)), prev: -1, d: ""}];
+					let seen = new Set([keyOf(queue[0].z, queue[0].p)]);
+					let found = -1;
+					for(let qi = 0; qi < queue.length; qi++){
+						let cur = queue[qi];
+						if(cur.p.every((x, k) => x === cells[k])){
+							found = qi;
+							break;
+						}
+						for(let m of neighbours(cur.z)){
+							if(locked[m.i]){
+								continue;
+							}
+							let np = cur.p.map(x => (x === m.i) ? cur.z : x);
+							let nk = keyOf(m.i, np);
+							if(seen.has(nk)){
+								continue;
+							}
+							seen.add(nk);
+							queue.push({z: m.i, p: np, prev: qi, d: m.d});
+						}
+					}
+					if(found < 0){
+						return false;
+					}
+					let seq = [];
+					for(let q = found; queue[q].prev >= 0; q = queue[q].prev){
+						seq.push(queue[q].d);
+					}
+					seq.reverse().forEach(applyMove);
+					return true;
+				}
+				while(true){
+					let h = N - top, w = N - left;
+					if(h <= 2 && w <= 2){
+						break;
+					}
+					if(h >= w && h > 2){
+						for(let c = left; c < N - 2; c++){
+							if(!placeTiles([top*N + c])){
+								return null;
+							}
+							locked[top*N + c] = true;
+						}
+						if(!placeTiles([top*N + N - 2, top*N + N - 1])){
+							return null;
+						}
+						locked[top*N + N - 2] = true;
+						locked[top*N + N - 1] = true;
+						top++;
+					}else{
+						for(let r = top; r < N - 2; r++){
+							if(!placeTiles([r*N + left])){
+								return null;
+							}
+							locked[r*N + left] = true;
+						}
+						if(!placeTiles([(N - 2)*N + left, (N - 1)*N + left])){
+							return null;
+						}
+						locked[(N - 2)*N + left] = true;
+						locked[(N - 1)*N + left] = true;
+						left++;
+					}
+				}
+				if(!placeTiles([(N - 2)*N + N - 2, (N - 2)*N + N - 1, (N - 1)*N + N - 2])){
+					return null;
+				}
+				for(let i = 0; i < N*N; i++){
+					if(s[i] !== (i + 1)%(N*N)){
+						return null;
+					}
+				}
+				return path;
+			}
+
 			function animate(moves){
 				let i = 0;
+				let delay = (moves.length > 80) ? 90 : 180;
 				let timer = setInterval(() => {
 					if(i >= moves.length){
 						clearInterval(timer);
@@ -609,13 +750,13 @@
 						setTimeout(() => alert(t("solved") + counterMoves + t("moves")), 50);
 						return;
 					}
-					let zIdx = r1*4 + c1, tIdx = zIdx + (moves[i] === "U" ? -4 : moves[i] === "D" ? 4 : moves[i] === "L" ? -1 : 1);
-					swapTiles(((tIdx + 1)%16).toString(16), ((zIdx + 1)%16).toString(16));
-					r1 = Math.floor(tIdx/4);
-					c1 = tIdx%4;
+					let zIdx = r1*N + c1, tIdx = zIdx + (moves[i] === "U" ? -N : moves[i] === "D" ? N : moves[i] === "L" ? -1 : 1);
+					swapTiles(tIdx, zIdx);
+					r1 = Math.floor(tIdx/N);
+					c1 = tIdx%N;
 					counterMoves++;
 					i++;
-				}, 180);
+				}, delay);
 			}
 
 			function resetUI(){
