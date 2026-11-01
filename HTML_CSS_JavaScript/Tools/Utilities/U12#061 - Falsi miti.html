@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="it"><!--U12#061 - Massimo - Falsi miti-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Falsi miti e luoghi comuni</title>
+		<style>
+			:root{
+				--bg: #f6f4ef;
+				--card: #fff;
+				--tx: #222;
+				--mu: #666;
+				--ac: #2a5d9f;
+				--ko: #b3261e;
+				--ok: #1e7a3c;
+				--bd: #ddd;
+			}
+			@media (prefers-color-scheme: dark){
+				:root{
+					--bg: #16181c;
+					--card: #20242a;
+					--tx: #e8e8e8;
+					--mu: #9aa0a6;
+					--ac: #7fb0ee;
+					--ko: #f08a82;
+					--ok: #7fd69a;
+					--bd: #363b43;
+				}
+			}
+			*{
+				box-sizing: border-box;
+			}
+			body{
+				margin: 0;
+				padding: 16px;
+				background: var(--bg);
+				color: var(--tx);
+				font: 16px/1.5 system-ui, sans-serif;
+			}
+			main{
+				max-width: 900px;
+				margin: 0 auto;
+			}
+			h1{
+				margin: 0 0 4px;
+			}
+			.sub{
+				color: var(--mu);
+				margin: 0 0 16px;
+			}
+			#q{
+				width: 100%;
+				padding: 10px 12px;
+				font-size: 16px;
+				border: 1px solid var(--bd);
+				border-radius: 8px;
+				background: var(--card);
+				color: var(--tx);
+			}
+			#cats{
+				display: flex;
+				flex-wrap: wrap;
+				gap: 6px;
+				margin: 12px 0;
+			}
+			#cats button{
+				padding: 6px 12px;
+				border: 1px solid var(--bd);
+				border-radius: 16px;
+				background: var(--card);
+				color: var(--tx);
+				cursor: pointer;
+				font-size: 14px;
+			}
+			#cats button.on{
+				background: var(--ac);
+				color: #fff;
+				border-color: var(--ac);
+			}
+			#n{
+				color: var(--mu);
+				font-size: 14px;
+				margin-bottom: 8px;
+			}
+			.c{
+				background: var(--card);
+				border: 1px solid var(--bd);
+				border-radius: 10px;
+				padding: 12px 14px;
+				margin-bottom: 10px;
+			}
+			.t{
+				font-size: 12px;
+				color: var(--mu);
+				text-transform: uppercase;
+				letter-spacing: .05em;
+			}
+			.m{
+				color: var(--ko);
+				font-weight: 600;
+				margin: 4px 0;
+			}
+			.r{
+				margin: 8px 0 0;
+			}
+			.r b{
+				color: var(--ok);
+			}
+			#quiz button{
+				padding: 10px 14px;
+				margin: 6px 6px 0 0;
+				border: 1px solid var(--bd);
+				border-radius: 8px;
+				background: var(--card);
+				color: var(--tx);
+				font-size: 15px;
+				cursor: pointer;
+			}
+			#quiz button:hover{
+				border-color: var(--ac);
+			}
+			#quiz .big{
+				font-size: 18px;
+			}
+		</style>
+	</head>
+	<body>
+		<main>
+			<h1>Falsi miti e luoghi comuni</h1>
+			<p class="sub">Cosa crede la gente e cosa dice davvero la scienza, la storia, la geografia.</p>
+			<input id="q" type="search" placeholder="Cerca (es. cervello, Napoleone, squali…)">
+			<div id="cats"></div>
+			<div id="n"></div>
+			<div id="list"></div>
+			<div id="quiz" hidden></div>
+		</main>
+		<script>
+			var D = [
+				["Corpo umano","Usiamo solo il 10% del cervello.","Usiamo tutto il cervello: le scansioni mostrano attività in ogni area, e il danno anche a una piccola parte ha conseguenze."],
+				["Corpo umano","La lingua ha zone separate per i gusti (dolce sulla punta, amaro in fondo).","La «mappa della lingua» è un errore di interpretazione: tutti i gusti si percepiscono su tutta la lingua."],
+				["Corpo umano","Prendere freddo causa il raffreddore.","A causarlo sono i virus. Il freddo può favorirne la diffusione (si sta chiusi, le mucose si seccano), ma non è la causa."],
+				["Corpo umano","Dopo la morte capelli e unghie continuano a crescere.","È solo la pelle che si disidrata e si ritrae, rendendoli più evidenti."],
+				["Corpo umano","Radersi fa ricrescere peli più spessi e scuri.","No: il pelo tagliato ha la punta netta invece che affusolata, per cui sembra più spesso."],
+				["Corpo umano","Far scrocchiare le dita provoca artrite.","Nessuno studio lo conferma: il rumore è dovuto a bolle di gas nel liquido articolare."],
+				["Corpo umano","Bisogna bere 8 bicchieri d’acqua al giorno.","È una cifra arbitraria. Il fabbisogno varia con persona e clima, e anche cibo e altre bevande contribuiscono."],
+				["Corpo umano","Il sangue nelle vene è blu.","È sempre rosso, più scuro se povero di ossigeno. Il blu delle vene è un effetto ottico attraverso la pelle."],
+				["Corpo umano","Si perde la maggior parte del calore dalla testa.","Se ne perde in proporzione alla superficie scoperta: la testa è circa il 7-10% del corpo."],
+				["Corpo umano","Dopo mangiato bisogna aspettare tre ore prima del bagno.","Non esistono prove di annegamenti dovuti alla digestione. Al massimo può dare un po’ di fastidio."],
+				["Corpo umano","Lo zucchero rende iperattivi i bambini.","Gli studi in doppio cieco non trovano alcun effetto: pesa molto di più l’aspettativa dei genitori."],
+				["Corpo umano","Gli esseri umani hanno cinque sensi.","Ne hanno molti di più: equilibrio, propriocezione, temperatura, dolore, sensi interni (fame, sete…)."],
+				["Corpo umano","Leggere al buio rovina la vista.","Affatica gli occhi temporaneamente, ma non causa danni permanenti."],
+				["Corpo umano","Le carote fanno vedere al buio.","È propaganda britannica della seconda guerra mondiale. La vitamina A serve, ma più del necessario non potenzia la vista."],
+				["Corpo umano","Il cuore sta a sinistra.","Sta al centro del torace, con la punta rivolta verso sinistra."],
+				["Corpo umano","Gli antibiotici curano l’influenza.","Agiscono solo sui batteri, non sui virus. Usarli a sproposito favorisce la resistenza."],
+				["Corpo umano","I vaccini causano l’autismo.","Falso: studi su milioni di bambini non trovano alcun legame. Lo studio originale fu ritirato per frode."],
+				["Corpo umano","Chi è sonnambulo non va svegliato.","Svegliarlo non è pericoloso. Il rischio vero è che si faccia male camminando."],
+				["Corpo umano","L’alcol scalda.","Dilata i vasi sanguigni della pelle dando sensazione di caldo, ma in realtà si disperde più calore."],
+				["Corpo umano","Esistono persone «cervello destro» (creative) e «sinistro» (logiche).","Le funzioni sono distribuite in entrambi gli emisferi, che lavorano insieme."],
+				["Corpo umano","Le diete «detox» eliminano le tossine.","Lo fanno già fegato e reni. Non esiste alcuna prova che succhi o diete speciali facciano di più."],
+				["Corpo umano","Ognuno ha il proprio «stile di apprendimento» (visivo, uditivo…).","Gli studi non mostrano benefici nell’adattare l’insegnamento a tali stili."],
+				["Scienza e natura","Il fulmine non cade mai due volte nello stesso posto.","Succede spesso: l’Empire State Building viene colpito circa 20-25 volte all’anno."],
+				["Scienza e natura","Il vetro è un liquido che scorre lentamente (vetrate delle cattedrali più spesse in basso).","È un solido amorfo. Lo spessore ineguale deriva dal metodo di fabbricazione antico."],
+				["Scienza e natura","Gli oggetti pesanti cadono più veloci di quelli leggeri.","Nel vuoto cadono alla stessa velocità. Nell’aria la differenza è dovuta alla resistenza."],
+				["Scienza e natura","Nello spazio gli astronauti non hanno gravità.","Sulla ISS la gravità è circa il 90% di quella terrestre: sono in caduta libera continua attorno alla Terra."],
+				["Scienza e natura","La Grande Muraglia si vede dallo spazio a occhio nudo.","Non è visibile a occhio nudo dall’orbita bassa: è lunga ma molto stretta."],
+				["Scienza e natura","Il Sole è giallo.","È bianco. Appare giallo per la diffusione della luce nell’atmosfera."],
+				["Scienza e natura","Il Sole brucia come un grande fuoco.","Produce energia per fusione nucleare dell’idrogeno in elio, non per combustione."],
+				["Scienza e natura","La Luna ha un lato oscuro.","Ha un lato nascosto (sempre rivolto altrove), ma è illuminato quanto l’altro."],
+				["Scienza e natura","Le stagioni dipendono dalla distanza Terra-Sole.","Dipendono dall’inclinazione dell’asse. La Terra è più vicina al Sole a gennaio, in pieno inverno boreale."],
+				["Scienza e natura","Il forno a microonde cuoce dall’interno.","Le microonde penetrano solo pochi centimetri; il resto si scalda per conduzione."],
+				["Scienza e natura","Il Big Bang fu un’esplosione in un punto dello spazio.","Fu l’espansione dello spazio stesso, avvenuta ovunque."],
+				["Scienza e natura","Le stelle cadenti sono stelle.","Sono meteore: granelli di polvere che bruciano nell’atmosfera."],
+				["Scienza e natura","L’uomo discende dalle scimmie attuali.","Uomo e scimpanzé hanno un antenato comune vissuto circa 6-7 milioni di anni fa."],
+				["Scienza e natura","«È solo una teoria».","In scienza una teoria è una spiegazione ampiamente verificata, non un’ipotesi o un’opinione."],
+				["Scienza e natura","L’acqua dello scarico gira in versi opposti nei due emisferi (Coriolis).","L’effetto è trascurabile su scala così piccola: il verso dipende dalla forma del lavandino."],
+				["Scienza e natura","Uomini e dinosauri sono vissuti insieme.","I dinosauri non aviani si estinsero circa 66 milioni di anni fa, molto prima dell’uomo."],
+				["Scienza e natura","L’acqua bolle sempre a 100 °C.","Solo alla pressione del livello del mare: in montagna bolle a temperature più basse."],
+				["Scienza e natura","I buchi neri aspirano tutto ciò che sta intorno.","A distanza si comportano come una qualunque massa uguale: la Terra non cadrebbe in uno al posto del Sole."],
+				["Scienza e natura","Nel vuoto dello spazio il corpo senza tuta esplode.","Non esplode: si perde coscienza in circa 15 secondi per mancanza di ossigeno."],
+				["Scienza e natura","Una monetina lanciata da un grattacielo può uccidere.","Raggiunge una velocità limite bassa per via dell’aria: fa al massimo male."],
+				["Animali","I pesci rossi hanno memoria di tre secondi.","Ricordano per mesi: imparano orari e percorsi."],
+				["Animali","Gli struzzi nascondono la testa sotto la sabbia.","Non lo fanno: tengono la testa bassa per mangiare o curare il nido."],
+				["Animali","I pipistrelli sono ciechi.","Vedono, e alcune specie molto bene. L’ecolocazione si aggiunge alla vista."],
+				["Animali","I tori si infuriano alla vista del rosso.","Non distinguono il rosso: reagiscono al movimento della muleta."],
+				["Animali","I lemming si suicidano in massa.","Falso: la scena fu messa in scena in un documentario Disney del 1958."],
+				["Animali","La gobba dei cammelli contiene acqua.","Contiene grasso, riserva di energia."],
+				["Animali","I camaleonti cambiano colore per mimetizzarsi.","Lo fanno soprattutto per comunicare e regolare la temperatura."],
+				["Animali","Se tocchi un uccellino la madre lo abbandona.","Gli uccelli hanno un olfatto scarso e di norma non abbandonano i piccoli."],
+				["Animali","Gli squali non si ammalano di cancro.","Possono ammalarsi di tumori. Le cartilagini di squalo non curano il cancro."],
+				["Animali","Un anno di cane equivale a sette anni umani.","Non esiste un rapporto fisso: dipende molto da taglia e razza."],
+				["Animali","I cani vedono solo in bianco e nero.","Vedono bene blu e giallo; distinguono poco rosso e verde."],
+				["Animali","Tutte le api muoiono dopo aver punto.","Succede alle api mellifere; vespe e calabroni possono pungere più volte."],
+				["Animali","Il gatto cade sempre in piedi.","Spesso si gira in aria, ma non sempre, e può farsi male anche da altezze modeste."],
+				["Animali","Le mucche hanno quattro stomaci.","Ne hanno uno solo, diviso in quattro compartimenti."],
+				["Animali","Le balene sono pesci.","Sono mammiferi: respirano aria e allattano i piccoli."],
+				["Animali","In media inghiottiamo otto ragni all’anno nel sonno.","Mito inventato: un ragno non si avvicinerebbe a un dormiente che respira e si muove."],
+				["Animali","I pipistrelli vampiro «succhiano» il sangue.","Lo leccano da una piccola ferita, con saliva anticoagulante."],
+				["Storia","Napoleone era bassissimo.","Era alto circa 1,69 m, nella media. L’equivoco nasce da unità di misura diverse e dalla propaganda inglese."],
+				["Storia","Colombo dimostrò che la Terra è rotonda.","I colti lo sapevano da secoli. Colombo sbagliò di molto la stima delle dimensioni."],
+				["Storia","I vichinghi portavano elmi con le corna.","Non ci sono prove: l’immagine nasce da costumi teatrali dell’Ottocento."],
+				["Storia","Maria Antonietta disse «Che mangino brioche».","Non ci sono prove: la frase è attribuita ad altri molto prima."],
+				["Storia","Nel Medioevo si credeva che la Terra fosse piatta.","I dotti sapevano che era sferica fin dall’antichità."],
+				["Storia","Einstein era un cattivo studente di matematica.","Eccelleva in matematica fin da ragazzo."],
+				["Storia","Marco Polo portò la pasta dalla Cina.","La pasta era già nota in Italia: documenti genovesi e siciliani sono precedenti."],
+				["Storia","Nerone suonò la lira mentre Roma bruciava.","Era ad Anzio quando scoppiò l’incendio, e tornò per organizzare i soccorsi. La lira come la intendiamo non c’era ancora."],
+				["Storia","I gladiatori dicevano «Ave Cesare, morituri te salutant».","Attestato una sola volta, da dei condannati a una naumachia, non dai gladiatori."],
+				["Storia","Le cinture di castità erano usate nel Medioevo.","Quasi certamente sono una invenzione di epoca più tarda."],
+				["Storia","Le piramidi furono costruite da schiavi.","Furono costruite da operai salariati, ben nutriti e curati."],
+				["Storia","A Salem le streghe furono bruciate.","Furono impiccate (e una persona fu schiacciata): nessun rogo."],
+				["Storia","Edison inventò la lampadina.","La perfezionò e la rese commerciale, ma altri vi avevano lavorato prima di lui."],
+				["Storia","Il Titanic era pubblicizzato come «inaffondabile».","La definizione fu usata dalla stampa, non dalla compagnia nelle pubblicità."],
+				["Storia","Per il vomitorium i Romani vomitavano durante i banchetti.","Il vomitorium era il passaggio di uscita di un teatro o anfiteatro."],
+				["Geografia","La capitale dell’Australia è Sydney.","È Canberra."],
+				["Geografia","La capitale del Brasile è Rio de Janeiro.","È Brasilia, dal 1960."],
+				["Geografia","Il Sahara è il deserto più grande del mondo.","È il più grande deserto caldo: il più grande in assoluto è l’Antartide."],
+				["Geografia","L’Everest è la montagna più alta.","È la più alta sul livello del mare. Dalla base, il Mauna Kea; dal centro della Terra, il Chimborazo."],
+				["Geografia","La Terra è una sfera perfetta.","È schiacciata ai poli e rigonfia all’equatore."],
+				["Geografia","Il polo nord magnetico coincide con quello geografico.","Sono diversi e quello magnetico si sposta nel tempo."],
+				["Cibo","Il glutammato (dado) fa male.","Si trova naturalmente in pomodori e parmigiano. Non ci sono prove di danni a dosi normali."],
+				["Cibo","Il sale marino è più sano di quello da cucina.","Contiene la stessa quantità di sodio."],
+				["Cibo","Mangiare di sera fa ingrassare di più.","Conta il totale di calorie nella giornata, non l’orario."],
+				["Cibo","Il caffè blocca la crescita.","Non c’è alcuna prova, e non secca il corpo se bevuto in quantità normali."],
+				["Cibo","La verdura surgelata è meno nutriente.","Spesso è pari o migliore di quella fresca poco consumata, perché surgelata subito dopo la raccolta."],
+				["Cibo","Sushi significa pesce crudo.","Sushi è il riso condito con aceto; il pesce crudo da solo è sashimi."],
+				["Cibo","Le uova marroni sono più sane di quelle bianche.","Il colore dipende dalla razza della gallina, non dal valore nutritivo."],
+				["Cibo","In Italia si mangiano gli «spaghetti alla bolognese».","A Bologna il ragù si serve con le tagliatelle: gli spaghetti alla bolognese sono un’invenzione estera."],
+				["Varie","Gli esquimesi hanno centinaia di parole per dire «neve».","È un’esagerazione: ne hanno poche di più, come qualunque lingua con parole composte."],
+				["Varie","Se un numero non esce da tanto tempo, è «ritardatario» e prima o poi uscirà.","È l’errore del giocatore: ogni estrazione è indipendente, le probabilità non cambiano."],
+				["Varie","L’effetto Mozart rende più intelligenti.","Dai test l’effetto è minimo e temporaneo, e non confermato in modo solido."],
+				["Varie","Con il mal di schiena serve il riposo assoluto.","In genere è meglio continuare a muoversi, con moderazione."],
+				["Varie","Una rana messa in acqua che si scalda lentamente si lascia bollire.","Salta fuori quando diventa troppo caldo."],
+				["Varie","Lo sbarco sulla Luna fu un falso.","Ci sono prove indipendenti: 382 kg di rocce lunari, retroriflettori ancora usati, tracciamento da parte di altri Paesi, anche rivali."],
+				["Varie","La Terra è piatta.","Lo dimostrano le navi che spariscono dietro l’orizzonte, le eclissi, i fusi orari, le foto da satellite e i voli di circumnavigazione."],
+				["Varie","Le scie degli aerei sono sostanze chimiche irrorate di nascosto.","Sono condensazione del vapore acqueo dei motori, come il tuo respiro in una giornata fredda."],
+				["Varie","L’oroscopo funziona.","I test controllati non mostrano alcuna capacità predittiva dell’astrologia."],
+				["Varie","La luna piena influenza nascite e comportamento.","Gli studi su nascite, ricoveri e reati non trovano nessuna relazione."],
+				["Varie","Il venerdì 17 o il 13 portano sfortuna ovunque.","È una superstizione culturale: in Italia è il 17, nei Paesi anglosassoni il 13, in Spagna il martedì 13."],
+				["Tecnologia","Il Mac non prende virus.","È meno preso di mira, ma esistono malware anche per macOS."],
+				["Tecnologia","La navigazione in incognito ti rende anonimo.","Non salva la cronologia sul dispositivo, ma siti, provider e datore di lavoro vedono comunque la tua attività."],
+				["Tecnologia","Lasciare il telefono in carica tutta la notte rovina la batteria.","I dispositivi moderni interrompono la carica a batteria piena. L’usura dipende di più da caldo e numero di cicli."],
+				["Tecnologia","Bisogna scaricare del tutto la batteria prima di ricaricarla.","Le batterie al litio non hanno «effetto memoria»: anzi, le scariche complete le usurano."],
+				["Tecnologia","Chiudere le app in background fa risparmiare batteria.","Spesso la consuma di più: riaprirle da zero costa più energia che lasciarle in pausa."],
+				["Tecnologia","Più megapixel significano foto migliori.","Contano molto di più dimensione del sensore, qualità dell’ottica e elaborazione."],
+				["Tecnologia","Internet e Web sono la stessa cosa.","Internet è la rete; il Web è uno dei servizi che ci girano sopra, come la posta elettronica."],
+				["Tecnologia","Cancellare un file lo elimina davvero.","Di solito si rimuove solo il riferimento: i dati restano finché non vengono sovrascritti."],
+				["Tecnologia","Il 5G e il Wi-Fi diffondono virus o fanno ammalare.","Usano radiazioni non ionizzanti a bassa potenza; i virus non viaggiano via onde radio."],
+				["Tecnologia","Una password sicura deve avere simboli strani.","Conta soprattutto la lunghezza: una frase lunga è più sicura di una parola corta piena di simboli."],
+				["Tecnologia","Cambiare spesso la password la rende più sicura.","Le linee guida attuali (NIST) sconsigliano i cambi periodici obbligatori: si cambia se c’è un sospetto di violazione."],
+				["Tecnologia","Il «cloud» è qualcosa di immateriale.","Sono data center fisici, con server, cavi e consumi elettrici reali."],
+				["Matematica","0,999… è un po’ meno di 1.","È esattamente uguale a 1: la differenza tra i due è zero."],
+				["Matematica","Lo zero non è né pari né dispari.","Zero è pari: è divisibile per 2 e sta tra due numeri dispari, −1 e 1."],
+				["Matematica","1 è un numero primo.","Per convenzione no: i primi hanno esattamente due divisori, mentre 1 ne ha uno."],
+				["Matematica","Dividere per zero dà infinito.","Non è definito: nessun numero moltiplicato per zero dà un risultato diverso da zero."],
+				["Matematica","(a+b)² = a² + b².","Manca il doppio prodotto: (a+b)² = a² + 2ab + b²."],
+				["Matematica","Un aumento del 50% seguito da un calo del 50% riporta al valore iniziale.","Si arriva al 75%: le due percentuali si applicano a basi diverse."],
+				["Matematica","Nel problema di Monty Hall, dopo che una porta è aperta le probabilità sono 50/50.","Cambiando porta si vince con probabilità 2/3, restando con 1/3."],
+				["Matematica","Servono 183 persone per avere il 50% di probabilità di due compleanni uguali.","Ne bastano 23 (paradosso dei compleanni)."],
+				["Lingua","«Qual è» si scrive con l’apostrofo.","Si scrive senza apostrofo, perché è un troncamento e non un’elisione."],
+				["Lingua","Non si può iniziare una frase con «ma», «e» o «però».","È perfettamente corretto, e lo fanno scrittori e grammatici."],
+				["Lingua","L’inglese è la lingua con più madrelingua.","Il cinese mandarino ha molti più madrelingua; l’inglese è però la più parlata in totale, contando chi la usa come seconda lingua."],
+				["Lingua","I dialetti sono italiano parlato male.","I dialetti italiani derivano direttamente dal latino volgare, come l’italiano: sono lingue sorelle, non sue deformazioni."],
+				["Sport e salute","Il dolore muscolare dopo l’allenamento è acido lattico.","Il lattato sparisce in poche ore: il dolore del giorno dopo è dovuto a micro-lesioni e infiammazione."],
+				["Sport e salute","Fare addominali fa dimagrire la pancia.","Non esiste il dimagrimento localizzato: il grasso si perde in modo diffuso."],
+				["Sport e salute","Il muscolo, se non lo si usa, si trasforma in grasso.","Sono tessuti diversi: il muscolo si riduce (atrofia) e il grasso può aumentare, ma uno non diventa l’altro."],
+				["Sport e salute","Sudare elimina le tossine.","Il sudore serve a regolare la temperatura, non a depurare."],
+				["Sport e salute","Lo stretching prima della corsa previene gli infortuni.","Le prove sono deboli; un buon riscaldamento è più utile."],
+				["Sport e salute","Un caffè fa passare la sbornia.","Non riduce l’alcol nel sangue: ti fa solo sentire più sveglio."],
+				["Sport e salute","Mischiare diversi alcolici fa più male.","Conta la quantità totale di alcol: il mal di testa dipende da questa e dalla disidratazione."],
+				["Sport e salute","Lavare il pollo crudo prima di cuocerlo lo rende più sicuro.","Schizzi e gocce diffondono i batteri in cucina: la cottura li elimina."],
+				["Sport e salute","Il cibo caduto per terra è sicuro se lo raccogli entro 5 secondi.","I batteri si trasferiscono quasi subito: dipende da superficie e umidità, non dal tempo."],
+				["Sport e salute","L’abbronzatura protegge la pelle.","È una reazione di difesa al danno da raggi UV: non sostituisce la crema solare."],
+				["Italia","La carbonara tradizionale si fa con la panna.","La ricetta tradizionale prevede guanciale, uova, pecorino e pepe: niente panna, né cipolla o pancetta affumicata."],
+				["Italia","La pizza Margherita fu inventata nel 1889 per la regina Margherita, con i colori della bandiera.","Pizze simili esistevano già: la storia è stata molto abbellita e ricostruita in seguito."],
+				["Italia","Pompei fu distrutta dalla lava del Vesuvio.","Il Vesuvio non emise lava: la città fu sepolta da cenere e lapilli e travolta da flussi piroclastici."],
+				["Italia","Il Vesuvio è un vulcano estinto.","È attivo e in quiescenza: l’ultima eruzione risale al 1944."],
+				["Italia","La Torre di Pisa fu costruita pendente di proposito.","Il terreno cedette già durante la costruzione. Oggi è stata stabilizzata con interventi di ingegneria."],
+				["Italia","Gli spaghetti con le polpette sono un piatto tradizionale italiano.","Sono un piatto italoamericano, nato negli Stati Uniti."],
+				["Italia","Il colpo d’aria e la corrente causano malanni.","I malanni sono causati da virus e batteri: la corrente d’aria non è in sé una causa di malattia."],
+				["Italia","I colori del Tricolore rappresentano fede, speranza e carità.","È un’interpretazione posteriore: i colori derivano dalle insegne repubblicane di fine Settecento."],
+				["Italia","Roma fu fondata da Romolo nel 753 a.C.","È la data tradizionale (leggendaria): l’archeologia mostra una formazione graduale dell’abitato nel tempo."],
+				["Italia","L’olio extravergine d’oliva non si può usare per friggere.","Ha un punto di fumo adatto alla frittura, ed è anzi molto stabile alle alte temperature."],
+				["Italia","Il sale nell’acqua della pasta la fa bollire prima.","Ne altera appena il punto di ebollizione. Serve a dare sapore alla pasta."],
+				["Italia","Il pomodoro è un ortaggio.","In botanica è un frutto (una bacca), anche se in cucina si usa come ortaggio."]
+			];
+
+			var T = [
+				["Curiosità","Il miele non scade.","Se ben conservato resta commestibile per tempi lunghissimi: ne è stato trovato di ancora buono in tombe egizie."],
+				["Curiosità","Cleopatra visse più vicina nel tempo allo sbarco sulla Luna che alla costruzione della Grande Piramide.","La Grande Piramide è del 2560 a.C. circa, Cleopatra visse intorno al 50 a.C. (circa 2500 anni dopo) e lo sbarco sulla Luna è del 1969 (circa 2000 anni dopo)."],
+				["Curiosità","Gli squali esistono da prima degli alberi.","I primi squali risalgono a circa 450 milioni di anni fa, i primi alberi a circa 385."],
+				["Curiosità","L’Università di Oxford è più antica dell’impero azteco.","A Oxford si insegnava già nel 1096; Tenochtitlan fu fondata nel 1325."],
+				["Curiosità","Su Venere un giorno dura più di un anno.","Ruota su se stesso in 243 giorni terrestri e gira intorno al Sole in 225."],
+				["Curiosità","La Russia ha una superficie maggiore di quella di Plutone.","Circa 17,1 milioni di km² contro circa 16,7 milioni."],
+				["Curiosità","La Torre Eiffel è più alta d’estate che d’inverno.","Il ferro si dilata col caldo: la differenza può arrivare a una quindicina di centimetri."],
+				["Curiosità","Il Nilo scorre da sud verso nord.","Nasce nell’Africa centro-orientale e sfocia nel Mediterraneo."],
+				["Curiosità","Gli astronauti sulla ISS diventano più alti.","Senza il peso sulla colonna vertebrale, i dischi si distendono: la crescita può arrivare a qualche centimetro, poi sparisce al ritorno."],
+				["Curiosità","Il Sole è circa 400 volte più grande della Luna ed è circa 400 volte più lontano.","Per questa coincidenza, nelle eclissi totali i due dischi appaiono quasi uguali."],
+				["Animali","I polpi hanno tre cuori.","Due servono per le branchie e uno per il resto del corpo."],
+				["Animali","Le stelle marine non hanno un cervello.","Hanno un sistema nervoso diffuso, ma non un cervello centrale."],
+				["Animali","Le giraffe hanno lo stesso numero di vertebre del collo degli esseri umani.","Ne hanno sette, come quasi tutti i mammiferi, ma molto più lunghe."],
+				["Animali","Gli elefanti non riescono a saltare.","Per la struttura delle zampe e per il peso non possono staccarsi da terra."],
+				["Animali","I wombat producono feci a forma di cubo.","È dovuto alla diversa elasticità delle pareti dell’intestino."],
+				["Animali","Le impronte digitali dei koala sono molto simili a quelle umane.","Sono così simili da poter essere confuse al microscopio."],
+				["Scienza e natura","Le banane sono leggermente radioattive.","Contengono potassio-40, ma in quantità così bassa da essere innocua."],
+				["Scienza e natura","In botanica una banana è una bacca mentre una fragola no.","Una fragola è un falso frutto formato dal ricettacolo, i suoi «semi» sono frutti secchi."],
+				["Scienza e natura","Il ghiaccio galleggia perché l’acqua è più densa a circa 4 °C che a 0 °C.","È un’anomalia dell’acqua: è ciò che permette ai laghi di non congelare dal fondo."],
+				["Scienza e natura","Il cervello umano consuma circa il 20% dell’energia del corpo.","Pesa solo il 2% circa, ma è un organo molto dispendioso."],
+				["Scienza e natura","L’oro è commestibile.","Si usa come additivo alimentare (E175), ma non apporta nutrienti."],
+				["Curiosità","La Città del Vaticano è lo Stato più piccolo del mondo.","Ha una superficie di circa 0,44 km², meno di un decimo di Central Park."]
+			];
+
+			var cat = "Tutti", q = "";
+
+			function esc(s){
+				return s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+			}
+
+			function render(){
+				var h = "", k = 0;
+				D.forEach(function (d){
+					if(cat != "Tutti" && d[0] != cat){
+						return;
+					}
+					if(q && (d[1] + " " + d[2]).toLowerCase().indexOf(q) < 0){
+						return;
+					}
+					k++;
+					h += '<div class="c"><div class="t">' + d[0] + '</div><div class="m">✗ ' + esc(d[1]) + '</div><p class="r"><b>✓ In realtà:</b> ' + esc(d[2]) + '</p></div>';
+				});
+				document.getElementById("list").innerHTML = h || '<p class="sub">Nessun risultato.</p>';
+				document.getElementById("n").textContent = k + " su " + D.length + " miti";
+			}
+
+			var cs = ["Tutti"];
+
+			D.forEach(function (d){
+				if(cs.indexOf(d[0]) < 0){
+					cs.push(d[0]);
+				}
+			});
+
+			var cb = document.getElementById("cats");
+
+			cs.forEach(function (c){
+				var b = document.createElement("button");
+				b.textContent = c;
+				b.onclick = function (){
+					cat = c;
+					Array.prototype.forEach.call(cb.children, function (x){
+						x.className = x == b ? "on" : "";
+					});
+					render();
+				};
+				if(c == "Tutti"){
+					b.className = "on";
+				}
+				cb.appendChild(b);
+			});
+
+			var qz = document.getElementById("quiz"), qs = 0, qn = 0;
+
+			function mode(z){
+				["list", "n", "q"].forEach(function (i){
+					document.getElementById(i).hidden = z;
+				});
+				qz.hidden = !z;
+			}
+
+			Array.prototype.slice.call(cb.children).forEach(function (b){
+				b.addEventListener("click", function (){
+					mode(false);
+				});
+			});
+
+			var qb = document.createElement("button");
+			qb.textContent = "🎯 Quiz vero o falso";
+			qb.onclick = function (){
+				Array.prototype.forEach.call(cb.children, function (x){
+					x.className = x == qb ? "on" : "";
+				});
+				mode(true);
+				nq();
+			};
+			cb.appendChild(qb);
+
+			function score(){
+				return "<p class='sub'>Risposte esatte: " + qs + " su " + qn + "</p>";
+			}
+
+			function nq(){
+				var f = Math.random() < .5,
+					A = f ? D : T,
+					d = A[Math.floor(Math.random() * A.length)],
+					vera = !f;
+				qz.innerHTML = "<div class='c'><div class='t'>" + d[0] + "</div>" +
+					"<div class='m big' style='color:var(--tx)'>«" + esc(d[1]) + "»</div>" +
+					"<p class='sub'>Vera o falsa?</p>" +
+					"<button id='y'>Vera</button><button id='k'>Falsa</button></div>" + score();
+				function ans(v){
+					var ok = v == vera;
+					qn++;
+					if(ok){
+						qs++;
+					}
+					qz.innerHTML = "<div class='c'><div class='t'>" + d[0] + "</div>" +
+						"<div class='m' style='color:var(--tx)'>«" + esc(d[1]) + "»</div>" +
+						"<p class='r'><b style='color:var(--" + (ok ? "ok" : "ko") + ")'>" + (ok ? "✓ Esatto!" : "✗ Sbagliato.") + "</b> " +
+						"Era " + (vera ? "vera" : "falsa") + ". " + (f ? "In realtà: " : "") + esc(d[2]) + "</p>" +
+						"<button id='nx'>Prossima</button></div>" + score();
+					document.getElementById("nx").onclick = nq;
+				}
+				document.getElementById("y").onclick = function (){
+					ans(true);
+				};
+				document.getElementById("k").onclick = function (){
+					ans(false);
+				};
+			}
+
+			document.getElementById("q").oninput = function () {
+				q = this.value.toLowerCase().trim();
+				render();
+			};
+
+			render();
+		</script>
+	</body>
+</html>
