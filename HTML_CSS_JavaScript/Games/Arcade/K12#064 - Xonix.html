@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="it"><!--K12#064 - Alessandro - Xonix-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<title>Xonix</title>
+		<style>
+			*{
+				box-sizing: border-box;
+				-webkit-tap-highlight-color: transparent;
+				user-select: none;
+				-webkit-user-select: none;
+			}
+			html, body{
+				margin: 0;
+				height: 100%;
+				background: #05050f;
+				color: #fff;
+				font-family: "Courier New", monospace;
+				overflow: hidden;
+				touch-action: none;
+				overscroll-behavior: none;
+			}
+			body{
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: flex-start;
+			}
+			#hud{
+				display: flex;
+				gap: 4px 12px;
+				justify-content: center;
+				align-items: center;
+				padding: 5px 4px;
+				font-size: 13px;
+				color: #ffd34d;
+				flex-wrap: wrap;
+			}
+			#hud span{
+				white-space: nowrap;
+			}
+			#hud b{
+				color: #fff;
+			}
+			#hud button{
+				background: #1a2266;
+				border: 1px solid #3b4cff;
+				color: #fff;
+				border-radius: 6px;
+				font-size: 14px;
+				padding: 2px 9px;
+				line-height: 1.3;
+				font-family: inherit;
+				cursor: pointer;
+			}
+			#wrap{
+				position: relative;
+				width: 100%;
+				max-width: 960px;
+				aspect-ratio: 480/360;
+			}
+			canvas{
+				width: 100%;
+				height: 100%;
+				display: block;
+				image-rendering: pixelated;
+				border: 2px solid #3b4cff;
+				background: #000;
+				touch-action: none;
+			}
+			#msg{
+				position: absolute;
+				inset: 0;
+				display: flex;
+				background: rgba(0, 0, 20, .78);
+				text-align: center;
+				padding: 10px;
+				cursor: pointer;
+				overflow-y: auto;
+			}
+			#msg .in{
+				margin: auto;
+			}
+			#msg h1{
+				margin: 0 0 8px;
+				font-size: clamp(24px, 6vw, 48px);
+				color: #ffd34d;
+				letter-spacing: 4px;
+			}
+			#msg p{
+				margin: 4px;
+				font-size: clamp(11px, 2.4vw, 16px);
+			}
+			#pad{
+				display: none;
+				width: 100%;
+				max-width: 480px;
+				padding: 8px 16px;
+				justify-content: space-between;
+				align-items: center;
+			}
+			@media (pointer: coarse){
+				#pad{
+					display: flex;
+				}
+			}
+			#dpad{
+				display: grid;
+				grid-template-columns: repeat(3, 56px);
+				grid-template-rows: repeat(3, 56px);
+				gap: 4px;
+				touch-action: none;
+			}
+			#dpad button, .act{
+				background: #1a2266;
+				border: 2px solid #3b4cff;
+				color: #fff;
+				font-size: 22px;
+				border-radius: 10px;
+				touch-action: none;
+			}
+			#dpad button{
+				pointer-events: none;
+			}
+			#pad.cpad{
+				justify-content: center;
+			}
+			#acts{
+				display: flex;
+				gap: 10px;
+			}
+			.act{
+				width: 80px;
+				height: 80px;
+				border-radius: 50%;
+				font-size: 13px;
+				font-weight: bold;
+				font-family: inherit;
+				background: #6a1a1a;
+				border-color: #ff4d4d;
+			}
+			.act[data-k="slow"]{
+				background: #5a3a10;
+				border-color: #ffb84d;
+			}
+			.on{
+				background: #3b4cff !important;
+			}
+			.act.on{
+				background: #ff4d4d !important;
+			}
+			@media (pointer: coarse) and (orientation: landscape) and (max-height: 520px){
+				#pad{
+					position: fixed;
+					left: 0;
+					right: 0;
+					bottom: 6px;
+					max-width: none;
+					padding: 0 18px;
+					pointer-events: none;
+					opacity: .8;
+				}
+				#pad.cpad{
+					justify-content: flex-start;
+				}
+				#dpad, .act{
+					pointer-events: auto;
+				}
+				#hud{
+					padding: 2px;
+					font-size: 12px;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div id="hud">
+			<span>LIVELLO <b id="lv">1</b></span>
+			<span>PUNTI <b id="sc">0</b></span>
+			<span>VITE <b id="li">3</b></span>
+			<span>AREA <b id="pc">0</b>% / 75%</span>
+			<span>RECORD <b id="hi">0</b></span>
+			<button id="bp" type="button" tabindex="-1" title="Pausa (P)">&#9208;</button>
+			<button id="bm" type="button" tabindex="-1" title="Audio (M)">&#128266;</button>
+		</div>
+		<div id="wrap">
+			<canvas id="c" width="480" height="360"></canvas>
+			<div id="msg">
+				<div class="in">
+					<h1>XONIX</h1>
+					<p>Conquista almeno il 75% del campo trasformando il mare in terra.</p>
+					<p>Sulla terra ti muovi con le frecce / WASD; entrando in mare lasci una scia gialla e il cursore avanza da solo: cambia direzione con le frecce (non puoi tornare indietro).</p>
+					<p>Quando ritorni sulla terra, le zone di mare chiuse dalla scia che non contengono palle diventano terra.</p>
+					<p>Muori se una palla bianca tocca la scia, se tocchi la tua scia, o se una palla nera (mangiaterra) ti raggiunge mentre sei sulla terra.</p>
+					<p>P pausa &middot; M audio.</p>
+					<p><b>Tocca o premi Invio per iniziare</b></p>
+				</div>
+			</div>
+		</div>
+		<div id="pad" class="cpad">
+			<div id="dpad">
+				<span></span><button data-d="0,-1">▲</button><span></span>
+				<button data-d="-1,0">◀</button><span></span><button data-d="1,0">▶</button>
+				<span></span><button data-d="0,1">▼</button><span></span>
+			</div>
+		</div>
+		<script>
+			(function () {
+				"use strict";
+				var KEY = "xonix";
+				var KEYBTN = {};
+				var ASPECT = 480/360;
+				var $ = function (id){return document.getElementById(id);};
+				var cv = $("c"), ctx = cv.getContext("2d");
+				var state = "menu", level = 1, score = 0, lives = 3, pct = 0, hi = 0, muted = false, onOk = null, shownAt = 0, banner = 0, deadT = 0, AC = null, popups = [], parts = [], flashA = 0, tick = 0;
+				var keys = [], touchDir = null, btn = {}, dirHook = null;
+				function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+				function lsSet(k, v){try{localStorage.setItem(k, v);}catch(e){}}
+				hi = +lsGet(KEY + "_hi") || 0; muted = lsGet(KEY + "_mute") === "1";
+				function saveHi(){
+					if(score > hi){
+						hi = score;
+						lsSet(KEY + "_hi", String(hi));
+					}
+				}
+				function ac(){
+					if(!AC){
+						try{
+							AC = new (window.AudioContext || window.webkitAudioContext)();
+						}catch(e){
+							AC = false;
+						}
+					}
+					if(AC && AC.state === "suspended"){
+						AC.resume();
+					}
+					return AC;
+				}
+				function snd(f, d, type, v, f2, delay){
+					if(muted){
+						return;
+					}
+					var a = ac();
+					if(!a){
+						return;
+					}
+					var t = a.currentTime + (delay || 0), o = a.createOscillator(), gn = a.createGain();
+					o.type = type || "square";
+					o.frequency.setValueAtTime(f, t);
+					if(f2){
+						o.frequency.exponentialRampToValueAtTime(f2, t + d);
+					}
+					gn.gain.setValueAtTime(v || .05, t);
+					gn.gain.exponentialRampToValueAtTime(.0001, t + d);
+					o.connect(gn);
+					gn.connect(a.destination);
+					o.start(t);
+					o.stop(t + d + .02);
+				}
+				function burst(x, y){
+					for(var i = 0; i < 30; i++){
+						var a = Math.random()*6.283, s = .6 + Math.random()*2.6;
+						parts.push({x: x, y: y, vx: Math.cos(a)*s, vy: Math.sin(a)*s, l: 30 + Math.random()*30, h: 10 + Math.random()*50});
+					}
+				}
+				function stepFx(){
+					var i, p;
+					for(i = parts.length - 1; i >= 0; i--){
+						p = parts[i];
+						p.x += p.vx;
+						p.y += p.vy;
+						p.vx *= .96;
+						p.vy *= .96;
+						if(--p.l <= 0){
+							parts.splice(i, 1);
+						}
+					}
+					for(i = popups.length - 1; i >= 0; i--){
+						p = popups[i];
+						p.y -= .5;
+						if(--p.l <= 0){
+							popups.splice(i, 1);
+						}
+					}
+					if(flashA > 0){
+						flashA = Math.max(0, flashA - .03);
+					}
+					if(banner > 0){
+						banner--;
+					}
+				}
+				function drawFx(){
+					var i;
+					for(i = 0; i < parts.length; i++){
+						var pp = parts[i];
+						ctx.fillStyle = "hsla(" + pp.h + ",100%,65%," + Math.min(1, pp.l/25) + ")";
+						ctx.fillRect(pp.x - 1.5, pp.y - 1.5, 3, 3);
+					}
+					ctx.font = "bold 14px monospace";
+					ctx.textAlign = "center";
+					ctx.lineWidth = 3;
+					ctx.strokeStyle = "#000";
+					ctx.fillStyle = "#fff";
+					for(i = 0; i < popups.length; i++){
+						var pu = popups[i], pux = Math.max(40, Math.min(cv.width - 40, pu.x));
+						ctx.globalAlpha = Math.min(1, pu.l/25);
+						ctx.strokeText(pu.t, pux, pu.y);
+						ctx.fillText(pu.t, pux, pu.y);
+					}
+					ctx.globalAlpha = 1;
+					if(banner > 0){
+						ctx.globalAlpha = Math.min(1, banner/40);
+						ctx.fillStyle = "#ffd34d";
+						ctx.strokeStyle = "#000";
+						ctx.lineWidth = 4;
+						ctx.font = "bold 30px monospace";
+						ctx.textAlign = "center";
+						ctx.strokeText("LIVELLO " + level, cv.width/2, cv.height/2 - 10);
+						ctx.fillText("LIVELLO " + level, cv.width/2, cv.height/2 - 10);
+						ctx.globalAlpha = 1;
+					}
+				}
+				function hud(){
+					$("lv").textContent = level;
+					$("sc").textContent = score;
+					$("li").textContent = lives;
+					if($("pc")){
+						$("pc").textContent = pct;
+					}
+					$("hi").textContent = Math.max(hi, score);
+				}
+				function show(t, a, b, act){
+					var m = $("msg");
+					m.innerHTML = "<div class=\"in\"><h1>" + t + "</h1><p>" + a + "</p><p><b>" + b + "</b></p></div>";
+					m.style.display = "flex";
+					onOk = act;
+					shownAt = Date.now();
+				}
+				function go(){
+					if(Date.now() - shownAt < 450){
+						return;
+					}
+					if(state === "menu" || onOk === "restart"){
+						level = 1;
+						score = 0;
+						lives = 3;
+						newLevel();
+						banner = 150;
+						ac();
+					}else if(onOk === "next"){
+						level++;
+						newLevel();
+						banner = 150;
+					}
+					onOk = null;
+					$("msg").style.display = "none";
+					state = "play";
+				}
+				function pauseGame(){
+					if(state !== "play"){
+						return;
+					}
+					releaseInputs();
+					state = "pause";
+					show("PAUSA", "Gioco in pausa", "Tocca o premi P per riprendere", "resume");
+				}
+				$("msg").addEventListener("pointerdown", function (e){e.preventDefault(); if(state === "menu" || state === "msg" || state === "over" || state === "pause"){go();}});
+				function toggleMute(){
+					muted = !muted; lsSet(KEY + "_mute", muted ? "1" : "0");
+					$("bm").innerHTML = muted ? "&#128263;" : "&#128266;";
+					if(!muted){
+						snd(660, .08, "square", .05);
+					}
+				}
+				function hudBtn(id, fn){
+					var b = $(id);
+					b.addEventListener("mousedown", function (e){e.preventDefault();});
+					b.addEventListener("click", function (){fn(); b.blur();});
+				}
+				function fit(){
+					var pad = $("pad"), ph = 0;
+					if(pad){
+						var cs = getComputedStyle(pad);
+						ph = (cs.display !== "none" && cs.position !== "fixed") ? pad.offsetHeight : 0;
+					}
+					var avail = window.innerHeight - $("hud").offsetHeight - ph - 6;
+					$("wrap").style.width = Math.max(160, Math.min(window.innerWidth, avail*ASPECT, 960)) + "px";
+				}
+				function curDir(){
+					return keys.length ? keys[keys.length - 1] : touchDir;
+				}
+				var KM = {ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0], w: [0, -1], s: [0, 1], a: [-1, 0], d: [1, 0], W: [0, -1], S: [0, 1], A: [-1, 0], D: [1, 0]};
+				addEventListener("keydown", function (e){
+					var k = e.key, kn = KEYBTN[k];
+					if(KM[k]){
+						e.preventDefault();
+						for(var i = keys.length - 1; i >= 0; i--){
+							if(keys[i] === KM[k]){
+								keys.splice(i, 1);
+							}
+						}
+						keys.push(KM[k]);
+						if(!e.repeat && dirHook){
+							dirHook(KM[k]);
+						}
+					}else if(kn){
+						e.preventDefault();
+						if(!btn[kn]){
+							btn[kn] = true;
+							onBtn(kn, true);
+						}
+						if(state === "menu"){
+							go();
+						}
+					}else if(k === "p" || k === "P" || k === "Escape"){
+						if(state === "play"){
+							pauseGame();
+						}else if(state === "pause"){
+							go();
+						}
+					}else if((k === "m" || k === "M") && !e.repeat){
+						toggleMute();
+					}
+					if(k === "Enter" && (state === "menu" || state === "msg" || state === "over" || state === "pause")){
+						go();
+					}
+				});
+				addEventListener("keyup", function (e){
+					var kn = KEYBTN[e.key];
+					if(KM[e.key]){
+						var i = keys.indexOf(KM[e.key]);
+						if(i >= 0){
+							keys.splice(i, 1);
+						}
+					}else if(kn && btn[kn]){
+						btn[kn] = false;
+						onBtn(kn, false);
+					}
+				});
+				function releaseInputs(){
+					keys.length = 0;
+					btn = {};
+					touchDir = null;
+					Array.prototype.forEach.call(document.querySelectorAll("#dpad button, .act"), function (b) {b.classList.remove("on");});
+				}
+				function lostFocus(){
+					releaseInputs();
+					pauseGame();
+				}
+				addEventListener("blur", lostFocus);
+				document.addEventListener("visibilitychange", function (){if(document.hidden){lostFocus();}});
+				var dp = $("dpad"), dbtn = dp ? dp.querySelectorAll("button") : [], dpId = null;
+				function dpClear(){
+					touchDir = null;
+					Array.prototype.forEach.call(dbtn, function (b){b.classList.remove("on");});
+				}
+				function dpSet(e){
+					var r = dp.getBoundingClientRect(), dx = e.clientX - (r.left + r.width/2), dy = e.clientY - (r.top + r.height/2), d = null;
+					if(Math.hypot(dx, dy) > 14){
+						d = Math.abs(dx) > Math.abs(dy) ? [dx > 0 ? 1 : -1, 0] : [0, dy > 0 ? 1 : -1];
+					}
+					var prevD = touchDir;
+					touchDir = d;
+					if(d && dirHook && (!prevD || prevD[0] !== d[0] || prevD[1] !== d[1])){
+						dirHook(d);
+					}
+					Array.prototype.forEach.call(dbtn, function (b){b.classList.toggle("on", !!d && b.dataset.d === d[0] + "," + d[1]);});
+				}
+				if(dp){
+					dp.addEventListener("pointerdown", function (e){e.preventDefault(); dpId = e.pointerId; try{dp.setPointerCapture(e.pointerId);}catch(x){} dpSet(e);});
+					dp.addEventListener("pointermove", function (e){if(e.pointerId === dpId){dpSet(e);}});
+					["pointerup", "pointercancel", "lostpointercapture"].forEach(function (ev) {
+						dp.addEventListener(ev, function (e){if(e.pointerId === dpId){dpId = null; dpClear();}});
+					});
+				}
+				Array.prototype.forEach.call(document.querySelectorAll(".act"), function (b){
+					var k = b.dataset.k;
+					b.addEventListener("pointerdown", function (e){e.preventDefault(); try{b.setPointerCapture(e.pointerId);}catch(x){} if(!btn[k]){btn[k] = true; onBtn(k, true);} b.classList.add("on");});
+					["pointerup", "pointercancel", "lostpointercapture", "pointerleave"].forEach(function (ev){
+						b.addEventListener(ev, function (){if (btn[k]){btn[k] = false; onBtn(k, false);} b.classList.remove("on");});
+					});
+				});
+				addEventListener("contextmenu", function (e){e.preventDefault();});
+				addEventListener("resize", fit); addEventListener("orientationchange", fit);
+				var last = 0, acc = 0;
+				function loop(t){
+					acc += Math.min(t - last, 100);
+					last = t;
+					while(acc >= 16.67){
+						acc -= 16.67;
+						if(state === "pause"){
+							continue;
+						}
+						stepFx();
+						if(state === "dead"){
+							if(--deadT <= 0){
+								afterDeath();
+								state = "play";
+							}
+						}else if(state === "play"){
+							stepGame();
+						}
+					}
+					renderGame();
+					requestAnimationFrame(loop);
+				}
+				var W = 80, H = 60, C = 6, TARGET = 75, BAND = 2;
+				var grid = new Uint8Array(W*H);// 0 mare, 1 terra, 2 scia
+				var landC = document.createElement("canvas"); landC.width = 480; landC.height = 360;
+				var landX = landC.getContext("2d");
+				var seaC = document.createElement("canvas"); seaC.width = 480; seaC.height = 360;
+				var px = 0, py = 0, dir = null, inSea = false, trail = [], seaBalls = [], landBalls = [], moveT = 0;
+				function onBtn(){}
+				function initGame(){}
+				function cell(x, y){
+					return (x < 0 || y < 0 || x >= W || y >= H) ? -1 : grid[y*W + x];
+				}
+				function makeSea(){
+					var s = seaC.getContext("2d"), i, hue = 205 + ((level - 1)*17)%120;
+					var gr = s.createLinearGradient(0, 0, 0, 360);
+					gr.addColorStop(0, "hsl(" + hue + ",70%,8%)");
+					gr.addColorStop(1, "hsl(" + (hue + 20) + ",75%,16%)");
+					s.fillStyle = gr; s.fillRect(0, 0, 480, 360);
+					s.strokeStyle = "hsla(" + hue + ",80%,55%,.12)";
+					s.lineWidth = 1;
+					for(i = 0; i < 40; i++){
+						var wy = Math.random()*360, wx = Math.random()*480;
+						s.beginPath();
+						s.moveTo(wx, wy);
+						s.quadraticCurveTo(wx + 12, wy - 4, wx + 24, wy);
+						s.quadraticCurveTo(wx + 36, wy + 4, wx + 48, wy);
+						s.stroke();
+					}
+				}
+				function drawLand(){
+					var lc = landX, x, y, hue = 205 + ((level - 1)*17)%120;
+					lc.clearRect(0, 0, 480, 360);
+					for(y = 0; y < H; y++){
+						for(x = 0; x < W; x++){
+							if(grid[y*W + x] !== 1){
+								continue;
+							}
+							var t = ((x*7 + y*13)%5)*2;
+							lc.fillStyle = "hsl(" + hue + ",62%," + (46 + t) + "%)";
+							lc.fillRect(x*C, y*C, C, C);
+							lc.fillStyle = "rgba(255,255,255,.35)";
+							lc.fillRect(x*C, y*C, C, 1);
+							lc.fillRect(x*C, y*C, 1, C);
+							lc.fillStyle = "rgba(0,0,40,.45)";
+							lc.fillRect(x*C, y*C + C - 1, C, 1);
+							lc.fillRect(x*C + C - 1, y*C, 1, C);
+						}
+					}
+				}
+				function calcPct(){
+					var n = 0;
+					for(var y = BAND; y < H - BAND; y++){
+						for(var x = BAND; x < W - BAND; x++){
+							if(grid[y*W + x] === 1){
+								n++;
+							}
+						}
+					}
+					pct = Math.floor(n*100/((W - 2*BAND)*(H - 2*BAND)));
+				}
+				function newLevel(){
+					grid.fill(0);
+					for(var y = 0; y < H; y++){
+						for(var x = 0; x < W; x++){
+							if(x < BAND || y < BAND || x >= W - BAND || y >= H - BAND){
+								grid[y*W + x] = 1;
+							}
+						}
+					}
+					seaBalls = [];
+					landBalls = [];
+					var ns = Math.min(level + 1, 9), nl = Math.min(1 + ((level - 1)/3|0), 3), i;
+					for(i = 0; i < ns; i++){
+						seaBalls.push({x: 6 + (Math.random()*(W - 12) | 0), y: 6 + (Math.random()*(H - 12) | 0), dx: Math.random() < .5 ? 1 : -1, dy: Math.random() < .5 ? 1 : -1});
+					}
+					for(i = 0; i < nl; i++){
+						landBalls.push({x: 8 + i*20, y: 1, dx: i%2 ? -1 : 1, dy: 1});
+					}
+					resetPlayer();
+					makeSea();
+					drawLand();
+					calcPct();
+					popups = [];
+					parts = [];
+					flashA = 0;
+					tick = 0;
+					hud();
+					fit();
+				}
+				function resetPlayer(){
+					px = W >> 1;
+					py = H - 1;
+					dir = null;
+					inSea = false;
+					trail = [];
+					moveT = 0;
+				}
+				function afterDeath(){
+					resetPlayer();
+				}
+				function die(){
+					if(state !== "play"){
+						return;
+					}
+					lives--;
+					hud();
+					snd(320, .55, "sawtooth", .07, 40);
+					burst(px*C + C/2, py*C + C/2);
+					for(var i = 0; i < trail.length; i++){
+						grid[trail[i]] = 0;
+					}
+					trail = [];
+					inSea = false;
+					dir = null;
+					if(lives <= 0){
+						saveHi();
+						hud();
+						state = "over";
+						show("GAME OVER", "Punteggio: " + score + " &mdash; Record: " + hi, "Tocca o premi Invio per ricominciare", "restart");
+						return;
+					}
+					state = "dead";
+					deadT = 54;
+				}
+				function closeTrail(){
+					var i, k, gained = 0, vis = new Uint8Array(W*H), st = [];
+					for(i = 0; i < trail.length; i++){
+						grid[trail[i]] = 1;
+						gained++;
+					}
+					trail = [];
+					seaBalls.forEach(function (b){var id = b.y*W + b.x; if(grid[id] === 0 && !vis[id]){vis[id] = 1; st.push(id);}});
+					while(st.length){
+						var c = st.pop(), cx = c%W, cy = (c/W)|0;
+						for(k = 0; k < 4; k++){
+							var nx = cx + [1, -1, 0, 0][k], ny = cy + [0, 0, 1, -1][k];
+							if(nx < 0 || ny < 0 || nx >= W || ny >= H){
+								continue;
+							}
+							var ni = ny*W + nx;
+							if(grid[ni] === 0 && !vis[ni]){
+								vis[ni] = 1;
+								st.push(ni);
+							}
+						}
+					}
+					for(i = 0; i < W*H; i++){
+						if(grid[i] === 0 && !vis[i]){
+							grid[i] = 1;
+							gained++;
+						}
+					}
+					var pts = gained*10;
+					score += pts;
+					popups.push({x: px*C + C/2, y: py*C - 8, t: "+" + pts, l: 70});
+					snd(440, .08, "square", .05, 660);
+					snd(660, .1, "square", .05, 880, .07);
+					drawLand();
+					calcPct();
+					hud();
+					if(pct >= TARGET){
+						state = "msg";
+						score += (pct - TARGET + 1)*500;
+						saveHi();
+						hud();
+						snd(523, .12, "square", .06);
+						snd(659, .12, "square", .06, 0, .12);
+						snd(784, .12, "square", .06, 0, .24);
+						snd(1047, .3, "triangle", .07, 0, .36);
+						show("LIVELLO COMPLETATO", "Terra conquistata: " + pct + "%", "Tocca o premi Invio per il livello successivo", "next");
+					}
+				}
+				function stepPlayer(){
+					var d = curDir();
+					if(inSea){
+						if(d && !(dir && d[0] === -dir[0] && d[1] === -dir[1])){
+							dir = d;
+						}
+					}else{
+						dir = d;
+					}
+					if(!dir){
+						return;
+					}
+					var nx = px + dir[0], ny = py + dir[1], v = cell(nx, ny), i;
+					if(v < 0){
+						if(!inSea){
+							dir = null;
+						}
+						return;
+					}
+					if(v === 2){
+						die();
+						return;
+					}
+					for(i = 0; i < seaBalls.length; i++){
+						if(seaBalls[i].x === nx && seaBalls[i].y === ny){
+							die();
+							return;
+						}
+					}
+					if(v === 0){
+						grid[ny*W + nx] = 2;
+						trail.push(ny * W + nx);
+						px = nx;
+						py = ny;
+						inSea = true;
+					}else{
+						px = nx;
+						py = ny;
+						if(inSea){
+							inSea = false;
+							dir = null;
+							closeTrail();
+						}
+					}
+				}
+				function solid(kind, x, y){
+					var v = cell(x, y);
+					return kind === 0 ? (v === 1 || v < 0) : (v !== 1);
+				}
+				function ballStep(b, kind){
+					var nx = b.x + b.dx, ny = b.y + b.dy;
+					if(kind === 0 && (cell(nx, b.y) === 2 || cell(b.x, ny) === 2 || cell(nx, ny) === 2)){
+						die();
+						return;
+					}
+					var bx = solid(kind, nx, b.y), by = solid(kind, b.x, ny), bd = solid(kind, nx, ny);
+					if(bx){
+						b.dx = -b.dx;
+					}
+					if(by){
+						b.dy = -b.dy;
+					}
+					if(!bx && !by && bd){
+						b.dx = -b.dx;
+						b.dy = -b.dy;
+					}
+					nx = b.x + b.dx;
+					ny = b.y + b.dy;
+					if(!solid(kind, nx, ny)){
+						b.x = nx;
+						b.y = ny;
+					}
+				}
+				function stepGame(){
+					tick++;
+					moveT++;
+					if(moveT < 3){
+						return;
+					}
+					moveT = 0;
+					stepPlayer();
+					if(state !== "play"){
+						return;
+					}
+					var i;
+					for(i = 0; i < seaBalls.length && state === "play"; i++){
+						ballStep(seaBalls[i], 0);
+					}
+					for(i = 0; i < landBalls.length && state === "play"; i++){
+						ballStep(landBalls[i], 1);
+					}
+					if(state === "play" && !inSea){
+						for(i = 0; i < landBalls.length; i++){
+							if(Math.abs(landBalls[i].x - px) + Math.abs(landBalls[i].y - py) <= 1){
+								die();
+								return;
+							}
+						}
+					}
+				}
+				function ball(x, y, r, c0, c1, rim){
+					var gr = ctx.createRadialGradient(x - r*.35, y - r*.35, r*.1, x, y, r);
+					gr.addColorStop(0, c0);
+					gr.addColorStop(1, c1);
+					ctx.fillStyle = gr;
+					ctx.beginPath();
+					ctx.arc(x, y, r, 0, 7);
+					ctx.fill();
+					ctx.strokeStyle = rim;
+					ctx.lineWidth = 1.4;
+					ctx.stroke();
+				}
+				function renderGame(){
+					var i, now = Date.now();
+					ctx.drawImage(seaC, 0, 0);
+					ctx.drawImage(landC, 0, 0);
+					ctx.fillStyle = "#ffe14a";
+					for(i = 0; i < trail.length; i++){
+						ctx.fillRect((trail[i]%W)*C, ((trail[i]/W)|0)*C, C, C);
+					}
+					for(i = 0; i < seaBalls.length; i++){
+						ball(seaBalls[i].x*C + C/2, seaBalls[i].y*C + C/2, C*1.15, "#ffffff", "#7aa0d0", "#cfe4ff");
+					}
+					for(i = 0; i < landBalls.length; i++){
+						var lb = landBalls[i], lx = lb.x*C + C/2, ly = lb.y*C + C/2;
+						ball(lx, ly, C*1.2, "#555", "#000", "#ff3b3b");
+						ctx.fillStyle = "#ff3b3b";
+						ctx.fillRect(lx - 3, ly - 1.5, 2, 3);
+						ctx.fillRect(lx + 1, ly - 1.5, 2, 3);
+					}
+					if(state !== "dead" || (now >> 7)%2){
+						ctx.fillStyle = "#fff";
+						ctx.fillRect(px*C - 1, py*C - 1, C + 2, C + 2);
+						ctx.fillStyle = "#e22";
+						ctx.fillRect(px*C + 1, py*C + 1, C - 2, C - 2);
+					}
+					drawFx();
+				}
+				hudBtn("bp", function (){if(state === "play"){pauseGame();}else if(state === "pause"){go();}});
+				hudBtn("bm", toggleMute);
+				$("bm").innerHTML = muted ? "&#128263;" : "&#128266;";
+				initGame();
+				newLevel();
+				state = "menu";
+				hud();
+				fit();
+				requestAnimationFrame(loop);
+			})();
+		</script>
+	</body>
+</html>
