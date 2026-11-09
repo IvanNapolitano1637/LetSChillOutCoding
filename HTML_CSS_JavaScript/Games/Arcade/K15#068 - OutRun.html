@@ -57,7 +57,6 @@
 			c.width = W;
 			c.height = H;
 			const K = {}, R = Math.random, CC = ['#25f', '#fd0', '#fff', '#0c6', '#f80', '#c3f'];
-			const AUTO = matchMedia('(pointer:coarse)').matches;
 			let crash = 0, crSide = 1, inv = 0, TK = 0, mOn = false, mStep = 0, mNext = 0, mTimer = 0, mute = false, MG, NB, cdn = 0, AC, OS, st = 0, pos = 0, sp = 0, px = 0, tm = 0, sc = 0, stg = 1, cars = [], bg = 0, msg = '', mt = 0, shake = 0, nextCp = 0, hi = 0;
 			const cv = p => Math.sin(p/1700)*1.1 + Math.sin(p/650)*.6 + Math.sin(p/310)*.15;
 			const nc = p => ({p: p + R()*100, x: [-.6, 0, .6][R()*3|0], v: 50 + R()*70, c: CC[R()*6|0]});
@@ -317,7 +316,7 @@
 				}else{
 					const gas = K.ArrowUp || K[' '] || K.z || K.w, br = K.ArrowDown || K.x || K.s, L = K.ArrowLeft || K.a, Rt = K.ArrowRight || K.d;
 					const off = Math.abs(px) > 1.15;
-					if(gas || AUTO){
+					if(gas){
 						sp += 130*dt;
 					}else{
 						sp -= 40*dt;
