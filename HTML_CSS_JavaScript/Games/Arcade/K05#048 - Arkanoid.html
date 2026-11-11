@@ -47,12 +47,84 @@
 			#pa{
 				right: calc(54px + env(safe-area-inset-right, 0px))
 			}
+			#sb{
+				position: fixed;
+				left: 0;
+				bottom: 0;
+				width: 0;
+				height: env(safe-area-inset-bottom, 0px);
+				visibility: hidden;
+				pointer-events: none
+			}
+			#tp,
+			#fb{
+				position: fixed;
+				display: none;
+				box-sizing: border-box;
+				border-radius: 14px;
+				touch-action: none;
+				user-select: none;
+				-webkit-user-select: none
+			}
+			#tp{
+				border: 1px solid rgba(255, 255, 255, .35);
+				background: rgba(255, 255, 255, .07)
+			}
+			#tp::before{
+				content: "";
+				position: absolute;
+				left: 18px;
+				right: 18px;
+				top: 50%;
+				height: 4px;
+				margin-top: -2px;
+				border-radius: 2px;
+				background: rgba(255, 255, 255, .18)
+			}
+			#th{
+				position: absolute;
+				left: 0;
+				right: 0;
+				top: 3px;
+				text-align: center;
+				color: #fff;
+				opacity: .4;
+				font: 10px "Courier New", Courier, monospace;
+				pointer-events: none
+			}
+			#kn{
+				position: absolute;
+				top: 50%;
+				left: 0;
+				width: 68px;
+				height: 38px;
+				margin-top: -19px;
+				border-radius: 10px;
+				background: linear-gradient(90deg, #e03030 0, #e03030 14px, #c8c8d8 14px, #c8c8d8 calc(100% - 14px), #e03030 calc(100% - 14px));
+				box-shadow: 0 2px 6px rgba(0, 0, 0, .6);
+				pointer-events: none;
+				will-change: transform
+			}
+			#fb{
+				align-items: center;
+				justify-content: center;
+				border: 2px solid rgba(255, 255, 255, .5);
+				background: rgba(232, 48, 48, .35);
+				color: #fff;
+				font: bold 18px "Courier New", Courier, monospace
+			}
+			#fb.dn{
+				background: rgba(232, 48, 48, .8)
+			}
 		</style>
 	</head>
 	<body>
 		<canvas id="c"></canvas>
 		<div class="ib" id="pa">&#10074;&#10074;</div>
 		<div class="ib" id="mu">&#128266;</div>
+		<div id="sb"></div>
+		<div id="tp"><div id="th">&#9664; TRASCINA &#9654;</div><div id="kn"></div></div>
+		<div id="fb">INIZIA</div>
 		<script>
 			(() => {
 				const cv = document.getElementById('c'), g = cv.getContext('2d');
@@ -62,14 +134,47 @@
 				const GW = 480, GH = 640, WL = 10, WR = 470, WT = 50, BW = 40, BH = 18, BR = 6, PH = 14, PY = 592, BY0 = 90;
 				let sc = 1, ox = 0, oy = 0, DPR = 1;
 
+				const tp = document.getElementById('tp'), kn = document.getElementById('kn'), fb = document.getElementById('fb'), sbp = document.getElementById('sb');
+				const KW = 68;
+				let ctlOn = false, tpw = 1, fbTxt = '';
+
+				function put(el, o){
+					el.style.left = o.l || 'auto';
+					el.style.right = o.r || 'auto';
+					el.style.top = o.t || 'auto';
+					el.style.bottom = o.b || 'auto';
+					el.style.width = o.w || 'auto';
+					el.style.height = o.h || 'auto';
+					el.style.display = 'flex'
+				}
+
 				function rs(){
 					DPR = Math.min(devicePixelRatio || 1, 2);
 					const w = innerWidth, h = innerHeight;
 					cv.width = w*DPR;
 					cv.height = h*DPR;
-					sc = Math.min(w/GW, h/GH);
+					let ah = h;
+					ctlOn = coarse;
+					if(coarse){
+						const fs = Math.min(w/GW, h/GH), sw = (w - GW*fs)/2, sbh = sbp.offsetHeight;
+						const iL = 'env(safe-area-inset-left, 0px)', iR = 'env(safe-area-inset-right, 0px)', iB = 'env(safe-area-inset-bottom, 0px)';
+						if(w > h && sw >= 100){
+							const pw2 = Math.floor(sw - 16);
+							put(tp, {l: 'calc(8px + ' + iL + ')', h: '76px', b: 'calc(8px + ' + iB + ')', w: 'calc(' + pw2 + 'px - ' + iL + ')'});
+							put(fb, {r: 'calc(8px + ' + iR + ')', h: '76px', b: 'calc(8px + ' + iB + ')', w: 'calc(' + pw2 + 'px - ' + iR + ')'});
+						}else{
+							const ch = Math.round(Math.max(84, Math.min(100, h*.12))), bh = ch - 16, fw = Math.round(Math.max(84, Math.min(120, w*.25)));
+							ah = h - ch - sbh;
+							put(tp, {l: 'calc(8px + ' + iL + ')', r: 'calc(' + (16 + fw) + 'px + ' + iR + ')', b: 'calc(8px + ' + iB + ')', h: bh + 'px'});
+							put(fb, {r: 'calc(8px + ' + iR + ')', b: 'calc(8px + ' + iB + ')', w: fw + 'px', h: bh + 'px'});
+						}
+						tpw = Math.max(KW + 1, tp.clientWidth)
+					}else{
+						tp.style.display = fb.style.display = 'none'
+					}
+					sc = Math.min(w/GW, ah/GH);
 					ox = (w - GW*sc)/2;
-					oy = (h - GH*sc)/2;
+					oy = ah < h && w <= h ? ah - GH*sc - 4 : (ah - GH*sc)/2;
 				}
 
 				addEventListener('resize', rs);
@@ -124,14 +229,42 @@
 					["ooooooooooo", "c.c.c.c.c.c", "ggggggggggg", "r.r.r.r.r.r", "bbbbbbbbbbb", "...........", "G.........G"],
 					[".....y.....", "....ygy....", "...ygrgy...", "..ygrbrgy..", ".ygrbmbrgy.", "SSSSSSSSSSS", "..ygrbrgy..", "...ygrgy...", "....ygy....", "....GGG...."],
 					["S.r.g.b.m.S", "S.r.g.b.m.S", "S.r.g.b.m.S", "G.y.o.c.w.G", "G.y.o.c.w.G", "...........", "wwwwwwwwwww"],
-					["SrSrSrSrSrS", "rSrSrSrSrSr", "SySySySySyS", "bSbSbSbSbSb", "...........", "GGG.....GGG", "mmmmmmmmmmm", "ccccccccccc"]
+					["SrSrSrSrSrS", "rSrSrSrSrSr", "SySySySySyS", "bSbSbSbSbSb", "...........", "GGG.....GGG", "mmmmmmmmmmm", "ccccccccccc"],
+					["cc.........", "ccgg.......", "ccggrr.....", "ccggrrbb...", "ccggrrbbmm.", "ccggrrbbmmy", "SSSSSSSSSSS"],
+					["G....w....G", "....www....", "...wcccw...", "..wcgggcw..", ".wcgrrrgcw.", "wcgrbbbrgcw", ".wcgrrrgcw.", "..wcgggcw..", "...wcccw...", "....www....", ".....w....."],
+					["SSSSSSSSSSS", "bybybybybyb", "ybybybybyby", "bybybybybyb", "ybybybybyby", "...........", "G.........G"],
+					["S.S.S.S.S.S", "r.y.g.c.b.m", "r.y.g.c.b.m", "r.y.g.c.b.m", "r.y.g.c.b.m", "r.y.g.c.b.m", "r.y.g.c.b.m", "r.y.g.c.b.m", "G.G.G.G.G.G"],
+					["..rrrrrrr..", ".rrrrrrrrr.", "rrr.....rrr", "yyy.....yyy", "yyy.....yyy", "ggg.....ggg", "ggg.....ggg", "bbb.....bbb", "GGG.....GGG"],
+					["SSSSSSSSSSS", "rr.......rr", ".gg.....gg.", "..bb...bb..", "...mm.mm...", "....yyy....", "....ccc...."],
+					["..g.....g..", "...g...g...", "..ggggggg..", ".gg.ggg.gg.", "ccccccccccc", "c.ccccccc.c", "c.c.....c.c", "...mm.mm..."],
+					[".mmm...mmm.", "rrrrm.rrrrr", "rrrrrrrrrrr", "rrrrrrrrrrr", ".rrrrrrrrr.", "..rrrrrrr..", "...rrrrr...", "....rrr....", ".....r....."],
+					["wwwwwwwwwww", "...........", "ooooooooooo", "...........", "ccccccccccc", "...........", "ggggggggggg", "...........", "rrrrrrrrrrr", "G.........G"],
+					["rrrrrrrrrr.", ".........r.", ".yyyyyyyyy.", ".y.........", ".bbbbbbbbbb", "..........b", "mmmmmmmmmm."],
+					["G.G.G.G.G.G", "GSSSSSSSSSG", "GrrrrrrrrrG", "GryyyyyyyrG", "GrybbbbbyrG", "GryyyyyyyrG", "GrrrrrrrrrG"],
+					["SSSSSSSSSSS", "y.........y", "y.rrrrrrr.y", "y.r.....r.y", "y.r.bbb.r.y", "y.r.....r.y", "y.rrrrrrr.y", "y.........y", "yyyyyyyyyyy"],
+					["rybg.rybg.r", "ybg.rybg.ry", "bg.rybg.ryb", "g.rybg.rybg", ".rybg.rybg.", "rybg.rybg.r", "ybg.rybg.ry", "bg.rybg.ryb"],
+					[".....S.....", "....SgS....", "...ScccS...", "..SbbbbbS..", ".SmmmmmmmS.", "SyyyyyyyyyS"],
+					["....rrr....", "....rrr....", "....rrr....", "yyyyyyyyyyy", "yyyyyyyyyyy", "yyyyyyyyyyy", "....bbb....", "....bbb....", "....bbb....", "....bbb...."],
+					["rrr.....bbb", "rrr.....bbb", "...........", "..yyyyyyy..", "..yyyyyyy..", "....GGG....", "mmm.....ooo", "mmm.....ooo"],
+					["......rrr..", ".....ryyy..", "r....ygggr.", "y...rg...y.", "grrry....gr", ".yyyg.....y", ".ggg......g"],
+					["bbbbbbbbbbb", "b.b.b.b.b.b", "ggggggggggg", "g.g.g.g.g.g", "yyyyyyyyyyy", "y.y.y.y.y.y", "rrrrrrrrrrr", "G.........G"],
+					["rr.......rr", ".yy.....yy.", "..gg...gg..", "...cc.cc...", "....GGG....", "...bb.bb...", "..mm...mm..", ".oo.....oo.", "ww.......ww"],
+					["...rrrrr...", "..rrrrrrr..", ".rrrrrrrrr.", ".rwwrrrwwr.", ".rwbrrrwbr.", ".rrrrrrrrr.", ".rrrrrrrrr.", ".rr.rrr.rr.", "rr.rr.rr.rr"],
+					["Grrrrrrrrrr", ".Gyyyyyyyyy", "..Ggggggggg", "...Gbbbbbbb", "....Gcccccc", ".....Gmmmmm", "......Grrrr", ".......Gooo", "........Gyy"],
+					["roygcbmbcgy", "roygcbmbcgy", "roygcbmbcgy", ".oygcbmbcg.", ".o.gcbmb.g.", ".o.g.b.b.g.", "...g.b.b...", "...G...G..."],
+					["rrrrrrrrrrr", ".ooooooooo.", "..ooooooo..", "...yyyyy...", "....yyy....", ".....g.....", "....ggg....", "...ccccc...", "..bbbbbbb..", ".bbbbbbbbb.", "mmmmmmmmmmm"],
+					["mmmmmmmmmmm", "...........", "GGGGGGGGG..", "bbbbbbbbbbb", "...........", "..GGGGGGGGG", "rrrrrrrrrrr", "...........", "GGGGGGGGG..", "ccccccccccc"],
+					["SSSSSSSSSSS", "SrrrrrrrrrS", ".SrryyyrrS.", "..SrybyrS..", "...SrmrS...", "....SrS....", ".....S....."],
+					["SSSSSSSSSSS", "rrrGbbbGggg", "yyyGcccGooo", "rrrGbbbGggg", "yyyGcccGooo", "rrrGbbbGggg", "yyyGcccGooo", "rrrGbbbGggg"],
+					["r...r...r..", ".y.y.y.y.y.", "..g...g...g", ".c.c.c.c.c.", "b...b...b..", ".m.m.m.m.m.", "..w...w...w", ".o.o.o.o.o.", "r...r...r.."],
+					["GSSSSSSSSSG", "GrrrrrrrrrG", "GyyyyyyyyyG", "GgggggggggG", "GcccccccccG", "GbbbbbbbbbG", "GmmmmmmmmmG", "GwwwwwwwwwG", "G.........G"]
 				];
 				const TYPES = {L: ['#e83030', 'LASER'], E: ['#3060f0', 'ALLUNGA'], C: ['#30d050', 'CATTURA'], S: ['#f08020', 'LENTO'], D: ['#20c8e8', 'TRIPLA'], P: ['#dddddd', 'VITA']};
 				const K = {l: 0, r: 0, f: 0};
 				let st = 'title', paused = false, score = 0, hi = 0, lives = 3, level = 1, nextLife = 20000;
 				let bricks = [], remain = 0, balls = [], caps = [], bul = [], parts = [];
 				let pad = {x: GW/2, w: 80, tw: 80}, pw = {laser: 0, catch: 0, slow: 0};
-				let bricksHit = 0, respT = 0, lvT = 0, overT = 0, banner = 0, fireCd = 0, fireReq = false, fireHeld = false, tm = 0;
+				let fireBtn = false, bricksHit = 0, respT = 0, lvT = 0, overT = 0, banner = 0, fireCd = 0, fireReq = false, fireHeld = false, tm = 0;
 
 				try{
 					hi = +localStorage.getItem('ark_hi') || 0
@@ -461,7 +594,7 @@
 					updBalls(dt);
 					fireCd -= dt;
 					const stuckAny = balls.some(b => b.stuck);
-					if(pw.laser && !stuckAny && (fireReq || fireHeld || K.f) && fireCd <= 0 && bul.length < 8){
+					if(pw.laser && !stuckAny && (fireReq || fireHeld || fireBtn || K.f) && fireCd <= 0 && bul.length < 8){
 						fireCd = .28;
 						bul.push({x: pad.x - pad.w/2 + 8, y: PY - 4}, {x: pad.x + pad.w/2 - 8, y: PY - 4});
 						tone(1200, .1, 'sawtooth', .05, 300);
@@ -670,13 +803,13 @@
 					}
 					if(st === 'play'){
 						if(banner > 0 && lvT <= 0){
-							txt('LIVELLO ' + level, GW/2, BY0 + BH*8 + 50, 30, 'center', '#fff', Math.min(1, banner));
+							txt('LIVELLO ' + level, GW/2, BY0 + BH*12 + 70, 30, 'center', '#fff', Math.min(1, banner));
 						}
 						if(lvT > 0){
 							txt('LIVELLO COMPLETATO!', GW/2, GH/2, 28, 'center', '#ff8');
 						}
 						if(!paused && respT <= 0 && lvT <= 0 && balls.some(b => b.stuck)){
-							txt(coarse ? 'TOCCA PER LANCIARE' : 'SPAZIO / CLICK: LANCIA', GW/2, PY - 34, 16, 'center', '#fff', .5 + .5*Math.sin(tm*5));
+							txt(coarse ? 'PREMI IL PULSANTE' : 'SPAZIO / CLICK: LANCIA', GW/2, PY - 34, 16, 'center', '#fff', .5 + .5*Math.sin(tm*5));
 						}
 						if(paused){
 							g.fillStyle = 'rgba(0,0,0,.6)'; g.fillRect(0, 0, GW, GH);
@@ -692,7 +825,7 @@
 							txt(t[i], GW/2 - (t.length - 1)*20 + i*40, 200, 52, 'center', cols[i]);
 						}
 						txt(coarse ? 'TOCCA PER INIZIARE' : 'PREMI INVIO O SPAZIO', GW/2, 270, 20, 'center', '#fff', .55 + .45*Math.sin(tm*4));
-						const L = coarse ? ['Trascina il dito: muovi la barra', 'Tocca: lancia la pallina / spara'] : ['Mouse o frecce &#8592; &#8594;: muovi la barra', 'SPAZIO o click: lancia / spara', 'P: pausa   M: audio'];
+						const L = coarse ? ['Slider in basso: muovi la barra', 'Pulsante: lancia la pallina / spara'] : ['Mouse o frecce &#8592; &#8594;: muovi la barra', 'SPAZIO o click: lancia / spara', 'P: pausa   M: audio'];
 						L.forEach((s, i) => txt(s.replace(/&#(\d+);/g, (_, c) => String.fromCharCode(c)), GW/2, 330 + i*26, 16, 'center', '#fff', .75));
 						const y0 = 440;
 						[['L', 'Laser'], ['E', 'Barra lunga'], ['C', 'Cattura palla'], ['S', 'Rallenta'], ['D', 'Tre palline'], ['P', 'Vita extra']].forEach((p, i) => {
@@ -716,6 +849,20 @@
 					g.restore();
 				}
 
+				function ctlUpd(){
+					if(!ctlOn){
+						return;
+					}
+					const span = (WR - WL) - pad.w, f = span > 0 ? Math.max(0, Math.min(1, (pad.x - WL - pad.w/2)/span)) : .5;
+					kn.style.transform = 'translateX(' + (f*(tpw - 2 - KW)).toFixed(1) + 'px)';
+					const t = st !== 'play' ? 'INIZIA' : balls.some(b => b.stuck) ? 'LANCIA' : pw.laser ? 'SPARA' : 'FUOCO';
+					if(t !== fbTxt){
+						fbTxt = t;
+						fb.textContent = t;
+						fb.style.opacity = t === 'FUOCO' ? .45 : 1
+					}
+				}
+
 				let last = 0;
 
 				function loop(t){
@@ -730,6 +877,7 @@
 						overT -= dt;
 					}
 					draw();
+					ctlUpd();
 				}
 
 				function pause(v){
@@ -871,6 +1019,82 @@
 				cv.addEventListener('pointerup', pup);
 
 				cv.addEventListener('pointercancel', pup);
+
+				let tpid = null, fpid = null;
+
+				function tpSet(e){
+					const r = tp.getBoundingClientRect(), f = Math.max(0, Math.min(1, (e.clientX - r.left - 1 - KW/2)/(tpw - 2 - KW)));
+					pad.x = WL + pad.w/2 + f*((WR - WL) - pad.w);
+					clampPad()
+				}
+
+				tp.addEventListener('pointerdown', e => {
+					e.preventDefault();
+					ainit();
+					if(st !== 'play'){
+						go();
+						return
+					}
+					if(paused){
+						pause(false);
+						return
+					}
+					tpid = e.pointerId;
+					try{
+						tp.setPointerCapture(e.pointerId)
+					}catch(x){
+					}
+					tpSet(e)
+				});
+
+				tp.addEventListener('pointermove', e => {
+					if(e.pointerId === tpid && st === 'play' && !paused){
+						tpSet(e)
+					}
+				});
+
+				function tpEnd(e){
+					if(e.pointerId === tpid){
+						tpid = null
+					}
+				}
+
+				tp.addEventListener('pointerup', tpEnd);
+
+				tp.addEventListener('pointercancel', tpEnd);
+
+				fb.addEventListener('pointerdown', e => {
+					e.preventDefault();
+					ainit();
+					if(st !== 'play'){
+						go();
+						return
+					}
+					if(paused){
+						pause(false);
+						return
+					}
+					fpid = e.pointerId;
+					try{
+						fb.setPointerCapture(e.pointerId)
+					}catch(x){
+					}
+					fireBtn = true;
+					fb.classList.add('dn');
+					tapAction()
+				});
+
+				function fbEnd(e){
+					if(e.pointerId === fpid){
+						fpid = null;
+						fireBtn = false;
+						fb.classList.remove('dn')
+					}
+				}
+
+				fb.addEventListener('pointerup', fbEnd);
+
+				fb.addEventListener('pointercancel', fbEnd);
 
 				muB.addEventListener('pointerdown', e => {e.stopPropagation(); ainit(); toggleMute()});
 
