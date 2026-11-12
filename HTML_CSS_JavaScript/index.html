@@ -4522,11 +4522,33 @@ document.addEventListener('click', function(e) {
 					}
 				});
 
-				addEventListener('blur', () => {K.l = K.r = K.f = 0; pause(true)});
+				addEventListener('blur', () => {K.l = K.r = K.f = 0; releaseAll(); pause(true)});
 
-				document.addEventListener('visibilitychange', () => {if(document.hidden){pause(true)}});
+				document.addEventListener('visibilitychange', () => {if(document.hidden){releaseAll(); pause(true)}});
 
 				let pid = null, px = 0, pt = 0, pmoved = 0;
+				let tpid = null, fpid = null;
+
+				function releaseAll(){
+					pid = null;
+					tpid = null;
+					fpid = null;
+					fireHeld = false;
+					fireBtn = false;
+					fireReq = false;
+					fb.classList.remove('dn')
+				}
+
+				function endAny(e){
+					if(e.touches && e.touches.length === 0 || e.type === 'pointercancel' && e.pointerType === 'touch'){
+						releaseAll()
+					}
+				}
+
+				addEventListener('touchend', endAny, true);
+				addEventListener('touchcancel', endAny, true);
+				addEventListener('pointerup', e => {if(e.pointerType !== 'touch'){fireHeld = false}}, true);
+				addEventListener('lostpointercapture', e => {if(e.pointerId === fpid){fpid = null; fireBtn = false; fb.classList.remove('dn')} if(e.pointerId === pid && e.pointerType === 'touch'){pid = null}}, true);
 
 				cv.addEventListener('pointerdown', e => {
 					ainit();
@@ -4546,8 +4568,8 @@ document.addEventListener('click', function(e) {
 					px = e.clientX;
 					pt = performance.now();
 					pmoved = 0;
-					fireHeld = true;
 					if(e.pointerType !== 'touch'){
+						fireHeld = true;
 						pad.x = lx(e.clientX);
 						clampPad();
 						tapAction()
@@ -4587,8 +4609,6 @@ document.addEventListener('click', function(e) {
 				cv.addEventListener('pointerup', pup);
 
 				cv.addEventListener('pointercancel', pup);
-
-				let tpid = null, fpid = null;
 
 				function tpSet(e){
 					const r = tp.getBoundingClientRect(), f = Math.max(0, Math.min(1, (e.clientX - r.left - 1 - KW/2)/(tpw - 2 - KW)));
@@ -11157,7 +11177,7 @@ document.addEventListener('click', function(e) {
 				var flashC = document.createElement("canvas"); flashC.width = W; flashC.height = H;
 				var flashX = flashC.getContext("2d"), flashI = flashX.createImageData(W, H);
 				var px = 0, py = 0, drawing = false, trail = [], slowM = false, fuse = null, idle = 0, moved = false, moveT = 0;
-				var qixes = [], sparx = [], borderPath = null, pctF = 0;
+				var qixes = [], sparx = [], borderPath = null, pctF = 0, grace = 0;
 				function onBtn(){}
 				function initGame(){}
 				function g(x, y){
@@ -11247,6 +11267,7 @@ document.addEventListener('click', function(e) {
 					moved = false;
 					moveT = 0;
 					tick = 0;
+					grace = 0;
 					sparx = [];
 				}
 				function afterDeath(){
@@ -11455,6 +11476,17 @@ document.addEventListener('click', function(e) {
 						floodClaim(type);
 					}
 					unstick();
+					sparx.forEach(function (p){
+						if(!isBorder(p.x, p.y)){
+							var sb = nearBorder(W >> 1, 0);
+							p.x = sb[0];
+							p.y = sb[1];
+							p.pxx = -1;
+							p.pyy = -1;
+							p.acc = 0;
+						}
+					});
+					grace = 70;
 					trail = [];
 					var d = flashI.data, nn = 0;
 					for(i = 0; i < W*H; i++){
@@ -11712,6 +11744,10 @@ document.addEventListener('click', function(e) {
 					}
 				}
 				function stepSparx(){
+					if(grace > 0){
+						grace--;
+						return;
+					}
 					var sp = Math.min(.5 + level*.03, .85), chase = Math.min(.3 + level*.06, .8);
 					for(var i = 0; i < sparx.length; i++){
 						var p = sparx[i];
@@ -67617,7 +67653,7 @@ document.addEventListener('click', function(e) {
 					<span class="badge badge-it">Italiano</span>
 					<strong>Games, Card</strong>
 					<div class="page-body">
-						<p>Versione digitale di un gioco che faccio da molti anni con le carte napoletane, avrò iniziato da bambino. Non sono nemmeno sicuro le regole siano esatte. Qualcuna potrei averla modificata, qualcuna inventata. Potrei essere l'unico a giocare alla prima di queste tre versioni e non so quanto possa essere diffusa la terza. La seconda è una sorta di versione intermedia tra le altre due. C'è anche un pulsante per iniziare una nuova partita, uno per annullare tutte le mosse fino a tornare all'inizio della partita ed un terzo pulsante per cambiare versione. Le differenze tra le tre versioni sono le seguenti. Nella prima versione ci sono cinque colonne e si può rigirare il mazzetto un numero arbitrrario di volte. Nella seconda versione ci sono sei colonne. Nella terza ci sono sempre sei colonne ma al secondo giro si deve decidere una delle due direzioni possibili (secondo giro del mazzetto normale o usando gli scarti, andando in direzione opposta) e nel momento in cui non si riesce a piazzare una delle carte pescate la partita sarà persa.</p>
+						<p>Versione digitale di un gioco che faccio da molti anni con le carte napoletane, avrò iniziato da bambino. Non sono nemmeno sicuro le regole siano esatte. Qualcuna potrei averla modificata, qualcuna inventata. Potrei essere l'unico a giocare alla prima di queste tre versioni e non so quanto possa essere diffusa la terza. La seconda è una sorta di versione intermedia tra le altre due. C'è anche un pulsante per iniziare una nuova partita, uno per annullare tutte le mosse fino a tornare all'inizio della partita ed un terzo pulsante per cambiare versione. Le differenze tra le tre versioni sono le seguenti. Nella prima versione ci sono cinque colonne e si può rigirare il mazzetto un numero arbitrario di volte. Nella seconda versione ci sono sei colonne. Nella terza ci sono sempre sei colonne ma al secondo giro si deve decidere una delle due direzioni possibili (secondo giro del mazzetto normale o usando gli scarti, andando in direzione opposta) e nel momento in cui non si riesce a piazzare una delle carte pescate la partita sarà persa.</p>
 					</div>
 				</div>
 				<div class="page-entry" id="pag-21">

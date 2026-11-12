@@ -954,11 +954,33 @@
 					}
 				});
 
-				addEventListener('blur', () => {K.l = K.r = K.f = 0; pause(true)});
+				addEventListener('blur', () => {K.l = K.r = K.f = 0; releaseAll(); pause(true)});
 
-				document.addEventListener('visibilitychange', () => {if(document.hidden){pause(true)}});
+				document.addEventListener('visibilitychange', () => {if(document.hidden){releaseAll(); pause(true)}});
 
 				let pid = null, px = 0, pt = 0, pmoved = 0;
+				let tpid = null, fpid = null;
+
+				function releaseAll(){
+					pid = null;
+					tpid = null;
+					fpid = null;
+					fireHeld = false;
+					fireBtn = false;
+					fireReq = false;
+					fb.classList.remove('dn')
+				}
+
+				function endAny(e){
+					if(e.touches && e.touches.length === 0 || e.type === 'pointercancel' && e.pointerType === 'touch'){
+						releaseAll()
+					}
+				}
+
+				addEventListener('touchend', endAny, true);
+				addEventListener('touchcancel', endAny, true);
+				addEventListener('pointerup', e => {if(e.pointerType !== 'touch'){fireHeld = false}}, true);
+				addEventListener('lostpointercapture', e => {if(e.pointerId === fpid){fpid = null; fireBtn = false; fb.classList.remove('dn')} if(e.pointerId === pid && e.pointerType === 'touch'){pid = null}}, true);
 
 				cv.addEventListener('pointerdown', e => {
 					ainit();
@@ -978,8 +1000,8 @@
 					px = e.clientX;
 					pt = performance.now();
 					pmoved = 0;
-					fireHeld = true;
 					if(e.pointerType !== 'touch'){
+						fireHeld = true;
 						pad.x = lx(e.clientX);
 						clampPad();
 						tapAction()
@@ -1019,8 +1041,6 @@
 				cv.addEventListener('pointerup', pup);
 
 				cv.addEventListener('pointercancel', pup);
-
-				let tpid = null, fpid = null;
 
 				function tpSet(e){
 					const r = tp.getBoundingClientRect(), f = Math.max(0, Math.min(1, (e.clientX - r.left - 1 - KW/2)/(tpw - 2 - KW)));
