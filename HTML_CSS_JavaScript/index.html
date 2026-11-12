@@ -15638,8 +15638,8 @@ document.addEventListener('click', function(e) {
 			}
 			canvas{
 				image-rendering: pixelated;
-				aspect-ratio: 8/5;
-				width: min(100vw, calc(100vh*1.6));
+				aspect-ratio: 4/3;
+				width: min(100vw, calc(100vh*4/3));
 				height: auto;
 			}
 			.b{
@@ -15675,6 +15675,7 @@ document.addEventListener('click', function(e) {
 				var cv = document.getElementById("c"), g = cv.getContext("2d"), W = 320, H = 200, VH = 168, N = 160, CW = 2;
 				cv.width = W;
 				cv.height = H;
+				g.imageSmoothingEnabled = false;
 				var MAP = [
 					"222222222222222222222222",
 					"#......#.......#.......#",
@@ -15723,9 +15724,9 @@ document.addEventListener('click', function(e) {
 					["h", 20, 13],
 					["a", 9, 3],
 					["a", 18, 8],
-					["a", 5, 12],
-					["a", 12, 7],
-					["a", 21, 4]
+					["c", 5, 12],
+					["c", 12, 7],
+					["r", 21, 4]
 				];
 				var IMP = [
 					[.28, .3, .72, .72, "#7b4a2c"],
@@ -15765,8 +15766,61 @@ document.addEventListener('click', function(e) {
 				var FB = [[.3, .3, .7, .7, "#f60"], [.4, .4, .6, .6, "#ff6"]];
 				var HK = [[.15, .55, .85, 1, "#ddd"], [.42, .6, .58, .95, "#c11"], [.2, .72, .8, .82, "#c11"]];
 				var AM = [[.2, .6, .8, 1, "#8a7a3a"], [.3, .68, .7, .78, "#e6c84a"]];
+				var AR = [[.2, .5, .8, 1, "#1f7a1f"], [.3, .55, .7, .72, "#4fd04f"], [.42, .5, .58, .6, "#0a4a0a"]];
+				var SH = [[.15, .7, .85, 1, "#a02020"], [.2, .58, .4, .78, "#d33"], [.5, .58, .7, .78, "#d33"]];
 				var K = {};
-				var sg = 0, wp = 0, st = 0, px, py, a, hp = 100, ar = 0, am = 50, ens = [], pks = [], fbs = [], cd = 0, fl = 0, hurt = 0, lvl = 1, kills = 0, tt = 0, bob = 0, msg = "", mt = 0;
+				var nz = function (x, y){return ((Math.imul(x, 374761393) + Math.imul(y, 668265263)) >>> 0)%100/100;};
+				function mk(f){
+					var c = document.createElement("canvas"), q = c.getContext("2d");
+					c.width = c.height = 64;
+					var im = q.createImageData(64, 64);
+					for(var y = 0; y < 64; y++){
+						for(var x = 0; x < 64; x++){
+							var p = f(x, y), i = (y*64 + x)*4;
+							im.data[i] = p[0];
+							im.data[i + 1] = p[1];
+							im.data[i + 2] = p[2];
+							im.data[i + 3] = 255;
+						}
+					}
+					q.putImageData(im, 0, 0);
+					return c;
+				}
+				var TX = [
+					mk(function (x, y){
+						var n = nz(x, y)*14, v = 1, ex = x%32, ey = y%32;
+						if(ex < 2 || ey < 2){
+							v = .45;
+						}else if(ex > 29 || ey > 29){
+							v = 1.15;
+						}
+						if((ex == 5 || ex == 26) && (ey == 5 || ey == 26)){
+							v = 1.5;
+						}
+						if(ey > 11 && ey < 19 && ex > 6 && ex < 25){
+							return [(44 + n)*v, (84 + n)*v, (60 + n)*v];
+						}
+						return [(98 + n)*v, (106 + n)*v, (98 + n)*v];
+					}),
+					mk(function (x, y){
+						var m = y%8 == 0 || (x + (y >> 3 & 1)*8)%16 == 0, n = nz(x >> 1, y >> 1)*44;
+						return m ? [48, 38, 34] : [128 + n, 62 + n/2, 44 + n/3];
+					}),
+					mk(function (x, y){
+						var n = nz(x, y)*10;
+						if(x < 2 || x > 61 || y < 2){
+							return [18, 20, 26];
+						}
+						if(y > 20 && y < 36 && x > 12 && x < 52){
+							return [20 + n, 150 + n*2, 70];
+						}
+						if(y > 44 && y < 50 && x > 8 && x < 56 && x%8 < 5){
+							return [190, 40, 40];
+						}
+						return [58 + n, 66 + n, 78 + n];
+					})
+				];
+				var sg = 0, sl = 0, wp = 0, st = 0, px, py, a, hp = 100, ar = 0, am = 50, ens = [], pks = [], fbs = [], cd = 0, fl = 0, hurt = 0, lvl = 1, kills = 0, tt = 0, bob = 0, msg = "", mt = 0;
 				var Z = new Array(N);
 				var AC = null;
 				function snd(f, d, ty, v){
@@ -15789,14 +15843,15 @@ document.addEventListener('click', function(e) {
 					if(nw){
 						hp = 100;
 						ar = 0;
-						am = 80;
+						am = 50;
+						sl = 0;
 						lvl = 1;
 						kills = 0;
 						sg = 0;
 						wp = 0;
 					}else{
 						lvl++;
-						am += 30;
+						am = Math.min(200, am + 20);
 						hp = Math.min(100, hp + 30);
 					}
 					px = 2.5;
@@ -15805,7 +15860,7 @@ document.addEventListener('click', function(e) {
 					fbs = [];
 					cd = 0;
 					fl = 0;
-					ens = EN.map(function (p){return {x: p[0] + .5, y: p[1] + .5, t: p[2], hp: [50, 25, 120][p[2]] + lvl*15, st: 0, cd: 1 + R(), pain: 0, atk: 0};});
+					ens = EN.map(function (p){return {x: p[0] + .5, y: p[1] + .5, t: p[2], hp: [60, 20, 150][p[2]] + lvl*10, st: 0, cd: 1 + R(), pain: 0, atk: 0, dd: 0};});
 					pks = PK.map(function (p){return {t: p[0], x: p[1] + .5, y: p[2] + .5, on: 1};});
 					st = 1;
 				}
@@ -15824,10 +15879,10 @@ document.addEventListener('click', function(e) {
 					if(e.key == "Control"){
 						K[" "] = 1;
 					}
-					if(e.key == "1"){
+					if(e.key == "1" || e.key == "2"){
 						wp = 0;
 					}
-					if(e.key == "2" && sg){
+					if(e.key == "3" && sg){
 						wp = 1;
 					}
 					e.preventDefault();
@@ -15888,9 +15943,16 @@ document.addEventListener('click', function(e) {
 					}
 					return true;
 				}
+				function pel(n){
+					var t = 0;
+					while(n-- > 0){
+						t += 5*(1 + R()*3 | 0);
+					}
+					return t;
+				}
 				function dmg(n){
 					if(ar > 0){
-						var ab = Math.min(ar, n >> 1);
+						var ab = Math.min(ar, n/3 | 0);
 						ar -= ab;
 						n -= ab;
 					}
@@ -15903,7 +15965,11 @@ document.addEventListener('click', function(e) {
 					}
 				}
 				function shoot(){
-					am--;
+					if(wp){
+						sl--;
+					}else{
+						am--;
+					}
 					cd = wp ? .9 : .42;
 					fl = wp ? .14 : .09;
 					snd(wp ? 200 : 500, wp ? .25 : .12, "square", .14);
@@ -15924,11 +15990,12 @@ document.addEventListener('click', function(e) {
 						}
 					}
 					if(best){
-						best.hp -= wp ? (bf < 6 ? 60 : 30) + R()*20 : 15 + R()*10;
+						best.hp -= wp ? pel(Math.ceil(7*Math.max(.25, 1 - bf/10))) : 5*(1 + R()*3 | 0);
 						best.st = 1;
 						best.pain = .25;
 						if(best.hp <= 0){
 							best.st = 2;
+							best.dd = .5;
 							kills++;
 							snd(90, .35, "sawtooth", .12);
 						}else{
@@ -15955,8 +16022,11 @@ document.addEventListener('click', function(e) {
 					if(mv || sd){
 						bob += dt*9;
 					}
-					if(K[" "] && cd <= 0 && am > 0){
+					if(K[" "] && cd <= 0 && (wp ? sl : am) > 0){
 						shoot();
+						if(wp && sl <= 0){
+							wp = 0;
+						}
 					}
 					for(var p of pks){
 						if(!p.on){
@@ -15967,26 +16037,43 @@ document.addEventListener('click', function(e) {
 								hp = Math.min(100, hp + 25);
 								p.on = 0;
 								snd(700, .15, "sine");
-								msg = "Medikit +25";
+								msg = "Picked up a medikit.";
 								mt = 1.5;
 							}
 							if(p.t == "s"){
 								sg = 1;
 								wp = 1;
-								am += 8;
+								sl = Math.min(50, sl + 8);
 								p.on = 0;
 								snd(500, .2, "sine");
-								msg = "Fucile a pompa! (tasto 2)";
+								msg = "You got the shotgun!";
 								mt = 2;
 							}
-							if(p.t == "a"){
-								am = Math.min(200, am + 12);
+							if(p.t == "r" && ar < 100){
+								ar = 100;
+								p.on = 0;
+								snd(550, .2, "sine");
+								msg = "Picked up the armor.";
+								mt = 1.5;
+							}
+							if(p.t == "c" && sl < 50){
+								sl = Math.min(50, sl + 4);
 								p.on = 0;
 								snd(600, .1, "sine");
-								msg = "Munizioni +12";
+								msg = "Picked up 4 shotgun shells.";
+								mt = 1.5;
+							}
+							if(p.t == "a"){
+								am = Math.min(200, am + 10);
+								p.on = 0;
+								snd(600, .1, "sine");
+								msg = "Picked up a clip.";
 								mt = 1.5;
 							}
 						}
+					}
+					for(var e of ens){
+						e.dd -= dt;
 					}
 					var spd = .9 + lvl*.1;
 					for(var e of ens){
@@ -16018,18 +16105,18 @@ document.addEventListener('click', function(e) {
 						}
 						if(e.cd <= 0){
 							if(d < 1.6){
-								dmg((e.t == 2 ? 12 : 6) + R()*6 | 0);
+								dmg(e.t == 2 ? 4*(1 + R()*10 | 0) : 3*(1 + R()*8 | 0));
 								e.cd = 1;
 								e.atk = .3;
 							}else if(e.t == 1 && d < 12 && los(e.x, e.y, px, py)){
-								if(R() < .25){
-									dmg(3 + R()*5 | 0);
+								if(R() < .5){
+									dmg(3*(1 + R()*5 | 0));
 								}
 								e.cd = 1.8 + R();
 								e.atk = .3;
 								snd(380, .15, "square", .08);
 							}else if(e.t == 0 && d < 10 && los(e.x, e.y, px, py)){
-								fbs.push({x: e.x, y: e.y, vx: ex/d*3.2, vy: ey/d*3.2});
+								fbs.push({x: e.x, y: e.y, vx: ex/d*5, vy: ey/d*5});
 								e.cd = 2 + R()*1.5;
 								e.atk = .35;
 								snd(260, .2, "sawtooth", .06);
@@ -16045,7 +16132,7 @@ document.addEventListener('click', function(e) {
 							continue;
 						}
 						if(Math.hypot(f.x - px, f.y - py) < .4){
-							dmg(7 + R()*6 | 0);
+							dmg(3*(1 + R()*8 | 0));
 							fbs.splice(i, 1);
 						}
 					}
@@ -16055,16 +16142,11 @@ document.addEventListener('click', function(e) {
 				}
 				var rgb = function (r, gg, b, s){return \`rgb(\${r * s | 0},\${gg * s | 0},\${b * s | 0})\`;};
 				function render(){
-					var gr = g.createLinearGradient(0, 0, 0, VH/2);
-					gr.addColorStop(0, "#101010");
-					gr.addColorStop(1, "#3a3a3a");
-					g.fillStyle = gr;
-					g.fillRect(0, 0, W, VH/2);
-					gr = g.createLinearGradient(0, VH/2, 0, VH);
-					gr.addColorStop(0, "#1a120c");
-					gr.addColorStop(1, "#5a4330");
-					g.fillStyle = gr;
-					g.fillRect(0, VH/2, W, VH/2);
+					for(var y = 0; y < VH; y++){
+						var dd = Math.max(.5, Math.abs(y - VH/2 + .5)), sf = Math.round(Math.max(.12, 1 - VH/2/dd/12)*16)/16;
+						g.fillStyle = y < VH/2 ? rgb(78, 72, 68, sf) : rgb(112, 100, 80, sf);
+						g.fillRect(0, y, W, 1);
+					}
 					var dX = Math.cos(a), dY = Math.sin(a), plX = -dY*.66, plY = dX*.66;
 					for(var x = 0; x < N; x++){
 						var cx = 2*x/N - 1, rx = dX + plX*cx, ry = dY + plY*cx;
@@ -16105,41 +16187,23 @@ document.addEventListener('click', function(e) {
 						Z[x] = pd;
 						var u = side == 0 ? py + pd*ry : px + pd*rx;
 						u -= Math.floor(u);
-						var lh = VH/pd, top = (VH - lh)/2, s = Math.max(.12, 1 - pd/12)*(side ? .72 : 1), X = x*CW;
-						if(tile == "2"){
-							g.fillStyle = rgb(40, 48, 58, s);
+						if(side == 0 && rx > 0 || side == 1 && ry < 0){
+							u = 1 - u;
+						}
+						var lh = VH/pd, top = (VH - lh)/2, s = Math.round(Math.max(.1, 1 - pd/12)*(side ? .78 : 1)*16)/16, X = x*CW;
+						g.drawImage(tile == "2" ? TX[2] : TX[((mx >> 3) + (my >> 3)) & 1], Math.floor(u*64) & 63, 0, 1, 64, X, top, CW, lh);
+						if(s < 1){
+							g.fillStyle = \`rgba(0,0,0,\${1 - s})\`;
 							g.fillRect(X, top, CW, lh);
-							for(var b = 0; b < 4; b++){
-								g.fillStyle = rgb(78 + b%2*12, 92 + b%2*12, 108 + b%2*12, s);
-								if(u > .05 && u < .95){
-									g.fillRect(X, top + lh*b/4 + lh*.02, CW, lh/4 - lh*.04);
-								}
-							}
-							if(u > .4 && u < .6){
-								g.fillStyle = rgb(40, 220, 90, s);
-								g.fillRect(X, top + lh*.3, CW, lh*.06);
-							}
-						}else{
-							g.fillStyle = rgb(55, 48, 44, s);
-							g.fillRect(X, top, CW, lh);
-							for(var b = 0; b < 8; b++){
-								var uu = u*4 + (b & 1)*.5, bi = Math.floor(uu), fr = uu - bi;
-								if(fr < .08){
-									continue;
-								}
-								var h = ((bi*73856093 ^ b*19349663 ^ mx*83492791 ^ my*2971) >>> 0)%40;
-								g.fillStyle = rgb(135 + h, 55 + h/2, 40 + h/4, s);
-								g.fillRect(X, top + lh*b/8 + lh*.01, CW, lh/8 - lh*.02);
-							}
 						}
 					}
 					var iD = 1/(plX*dY - dX*plY), L = [];
 					for(var e of ens){
-						L.push({x: e.x, y: e.y, k: e.st == 2 ? DEAD : [IMP, ZOM, DEM][e.t], e, sc: e.st == 2 ? .9 : .85});
+						L.push({x: e.x, y: e.y, k: e.st == 2 && e.dd <= 0 ? DEAD : [IMP, ZOM, DEM][e.t], e, v: e.st == 2 && e.dd > 0 ? .25 + e.dd*1.5 : 1, sc: e.st == 2 ? .9 : .85});
 					}
 					for(var p of pks){
 						if(p.on){
-							L.push({x: p.x, y: p.y, k: p.t == "h" ? HK : p.t == "s" ? SG : AM, sc: .35});
+							L.push({x: p.x, y: p.y, k: ({h: HK, s: SG, r: AR, c: SH})[p.t] || AM, sc: .35});
 						}
 					}
 					for(var f of fbs){
@@ -16155,7 +16219,7 @@ document.addEventListener('click', function(e) {
 							continue;
 						}
 						var wh = VH/ty, sh = wh*o.sc, cx = N/2*(1 + tx/ty)*CW, bot = VH/2 + wh/2 + (o.fl ? -wh*.15 : 0), x0 = cx - sh/2;
-						var dk = Math.max(.3, 1 - ty/14);
+						var dk = Math.max(.3, 1 - ty/14), vs = o.v || 1, wk = o.e && o.e.st == 1 && o.e.pain <= 0 ? Math.sin(tt*8 + o.e.x*3)*.07 : 0;
 						for(var c = Math.max(0, Math.floor(x0/CW)); c < Math.min(N, Math.ceil((x0 + sh)/CW)); c++){
 							if(Z[c] < ty){
 								continue;
@@ -16163,9 +16227,10 @@ document.addEventListener('click', function(e) {
 							var u = (c*CW + CW/2 - x0)/sh;
 							var D = o.k;
 							for(var r of D){
-								if(u >= r[0] && u <= r[2]){
-									g.fillStyle = r[4];
-									g.fillRect(c*CW, bot - sh + r[1]*sh, CW, (r[3] - r[1])*sh);
+								var lo = r[1] >= .72 && r[3] == 1 ? (r[0] < .5 ? wk : -wk) : 0, up = o.e && o.e.atk > 0 && o.e.t == 0 && r[1] > .3 && r[1] < .34 ? -.2 : 0;
+								if(u >= r[0] + lo && u <= r[2] + lo){
+									g.fillStyle = o.e && o.e.pain > 0 ? "#fff" : r[4];
+									g.fillRect(c*CW, bot - sh*vs + (r[1] + up)*sh*vs, CW, (r[3] - r[1])*sh*vs);
 								}
 							}
 							if(o.e && o.e.st != 2 && o.e.t == 0){
@@ -16173,82 +16238,127 @@ document.addEventListener('click', function(e) {
 								for(var r of E){
 									if(u >= r[0] && u <= r[2]){
 										g.fillStyle = r[4];
-										g.fillRect(c*CW, bot - sh + r[1]*sh, CW, (r[3] - r[1])*sh);
+										g.fillRect(c*CW, bot - sh*vs + r[1]*sh*vs, CW, (r[3] - r[1])*sh*vs);
 									}
 								}
 							}
 						}
 					}
-					// arma
-					var by = Math.abs(Math.sin(bob))*4, gx = W/2 + Math.cos(bob)*3, gy = VH - 40 + by + (fl > 0 ? 6 : 0);
+					var by = fl > 0 ? 0 : Math.abs(Math.sin(bob))*4, gx = W/2 + (fl > 0 ? 0 : Math.cos(bob)*5), gy = VH - 46 + by + (fl > .05 ? 5 : 0);
 					if(wp){
+						g.fillStyle = "#2a2a2a";
+						g.fillRect(gx - 5, gy - 8, 10, 48);
+						g.fillStyle = "#555";
+						g.fillRect(gx - 5, gy - 8, 3, 48);
 						g.fillStyle = "#3a3a3a";
-						g.fillRect(gx - 9, gy - 2, 7, 32);
-						g.fillRect(gx + 2, gy - 2, 7, 32);
-						g.fillStyle = "#7a4a22";
-						g.fillRect(gx - 10, gy + 18, 20, 12);
+						g.fillRect(gx - 10, gy - 2, 5, 40);
+						g.fillStyle = "#6a3c1c";
+						g.fillRect(gx - 12, gy + (fl > 0 ? 24 : 14), 24, 14);
+						g.fillStyle = "#8f5a2a";
+						g.fillRect(gx - 12, gy + (fl > 0 ? 24 : 14), 24, 3);
+						g.fillStyle = "#c9955e";
+						g.fillRect(gx - 14, gy + 36, 28, 20);
 					}else{
-						g.fillStyle = "#4a4a4a";
-						g.fillRect(gx - 5, gy, 10, 30);
+						g.fillStyle = "#3f4756";
+						g.fillRect(gx - 6, gy + 4, 12, 28);
+						g.fillStyle = "#6a7486";
+						g.fillRect(gx - 6, gy + 4, 4, 28);
+						g.fillStyle = "#1c1c1c";
+						g.fillRect(gx - 2, gy, 4, 5);
+						g.fillStyle = "#2a2f3a";
+						g.fillRect(gx - 7, gy + 30, 14, 10);
+						g.fillStyle = "#c9955e";
+						g.fillRect(gx - 12, gy + 36, 24, 22);
+						g.fillStyle = "#3a5a2a";
+						g.fillRect(gx - 14, gy + 50, 28, 20);
 					}
-					g.fillStyle = "#8a8a8a";
-					g.fillRect(gx - 6, gy - 4, 12, 8);
-					g.fillStyle = "#2a2a2a";
-					g.fillRect(gx - 3, gy - 6, 6, 3);
-					g.fillStyle = "#c9955e";
-					g.fillRect(gx - 11, gy + 22, 22, 22);
-					g.fillStyle = "#3a3a3a";
-					g.fillRect(gx - 9, gy + 14, 18, 10);
 					if(fl > 0){
-						g.fillStyle = "#ffd23a";
-						g.fillRect(gx - 8, gy - 18, 16, 14);
-						g.fillStyle = "#fff6b0";
-						g.fillRect(gx - 4, gy - 14, 8, 8);
-						g.fillStyle = "rgba(255,200,80,.18)";
+						var fw = wp ? 14 : 9;
+						g.fillStyle = "#ff9a1a";
+						g.fillRect(gx - fw, gy - fw - 10, fw*2, fw + 4);
+						g.fillStyle = "#fff2a0";
+						g.fillRect(gx - fw/2, gy - fw - 6, fw, fw/2 + 3);
+						g.fillStyle = "rgba(255,190,70,.2)";
 						g.fillRect(0, 0, W, VH);
 					}
 					if(hurt > 0){
 						g.fillStyle = \`rgba(200,0,0,\${Math.min(.5, hurt * 1.6)})\`;
 						g.fillRect(0, 0, W, VH);
 					}
-					// HUD
-					g.fillStyle = "#565656";
-					g.fillRect(0, VH, W, H - VH);
-					g.fillStyle = "#2e2e2e";
-					for(var r of [[4, 0, 70], [80, 0, 70], [176, 0, 70], [252, 0, 64]]){
-						g.fillRect(r[0], VH + 3, r[2], H - VH - 6);
-					}
 					g.font = "bold 7px monospace";
-					g.fillStyle = "#bbb";
-					g.fillText("MUNIZIONI", 12, VH + 10);
-					g.fillText("SALUTE", 96, VH + 10);
-					g.fillText("ARMATURA", 190, VH + 10);
-					g.fillText("UCCISI " + kills + "/" + ens.length, 256, VH + 10);
+					g.fillStyle = "#d8c040";
+					g.fillText("KILLS " + kills + "/" + ens.length, 4, 9);
+					g.fillStyle = "#6a6a6a";
+					g.fillRect(0, VH, W, H - VH);
+					g.fillStyle = "#9a9a9a";
+					g.fillRect(0, VH, W, 1);
+					for(var r of [[2, 52], [56, 58], [118, 36], [198, 58], [262, 56]]){
+						g.fillStyle = "#2e2e2e";
+						g.fillRect(r[0], VH + 3, r[1], H - VH - 5);
+						g.fillStyle = "#484848";
+						g.fillRect(r[0] + 1, VH + 4, r[1] - 2, H - VH - 7);
+					}
+					g.font = "bold 6px monospace";
+					g.fillStyle = "#c8b020";
+					g.textAlign = "center";
+					g.fillText("AMMO", 28, VH + 10);
+					g.fillText("HEALTH", 85, VH + 10);
+					g.fillText("ARMS", 136, VH + 10);
+					g.fillText("ARMOR", 227, VH + 10);
 					g.font = "bold 18px monospace";
-					g.fillStyle = "#d62020";
-					g.fillText(String(am).padStart(3, " "), 16, VH + 28);
-					g.fillText(hp + "%", 92, VH + 28);
-					g.fillText(ar + "%", 188, VH + 28);
-					g.fillStyle = "#c9955e";
-					g.fillRect(146, VH + 4, 26, 28);
-					g.fillStyle = "#4a2f14";
-					g.fillRect(146, VH + 4, 26, 6);
-					g.fillStyle = "#000";
-					g.fillRect(151, VH + 14, 4, 3);
-					g.fillRect(163, VH + 14, 4, 3);
-					g.fillRect(151, VH + 11, 5, 1);
-					g.fillRect(162, VH + 11, 5, 1);
-					g.fillRect(152, VH + 25, 14, hp > 50 ? 2 : 1);
-					if(hp < 70){
-						g.fillStyle = "#a00";
-						g.fillRect(148, VH + 10, 3, 10);
+					g.textAlign = "right";
+					g.fillStyle = "#d82020";
+					g.fillText(String(wp ? sl : am), 50, VH + 28);
+					g.fillText(hp + "%", 112, VH + 28);
+					g.fillText(ar + "%", 254, VH + 28);
+					g.font = "bold 8px monospace";
+					g.textAlign = "left";
+					for(var i = 0; i < 6; i++){
+						g.fillStyle = i == 0 || i == 1 && sg ? "#ffe033" : "#7a7a7a";
+						g.fillText(String(i + 2), 124 + i%3*10, VH + 20 + (i/3 | 0)*9);
 					}
-					if(hp < 40){
-						g.fillRect(166, VH + 16, 4, 10);
-						g.fillRect(156, VH + 6, 3, 5);
+					g.font = "bold 6px monospace";
+					g.fillStyle = "#c8b020";
+					for(var i = 0; i < 4; i++){
+						g.fillText(["BULL", "SHEL", "ROCK", "CELL"][i], 266, VH + 11 + i*6);
+						g.fillText([am + "/200", sl + "/50", "0/50", "0/300"][i], 288, VH + 11 + i*6);
 					}
-					g.fillStyle = "#d62020";
-					g.fillRect(256, VH + 16, Math.min(56, kills/ens.length*56), 6);
+					var fx = 164, fy = VH + 3, hv = hp > 80 ? 0 : hp > 60 ? 1 : hp > 40 ? 2 : hp > 20 ? 3 : 4, dp = hurt > 0 ? 0 : Math.round(Math.sin(tt*.9)*1.5);
+					g.fillStyle = "#c8946a";
+					g.fillRect(fx, fy, 28, 27);
+					g.fillStyle = "#3a230f";
+					g.fillRect(fx, fy, 28, 7);
+					g.fillRect(fx, fy, 3, 14);
+					g.fillRect(fx + 25, fy, 3, 14);
+					g.fillStyle = "#fff";
+					g.fillRect(fx + 6, fy + 10, 6, 4);
+					g.fillRect(fx + 16, fy + 10, 6, 4);
+					g.fillStyle = "#111";
+					g.fillRect(fx + 8 + dp, fy + 11, 2, 3);
+					g.fillRect(fx + 18 + dp, fy + 11, 2, 3);
+					g.fillStyle = "#2a1808";
+					g.fillRect(fx + 5, fy + 8 + (hurt > 0 ? 1 : 0), 8, 2);
+					g.fillRect(fx + 15, fy + 8 + (hurt > 0 ? 1 : 0), 8, 2);
+					g.fillStyle = "#a5744e";
+					g.fillRect(fx + 13, fy + 14, 3, 5);
+					g.fillStyle = hurt > 0 ? "#400" : "#3a1010";
+					g.fillRect(fx + 9, fy + 21, 10, hurt > 0 || hv > 2 ? 4 : 2);
+					if(hurt > 0){
+						g.fillStyle = "#fff";
+						g.fillRect(fx + 10, fy + 21, 8, 1);
+					}
+					g.fillStyle = "#a00";
+					if(hv > 0){
+						g.fillRect(fx + 4, fy + 7, 3, 3 + hv*2);
+					}
+					if(hv > 1){
+						g.fillRect(fx + 20, fy + 8, 4, 10);
+					}
+					if(hv > 2){
+						g.fillRect(fx + 10, fy + 14, 2, 8);
+						g.fillRect(fx + 6, fy + 18, 16, 2);
+					}
+					g.textAlign = "left";
 					if(mt > 0){
 						g.font = "bold 10px monospace";
 						g.textAlign = "center";
@@ -16266,7 +16376,7 @@ document.addEventListener('click', function(e) {
 							g.fillText("DOOM", W/2, 80);
 							g.font = "10px monospace";
 							g.fillStyle = "#ddd";
-							g.fillText("WASD muovi · mouse o ← → gira · clic/Spazio spara · 1/2 armi", W/2, 110);
+							g.fillText("WASD muovi · mouse o ← → gira · clic/Spazio spara · 2/3 armi", W/2, 110);
 							g.fillText("Elimina tutti gli imp per superare il livello", W/2, 126);
 							g.fillStyle = "#ffe033";
 							g.fillText("Premi un tasto o tocca per iniziare", W/2, 155);
