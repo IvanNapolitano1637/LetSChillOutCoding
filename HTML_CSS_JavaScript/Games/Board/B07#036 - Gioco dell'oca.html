@@ -640,6 +640,49 @@
 				color: var(--ink);
 				outline: none;
 			}
+		@media (min-width: 600px) and (min-height: 600px) and (pointer: coarse){
+			#game-area{
+				max-width: 1180px;
+			}
+			.game-layout{
+				grid-template-columns: 1fr 300px;
+				gap: 18px;
+			}
+			#setup-panel{
+				max-width: 640px;
+				padding: 28px 36px;
+			}
+			#setup-panel h2{
+				font-size: 1.4rem;
+			}
+			.player-row label{
+				font-size: 1.2rem;
+			}
+			.player-row input{
+				font-size: 1.2rem;
+				padding: 10px 14px;
+			}
+			.token-option{
+				font-size: 1.7rem;
+				padding: 4px;
+			}
+			.btn{
+				padding: 16px;
+				font-size: 1.2rem;
+			}
+			.btn.secondary{
+				font-size: 1.05rem;
+			}
+			.cell-num{
+				font-size: clamp(0.6rem, 1.5vw, 1rem);
+			}
+			.cell-icon{
+				font-size: clamp(1rem, 2.4vw, 1.7rem);
+			}
+			.token-on-board{
+				font-size: clamp(0.8rem, 1.9vw, 1.2rem);
+			}
+		}
 		</style>
 	</head>
 	<body>

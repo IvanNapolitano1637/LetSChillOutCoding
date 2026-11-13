@@ -46,10 +46,36 @@
 		</div>
 		<script>
 			const COLORS = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#00AF00", "#7F007F", "#FFAFAF", "#FFCF4F", "#FF7F00", "#7F3F00"];
-			const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
-			const SIZE = DESKTOP ? 640 : 320;
-			const RADIUS = SIZE*0.40;
-			const DOT_RADIUS = DESKTOP ? 48 : 24;
+			const IS_TABLET = (function(){
+				const ua = navigator.userAgent;
+				if((/iPad|Tablet/i).test(ua)){
+					return true;
+				}
+				if((/Android/i).test(ua) && !(/Mobi/i).test(ua)){
+					return true;
+				}
+				if((/Macintosh/i).test(ua) && navigator.maxTouchPoints > 1){
+					return true;
+				}
+				const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+				return !!coarse && Math.min(screen.width, screen.height) >= 600;
+			})();
+			const DESKTOP = IS_TABLET || !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
+			let SIZE, RADIUS, DOT_RADIUS;
+
+			function computeSizes(){
+				if(IS_TABLET){
+					SIZE = Math.max(360, Math.min(900, Math.floor(Math.min(window.innerWidth, window.innerHeight) - 32)));
+					DOT_RADIUS = SIZE*0.075;
+				}else{
+					SIZE = DESKTOP ? 640 : 320;
+					DOT_RADIUS = DESKTOP ? 48 : 24;
+				}
+				RADIUS = SIZE*0.40;
+			}
+
+			computeSizes();
+			window.addEventListener('resize', computeSizes);
 
 			function drawClockFace(){
 				const svg = document.getElementById("panel");
@@ -77,7 +103,7 @@
 				const hourColor = COLORS[(date.getHours() + 11)%12];
 				const day = date.getDate();
 				const minutes = date.getMinutes().toString().padStart(2, '0');
-				const fontSize = DESKTOP ? "32px" : "16px";
+				const fontSize = IS_TABLET ? (SIZE/20) + "px" : (DESKTOP ? "32px" : "16px");
 				counter.style.fontSize = fontSize;
 				counter.innerHTML = `
 					<div style="color: ${monthColor}; display: inline-block; font-size: 3em; font-weight: bold;">${day}</div>
@@ -86,6 +112,7 @@
 				`;
 				drawClockFace();
 			}
+
 			updateTime();
 			setInterval(updateTime, 200);
 		</script>

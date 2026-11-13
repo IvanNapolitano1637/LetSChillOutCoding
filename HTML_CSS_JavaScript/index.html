@@ -2125,6 +2125,44 @@ document.addEventListener('click', function(e) {
 				opacity: .7;
 				text-align: center
 			}
+			@media (hover:none) and (pointer:coarse) and (min-width:600px) and (min-height:600px){
+				body{
+					--w: min(calc(100vw - 32px), 780px, calc((100vh - 250px)*224/256));
+					--w: min(calc(100vw - 32px), 780px, calc((100dvh - 250px)*224/256));
+					gap: 14px
+				}
+				.bar{
+					gap: 10px
+				}
+				.bar button{
+					font-size: 1.1rem;
+					padding: 8px 18px;
+					border-radius: 8px
+				}
+				.ctl{
+					width: min(calc(100vw - 32px), 780px);
+					gap: 16px
+				}
+				.ctl button{
+					height: 92px;
+					font-size: 2rem;
+					border-radius: 18px
+				}
+				.ctl button.f{
+					font-size: 1.5rem
+				}
+				.ov h1{
+					font-size: 2.6rem
+				}
+				.ov p{
+					font-size: 1.2rem;
+					max-width: 34ch
+				}
+				.play{
+					font-size: 1.5rem;
+					padding: 14px 40px
+				}
+			}
 		</style>
 	</head>
 	<body>
@@ -2143,7 +2181,7 @@ document.addEventListener('click', function(e) {
 		</div>
 		<script>
 			(() => {
-				const W = 224, H = 256, S = 3, PY = 220, SY = 192, GY = 232;
+				const W = 224, H = 256, S = (window.matchMedia && window.matchMedia('(hover: none) and (pointer: coarse) and (min-width: 600px) and (min-height: 600px)').matches) ? 4 : 3, PY = 220, SY = 192, GY = 232;
 				const cv = document.getElementById('c'), ctx = cv.getContext('2d');
 				cv.width = W*S;
 				cv.height = H*S;
@@ -17478,6 +17516,56 @@ document.addEventListener('click', function(e) {
 				border-radius: 50%;
 				vertical-align: middle;
 			}
+			@media (min-width: 600px) and (min-height: 600px) and (pointer: coarse){
+				body{
+					padding: 16px;
+				}
+				button, select{
+					font-size: 1.1rem;
+					padding: 12px 18px;
+				}
+				.controls{
+					max-width: 1000px;
+				}
+				.controls button{
+					flex: 0 1 200px;
+					height: 56px;
+				}
+				.flag-svg{
+					width: 32px;
+				}
+				#helpBox{
+					max-width: 620px;
+					padding: 36px 40px 30px;
+				}
+				#helpBox table{
+					font-size: 1.1rem;
+				}
+				#helpCloseBtn{
+					font-size: 2rem;
+					padding: 6px 12px;
+				}
+				#setupBox{
+					max-width: 600px;
+					padding: 36px 40px 30px;
+				}
+				.setup-btn{
+					font-size: 1rem;
+					padding: 10px 12px;
+				}
+				.lang-btn{
+					font-size: 0.95rem;
+					padding: 10px 6px;
+				}
+				.disc-dot{
+					width: 18px;
+					height: 18px;
+				}
+				#setupConfirmBtn{
+					padding: 16px 48px;
+					font-size: 1.3rem;
+				}
+			}
 		</style>
 	</head>
 	<body>
@@ -17529,8 +17617,22 @@ document.addEventListener('click', function(e) {
 			</div>
 		</div>
 		<script>
-			const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
-			const UNIT = DESKTOP ? 10 : 5;
+			const IS_TABLET = (function(){
+				const ua = navigator.userAgent;
+				if((/iPad|Tablet/i).test(ua)){
+					return true;
+				}
+				if((/Android/i).test(ua) && !(/Mobi/i).test(ua)){
+					return true;
+				}
+				if((/Macintosh/i).test(ua) && navigator.maxTouchPoints > 1){
+					return true;
+				}
+				const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+				return !!coarse && Math.min(screen.width, screen.height) >= 600;
+			})();
+			const DESKTOP = IS_TABLET || !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
+			const UNIT = IS_TABLET ? Math.max(8, Math.min(14, Math.floor(Math.min((window.innerWidth - 32)/64, (window.innerHeight - 190)/55)))) : (DESKTOP ? 10 : 5);
 			const RADIUS = 4*UNIT;
 			const DIAMETER = 2*RADIUS;
 			const GRID_THICKNESS = UNIT;
@@ -24665,6 +24767,49 @@ document.addEventListener('click', function(e) {
 				color: var(--ink);
 				outline: none;
 			}
+		@media (min-width: 600px) and (min-height: 600px) and (pointer: coarse){
+			#game-area{
+				max-width: 1180px;
+			}
+			.game-layout{
+				grid-template-columns: 1fr 300px;
+				gap: 18px;
+			}
+			#setup-panel{
+				max-width: 640px;
+				padding: 28px 36px;
+			}
+			#setup-panel h2{
+				font-size: 1.4rem;
+			}
+			.player-row label{
+				font-size: 1.2rem;
+			}
+			.player-row input{
+				font-size: 1.2rem;
+				padding: 10px 14px;
+			}
+			.token-option{
+				font-size: 1.7rem;
+				padding: 4px;
+			}
+			.btn{
+				padding: 16px;
+				font-size: 1.2rem;
+			}
+			.btn.secondary{
+				font-size: 1.05rem;
+			}
+			.cell-num{
+				font-size: clamp(0.6rem, 1.5vw, 1rem);
+			}
+			.cell-icon{
+				font-size: clamp(1rem, 2.4vw, 1.7rem);
+			}
+			.token-on-board{
+				font-size: clamp(0.8rem, 1.9vw, 1.2rem);
+			}
+		}
 		</style>
 	</head>
 	<body>
@@ -27271,6 +27416,42 @@ document.addEventListener('click', function(e) {
 					right: 2px;
 				}
 			}
+		@media (min-width: 600px) and (min-height: 600px) and (pointer: coarse){
+			:root{
+				--bar-h: 114px;
+			}
+			#titlebar{
+				height: 40px;
+				padding: 0 12px;
+			}
+			#titlebar .icon{
+				width: 20px;
+				height: 20px;
+			}
+			#titlebar .title{
+				font-size: 16px;
+			}
+			#titlebar .btn{
+				width: 40px;
+				height: 28px;
+				font-size: 14px;
+			}
+			#menubar{
+				height: 34px;
+				font-size: 16px;
+			}
+			.menu-item{
+				padding: 4px 14px;
+			}
+			#scorebar{
+				height: 40px;
+				font-size: 16px;
+				gap: 24px;
+			}
+			.score-value{
+				font-size: 16px;
+			}
+		}
 		</style>
 	</head>
 	<body>
@@ -27360,10 +27541,12 @@ document.addEventListener('click', function(e) {
 			function updateCardSize(){
 				const vw = window.innerWidth;
 				const isMob = vw <= 500;
+				const vh = window.innerHeight;
+				const isTab = window.matchMedia('(pointer: coarse)').matches && Math.min(vw, vh) >= 600;
 				const pad = isMob ? 2: Math.max(14, Math.min(24, vw*0.015));
 				const gap = isMob ? 2: Math.max(6, Math.min(12, vw*0.012));
 				let cw = (vw - 2*pad - 6*gap)/7;
-				cw = Math.max(isMob ? 32 : 60, Math.min(isMob ? 46 : 96, cw));
+				cw = Math.max(isMob ? 32 : 60, Math.min(isMob ? 46 : (isTab ? Math.max(96, Math.min(132, vh*0.14)) : 96), cw));
 				const r = document.documentElement;
 				r.style.setProperty('--cw', cw + 'px');
 				r.style.setProperty('--gap', gap + 'px');
@@ -41574,6 +41757,19 @@ document.addEventListener('click', function(e) {
 				font-size: 0.78em;
 				color: #888;
 			}
+			@media (min-width: 600px) and (min-height: 600px) and (pointer: coarse){
+				.help-modal{
+					max-width: 560px;
+					padding: 32px 36px 28px 36px;
+				}
+				.help-table{
+					font-size: 1.1em;
+				}
+				.help-close{
+					font-size: 1.8em;
+					padding: 6px 12px;
+				}
+			}
 		</style>
 	</head>
 	<body id="body">
@@ -41597,8 +41793,22 @@ document.addEventListener('click', function(e) {
 			const FRAME_COLOR = "#000000";
 			const BORDER_COLOR = "#ff9f00";
 			const WINNING_COLOR = "#00ff00";
-			const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
-			const UNIT = DESKTOP ? 5 : 3;
+			const IS_TABLET = (function(){
+				const ua = navigator.userAgent;
+				if((/iPad|Tablet/i).test(ua)){
+					return true;
+				}
+				if((/Android/i).test(ua) && !(/Mobi/i).test(ua)){
+					return true;
+				}
+				if((/Macintosh/i).test(ua) && navigator.maxTouchPoints > 1){
+					return true;
+				}
+				const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+				return !!coarse && Math.min(screen.width, screen.height) >= 600;
+			})();
+			const DESKTOP = IS_TABLET || !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
+			const UNIT = IS_TABLET ? Math.max(5, Math.min(10, Math.floor(Math.min((window.innerWidth - 24)/96, (window.innerHeight - 90)/112)))) : (DESKTOP ? 5 : 3);
 			const DIVISION_WIDTH = UNIT;
 			const BORDER_WIDTH = 4*UNIT;
 			const MARGIN_DIM = 2*UNIT;
@@ -45302,7 +45512,7 @@ document.addEventListener('click', function(e) {
 <html lang="en"><!--P03#034 - Ernesto - Rubik's Cube-->
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 		<title>Rubik's Cube</title>
 		<style>
 			@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap');
@@ -45317,7 +45527,7 @@ document.addEventListener('click', function(e) {
 				--acc2: #ff6b6b;
 			}
 			*{
-				box-sizing: border - box;
+				box-sizing: border-box;
 				margin: 0;
 				padding: 0;
 				-webkit-tap-highlight-color: transparent;
@@ -45327,7 +45537,7 @@ document.addEventListener('click', function(e) {
 				overflow: hidden;
 				background: var(--bg);
 				color: var(--txt);
-				font-family: 'Syne', sans - serif;
+				font-family: 'Syne', sans-serif;
 			}
 			body{
 				display: flex;
@@ -45725,12 +45935,66 @@ document.addEventListener('click', function(e) {
 				background: var(--surf2);
 				border-radius: 2px;
 			}
-			.lang-bar{
+			.lang-wrap{
+				position: relative;
+				flex-shrink: 0;
+			}
+			.lang-toggle{
 				display: flex;
-				gap: 5px;
 				align-items: center;
-				flex-wrap: wrap;
-				justify-content: center;
+				gap: 5px;
+				background: var(--surf2);
+				border: 1px solid var(--brd);
+				border-radius: 8px;
+				padding: 5px 7px;
+				color: var(--mut);
+				cursor: pointer;
+				line-height: 0;
+			}
+			.lang-toggle .caret{
+				font-size: .65rem;
+				line-height: 1;
+			}
+			.lang-wrap.open .lang-toggle{
+				border-color: var(--acc);
+			}
+			.lang-bar{
+				display: none;
+				position: absolute;
+				top: calc(100% + 8px);
+				right: 0;
+				z-index: 300;
+				background: var(--surf);
+				border: 1px solid var(--brd);
+				border-radius: 10px;
+				padding: 8px;
+				box-shadow: 0 10px 30px rgba(0, 0, 0, .55);
+				grid-template-columns: repeat(4, auto);
+				gap: 6px;
+			}
+			.lang-wrap.open .lang-bar{
+				display: grid;
+			}
+			.lang-btn{
+				padding: 5px 6px;
+			}
+			@media(min-width: 1100px){
+				.lang-toggle{
+					display: none;
+				}
+				.lang-wrap .lang-bar{
+					display: flex;
+					position: static;
+					background: none;
+					border: none;
+					box-shadow: none;
+					padding: 0;
+					gap: 5px;
+					flex-wrap: nowrap;
+				}
+				.lang-btn{
+					padding: 1px 2px;
+				}
 			}
 			.lang-btn{
 				background: none;
@@ -45794,7 +46058,7 @@ document.addEventListener('click', function(e) {
 			.leg-mb{
 				margin-bottom: 1rem;
 			}
-			@media(min-width: 700px){
+			@media(min-width: 900px){
 				body{
 					flex-direction: column;
 				}
@@ -45944,7 +46208,7 @@ document.addEventListener('click', function(e) {
 					gap: 4px;
 				}
 			}
-			@media(max-width: 699px){
+			@media(max-width: 899px){
 				main{
 					flex: 1;
 					display: flex;
@@ -45953,6 +46217,225 @@ document.addEventListener('click', function(e) {
 				}
 				.desktop-sidebar{
 					display: none!important;
+				}
+			}
+			@media (min-width: 900px) and (min-height: 600px) and (pointer: coarse){
+				header{
+					min-height: 60px;
+					padding: 0.6rem 1.2rem;
+				}
+				.logo{
+					font-size: 1.1rem;
+				}
+				.sb{
+					width: 260px;
+					padding: 1rem;
+				}
+				.pt{
+					font-size: 0.7rem;
+				}
+				.bg, .rot-grid{
+					gap: 8px;
+				}
+				.btn{
+					padding: 0.8rem 0.5rem;
+					font-size: 0.95rem;
+					border-radius: 8px;
+				}
+			}
+			@supports (height: 100dvh){
+				html, body{
+					height: 100dvh;
+				}
+			}
+			body{
+				-webkit-user-select: none;
+				user-select: none;
+				-webkit-touch-callout: none;
+				padding-left: env(safe-area-inset-left);
+				padding-right: env(safe-area-inset-right);
+			}
+			button{
+				touch-action: manipulation;
+			}
+			canvas{
+				touch-action: none;
+				outline: none;
+			}
+			header{
+				padding-top: calc(.5rem + env(safe-area-inset-top));
+			}
+			.logo, .stats{
+				flex-shrink: 0;
+			}
+			.sl{
+				white-space: nowrap;
+			}
+			.hint{
+				max-width: 70%;
+				white-space: normal;
+				text-align: center;
+				line-height: 1.3;
+			}
+			@media(max-width: 899px){
+				.bottom{
+					padding-bottom: calc(.6rem + env(safe-area-inset-bottom));
+				}
+				.mlog-row{
+					flex-wrap: nowrap;
+					overflow-x: auto;
+					overflow-y: hidden;
+					max-height: none;
+				}
+				.mlog-row::-webkit-scrollbar{
+					display: none;
+				}
+				.mt{
+					flex-shrink: 0;
+					white-space: nowrap;
+				}
+				.drawer{
+					max-height: 80vh;
+					max-width: 560px;
+					margin: 0 auto;
+					padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+				}
+			}
+			@media(max-width: 599px){
+				header{
+					padding-left: .6rem;
+					padding-right: .6rem;
+					gap: .4rem;
+				}
+				.stats{
+					gap: .75rem;
+				}
+				.sv{
+					font-size: .9rem;
+				}
+				.logo span[data-i18n="title"]{
+					display: none;
+				}
+				.rot-btn{
+					width: 34px;
+					height: 34px;
+					font-size: .8rem;
+				}
+				.lang-bar{
+					grid-template-columns: repeat(4, auto);
+				}
+			}
+			@media(min-width: 600px) and (max-width: 899px){
+				header{
+					min-height: 60px;
+					padding-left: 1.2rem;
+					padding-right: 1.2rem;
+				}
+				.logo{
+					font-size: 1.1rem;
+				}
+				.sv{
+					font-size: 1.2rem;
+				}
+				.sl{
+					font-size: .6rem;
+				}
+				.rot-btn{
+					width: 50px;
+					height: 50px;
+					font-size: 1.2rem;
+				}
+				.rot-down, .rot-cw, .rot-ccw{
+					bottom: 36px;
+				}
+				.bottom{
+					padding: .8rem 1.2rem calc(.9rem + env(safe-area-inset-bottom));
+					gap: .6rem;
+				}
+				.qbtn{
+					min-height: 50px;
+					font-size: .95rem;
+				}
+				.moves-scroll{
+					gap: .5rem;
+					justify-content: center;
+				}
+				.mbtn{
+					width: 56px;
+					height: 48px;
+					font-size: 1rem;
+				}
+				.move-label{
+					font-size: .6rem;
+				}
+				.mt{
+					font-size: .75rem;
+				}
+				.open-drawer-btn{
+					width: 52px;
+					height: 46px;
+				}
+			}
+			@media(max-width: 899px) and (orientation: landscape) and (max-height: 520px){
+				body{
+					display: grid;
+					grid-template-columns: minmax(0, 1fr) 250px;
+					grid-template-rows: auto minmax(0, 1fr);
+				}
+				header{
+					grid-column: 1 / -1;
+					min-height: 40px;
+					padding-top: calc(.3rem + env(safe-area-inset-top));
+					padding-bottom: .3rem;
+				}
+				main{
+					grid-column: 1;
+					grid-row: 2;
+					min-height: 0;
+				}
+				.bottom{
+					grid-column: 2;
+					grid-row: 2;
+					min-height: 0;
+					overflow-y: auto;
+					border-top: none;
+					border-left: 1px solid var(--brd);
+					padding: .5rem .6rem;
+				}
+				.moves-scroll{
+					display: grid;
+					grid-template-columns: repeat(4, 1fr);
+					gap: .3rem;
+					overflow: visible;
+				}
+				.move-pair{
+					align-items: stretch;
+				}
+				.mbtn{
+					width: 100%;
+					height: 34px;
+				}
+				.qbtn{
+					min-height: 36px;
+				}
+				.rot-btn{
+					width: 34px;
+					height: 34px;
+					font-size: .8rem;
+				}
+				.rot-down, .rot-cw, .rot-ccw{
+					bottom: 8px;
+				}
+				.hint{
+					display: none;
+				}
+			}
+			@media(min-width: 900px) and (pointer: coarse){
+				.btn, .ab-d{
+					min-height: 44px;
+				}
+				.lang-btn{
+					padding: 5px 6px;
 				}
 			}
 		</style>
@@ -45968,7 +46451,10 @@ document.addEventListener('click', function(e) {
 				</div>
 				<span data-i18n="title">Rubik's Cube 3D</span>
 			</div>
-			<div class="lang-bar" id="lang-bar"></div>
+			<div class="lang-wrap" id="lang-wrap">
+				<button class="lang-toggle" id="lang-toggle" type="button" aria-haspopup="true" aria-expanded="false"></button>
+				<div class="lang-bar" id="lang-bar"></div>
+			</div>
 			<div class="stats">
 				<div class="stat">
 					<div class="sv" id="mc">0</div>
@@ -45998,7 +46484,6 @@ document.addEventListener('click', function(e) {
 					<button class="btn" onclick="orbitCam('z',-1)">&#8634; CCW</button>
 				</div>
 				<div class="pt" data-i18n="actions">Actions</div>
-				</div>
 				<div class="bg">
 					<button class="btn f p" onclick="scramble()">&#128256; <span data-i18n="scramble">Scramble</span></button>
 					<button class="btn f d" onclick="resetCube()">&#8634; <span data-i18n="reset">Reset</span></button>
@@ -46311,7 +46796,13 @@ document.addEventListener('click', function(e) {
 				document.querySelectorAll('.lang-btn').forEach(btn => {
 					btn.classList.toggle('active', btn.dataset.lang === lang);
 				});
-				document.documentElement.lang = lang === 'uk' ? 'uk' : lang === 'el' ? 'el' : lang === 'zh' ? 'zh' : lang === 'ja' ? 'ja' : lang;
+				document.documentElement.lang = lang;
+				const tg = document.getElementById('lang-toggle');
+				const fi = LANG_CODES.indexOf(lang);
+				if(tg && fi >= 0){
+					tg.innerHTML = FLAGS_SVG[fi] + '<span class="caret">\\u25be</span>';
+					tg.title = lang.toUpperCase();
+				}
 			}
 
 			(function buildLangBar(){
@@ -46324,10 +46815,42 @@ document.addEventListener('click', function(e) {
 					btn.dataset.lang = code;
 					btn.innerHTML = svg;
 					btn.title = code.toUpperCase();
-					btn.onclick = () => applyLang(code);
+					btn.onclick = () => {
+						applyLang(code);
+						closeLangMenu();
+					};
 					bar.appendChild(btn);
 				});
+				const wrap = document.getElementById('lang-wrap');
+				const tg = document.getElementById('lang-toggle');
+				if(tg && wrap){
+					tg.onclick = e => {
+						e.stopPropagation();
+						const open = wrap.classList.toggle('open');
+						tg.setAttribute('aria-expanded', open ? 'true' : 'false');
+					};
+					document.addEventListener('click', e => {
+						if(!wrap.contains(e.target)){
+							closeLangMenu();
+						}
+					});
+					document.addEventListener('keydown', e => {
+						if(e.key === 'Escape'){
+							closeLangMenu();
+						}
+					});
+				}
 			})();
+			function closeLangMenu(){
+				const wrap = document.getElementById('lang-wrap');
+				const tg = document.getElementById('lang-toggle');
+				if(wrap){
+					wrap.classList.remove('open');
+				}
+				if(tg){
+					tg.setAttribute('aria-expanded', 'false');
+				}
+			}
 
 			if(canvas){
 				const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
@@ -46342,6 +46865,8 @@ document.addEventListener('click', function(e) {
 					}
 					renderer.setSize(w, h, false);
 					camera.aspect = w/h;
+					const halfTan = Math.tan(THREE.MathUtils.degToRad(20));
+					camera.fov = THREE.MathUtils.radToDeg(2*Math.atan(halfTan/Math.min(1, camera.aspect)));
 					camera.updateProjectionMatrix();
 				}
 				new ResizeObserver(resize).observe(canvas);
@@ -46456,7 +46981,7 @@ document.addEventListener('click', function(e) {
 					}
 					return true;
 				}
-				const MOVE_DEF = {U:{axis: 'y', coord: 1, sign: 1}, D:{axis: 'y', coord: -1, sign: -1}, R:{axis: 'x', coord: 1, sign: -1}, L:{axis: 'x', coord: -1, sign: 1}, F:{axis: 'z', coord: 1, sign: -1}, B:{axis: 'z', coord: -1, sign: 1}, M:{axis: 'x', coord: 0, sign: 1}, E:{axis: 'y', coord: 0, sign: -1}, S:{axis: 'z', coord: 0, sign: -1},};
+				const MOVE_DEF = {U:{axis: 'y', coord: 1, sign: -1}, D:{axis: 'y', coord: -1, sign: 1}, R:{axis: 'x', coord: 1, sign: -1}, L:{axis: 'x', coord: -1, sign: 1}, F:{axis: 'z', coord: 1, sign: -1}, B:{axis: 'z', coord: -1, sign: 1}, M:{axis: 'x', coord: 0, sign: 1}, E:{axis: 'y', coord: 0, sign: 1}, S:{axis: 'z', coord: 0, sign: -1},};
 
 				const ADUR = 160;
 				let animQ = [], isCubeAnim = false, isCamAnim = false;
@@ -46606,16 +47131,57 @@ document.addEventListener('click', function(e) {
 					return best;
 				}
 
+				const OPPOSITE = {U: 'D', D: 'U', R: 'L', L: 'R', F: 'B', B: 'F'};
+				const SLICE_OF = {L: 'M', R: "M'", D: 'E', U: "E'", F: 'S', B: "S'"};
+
+				/* Associa i nomi U D R L F B alle facce che l'utente vede in questo momento:
+				   U = faccia in alto sullo schermo, F = faccia rivolta verso l'osservatore
+				   tra le quattro laterali, R = faccia a destra. */
 				function getVisualFaceMap(){
-					const cp = camera.position.clone();
-					const camDir = cp.clone().negate().normalize();
-					const worldUp = camera.up.clone().normalize();
-					let camRight = new THREE.Vector3().crossVectors(camDir, worldUp).normalize();
-					if(camRight.lengthSq() < 0.001){
-						camRight.set(1, 0, 0);
+					camera.updateMatrixWorld();
+					const q = camera.quaternion;
+					const toCam = new THREE.Vector3(0, 0, 1).applyQuaternion(q);
+					const camUp = new THREE.Vector3(0, 1, 0).applyQuaternion(q);
+					const best = (vec, banned) => {
+						let name = null, bd = -Infinity;
+						for(const [n, ax] of Object.entries(FACE_AXES)){
+							if(banned.includes(n)){
+								continue;
+							}
+							const d = vec.dot(ax);
+							if(d > bd){
+								bd = d;
+								name = n;
+							}
+						}
+						return name;
+					};
+					const U = best(camUp, []);
+					const F = best(toCam, [U, OPPOSITE[U]]);
+					const cr = new THREE.Vector3().crossVectors(FACE_AXES[U], FACE_AXES[F]);
+					const R = closestFace(cr);
+					return{U, D: OPPOSITE[U], F, B: OPPOSITE[F], R, L: OPPOSITE[R]};
+				}
+
+				function invertNotation(n){
+					return n.endsWith("'") ? n.slice(0, -1) : n + "'";
+				}
+
+				function viewMove(base, inv){
+					const map = getVisualFaceMap();
+					let n;
+					if(map [base]){
+						n = map [base];
+					}else if(base === 'M'){
+						n = SLICE_OF [map.L];
+					}else if(base === 'E'){
+						n = SLICE_OF [map.D];
+					}else if(base === 'S'){
+						n = SLICE_OF [map.F];
+					}else{
+						n = base;
 					}
-					const camUp = new THREE.Vector3().crossVectors(camRight, camDir).normalize();
-					return{F: closestFace(camDir.clone().negate()), B: closestFace(camDir), U: closestFace(camUp), D: closestFace(camUp.clone().negate()), R: closestFace(camRight), L: closestFace(camRight.clone().negate()),};
+					return inv ? invertNotation(n) : n;
 				}
 
 				function orbitCam(axis, dir){
@@ -46657,7 +47223,7 @@ document.addEventListener('click', function(e) {
 				if(scrollEl){
 					ALL_PAIRS.forEach(( [cw, ccw])  =>  {
 						const base = cw.replace("'", "");
-						const isRemap = REMAPPABLE.includes(base);
+						const isRemap = true;
 						const pair = document.createElement('div');
 						pair.className = 'move-pair';
 						const lbl = document.createElement('div');
@@ -46672,8 +47238,8 @@ document.addEventListener('click', function(e) {
 						if(isRemap){
 							bcw.id = 'mb-' + base;
 							bccw.id = 'mb-' + base + 'i';
-							bcw.onclick = ()  =>  mv(getVisualFaceMap() [base]);
-							bccw.onclick = ()  =>  mv(getVisualFaceMap() [base] + "'");
+							bcw.onclick = ()  =>  mv(viewMove(base, false));
+							bccw.onclick = ()  =>  mv(viewMove(base, true));
 						}else{
 							bcw.onclick = ()  =>  mv(cw);
 							bccw.onclick = ()  =>  mv(ccw);
@@ -46686,7 +47252,7 @@ document.addEventListener('click', function(e) {
 				if(deskEl){
 					ALL_PAIRS.forEach(( [cw, ccw])  =>  {
 						const base = cw.replace("'", "");
-						const isRemap = REMAPPABLE.includes(base);
+						const isRemap = true;
 						const bcw = document.createElement('button');
 						bcw.className = 'btn';
 						bcw.textContent = base;
@@ -46696,8 +47262,8 @@ document.addEventListener('click', function(e) {
 						if(isRemap){
 							bcw.id = 'db-' + base;
 							bccw.id = 'db-' + base + 'i';
-							bcw.onclick = ()  =>  mv(getVisualFaceMap() [base]);
-							bccw.onclick = ()  =>  mv(getVisualFaceMap() [base] + "'");
+							bcw.onclick = ()  =>  mv(viewMove(base, false));
+							bccw.onclick = ()  =>  mv(viewMove(base, true));
 						}else{
 							bcw.onclick = ()  =>  mv(cw);
 							bccw.onclick = ()  =>  mv(ccw);
@@ -46716,8 +47282,8 @@ document.addEventListener('click', function(e) {
 						s.textContent = n;
 						el.appendChild(s);
 						el.scrollTop = el.scrollHeight;
-					}
-					);
+						el.scrollLeft = el.scrollWidth;
+					});
 				}
 
 				function refreshLog(){
@@ -46845,7 +47411,9 @@ document.addEventListener('click', function(e) {
 						o.classList.remove('open');
 					}
 				}
+
 				const ALGOS = [{name: "Sexy Move", moves: "R U R' U'"},{name: "Sune", moves: "R U R' U R U2 R'"},{name: "Anti-Sune", moves: "R U2 R' U' R U' R'"},{name: "T-Perm", moves: "R U R' U' R' F R2 U' R' U' R U R' F'"},{name: "OLL Cross", moves: "F R U R' U' F'"},{name: "Y-Perm", moves: "F R U' R' U' R U R' F' R U R' U' R' F R F'"},{name: "A-Perm", moves: "R' F R' B2 R F' R' B2 R2"},];
+
 				ALGOS.forEach(a => {
 					const alM = document.getElementById('al-m');
 					if(alM){
@@ -46867,12 +47435,15 @@ document.addEventListener('click', function(e) {
 						alD.appendChild(bd);
 					}
 				});
+
 				let drag = false, mx = 0, my = 0;
+
 				canvas.addEventListener('mousedown', e => {
 					drag = true;
 					mx = e.clientX;
 					my = e.clientY;
 				});
+
 				window.addEventListener('mousemove', e => {
 					if(!drag) return;
 					const dx = e.clientX - mx;
@@ -46890,16 +47461,20 @@ document.addEventListener('click', function(e) {
 					camera.up.applyQuaternion(q);
 					camera.lookAt(0, 0, 0);
 				});
+
 				window.addEventListener('mouseup',() => {
 					drag = false;
 					refreshMoveBtns();
 				});
+
 				canvas.addEventListener('wheel', e => {
 					camR = Math.max(5, Math.min(16, camR + e.deltaY*0.01));
 					camera.position.setLength(camR);
 					e.preventDefault();
 				},{passive: false});
+
 				let t0x = 0, t0y = 0, t0d = 0, tDragging = false;
+
 				canvas.addEventListener('touchstart', e => {
 					if(e.touches.length === 1){
 						t0x = e.touches [0].clientX;
@@ -46912,6 +47487,7 @@ document.addEventListener('click', function(e) {
 						t0d = Math.sqrt(dx*dx + dy*dy);
 					}
 				},{passive: true});
+
 				canvas.addEventListener('touchmove', e => {
 					e.preventDefault();
 					if(e.touches.length === 1 && tDragging){
@@ -46949,7 +47525,7 @@ document.addEventListener('click', function(e) {
 					const k = e.key.toUpperCase();
 					const faceKeys = {U: 'U', D: 'D', R: 'R', L: 'L', F: 'F', B: 'B'};
 					if(faceKeys [k]){
-						mv(getVisualFaceMap() [k] +(e.shiftKey ? "'": ''));
+						mv(viewMove(k, e.shiftKey));
 						return;
 					}
 					if(k === 'Z'){
@@ -46985,14 +47561,17 @@ document.addEventListener('click', function(e) {
 						return;
 					}
 				});
+
 				function loop(){
 					requestAnimationFrame(loop);
 					renderer.render(scene, camera);
 				}
+
 				buildCube();
 				updateUndoBtn();
 				loop();
 			}
+
 			applyLang('en');
 		<\/script>
 	<script>
@@ -47080,13 +47659,36 @@ document.addEventListener('click', function(e) {
 	<body>
 		<div id="clock-container"></div>
 		<script>
-			const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
+			const IS_TABLET = (function(){
+				const ua = navigator.userAgent;
+				if((/iPad|Tablet/i).test(ua)){
+					return true;
+				}
+				if((/Android/i).test(ua) && !(/Mobi/i).test(ua)){
+					return true;
+				}
+				if((/Macintosh/i).test(ua) && navigator.maxTouchPoints > 1){
+					return true;
+				}
+				const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+				return !!coarse && Math.min(screen.width, screen.height) >= 600;
+			})();
+			const DESKTOP = IS_TABLET || !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
 			const FLAG = true;
-			const UNIT = DESKTOP ? 5 : 3;
+			const UNIT = IS_TABLET ? Math.max(5, Math.min(9, Math.floor(Math.min((window.innerWidth - 24)/106, (window.innerHeight - 70)/113)))) : (DESKTOP ? 5 : 3);
 			const HORIZONTAL_SPACE = 2*UNIT;
 			const VERTICAL_SPACE = 2*UNIT;
 			const YEAR_RADIUS = 3*UNIT;
 			const RADIUS = 2*YEAR_RADIUS + (HORIZONTAL_SPACE/2);
+
+			function tsX(i){
+				if(IS_TABLET){
+					const r = RADIUS/5;
+					const w = 12*RADIUS + 11*HORIZONTAL_SPACE;
+					return 2*UNIT + r + i*((w - 4*UNIT - 2*r)/31);
+				}
+				return ((i*2 + 1)*(RADIUS/5)) + (1*HORIZONTAL_SPACE) + i + (DESKTOP ? i : UNIT);
+			}
 			const ZERO_COLOR = 'blue';
 			const ONE_COLOR = 'red';
 			const SEPARATOR_COLOR = 'yellow';
@@ -47123,6 +47725,23 @@ document.addEventListener('click', function(e) {
 					<input type="text" id="sign" value="caddc7ec" disabled>
 				</div>
 			\`;
+
+			if(IS_TABLET){
+				document.querySelectorAll('.controls input').forEach(input => {
+					input.style.fontSize = Math.round(UNIT*2) + "px";
+					input.style.padding = "6px 4px";
+				});
+				const startLandscape = window.innerWidth > window.innerHeight;
+				let resizeTimer;
+				window.addEventListener('resize', () => {
+					clearTimeout(resizeTimer);
+					resizeTimer = setTimeout(() => {
+						if((window.innerWidth > window.innerHeight) !== startLandscape){
+							window.parent.postMessage('RELOAD_REQUEST','*');
+						}
+					}, 250);
+				});
+			}
 
 			let clockSetting = (function(){
 				let executed = false;
@@ -47181,13 +47800,13 @@ document.addEventListener('click', function(e) {
 						for(let i = 0; i < 32; i++){
 							TS_C[i] = document.createElementNS(svgns, "circle");
 							TS_C[i].setAttribute("r", RADIUS/5);
-							TS_C[i].setAttribute("cx",((i*2 + 1)*(RADIUS/5)) + (1*HORIZONTAL_SPACE) + i + (DESKTOP ? i : UNIT));
+							TS_C[i].setAttribute("cx",tsX(i));
 							TS_C[i].setAttribute("cy", 2*YEAR_RADIUS + 11*RADIUS + 10*VERTICAL_SPACE);
 							svg.appendChild(TS_C[i]);
 							if(FLAG){
 								LAST_ARRAY_BD_C[i] = document.createElementNS(svgns, "circle");
 								LAST_ARRAY_BD_C[i].setAttribute("r", RADIUS/5);
-								LAST_ARRAY_BD_C[i].setAttribute("cx",((i*2 + 1)*(RADIUS/5)) + (1*HORIZONTAL_SPACE) + i + (DESKTOP ? i : UNIT));
+								LAST_ARRAY_BD_C[i].setAttribute("cx",tsX(i));
 								LAST_ARRAY_BD_C[i].setAttribute("cy", 2*YEAR_RADIUS + 12*RADIUS + 10*VERTICAL_SPACE);
 								LAST_ARRAY_BD_C[i].style.fill = (LAST_ARRAY_BD[i] === 0) ? ZERO_COLOR : ONE_COLOR;
 								svg.appendChild(LAST_ARRAY_BD_C[i]);
@@ -47843,6 +48462,9 @@ document.addEventListener('click', function(e) {
 			.clock.reflected #time span b{
 				transform: rotate(calc(-15deg*var(--i))) scaleX(-1);
 			}
+			.clock{
+				touch-action: manipulation;
+			}
 		</style>
 	</head>
 	<body>
@@ -47922,7 +48544,21 @@ document.addEventListener('click', function(e) {
 				document.getElementById('clock_el').classList.toggle('reflected', isReflected);
 			}
 
+			function fitForTablet(){
+				const el = document.getElementById('clock_el');
+				const minSide = Math.min(window.innerWidth, window.innerHeight);
+				const tablet = window.matchMedia('(pointer: coarse)').matches && minSide >= 600;
+				if(tablet){
+					el.style.setProperty('--base-scale', Math.min(3.6, minSide*0.9/250).toFixed(3));
+				}else{
+					el.style.removeProperty('--base-scale');
+				}
+			}
+
 			drawNumbers();
+			fitForTablet();
+			window.addEventListener('resize', fitForTablet);
+			window.addEventListener('orientationchange', fitForTablet);
 			setInterval(updateClock, 50);
 			updateClock();
 		<\/script>
@@ -47996,10 +48632,36 @@ document.addEventListener('click', function(e) {
 		</div>
 		<script>
 			const COLORS = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#00AF00", "#7F007F", "#FFAFAF", "#FFCF4F", "#FF7F00", "#7F3F00"];
-			const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
-			const SIZE = DESKTOP ? 640 : 320;
-			const RADIUS = SIZE*0.40;
-			const DOT_RADIUS = DESKTOP ? 48 : 24;
+			const IS_TABLET = (function(){
+				const ua = navigator.userAgent;
+				if((/iPad|Tablet/i).test(ua)){
+					return true;
+				}
+				if((/Android/i).test(ua) && !(/Mobi/i).test(ua)){
+					return true;
+				}
+				if((/Macintosh/i).test(ua) && navigator.maxTouchPoints > 1){
+					return true;
+				}
+				const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+				return !!coarse && Math.min(screen.width, screen.height) >= 600;
+			})();
+			const DESKTOP = IS_TABLET || !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
+			let SIZE, RADIUS, DOT_RADIUS;
+
+			function computeSizes(){
+				if(IS_TABLET){
+					SIZE = Math.max(360, Math.min(900, Math.floor(Math.min(window.innerWidth, window.innerHeight) - 32)));
+					DOT_RADIUS = SIZE*0.075;
+				}else{
+					SIZE = DESKTOP ? 640 : 320;
+					DOT_RADIUS = DESKTOP ? 48 : 24;
+				}
+				RADIUS = SIZE*0.40;
+			}
+
+			computeSizes();
+			window.addEventListener('resize', computeSizes);
 
 			function drawClockFace(){
 				const svg = document.getElementById("panel");
@@ -48027,7 +48689,7 @@ document.addEventListener('click', function(e) {
 				const hourColor = COLORS[(date.getHours() + 11)%12];
 				const day = date.getDate();
 				const minutes = date.getMinutes().toString().padStart(2, '0');
-				const fontSize = DESKTOP ? "32px" : "16px";
+				const fontSize = IS_TABLET ? (SIZE/20) + "px" : (DESKTOP ? "32px" : "16px");
 				counter.style.fontSize = fontSize;
 				counter.innerHTML = \`
 					<div style="color: \${monthColor}; display: inline-block; font-size: 3em; font-weight: bold;">\${day}</div>
@@ -48036,6 +48698,7 @@ document.addEventListener('click', function(e) {
 				\`;
 				drawClockFace();
 			}
+
 			updateTime();
 			setInterval(updateTime, 200);
 		<\/script>
@@ -51765,6 +52428,16 @@ document.addEventListener('click', function(e) {
 			@media (max-width: 480px){
 				.menu-container{
 					transform: scale(0.8);
+				}
+			}
+			@media (min-width: 600px) and (min-height: 600px) and (pointer: coarse){
+				.menu-container{
+					transform: scale(1.6);
+				}
+			}
+			@media (min-width: 1000px) and (min-height: 900px) and (pointer: coarse){
+				.menu-container{
+					transform: scale(2);
 				}
 			}
 			*{
@@ -58249,6 +58922,77 @@ document.addEventListener('click', function(e) {
 				}
 				input[type="text"]{
 					padding: 8px 4px;
+				}
+			}
+			@media (min-width: 600px) and (min-height: 600px) and (pointer: coarse){
+				body{
+					margin: 32px;
+				}
+				.container{
+					max-width: 640px;
+					padding: 32px;
+				}
+				h3{
+					font-size: 1.8em;
+				}
+				label{
+					font-size: 1.1em;
+					margin-bottom: 10px;
+				}
+				.row-group{
+					gap: 14px;
+					margin-bottom: 12px;
+				}
+				input[type="text"]{
+					font-size: 1.2rem;
+					padding: 12px 10px;
+					min-height: 52px;
+				}
+				button{
+					font-size: 1.1rem;
+					padding: 12px 22px;
+					min-height: 52px;
+				}
+				.btn-today{
+					font-size: 1rem;
+					min-width: 130px;
+					padding: 12px 8px;
+					letter-spacing: 0;
+				}
+				.btn-step{
+					min-width: 64px;
+					padding: 12px;
+					font-size: 1.2rem;
+				}
+				.btn-action{
+					min-width: 80px;
+				}
+				.custom-select-container{
+					width: 84px;
+				}
+				.selected-flag{
+					padding: 8px;
+				}
+				.options-container{
+					width: 84px;
+				}
+				.option-flag{
+					padding: 12px;
+				}
+				.flag-svg{
+					width: 42px;
+					height: 28px;
+				}
+				.help-modal{
+					max-width: 560px;
+					padding: 32px 36px 28px 36px;
+				}
+				.help-table{
+					font-size: 1.1em;
+				}
+				.help-close{
+					font-size: 1.8em;
+					padding: 6px 12px;
 				}
 			}
 		</style>
@@ -67519,7 +68263,7 @@ document.addEventListener('click', function(e) {
 				<p>Questa repo contiene una cinquatina di pagine HTML divise in alcune categorie. Le ho divise per cartelle e categorie perché cominciavano a diventare troppe ed era diventato dispersivo averle tutte insieme in un unico punto. Oltre queste ne ho scritte anche un'altra quarantina, tutte di matematica, ma ancora non sono presentabili per una pubblicazione, vedremo forse nei prossimi mesi.</p>
 				<p>Queste pagine sono un gioco, un passatempo, sia per me che le ho scritte che per l'eventuale utente. Non vanno prese seriamente. Sono ancora in fase di modifica, in questo periodo ci sto lavorando più volte a settimana. Sono passati anche interi mesi senza che facessi nulla, sono stato più volte convinto di aver terminato il lavoro su alcune di esse per poi tornare a metterci mano. Chissà, forse su nessuna si può avere la garanzia che sia davvero finita finché non sarò morto.</p>
 				<p>Ci sto lavorando da tanto tempo, forse dal 2019/2020, non ricordo. Quando ho iniziato ad utilizzare l'intelligenza artificiale hanno avuto un rapido sviluppo e c'è stato anche un notevole salto di qualità.</p>
-				<p>Funzionano sia da cellulare sia da pc. Dato che sostanzialmente nessuno ha mostrato un sincero interesse ho limitato lo studio della grafica ed i controlli di funzionamento al mio telefono Android ed al mio calcolatore con Windows. Dubito funzioni su altre famiglie di sistemi operativi ed ho visto che non funziona su diversi tipi di smartphone. Non ho ancora preso molto in considerazione il loro funzionamento su tablet semplicemente perché non ne ho mai avuto uno prima d'ora. Uno l'ho preso di recente ma lo uso ancora poco. Ad una rapida occhiata funzionano tutte ma in alcune vanno sistemate le dimensioni.</p>
+				<p>Funzionano sia da cellulare sia da pc. Dato che sostanzialmente nessuno ha mostrato un sincero interesse ho limitato lo studio della grafica ed i controlli di funzionamento al mio telefono Android ed al mio calcolatore con Windows. Dubito funzioni su altre famiglie di sistemi operativi ed ho visto che non funziona su diversi tipi di smartphone. Ho cominciato a sistemarle anche per il tablet ma non ho ancora finito. Forse finirò domani.</p>
 				<p>Nasco come programmatore di linguaggi compilati e fortemente tipizzati come C++ e Java. Il front-end lo vivo più come compromesso per far diffondere più semplicemente alcune mie creazioni anche a chi è a digiuno di informatica.</p>
 				<p>I codici sono scritti esclusivamente in inglese con un'unica eccezione di cui parlerò quando tratterò di quella specifica pagina. Alcune pagine sono solo in italiano, in gran parte hanno il nome in inglese, alcune sono in dodici lingue (Inglese, Italiano, Francese, Spagnolo, Tedesco, Portoghese, Romeno, Ucraino, Greco, Latino, Cinese, Giapponese), poche prive di lingue. Qualcuna è solo italiana perché o non trovo abbia senso in altre lingue oppure perché ancora non l'ho fatta tradurre nelle altre undici ma un giorno conto di farlo. Di ogni pagina sono segnalati il numero di lingue e la sezione.</p>
 				<p>Ogni pagina ha quattro identificativi:</p>

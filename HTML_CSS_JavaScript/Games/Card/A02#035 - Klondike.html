@@ -507,6 +507,42 @@
 					right: 2px;
 				}
 			}
+		@media (min-width: 600px) and (min-height: 600px) and (pointer: coarse){
+			:root{
+				--bar-h: 114px;
+			}
+			#titlebar{
+				height: 40px;
+				padding: 0 12px;
+			}
+			#titlebar .icon{
+				width: 20px;
+				height: 20px;
+			}
+			#titlebar .title{
+				font-size: 16px;
+			}
+			#titlebar .btn{
+				width: 40px;
+				height: 28px;
+				font-size: 14px;
+			}
+			#menubar{
+				height: 34px;
+				font-size: 16px;
+			}
+			.menu-item{
+				padding: 4px 14px;
+			}
+			#scorebar{
+				height: 40px;
+				font-size: 16px;
+				gap: 24px;
+			}
+			.score-value{
+				font-size: 16px;
+			}
+		}
 		</style>
 	</head>
 	<body>
@@ -596,10 +632,12 @@
 			function updateCardSize(){
 				const vw = window.innerWidth;
 				const isMob = vw <= 500;
+				const vh = window.innerHeight;
+				const isTab = window.matchMedia('(pointer: coarse)').matches && Math.min(vw, vh) >= 600;
 				const pad = isMob ? 2: Math.max(14, Math.min(24, vw*0.015));
 				const gap = isMob ? 2: Math.max(6, Math.min(12, vw*0.012));
 				let cw = (vw - 2*pad - 6*gap)/7;
-				cw = Math.max(isMob ? 32 : 60, Math.min(isMob ? 46 : 96, cw));
+				cw = Math.max(isMob ? 32 : 60, Math.min(isMob ? 46 : (isTab ? Math.max(96, Math.min(132, vh*0.14)) : 96), cw));
 				const r = document.documentElement;
 				r.style.setProperty('--cw', cw + 'px');
 				r.style.setProperty('--gap', gap + 'px');

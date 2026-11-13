@@ -61,13 +61,36 @@
 	<body>
 		<div id="clock-container"></div>
 		<script>
-			const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
+			const IS_TABLET = (function(){
+				const ua = navigator.userAgent;
+				if((/iPad|Tablet/i).test(ua)){
+					return true;
+				}
+				if((/Android/i).test(ua) && !(/Mobi/i).test(ua)){
+					return true;
+				}
+				if((/Macintosh/i).test(ua) && navigator.maxTouchPoints > 1){
+					return true;
+				}
+				const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+				return !!coarse && Math.min(screen.width, screen.height) >= 600;
+			})();
+			const DESKTOP = IS_TABLET || !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
 			const FLAG = true;
-			const UNIT = DESKTOP ? 5 : 3;
+			const UNIT = IS_TABLET ? Math.max(5, Math.min(9, Math.floor(Math.min((window.innerWidth - 24)/106, (window.innerHeight - 70)/113)))) : (DESKTOP ? 5 : 3);
 			const HORIZONTAL_SPACE = 2*UNIT;
 			const VERTICAL_SPACE = 2*UNIT;
 			const YEAR_RADIUS = 3*UNIT;
 			const RADIUS = 2*YEAR_RADIUS + (HORIZONTAL_SPACE/2);
+
+			function tsX(i){
+				if(IS_TABLET){
+					const r = RADIUS/5;
+					const w = 12*RADIUS + 11*HORIZONTAL_SPACE;
+					return 2*UNIT + r + i*((w - 4*UNIT - 2*r)/31);
+				}
+				return ((i*2 + 1)*(RADIUS/5)) + (1*HORIZONTAL_SPACE) + i + (DESKTOP ? i : UNIT);
+			}
 			const ZERO_COLOR = 'blue';
 			const ONE_COLOR = 'red';
 			const SEPARATOR_COLOR = 'yellow';
@@ -104,6 +127,23 @@
 					<input type="text" id="sign" value="caddc7ec" disabled>
 				</div>
 			`;
+
+			if(IS_TABLET){
+				document.querySelectorAll('.controls input').forEach(input => {
+					input.style.fontSize = Math.round(UNIT*2) + "px";
+					input.style.padding = "6px 4px";
+				});
+				const startLandscape = window.innerWidth > window.innerHeight;
+				let resizeTimer;
+				window.addEventListener('resize', () => {
+					clearTimeout(resizeTimer);
+					resizeTimer = setTimeout(() => {
+						if((window.innerWidth > window.innerHeight) !== startLandscape){
+							location.reload();
+						}
+					}, 250);
+				});
+			}
 
 			let clockSetting = (function(){
 				let executed = false;
@@ -162,13 +202,13 @@
 						for(let i = 0; i < 32; i++){
 							TS_C[i] = document.createElementNS(svgns, "circle");
 							TS_C[i].setAttribute("r", RADIUS/5);
-							TS_C[i].setAttribute("cx",((i*2 + 1)*(RADIUS/5)) + (1*HORIZONTAL_SPACE) + i + (DESKTOP ? i : UNIT));
+							TS_C[i].setAttribute("cx",tsX(i));
 							TS_C[i].setAttribute("cy", 2*YEAR_RADIUS + 11*RADIUS + 10*VERTICAL_SPACE);
 							svg.appendChild(TS_C[i]);
 							if(FLAG){
 								LAST_ARRAY_BD_C[i] = document.createElementNS(svgns, "circle");
 								LAST_ARRAY_BD_C[i].setAttribute("r", RADIUS/5);
-								LAST_ARRAY_BD_C[i].setAttribute("cx",((i*2 + 1)*(RADIUS/5)) + (1*HORIZONTAL_SPACE) + i + (DESKTOP ? i : UNIT));
+								LAST_ARRAY_BD_C[i].setAttribute("cx",tsX(i));
 								LAST_ARRAY_BD_C[i].setAttribute("cy", 2*YEAR_RADIUS + 12*RADIUS + 10*VERTICAL_SPACE);
 								LAST_ARRAY_BD_C[i].style.fill = (LAST_ARRAY_BD[i] === 0) ? ZERO_COLOR : ONE_COLOR;
 								svg.appendChild(LAST_ARRAY_BD_C[i]);

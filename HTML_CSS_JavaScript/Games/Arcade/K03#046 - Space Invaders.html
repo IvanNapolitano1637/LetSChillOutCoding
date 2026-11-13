@@ -151,6 +151,44 @@
 				opacity: .7;
 				text-align: center
 			}
+			@media (hover:none) and (pointer:coarse) and (min-width:600px) and (min-height:600px){
+				body{
+					--w: min(calc(100vw - 32px), 780px, calc((100vh - 250px)*224/256));
+					--w: min(calc(100vw - 32px), 780px, calc((100dvh - 250px)*224/256));
+					gap: 14px
+				}
+				.bar{
+					gap: 10px
+				}
+				.bar button{
+					font-size: 1.1rem;
+					padding: 8px 18px;
+					border-radius: 8px
+				}
+				.ctl{
+					width: min(calc(100vw - 32px), 780px);
+					gap: 16px
+				}
+				.ctl button{
+					height: 92px;
+					font-size: 2rem;
+					border-radius: 18px
+				}
+				.ctl button.f{
+					font-size: 1.5rem
+				}
+				.ov h1{
+					font-size: 2.6rem
+				}
+				.ov p{
+					font-size: 1.2rem;
+					max-width: 34ch
+				}
+				.play{
+					font-size: 1.5rem;
+					padding: 14px 40px
+				}
+			}
 		</style>
 	</head>
 	<body>
@@ -169,7 +207,7 @@
 		</div>
 		<script>
 			(() => {
-				const W = 224, H = 256, S = 3, PY = 220, SY = 192, GY = 232;
+				const W = 224, H = 256, S = (window.matchMedia && window.matchMedia('(hover: none) and (pointer: coarse) and (min-width: 600px) and (min-height: 600px)').matches) ? 4 : 3, PY = 220, SY = 192, GY = 232;
 				const cv = document.getElementById('c'), ctx = cv.getContext('2d');
 				cv.width = W*S;
 				cv.height = H*S;

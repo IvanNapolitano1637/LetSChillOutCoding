@@ -151,6 +151,9 @@
 			.clock.reflected #time span b{
 				transform: rotate(calc(-15deg*var(--i))) scaleX(-1);
 			}
+			.clock{
+				touch-action: manipulation;
+			}
 		</style>
 	</head>
 	<body>
@@ -230,7 +233,21 @@
 				document.getElementById('clock_el').classList.toggle('reflected', isReflected);
 			}
 
+			function fitForTablet(){
+				const el = document.getElementById('clock_el');
+				const minSide = Math.min(window.innerWidth, window.innerHeight);
+				const tablet = window.matchMedia('(pointer: coarse)').matches && minSide >= 600;
+				if(tablet){
+					el.style.setProperty('--base-scale', Math.min(3.6, minSide*0.9/250).toFixed(3));
+				}else{
+					el.style.removeProperty('--base-scale');
+				}
+			}
+
 			drawNumbers();
+			fitForTablet();
+			window.addEventListener('resize', fitForTablet);
+			window.addEventListener('orientationchange', fitForTablet);
 			setInterval(updateClock, 50);
 			updateClock();
 		</script>

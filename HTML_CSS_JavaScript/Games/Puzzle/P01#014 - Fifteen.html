@@ -183,6 +183,19 @@
 				font-size: 0.78em;
 				color: #888;
 			}
+			@media (min-width: 600px) and (min-height: 600px) and (pointer: coarse){
+				.help-modal{
+					max-width: 560px;
+					padding: 32px 36px 28px 36px;
+				}
+				.help-table{
+					font-size: 1.1em;
+				}
+				.help-close{
+					font-size: 1.8em;
+					padding: 6px 12px;
+				}
+			}
 		</style>
 	</head>
 	<body id="body">
@@ -206,8 +219,22 @@
 			const FRAME_COLOR = "#000000";
 			const BORDER_COLOR = "#ff9f00";
 			const WINNING_COLOR = "#00ff00";
-			const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
-			const UNIT = DESKTOP ? 5 : 3;
+			const IS_TABLET = (function(){
+				const ua = navigator.userAgent;
+				if((/iPad|Tablet/i).test(ua)){
+					return true;
+				}
+				if((/Android/i).test(ua) && !(/Mobi/i).test(ua)){
+					return true;
+				}
+				if((/Macintosh/i).test(ua) && navigator.maxTouchPoints > 1){
+					return true;
+				}
+				const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+				return !!coarse && Math.min(screen.width, screen.height) >= 600;
+			})();
+			const DESKTOP = IS_TABLET || !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
+			const UNIT = IS_TABLET ? Math.max(5, Math.min(10, Math.floor(Math.min((window.innerWidth - 24)/96, (window.innerHeight - 90)/112)))) : (DESKTOP ? 5 : 3);
 			const DIVISION_WIDTH = UNIT;
 			const BORDER_WIDTH = 4*UNIT;
 			const MARGIN_DIM = 2*UNIT;

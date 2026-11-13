@@ -2,7 +2,7 @@
 <html lang="en"><!--P03#034 - Ernesto - Rubik's Cube-->
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 		<title>Rubik's Cube</title>
 		<style>
 			@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap');
@@ -17,7 +17,7 @@
 				--acc2: #ff6b6b;
 			}
 			*{
-				box-sizing: border - box;
+				box-sizing: border-box;
 				margin: 0;
 				padding: 0;
 				-webkit-tap-highlight-color: transparent;
@@ -27,7 +27,7 @@
 				overflow: hidden;
 				background: var(--bg);
 				color: var(--txt);
-				font-family: 'Syne', sans - serif;
+				font-family: 'Syne', sans-serif;
 			}
 			body{
 				display: flex;
@@ -425,12 +425,66 @@
 				background: var(--surf2);
 				border-radius: 2px;
 			}
-			.lang-bar{
+			.lang-wrap{
+				position: relative;
+				flex-shrink: 0;
+			}
+			.lang-toggle{
 				display: flex;
-				gap: 5px;
 				align-items: center;
-				flex-wrap: wrap;
-				justify-content: center;
+				gap: 5px;
+				background: var(--surf2);
+				border: 1px solid var(--brd);
+				border-radius: 8px;
+				padding: 5px 7px;
+				color: var(--mut);
+				cursor: pointer;
+				line-height: 0;
+			}
+			.lang-toggle .caret{
+				font-size: .65rem;
+				line-height: 1;
+			}
+			.lang-wrap.open .lang-toggle{
+				border-color: var(--acc);
+			}
+			.lang-bar{
+				display: none;
+				position: absolute;
+				top: calc(100% + 8px);
+				right: 0;
+				z-index: 300;
+				background: var(--surf);
+				border: 1px solid var(--brd);
+				border-radius: 10px;
+				padding: 8px;
+				box-shadow: 0 10px 30px rgba(0, 0, 0, .55);
+				grid-template-columns: repeat(4, auto);
+				gap: 6px;
+			}
+			.lang-wrap.open .lang-bar{
+				display: grid;
+			}
+			.lang-btn{
+				padding: 5px 6px;
+			}
+			@media(min-width: 1100px){
+				.lang-toggle{
+					display: none;
+				}
+				.lang-wrap .lang-bar{
+					display: flex;
+					position: static;
+					background: none;
+					border: none;
+					box-shadow: none;
+					padding: 0;
+					gap: 5px;
+					flex-wrap: nowrap;
+				}
+				.lang-btn{
+					padding: 1px 2px;
+				}
 			}
 			.lang-btn{
 				background: none;
@@ -494,7 +548,7 @@
 			.leg-mb{
 				margin-bottom: 1rem;
 			}
-			@media(min-width: 700px){
+			@media(min-width: 900px){
 				body{
 					flex-direction: column;
 				}
@@ -644,7 +698,7 @@
 					gap: 4px;
 				}
 			}
-			@media(max-width: 699px){
+			@media(max-width: 899px){
 				main{
 					flex: 1;
 					display: flex;
@@ -653,6 +707,225 @@
 				}
 				.desktop-sidebar{
 					display: none!important;
+				}
+			}
+			@media (min-width: 900px) and (min-height: 600px) and (pointer: coarse){
+				header{
+					min-height: 60px;
+					padding: 0.6rem 1.2rem;
+				}
+				.logo{
+					font-size: 1.1rem;
+				}
+				.sb{
+					width: 260px;
+					padding: 1rem;
+				}
+				.pt{
+					font-size: 0.7rem;
+				}
+				.bg, .rot-grid{
+					gap: 8px;
+				}
+				.btn{
+					padding: 0.8rem 0.5rem;
+					font-size: 0.95rem;
+					border-radius: 8px;
+				}
+			}
+			@supports (height: 100dvh){
+				html, body{
+					height: 100dvh;
+				}
+			}
+			body{
+				-webkit-user-select: none;
+				user-select: none;
+				-webkit-touch-callout: none;
+				padding-left: env(safe-area-inset-left);
+				padding-right: env(safe-area-inset-right);
+			}
+			button{
+				touch-action: manipulation;
+			}
+			canvas{
+				touch-action: none;
+				outline: none;
+			}
+			header{
+				padding-top: calc(.5rem + env(safe-area-inset-top));
+			}
+			.logo, .stats{
+				flex-shrink: 0;
+			}
+			.sl{
+				white-space: nowrap;
+			}
+			.hint{
+				max-width: 70%;
+				white-space: normal;
+				text-align: center;
+				line-height: 1.3;
+			}
+			@media(max-width: 899px){
+				.bottom{
+					padding-bottom: calc(.6rem + env(safe-area-inset-bottom));
+				}
+				.mlog-row{
+					flex-wrap: nowrap;
+					overflow-x: auto;
+					overflow-y: hidden;
+					max-height: none;
+				}
+				.mlog-row::-webkit-scrollbar{
+					display: none;
+				}
+				.mt{
+					flex-shrink: 0;
+					white-space: nowrap;
+				}
+				.drawer{
+					max-height: 80vh;
+					max-width: 560px;
+					margin: 0 auto;
+					padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+				}
+			}
+			@media(max-width: 599px){
+				header{
+					padding-left: .6rem;
+					padding-right: .6rem;
+					gap: .4rem;
+				}
+				.stats{
+					gap: .75rem;
+				}
+				.sv{
+					font-size: .9rem;
+				}
+				.logo span[data-i18n="title"]{
+					display: none;
+				}
+				.rot-btn{
+					width: 34px;
+					height: 34px;
+					font-size: .8rem;
+				}
+				.lang-bar{
+					grid-template-columns: repeat(4, auto);
+				}
+			}
+			@media(min-width: 600px) and (max-width: 899px){
+				header{
+					min-height: 60px;
+					padding-left: 1.2rem;
+					padding-right: 1.2rem;
+				}
+				.logo{
+					font-size: 1.1rem;
+				}
+				.sv{
+					font-size: 1.2rem;
+				}
+				.sl{
+					font-size: .6rem;
+				}
+				.rot-btn{
+					width: 50px;
+					height: 50px;
+					font-size: 1.2rem;
+				}
+				.rot-down, .rot-cw, .rot-ccw{
+					bottom: 36px;
+				}
+				.bottom{
+					padding: .8rem 1.2rem calc(.9rem + env(safe-area-inset-bottom));
+					gap: .6rem;
+				}
+				.qbtn{
+					min-height: 50px;
+					font-size: .95rem;
+				}
+				.moves-scroll{
+					gap: .5rem;
+					justify-content: center;
+				}
+				.mbtn{
+					width: 56px;
+					height: 48px;
+					font-size: 1rem;
+				}
+				.move-label{
+					font-size: .6rem;
+				}
+				.mt{
+					font-size: .75rem;
+				}
+				.open-drawer-btn{
+					width: 52px;
+					height: 46px;
+				}
+			}
+			@media(max-width: 899px) and (orientation: landscape) and (max-height: 520px){
+				body{
+					display: grid;
+					grid-template-columns: minmax(0, 1fr) 250px;
+					grid-template-rows: auto minmax(0, 1fr);
+				}
+				header{
+					grid-column: 1 / -1;
+					min-height: 40px;
+					padding-top: calc(.3rem + env(safe-area-inset-top));
+					padding-bottom: .3rem;
+				}
+				main{
+					grid-column: 1;
+					grid-row: 2;
+					min-height: 0;
+				}
+				.bottom{
+					grid-column: 2;
+					grid-row: 2;
+					min-height: 0;
+					overflow-y: auto;
+					border-top: none;
+					border-left: 1px solid var(--brd);
+					padding: .5rem .6rem;
+				}
+				.moves-scroll{
+					display: grid;
+					grid-template-columns: repeat(4, 1fr);
+					gap: .3rem;
+					overflow: visible;
+				}
+				.move-pair{
+					align-items: stretch;
+				}
+				.mbtn{
+					width: 100%;
+					height: 34px;
+				}
+				.qbtn{
+					min-height: 36px;
+				}
+				.rot-btn{
+					width: 34px;
+					height: 34px;
+					font-size: .8rem;
+				}
+				.rot-down, .rot-cw, .rot-ccw{
+					bottom: 8px;
+				}
+				.hint{
+					display: none;
+				}
+			}
+			@media(min-width: 900px) and (pointer: coarse){
+				.btn, .ab-d{
+					min-height: 44px;
+				}
+				.lang-btn{
+					padding: 5px 6px;
 				}
 			}
 		</style>
@@ -668,7 +941,10 @@
 				</div>
 				<span data-i18n="title">Rubik's Cube 3D</span>
 			</div>
-			<div class="lang-bar" id="lang-bar"></div>
+			<div class="lang-wrap" id="lang-wrap">
+				<button class="lang-toggle" id="lang-toggle" type="button" aria-haspopup="true" aria-expanded="false"></button>
+				<div class="lang-bar" id="lang-bar"></div>
+			</div>
 			<div class="stats">
 				<div class="stat">
 					<div class="sv" id="mc">0</div>
@@ -698,7 +974,6 @@
 					<button class="btn" onclick="orbitCam('z',-1)">&#8634; CCW</button>
 				</div>
 				<div class="pt" data-i18n="actions">Actions</div>
-				</div>
 				<div class="bg">
 					<button class="btn f p" onclick="scramble()">&#128256; <span data-i18n="scramble">Scramble</span></button>
 					<button class="btn f d" onclick="resetCube()">&#8634; <span data-i18n="reset">Reset</span></button>
@@ -1011,7 +1286,13 @@
 				document.querySelectorAll('.lang-btn').forEach(btn => {
 					btn.classList.toggle('active', btn.dataset.lang === lang);
 				});
-				document.documentElement.lang = lang === 'uk' ? 'uk' : lang === 'el' ? 'el' : lang === 'zh' ? 'zh' : lang === 'ja' ? 'ja' : lang;
+				document.documentElement.lang = lang;
+				const tg = document.getElementById('lang-toggle');
+				const fi = LANG_CODES.indexOf(lang);
+				if(tg && fi >= 0){
+					tg.innerHTML = FLAGS_SVG[fi] + '<span class="caret">\u25be</span>';
+					tg.title = lang.toUpperCase();
+				}
 			}
 
 			(function buildLangBar(){
@@ -1024,10 +1305,42 @@
 					btn.dataset.lang = code;
 					btn.innerHTML = svg;
 					btn.title = code.toUpperCase();
-					btn.onclick = () => applyLang(code);
+					btn.onclick = () => {
+						applyLang(code);
+						closeLangMenu();
+					};
 					bar.appendChild(btn);
 				});
+				const wrap = document.getElementById('lang-wrap');
+				const tg = document.getElementById('lang-toggle');
+				if(tg && wrap){
+					tg.onclick = e => {
+						e.stopPropagation();
+						const open = wrap.classList.toggle('open');
+						tg.setAttribute('aria-expanded', open ? 'true' : 'false');
+					};
+					document.addEventListener('click', e => {
+						if(!wrap.contains(e.target)){
+							closeLangMenu();
+						}
+					});
+					document.addEventListener('keydown', e => {
+						if(e.key === 'Escape'){
+							closeLangMenu();
+						}
+					});
+				}
 			})();
+			function closeLangMenu(){
+				const wrap = document.getElementById('lang-wrap');
+				const tg = document.getElementById('lang-toggle');
+				if(wrap){
+					wrap.classList.remove('open');
+				}
+				if(tg){
+					tg.setAttribute('aria-expanded', 'false');
+				}
+			}
 
 			if(canvas){
 				const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
@@ -1042,6 +1355,8 @@
 					}
 					renderer.setSize(w, h, false);
 					camera.aspect = w/h;
+					const halfTan = Math.tan(THREE.MathUtils.degToRad(20));
+					camera.fov = THREE.MathUtils.radToDeg(2*Math.atan(halfTan/Math.min(1, camera.aspect)));
 					camera.updateProjectionMatrix();
 				}
 				new ResizeObserver(resize).observe(canvas);
@@ -1156,7 +1471,7 @@
 					}
 					return true;
 				}
-				const MOVE_DEF = {U:{axis: 'y', coord: 1, sign: 1}, D:{axis: 'y', coord: -1, sign: -1}, R:{axis: 'x', coord: 1, sign: -1}, L:{axis: 'x', coord: -1, sign: 1}, F:{axis: 'z', coord: 1, sign: -1}, B:{axis: 'z', coord: -1, sign: 1}, M:{axis: 'x', coord: 0, sign: 1}, E:{axis: 'y', coord: 0, sign: -1}, S:{axis: 'z', coord: 0, sign: -1},};
+				const MOVE_DEF = {U:{axis: 'y', coord: 1, sign: -1}, D:{axis: 'y', coord: -1, sign: 1}, R:{axis: 'x', coord: 1, sign: -1}, L:{axis: 'x', coord: -1, sign: 1}, F:{axis: 'z', coord: 1, sign: -1}, B:{axis: 'z', coord: -1, sign: 1}, M:{axis: 'x', coord: 0, sign: 1}, E:{axis: 'y', coord: 0, sign: 1}, S:{axis: 'z', coord: 0, sign: -1},};
 
 				const ADUR = 160;
 				let animQ = [], isCubeAnim = false, isCamAnim = false;
@@ -1306,16 +1621,57 @@
 					return best;
 				}
 
+				const OPPOSITE = {U: 'D', D: 'U', R: 'L', L: 'R', F: 'B', B: 'F'};
+				const SLICE_OF = {L: 'M', R: "M'", D: 'E', U: "E'", F: 'S', B: "S'"};
+
+				/* Associa i nomi U D R L F B alle facce che l'utente vede in questo momento:
+				   U = faccia in alto sullo schermo, F = faccia rivolta verso l'osservatore
+				   tra le quattro laterali, R = faccia a destra. */
 				function getVisualFaceMap(){
-					const cp = camera.position.clone();
-					const camDir = cp.clone().negate().normalize();
-					const worldUp = camera.up.clone().normalize();
-					let camRight = new THREE.Vector3().crossVectors(camDir, worldUp).normalize();
-					if(camRight.lengthSq() < 0.001){
-						camRight.set(1, 0, 0);
+					camera.updateMatrixWorld();
+					const q = camera.quaternion;
+					const toCam = new THREE.Vector3(0, 0, 1).applyQuaternion(q);
+					const camUp = new THREE.Vector3(0, 1, 0).applyQuaternion(q);
+					const best = (vec, banned) => {
+						let name = null, bd = -Infinity;
+						for(const [n, ax] of Object.entries(FACE_AXES)){
+							if(banned.includes(n)){
+								continue;
+							}
+							const d = vec.dot(ax);
+							if(d > bd){
+								bd = d;
+								name = n;
+							}
+						}
+						return name;
+					};
+					const U = best(camUp, []);
+					const F = best(toCam, [U, OPPOSITE[U]]);
+					const cr = new THREE.Vector3().crossVectors(FACE_AXES[U], FACE_AXES[F]);
+					const R = closestFace(cr);
+					return{U, D: OPPOSITE[U], F, B: OPPOSITE[F], R, L: OPPOSITE[R]};
+				}
+
+				function invertNotation(n){
+					return n.endsWith("'") ? n.slice(0, -1) : n + "'";
+				}
+
+				function viewMove(base, inv){
+					const map = getVisualFaceMap();
+					let n;
+					if(map [base]){
+						n = map [base];
+					}else if(base === 'M'){
+						n = SLICE_OF [map.L];
+					}else if(base === 'E'){
+						n = SLICE_OF [map.D];
+					}else if(base === 'S'){
+						n = SLICE_OF [map.F];
+					}else{
+						n = base;
 					}
-					const camUp = new THREE.Vector3().crossVectors(camRight, camDir).normalize();
-					return{F: closestFace(camDir.clone().negate()), B: closestFace(camDir), U: closestFace(camUp), D: closestFace(camUp.clone().negate()), R: closestFace(camRight), L: closestFace(camRight.clone().negate()),};
+					return inv ? invertNotation(n) : n;
 				}
 
 				function orbitCam(axis, dir){
@@ -1357,7 +1713,7 @@
 				if(scrollEl){
 					ALL_PAIRS.forEach(( [cw, ccw])  =>  {
 						const base = cw.replace("'", "");
-						const isRemap = REMAPPABLE.includes(base);
+						const isRemap = true;
 						const pair = document.createElement('div');
 						pair.className = 'move-pair';
 						const lbl = document.createElement('div');
@@ -1372,8 +1728,8 @@
 						if(isRemap){
 							bcw.id = 'mb-' + base;
 							bccw.id = 'mb-' + base + 'i';
-							bcw.onclick = ()  =>  mv(getVisualFaceMap() [base]);
-							bccw.onclick = ()  =>  mv(getVisualFaceMap() [base] + "'");
+							bcw.onclick = ()  =>  mv(viewMove(base, false));
+							bccw.onclick = ()  =>  mv(viewMove(base, true));
 						}else{
 							bcw.onclick = ()  =>  mv(cw);
 							bccw.onclick = ()  =>  mv(ccw);
@@ -1386,7 +1742,7 @@
 				if(deskEl){
 					ALL_PAIRS.forEach(( [cw, ccw])  =>  {
 						const base = cw.replace("'", "");
-						const isRemap = REMAPPABLE.includes(base);
+						const isRemap = true;
 						const bcw = document.createElement('button');
 						bcw.className = 'btn';
 						bcw.textContent = base;
@@ -1396,8 +1752,8 @@
 						if(isRemap){
 							bcw.id = 'db-' + base;
 							bccw.id = 'db-' + base + 'i';
-							bcw.onclick = ()  =>  mv(getVisualFaceMap() [base]);
-							bccw.onclick = ()  =>  mv(getVisualFaceMap() [base] + "'");
+							bcw.onclick = ()  =>  mv(viewMove(base, false));
+							bccw.onclick = ()  =>  mv(viewMove(base, true));
 						}else{
 							bcw.onclick = ()  =>  mv(cw);
 							bccw.onclick = ()  =>  mv(ccw);
@@ -1416,8 +1772,8 @@
 						s.textContent = n;
 						el.appendChild(s);
 						el.scrollTop = el.scrollHeight;
-					}
-					);
+						el.scrollLeft = el.scrollWidth;
+					});
 				}
 
 				function refreshLog(){
@@ -1545,7 +1901,9 @@
 						o.classList.remove('open');
 					}
 				}
+
 				const ALGOS = [{name: "Sexy Move", moves: "R U R' U'"},{name: "Sune", moves: "R U R' U R U2 R'"},{name: "Anti-Sune", moves: "R U2 R' U' R U' R'"},{name: "T-Perm", moves: "R U R' U' R' F R2 U' R' U' R U R' F'"},{name: "OLL Cross", moves: "F R U R' U' F'"},{name: "Y-Perm", moves: "F R U' R' U' R U R' F' R U R' U' R' F R F'"},{name: "A-Perm", moves: "R' F R' B2 R F' R' B2 R2"},];
+
 				ALGOS.forEach(a => {
 					const alM = document.getElementById('al-m');
 					if(alM){
@@ -1567,12 +1925,15 @@
 						alD.appendChild(bd);
 					}
 				});
+
 				let drag = false, mx = 0, my = 0;
+
 				canvas.addEventListener('mousedown', e => {
 					drag = true;
 					mx = e.clientX;
 					my = e.clientY;
 				});
+
 				window.addEventListener('mousemove', e => {
 					if(!drag) return;
 					const dx = e.clientX - mx;
@@ -1590,16 +1951,20 @@
 					camera.up.applyQuaternion(q);
 					camera.lookAt(0, 0, 0);
 				});
+
 				window.addEventListener('mouseup',() => {
 					drag = false;
 					refreshMoveBtns();
 				});
+
 				canvas.addEventListener('wheel', e => {
 					camR = Math.max(5, Math.min(16, camR + e.deltaY*0.01));
 					camera.position.setLength(camR);
 					e.preventDefault();
 				},{passive: false});
+
 				let t0x = 0, t0y = 0, t0d = 0, tDragging = false;
+
 				canvas.addEventListener('touchstart', e => {
 					if(e.touches.length === 1){
 						t0x = e.touches [0].clientX;
@@ -1612,6 +1977,7 @@
 						t0d = Math.sqrt(dx*dx + dy*dy);
 					}
 				},{passive: true});
+
 				canvas.addEventListener('touchmove', e => {
 					e.preventDefault();
 					if(e.touches.length === 1 && tDragging){
@@ -1649,7 +2015,7 @@
 					const k = e.key.toUpperCase();
 					const faceKeys = {U: 'U', D: 'D', R: 'R', L: 'L', F: 'F', B: 'B'};
 					if(faceKeys [k]){
-						mv(getVisualFaceMap() [k] +(e.shiftKey ? "'": ''));
+						mv(viewMove(k, e.shiftKey));
 						return;
 					}
 					if(k === 'Z'){
@@ -1685,14 +2051,17 @@
 						return;
 					}
 				});
+
 				function loop(){
 					requestAnimationFrame(loop);
 					renderer.render(scene, camera);
 				}
+
 				buildCube();
 				updateUndoBtn();
 				loop();
 			}
+
 			applyLang('en');
 		</script>
 	</body>

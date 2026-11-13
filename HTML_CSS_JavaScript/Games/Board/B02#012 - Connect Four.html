@@ -248,6 +248,56 @@
 				border-radius: 50%;
 				vertical-align: middle;
 			}
+			@media (min-width: 600px) and (min-height: 600px) and (pointer: coarse){
+				body{
+					padding: 16px;
+				}
+				button, select{
+					font-size: 1.1rem;
+					padding: 12px 18px;
+				}
+				.controls{
+					max-width: 1000px;
+				}
+				.controls button{
+					flex: 0 1 200px;
+					height: 56px;
+				}
+				.flag-svg{
+					width: 32px;
+				}
+				#helpBox{
+					max-width: 620px;
+					padding: 36px 40px 30px;
+				}
+				#helpBox table{
+					font-size: 1.1rem;
+				}
+				#helpCloseBtn{
+					font-size: 2rem;
+					padding: 6px 12px;
+				}
+				#setupBox{
+					max-width: 600px;
+					padding: 36px 40px 30px;
+				}
+				.setup-btn{
+					font-size: 1rem;
+					padding: 10px 12px;
+				}
+				.lang-btn{
+					font-size: 0.95rem;
+					padding: 10px 6px;
+				}
+				.disc-dot{
+					width: 18px;
+					height: 18px;
+				}
+				#setupConfirmBtn{
+					padding: 16px 48px;
+					font-size: 1.3rem;
+				}
+			}
 		</style>
 	</head>
 	<body>
@@ -299,8 +349,22 @@
 			</div>
 		</div>
 		<script>
-			const DESKTOP = !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
-			const UNIT = DESKTOP ? 10 : 5;
+			const IS_TABLET = (function(){
+				const ua = navigator.userAgent;
+				if((/iPad|Tablet/i).test(ua)){
+					return true;
+				}
+				if((/Android/i).test(ua) && !(/Mobi/i).test(ua)){
+					return true;
+				}
+				if((/Macintosh/i).test(ua) && navigator.maxTouchPoints > 1){
+					return true;
+				}
+				const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+				return !!coarse && Math.min(screen.width, screen.height) >= 600;
+			})();
+			const DESKTOP = IS_TABLET || !(/Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i).test(navigator.userAgent);
+			const UNIT = IS_TABLET ? Math.max(8, Math.min(14, Math.floor(Math.min((window.innerWidth - 32)/64, (window.innerHeight - 190)/55)))) : (DESKTOP ? 10 : 5);
 			const RADIUS = 4*UNIT;
 			const DIAMETER = 2*RADIUS;
 			const GRID_THICKNESS = UNIT;
