@@ -15668,6 +15668,8 @@ document.addEventListener('click', function(e) {
 		<div class="b" data-k="s" style="left:70px;bottom:14px">▼</div>
 		<div class="b" data-k="ArrowLeft" style="left:8px;bottom:53px">◀</div>
 		<div class="b" data-k="ArrowRight" style="left:132px;bottom:53px">▶</div>
+		<div class="b" data-k="e" style="right:130px;bottom:50px;width:64px;height:64px;font-size:13px">USA</div>
+		<div class="b" data-k="q" style="right:130px;bottom:124px;width:64px;height:64px;font-size:13px">ARMA</div>
 		<div class="b" data-k=" " style="right:18px;bottom:40px;width:96px;height:96px;background:#e0202040;border-color:#ff606090">FUOCO</div>
 		<script>
 			(function (){
@@ -15677,30 +15679,32 @@ document.addEventListener('click', function(e) {
 				cv.height = H;
 				g.imageSmoothingEnabled = false;
 				var MAP = [
-					"222222222222222222222222",
+					"22222222222S222222222222",
 					"#......#.......#.......#",
 					"#......#.......#.......#",
 					"#.....................#",
 					"#......#.......#.......#",
-					"###.####.#######.#.#####",
+					"###D####.#######D#.#####",
 					"#......#.......#.......#",
 					"#..............#.......#",
 					"#......#.......#.......#",
 					"#......#.......#.......#",
-					"###.######.#####.#######",
+					"###D######D#####.#######",
 					"#.....#........#.......#",
 					"#.....#........#.......#",
 					"#.....................#",
 					"#.....#........#.......#",
 					"222222222222222222222222"
 				].map(function (r){return r.length < 24 ? r.slice(0, 1) + r.slice(1, -1).padEnd(22, ".") + r.slice(-1) : r;});
-				var MW = 24, MH = 16, R = Math.random;
+				var MW = 24, MH = 16, R = Math.random, DO = {};
 				var cell = function (x, y){
 					x = Math.floor(x);
 					y = Math.floor(y);
-					return x < 0 || y < 0 || x >= MW || y >= MH ? "#" : MAP[y][x];
+					var c = x < 0 || y < 0 || x >= MW || y >= MH ? "#" : MAP[y][x];
+					return c == "D" && DO[x + "," + y] >= 1 ? "." : c;
 				};
-				var solid = function (x, y){return cell(x, y) != ".";};
+				var solid = function (x, y){var c = cell(x, y);
+					return c != "." && !(c == "D" && DO[Math.floor(x) + "," + Math.floor(y)] > .8);};
 				var free = function (x, y){return !solid(x - .22, y - .22) && !solid(x + .22, y - .22) && !solid(x - .22, y + .22) && !solid(x + .22, y + .22);};
 				var EN = [
 					[5, 2, 1],
@@ -15726,7 +15730,7 @@ document.addEventListener('click', function(e) {
 					["a", 18, 8],
 					["c", 5, 12],
 					["c", 12, 7],
-					["r", 21, 4]
+					["r", 21, 4], ["g", 20, 12], ["k", 12, 8], ["p", 19, 3]
 				];
 				var IMP = [
 					[.28, .3, .72, .72, "#7b4a2c"],
@@ -15820,7 +15824,38 @@ document.addEventListener('click', function(e) {
 						return [58 + n, 66 + n, 78 + n];
 					})
 				];
-				var sg = 0, sl = 0, wp = 0, st = 0, px, py, a, hp = 100, ar = 0, am = 50, ens = [], pks = [], fbs = [], cd = 0, fl = 0, hurt = 0, lvl = 1, kills = 0, tt = 0, bob = 0, msg = "", mt = 0;
+				var CG = [[.1, .7, .9, .82, "#333"], [.2, .6, .8, .7, "#666"], [.1, .82, .4, .92, "#a22"]];
+				var RL = [[.05, .62, .95, .82, "#4a5a3a"], [.05, .56, .3, .66, "#222"], [.7, .82, .9, .94, "#c9955e"]];
+				var PG = [[.1, .6, .9, .84, "#4a4a5e"], [.7, .55, .9, .65, "#39f"], [.2, .84, .5, .94, "#9cf"]];
+				var RK = [[.2, .4, .8, .6, "#888"], [.6, .44, .9, .56, "#f80"]];
+				var PL = [[.25, .25, .75, .75, "#39f"], [.4, .4, .6, .6, "#cff"]];
+				var EX = [[.05, .05, .95, .95, "#f60"], [.25, .25, .75, .75, "#ff6"]];
+				var WS = [
+					[[-6, 4, 12, 28, "#3f4756"], [-6, 4, 4, 28, "#6a7486"], [-2, 0, 4, 5, "#1c1c1c"], [-7, 30, 14, 10, "#2a2f3a"], [-12, 36, 24, 22, "#c9955e"], [-14, 50, 28, 20, "#3a5a2a"]],
+					[[-5, -8, 10, 48, "#2a2a2a"], [-5, -8, 3, 48, "#555"], [-10, -2, 5, 40, "#3a3a3a"], [-12, 14, 24, 14, "#6a3c1c", 1], [-12, 14, 24, 3, "#8f5a2a", 1], [-14, 36, 28, 20, "#c9955e"], [-14, 50, 28, 20, "#3a5a2a"]],
+					[[-10, -4, 20, 40, "#2e2e2e"], [-10, -4, 6, 40, "#666"], [-3, -8, 6, 6, "#111"], [-5, 0, 10, 34, "#444"], [-14, 34, 28, 22, "#c9955e"], [-14, 50, 28, 20, "#3a5a2a"]],
+					[[-13, -4, 26, 44, "#4a5a3a"], [-8, -10, 16, 8, "#222"], [-13, -4, 5, 44, "#6a7a5a"], [-14, 36, 28, 20, "#c9955e"], [-14, 50, 28, 20, "#3a5a2a"]],
+					[[-10, 0, 20, 38, "#4a4a5e"], [-10, 0, 5, 38, "#7a7a96"], [-6, -6, 12, 8, "#39f"], [-3, 8, 6, 24, "#9cf"], [-14, 36, 28, 20, "#c9955e"], [-14, 50, 28, 20, "#3a5a2a"]],
+					[[-16, 14, 32, 32, "#c9955e"], [-16, 14, 32, 6, "#a8764a"], [-14, 44, 28, 26, "#3a5a2a"]]
+				];
+				TX.push(mk(function (x, y){
+					var n = nz(x, y)*10;
+					if(y < 3 || y > 60 || x < 2 || x > 61){
+						return [36, 36, 36];
+					}
+					return (x + y >> 3 & 1) ? [200 + n, 160 + n, 30] : [100 + n, 100 + n, 110 + n];
+				}));
+				TX.push(mk(function (x, y){
+					var n = nz(x, y)*10;
+					if(y > 8 && y < 26 && x > 8 && x < 56){
+						return y > 14 && y < 20 && x%8 < 5 ? [240, 240, 240] : [190 + n, 30, 30];
+					}
+					if(y > 34 && y < 48 && x > 25 && x < 39){
+						return [30, 210, 60];
+					}
+					return [70 + n, 78 + n, 70 + n];
+				}));
+				var HV = [1, 0, 0, 0, 0, 1], AMV = [50, 0, 0, 0], WA = [0, 1, 0, 2, 3, -1], CAP = [200, 50, 50, 300], exs = [], wp = 0, st = 0, px, py, a, hp = 100, ar = 0, am = 50, ens = [], pks = [], fbs = [], cd = 0, fl = 0, hurt = 0, lvl = 1, kills = 0, tt = 0, bob = 0, msg = "", mt = 0;
 				var Z = new Array(N);
 				var AC = null;
 				function snd(f, d, ty, v){
@@ -15843,21 +15878,22 @@ document.addEventListener('click', function(e) {
 					if(nw){
 						hp = 100;
 						ar = 0;
-						am = 50;
-						sl = 0;
+						AMV = [50, 0, 0, 0];
 						lvl = 1;
 						kills = 0;
-						sg = 0;
+						HV = [1, 0, 0, 0, 0, 1];
 						wp = 0;
 					}else{
 						lvl++;
-						am = Math.min(200, am + 20);
+						AMV[0] = Math.min(200, AMV[0] + 20);
 						hp = Math.min(100, hp + 30);
 					}
 					px = 2.5;
 					py = 13.5;
 					a = 0;
 					fbs = [];
+					exs = [];
+					DO = {};
 					cd = 0;
 					fl = 0;
 					ens = EN.map(function (p){return {x: p[0] + .5, y: p[1] + .5, t: p[2], hp: [60, 20, 150][p[2]] + lvl*10, st: 0, cd: 1 + R(), pain: 0, atk: 0, dd: 0};});
@@ -15879,11 +15915,15 @@ document.addEventListener('click', function(e) {
 					if(e.key == "Control"){
 						K[" "] = 1;
 					}
-					if(e.key == "1" || e.key == "2"){
-						wp = 0;
+					var kw = {"1": 5, "2": 0, "3": 1, "4": 2, "5": 3, "6": 4}[e.key];
+					if(kw != null && HV[kw]){
+						wp = kw;
 					}
-					if(e.key == "3" && sg){
-						wp = 1;
+					if(st == 1 && (e.key == "e" || e.key == "Enter")){
+						use();
+					}
+					if(e.key == "q"){
+						nextW();
 					}
 					e.preventDefault();
 				};
@@ -15897,6 +15937,12 @@ document.addEventListener('click', function(e) {
 					var k = b.dataset.k;
 					b.onpointerdown = function (e){
 						K[k] = 1;
+						if(st == 1 && k == "e"){
+							use();
+						}
+						if(k == "q"){
+							nextW();
+						}
 						e.stopPropagation();
 						if(st != 1){
 							start();
@@ -15964,43 +16010,75 @@ document.addEventListener('click', function(e) {
 						st = 2;
 					}
 				}
-				function shoot(){
-					if(wp){
-						sl--;
-					}else{
-						am--;
+				function hurtE(e, n){
+					e.hp -= n;
+					e.st = 1;
+					e.pain = .2;
+					if(e.hp <= 0){
+						e.st = 2;
+						e.dd = .5;
+						kills++;
+						snd(90, .35, "sawtooth", .12);
 					}
-					cd = wp ? .9 : .42;
-					fl = wp ? .14 : .09;
-					snd(wp ? 200 : 500, wp ? .25 : .12, "square", .14);
-					var best = null, bf = 99;
+				}
+				function boom(x, y){
+					exs.push({x: x, y: y, t: .45});
+					snd(70, .5, "sawtooth", .18);
 					for(var e of ens){
+						var d = Math.hypot(e.x - x, e.y - y);
+						if(e.st != 2 && d < 2.2){
+							hurtE(e, 20 + 120*(1 - d/2.2));
+						}
+					}
+					var dp = Math.hypot(px - x, py - y);
+					if(dp < 2){
+						dmg(Math.round(70*(1 - dp/2)));
+					}
+				}
+				function use(){
+					var tx = px + Math.cos(a)*1.1, ty = py + Math.sin(a)*1.1, c = cell(tx, ty), k = Math.floor(tx) + "," + Math.floor(ty);
+					if(c == "D" && !DO[k]){
+						DO[k] = .01;
+						snd(200, .4, "sawtooth", .08);
+					}
+					if(c == "S"){
+						st = 3;
+						snd(800, .3, "sine");
+					}
+				}
+				function nextW(){
+					do{
+						wp = (wp + 1)%6;
+					}while(!HV[wp]);
+				}
+				function shoot(){
+					var w = wp, t = WA[w], ca = Math.cos(a), sa = Math.sin(a);
+					if(t >= 0){
+						AMV[t]--;
+					}
+					cd = [.42, .95, .11, .8, .11, .45][w];
+					fl = [.09, .14, .07, .12, .08, .14][w];
+					snd([500, 200, 420, 150, 900, 140][w], [.12, .25, .09, .3, .1, .08][w], w == 1 || w == 3 ? "sawtooth" : "square", .14);
+					if(w == 3 || w == 4){
+						fbs.push({x: px + ca*.3, y: py + sa*.3, vx: ca*(w == 3 ? 9 : 14), vy: sa*(w == 3 ? 9 : 14), pl: w == 3 ? 1 : 2});
+						return;
+					}
+					var best = null, bf = w == 5 ? 1.3 : 99;
+					for(var e of ens){
+						if(w != 5 && e.st == 0 && Math.hypot(e.x - px, e.y - py) < 8){
+							e.st = 1;
+						}
 						if(e.st == 2){
 							continue;
 						}
-						var dx = e.x - px, dy = e.y - py, f = dx*Math.cos(a) + dy*Math.sin(a), lat = Math.abs(-dx*Math.sin(a) + dy*Math.cos(a));
-						if(f > 0 && lat < (wp ? .6 : .45) && f < bf && los(px, py, e.x, e.y)){
+						var dx = e.x - px, dy = e.y - py, f = dx*ca + dy*sa, lat = Math.abs(-dx*sa + dy*ca);
+						if(f > 0 && lat < (w == 1 ? .6 : .45) && f < bf && los(px, py, e.x, e.y)){
 							best = e;
 							bf = f;
 						}
 					}
-					for(var e of ens){
-						if(e.st == 0 && Math.hypot(e.x - px, e.y - py) < 8){
-							e.st = 1;
-						}
-					}
 					if(best){
-						best.hp -= wp ? pel(Math.ceil(7*Math.max(.25, 1 - bf/10))) : 5*(1 + R()*3 | 0);
-						best.st = 1;
-						best.pain = .25;
-						if(best.hp <= 0){
-							best.st = 2;
-							best.dd = .5;
-							kills++;
-							snd(90, .35, "sawtooth", .12);
-						}else{
-							snd(200, .1, "square", .08);
-						}
+						hurtE(best, w == 1 ? pel(Math.ceil(7*Math.max(.25, 1 - bf/10))) : w == 5 ? 2*(1 + R()*10 | 0) : 5*(1 + R()*3 | 0));
 					}
 				}
 				function upd(dt){
@@ -16022,9 +16100,9 @@ document.addEventListener('click', function(e) {
 					if(mv || sd){
 						bob += dt*9;
 					}
-					if(K[" "] && cd <= 0 && (wp ? sl : am) > 0){
+					if(K[" "] && cd <= 0 && (WA[wp] < 0 || AMV[WA[wp]] > 0)){
 						shoot();
-						if(wp && sl <= 0){
+						if(WA[wp] >= 0 && AMV[WA[wp]] <= 0){
 							wp = 0;
 						}
 					}
@@ -16041,9 +16119,9 @@ document.addEventListener('click', function(e) {
 								mt = 1.5;
 							}
 							if(p.t == "s"){
-								sg = 1;
+								HV[1] = 1;
 								wp = 1;
-								sl = Math.min(50, sl + 8);
+								AMV[1] = Math.min(50, AMV[1] + 8);
 								p.on = 0;
 								snd(500, .2, "sine");
 								msg = "You got the shotgun!";
@@ -16056,15 +16134,25 @@ document.addEventListener('click', function(e) {
 								msg = "Picked up the armor.";
 								mt = 1.5;
 							}
-							if(p.t == "c" && sl < 50){
-								sl = Math.min(50, sl + 4);
+							if(p.t == "c" && AMV[1] < 50){
+								AMV[1] = Math.min(50, AMV[1] + 4);
 								p.on = 0;
 								snd(600, .1, "sine");
 								msg = "Picked up 4 shotgun shells.";
 								mt = 1.5;
 							}
+							if("gkp".indexOf(p.t) >= 0){
+								var w = p.t == "g" ? 2 : p.t == "k" ? 3 : 4;
+								HV[w] = 1;
+								wp = w;
+								AMV[WA[w]] = Math.min(CAP[WA[w]], AMV[WA[w]] + [0, 0, 20, 5, 40][w]);
+								p.on = 0;
+								snd(500, .25, "sine");
+								msg = ["", "", "You got the chaingun!", "You got the rocket launcher!", "You got the plasma rifle!"][w];
+								mt = 2;
+							}
 							if(p.t == "a"){
-								am = Math.min(200, am + 10);
+								AMV[0] = Math.min(200, AMV[0] + 10);
 								p.on = 0;
 								snd(600, .1, "sine");
 								msg = "Picked up a clip.";
@@ -16075,6 +16163,10 @@ document.addEventListener('click', function(e) {
 					for(var e of ens){
 						e.dd -= dt;
 					}
+					for(var k in DO){
+						DO[k] = Math.min(1, DO[k] + dt*1.1);
+					}
+					exs = exs.filter(function (f){return (f.t -= dt) > 0;});
 					var spd = .9 + lvl*.1;
 					for(var e of ens){
 						if(e.st == 2){
@@ -16127,6 +16219,23 @@ document.addEventListener('click', function(e) {
 						var f = fbs[i];
 						f.x += f.vx*dt;
 						f.y += f.vy*dt;
+						if(f.pl){
+							var he = null;
+							for(var e of ens){
+								if(e.st != 2 && Math.hypot(e.x - f.x, e.y - f.y) < .5){
+									he = e;
+								}
+							}
+							if(he || solid(f.x, f.y)){
+								if(f.pl == 1){
+									boom(f.x, f.y);
+								}else if(he){
+									hurtE(he, 5*(1 + R()*8 | 0));
+								}
+								fbs.splice(i, 1);
+							}
+							continue;
+						}
 						if(solid(f.x, f.y)){
 							fbs.splice(i, 1);
 							continue;
@@ -16136,10 +16245,7 @@ document.addEventListener('click', function(e) {
 							fbs.splice(i, 1);
 						}
 					}
-					if(st == 1 && ens.every(function (e){return e.st == 2;})){
-						st = 3;
-					}
-				}
+									}
 				var rgb = function (r, gg, b, s){return \`rgb(\${r * s | 0},\${gg * s | 0},\${b * s | 0})\`;};
 				function render(){
 					for(var y = 0; y < VH; y++){
@@ -16191,7 +16297,8 @@ document.addEventListener('click', function(e) {
 							u = 1 - u;
 						}
 						var lh = VH/pd, top = (VH - lh)/2, s = Math.round(Math.max(.1, 1 - pd/12)*(side ? .78 : 1)*16)/16, X = x*CW;
-						g.drawImage(tile == "2" ? TX[2] : TX[((mx >> 3) + (my >> 3)) & 1], Math.floor(u*64) & 63, 0, 1, 64, X, top, CW, lh);
+						var dO = tile == "D" ? DO[mx + "," + my] || 0 : 0, tx = {"2": TX[2], D: TX[3], S: TX[4]}[tile] || TX[((mx >> 3) + (my >> 3)) & 1];
+						g.drawImage(tx, Math.floor(u*64) & 63, 0, 1, 64*(1 - dO), X, top, CW, lh*(1 - dO));
 						if(s < 1){
 							g.fillStyle = \`rgba(0,0,0,\${1 - s})\`;
 							g.fillRect(X, top, CW, lh);
@@ -16203,11 +16310,14 @@ document.addEventListener('click', function(e) {
 					}
 					for(var p of pks){
 						if(p.on){
-							L.push({x: p.x, y: p.y, k: ({h: HK, s: SG, r: AR, c: SH})[p.t] || AM, sc: .35});
+							L.push({x: p.x, y: p.y, k: ({h: HK, s: SG, r: AR, c: SH, g: CG, k: RL, p: PG})[p.t] || AM, sc: .35});
 						}
 					}
-					for(var f of fbs){
-						L.push({x: f.x, y: f.y, k: FB, sc: .3, fl: 1});
+					for(var f of exs){
+					L.push({x: f.x, y: f.y, k: EX, sc: 1.5 - f.t*1.6, fl: 1});
+				}
+				for(var f of fbs){
+						L.push({x: f.x, y: f.y, k: f.pl == 2 ? PL : f.pl == 1 ? RK : FB, sc: .3, fl: 1});
 					}
 					for(var o of L){
 						o.d = (o.x - px) ** 2 + (o.y - py) ** 2;
@@ -16244,39 +16354,16 @@ document.addEventListener('click', function(e) {
 							}
 						}
 					}
-					var by = fl > 0 ? 0 : Math.abs(Math.sin(bob))*4, gx = W/2 + (fl > 0 ? 0 : Math.cos(bob)*5), gy = VH - 46 + by + (fl > .05 ? 5 : 0);
-					if(wp){
-						g.fillStyle = "#2a2a2a";
-						g.fillRect(gx - 5, gy - 8, 10, 48);
-						g.fillStyle = "#555";
-						g.fillRect(gx - 5, gy - 8, 3, 48);
-						g.fillStyle = "#3a3a3a";
-						g.fillRect(gx - 10, gy - 2, 5, 40);
-						g.fillStyle = "#6a3c1c";
-						g.fillRect(gx - 12, gy + (fl > 0 ? 24 : 14), 24, 14);
-						g.fillStyle = "#8f5a2a";
-						g.fillRect(gx - 12, gy + (fl > 0 ? 24 : 14), 24, 3);
-						g.fillStyle = "#c9955e";
-						g.fillRect(gx - 14, gy + 36, 28, 20);
-					}else{
-						g.fillStyle = "#3f4756";
-						g.fillRect(gx - 6, gy + 4, 12, 28);
-						g.fillStyle = "#6a7486";
-						g.fillRect(gx - 6, gy + 4, 4, 28);
-						g.fillStyle = "#1c1c1c";
-						g.fillRect(gx - 2, gy, 4, 5);
-						g.fillStyle = "#2a2f3a";
-						g.fillRect(gx - 7, gy + 30, 14, 10);
-						g.fillStyle = "#c9955e";
-						g.fillRect(gx - 12, gy + 36, 24, 22);
-						g.fillStyle = "#3a5a2a";
-						g.fillRect(gx - 14, gy + 50, 28, 20);
+					var by = fl > 0 ? 0 : Math.abs(Math.sin(bob))*4, gx = W/2 + (fl > 0 ? 0 : Math.cos(bob)*5), gy = VH - 46 + by + (fl > .05 && wp != 5 ? 5 : 0) + (wp == 5 && fl > 0 ? -14 : 0);
+					for(var r of WS[wp]){
+						g.fillStyle = r[4];
+						g.fillRect(gx + r[0], gy + r[1] + (r[5] && fl > 0 ? 10 : 0), r[2], r[3]);
 					}
-					if(fl > 0){
-						var fw = wp ? 14 : 9;
-						g.fillStyle = "#ff9a1a";
+					if(fl > 0 && wp != 5){
+						var fw = wp == 1 || wp == 3 ? 14 : 9;
+						g.fillStyle = wp == 4 ? "#39f" : "#ff9a1a";
 						g.fillRect(gx - fw, gy - fw - 10, fw*2, fw + 4);
-						g.fillStyle = "#fff2a0";
+						g.fillStyle = wp == 4 ? "#cff" : "#fff2a0";
 						g.fillRect(gx - fw/2, gy - fw - 6, fw, fw/2 + 3);
 						g.fillStyle = "rgba(255,190,70,.2)";
 						g.fillRect(0, 0, W, VH);
@@ -16308,20 +16395,20 @@ document.addEventListener('click', function(e) {
 					g.font = "bold 18px monospace";
 					g.textAlign = "right";
 					g.fillStyle = "#d82020";
-					g.fillText(String(wp ? sl : am), 50, VH + 28);
+					g.fillText(String(WA[wp] < 0 ? "" : AMV[WA[wp]]), 50, VH + 28);
 					g.fillText(hp + "%", 112, VH + 28);
 					g.fillText(ar + "%", 254, VH + 28);
 					g.font = "bold 8px monospace";
 					g.textAlign = "left";
 					for(var i = 0; i < 6; i++){
-						g.fillStyle = i == 0 || i == 1 && sg ? "#ffe033" : "#7a7a7a";
+						g.fillStyle = i < 5 && HV[i] ? "#ffe033" : "#7a7a7a";
 						g.fillText(String(i + 2), 124 + i%3*10, VH + 20 + (i/3 | 0)*9);
 					}
 					g.font = "bold 6px monospace";
 					g.fillStyle = "#c8b020";
 					for(var i = 0; i < 4; i++){
 						g.fillText(["BULL", "SHEL", "ROCK", "CELL"][i], 266, VH + 11 + i*6);
-						g.fillText([am + "/200", sl + "/50", "0/50", "0/300"][i], 288, VH + 11 + i*6);
+						g.fillText([AMV[0] + "/200", AMV[1] + "/50", AMV[2] + "/50", AMV[3] + "/300"][i], 288, VH + 11 + i*6);
 					}
 					var fx = 164, fy = VH + 3, hv = hp > 80 ? 0 : hp > 60 ? 1 : hp > 40 ? 2 : hp > 20 ? 3 : 4, dp = hurt > 0 ? 0 : Math.round(Math.sin(tt*.9)*1.5);
 					g.fillStyle = "#c8946a";
@@ -16376,8 +16463,8 @@ document.addEventListener('click', function(e) {
 							g.fillText("DOOM", W/2, 80);
 							g.font = "10px monospace";
 							g.fillStyle = "#ddd";
-							g.fillText("WASD muovi · mouse o ← → gira · clic/Spazio spara · 2/3 armi", W/2, 110);
-							g.fillText("Elimina tutti gli imp per superare il livello", W/2, 126);
+							g.fillText("WASD muovi · mouse o ← → gira · clic/Spazio spara · 1-6 armi · E usa · Q cambia", W/2, 110);
+							g.fillText("Trova l'interruttore EXIT per uscire", W/2, 126);
 							g.fillStyle = "#ffe033";
 							g.fillText("Premi un tasto o tocca per iniziare", W/2, 155);
 						}else if(st == 2){
