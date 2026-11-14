@@ -26930,7 +26930,7 @@ document.addEventListener('click', function(e) {
 <html lang="en"><!--A02#035 - Daniele - Klondike-->
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Solitario</title>
 		<style>
 			@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap');
@@ -27565,13 +27565,12 @@ document.addEventListener('click', function(e) {
 				const pad = isMob ? 2: Math.max(14, Math.min(24, vw*0.015));
 				const gap = isMob ? 2: Math.max(6, Math.min(12, vw*0.012));
 				let cw = (vw - 2*pad - 6*gap)/7;
-				const ga = document.getElementById('gameArea');
-				const gaTop = ga ? ga.getBoundingClientRect().top : 0;
-				const availH = vh - gaTop - (isMob ? 2 : 10) - pad - (isMob ? 2 : 10);
-				const cwByHeight = availH / 7.44;
-				const maxW = isMob ? 46 : (isTab ? 100 : 96);
-				const minW = isMob ? 32 : 44;
-				cw = Math.max(minW, Math.min(maxW, cw, cwByHeight));
+				if(isTab){
+					const availH = vh - 114 - 24;
+					cw = Math.max(64, Math.min(120, cw*0.86, availH/7.4));
+				}else{
+					cw = Math.max(isMob ? 32 : 60, Math.min(isMob ? 46 : 96, cw));
+				}
 				const r = document.documentElement;
 				r.style.setProperty('--cw', cw + 'px');
 				r.style.setProperty('--gap', gap + 'px');
@@ -27581,18 +27580,6 @@ document.addEventListener('click', function(e) {
 			}
 
 			window.addEventListener('resize',() => {
-				updateCardSize();
-				render();
-			});
-
-			window.addEventListener('orientationchange',() => {
-				setTimeout(() => {
-					updateCardSize();
-					render();
-				}, 250);
-			});
-
-			window.addEventListener('load',() => {
 				updateCardSize();
 				render();
 			});
@@ -27620,7 +27607,7 @@ document.addEventListener('click', function(e) {
 			}
 
 			function CARD_H(){
-				return CARD_W()*1.39;
+				return getCSSVar('--ch') || 100;
 			}
 
 			let stock = [], waste = [];
@@ -28012,29 +27999,7 @@ document.addEventListener('click', function(e) {
 				}
 			}
 
-			let colScales = [1, 1, 1, 1, 1, 1, 1];
-
-			function computeColScales(){
-				const ga = document.getElementById('gameArea');
-				const tr = document.getElementById('topRow');
-				let avail = Infinity;
-				if(ga && tr){
-					const cs = getComputedStyle(ga);
-					const visibleH = Math.min(ga.clientHeight, window.innerHeight - ga.getBoundingClientRect().top);
-					avail = visibleH - parseFloat(cs.paddingTop) - Math.max(parseFloat(cs.paddingBottom), 8)
-						- tr.offsetHeight - parseFloat(getComputedStyle(tr).marginBottom) - CARD_H() - 4;
-				}
-				for(let col = 0; col < 7; col++){
-					let nat = 0;
-					for(let i = 0; i < tableau[col].length - 1; i++){
-						nat += tableau[col][i].faceUp ? CARD_OVERLAP_UP(): CARD_OVERLAP_DOWN();
-					}
-					colScales[col] = (avail > 0 && nat > avail) ? Math.max(0.55, avail/nat) : 1;
-				}
-			}
-
 			function renderTableau(){
-				computeColScales();
 				for(let col = 0; col < 7; col++){
 					const el = document.getElementById('t' + col);
 					el.innerHTML = '';
@@ -28066,7 +28031,7 @@ document.addEventListener('click', function(e) {
 			function getCardTop(col, idx){
 				let top = 0;
 				for(let i = 0; i < idx; i++){
-					top += (tableau[col][i].faceUp ? CARD_OVERLAP_UP(): CARD_OVERLAP_DOWN())*(colScales[col] || 1);
+					top += tableau[col][i].faceUp ? CARD_OVERLAP_UP(): CARD_OVERLAP_DOWN();
 				}
 				return top;
 			}
@@ -28129,8 +28094,7 @@ document.addEventListener('click', function(e) {
 				const rect = targetEl.getBoundingClientRect();
 				const offsetX = clientX - rect.left;
 				const offsetY = clientY - rect.top;
-				const cw = CARD_W(), ch = CARD_H();
-				const oup = CARD_OVERLAP_UP()*(pile === 'tableau' ? (colScales[colOrIndex] || 1) : 1);
+				const cw = CARD_W(), ch = CARD_H(), oup = CARD_OVERLAP_UP();
 				const ghosts = cards.map((card, i) => {
 					const el = createCardEl({...card, faceUp: true } );
 					el.style.cssText = \`position:fixed;width:\${cw}px;height:\${ch}px;z-index:\${9000 + i};
@@ -28139,14 +28103,14 @@ document.addEventListener('click', function(e) {
 					document.body.appendChild(el);
 					return el;
 				});
-				dragState = {cards, from: fromInfo, ghosts, offsetX, offsetY, oup};
+				dragState = {cards, from: fromInfo, ghosts, offsetX, offsetY};
 			}
 
 			function moveDrag(clientX, clientY){
 				if(!dragState){
 					return;
 				}
-				const oup = dragState.oup || CARD_OVERLAP_UP();
+				const oup = CARD_OVERLAP_UP();
 				dragState.ghosts.forEach((el, i) => {
 					el.style.left = (clientX - dragState.offsetX) + 'px';
 					el.style.top = (clientY - dragState.offsetY + i*oup) + 'px';
