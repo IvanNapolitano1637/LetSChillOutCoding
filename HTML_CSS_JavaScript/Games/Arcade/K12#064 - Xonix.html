@@ -505,7 +505,7 @@
 					renderGame();
 					requestAnimationFrame(loop);
 				}
-				var W = 80, H = 60, C = 6, TARGET = 75, BAND = 2;
+				var W = 80, H = 60, C = 6, TARGET = 75, BAND = 2, FDX = [1, -1, 0, 0], FDY = [0, 0, 1, -1];
 				var grid = new Uint8Array(W*H);// 0 mare, 1 terra, 2 scia
 				var landC = document.createElement("canvas"); landC.width = 480; landC.height = 360;
 				var landX = landC.getContext("2d");
@@ -533,23 +533,38 @@
 						s.stroke();
 					}
 				}
+				var tiles = [];
+				function makeTiles(){
+					var hue = 205 + ((level - 1)*17)%120, k, tc, q;
+					tiles = [];
+					for(k = 0; k < 5; k++){
+						tc = document.createElement("canvas");
+						tc.width = C;
+						tc.height = C;
+						q = tc.getContext("2d");
+						q.fillStyle = "hsl(" + hue + ",62%," + (46 + k*2) + "%)";
+						q.fillRect(0, 0, C, C);
+						q.fillStyle = "rgba(255,255,255,.35)";
+						q.fillRect(0, 0, C, 1);
+						q.fillRect(0, 0, 1, C);
+						q.fillStyle = "rgba(0,0,40,.45)";
+						q.fillRect(0, C - 1, C, 1);
+						q.fillRect(C - 1, 0, 1, C);
+						tiles.push(tc);
+					}
+				}
+				function drawCell(x, y){
+					landX.drawImage(tiles[((x*7 + y*13)%5)], x*C, y*C);
+				}
 				function drawLand(){
-					var lc = landX, x, y, hue = 205 + ((level - 1)*17)%120;
-					lc.clearRect(0, 0, 480, 360);
+					var x, y;
+					makeTiles();
+					landX.clearRect(0, 0, 480, 360);
 					for(y = 0; y < H; y++){
 						for(x = 0; x < W; x++){
-							if(grid[y*W + x] !== 1){
-								continue;
+							if(grid[y*W + x] === 1){
+								drawCell(x, y);
 							}
-							var t = ((x*7 + y*13)%5)*2;
-							lc.fillStyle = "hsl(" + hue + ",62%," + (46 + t) + "%)";
-							lc.fillRect(x*C, y*C, C, C);
-							lc.fillStyle = "rgba(255,255,255,.35)";
-							lc.fillRect(x*C, y*C, C, 1);
-							lc.fillRect(x*C, y*C, 1, C);
-							lc.fillStyle = "rgba(0,0,40,.45)";
-							lc.fillRect(x*C, y*C + C - 1, C, 1);
-							lc.fillRect(x*C + C - 1, y*C, 1, C);
 						}
 					}
 				}
@@ -629,9 +644,10 @@
 					deadT = 54;
 				}
 				function closeTrail(){
-					var i, k, gained = 0, vis = new Uint8Array(W*H), st = [];
+					var i, k, gained = 0, vis = new Uint8Array(W*H), st = [], fresh = [];
 					for(i = 0; i < trail.length; i++){
 						grid[trail[i]] = 1;
+						fresh.push(trail[i]);
 						gained++;
 					}
 					trail = [];
@@ -639,7 +655,7 @@
 					while(st.length){
 						var c = st.pop(), cx = c%W, cy = (c/W)|0;
 						for(k = 0; k < 4; k++){
-							var nx = cx + [1, -1, 0, 0][k], ny = cy + [0, 0, 1, -1][k];
+							var nx = cx + FDX[k], ny = cy + FDY[k];
 							if(nx < 0 || ny < 0 || nx >= W || ny >= H){
 								continue;
 							}
@@ -653,6 +669,7 @@
 					for(i = 0; i < W*H; i++){
 						if(grid[i] === 0 && !vis[i]){
 							grid[i] = 1;
+							fresh.push(i);
 							gained++;
 						}
 					}
@@ -661,7 +678,9 @@
 					popups.push({x: px*C + C/2, y: py*C - 8, t: "+" + pts, l: 70});
 					snd(440, .08, "square", .05, 660);
 					snd(660, .1, "square", .05, 880, .07);
-					drawLand();
+					for(i = 0; i < fresh.length; i++){
+						drawCell(fresh[i]%W, (fresh[i]/W)|0);
+					}
 					calcPct();
 					hud();
 					if(pct >= TARGET){

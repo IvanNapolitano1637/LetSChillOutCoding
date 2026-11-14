@@ -12484,7 +12484,7 @@ document.addEventListener('click', function(e) {
 					renderGame();
 					requestAnimationFrame(loop);
 				}
-				var W = 80, H = 60, C = 6, TARGET = 75, BAND = 2;
+				var W = 80, H = 60, C = 6, TARGET = 75, BAND = 2, FDX = [1, -1, 0, 0], FDY = [0, 0, 1, -1];
 				var grid = new Uint8Array(W*H);// 0 mare, 1 terra, 2 scia
 				var landC = document.createElement("canvas"); landC.width = 480; landC.height = 360;
 				var landX = landC.getContext("2d");
@@ -12512,23 +12512,38 @@ document.addEventListener('click', function(e) {
 						s.stroke();
 					}
 				}
+				var tiles = [];
+				function makeTiles(){
+					var hue = 205 + ((level - 1)*17)%120, k, tc, q;
+					tiles = [];
+					for(k = 0; k < 5; k++){
+						tc = document.createElement("canvas");
+						tc.width = C;
+						tc.height = C;
+						q = tc.getContext("2d");
+						q.fillStyle = "hsl(" + hue + ",62%," + (46 + k*2) + "%)";
+						q.fillRect(0, 0, C, C);
+						q.fillStyle = "rgba(255,255,255,.35)";
+						q.fillRect(0, 0, C, 1);
+						q.fillRect(0, 0, 1, C);
+						q.fillStyle = "rgba(0,0,40,.45)";
+						q.fillRect(0, C - 1, C, 1);
+						q.fillRect(C - 1, 0, 1, C);
+						tiles.push(tc);
+					}
+				}
+				function drawCell(x, y){
+					landX.drawImage(tiles[((x*7 + y*13)%5)], x*C, y*C);
+				}
 				function drawLand(){
-					var lc = landX, x, y, hue = 205 + ((level - 1)*17)%120;
-					lc.clearRect(0, 0, 480, 360);
+					var x, y;
+					makeTiles();
+					landX.clearRect(0, 0, 480, 360);
 					for(y = 0; y < H; y++){
 						for(x = 0; x < W; x++){
-							if(grid[y*W + x] !== 1){
-								continue;
+							if(grid[y*W + x] === 1){
+								drawCell(x, y);
 							}
-							var t = ((x*7 + y*13)%5)*2;
-							lc.fillStyle = "hsl(" + hue + ",62%," + (46 + t) + "%)";
-							lc.fillRect(x*C, y*C, C, C);
-							lc.fillStyle = "rgba(255,255,255,.35)";
-							lc.fillRect(x*C, y*C, C, 1);
-							lc.fillRect(x*C, y*C, 1, C);
-							lc.fillStyle = "rgba(0,0,40,.45)";
-							lc.fillRect(x*C, y*C + C - 1, C, 1);
-							lc.fillRect(x*C + C - 1, y*C, 1, C);
 						}
 					}
 				}
@@ -12608,9 +12623,10 @@ document.addEventListener('click', function(e) {
 					deadT = 54;
 				}
 				function closeTrail(){
-					var i, k, gained = 0, vis = new Uint8Array(W*H), st = [];
+					var i, k, gained = 0, vis = new Uint8Array(W*H), st = [], fresh = [];
 					for(i = 0; i < trail.length; i++){
 						grid[trail[i]] = 1;
+						fresh.push(trail[i]);
 						gained++;
 					}
 					trail = [];
@@ -12618,7 +12634,7 @@ document.addEventListener('click', function(e) {
 					while(st.length){
 						var c = st.pop(), cx = c%W, cy = (c/W)|0;
 						for(k = 0; k < 4; k++){
-							var nx = cx + [1, -1, 0, 0][k], ny = cy + [0, 0, 1, -1][k];
+							var nx = cx + FDX[k], ny = cy + FDY[k];
 							if(nx < 0 || ny < 0 || nx >= W || ny >= H){
 								continue;
 							}
@@ -12632,6 +12648,7 @@ document.addEventListener('click', function(e) {
 					for(i = 0; i < W*H; i++){
 						if(grid[i] === 0 && !vis[i]){
 							grid[i] = 1;
+							fresh.push(i);
 							gained++;
 						}
 					}
@@ -12640,7 +12657,9 @@ document.addEventListener('click', function(e) {
 					popups.push({x: px*C + C/2, y: py*C - 8, t: "+" + pts, l: 70});
 					snd(440, .08, "square", .05, 660);
 					snd(660, .1, "square", .05, 880, .07);
-					drawLand();
+					for(i = 0; i < fresh.length; i++){
+						drawCell(fresh[i]%W, (fresh[i]/W)|0);
+					}
 					calcPct();
 					hud();
 					if(pct >= TARGET){
@@ -26911,7 +26930,7 @@ document.addEventListener('click', function(e) {
 <html lang="en"><!--A02#035 - Daniele - Klondike-->
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 		<title>Solitario</title>
 		<style>
 			@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap');
@@ -27074,9 +27093,9 @@ document.addEventListener('click', function(e) {
 				padding-top: 10px;
 				padding-bottom: max(var(--pad), env(safe-area-inset-bottom));
 				height: calc(100vh - var(--bar-h));
+				height: calc(100dvh - var(--bar-h));
 				overflow-y: auto;
 				overflow-x: hidden;
-				/* Center the table horizontally */
 				display: flex;
 				flex-direction: column;
 				align-items: center;
@@ -27546,7 +27565,13 @@ document.addEventListener('click', function(e) {
 				const pad = isMob ? 2: Math.max(14, Math.min(24, vw*0.015));
 				const gap = isMob ? 2: Math.max(6, Math.min(12, vw*0.012));
 				let cw = (vw - 2*pad - 6*gap)/7;
-				cw = Math.max(isMob ? 32 : 60, Math.min(isMob ? 46 : (isTab ? Math.max(96, Math.min(132, vh*0.14)) : 96), cw));
+				const ga = document.getElementById('gameArea');
+				const gaTop = ga ? ga.getBoundingClientRect().top : 0;
+				const availH = vh - gaTop - (isMob ? 2 : 10) - pad - (isMob ? 2 : 10);
+				const cwByHeight = availH / 7.44;
+				const maxW = isMob ? 46 : (isTab ? 100 : 96);
+				const minW = isMob ? 32 : 44;
+				cw = Math.max(minW, Math.min(maxW, cw, cwByHeight));
 				const r = document.documentElement;
 				r.style.setProperty('--cw', cw + 'px');
 				r.style.setProperty('--gap', gap + 'px');
@@ -27556,6 +27581,18 @@ document.addEventListener('click', function(e) {
 			}
 
 			window.addEventListener('resize',() => {
+				updateCardSize();
+				render();
+			});
+
+			window.addEventListener('orientationchange',() => {
+				setTimeout(() => {
+					updateCardSize();
+					render();
+				}, 250);
+			});
+
+			window.addEventListener('load',() => {
 				updateCardSize();
 				render();
 			});
@@ -27583,7 +27620,7 @@ document.addEventListener('click', function(e) {
 			}
 
 			function CARD_H(){
-				return getCSSVar('--ch') || 100;
+				return CARD_W()*1.39;
 			}
 
 			let stock = [], waste = [];
@@ -27975,7 +28012,29 @@ document.addEventListener('click', function(e) {
 				}
 			}
 
+			let colScales = [1, 1, 1, 1, 1, 1, 1];
+
+			function computeColScales(){
+				const ga = document.getElementById('gameArea');
+				const tr = document.getElementById('topRow');
+				let avail = Infinity;
+				if(ga && tr){
+					const cs = getComputedStyle(ga);
+					const visibleH = Math.min(ga.clientHeight, window.innerHeight - ga.getBoundingClientRect().top);
+					avail = visibleH - parseFloat(cs.paddingTop) - Math.max(parseFloat(cs.paddingBottom), 8)
+						- tr.offsetHeight - parseFloat(getComputedStyle(tr).marginBottom) - CARD_H() - 4;
+				}
+				for(let col = 0; col < 7; col++){
+					let nat = 0;
+					for(let i = 0; i < tableau[col].length - 1; i++){
+						nat += tableau[col][i].faceUp ? CARD_OVERLAP_UP(): CARD_OVERLAP_DOWN();
+					}
+					colScales[col] = (avail > 0 && nat > avail) ? Math.max(0.55, avail/nat) : 1;
+				}
+			}
+
 			function renderTableau(){
+				computeColScales();
 				for(let col = 0; col < 7; col++){
 					const el = document.getElementById('t' + col);
 					el.innerHTML = '';
@@ -28007,7 +28066,7 @@ document.addEventListener('click', function(e) {
 			function getCardTop(col, idx){
 				let top = 0;
 				for(let i = 0; i < idx; i++){
-					top += tableau[col][i].faceUp ? CARD_OVERLAP_UP(): CARD_OVERLAP_DOWN();
+					top += (tableau[col][i].faceUp ? CARD_OVERLAP_UP(): CARD_OVERLAP_DOWN())*(colScales[col] || 1);
 				}
 				return top;
 			}
@@ -28070,7 +28129,8 @@ document.addEventListener('click', function(e) {
 				const rect = targetEl.getBoundingClientRect();
 				const offsetX = clientX - rect.left;
 				const offsetY = clientY - rect.top;
-				const cw = CARD_W(), ch = CARD_H(), oup = CARD_OVERLAP_UP();
+				const cw = CARD_W(), ch = CARD_H();
+				const oup = CARD_OVERLAP_UP()*(pile === 'tableau' ? (colScales[colOrIndex] || 1) : 1);
 				const ghosts = cards.map((card, i) => {
 					const el = createCardEl({...card, faceUp: true } );
 					el.style.cssText = \`position:fixed;width:\${cw}px;height:\${ch}px;z-index:\${9000 + i};
@@ -28079,14 +28139,14 @@ document.addEventListener('click', function(e) {
 					document.body.appendChild(el);
 					return el;
 				});
-				dragState = {cards, from: fromInfo, ghosts, offsetX, offsetY};
+				dragState = {cards, from: fromInfo, ghosts, offsetX, offsetY, oup};
 			}
 
 			function moveDrag(clientX, clientY){
 				if(!dragState){
 					return;
 				}
-				const oup = CARD_OVERLAP_UP();
+				const oup = dragState.oup || CARD_OVERLAP_UP();
 				dragState.ghosts.forEach((el, i) => {
 					el.style.left = (clientX - dragState.offsetX) + 'px';
 					el.style.top = (clientY - dragState.offsetY + i*oup) + 'px';
@@ -45935,8 +45995,11 @@ document.addEventListener('click', function(e) {
 				background: var(--surf2);
 				border-radius: 2px;
 			}
-			.lang-wrap{
+			header{
 				position: relative;
+				z-index: 300;
+			}
+			.lang-wrap{
 				flex-shrink: 0;
 			}
 			.lang-toggle{
@@ -45961,8 +46024,10 @@ document.addEventListener('click', function(e) {
 			.lang-bar{
 				display: none;
 				position: absolute;
-				top: calc(100% + 8px);
-				right: 0;
+				top: calc(100% + 6px);
+				left: 50%;
+				transform: translateX(-50%);
+				max-width: calc(100vw - 16px);
 				z-index: 300;
 				background: var(--surf);
 				border: 1px solid var(--brd);
@@ -45985,6 +46050,7 @@ document.addEventListener('click', function(e) {
 				.lang-wrap .lang-bar{
 					display: flex;
 					position: static;
+					transform: none;
 					background: none;
 					border: none;
 					box-shadow: none;
@@ -46219,225 +46285,238 @@ document.addEventListener('click', function(e) {
 					display: none!important;
 				}
 			}
-			@media (min-width: 900px) and (min-height: 600px) and (pointer: coarse){
-				header{
-					min-height: 60px;
-					padding: 0.6rem 1.2rem;
-				}
-				.logo{
-					font-size: 1.1rem;
-				}
-				.sb{
-					width: 260px;
-					padding: 1rem;
-				}
-				.pt{
-					font-size: 0.7rem;
-				}
-				.bg, .rot-grid{
-					gap: 8px;
-				}
-				.btn{
-					padding: 0.8rem 0.5rem;
-					font-size: 0.95rem;
-					border-radius: 8px;
-				}
-			}
-			@supports (height: 100dvh){
-				html, body{
-					height: 100dvh;
-				}
-			}
-			body{
-				-webkit-user-select: none;
-				user-select: none;
-				-webkit-touch-callout: none;
-				padding-left: env(safe-area-inset-left);
-				padding-right: env(safe-area-inset-right);
-			}
-			button{
-				touch-action: manipulation;
-			}
-			canvas{
-				touch-action: none;
-				outline: none;
-			}
+		@media (min-width: 900px) and (min-height: 600px) and (pointer: coarse){
 			header{
-				padding-top: calc(.5rem + env(safe-area-inset-top));
+				min-height: 60px;
+				padding: 0.6rem 1.2rem;
 			}
-			.logo, .stats{
+			.logo{
+				font-size: 1.1rem;
+			}
+			.sb{
+				width: 260px;
+				padding: 1rem;
+			}
+			.pt{
+				font-size: 0.7rem;
+			}
+			.bg, .rot-grid{
+				gap: 8px;
+			}
+			.btn{
+				padding: 0.8rem 0.5rem;
+				font-size: 0.95rem;
+				border-radius: 8px;
+			}
+		}
+
+		/* ===== Ottimizzazione smartphone / tablet ===== */
+		@supports (height: 100dvh){
+			html, body{
+				height: 100dvh;
+			}
+		}
+		body{
+			-webkit-user-select: none;
+			user-select: none;
+			-webkit-touch-callout: none;
+			padding-left: env(safe-area-inset-left);
+			padding-right: env(safe-area-inset-right);
+		}
+		button{
+			touch-action: manipulation;
+		}
+		canvas{
+			touch-action: none;
+			outline: none;
+		}
+		header{
+			padding-top: calc(.5rem + env(safe-area-inset-top));
+		}
+		.logo, .stats{
+			flex-shrink: 0;
+		}
+		.sl{
+			white-space: nowrap;
+		}
+		.hint{
+			max-width: 70%;
+			white-space: normal;
+			text-align: center;
+			line-height: 1.3;
+		}
+		@media(max-width: 899px){
+			.bottom{
+				padding-bottom: calc(.6rem + env(safe-area-inset-bottom));
+			}
+			.mlog-row{
+				flex-wrap: nowrap;
+				overflow-x: auto;
+				overflow-y: hidden;
+				max-height: none;
+			}
+			.mlog-row::-webkit-scrollbar{
+				display: none;
+			}
+			.mt{
 				flex-shrink: 0;
-			}
-			.sl{
 				white-space: nowrap;
 			}
+			.drawer{
+				max-height: 80vh;
+				max-width: 560px;
+				margin: 0 auto;
+				padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+			}
+		}
+		/* telefoni in verticale */
+		@media(max-width: 599px){
+			header{
+				padding-left: .6rem;
+				padding-right: .6rem;
+				gap: .4rem;
+			}
+			.stats{
+				gap: .75rem;
+			}
+			.sv{
+				font-size: .9rem;
+			}
+			.logo span[data-i18n="title"]{
+				display: none;
+			}
+			.rot-btn{
+				width: 34px;
+				height: 34px;
+				font-size: .8rem;
+			}
+			.lang-bar{
+				grid-template-columns: repeat(4, auto);
+			}
+		}
+		/* tablet in verticale (e telefoni grandi): controlli piu' grandi */
+		@media(min-width: 600px) and (max-width: 899px){
+			header{
+				min-height: 60px;
+				padding-left: 1.2rem;
+				padding-right: 1.2rem;
+			}
+			.logo{
+				font-size: 1.1rem;
+			}
+			.sv{
+				font-size: 1.2rem;
+			}
+			.sl{
+				font-size: .6rem;
+			}
+			.rot-btn{
+				width: 50px;
+				height: 50px;
+				font-size: 1.2rem;
+			}
+			.rot-down, .rot-cw, .rot-ccw{
+				bottom: 36px;
+			}
+			.bottom{
+				padding: .8rem 1.2rem calc(.9rem + env(safe-area-inset-bottom));
+				gap: .6rem;
+			}
+			.qbtn{
+				min-height: 50px;
+				font-size: .95rem;
+			}
+			.moves-scroll{
+				gap: .5rem;
+				justify-content: center;
+			}
+			.mbtn{
+				width: 56px;
+				height: 48px;
+				font-size: 1rem;
+			}
+			.move-label{
+				font-size: .6rem;
+			}
+			.mt{
+				font-size: .75rem;
+			}
+			.open-drawer-btn{
+				width: 52px;
+				height: 46px;
+			}
+		}
+		/* telefoni in orizzontale: pannello comandi a lato invece che sotto */
+		@media(max-width: 899px) and (orientation: landscape) and (max-height: 520px){
+			body{
+				display: grid;
+				grid-template-columns: minmax(0, 1fr) 250px;
+				grid-template-rows: auto minmax(0, 1fr);
+			}
+			header{
+				grid-column: 1 / -1;
+				min-height: 40px;
+				padding-top: calc(.3rem + env(safe-area-inset-top));
+				padding-bottom: .3rem;
+			}
+			main{
+				grid-column: 1;
+				grid-row: 2;
+				min-height: 0;
+			}
+			.bottom{
+				grid-column: 2;
+				grid-row: 2;
+				min-height: 0;
+				overflow-y: auto;
+				border-top: none;
+				border-left: 1px solid var(--brd);
+				padding: .5rem .6rem;
+			}
+			.moves-scroll{
+				display: grid;
+				grid-template-columns: repeat(4, 1fr);
+				gap: .3rem;
+				overflow: visible;
+			}
+			.move-pair{
+				align-items: stretch;
+			}
+			.mbtn{
+				width: 100%;
+				height: 34px;
+			}
+			.quick-row{
+				grid-template-columns: repeat(3, minmax(0, 1fr));
+				gap: .3rem;
+			}
+			.qbtn{
+				min-height: 36px;
+				padding: .3rem .1rem;
+				font-size: .66rem;
+				min-width: 0;
+			}
+			.rot-btn{
+				width: 34px;
+				height: 34px;
+				font-size: .8rem;
+			}
+			.rot-down, .rot-cw, .rot-ccw{
+				bottom: 8px;
+			}
 			.hint{
-				max-width: 70%;
-				white-space: normal;
-				text-align: center;
-				line-height: 1.3;
+				display: none;
 			}
-			@media(max-width: 899px){
-				.bottom{
-					padding-bottom: calc(.6rem + env(safe-area-inset-bottom));
-				}
-				.mlog-row{
-					flex-wrap: nowrap;
-					overflow-x: auto;
-					overflow-y: hidden;
-					max-height: none;
-				}
-				.mlog-row::-webkit-scrollbar{
-					display: none;
-				}
-				.mt{
-					flex-shrink: 0;
-					white-space: nowrap;
-				}
-				.drawer{
-					max-height: 80vh;
-					max-width: 560px;
-					margin: 0 auto;
-					padding-bottom: calc(1rem + env(safe-area-inset-bottom));
-				}
+		}
+		/* tablet in orizzontale con pannelli laterali: bersagli piu' comodi al tocco */
+		@media(min-width: 900px) and (pointer: coarse){
+			.btn, .ab-d{
+				min-height: 44px;
 			}
-			@media(max-width: 599px){
-				header{
-					padding-left: .6rem;
-					padding-right: .6rem;
-					gap: .4rem;
-				}
-				.stats{
-					gap: .75rem;
-				}
-				.sv{
-					font-size: .9rem;
-				}
-				.logo span[data-i18n="title"]{
-					display: none;
-				}
-				.rot-btn{
-					width: 34px;
-					height: 34px;
-					font-size: .8rem;
-				}
-				.lang-bar{
-					grid-template-columns: repeat(4, auto);
-				}
+			.lang-btn{
+				padding: 5px 6px;
 			}
-			@media(min-width: 600px) and (max-width: 899px){
-				header{
-					min-height: 60px;
-					padding-left: 1.2rem;
-					padding-right: 1.2rem;
-				}
-				.logo{
-					font-size: 1.1rem;
-				}
-				.sv{
-					font-size: 1.2rem;
-				}
-				.sl{
-					font-size: .6rem;
-				}
-				.rot-btn{
-					width: 50px;
-					height: 50px;
-					font-size: 1.2rem;
-				}
-				.rot-down, .rot-cw, .rot-ccw{
-					bottom: 36px;
-				}
-				.bottom{
-					padding: .8rem 1.2rem calc(.9rem + env(safe-area-inset-bottom));
-					gap: .6rem;
-				}
-				.qbtn{
-					min-height: 50px;
-					font-size: .95rem;
-				}
-				.moves-scroll{
-					gap: .5rem;
-					justify-content: center;
-				}
-				.mbtn{
-					width: 56px;
-					height: 48px;
-					font-size: 1rem;
-				}
-				.move-label{
-					font-size: .6rem;
-				}
-				.mt{
-					font-size: .75rem;
-				}
-				.open-drawer-btn{
-					width: 52px;
-					height: 46px;
-				}
-			}
-			@media(max-width: 899px) and (orientation: landscape) and (max-height: 520px){
-				body{
-					display: grid;
-					grid-template-columns: minmax(0, 1fr) 250px;
-					grid-template-rows: auto minmax(0, 1fr);
-				}
-				header{
-					grid-column: 1 / -1;
-					min-height: 40px;
-					padding-top: calc(.3rem + env(safe-area-inset-top));
-					padding-bottom: .3rem;
-				}
-				main{
-					grid-column: 1;
-					grid-row: 2;
-					min-height: 0;
-				}
-				.bottom{
-					grid-column: 2;
-					grid-row: 2;
-					min-height: 0;
-					overflow-y: auto;
-					border-top: none;
-					border-left: 1px solid var(--brd);
-					padding: .5rem .6rem;
-				}
-				.moves-scroll{
-					display: grid;
-					grid-template-columns: repeat(4, 1fr);
-					gap: .3rem;
-					overflow: visible;
-				}
-				.move-pair{
-					align-items: stretch;
-				}
-				.mbtn{
-					width: 100%;
-					height: 34px;
-				}
-				.qbtn{
-					min-height: 36px;
-				}
-				.rot-btn{
-					width: 34px;
-					height: 34px;
-					font-size: .8rem;
-				}
-				.rot-down, .rot-cw, .rot-ccw{
-					bottom: 8px;
-				}
-				.hint{
-					display: none;
-				}
-			}
-			@media(min-width: 900px) and (pointer: coarse){
-				.btn, .ab-d{
-					min-height: 44px;
-				}
-				.lang-btn{
-					padding: 5px 6px;
-				}
-			}
+		}
 		</style>
 	</head>
 	<body>
@@ -46522,7 +46601,7 @@ document.addEventListener('click', function(e) {
 				<div class="al-d" id="al-d"></div>
 				<div class="pt" data-i18n="keyboard">Keyboard</div>
 				<div class="km">
-					<div class="kr"><span class="kk">U D R L F B</span> <span data-i18n="kbCW">CW move</span></div>
+					<div class="kr"><span class="kk">U D R L F B M E</span> <span data-i18n="kbCW">CW move</span></div>
 					<div class="kr"><span class="kk">Shift</span> <span data-i18n="kbInv">+ key inv.</span></div>
 					<div class="kr"><span class="kk"><span data-i18n="kbArrows">Arrows</span></span> <span data-i18n="kbRotate">rotate view</span></div>
 					<div class="kr"><span class="kk">Z</span> <span data-i18n="kbUndo">undo</span></div>
@@ -46866,7 +46945,7 @@ document.addEventListener('click', function(e) {
 					renderer.setSize(w, h, false);
 					camera.aspect = w/h;
 					const halfTan = Math.tan(THREE.MathUtils.degToRad(20));
-					camera.fov = THREE.MathUtils.radToDeg(2*Math.atan(halfTan/Math.min(1, camera.aspect)));
+					camera.fov = THREE.MathUtils.radToDeg(2*Math.atan(camera.aspect < 1 ? halfTan*1.12/camera.aspect : halfTan));
 					camera.updateProjectionMatrix();
 				}
 				new ResizeObserver(resize).observe(canvas);
@@ -47283,7 +47362,8 @@ document.addEventListener('click', function(e) {
 						el.appendChild(s);
 						el.scrollTop = el.scrollHeight;
 						el.scrollLeft = el.scrollWidth;
-					});
+					}
+					);
 				}
 
 				function refreshLog(){
@@ -47411,9 +47491,7 @@ document.addEventListener('click', function(e) {
 						o.classList.remove('open');
 					}
 				}
-
 				const ALGOS = [{name: "Sexy Move", moves: "R U R' U'"},{name: "Sune", moves: "R U R' U R U2 R'"},{name: "Anti-Sune", moves: "R U2 R' U' R U' R'"},{name: "T-Perm", moves: "R U R' U' R' F R2 U' R' U' R U R' F'"},{name: "OLL Cross", moves: "F R U R' U' F'"},{name: "Y-Perm", moves: "F R U' R' U' R U R' F' R U R' U' R' F R F'"},{name: "A-Perm", moves: "R' F R' B2 R F' R' B2 R2"},];
-
 				ALGOS.forEach(a => {
 					const alM = document.getElementById('al-m');
 					if(alM){
@@ -47435,15 +47513,12 @@ document.addEventListener('click', function(e) {
 						alD.appendChild(bd);
 					}
 				});
-
 				let drag = false, mx = 0, my = 0;
-
 				canvas.addEventListener('mousedown', e => {
 					drag = true;
 					mx = e.clientX;
 					my = e.clientY;
 				});
-
 				window.addEventListener('mousemove', e => {
 					if(!drag) return;
 					const dx = e.clientX - mx;
@@ -47461,20 +47536,16 @@ document.addEventListener('click', function(e) {
 					camera.up.applyQuaternion(q);
 					camera.lookAt(0, 0, 0);
 				});
-
 				window.addEventListener('mouseup',() => {
 					drag = false;
 					refreshMoveBtns();
 				});
-
 				canvas.addEventListener('wheel', e => {
 					camR = Math.max(5, Math.min(16, camR + e.deltaY*0.01));
 					camera.position.setLength(camR);
 					e.preventDefault();
 				},{passive: false});
-
 				let t0x = 0, t0y = 0, t0d = 0, tDragging = false;
-
 				canvas.addEventListener('touchstart', e => {
 					if(e.touches.length === 1){
 						t0x = e.touches [0].clientX;
@@ -47487,7 +47558,6 @@ document.addEventListener('click', function(e) {
 						t0d = Math.sqrt(dx*dx + dy*dy);
 					}
 				},{passive: true});
-
 				canvas.addEventListener('touchmove', e => {
 					e.preventDefault();
 					if(e.touches.length === 1 && tDragging){
@@ -47523,7 +47593,7 @@ document.addEventListener('click', function(e) {
 						return;
 					}
 					const k = e.key.toUpperCase();
-					const faceKeys = {U: 'U', D: 'D', R: 'R', L: 'L', F: 'F', B: 'B'};
+					const faceKeys = {U: 'U', D: 'D', R: 'R', L: 'L', F: 'F', B: 'B', M: 'M', E: 'E'};
 					if(faceKeys [k]){
 						mv(viewMove(k, e.shiftKey));
 						return;
@@ -47561,17 +47631,14 @@ document.addEventListener('click', function(e) {
 						return;
 					}
 				});
-
 				function loop(){
 					requestAnimationFrame(loop);
 					renderer.render(scene, camera);
 				}
-
 				buildCube();
 				updateUndoBtn();
 				loop();
 			}
-
 			applyLang('en');
 		<\/script>
 	<script>
