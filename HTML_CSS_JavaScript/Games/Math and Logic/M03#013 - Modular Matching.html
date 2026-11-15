@@ -89,6 +89,13 @@
 				background: var(--color-opposite);
 				border-color: #7c52cc;
 			}
+			#btnUnmatched.active{
+				background: #f8bbd0;
+				border-color: #e57ba0;
+			}
+			.cell.gone{
+				display: none;
+			}
 			.btn-primary{
 				background-color: #2196f3;
 				color: white;
@@ -112,6 +119,21 @@
 			}
 			.color-error{
 				color: var(--error-color);
+			}
+			.lbl-short{
+				display: none;
+			}
+			@media (max-width: 600px){
+				.lbl-full{
+					display: none;
+				}
+				.lbl-short{
+					display: inline;
+					font-weight: bold;
+				}
+				.button-group button{
+					min-width: 44px;
+				}
 			}
 			@media (max-width: 480px){
 				button {
@@ -285,8 +307,9 @@
 					<button id="btnLang" title="btnLang" onclick="nextLang()"></button>
 				</div>
 				<div class="button-group">
-					<button id="btnDouble">Highlight doubles</button>
-					<button id="btnOpposite">Highlight opposites</button>
+					<button id="btnDouble"><span class="lbl-full">Highlight doubles</span><span class="lbl-short">2x</span></button>
+					<button id="btnOpposite"><span class="lbl-full">Highlight opposites</span><span class="lbl-short">&minus;x</span></button>
+					<button id="btnUnmatched"><span class="lbl-full">Show only unmatched</span><span class="lbl-short">&#128065;</span></button>
 				</div>
 			</div>
 		</div>
@@ -319,18 +342,18 @@
 			];
 			const LANG_KEYS = ['en','it','fr','es','de','pt','ro','uk','el','la','zh','ja'];
 			const TRANSLATIONS = {
-				en: { errors: "Errors", matches: "Pairs", updateP: "Update P", hlDoubles: "Highlight doubles (2x)", hlOpposites: "Highlight opposites (-x)", notPrime: " is not prime. Some numbers may lack an inverse. Continue?", warnPrime: " is not prime. Some numbers could not have a reverse.", maxErrors: "Max errors!", win: "You win! Congratulations! 🎉", varP: "P", varX: "x", invalidP: "P must be a number greater than or equal to 2." },
-				it: { errors: "Errori", matches: "Coppie", updateP: "Aggiorna P", hlDoubles: "Evidenzia doppi (2x)", hlOpposites: "Evidenzia opposti (-x)", notPrime: " non è primo. Alcuni numeri potrebbero non avere un inverso. Continuare?", warnPrime: " non è primo. Alcuni numeri potrebbero non avere un inverso.", maxErrors: "Max errori!", win: "Hai vinto! Complimenti! 🎉", varP: "P", varX: "x", invalidP: "P deve essere un numero maggiore o uguale a 2." },
-				fr: { errors: "Erreurs", matches: "Paires", updateP: "MàJ P", hlDoubles: "Surligner doubles (2x)", hlOpposites: "Surligner opposés (-x)", notPrime: " n'est pas premier. Certains nombres peuvent manquer d'inverse. Continuer?", warnPrime: " n'est pas premier. Certains nombres pourraient ne pas avoir d'inverse.", maxErrors: "Max erreurs!", win: "Vous avez gagné ! Félicitations ! 🎉", varP: "P", varX: "x", invalidP: "P doit être un nombre supérieur ou égal à 2." },
-				es: { errors: "Errores", matches: "Pares", updateP: "Actualizar P", hlDoubles: "Resaltar dobles (2x)", hlOpposites: "Resaltar opuestos (-x)", notPrime: " no es primo. Algunos números podrían no tener inverso. ¿Continuar?", warnPrime: " no es primo. Algunos números podrían no tener inverso.", maxErrors: "¡Max errori!", win: "¡Has ganado! ¡Felicitaciones! 🎉", varP: "P", varX: "x", invalidP: "P debe ser un número mayor o igual a 2." },
-				de: { errors: "Fehler", matches: "Paare", updateP: "P akt.", hlDoubles: "Doppelte hervorheben (2x)", hlOpposites: "Gegenteile hervorheben (-x)", notPrime: " ist keine Primzahl. Einige Zahlen haben eventuell keinen Kehrwert. Fortfahren?", warnPrime: " ist keine Primzahl. Einige Zahlen könnten keinen Kehrwert haben.", maxErrors: "Fehlerlimit!", win: "Du hast gewonnen! Herzlichen Glückwunsch! 🎉", varP: "P", varX: "x", invalidP: "P muss eine Zahl größer oder gleich 2 sein." },
-				pt: { errors: "Erros", matches: "Pares", updateP: "Atualizar P", hlDoubles: "Destacar dobros (2x)", hlOpposites: "Destacar opostos (-x)", notPrime: " não è primo. Alguns números podem não ter inverso. Continuar?", warnPrime: " não è primo. Alguns números podem não ter inverso.", maxErrors: "Erro max!", win: "Você ganhou! Parabéns! 🎉", varP: "P", varX: "x", invalidP: "P deve ser um número maior ou igual a 2." },
-				ro: { errors: "Erori", matches: "Perechi", updateP: "Actualizează P", hlDoubles: "Evidențiază dubluri (2x)", hlOpposites: "Evidențiază opuse (-x)", notPrime: " nu este prim. Unele numere ar putea să nu aibă invers. Continuați?", warnPrime: " nu este prim. Unele numere ar putea să nu aibă invers.", maxErrors: "Erori max!", win: "Ai câștigat! Felicitări! 🎉", varP: "P", varX: "x", invalidP: "P trebuie să fie un număr mai mare sau egal cu 2." },
-				uk: { errors: "Помилки", matches: "Пари", updateP: "Оновити П", hlDoubles: "Виділити подвійні (2n)", hlOpposites: "Виділити протилежні (-n)", notPrime: " не є простим. Деякі числа можуть не мати оберненого. Продовжити?", warnPrime: " не є простим. Деякі числа можуть не мати оберненого.", maxErrors: "Помилки!", win: "Ви перемогли! Вітаємо! 🎉", varP: "П", varX: "n", invalidP: "П має бути числом, більшим або рівним 2." },
-				el: { errors: "Σφάλματα", matches: "Ζεύγη", updateP: "Ενημέρωση Π", hlDoubles: "Επισήμανση διπλών (2x)", hlOpposites: "Επισήμανση αντίθετων (-x)", notPrime: " δεν είναι πρώτος. Ορισμένοι αριθμοί μπορεί να μην έχουν αντίστροφο. Συνέχεια;", warnPrime: " δεν είναι πρώτος. Ορισμένοι αριθμοί μπορεί να μην έχουν αντίστροφο.", maxErrors: "Σφάλματα!", win: "Κερδίσατε! Συγχαρητήρια! 🎉", varP: "Π", varX: "x", invalidP: "Το Π πρέπει να είναι αριθμός μεγαλύτερος ή ίσος του 2." },
-				la: { errors: "Errores", matches: "Paria", updateP: "Renova P", hlDoubles: "Ostende duplices (2x)", hlOpposites: "Ostende oppositos (-x)", notPrime: " non est primus. Aliqui numeri inversum non habere possunt. Pergere?", warnPrime: " non est primus. Aliqui numeri inversum non habere possunt.", maxErrors: "Errores!", win: "Vicisti! Gratulationes! 🎉", varP: "P", varX: "x", invalidP: "P debet esse numerus maior vel aequalis duobus." },
-				zh: { errors: "错误", matches: "对数", updateP: "更新 模", hlDoubles: "高亮双倍 (2n)", hlOpposites: "高亮相反数 (-n)", notPrime: " 不是质数。某些数字可能没有逆元。继续？", warnPrime: " 不是质数。某些数字可能没有逆元。", maxErrors: "错误过多!", win: "你赢了！恭喜！ 🎉", varP: "模", varX: "n", invalidP: "模数必须是大于或等于 2 的数字。" },
-				ja: { errors: "エラー", matches: "ペア", updateP: "P 更新", hlDoubles: "2倍を強調 (2n)", hlOpposites: "逆数を強調 (-n)", notPrime: " は素数ではありません。一部の数値には逆数がない場合があります。続行？", warnPrime: " は素数ではありません。一部の数値には逆数がない場合があります。", maxErrors: "リトライ!", win: "あなたの勝ちです！おめでとうございます！ 🎉", varP: "P", varX: "n", invalidP: "P は 2 以上の数値である必要があります。" }
+				en: { onlyUnmatched: "Show only unmatched", showAll: "Show all", errors: "Errors", matches: "Pairs", updateP: "Update P", hlDoubles: "Highlight doubles (2x)", hlOpposites: "Highlight opposites (-x)", notPrime: " is not prime. Some numbers may lack an inverse. Continue?", warnPrime: " is not prime. Some numbers could not have a reverse.", maxErrors: "Max errors!", win: "You win! Congratulations! 🎉", varP: "P", varX: "x", invalidP: "P must be a number greater than or equal to 2." },
+				it: { onlyUnmatched: "Mostra solo non accoppiati", showAll: "Mostra tutti", errors: "Errori", matches: "Coppie", updateP: "Aggiorna P", hlDoubles: "Evidenzia doppi (2x)", hlOpposites: "Evidenzia opposti (-x)", notPrime: " non è primo. Alcuni numeri potrebbero non avere un inverso. Continuare?", warnPrime: " non è primo. Alcuni numeri potrebbero non avere un inverso.", maxErrors: "Max errori!", win: "Hai vinto! Complimenti! 🎉", varP: "P", varX: "x", invalidP: "P deve essere un numero maggiore o uguale a 2." },
+				fr: { onlyUnmatched: "Afficher les non appariés", showAll: "Tout afficher", errors: "Erreurs", matches: "Paires", updateP: "MàJ P", hlDoubles: "Surligner doubles (2x)", hlOpposites: "Surligner opposés (-x)", notPrime: " n'est pas premier. Certains nombres peuvent manquer d'inverse. Continuer?", warnPrime: " n'est pas premier. Certains nombres pourraient ne pas avoir d'inverse.", maxErrors: "Max erreurs!", win: "Vous avez gagné ! Félicitations ! 🎉", varP: "P", varX: "x", invalidP: "P doit être un nombre supérieur ou égal à 2." },
+				es: { onlyUnmatched: "Mostrar solo sin emparejar", showAll: "Mostrar todos", errors: "Errores", matches: "Pares", updateP: "Actualizar P", hlDoubles: "Resaltar dobles (2x)", hlOpposites: "Resaltar opuestos (-x)", notPrime: " no es primo. Algunos números podrían no tener inverso. ¿Continuar?", warnPrime: " no es primo. Algunos números podrían no tener inverso.", maxErrors: "¡Max errori!", win: "¡Has ganado! ¡Felicitaciones! 🎉", varP: "P", varX: "x", invalidP: "P debe ser un número mayor o igual a 2." },
+				de: { onlyUnmatched: "Nur ungepaarte zeigen", showAll: "Alle zeigen", errors: "Fehler", matches: "Paare", updateP: "P akt.", hlDoubles: "Doppelte hervorheben (2x)", hlOpposites: "Gegenteile hervorheben (-x)", notPrime: " ist keine Primzahl. Einige Zahlen haben eventuell keinen Kehrwert. Fortfahren?", warnPrime: " ist keine Primzahl. Einige Zahlen könnten keinen Kehrwert haben.", maxErrors: "Fehlerlimit!", win: "Du hast gewonnen! Herzlichen Glückwunsch! 🎉", varP: "P", varX: "x", invalidP: "P muss eine Zahl größer oder gleich 2 sein." },
+				pt: { onlyUnmatched: "Mostrar só não emparelhados", showAll: "Mostrar todos", errors: "Erros", matches: "Pares", updateP: "Atualizar P", hlDoubles: "Destacar dobros (2x)", hlOpposites: "Destacar opostos (-x)", notPrime: " não è primo. Alguns números podem não ter inverso. Continuar?", warnPrime: " não è primo. Alguns números podem não ter inverso.", maxErrors: "Erro max!", win: "Você ganhou! Parabéns! 🎉", varP: "P", varX: "x", invalidP: "P deve ser um número maior ou igual a 2." },
+				ro: { onlyUnmatched: "Arată doar neperecheate", showAll: "Arată toate", errors: "Erori", matches: "Perechi", updateP: "Actualizează P", hlDoubles: "Evidențiază dubluri (2x)", hlOpposites: "Evidențiază opuse (-x)", notPrime: " nu este prim. Unele numere ar putea să nu aibă invers. Continuați?", warnPrime: " nu este prim. Unele numere ar putea să nu aibă invers.", maxErrors: "Erori max!", win: "Ai câștigat! Felicitări! 🎉", varP: "P", varX: "x", invalidP: "P trebuie să fie un număr mai mare sau egal cu 2." },
+				uk: { onlyUnmatched: "Показати лише без пари", showAll: "Показати всі", errors: "Помилки", matches: "Пари", updateP: "Оновити П", hlDoubles: "Виділити подвійні (2n)", hlOpposites: "Виділити протилежні (-n)", notPrime: " не є простим. Деякі числа можуть не мати оберненого. Продовжити?", warnPrime: " не є простим. Деякі числа можуть не мати оберненого.", maxErrors: "Помилки!", win: "Ви перемогли! Вітаємо! 🎉", varP: "П", varX: "n", invalidP: "П має бути числом, більшим або рівним 2." },
+				el: { onlyUnmatched: "Εμφάνιση μόνο χωρίς ζεύγος", showAll: "Εμφάνιση όλων", errors: "Σφάλματα", matches: "Ζεύγη", updateP: "Ενημέρωση Π", hlDoubles: "Επισήμανση διπλών (2x)", hlOpposites: "Επισήμανση αντίθετων (-x)", notPrime: " δεν είναι πρώτος. Ορισμένοι αριθμοί μπορεί να μην έχουν αντίστροφο. Συνέχεια;", warnPrime: " δεν είναι πρώτος. Ορισμένοι αριθμοί μπορεί να μην έχουν αντίστροφο.", maxErrors: "Σφάλματα!", win: "Κερδίσατε! Συγχαρητήρια! 🎉", varP: "Π", varX: "x", invalidP: "Το Π πρέπει να είναι αριθμός μεγαλύτερος ή ίσος του 2." },
+				la: { onlyUnmatched: "Ostende tantum non iunctos", showAll: "Ostende omnes", errors: "Errores", matches: "Paria", updateP: "Renova P", hlDoubles: "Ostende duplices (2x)", hlOpposites: "Ostende oppositos (-x)", notPrime: " non est primus. Aliqui numeri inversum non habere possunt. Pergere?", warnPrime: " non est primus. Aliqui numeri inversum non habere possunt.", maxErrors: "Errores!", win: "Vicisti! Gratulationes! 🎉", varP: "P", varX: "x", invalidP: "P debet esse numerus maior vel aequalis duobus." },
+				zh: { onlyUnmatched: "仅显示未配对", showAll: "显示全部", errors: "错误", matches: "对数", updateP: "更新 模", hlDoubles: "高亮双倍 (2n)", hlOpposites: "高亮相反数 (-n)", notPrime: " 不是质数。某些数字可能没有逆元。继续？", warnPrime: " 不是质数。某些数字可能没有逆元。", maxErrors: "错误过多!", win: "你赢了！恭喜！ 🎉", varP: "模", varX: "n", invalidP: "模数必须是大于或等于 2 的数字。" },
+				ja: { onlyUnmatched: "未ペアのみ表示", showAll: "すべて表示", errors: "エラー", matches: "ペア", updateP: "P 更新", hlDoubles: "2倍を強調 (2n)", hlOpposites: "逆数を強調 (-n)", notPrime: " は素数ではありません。一部の数値には逆数がない場合があります。続行？", warnPrime: " は素数ではありません。一部の数値には逆数がない場合があります。", maxErrors: "リトライ!", win: "あなたの勝ちです！おめでとうございます！ 🎉", varP: "P", varX: "n", invalidP: "P は 2 以上の数値である必要があります。" }
 			};
 			const HELP_TITLE = {
 				en: "Keyboard Shortcuts", it: "Tasti di scelta rapida", fr: "Raccourcis clavier",
@@ -340,18 +363,18 @@
 				zh: "键盘快捷键", ja: "キーボードショートカット"
 			};
 			const HELP_SHORTCUTS = {
-				en: [["D","Toggle highlight doubles (2x)"],["O","Toggle highlight opposites (-x)"],["L","Switch language"],["Z","Reset error counter"],["?","Show / hide this help"]],
-				it: [["D","Attiva/disattiva evidenziazione doppi (2x)"],["O","Attiva/disattiva evidenziazione opposti (-x)"],["L","Cambia lingua"],["Z","Azzera contatore errori"],["?","Mostra / nascondi questo aiuto"]],
-				fr: [["D","Activer/désactiver surlignage doubles (2x)"],["O","Activer/désactiver surlignage opposés (-x)"],["L","Changer de langue"],["Z","Réinitialiser le compteur d'erreurs"],["?","Afficher / masquer cette aide"]],
-				es: [["D","Activar/desactivar resaltado dobles (2x)"],["O","Activar/desactivar resaltado opuestos (-x)"],["L","Cambiar idioma"],["Z","Reiniciar contador de errores"],["?","Mostrar / ocultar esta ayuda"]],
-				de: [["D","Doppelte hervorheben ein/aus (2x)"],["O","Gegenteile hervorheben ein/aus (-x)"],["L","Sprache wechseln"],["Z","Fehlerzähler zurücksetzen"],["?","Hilfe anzeigen / ausblenden"]],
-				pt: [["D","Ativar/desativar destaque dobros (2x)"],["O","Ativar/desativar destaque opostos (-x)"],["L","Mudar idioma"],["Z","Redefinir contador de erros"],["?","Mostrar / ocultar esta ajuda"]],
-				ro: [["D","Activează/dezactivează evidențiere dubluri (2x)"],["O","Activează/dezactivează evidențiere opuse (-x)"],["L","Schimbă limba"],["Z","Resetează contorul de erori"],["?","Afișează / ascunde această ajutor"]],
-				uk: [["D","Увімк./вимк. виділення подвійних (2n)"],["O","Увімк./вимк. виділення протилежних (-n)"],["L","Змінити мову"],["Z","Скинути лічильник помилок"],["?","Показати / приховати цю довідку"]],
-				el: [["D","Ενεργοπ./Απενεργοπ. επισήμανση διπλών (2x)"],["O","Ενεργοπ./Απενεργοπ. επισήμανση αντίθετων (-x)"],["L","Αλλαγή γλώσσας"],["Z","Μηδενισμός μετρητή σφαλμάτων"],["?","Εμφάνιση / απόκρυψη βοήθειας"]],
-				la: [["D","Ostende/absconde duplices (2x)"],["O","Ostende/absconde oppositos (-x)"],["L","Linguam muta"],["Z","Errores tolle"],["?","Auxilium ostende / absconde"]],
-				zh: [["D","切换双倍高亮 (2n)"],["O","切换相反数高亮 (-n)"],["L","切换语言"],["Z","重置错误计数器"],["?","显示 / 隐藏帮助"]],
-				ja: [["D","2倍の強調表示 オン/オフ (2n)"],["O","逆数の強調表示 オン/オフ (-n)"],["L","言語を切替"],["Z","エラーカウンターをリセット"],["?","ヘルプを表示 / 非表示"]]
+				en: [["D","Toggle highlight doubles (2x)"],["O","Toggle highlight opposites (-x)"],["U","Toggle show only unmatched numbers"],["L","Switch language"],["Z","Reset error counter"],["?","Show / hide this help"]],
+				it: [["D","Attiva/disattiva evidenziazione doppi (2x)"],["O","Attiva/disattiva evidenziazione opposti (-x)"],["U","Attiva/disattiva solo numeri non accoppiati"],["L","Cambia lingua"],["Z","Azzera contatore errori"],["?","Mostra / nascondi questo aiuto"]],
+				fr: [["D","Activer/désactiver surlignage doubles (2x)"],["O","Activer/désactiver surlignage opposés (-x)"],["U","Activer/désactiver nombres non appariés seulement"],["L","Changer de langue"],["Z","Réinitialiser le compteur d'erreurs"],["?","Afficher / masquer cette aide"]],
+				es: [["D","Activar/desactivar resaltado dobles (2x)"],["O","Activar/desactivar resaltado opuestos (-x)"],["U","Activar/desactivar solo números sin emparejar"],["L","Cambiar idioma"],["Z","Reiniciar contador de errores"],["?","Mostrar / ocultar esta ayuda"]],
+				de: [["D","Doppelte hervorheben ein/aus (2x)"],["O","Gegenteile hervorheben ein/aus (-x)"],["U","Nur ungepaarte Zahlen ein/aus"],["L","Sprache wechseln"],["Z","Fehlerzähler zurücksetzen"],["?","Hilfe anzeigen / ausblenden"]],
+				pt: [["D","Ativar/desativar destaque dobros (2x)"],["O","Ativar/desativar destaque opostos (-x)"],["U","Ativar/desativar só números não emparelhados"],["L","Mudar idioma"],["Z","Redefinir contador de erros"],["?","Mostrar / ocultar esta ajuda"]],
+				ro: [["D","Activează/dezactivează evidențiere dubluri (2x)"],["O","Activează/dezactivează evidențiere opuse (-x)"],["U","Activează/dezactivează doar numerele neperecheate"],["L","Schimbă limba"],["Z","Resetează contorul de erori"],["?","Afișează / ascunde această ajutor"]],
+				uk: [["D","Увімк./вимк. виділення подвійних (2n)"],["O","Увімк./вимк. виділення протилежних (-n)"],["U","Увімк./вимк. лише числа без пари"],["L","Змінити мову"],["Z","Скинути лічильник помилок"],["?","Показати / приховати цю довідку"]],
+				el: [["D","Ενεργοπ./Απενεργοπ. επισήμανση διπλών (2x)"],["O","Ενεργοπ./Απενεργοπ. επισήμανση αντίθετων (-x)"],["U","Ενεργοπ./Απενεργοπ. μόνο αριθμοί χωρίς ζεύγος"],["L","Αλλαγή γλώσσας"],["Z","Μηδενισμός μετρητή σφαλμάτων"],["?","Εμφάνιση / απόκρυψη βοήθειας"]],
+				la: [["D","Ostende/absconde duplices (2x)"],["O","Ostende/absconde oppositos (-x)"],["U","Ostende/absconde tantum numeros non iunctos"],["L","Linguam muta"],["Z","Errores tolle"],["?","Auxilium ostende / absconde"]],
+				zh: [["D","切换双倍高亮 (2n)"],["O","切换相反数高亮 (-n)"],["U","切换仅显示未配对的数字"],["L","切换语言"],["Z","重置错误计数器"],["?","显示 / 隐藏帮助"]],
+				ja: [["D","2倍の強調表示 オン/オフ (2n)"],["O","逆数の強調表示 オン/オフ (-n)"],["U","未ペアの数字のみ表示 オン/オフ"],["L","言語を切替"],["Z","エラーカウンターをリセット"],["?","ヘルプを表示 / 非表示"]]
 			};
 			let currentLangIndex = 0;
 
@@ -364,8 +387,13 @@
 				document.getElementById('txt-matches').textContent = t("matches");
 				document.getElementById('labelP').textContent = t("varP") + " = ";
 				document.getElementById('btnUpdateP').textContent = t("updateP");
-				document.getElementById('btnDouble').textContent = t("hlDoubles");
-				document.getElementById('btnOpposite').textContent = t("hlOpposites");
+				const unmatchedLabel = document.body.classList.contains('only-unmatched') ? t("showAll") : t("onlyUnmatched");
+				[['btnDouble', t("hlDoubles")], ['btnOpposite', t("hlOpposites")], ['btnUnmatched', unmatchedLabel]].forEach(([id, label]) => {
+					const btn = document.getElementById(id);
+					btn.querySelector('.lbl-full').textContent = label;
+					btn.title = label;
+					btn.setAttribute('aria-label', label);
+				});
 				document.getElementById('btnLang').innerHTML = FLAGS_SVG[currentLangIndex];
 				document.body.setAttribute('lang', LANG_KEYS[currentLangIndex]);
 			}
@@ -387,6 +415,7 @@
 					`<tr><td class="key">${k}</td><td>${d}</td></tr>`
 				).join("");
 			}
+
 			function nextLang(){
 				currentLangIndex = (currentLangIndex + 1)%(LANG_KEYS.length);
 				updateUI();
@@ -399,6 +428,29 @@
 					cell.innerHTML = (n1 === n2) ? `${n1} = ${n1}⁻¹` : `${n1} = ${n2}⁻¹`;
 				});
 			}
+
+			const mobileQuery = window.matchMedia('(max-width: 600px)');
+
+			function placeLangButton(){
+				const btn = document.getElementById('btnLang');
+				const pGroup = document.querySelector('.p-input-group');
+				const btnGroup = document.querySelector('.button-group');
+				if(mobileQuery.matches){
+					if(btn.parentElement !== btnGroup){
+						btnGroup.appendChild(btn);
+					}
+				}else if(btn.parentElement !== pGroup){
+					pGroup.appendChild(btn);
+				}
+			}
+
+			if(mobileQuery.addEventListener){
+				mobileQuery.addEventListener('change', placeLangButton);
+			}else{
+				mobileQuery.addListener(placeLangButton);
+			}
+
+			placeLangButton();
 
 			document.addEventListener('DOMContentLoaded',() => {
 				let P = 37;
@@ -481,21 +533,20 @@
 					fitGrid(P - 1);
 				}
 
-				function fitGrid(cellCount){
-					if(cellCount <= 0){
-						return;
-					}
+				function fitGrid(){
 					const header = document.querySelector('.header');
-					const cells = Array.from(document.querySelectorAll('.cell'));
-					if(cells.length === 0){
-						return;
-					}
-					cells.forEach(cell => {
+					const allCells = Array.from(document.querySelectorAll('.cell'));
+					allCells.forEach(cell => {
 						cell.style.height = '';
 						cell.style.width = '';
 						cell.style.aspectRatio = '';
 						cell.style.fontSize = '';
 					});
+					const cells = allCells.filter(cell => !cell.classList.contains('gone'));
+					const cellCount = cells.length;
+					if(cellCount === 0){
+						return;
+					}
 					chooseColumnCount(cellCount);
 					const gap = parseFloat(getComputedStyle(GRID).rowGap) || 8;
 					const cols = getComputedStyle(GRID).gridTemplateColumns.trim().split(/\s+/).length;
@@ -586,6 +637,9 @@
 							registerMatchedNumber(num2);
 						}
 						refreshHighlights();
+						if(document.body.classList.contains('only-unmatched')){
+							setTimeout(applyUnmatchedFilter, 600);
+						}
 						correctStreak++;
 						if(correctStreak >= 3){
 							if(currentErrors > 0){
@@ -778,6 +832,26 @@
 					highlightOpposite();
 				});
 
+				function applyUnmatchedFilter(){
+					const on = document.body.classList.contains('only-unmatched');
+					document.querySelectorAll('.cell.matched').forEach(cell => {
+						cell.classList.toggle('gone', on);
+					});
+					fitGrid();
+				}
+
+				function toggleUnmatched(){
+					const on = document.body.classList.toggle('only-unmatched');
+					document.getElementById('btnUnmatched').classList.toggle('active', on);
+					updateUI();
+					applyUnmatchedFilter();
+				}
+
+				document.getElementById('btnUnmatched').addEventListener('click', (e) => {
+					e.preventDefault();
+					toggleUnmatched();
+				});
+
 				document.addEventListener("keydown", e => {
 					if(e.key.toLowerCase() === "l"){
 						nextLang();
@@ -785,6 +859,8 @@
 						highlightDouble();
 					}else if(e.key.toLowerCase() === "o"){
 						highlightOpposite();
+					}else if(e.key.toLowerCase() === "u"){
+						toggleUnmatched();
 					}else if(e.key.toLowerCase() === "z"){
 						currentErrors = 0;
 						correctStreak = 0;

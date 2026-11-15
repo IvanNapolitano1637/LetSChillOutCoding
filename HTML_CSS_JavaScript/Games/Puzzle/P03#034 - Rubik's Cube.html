@@ -101,7 +101,7 @@
 			}
 			.rot-btn{
 				position: absolute;
-				background: rgba(19, 19, 28,.8);
+				background: rgba(19, 19, 28,.88);
 				border: 1px solid rgba(255, 255, 255,.15);
 				color: var(--txt);
 				border-radius: 50%;
@@ -113,8 +113,6 @@
 				font-size:.95rem;
 				cursor: pointer;
 				pointer-events: all;
-				-webkit-backdrop-filter: blur(4px);
-				backdrop-filter: blur(4px);
 				-webkit-user-select: none;
 				user-select: none;
 				transition: background.15s;
@@ -1362,8 +1360,19 @@
 			}
 
 			if(canvas){
-				const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
-				renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+				const renderer = new THREE.WebGLRenderer({canvas, antialias: true, powerPreference: 'high-performance'});
+				const coarsePointer = window.matchMedia('(pointer: coarse)');
+				function pickPixelRatio(w, h){
+					let dpr = Math.min(window.devicePixelRatio || 1, 2);
+					if(coarsePointer.matches && Math.min(window.innerWidth, window.innerHeight) >= 600){
+						dpr = Math.max(1, Math.min(dpr, Math.sqrt(1500000/(w*h))));
+					}
+					return dpr;
+				}
+				let activeUntil = 0;
+				function wake(ms){
+					activeUntil = Math.max(activeUntil, performance.now() + (ms || 700));
+				}
 				const scene = new THREE.Scene();
 				scene.background = new THREE.Color(0x0d0d14);
 				const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
@@ -1372,7 +1381,9 @@
 					if(w === 0 || h === 0){
 						return;
 					}
+					renderer.setPixelRatio(pickPixelRatio(w, h));
 					renderer.setSize(w, h, false);
+					wake();
 					camera.aspect = w/h;
 					const halfTan = Math.tan(THREE.MathUtils.degToRad(20));
 					camera.fov = THREE.MathUtils.radToDeg(2*Math.atan(camera.aspect < 1 ? halfTan*1.12/camera.aspect : halfTan));
@@ -1513,13 +1524,13 @@
 					affected.forEach(c  =>  pivot.attach(c.g));
 					const t0 = performance.now();
 					let prevA = 0;
+					const axVec3 = new THREE.Vector3(axis === 'x' ? 1: 0, axis === 'y' ? 1: 0, axis === 'z' ? 1: 0);
 					function step(now){
 						const t = Math.min((now - t0)/ADUR, 1);
 						const a = eio(t)*angle, da = a - prevA;
 						prevA = a;
-						const axVec3 = new THREE.Vector3(axis === 'x' ? 1: 0, axis === 'y' ? 1: 0, axis === 'z' ? 1: 0);
 						pivot.rotateOnWorldAxis(axVec3, da);
-						renderer.render(scene, camera);
+						wake();
 						if(t < 1){
 							requestAnimationFrame(step);
 							return;
@@ -1708,6 +1719,7 @@
 						camera.position.copy(startPos).applyQuaternion(q);
 						camera.up.copy(startUp).applyQuaternion(q);
 						camera.lookAt(0, 0, 0);
+						wake();
 						if(t < 1){
 							requestAnimationFrame(step);
 							return;
@@ -2061,13 +2073,19 @@
 						return;
 					}
 				});
-				function loop(){
+				function loop(now){
 					requestAnimationFrame(loop);
-					renderer.render(scene, camera);
+					if(now < activeUntil){
+						renderer.render(scene, camera);
+					}
 				}
+				['pointerdown', 'pointermove', 'touchstart', 'touchmove', 'touchend', 'keydown', 'click', 'wheel', 'resize', 'orientationchange', 'visibilitychange', 'load'].forEach(ev => {
+					window.addEventListener(ev, () => wake(), {capture: true, passive: true});
+				});
 				buildCube();
 				updateUndoBtn();
-				loop();
+				wake(1500);
+				loop(0);
 			}
 			applyLang('en');
 		</script>
