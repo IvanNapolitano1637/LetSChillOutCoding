@@ -689,7 +689,8 @@
 
 				function checkWin(){
 					if(pairsFound === maxPairs){
-						setTimeout(() => alert(t("win")), 200);
+						const delay = document.body.classList.contains('only-unmatched') ? 900 : 200;
+						setTimeout(() => alert(t("win")), delay);
 					}
 				}
 
