@@ -1399,7 +1399,9 @@
 				camera.position.set(camR*Math.sin(0.85)*Math.sin(0.6), camR*Math.cos(0.85), camR*Math.sin(0.85)*Math.cos(0.6));
 				camera.up.set(0, 1, 0);
 				camera.lookAt(0, 0, 0);
-				const COLORS = {W: 0xf0f0f0, Y: 0xffd600, R: 0xf44336, O: 0xff9800, B: 0x2196f3, G: 0x4caf50, X: 0x111111};
+				//const COLORS = {W: 0xf0f0f0, Y: 0xffd600, R: 0xf44336, O: 0xff9800, B: 0x2196f3, G: 0x4caf50, X: 0x111111};
+				//const COLORS = {W: 0xffffff, Y: 0xffea00, R: 0xd50000, O: 0xff5722, B: 0x1565c0, G: 0x00c853, X: 0x111111};
+				const COLORS = {W: 0xffffff, Y: 0xf4ff00, R: 0xb71c1c, O: 0xff6d00, B: 0x0d47a1, G: 0x00c853, X: 0x111111};
 				const STEP = 1.05, BODY = 1.0, SSIZE = 0.86, SDEPTH = 0.025;
 				const cubeGroup = new THREE.Group();
 				scene.add(cubeGroup);
