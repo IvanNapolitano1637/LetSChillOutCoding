@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -27,9 +28,12 @@ public class ModInverseGame extends JFrame{
     private final int HEIGHT = 750;
     private final int NUMBER_OF_COLUMNS = 12;
     private final int VERTICAL_SCROLL_BAR_UNIT_INCREMENT = 50;
+    private final int HIDE_MATCHED_DELAY_MS = 600;
     private final String GAME_TITLE = "Inverse modulus ";
     private final String SCORE_LABEL_NAME = "Couples found: ";
     private final String HIGHLIGHT_BUTTON_NAME = "Highlight";
+    private final String UNMATCHED_BUTTON_NAME = "Show only unmatched";
+    private final String SHOW_ALL_BUTTON_NAME = "Show all";
     private final String CHECK_OPPOSITE_FLAG_NAME = "Check opposite";
     private final String CONFIGURE_BUTTON_NAME = "Chosen bases:";
     private final String ERROR_LABEL_NAME = "Errors: ";
@@ -50,6 +54,8 @@ public class ModInverseGame extends JFrame{
     private JButton[] buttons;
     private JButton firstSelected = null;
     private JButton highlightButton;
+    private JButton unmatchedButton;
+    private JPanel gridPanel;
     private JButton resetButton;
     private JButton configureButton;
     private JButton saveButton;
@@ -62,6 +68,7 @@ public class ModInverseGame extends JFrame{
     private int score = 0;
     private int totalPairs;
     private boolean highlightActive = false;
+    private boolean showOnlyUnmatched = false;
     private Color defaultColor;
     private int[] BASES = {2,3};
     private int errors = 0;
@@ -101,6 +108,9 @@ public class ModInverseGame extends JFrame{
         highlightButton = new JButton(HIGHLIGHT_BUTTON_NAME);
         highlightButton.setFont(new Font(NAME_FONT, STYLE_FONT, SIZE_FONT));
         highlightButton.addActionListener(_ -> toggleHighlight());
+        unmatchedButton = new JButton(UNMATCHED_BUTTON_NAME);
+        unmatchedButton.setFont(new Font(NAME_FONT, STYLE_FONT, SIZE_FONT));
+        unmatchedButton.addActionListener(_ -> toggleUnmatched());
         resetButton = new JButton(RESET_BUTTON_NAME);
         resetButton.setFont(new Font(NAME_FONT, STYLE_FONT, SIZE_FONT));
         resetButton.addActionListener(_ -> resetGame());
@@ -113,10 +123,14 @@ public class ModInverseGame extends JFrame{
         loadButton = new JButton(NAME_OF_LOAD_BUTTON);
         loadButton.setFont(new Font(NAME_FONT, STYLE_FONT, SIZE_FONT));
         loadButton.addActionListener(_ -> load());
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 5));
+        JPanel topPanel = new JPanel(new GridLayout(2, 1));
+        JPanel firstRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 5));
+        JPanel secondRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 5));
+        topPanel.add(firstRow);
+        topPanel.add(secondRow);
         add(topPanel, BorderLayout.NORTH);
         int rows = (int) Math.ceil((double) (MOD - 1)/NUMBER_OF_COLUMNS);
-        JPanel grid = new JPanel(new GridLayout(rows, NUMBER_OF_COLUMNS, 5, 5));
+        gridPanel = new JPanel(new GridLayout(rows, NUMBER_OF_COLUMNS, 5, 5));
         for(int i = 1; i < MOD; i++){
             JButton btn = new JButton(String.valueOf(i));
             btn.setMinimumSize(new Dimension(50, 40));
@@ -129,10 +143,10 @@ public class ModInverseGame extends JFrame{
             int value = i;
             btn.addActionListener(_ -> handleClick(btn, value));
             buttons[i - 1] = btn;
-            grid.add(btn);
+            gridPanel.add(btn);
         }
         defaultColor = buttons[0].getBackground();
-        JScrollPane scrollPane = new JScrollPane(grid);
+        JScrollPane scrollPane = new JScrollPane(gridPanel);
         add(scrollPane, BorderLayout.CENTER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(VERTICAL_SCROLL_BAR_UNIT_INCREMENT);
         if(!skipConfigureOnInit){
@@ -146,14 +160,15 @@ public class ModInverseGame extends JFrame{
         checkOppositeNumbers = new JCheckBox(CHECK_OPPOSITE_FLAG_NAME);
         checkOppositeNumbers.setFont(new Font(NAME_FONT, STYLE_FONT, SIZE_FONT));
         checkOppositeNumbers.addActionListener(_ -> checkOppositeNumbers());
-        topPanel.add(scoreLabel);
-        topPanel.add(highlightButton);
-        topPanel.add(checkOppositeNumbers);
-        topPanel.add(configureButton);
-        topPanel.add(errorsLabel);
-        topPanel.add(saveButton);
-        topPanel.add(loadButton);
-        topPanel.add(resetButton);
+        firstRow.add(scoreLabel);
+        firstRow.add(highlightButton);
+        firstRow.add(checkOppositeNumbers);
+        firstRow.add(unmatchedButton);
+        firstRow.add(configureButton);
+        secondRow.add(errorsLabel);
+        secondRow.add(saveButton);
+        secondRow.add(loadButton);
+        secondRow.add(resetButton);
     }
 
     private String getStateFromColor(Color c){
@@ -262,6 +277,11 @@ public class ModInverseGame extends JFrame{
             firstSelected.setBackground(DONE_COLOR);
             btn.setText(value + "×" + firstValue);
             firstSelected.setText(firstValue + "×" + value);
+            if(showOnlyUnmatched){
+                javax.swing.Timer hideTimer = new javax.swing.Timer(HIDE_MATCHED_DELAY_MS, _ -> updateGridVisibility());
+                hideTimer.setRepeats(false);
+                hideTimer.start();
+            }
             score++;
             scoreLabel.setText(SCORE_LABEL_NAME + score + "/" + totalPairs);
             consecutiveMatches++;
@@ -305,6 +325,32 @@ public class ModInverseGame extends JFrame{
         highlightButton.setBackground(highlightActive ? ACTIVE_COLOR : defaultColor);
         updateHighlightColors();
         checkOppositeNumbers();
+    }
+
+    private void toggleUnmatched(){
+        showOnlyUnmatched = !showOnlyUnmatched;
+        updateUnmatchedButton();
+        updateGridVisibility();
+    }
+
+    private void updateUnmatchedButton(){
+        unmatchedButton.setText(showOnlyUnmatched ? SHOW_ALL_BUTTON_NAME : UNMATCHED_BUTTON_NAME);
+        unmatchedButton.setBackground(showOnlyUnmatched ? ACTIVE_COLOR : defaultColor);
+    }
+
+    private void updateGridVisibility(){
+        gridPanel.removeAll();
+        int shown = 0;
+        for(JButton btn : buttons){
+            if(!showOnlyUnmatched || !btn.getBackground().equals(DONE_COLOR)){
+                gridPanel.add(btn);
+                shown++;
+            }
+        }
+        int rows = Math.max(1, (int) Math.ceil((double) shown/NUMBER_OF_COLUMNS));
+        gridPanel.setLayout(new GridLayout(rows, NUMBER_OF_COLUMNS, 5, 5));
+        gridPanel.revalidate();
+        gridPanel.repaint();
     }
 
     private void updateHighlightColors(){
@@ -409,6 +455,9 @@ public class ModInverseGame extends JFrame{
         errorsLabel.setText(ERROR_LABEL_NAME + "0/" + maxNumberOfErrors);
         highlightActive = false;
         highlightButton.setBackground(defaultColor);
+        showOnlyUnmatched = false;
+        updateUnmatchedButton();
+        updateGridVisibility();
         updateLegend();
         checkOppositeNumbers.setSelected(false);
     }
@@ -484,6 +533,7 @@ public class ModInverseGame extends JFrame{
         }
         out.writeObject(texts);
         out.writeObject(states);
+        out.writeObject(showOnlyUnmatched);
     }
 
     private void load(){
@@ -519,25 +569,35 @@ public class ModInverseGame extends JFrame{
         boolean loadedCheckOpposite = (Boolean) in.readObject();
         String[] texts = (String[]) in.readObject();
         String[] states = (String[]) in.readObject();
+        final boolean loadedUnmatched = readOptionalBoolean(in, false);
         if(loadedMod != MOD){
             SwingUtilities.invokeLater(() ->{
                 ModInverseGame newGame = new ModInverseGame(loadedMod, maxNumberOfErrors, loadedBases);
-                newGame.applyLoadedState(loadedScore, loadedErrors, loadedMaxErrors, loadedConsecutiveMatches, loadedHighlight, loadedCheckOpposite, texts, states, loadedBases);
+                newGame.applyLoadedState(loadedScore, loadedErrors, loadedMaxErrors, loadedConsecutiveMatches, loadedHighlight, loadedCheckOpposite, loadedUnmatched, texts, states, loadedBases);
             });
             dispose();
         }else{
-            applyLoadedState(loadedScore, loadedErrors, loadedMaxErrors, loadedConsecutiveMatches, loadedHighlight, loadedCheckOpposite, texts, states, loadedBases);
+            applyLoadedState(loadedScore, loadedErrors, loadedMaxErrors, loadedConsecutiveMatches, loadedHighlight, loadedCheckOpposite, loadedUnmatched, texts, states, loadedBases);
+        }
+    }
+
+    private boolean readOptionalBoolean(ObjectInputStream in, boolean defaultValue) throws Exception{
+        try{
+            return (Boolean) in.readObject();
+        }catch(EOFException ex){
+            return defaultValue;
         }
     }
 
     private void applyLoadedState(int loadedScore, int loadedErrors, int loadedMaxErrors, int loadedConsecutiveMatches,
-            boolean loadedHighlight, boolean loadedCheckOpposite,
+            boolean loadedHighlight, boolean loadedCheckOpposite, boolean loadedUnmatched,
             String[] texts, String[] states, int[] loadedBases){
     	score = loadedScore;
     	errors = loadedErrors;
     	maxNumberOfErrors = loadedMaxErrors;
     	consecutiveMatches = loadedConsecutiveMatches;
     	highlightActive = loadedHighlight;
+    	showOnlyUnmatched = loadedUnmatched;
     	checkOppositeNumbers.setSelected(loadedCheckOpposite);
     	if(loadedBases != null){
     		BASES = loadedBases.clone();
@@ -562,6 +622,8 @@ public class ModInverseGame extends JFrame{
     	highlightButton.setBackground(highlightActive ? ACTIVE_COLOR : defaultColor);
     	updateHighlightColors();
     	checkOppositeNumbers();
+    	updateUnmatchedButton();
+    	updateGridVisibility();
     }
 
     public static void main(String[] args){
