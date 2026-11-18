@@ -136,6 +136,9 @@
 			.lbl-short{
 				display: none;
 			}
+			.row-bottom{
+				display: contents;
+			}
 			@media (max-width: 600px){
 				.lbl-full{
 					display: none;
@@ -147,14 +150,54 @@
 				.button-group button{
 					min-width: 44px;
 				}
+				.controls{
+					gap: 8px 10px;
+					padding: 0 6px;
+				}
+				.stats-container, .p-input-group, .row-bottom{
+					flex: 0 0 100%;
+					justify-content: center;
+					flex-wrap: nowrap;
+					min-width: 0;
+				}
+				.row-bottom{
+					display: flex;
+					align-items: center;
+					gap: 10px;
+				}
+				.stats-container{
+					gap: 14px;
+					white-space: nowrap;
+				}
+				.p-input-group{
+					margin-right: 0;
+				}
+				.p-input-group label, .primes-group label, .p-input-group button{
+					white-space: nowrap;
+				}
+				.primes-group{
+					flex: 0 1 auto;
+					min-width: 0;
+				}
+				.primes-group select{
+					min-width: 0;
+				}
+				.button-group{
+					flex: 0 0 auto;
+					gap: 5px;
+				}
 			}
 			@media (max-width: 480px){
 				button {
 					font-size: 0.8em;
 					padding: 6px 10px;
 				}
-				.controls {
-					gap: 5px;
+				.row-bottom{
+					gap: 6px;
+				}
+				.button-group button{
+					min-width: 38px;
+					padding: 6px 6px;
 				}
 			}
 			.grid{
@@ -212,9 +255,7 @@
 				background-color: var(--reveal-color);
 				transform: scale(1.05);
 			}
-			.cell.highlight-double.revealed,
-			.cell.highlight-opposite.revealed,
-			.cell.highlight-both.revealed{
+			.cell.highlight-double.revealed, .cell.highlight-opposite.revealed, .cell.highlight-both.revealed{
 				background-color: var(--reveal-color);
 			}
 			.error-flash{
@@ -322,19 +363,21 @@
 					<button id="btnUpdateP" class="btn-primary">Update P</button>
 					<button id="btnLang" title="btnLang" onclick="nextLang()"></button>
 				</div>
-				<div class="primes-group">
-					<label for="primeSet" id="labelPrimes">Primes</label>
-					<select id="primeSet">
-						<option value="2">2</option>
-						<option value="2,3">2, 3</option>
-						<option value="2,3,5">2, 3, 5</option>
-						<option value="2,3,5,7">2, 3, 5, 7</option>
-					</select>
-				</div>
-				<div class="button-group">
-					<button id="btnDouble"><span class="lbl-full">Highlight multiples</span><span class="lbl-short">&times;p</span></button>
-					<button id="btnOpposite"><span class="lbl-full">Highlight opposites</span><span class="lbl-short">&minus;x</span></button>
-					<button id="btnUnmatched"><span class="lbl-full">Show only unmatched</span><span class="lbl-short">&#128065;</span></button>
+				<div class="row-bottom">
+					<div class="primes-group">
+						<label for="primeSet" id="labelPrimes">Primes</label>
+						<select id="primeSet">
+							<option value="2">2</option>
+							<option value="2,3">2, 3</option>
+							<option value="2,3,5">2, 3, 5</option>
+							<option value="2,3,5,7">2, 3, 5, 7</option>
+						</select>
+					</div>
+					<div class="button-group">
+						<button id="btnDouble"><span class="lbl-full">Highlight multiples</span><span class="lbl-short">&times;p</span></button>
+						<button id="btnOpposite"><span class="lbl-full">Highlight opposites</span><span class="lbl-short">&minus;x</span></button>
+						<button id="btnUnmatched"><span class="lbl-full">Show only unmatched</span><span class="lbl-short">&#128065;</span></button>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -455,29 +498,6 @@
 					cell.innerHTML = (n1 === n2) ? `${n1} = ${n1}⁻¹` : `${n1} = ${n2}⁻¹`;
 				});
 			}
-
-			const mobileQuery = window.matchMedia('(max-width: 600px)');
-
-			function placeLangButton(){
-				const btn = document.getElementById('btnLang');
-				const pGroup = document.querySelector('.p-input-group');
-				const btnGroup = document.querySelector('.button-group');
-				if(mobileQuery.matches){
-					if(btn.parentElement !== btnGroup){
-						btnGroup.appendChild(btn);
-					}
-				}else if(btn.parentElement !== pGroup){
-					pGroup.appendChild(btn);
-				}
-			}
-
-			if(mobileQuery.addEventListener){
-				mobileQuery.addEventListener('change', placeLangButton);
-			}else{
-				mobileQuery.addListener(placeLangButton);
-			}
-
-			placeLangButton();
 
 			document.addEventListener('DOMContentLoaded',() => {
 				let P = 37;
