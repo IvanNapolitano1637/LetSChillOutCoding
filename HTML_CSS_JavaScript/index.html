@@ -55305,8 +55305,6 @@ document.addEventListener('click', function(e) {
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<title>Animazione Palline Casuali</title>
-		<script src="https://cdn.tailwindcss.com"><\/script>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 		<style>
 			*{
 				box-sizing: border-box;
@@ -55320,8 +55318,9 @@ document.addEventListener('click', function(e) {
 				width: 100%;
 				height: 100%;
 				overflow: hidden;
-				font-family: 'Inter', sans-serif;
+				font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 				background-color: #0f172a;
+				color: #ffffff;
 			}
 			canvas{
 				display: block;
@@ -55334,55 +55333,161 @@ document.addEventListener('click', function(e) {
 				backdrop-filter: blur(12px);
 				-webkit-backdrop-filter: blur(12px);
 				border: 1px solid rgba(255, 255, 255, 0.25);
+				box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+				border-radius: 9999px;
 			}
 			.dark .glass-panel{
 				background: rgba(15, 23, 42, 0.45);
 				border: 1px solid rgba(255, 255, 255, 0.1);
 			}
+			.top-bar{
+				position: fixed;
+				top: 1rem;
+				left: 1rem;
+				right: 1rem;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				pointer-events: none;
+				z-index: 10;
+			}
+			.counter-badge{
+				padding: 0.5rem 1rem;
+				display: flex;
+				align-items: center;
+				gap: 0.75rem;
+				font-size: 0.875rem;
+				line-height: 1.25rem;
+				font-weight: 600;
+				pointer-events: none;
+			}
+			.dot-container{
+				position: relative;
+				display: flex;
+				height: 0.75rem;
+				width: 0.75rem;
+			}
+			@keyframes ping{
+				75%, 100%{
+					transform: scale(2);
+					opacity: 0;
+				}
+			}
+			.dot-ping{
+				animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+				position: absolute;
+				display: inline-flex;
+				height: 100%;
+				width: 100%;
+				border-radius: 9999px;
+				background-color: #34d399;
+				opacity: 0.75;
+			}
+			.dot-solid{
+				position: relative;
+				display: inline-flex;
+				border-radius: 9999px;
+				height: 0.75rem;
+				width: 0.75rem;
+				background-color: #10b981;
+			}
+			.controls-group{
+				padding: 0.375rem;
+				display: flex;
+				align-items: center;
+				gap: 0.25rem;
+				pointer-events: auto;
+			}
+			.control-btn{
+				background: transparent;
+				border: none;
+				padding: 0.625rem;
+				border-radius: 9999px;
+				color: #ffffff;
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				transition: background-color 0.15s ease, transform 0.15s ease;
+			}
+			.control-btn:hover{
+				background-color: rgba(255, 255, 255, 0.2);
+			}
+			.control-btn:active{
+				transform: scale(0.95);
+			}
+			.icon{
+				width: 1.25rem;
+				height: 1.25rem;
+			}
+			.hidden{
+				display: none !important;
+			}
+			.bottom-hint{
+				position: fixed;
+				bottom: 1rem;
+				left: 50%;
+				transform: translateX(-50%);
+				pointer-events: none;
+				z-index: 10;
+				opacity: 0.7;
+				font-size: 0.75rem;
+				line-height: 1rem;
+				letter-spacing: 0.05em;
+				text-transform: uppercase;
+				font-weight: 500;
+				background-color: rgba(0, 0, 0, 0.3);
+				backdrop-filter: blur(12px);
+				-webkit-backdrop-filter: blur(12px);
+				padding: 0.375rem 0.75rem;
+				border-radius: 9999px;
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				white-space: nowrap;
+			}
 		</style>
 	</head>
-	<body class="relative w-full h-full text-white">
+	<body>
 		<canvas id="ballCanvas"></canvas>
-		<div class="fixed top-4 left-4 right-4 flex justify-between items-center pointer-events-none z-10">
-			<div class="glass-panel px-4 py-2 rounded-full shadow-lg flex items-center space-x-3 text-sm font-semibold pointer-events-auto transition hover:scale-105">
-				<span class="flex h-3 w-3 relative">
-					<span id="pulseDot" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-					<span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+		<div class="top-bar">
+			<div class="glass-panel counter-badge">
+				<span class="dot-container">
+					<span id="pulseDot" class="dot-ping"></span>
+					<span class="dot-solid"></span>
 				</span>
 				<span id="ballCountText">Palline: 0</span>
 			</div>
-			<div class="glass-panel p-1.5 rounded-full shadow-lg flex items-center space-x-1 pointer-events-auto">
-				<button id="btnPause" class="p-2.5 rounded-full hover:bg-white/20 active:scale-95 transition text-white" title="Pausa/Riprendi">
-					<svg id="iconPause" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<div class="glass-panel controls-group">
+				<button id="btnPause" class="control-btn" title="Pausa/Riprendi">
+					<svg id="iconPause" class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
 					</svg>
-					<svg id="iconPlay" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg id="iconPlay" class="icon hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
 					</svg>
 				</button>
-				<button id="btnNewBg" class="p-2.5 rounded-full hover:bg-white/20 active:scale-95 transition text-white" title="Cambia Sfondo">
-					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<button id="btnNewBg" class="control-btn" title="Cambia Sfondo">
+					<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
 					</svg>
 				</button>
-				<button id="btnAudio" class="p-2.5 rounded-full hover:bg-white/20 active:scale-95 transition text-white" title="Effetti Sonori">
-					<svg id="iconAudioOff" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<button id="btnAudio" class="control-btn" title="Effetti Sonori">
+					<svg id="iconAudioOff" class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
 					</svg>
-					<svg id="iconAudioOn" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg id="iconAudioOn" class="icon hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
 					</svg>
 				</button>
-				<button id="btnClear" class="p-2.5 rounded-full hover:bg-white/20 active:scale-95 transition text-white" title="Cancella Tutte">
-					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<button id="btnClear" class="control-btn" title="Cancella Tutte">
+					<svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
 					</svg>
 				</button>
 			</div>
 		</div>
-		<div class="fixed bottom-4 left-1/2 -translate-x-1/2 pointer-events-none z-10 opacity-70 text-xs tracking-wider uppercase font-medium bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+		<div class="bottom-hint">
 			Tocca le palline per farle scoppiare!
 		</div>
 		<script>
@@ -55430,6 +55535,7 @@ document.addEventListener('click', function(e) {
 				canvas.height = Math.floor(viewportHeight*dpr);
 				canvas.style.width = viewportWidth + 'px';
 				canvas.style.height = viewportHeight + 'px';
+				ctx.setTransform(1, 0, 0, 1, 0, 0);
 				ctx.scale(dpr, dpr);
 				balls.forEach(ball => {
 					ball.updateDimensions(viewportWidth, viewportHeight);
@@ -55520,7 +55626,7 @@ document.addEventListener('click', function(e) {
 			}
 
 			class Particle{
-				constructor(x, y, color) {
+				constructor(x, y, color){
 					this.x = x;
 					this.y = y;
 					this.color = color;
@@ -55577,7 +55683,7 @@ document.addEventListener('click', function(e) {
 					gain.connect(audioCtx.destination);
 					osc.start();
 					osc.stop(audioCtx.currentTime + 0.09);
-				}catch (e){
+				}catch(e){
 					console.warn('Audio non supportato o bloccato dal browser.', e);
 				}
 			}
