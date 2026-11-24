@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="it"><!--L10#070 - Margherita - Zen Bubbles-->
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>Animazione Palline Casuali</title>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+		<style>
+			*{
+				box-sizing: border-box;
+				user-select: none;
+				-webkit-user-select: none;
+				touch-action: manipulation;
+			}
+			body, html{
+				margin: 0;
+				padding: 0;
+				width: 100%;
+				height: 100%;
+				overflow: hidden;
+				font-family: 'Inter', sans-serif;
+				background-color: #0f172a;
+			}
+			canvas{
+				display: block;
+				width: 100%;
+				height: 100%;
+				touch-action: none;
+			}
+			.glass-panel{
+				background: rgba(255, 255, 255, 0.15);
+				backdrop-filter: blur(12px);
+				-webkit-backdrop-filter: blur(12px);
+				border: 1px solid rgba(255, 255, 255, 0.25);
+			}
+			.dark .glass-panel{
+				background: rgba(15, 23, 42, 0.45);
+				border: 1px solid rgba(255, 255, 255, 0.1);
+			}
+		</style>
+	</head>
+	<body class="relative w-full h-full text-white">
+		<canvas id="ballCanvas"></canvas>
+		<div class="fixed top-4 left-4 right-4 flex justify-between items-center pointer-events-none z-10">
+			<div class="glass-panel px-4 py-2 rounded-full shadow-lg flex items-center space-x-3 text-sm font-semibold pointer-events-auto transition hover:scale-105">
+				<span class="flex h-3 w-3 relative">
+					<span id="pulseDot" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+					<span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+				</span>
+				<span id="ballCountText">Palline: 0</span>
+			</div>
+			<div class="glass-panel p-1.5 rounded-full shadow-lg flex items-center space-x-1 pointer-events-auto">
+				<button id="btnPause" class="p-2.5 rounded-full hover:bg-white/20 active:scale-95 transition text-white" title="Pausa/Riprendi">
+					<svg id="iconPause" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+					</svg>
+					<svg id="iconPlay" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+					</svg>
+				</button>
+				<button id="btnNewBg" class="p-2.5 rounded-full hover:bg-white/20 active:scale-95 transition text-white" title="Cambia Sfondo">
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+					</svg>
+				</button>
+				<button id="btnAudio" class="p-2.5 rounded-full hover:bg-white/20 active:scale-95 transition text-white" title="Effetti Sonori">
+					<svg id="iconAudioOff" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+					</svg>
+					<svg id="iconAudioOn" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+					</svg>
+				</button>
+				<button id="btnClear" class="p-2.5 rounded-full hover:bg-white/20 active:scale-95 transition text-white" title="Cancella Tutte">
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+					</svg>
+				</button>
+			</div>
+		</div>
+		<div class="fixed bottom-4 left-1/2 -translate-x-1/2 pointer-events-none z-10 opacity-70 text-xs tracking-wider uppercase font-medium bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+			Tocca le palline per farle scoppiare!
+		</div>
+		<script>
+			const canvas = document.getElementById('ballCanvas');
+			const ctx = canvas.getContext('2d');
+			const ballCountText = document.getElementById('ballCountText');
+			const pulseDot = document.getElementById('pulseDot');
+			const btnPause = document.getElementById('btnPause');
+			const iconPause = document.getElementById('iconPause');
+			const iconPlay = document.getElementById('iconPlay');
+			const btnNewBg = document.getElementById('btnNewBg');
+			const btnClear = document.getElementById('btnClear');
+			const btnAudio = document.getElementById('btnAudio');
+			const iconAudioOn = document.getElementById('iconAudioOn');
+			const iconAudioOff = document.getElementById('iconAudioOff');
+			let viewportWidth = window.innerWidth;
+			let viewportHeight = window.innerHeight;
+			let dpr = window.devicePixelRatio || 1;
+			let isRunning = true;
+			let isAudioEnabled = false;
+			let balls = [];
+			let particles = [];
+			let currentBgColor = '';
+			let spawnInterval = null;
+			let audioCtx = null;
+
+			function getRandomBackgroundColor(){
+				const hues = [210, 230, 260, 280, 320, 340, 150, 180, 30];
+				const h = hues[Math.floor(Math.random()*hues.length)];
+				const s = Math.floor(Math.random()*35) + 30;
+				const l = Math.floor(Math.random()*20) + 12;
+				return `hsl(${h}, ${s}%, ${l}%)`;
+			}
+
+			function setRandomBackground(){
+				currentBgColor = getRandomBackgroundColor();
+				document.body.style.backgroundColor = currentBgColor;
+			}
+
+			function resizeCanvas(){
+				viewportWidth = window.innerWidth;
+				viewportHeight = window.innerHeight;
+				dpr = window.devicePixelRatio || 1;
+				canvas.width = Math.floor(viewportWidth*dpr);
+				canvas.height = Math.floor(viewportHeight*dpr);
+				canvas.style.width = viewportWidth + 'px';
+				canvas.style.height = viewportHeight + 'px';
+				ctx.scale(dpr, dpr);
+				balls.forEach(ball => {
+					ball.updateDimensions(viewportWidth, viewportHeight);
+				});
+			}
+
+			class Ball{
+				constructor(w, h){
+					const minDimension = Math.min(w, h);
+					const minRadiusRatio = 0.035;
+					const maxRadiusRatio = 0.090;
+					this.relRadiusRatio = minRadiusRatio + Math.random()*(maxRadiusRatio - minRadiusRatio);
+					this.targetRadius = minDimension*this.relRadiusRatio;
+					const minRelX = this.relRadiusRatio;
+					const maxRelX = 1 - this.relRadiusRatio;
+					const minRelY = this.relRadiusRatio;
+					const maxRelY = 1 - this.relRadiusRatio;
+					this.relX = minRelX + Math.random()*(maxRelX - minRelX);
+					this.relY = minRelY + Math.random()*(maxRelY - minRelY);
+					this.x = this.relX*w;
+					this.y = this.relY*h;
+					this.scale = 0;
+					this.velocityScale = 0;
+					this.targetScale = 1;
+					const hue = Math.floor(Math.random()*360);
+					const sat = Math.floor(Math.random()*25) + 75;
+					const light = Math.floor(Math.random()*25) + 55;
+					this.colorHue = hue;
+					this.colorStr = `hsl(${hue}, ${sat}%, ${light}%)`;
+					this.highlightColor = `hsl(${hue}, ${sat}%, 85%)`;
+					this.floatOffset = Math.random()*Math.PI*2;
+					this.floatSpeed = 0.5 + Math.random()*1.0;
+				}
+
+				updateDimensions(w, h){
+					const minDimension = Math.min(w, h);
+					this.targetRadius = minDimension*this.relRadiusRatio;
+					this.x = this.relX*w;
+					this.y = this.relY*h;
+				}
+
+				update(deltaTime){
+					if(this.scale < 0.999){
+						const stiffness = 0.15;
+						const damping = 0.72;
+						const deltaScale = this.targetScale - this.scale;
+						this.velocityScale += deltaScale*stiffness;
+						this.velocityScale *= damping;
+						this.scale += this.velocityScale;
+					}else{
+						this.scale = 1;
+					}
+				}
+
+				draw(ctx, time){
+					const currentRadius = Math.max(0, this.targetRadius * this.scale);
+					if(currentRadius <= 0){
+						return;
+					}
+					const floatY = Math.sin(time*this.floatSpeed + this.floatOffset)*(currentRadius*0.08);
+					const drawX = this.x;
+					const drawY = this.y + floatY;
+					ctx.save();
+					ctx.beginPath();
+					ctx.arc(drawX, drawY, currentRadius, 0, Math.PI*2);
+					const highlightX = drawX - currentRadius*0.3;
+					const highlightY = drawY - currentRadius*0.3;
+					const gradient = ctx.createRadialGradient(
+						highlightX, highlightY, currentRadius*0.05,
+						drawX, drawY, currentRadius
+					);
+					gradient.addColorStop(0, this.highlightColor);
+					gradient.addColorStop(0.4, this.colorStr);
+					gradient.addColorStop(1, `hsl(${this.colorHue}, 80%, 30%)`);
+					ctx.fillStyle = gradient;
+					ctx.shadowColor = 'rgba(0,0,0,0.25)';
+					ctx.shadowBlur = currentRadius*0.4;
+					ctx.shadowOffsetY = currentRadius*0.2;
+					ctx.fill();
+					ctx.restore();
+				}
+
+				containsPoint(px, py){
+					const dx = px - this.x;
+					const dy = py - this.y;
+					return (dx*dx + dy*dy) <= (this.targetRadius*this.targetRadius);
+				}
+			}
+
+			class Particle{
+				constructor(x, y, color) {
+					this.x = x;
+					this.y = y;
+					this.color = color;
+					const angle = Math.random()*Math.PI*2;
+					const speed = 2 + Math.random()*6;
+					this.vx = Math.cos(angle)*speed;
+					this.vy = Math.sin(angle)*speed;
+					this.radius = 2 + Math.random()*4;
+					this.alpha = 1;
+					this.decay = 0.02 + Math.random()*0.03;
+				}
+
+				update(){
+					this.x += this.vx;
+					this.y += this.vy;
+					this.vy += 0.1;
+					this.alpha -= this.decay;
+				}
+
+				draw(ctx){
+					if(this.alpha <= 0){
+						return;
+					}
+					ctx.save();
+					ctx.globalAlpha = this.alpha;
+					ctx.beginPath();
+					ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+					ctx.fillStyle = this.color;
+					ctx.fill();
+					ctx.restore();
+				}
+			}
+
+			function playPopSound(){
+				if(!isAudioEnabled){
+					return;
+				}
+				try{
+					if(!audioCtx){
+						audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+					}
+					if(audioCtx.state === 'suspended'){
+						audioCtx.resume();
+					}
+					const osc = audioCtx.createOscillator();
+					const gain = audioCtx.createGain();
+					osc.type = 'sine';
+					const freq = 400 + Math.random()*500;
+					osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+					osc.frequency.exponentialRampToValueAtTime(freq*1.5, audioCtx.currentTime + 0.08);
+					gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+					gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+					osc.connect(gain);
+					gain.connect(audioCtx.destination);
+					osc.start();
+					osc.stop(audioCtx.currentTime + 0.09);
+				}catch (e){
+					console.warn('Audio non supportato o bloccato dal browser.', e);
+				}
+			}
+
+			function spawnBall(){
+				if(!isRunning){
+					return;
+				}
+				const newBall = new Ball(viewportWidth, viewportHeight);
+				balls.push(newBall);
+				updateUI();
+				playPopSound();
+			}
+
+			function createPopParticles(x, y, color){
+				for(let i = 0; i < 14; i++){
+					particles.push(new Particle(x, y, color));
+				}
+			}
+
+			function updateUI(){
+				ballCountText.textContent = `Palline: ${balls.length}`;
+			}
+
+			let lastTime = performance.now();
+
+			function animate(now){
+				requestAnimationFrame(animate);
+				const deltaTime = (now - lastTime)/1000;
+				lastTime = now;
+				const timeInSeconds = now/1000;
+				ctx.clearRect(0, 0, viewportWidth, viewportHeight);
+				for(let i = 0; i < balls.length; i++){
+					balls[i].update(deltaTime);
+					balls[i].draw(ctx, timeInSeconds);
+				}
+				for(let i = particles.length - 1; i >= 0; i--){
+					const p = particles[i];
+					p.update();
+					p.draw(ctx);
+					if(p.alpha <= 0){
+						particles.splice(i, 1);
+					}
+				}
+			}
+
+			function handleInteraction(clientX, clientY){
+				for(let i = balls.length - 1; i >= 0; i--){
+					if(balls[i].containsPoint(clientX, clientY)){
+						createPopParticles(balls[i].x, balls[i].y, balls[i].colorStr);
+						playPopSound();
+						balls.splice(i, 1);
+						updateUI();
+						break;
+					}
+				}
+			}
+
+			canvas.addEventListener('click', (e) => {handleInteraction(e.clientX, e.clientY);});
+
+			canvas.addEventListener('touchstart', (e) => {
+				if(e.touches.length > 0){
+					const touch = e.touches[0];
+					handleInteraction(touch.clientX, touch.clientY);
+				}
+			}, {passive: true});
+
+			function togglePause(){
+				isRunning = !isRunning;
+				if(isRunning){
+					iconPause.classList.remove('hidden');
+					iconPlay.classList.add('hidden');
+					pulseDot.classList.remove('hidden');
+					startTimer();
+				}else{
+					iconPause.classList.add('hidden');
+					iconPlay.classList.remove('hidden');
+					pulseDot.classList.add('hidden');
+					stopTimer();
+				}
+			}
+
+			function startTimer(){
+				stopTimer();
+				spawnInterval = setInterval(spawnBall, 1000);
+			}
+
+			function stopTimer(){
+				if(spawnInterval){
+					clearInterval(spawnInterval);
+					spawnInterval = null;
+				}
+			}
+
+			btnPause.addEventListener('click', togglePause);
+
+			btnNewBg.addEventListener('click', () => {setRandomBackground();});
+
+			btnClear.addEventListener('click', () => {balls = []; particles = []; updateUI();});
+
+			btnAudio.addEventListener('click', () => {
+				isAudioEnabled = !isAudioEnabled;
+				if(isAudioEnabled){
+					iconAudioOn.classList.remove('hidden');
+					iconAudioOff.classList.add('hidden');
+					if(!audioCtx){
+						audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+					}
+				}else{
+					iconAudioOn.classList.add('hidden');
+					iconAudioOff.classList.remove('hidden');
+				}
+			});
+
+			window.addEventListener('resize', resizeCanvas);
+
+			window.addEventListener('orientationchange', () => {setTimeout(resizeCanvas, 150);});
+
+			window.onload = function(){
+				setRandomBackground();
+				resizeCanvas();
+				spawnBall();
+				startTimer();
+				requestAnimationFrame(animate);
+			};
+		</script>
+	</body>
+</html>
