@@ -47625,10 +47625,11 @@ document.addEventListener('click', function(e) {
 				}
 
 				function scramble(){
-					if(isScrambling){
+					if(isScrambling || isCubeAnim){
 						return;
 					}
-					resetCube();
+					animGen++;
+					animQ = [];
 					setScrambleState(true);
 					const ban = document.getElementById('ban');
 					if(ban){
