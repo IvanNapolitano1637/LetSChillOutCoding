@@ -5,249 +5,248 @@
 		<meta name = "viewport" content="width=device-width, initial-scale=1">
 		<title>Alchimia interattiva</title>
 		<style>
-		:root{
-			--bg: #f6f1e7;
-			--fg: #2a2118;
-			--card: #fffaf0;
-			--ac: #8b5a2b;
-			--bd: #dccfb8
-		}
-		@media(prefers-color-scheme:dark){
 			:root{
-				--bg: #17130e;
-				--fg: #eee4d2;
-				--card: #221c14;
-				--ac: #e0a85c;
-				--bd: #3d3425
+				--bg: #f6f1e7;
+				--fg: #2a2118;
+				--card: #fffaf0;
+				--ac: #8b5a2b;
+				--bd: #dccfb8;
 			}
-		}
-		*{
-			box-sizing: border-box
-		}
-		body{
-			margin: 0;
-			font: 15px/1.55 Georgia, 'Times New Roman', serif;
-			background: var(--bg);
-			color: var(--fg)
-		}
-		header{
-			padding: 14px 16px 4px
-		}
-		h1{
-			margin: 0;
-			font-size: 22px
-		}
-		nav{
-			display: flex;
-			gap: 6px;
-			padding: 8px 12px;
-			overflow-x: auto;
-			position: sticky;
-			top: 0;
-			background: var(--bg);
-			z-index: 5
-		}
-		nav button,
-		.btn{
-			border: 1px solid var(--bd);
-			background: var(--card);
-			color: var(--fg);
-			padding: 7px 12px;
-			border-radius: 8px;
-			font: inherit;
-			cursor: pointer;
-			white-space: nowrap
-		}
-		nav button.on,
-		.btn.on{
-			background: var(--ac);
-			color: #fff;
-			border-color: var(--ac)
-		}
-		main{
-			padding: 8px 12px 40px;
-			max-width: 1100px;
-			margin: auto
-		}
-		section[hidden]{
-			display: none
-		}
-		.card{
-			background: var(--card);
-			border: 1px solid var(--bd);
-			border-radius: 12px;
-			padding: 12px 14px;
-			margin: 10px 0
-		}
-		#gr{
-			display: grid;
-			grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
-			gap: 6px
-		}
-		.al{
-			color: #111;
-			border-radius: 8px;
-			padding: 6px 4px;
-			cursor: pointer;
-			text-align: center;
-			border: 1px solid #0002;
-			transition: opacity .15s;
-			min-height: 92px
-		}
-		.al .g{
-			height: 40px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			font-size: 32px;
-			line-height: 1
-		}
-		.al svg{
-			width: 38px;
-			height: 38px;
-			stroke: #111;
-			fill: none;
-			stroke-width: 2.5;
-			stroke-linecap: round;
-			stroke-linejoin: round
-		}
-		.al b{
-			display: block;
-			font-size: 13px
-		}
-		.al small{
-			display: block;
-			font-size: 10px;
-			opacity: .75
-		}
-		.al.dim{
-			opacity: .15
-		}
-		.c0{
-			background: #ffb79e
-		}
-		.c1{
-			background: #f3e08a
-		}
-		.c2{
-			background: #b9d8ff
-		}
-		.c3{
-			background: #c9e8a0
-		}
-		.lg{
-			display: flex;
-			flex-wrap: wrap;
-			gap: 5px;
-			margin: 8px 0
-		}
-		.lg button{
-			border: 1px solid #0002;
-			border-radius: 8px;
-			padding: 3px 9px;
-			font: inherit;
-			font-size: 13px;
-			color: #111;
-			cursor: pointer
-		}
-		details{
-			border: 1px solid var(--bd);
-			background: var(--card);
-			border-radius: 10px;
-			margin: 8px 0;
-			padding: 8px 12px
-		}
-		summary{
-			cursor: pointer;
-			font-weight: 600
-		}
-		table.k{
-			border-collapse: collapse;
-			width: 100%
-		}
-		table.k td,
-		table.k th{
-			padding: 4px 6px;
-			border-bottom: 1px solid var(--bd);
-			text-align: left;
-			vertical-align: top
-		}
-		input[type = text]{
-			padding: 7px;
-			border: 1px solid var(--bd);
-			border-radius: 8px;
-			background: var(--card);
-			color: var(--fg);
-			font: inherit;
-			width: 100%;
-			max-width: 380px
-		}
-		.ex{
-			background: #8b5a2b18;
-			border-left: 3px solid var(--ac);
-			padding: 4px 10px;
-			margin: 6px 0;
-			border-radius: 4px
-		}
-		.q button{
-			display: block;
-			width: 100%;
-			margin: 5px 0;
-			text-align: left
-		}
-		.ok{
-			background: #2a9d4a!important;
-			color: #fff
-		}
-		.no{
-			background: #d33!important;
-			color: #fff
-		}
-		#ov{
-			position: fixed;
-			inset: 0;
-			background: #0009;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			z-index: 20;
-			padding: 12px
-		}
-		#ov[hidden]{
-			display: none
-		}
-		#det{
-			width: 100%;
-			max-width: 520px;
-			margin: 0;
-			text-align: center
-		}
-		#det .big{
-			font-size: 64px;
-			line-height: 1.2;
-			height: 80px;
-			display: flex;
-			align-items: center;
-			justify-content: center
-		}
-		#det .big svg{
-			width: 70px;
-			height: 70px;
-			stroke: currentColor;
-			fill: none;
-			stroke-width: 2.5;
-			stroke-linecap: round;
-			stroke-linejoin: round
-		}
-		#det p{
-			text-align: left
-		}
-		.pl{
-			display: flex;
-			flex-wrap: wrap;
-			gap: 6px;
-			margin: 6px 0
-		}
+			@media(prefers-color-scheme:dark){
+				:root{
+					--bg: #17130e;
+					--fg: #eee4d2;
+					--card: #221c14;
+					--ac: #e0a85c;
+					--bd: #3d3425;
+				}
+			}
+			*{
+				box-sizing: border-box;
+				-webkit-tap-highlight-color: transparent;
+				-tap-highlight-color: transparent;
+			}
+			body{
+				margin: 0;
+				font: 15px/1.55 Georgia, 'Times New Roman', serif;
+				background: var(--bg);
+				color: var(--fg);
+			}
+			header{
+				padding: 14px 16px 4px;
+			}
+			h1{
+				margin: 0;
+				font-size: 22px;
+			}
+			nav{
+				display: flex;
+				gap: 6px;
+				padding: 8px 12px;
+				overflow-x: auto;
+				position: sticky;
+				top: 0;
+				background: var(--bg);
+				z-index: 5;
+			}
+			nav button, .btn{
+				border: 1px solid var(--bd);
+				background: var(--card);
+				color: var(--fg);
+				padding: 7px 12px;
+				border-radius: 8px;
+				font: inherit;
+				cursor: pointer;
+				white-space: nowrap;
+			}
+			nav button.on, .btn.on{
+				background: var(--ac);
+				color: #fff;
+				border-color: var(--ac);
+			}
+			main{
+				padding: 8px 12px 40px;
+				max-width: 1100px;
+				margin: auto;
+			}
+			section[hidden]{
+				display: none;
+			}
+			.card{
+				background: var(--card);
+				border: 1px solid var(--bd);
+				border-radius: 12px;
+				padding: 12px 14px;
+				margin: 10px 0;
+			}
+			#gr{
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+				gap: 6px;
+			}
+			.al{
+				color: #111;
+				border-radius: 8px;
+				padding: 6px 4px;
+				cursor: pointer;
+				text-align: center;
+				border: 1px solid #0002;
+				transition: opacity .15s;
+				min-height: 92px;
+			}
+			.al .g{
+				height: 40px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 32px;
+				line-height: 1;
+			}
+			.al svg{
+				width: 38px;
+				height: 38px;
+				stroke: #111;
+				fill: none;
+				stroke-width: 2.5;
+				stroke-linecap: round;
+				stroke-linejoin: round;
+			}
+			.al b{
+				display: block;
+				font-size: 13px;
+			}
+			.al small{
+				display: block;
+				font-size: 10px;
+				opacity: .75;
+			}
+			.al.dim{
+				opacity: .15;
+			}
+			.c0{
+				background: #ffb79e;
+			}
+			.c1{
+				background: #f3e08a;
+			}
+			.c2{
+				background: #b9d8ff;
+			}
+			.c3{
+				background: #c9e8a0;
+			}
+			.lg{
+				display: flex;
+				flex-wrap: wrap;
+				gap: 5px;
+				margin: 8px 0;
+			}
+			.lg button{
+				border: 1px solid #0002;
+				border-radius: 8px;
+				padding: 3px 9px;
+				font: inherit;
+				font-size: 13px;
+				color: #111;
+				cursor: pointer;
+			}
+			details{
+				border: 1px solid var(--bd);
+				background: var(--card);
+				border-radius: 10px;
+				margin: 8px 0;
+				padding: 8px 12px;
+			}
+			summary{
+				cursor: pointer;
+				font-weight: 600;
+			}
+			table.k{
+				border-collapse: collapse;
+				width: 100%;
+			}
+			table.k td, table.k th{
+				padding: 4px 6px;
+				border-bottom: 1px solid var(--bd);
+				text-align: left;
+				vertical-align: top;
+			}
+			input[type = text]{
+				padding: 7px;
+				border: 1px solid var(--bd);
+				border-radius: 8px;
+				background: var(--card);
+				color: var(--fg);
+				font: inherit;
+				width: 100%;
+				max-width: 380px;
+			}
+			.ex{
+				background: #8b5a2b18;
+				border-left: 3px solid var(--ac);
+				padding: 4px 10px;
+				margin: 6px 0;
+				border-radius: 4px;
+			}
+			.q button{
+				display: block;
+				width: 100%;
+				margin: 5px 0;
+				text-align: left;
+			}
+			.ok{
+				background: #2a9d4a!important;
+				color: #fff;
+			}
+			.no{
+				background: #d33!important;
+				color: #fff;
+			}
+			#ov{
+				position: fixed;
+				inset: 0;
+				background: #0009;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				z-index: 20;
+				padding: 12px;
+			}
+			#ov[hidden]{
+				display: none;
+			}
+			#det{
+				width: 100%;
+				max-width: 520px;
+				margin: 0;
+				text-align: center;
+			}
+			#det .big{
+				font-size: 64px;
+				line-height: 1.2;
+				height: 80px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			#det .big svg{
+				width: 70px;
+				height: 70px;
+				stroke: currentColor;
+				fill: none;
+				stroke-width: 2.5;
+				stroke-linecap: round;
+				stroke-linejoin: round;
+			}
+			#det p{
+				text-align: left;
+			}
+			.pl{
+				display: flex;
+				flex-wrap: wrap;
+				gap: 6px;
+				margin: 6px 0;
+			}
 		</style>
 	</head>
 	<body>

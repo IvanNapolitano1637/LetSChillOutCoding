@@ -5,130 +5,132 @@
 		<meta name = "viewport" content="width=device-width, initial-scale=1">
 		<title>Fisica: definizioni, simboli e leggi</title>
 		<style>
-		:root{
-			--bg: #f6f7f9;
-			--ink: #1b2330;
-			--mut: #5a6577;
-			--acc: #1f5f8b;
-			--box: #e8eef5;
-			--line: #c9d3df
-		}
-		@media(prefers-color-scheme:dark){
 			:root{
-				--bg: #161a21;
-				--ink: #e6e9ee;
-				--mut: #9aa5b6;
-				--acc: #7fb8e6;
-				--box: #212835;
-				--line: #344052
+				--bg: #f6f7f9;
+				--ink: #1b2330;
+				--mut: #5a6577;
+				--acc: #1f5f8b;
+				--box: #e8eef5;
+				--line: #c9d3df;
 			}
-		}
-		*{
-			box-sizing: border-box
-		}
-		html{
-			-webkit-text-size-adjust: 100%
-		}
-		body{
-			margin: 0;
-			font: 16px/1.55 Georgia, 'Iowan Old Style', 'Times New Roman', serif;
-			background: var(--bg);
-			color: var(--ink)
-		}
-		header, nav, main{
-			max-width: 800px;
-			margin: 0 auto;
-			padding-left: 14px;
-			padding-right: 14px
-		}
-		header{
-			padding-top: 16px
-		}
-		h1{
-			margin: 0 0 .2em;
-			font-size: 1.5em;
-			line-height: 1.25
-		}
-		h2{
-			font-size: 1.15em;
-			margin: 18px 0 4px;
-			color: var(--acc)
-		}
-		nav{
-			display: flex;
-			flex-wrap: wrap;
-			gap: 6px;
-			padding-top: 10px;
-			padding-bottom: 6px
-		}
-		main{
-			padding-bottom: 60px
-		}
-		#q{
-			width: 100%;
-			font: inherit;
-			padding: 9px 12px;
-			margin: 6px 0 4px;
-			border: 1px solid var(--line);
-			border-radius: 6px;
-			background: var(--bg);
-			color: var(--ink)
-		}
-		.btn{
-			font: inherit;
-			font-size: 14px;
-			background: var(--box);
-			color: var(--ink);
-			border: 1px solid var(--line);
-			border-radius: 6px;
-			padding: 6px 10px;
-			cursor: pointer
-		}
-		.btn.on{
-			background: var(--acc);
-			color: var(--bg);
-			border-color: var(--acc)
-		}
-		.btn:focus-visible, summary:focus-visible, #q:focus-visible{
-			outline: 3px solid var(--acc);
-			outline-offset: 2px
-		}
-		details{
-			border: 1px solid var(--line);
-			border-radius: 8px;
-			margin: 10px 0
-		}
-		summary{
-			cursor: pointer;
-			padding: 11px 14px;
-			font-weight: bold;
-			color: var(--acc)
-		}
-		.in{
-			padding: 0 14px 6px
-		}
-		.r{
-			padding: 8px 0;
-			border-top: 1px solid var(--line)
-		}
-		.r b, .r span, .r small{
-			display: block
-		}
-		.f{
-			background: var(--box);
-			border-radius: 5px;
-			padding: 4px 8px;
-			margin: 4px 0;
-			overflow-x: auto;
-			font-family: 'Cambria Math', 'Segoe UI Symbol', Georgia, serif
-		}
-		.r small{
-			color: var(--mut);
-			font-size: .9em
-		}
-		.mut{
-			color: var(--mut)
-		}
+			@media(prefers-color-scheme:dark){
+				:root{
+					--bg: #161a21;
+					--ink: #e6e9ee;
+					--mut: #9aa5b6;
+					--acc: #7fb8e6;
+					--box: #212835;
+					--line: #344052;
+				}
+			}
+			*{
+				box-sizing: border-box;
+				-webkit-tap-highlight-color: transparent;
+				-tap-highlight-color: transparent;
+			}
+			html{
+				-webkit-text-size-adjust: 100%;
+			}
+			body{
+				margin: 0;
+				font: 16px/1.55 Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+				background: var(--bg);
+				color: var(--ink);
+			}
+			header, nav, main{
+				max-width: 800px;
+				margin: 0 auto;
+				padding-left: 14px;
+				padding-right: 14px;
+			}
+			header{
+				padding-top: 16px;
+			}
+			h1{
+				margin: 0 0 .2em;
+				font-size: 1.5em;
+				line-height: 1.25;
+			}
+			h2{
+				font-size: 1.15em;
+				margin: 18px 0 4px;
+				color: var(--acc);
+			}
+			nav{
+				display: flex;
+				flex-wrap: wrap;
+				gap: 6px;
+				padding-top: 10px;
+				padding-bottom: 6px;
+			}
+			main{
+				padding-bottom: 60px;
+			}
+			#q{
+				width: 100%;
+				font: inherit;
+				padding: 9px 12px;
+				margin: 6px 0 4px;
+				border: 1px solid var(--line);
+				border-radius: 6px;
+				background: var(--bg);
+				color: var(--ink);
+			}
+			.btn{
+				font: inherit;
+				font-size: 14px;
+				background: var(--box);
+				color: var(--ink);
+				border: 1px solid var(--line);
+				border-radius: 6px;
+				padding: 6px 10px;
+				cursor: pointer;
+			}
+			.btn.on{
+				background: var(--acc);
+				color: var(--bg);
+				border-color: var(--acc);
+			}
+			.btn:focus-visible, summary:focus-visible, #q:focus-visible{
+				outline: 3px solid var(--acc);
+				outline-offset: 2px;
+			}
+			details{
+				border: 1px solid var(--line);
+				border-radius: 8px;
+				margin: 10px 0;
+			}
+			summary{
+				cursor: pointer;
+				padding: 11px 14px;
+				font-weight: bold;
+				color: var(--acc);
+			}
+			.in{
+				padding: 0 14px 6px;
+			}
+			.r{
+				padding: 8px 0;
+				border-top: 1px solid var(--line);
+			}
+			.r b, .r span, .r small{
+				display: block;
+			}
+			.f{
+				background: var(--box);
+				border-radius: 5px;
+				padding: 4px 8px;
+				margin: 4px 0;
+				overflow-x: auto;
+				font-family: 'Cambria Math', 'Segoe UI Symbol', Georgia, serif;
+			}
+			.r small{
+				color: var(--mut);
+				font-size: .9em;
+			}
+			.mut{
+				color: var(--mut);
+			}
 		</style>
 	</head>
 	<body>

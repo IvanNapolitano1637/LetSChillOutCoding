@@ -12,7 +12,7 @@
 				--muted: #5d6678;
 				--accent: #1f4fd8;
 				--line: #d9d6cd;
-				--err: #b3261e
+				--err: #b3261e;
 			}
 			@media (prefers-color-scheme:dark){
 				:root {
@@ -22,11 +22,13 @@
 					--muted: #a0a8ba;
 					--accent: #7c9cff;
 					--line: #323849;
-					--err: #ff8a80
+					--err: #ff8a80;
 				}
 			}
 			*{
-				box-sizing: border-box
+				box-sizing: border-box;
+				-webkit-tap-highlight-color: transparent;
+				-tap-highlight-color: transparent;
 			}
 			body{
 				margin: 0;
@@ -36,23 +38,23 @@
 				padding: 24px 16px;
 				background: var(--bg);
 				color: var(--ink);
-				font: 16px/1.5 "Segoe UI", system-ui, sans-serif
+				font: 16px/1.5 "Segoe UI", system-ui, sans-serif;
 			}
 			main{
 				width: 100%;
-				max-width: 480px
+				max-width: 480px;
 			}
 			h1{
 				font-size: 1.5rem;
-				margin: 0 0 4px
+				margin: 0 0 4px;
 			}
 			p.sub{
 				margin: 0 0 20px;
-				color: var(--muted)
+				color: var(--muted);
 			}
 			.row{
 				display: flex;
-				gap: 8px
+				gap: 8px;
 			}
 			input{
 				flex: 1;
@@ -62,7 +64,7 @@
 				color: var(--ink);
 				background: var(--panel);
 				border: 1px solid var(--line);
-				border-radius: 8px
+				border-radius: 8px;
 			}
 			button{
 				padding: 11px 16px;
@@ -72,27 +74,27 @@
 				background: var(--accent);
 				border: 0;
 				border-radius: 8px;
-				cursor: pointer
+				cursor: pointer;
 			}
 			@media (prefers-color-scheme:dark){
 				button{
-					color: #10131a
+					color: #10131a;
 				}
 			}
 			button.sec{
 				color: var(--ink);
 				background: transparent;
-				border: 1px solid var(--line)
+				border: 1px solid var(--line);
 			}
 			:is(input, button):focus-visible{
 				outline: 3px solid var(--accent);
-				outline-offset: 2px
+				outline-offset: 2px;
 			}
 			#err{
 				min-height: 1.5em;
 				margin: 8px 0 0;
 				color: var(--err);
-				font-size: .95rem
+				font-size: .95rem;
 			}
 			#box{
 				margin-top: 12px;
@@ -100,19 +102,19 @@
 				background: var(--panel);
 				border: 1px solid var(--line);
 				border-radius: 12px;
-				text-align: center
+				text-align: center;
 			}
 			#box[hidden]{
-				display: none
+				display: none;
 			}
 			#out svg{
 				display: block;
 				margin: 0 auto;
 				width: min(100%, 320px);
-				height: auto
+				height: auto;
 			}
 			#dl{
-				margin-top: 14px
+				margin-top: 14px;
 			}
 		</style>
 	</head>

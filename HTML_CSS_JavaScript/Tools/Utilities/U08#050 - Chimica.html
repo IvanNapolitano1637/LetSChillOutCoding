@@ -5,395 +5,393 @@
 		<meta name = "viewport" content="width=device-width, initial-scale=1">
 		<title>Chimica interattiva</title>
 		<style>
-		:root{
-			--bg: #f4f6fb;
-			--fg: #1c2230;
-			--card: #fff;
-			--ac: #2563eb;
-			--bd: #d5dae6
-		}
-		@media(prefers-color-scheme:dark){
 			:root{
-			--bg: #10141c;
-			--fg: #e6e9f0;
-			--card: #1a2030;
-			--ac: #7aa6ff;
-			--bd: #2c3550
+				--bg: #f4f6fb;
+				--fg: #1c2230;
+				--card: #fff;
+				--ac: #2563eb;
+				--bd: #d5dae6;
 			}
-		}
-		*{
-			box-sizing: border-box
-		}
-		body{
-			margin: 0;
-			font: 15px/1.55 system-ui, sans-serif;
-			background: var(--bg);
-			color: var(--fg)
-		}
-		header{
-			padding: 14px 16px 4px
-		}
-		h1{
-			margin: 0;
-			font-size: 22px
-		}
-		nav{
-			display: flex;
-			gap: 6px;
-			padding: 8px 12px;
-			overflow-x: auto;
-			position: sticky;
-			top: 0;
-			background: var(--bg);
-			z-index: 5
-		}
-		nav button,
-		.btn{
-			border: 1px solid var(--bd);
-			background: var(--card);
-			color: var(--fg);
-			padding: 7px 12px;
-			border-radius: 8px;
-			font: inherit;
-			cursor: pointer;
-			white-space: nowrap
-		}
-		nav button.on,
-		.btn.on{
-			background: var(--ac);
-			color: #fff;
-			border-color: var(--ac)
-		}
-		main{
-			padding: 8px 12px 40px;
-			max-width: 1200px;
-			margin: auto
-		}
-		section[hidden],
-		.card[hidden]{
-			display: none
-		}
-		.card{
-			background: var(--card);
-			border: 1px solid var(--bd);
-			border-radius: 12px;
-			padding: 12px 14px;
-			margin: 10px 0
-		}
-		#pt{
-			display: grid;
-			grid-template-columns: repeat(18, minmax(44px, 1fr));
-			grid-template-rows: repeat(7, auto) 12px auto auto;
-			gap: 3px;
-			overflow-x: auto;
-			padding-bottom: 6px;
-			min-width: 0
-		}
-		.el{
-			color: #111;
-			border-radius: 4px;
-			padding: 2px 3px;
-			cursor: pointer;
-			text-align: center;
-			line-height: 1.1;
-			min-height: 46px;
-			border: 1px solid #0002;
-			transition: opacity .15s
-		}
-		.el small{
-			display: block;
-			font-size: 9px;
-			text-align: left
-		}
-		.el b{
-			font-size: 15px
-		}
-		.el i{
-			display: block;
-			font-size: 7.5px;
-			font-style: normal;
-			overflow: hidden;
-			text-overflow: ellipsis
-		}
-		.el.dim{
-			opacity: .15
-		}
-		.el.sel{
-			outline: 3px solid var(--ac)
-		}
-		.ph{
-			font-size: 10px;
-			color: var(--fg);
-			opacity: .6;
-			align-self: center;
-			text-align: center
-		}
-		.alk{
-			background: #ff9e9e
-		}
-		.alt{
-			background: #ffc99e
-		}
-		.tr{
-			background: #ffe49e
-		}
-		.pt{
-			background: #c9e8a0
-		}
-		.mt{
-			background: #9ee8c9
-		}
-		.nm{
-			background: #9ed8ff
-		}
-		.ha{
-			background: #c9b8ff
-		}
-		.ng{
-			background: #f0a8ff
-		}
-		.la{
-			background: #ffb8d8
-		}
-		.ac{
-			background: #e0c0a0
-		}
-		.lg{
-			display: flex;
-			flex-wrap: wrap;
-			gap: 5px;
-			margin: 8px 0
-		}
-		.lg button{
-			border: 1px solid #0002;
-			border-radius: 8px;
-			padding: 3px 9px;
-			font: inherit;
-			font-size: 12px;
-			color: #111;
-			cursor: pointer
-		}
-		#det .big{
-			width: 90px;
-			height: 90px;
-			border-radius: 10px;
-			color: #111;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center
-		}
-		.big b{
-			font-size: 34px
-		}
-		table.k{
-			border-collapse: collapse;
-			width: 100%
-		}
-		table.k td{
-			padding: 3px 6px;
-			border-bottom: 1px solid var(--bd)
-		}
-		details{
-			border: 1px solid var(--bd);
-			background: var(--card);
-			border-radius: 10px;
-			margin: 8px 0;
-			padding: 8px 12px
-		}
-		summary{
-			cursor: pointer;
-			font-weight: 600
-		}
-		input[type = text],
-		input[type = number]{
-			padding: 7px;
-			border: 1px solid var(--bd);
-			border-radius: 8px;
-			background: var(--card);
-			color: var(--fg);
-			font: inherit
-		}
-		.ex{
-			background: #2563eb14;
-			border-left: 3px solid var(--ac);
-			padding: 4px 10px;
-			margin: 6px 0;
-			border-radius: 4px
-		}
-		#phbar{
-			height: 18px;
-			border-radius: 9px;
-			background: linear-gradient(90deg, #e11, #f90, #fd0, #3b3, #0aa, #26e, #82e)
-		}
-		.q button{
-			display: block;
-			width: 100%;
-			margin: 5px 0;
-			text-align: left
-		}
-		.ok{
-			background: #2a9d4a !important;
-			color: #fff
-		}
-		.no{
-			background: #d33 !important;
-			color: #fff
-		}
-		#ov{
-			position: fixed;
-			inset: 0;
-			background: #0009;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			z-index: 20;
-			padding: 12px
-		}
-		#ov[hidden]{
-			display: none
-		}
-		#det{
-			width: 100%;
-			max-width: 900px;
-			max-height: 92vh;
-			overflow: auto;
-			margin: 0
-		}
-		.dh{
-			display: flex;
-			align-items: center;
-			gap: 8px;
-			margin-bottom: 10px
-		}
-		.dh h3{
-			margin: 0;
-			flex: 1;
-			font-size: 22px
-		}
-		#det .dh .big{
-			width: 64px;
-			height: 64px
-		}
-		.dh .big b{
-			font-size: 26px
-		}
-		.dg{
-			display: grid;
-			grid-template-columns: 1fr 1fr;
-			gap: 16px
-		}
-		.tabs{
-			display: flex;
-			gap: 6px;
-			margin-bottom: 8px
-		}
-		.sv svg{
-			width: 100%;
-			max-width: 340px;
-			display: block;
-			margin: auto;
-			color: var(--fg)
-		}
-		.cap{
-			font-size: 12px;
-			opacity: .7;
-			text-align: center
-		}
-		.ob{
-			max-height: 340px;
-			overflow: auto
-		}
-		.sb{
-			display: flex;
-			align-items: center;
-			margin: 3px 0
-		}
-		.sl{
-			width: 46px;
-			font-weight: 600
-		}
-		.bx{
-			display: inline-flex;
-			width: 26px;
-			height: 26px;
-			border: 1.5px solid var(--ac);
-			align-items: center;
-			justify-content: center;
-			font-size: 13px;
-			margin-right: -1.5px
-		}
-		@media(min-width:900px){
-			.el i{
-			font-size: 9px
+			@media(prefers-color-scheme:dark){
+				:root{
+				--bg: #10141c;
+				--fg: #e6e9f0;
+				--card: #1a2030;
+				--ac: #7aa6ff;
+				--bd: #2c3550;
+				}
 			}
-		}
-		#phl{
-			max-height: 190px;
-			overflow-y: auto;
-			border: 1px solid var(--bd);
-			border-radius: 8px;
-			margin: 6px 0
-		}
-		#phl .g{
-			font-size: 11px;
-			opacity: .6;
-			padding: 4px 8px;
-			text-transform: uppercase;
-			letter-spacing: .04em
-		}
-		#phl button{
-			display: block;
-			width: 100%;
-			text-align: left;
-			border: 0;
-			border-top: 1px solid var(--bd);
-			background: transparent;
-			color: var(--fg);
-			padding: 6px 8px;
-			font: inherit;
-			font-size: 14px;
-			cursor: pointer
-		}
-		#phl button.on{
-			background: var(--ac);
-			color: #fff
-		}
-		@media(max-width:700px){
-			#phl button{
-				font-size: 11px;
-				padding: 4px 8px
+			*{
+				box-sizing: border-box;
+				-webkit-tap-highlight-color: transparent;
+				-tap-highlight-color: transparent;
 			}
-			#phl .g{
-				font-size: 9px
+			body{
+				margin: 0;
+				font: 15px/1.55 system-ui, sans-serif;
+				background: var(--bg);
+				color: var(--fg);
 			}
-			#ov{
-				align-items: flex-end;
-				padding: 0
-			}
-			#det{
-				border-radius: 16px 16px 0 0;
-				max-height: 90vh
-			}
-			.dg{
-				grid-template-columns: 1fr
-			}
-			#pt{
-				grid-template-columns: repeat(18, 40px)
-			}
-			.el{
-				min-height: 44px
-			}
-			.el i{
-				display: none
-			}
-			.el b{
-				font-size: 14px
+			header{
+				padding: 14px 16px 4px;
 			}
 			h1{
-				font-size: 19px
+				margin: 0;
+				font-size: 22px;
 			}
-		}
+			nav{
+				display: flex;
+				gap: 6px;
+				padding: 8px 12px;
+				overflow-x: auto;
+				position: sticky;
+				top: 0;
+				background: var(--bg);
+				z-index: 5;
+			}
+			nav button, .btn{
+				border: 1px solid var(--bd);
+				background: var(--card);
+				color: var(--fg);
+				padding: 7px 12px;
+				border-radius: 8px;
+				font: inherit;
+				cursor: pointer;
+				white-space: nowrap;
+			}
+			nav button.on, .btn.on{
+				background: var(--ac);
+				color: #fff;
+				border-color: var(--ac);
+			}
+			main{
+				padding: 8px 12px 40px;
+				max-width: 1200px;
+				margin: auto;
+			}
+			section[hidden], .card[hidden]{
+				display: none;
+			}
+			.card{
+				background: var(--card);
+				border: 1px solid var(--bd);
+				border-radius: 12px;
+				padding: 12px 14px;
+				margin: 10px 0;
+			}
+			#pt{
+				display: grid;
+				grid-template-columns: repeat(18, minmax(44px, 1fr));
+				grid-template-rows: repeat(7, auto) 12px auto auto;
+				gap: 3px;
+				overflow-x: auto;
+				padding-bottom: 6px;
+				min-width: 0;
+			}
+			.el{
+				color: #111;
+				border-radius: 4px;
+				padding: 2px 3px;
+				cursor: pointer;
+				text-align: center;
+				line-height: 1.1;
+				min-height: 46px;
+				border: 1px solid #0002;
+				transition: opacity .15s;
+			}
+			.el small{
+				display: block;
+				font-size: 9px;
+				text-align: left;
+			}
+			.el b{
+				font-size: 15px;
+			}
+			.el i{
+				display: block;
+				font-size: 7.5px;
+				font-style: normal;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+			.el.dim{
+				opacity: .15;
+			}
+			.el.sel{
+				outline: 3px solid var(--ac);
+			}
+			.ph{
+				font-size: 10px;
+				color: var(--fg);
+				opacity: .6;
+				align-self: center;
+				text-align: center;
+			}
+			.alk{
+				background: #ff9e9e;
+			}
+			.alt{
+				background: #ffc99e;
+			}
+			.tr{
+				background: #ffe49e;
+			}
+			.pt{
+				background: #c9e8a0;
+			}
+			.mt{
+				background: #9ee8c9;
+			}
+			.nm{
+				background: #9ed8ff;
+			}
+			.ha{
+				background: #c9b8ff;
+			}
+			.ng{
+				background: #f0a8ff;
+			}
+			.la{
+				background: #ffb8d8;
+			}
+			.ac{
+				background: #e0c0a0;
+			}
+			.lg{
+				display: flex;
+				flex-wrap: wrap;
+				gap: 5px;
+				margin: 8px 0;
+			}
+			.lg button{
+				border: 1px solid #0002;
+				border-radius: 8px;
+				padding: 3px 9px;
+				font: inherit;
+				font-size: 12px;
+				color: #111;
+				cursor: pointer;
+			}
+			#det .big{
+				width: 90px;
+				height: 90px;
+				border-radius: 10px;
+				color: #111;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+			}
+			.big b{
+				font-size: 34px;
+			}
+			table.k{
+				border-collapse: collapse;
+				width: 100%;
+			}
+			table.k td{
+				padding: 3px 6px;
+				border-bottom: 1px solid var(--bd);
+			}
+			details{
+				border: 1px solid var(--bd);
+				background: var(--card);
+				border-radius: 10px;
+				margin: 8px 0;
+				padding: 8px 12px;
+			}
+			summary{
+				cursor: pointer;
+				font-weight: 600;
+			}
+			input[type = text], input[type = number]{
+				padding: 7px;
+				border: 1px solid var(--bd);
+				border-radius: 8px;
+				background: var(--card);
+				color: var(--fg);
+				font: inherit;
+			}
+			.ex{
+				background: #2563eb14;
+				border-left: 3px solid var(--ac);
+				padding: 4px 10px;
+				margin: 6px 0;
+				border-radius: 4px;
+			}
+			#phbar{
+				height: 18px;
+				border-radius: 9px;
+				background: linear-gradient(90deg, #e11, #f90, #fd0, #3b3, #0aa, #26e, #82e);
+			}
+			.q button{
+				display: block;
+				width: 100%;
+				margin: 5px 0;
+				text-align: left;
+			}
+			.ok{
+				background: #2a9d4a !important;
+				color: #fff;
+			}
+			.no{
+				background: #d33 !important;
+				color: #fff;
+			}
+			#ov{
+				position: fixed;
+				inset: 0;
+				background: #0009;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				z-index: 20;
+				padding: 12px;
+			}
+			#ov[hidden]{
+				display: none;
+			}
+			#det{
+				width: 100%;
+				max-width: 900px;
+				max-height: 92vh;
+				overflow: auto;
+				margin: 0;
+			}
+			.dh{
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				margin-bottom: 10px;
+			}
+			.dh h3{
+				margin: 0;
+				flex: 1;
+				font-size: 22px;
+			}
+			#det .dh .big{
+				width: 64px;
+				height: 64px;
+			}
+			.dh .big b{
+				font-size: 26px;
+			}
+			.dg{
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 16px;
+			}
+			.tabs{
+				display: flex;
+				gap: 6px;
+				margin-bottom: 8px;
+			}
+			.sv svg{
+				width: 100%;
+				max-width: 340px;
+				display: block;
+				margin: auto;
+				color: var(--fg);
+			}
+			.cap{
+				font-size: 12px;
+				opacity: .7;
+				text-align: center;
+			}
+			.ob{
+				max-height: 340px;
+				overflow: auto;
+			}
+			.sb{
+				display: flex;
+				align-items: center;
+				margin: 3px 0;
+			}
+			.sl{
+				width: 46px;
+				font-weight: 600;
+			}
+			.bx{
+				display: inline-flex;
+				width: 26px;
+				height: 26px;
+				border: 1.5px solid var(--ac);
+				align-items: center;
+				justify-content: center;
+				font-size: 13px;
+				margin-right: -1.5px;
+			}
+			@media(min-width:900px){
+				.el i{
+					font-size: 9px;
+				}
+			}
+			#phl{
+				max-height: 190px;
+				overflow-y: auto;
+				border: 1px solid var(--bd);
+				border-radius: 8px;
+				margin: 6px 0;
+			}
+			#phl .g{
+				font-size: 11px;
+				opacity: .6;
+				padding: 4px 8px;
+				text-transform: uppercase;
+				letter-spacing: .04em;
+			}
+			#phl button{
+				display: block;
+				width: 100%;
+				text-align: left;
+				border: 0;
+				border-top: 1px solid var(--bd);
+				background: transparent;
+				color: var(--fg);
+				padding: 6px 8px;
+				font: inherit;
+				font-size: 14px;
+				cursor: pointer;
+			}
+			#phl button.on{
+				background: var(--ac);
+				color: #fff;
+			}
+			@media(max-width:700px){
+				#phl button{
+					font-size: 11px;
+					padding: 4px 8px;
+				}
+				#phl .g{
+					font-size: 9px;
+				}
+				#ov{
+					align-items: flex-end;
+					padding: 0;
+				}
+				#det{
+					border-radius: 16px 16px 0 0;
+					max-height: 90vh;
+				}
+				.dg{
+					grid-template-columns: 1fr;
+				}
+				#pt{
+					grid-template-columns: repeat(18, 40px);
+				}
+				.el{
+					min-height: 44px;
+				}
+				.el i{
+					display: none;
+				}
+				.el b{
+					font-size: 14px;
+				}
+				h1{
+					font-size: 19px;
+				}
+			}
 		</style>
 	</head>
 	<body>
