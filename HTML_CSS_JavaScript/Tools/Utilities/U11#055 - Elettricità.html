@@ -61,6 +61,11 @@
 				color: #1b3a6b;
 				text-decoration: none;
 			}
+			#nav a:active{
+				background: #1b3a6b;
+				color: #fff;
+				transform: scale(0.96);
+			}
 			main{
 				max-width: 1150px;
 				margin: 0 auto;
@@ -173,7 +178,11 @@
 				color: #fff;
 				border-color: #1b3a6b;
 			}
-			body.dk{}
+			#mode button:active, #mode button.on:active{
+				transform: scale(0.97);
+				box-shadow: 0 0 0 3px #7c9cff88;
+				filter: brightness(0.92);
+			}
 			.c{
 				transition: box-shadow .15s;
 			}
