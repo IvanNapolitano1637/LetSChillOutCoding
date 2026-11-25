@@ -175,14 +175,14 @@
 				font-weight: 700;
 				font-family: 'DM Mono', monospace;
 				cursor: pointer;
-				transition: background.1s, transform.08s;
+				transition: background.1s, transform.08s, opacity.15s;
 				text-align: center;
 				min-height: 40px;
 				display: flex;
 				align-items: center;
 				justify-content: center;
 			}
-			.qbtn:active{
+			.qbtn:active:not(:disabled){
 				transform: scale(.93);
 				background: var(--acc);
 			}
@@ -190,8 +190,13 @@
 				background: var(--acc);
 				border-color: var(--acc);
 			}
-			.qbtn.d:active{
+			.qbtn.d:active:not(:disabled){
 				background: var(--acc2);
+			}
+			.qbtn:disabled, .btn:disabled{
+				opacity: 0.35;
+				cursor: not-allowed;
+				pointer-events: none;
 			}
 			.moves-scroll{
 				display: flex;
@@ -609,14 +614,14 @@
 					font-weight: 700;
 					font-family: 'DM Mono', monospace;
 					cursor: pointer;
-					transition: background.1s, border-color.1s, transform.08s;
+					transition: background.1s, border-color.1s, transform.08s, opacity.15s;
 					text-align: center;
 				}
-				.btn:hover{
+				.btn:hover:not(:disabled){
 					background: var(--acc);
 					border-color: var(--acc);
 				}
-				.btn:active{
+				.btn:active:not(:disabled){
 					transform: scale(.95);
 				}
 				.btn.f{
@@ -626,10 +631,10 @@
 					background: var(--acc);
 					border-color: var(--acc);
 				}
-				.btn.p:hover{
+				.btn.p:hover:not(:disabled){
 					opacity:.8;
 				}
-				.btn.d:hover{
+				.btn.d:hover:not(:disabled){
 					background: var(--acc2);
 					border-color: var(--acc2);
 				}
@@ -737,8 +742,6 @@
 				border-radius: 8px;
 			}
 		}
-
-		/* ===== Ottimizzazione smartphone / tablet ===== */
 		@supports (height: 100dvh){
 			html, body{
 				height: 100dvh;
@@ -797,7 +800,6 @@
 				padding-bottom: calc(1rem + env(safe-area-inset-bottom));
 			}
 		}
-		/* telefoni in verticale */
 		@media(max-width: 599px){
 			header{
 				padding-left: .6rem;
@@ -822,7 +824,6 @@
 				grid-template-columns: repeat(4, auto);
 			}
 		}
-		/* tablet in verticale (e telefoni grandi): controlli piu' grandi */
 		@media(min-width: 600px) and (max-width: 899px){
 			header{
 				min-height: 60px;
@@ -874,7 +875,6 @@
 				height: 46px;
 			}
 		}
-		/* telefoni in orizzontale: pannello comandi a lato invece che sotto */
 		@media(max-width: 899px) and (orientation: landscape) and (max-height: 520px){
 			body{
 				display: grid;
@@ -936,7 +936,6 @@
 				display: none;
 			}
 		}
-		/* tablet in orizzontale con pannelli laterali: bersagli piu' comodi al tocco */
 		@media(min-width: 900px) and (pointer: coarse){
 			.btn, .ab-d{
 				min-height: 44px;
@@ -992,7 +991,7 @@
 				</div>
 				<div class="pt" data-i18n="actions">Actions</div>
 				<div class="bg">
-					<button class="btn f p" onclick="scramble()">&#128256; <span data-i18n="scramble">Scramble</span></button>
+					<button class="btn f p" id="scramble-btn-desk" onclick="scramble()">&#128256; <span data-i18n="scramble">Scramble</span></button>
 					<button class="btn f d" onclick="resetCube()">&#8634; <span data-i18n="reset">Reset</span></button>
 					<button class="btn f" id="undo-btn-desk" onclick="undo()">&#8617; <span data-i18n="undo">Undo</span></button>
 				</div>
@@ -1049,7 +1048,7 @@
 		</main>
 		<div class="bottom">
 			<div class="quick-row">
-				<button class="qbtn p" onclick="scramble()">&#128256; <span data-i18n="scramble">Scramble</span></button>
+				<button class="qbtn p" id="scramble-btn-mobile" onclick="scramble()">&#128256; <span data-i18n="scramble">Scramble</span></button>
 				<button class="qbtn" id="undo-btn-mobile" onclick="undo()">&#8617; <span data-i18n="undo">Undo</span></button>
 				<button class="qbtn d" onclick="resetCube()">&#8634; <span data-i18n="reset">Reset</span></button>
 			</div>
@@ -1506,13 +1505,21 @@
 				const MOVE_DEF = {U:{axis: 'y', coord: 1, sign: -1}, D:{axis: 'y', coord: -1, sign: 1}, R:{axis: 'x', coord: 1, sign: -1}, L:{axis: 'x', coord: -1, sign: 1}, F:{axis: 'z', coord: 1, sign: -1}, B:{axis: 'z', coord: -1, sign: 1}, M:{axis: 'x', coord: 0, sign: 1}, E:{axis: 'y', coord: 0, sign: 1}, S:{axis: 'z', coord: 0, sign: -1},};
 
 				const ADUR = 160;
-				let animQ = [], isCubeAnim = false, isCamAnim = false;
+				let animQ = [], isCubeAnim = false, isCamAnim = false, isScrambling = false, animGen = 0;
+
+				function setScrambleState(active){
+					isScrambling = active;
+					['scramble-btn-desk', 'scramble-btn-mobile'].forEach(id => {
+						const el = document.getElementById(id);
+						if(el) el.disabled = active;
+					});
+				}
 
 				function eio(t){
 					return t <.5 ? 2*t*t: -1 +(4 - 2*t)*t;
 				}
 
-				function runAnim(move, inv, onDone){
+				function runAnim(move, inv, gen, onDone){
 					const def = MOVE_DEF [move];
 					if(!def){
 						onDone();
@@ -1528,6 +1535,9 @@
 					let prevA = 0;
 					const axVec3 = new THREE.Vector3(axis === 'x' ? 1: 0, axis === 'y' ? 1: 0, axis === 'z' ? 1: 0);
 					function step(now){
+						if(gen !== animGen){
+							return;
+						}
 						const t = Math.min((now - t0)/ADUR, 1);
 						const a = eio(t)*angle, da = a - prevA;
 						prevA = a;
@@ -1564,12 +1574,19 @@
 				function pump(){
 					if(!animQ.length){
 						isCubeAnim = false;
+						if(isScrambling){
+							setScrambleState(false);
+						}
 						return;
 					}
 					isCubeAnim = true;
+					const gen = animGen;
 					const{move, inv, logical} = animQ.shift();
 					const snapBeforeMove = logical ? takeSnap() : null;
-					runAnim(move, inv,()  =>  {
+					runAnim(move, inv, gen, ()  =>  {
+						if(gen !== animGen){
+							return;
+						}
 						if(logical){
 							history.push({move, inv, snap: snapBeforeMove});
 							moveCount++;
@@ -1623,6 +1640,7 @@
 					if(!history.length || isCubeAnim){
 						return;
 					}
+					animGen++;
 					animQ = [];
 					isCubeAnim = false;
 					const last = history.pop();
@@ -1656,9 +1674,6 @@
 				const OPPOSITE = {U: 'D', D: 'U', R: 'L', L: 'R', F: 'B', B: 'F'};
 				const SLICE_OF = {L: 'M', R: "M'", D: 'E', U: "E'", F: 'S', B: "S'"};
 
-				/* Associa i nomi U D R L F B alle facce che l'utente vede in questo momento:
-				   U = faccia in alto sullo schermo, F = faccia rivolta verso l'osservatore
-				   tra le quattro laterali, R = faccia a destra. */
 				function getVisualFaceMap(){
 					camera.updateMatrixWorld();
 					const q = camera.quaternion;
@@ -1872,8 +1887,10 @@
 				}
 
 				function resetCube(){
+					animGen++;
 					animQ = [];
 					isCubeAnim = false;
+					setScrambleState(false);
 					stopTimer();
 					startTime = null;
 					moveCount = 0;
@@ -1894,7 +1911,11 @@
 				}
 
 				function scramble(){
+					if(isScrambling){
+						return;
+					}
 					resetCube();
+					setScrambleState(true);
 					const ban = document.getElementById('ban');
 					if(ban){
 						ban.classList.remove('show');
