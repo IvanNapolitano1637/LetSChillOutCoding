@@ -29,7 +29,7 @@
 				justify-content: center;
 				align-items: center;
 				animation: colorful 30s linear infinite;
-				scale: min(calc(100vw / 540px), calc(100vh / 540px), 1);
+				scale: min(calc(100vw/540px), calc(100vh/540px), 1);
 				cursor: pointer;
 				-webkit-tap-highlight-color: transparent;
 				outline: none;
@@ -40,8 +40,7 @@
 					filter: hue-rotate(360deg);
 				}
 			}
-			.bar-seconds,
-			.number-hours{
+			.bar-seconds, .number-hours{
 				position: absolute;
 				width: 100%;
 				height: 100%;
@@ -49,7 +48,7 @@
 			}
 			.bar-seconds span{
 				position: absolute;
-				transform: rotate(calc(var(--index) * 6deg));
+				transform: rotate(calc(var(--index)*6deg));
 				inset: -20px;
 				text-align: center;
 			}
@@ -68,7 +67,7 @@
 			}
 			.number-hours span{
 				position: absolute;
-				transform: rotate(calc(var(--index) * 30deg));
+				transform: rotate(calc(var(--index)*30deg));
 				inset: 6px;
 				text-align: center;
 			}
@@ -76,7 +75,7 @@
 				font-size: 52px;
 				color: #0ef;
 				text-shadow: 0 0 10px #0ef;
-				transform: rotate(calc(var(--index) * -30deg));
+				transform: rotate(calc(var(--index)*-30deg));
 				transition: opacity 0.3s ease, transform 0.3s ease;
 			}
 			.number-hours span p.roman{
@@ -84,7 +83,7 @@
 			}
 			.number-hours span p.switching{
 				opacity: 0;
-				transform: rotate(calc(var(--index) * -30deg)) scale(0.6);
+				transform: rotate(calc(var(--index)*-30deg)) scale(0.6);
 			}
 			.hands-box{
 				position: relative;

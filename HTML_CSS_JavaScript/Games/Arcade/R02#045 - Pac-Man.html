@@ -9,20 +9,19 @@
 				--y: #ffe600;
 				box-sizing: border-box;
 				padding-top: env(safe-area-inset-top, 0px);
-				padding-bottom: env(safe-area-inset-bottom, 0px)
+				padding-bottom: env(safe-area-inset-bottom, 0px);
 			}
 			*{
 				box-sizing: border-box;
-				-webkit-tap-highlight-color: transparent
+				-webkit-tap-highlight-color: transparent;
 			}
-			html,
-			body{
+			html, body{
 				margin: 0;
 				height: 100%;
 				background: #000;
 				color: #fff;
 				font-family: "Courier New", monospace;
-				overscroll-behavior: none
+				overscroll-behavior: none;
 			}
 			body{
 				--w: min(calc(100vw - 16px), 520px, calc((100vh - 120px)*28/31));
@@ -35,12 +34,12 @@
 				padding: 8px;
 				user-select: none;
 				-webkit-user-select: none;
-				touch-action: none
+				touch-action: none;
 			}
 			@media (hover:none) and (pointer:coarse){
 				body{
 					--w: min(calc(100vw - 16px), 520px, calc((100vh - 270px)*28/31));
-					--w: min(calc(100vw - 16px), 520px, calc((100dvh - 270px)*28/31))
+					--w: min(calc(100vw - 16px), 520px, calc((100dvh - 270px)*28/31));
 				}
 			}
 			.hud{
@@ -49,14 +48,14 @@
 				align-items: center;
 				gap: 6px;
 				width: var(--w);
-				font-size: clamp(.72rem, 3.2vw, 1rem)
+				font-size: clamp(.72rem, 3.2vw, 1rem);
 			}
 			.hud b{
-				color: var(--y)
+				color: var(--y);
 			}
 			#lv{
 				color: var(--y);
-				letter-spacing: 2px
+				letter-spacing: 2px;
 			}
 			.hud button{
 				font: inherit;
@@ -65,18 +64,18 @@
 				border: 1px solid #555;
 				border-radius: 6px;
 				padding: 3px 8px;
-				cursor: pointer
+				cursor: pointer;
 			}
 			.board{
 				position: relative;
 				width: var(--w);
-				aspect-ratio: 28/31
+				aspect-ratio: 28/31;
 			}
 			canvas{
 				display: block;
 				width: 100%;
 				height: 100%;
-				background: #000
+				background: #000;
 			}
 			.ov{
 				position: absolute;
@@ -88,21 +87,21 @@
 				gap: 10px;
 				background: rgba(0, 0, 0, .72);
 				text-align: center;
-				padding: 16px
+				padding: 16px;
 			}
 			.ov.hidden{
-				display: none
+				display: none;
 			}
 			.ov h1{
 				margin: 0;
 				color: var(--y);
 				font-size: clamp(1.6rem, 7vw, 2.6rem);
-				letter-spacing: 3px
+				letter-spacing: 3px;
 			}
 			.ov p{
 				margin: 0;
 				max-width: 30ch;
-				line-height: 1.4
+				line-height: 1.4;
 			}
 			.play{
 				font: inherit;
@@ -113,62 +112,62 @@
 				border: 0;
 				border-radius: 999px;
 				padding: 10px 28px;
-				cursor: pointer
+				cursor: pointer;
 			}
 			button:focus-visible{
 				outline: 3px solid #fff;
-				outline-offset: 2px
+				outline-offset: 2px;
 			}
 			.pad{
 				display: none;
 				grid-template-columns: repeat(3, 64px);
 				grid-template-rows: repeat(2, 64px);
-				gap: 6px
+				gap: 6px;
 			}
 			.pad button{
 				font-size: 1.5rem;
 				color: var(--y);
 				background: #1a1a6e;
 				border: 0;
-				border-radius: 14px
+				border-radius: 14px;
 			}
 			.pad button:active{
-				background: #2a2ad0
+				background: #2a2ad0;
 			}
 			.pad .u{
 				grid-column: 2;
-				grid-row: 1
+				grid-row: 1;
 			}
 			.pad .l{
 				grid-column: 1;
-				grid-row: 2
+				grid-row: 2;
 			}
 			.pad .d{
 				grid-column: 2;
-				grid-row: 2
+				grid-row: 2;
 			}
 			.pad .r{
 				grid-column: 3;
-				grid-row: 2
+				grid-row: 2;
 			}
 			@media (hover:none) and (pointer:coarse){
 				.pad{
-					display: grid
+					display: grid;
 				}
 				.kbd{
-					display: none
+					display: none;
 				}
 			}
 			@media (hover:hover) and (pointer:fine){
 				.touch{
-					display: none
+					display: none;
 				}
 			}
 			.hint{
 				margin: 0;
 				font-size: .8rem;
 				opacity: .7;
-				text-align: center
+				text-align: center;
 			}
 		</style>
 	</head>

@@ -7,8 +7,7 @@
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<title>Tetris</title>
 		<style>
-			html,
-			body{
+			html, body{
 				margin: 0;
 				height: 100%;
 				background: #0b0d1a;
@@ -17,19 +16,19 @@
 				user-select: none;
 				-webkit-user-select: none;
 				-webkit-touch-callout: none;
-				-webkit-tap-highlight-color: transparent
+				-webkit-tap-highlight-color: transparent;
 			}
 			canvas{
 				display: block;
 				width: 100%;
 				height: 100%;
-				touch-action: none
+				touch-action: none;
 			}
 			#tc{
 				position: fixed;
 				inset: 0;
 				pointer-events: none;
-				display: none
+				display: none;
 			}
 			.b{
 				position: absolute;
@@ -44,34 +43,34 @@
 				align-items: center;
 				justify-content: center;
 				background: rgba(255, 255, 255, .08);
-				touch-action: none
+				touch-action: none;
 			}
 			.b.on{
-				background: rgba(255, 255, 255, .35)
+				background: rgba(255, 255, 255, .35);
 			}
 			#bl{
 				left: calc(8px + env(safe-area-inset-left, 0px));
-				bottom: calc(var(--s, 70px) + 16px + env(safe-area-inset-bottom, 0px))
+				bottom: calc(var(--s, 70px) + 16px + env(safe-area-inset-bottom, 0px));
 			}
 			#br{
 				left: calc(var(--s, 70px) + 20px + env(safe-area-inset-left, 0px));
-				bottom: calc(var(--s, 70px) + 16px + env(safe-area-inset-bottom, 0px))
+				bottom: calc(var(--s, 70px) + 16px + env(safe-area-inset-bottom, 0px));
 			}
 			#bd{
 				left: calc(8px + (var(--s, 70px) + 12px)/2 + env(safe-area-inset-left, 0px));
-				bottom: calc(8px + env(safe-area-inset-bottom, 0px))
+				bottom: calc(8px + env(safe-area-inset-bottom, 0px));
 			}
 			#bk{
 				right: calc(var(--s, 70px) + 20px + env(safe-area-inset-right, 0px));
-				bottom: calc(var(--s, 70px) + 16px + env(safe-area-inset-bottom, 0px))
+				bottom: calc(var(--s, 70px) + 16px + env(safe-area-inset-bottom, 0px));
 			}
 			#bc{
 				right: calc(8px + env(safe-area-inset-right, 0px));
-				bottom: calc(var(--s, 70px) + 16px + env(safe-area-inset-bottom, 0px))
+				bottom: calc(var(--s, 70px) + 16px + env(safe-area-inset-bottom, 0px));
 			}
 			#bx{
 				right: calc(8px + (var(--s, 70px) + 12px)/2 + env(safe-area-inset-right, 0px));
-				bottom: calc(8px + env(safe-area-inset-bottom, 0px))
+				bottom: calc(8px + env(safe-area-inset-bottom, 0px));
 			}
 			#bh{
 				left: 50%;
@@ -81,7 +80,7 @@
 				height: calc(var(--s, 70px)*.75);
 				border-radius: 999px;
 				font-size: calc(var(--s, 70px)*.21);
-				font-family: "Courier New", monospace
+				font-family: "Courier New", monospace;
 			}
 			.ib{
 				position: fixed;
@@ -97,13 +96,13 @@
 				justify-content: center;
 				background: rgba(255, 255, 255, .08);
 				cursor: pointer;
-				touch-action: none
+				touch-action: none;
 			}
 			#mu{
-				right: calc(6px + env(safe-area-inset-right, 0px))
+				right: calc(6px + env(safe-area-inset-right, 0px));
 			}
 			#pa{
-				right: calc(46px + env(safe-area-inset-right, 0px))
+				right: calc(46px + env(safe-area-inset-right, 0px));
 			}
 		</style>
 	</head>

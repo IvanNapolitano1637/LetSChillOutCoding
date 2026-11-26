@@ -20,16 +20,15 @@
 			}
 			*{
 				box-sizing: border-box;
-				-webkit-tap-highlight-color: transparent
+				-webkit-tap-highlight-color: transparent;
 			}
-			html,
-			body{
+			html, body{
 				margin: 0;
 				height: 100%;
 				background: var(--page);
 				font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
 				color: var(--bar-text);
-				overscroll-behavior: none
+				overscroll-behavior: none;
 			}
 			body{
 				display: flex;
@@ -39,11 +38,11 @@
 				gap: 12px;
 				padding: 12px;
 				user-select: none;
-				-webkit-user-select: none
+				-webkit-user-select: none;
 			}
 			.wrap{
-				width: min(100%, 560px, calc((100dvh - 200px) * 17 / 15 + 0px));
-				min-width: 260px
+				width: min(100%, 560px, calc((100dvh - 200px)*17/15 + 0px));
+				min-width: 260px;
 			}
 			.bar{
 				display: flex;
@@ -54,22 +53,22 @@
 				border-radius: 10px 10px 0 0;
 				padding: 8px 12px;
 				font-size: 1.15rem;
-				font-weight: 700
+				font-weight: 700;
 			}
 			.bar .stat{
 				display: flex;
 				align-items: center;
 				gap: 6px;
-				min-width: 64px
+				min-width: 64px;
 			}
 			.bar .tools{
 				display: flex;
-				gap: 6px
+				gap: 6px;
 			}
 			button{
 				font: inherit;
 				color: inherit;
-				cursor: pointer
+				cursor: pointer;
 			}
 			.ico{
 				background: rgba(255, 255, 255, .15);
@@ -77,16 +76,14 @@
 				border-radius: 8px;
 				padding: 6px 10px;
 				font-size: .9rem;
-				font-weight: 700
+				font-weight: 700;
 			}
 			.ico:hover{
-				background: rgba(255, 255, 255, .28)
+				background: rgba(255, 255, 255, .28);
 			}
-			.ico:focus-visible,
-			.play:focus-visible,
-			.pad button:focus-visible{
+			.ico:focus-visible, .play:focus-visible, .pad button:focus-visible{
 				outline: 3px solid #fff;
-				outline-offset: 2px
+				outline-offset: 2px;
 			}
 			.board{
 				position: relative;
@@ -94,12 +91,12 @@
 				border-radius: 0 0 10px 10px;
 				overflow: hidden;
 				touch-action: none;
-				box-shadow: 0 6px 20px rgba(0, 0, 0, .25)
+				box-shadow: 0 6px 20px rgba(0, 0, 0, .25);
 			}
 			canvas{
 				display: block;
 				width: 100%;
-				height: 100%
+				height: 100%;
 			}
 			.overlay{
 				position: absolute;
@@ -111,20 +108,20 @@
 				gap: 10px;
 				background: rgba(30, 50, 15, .55);
 				text-align: center;
-				padding: 16px
+				padding: 16px;
 			}
 			.overlay.hidden{
-				display: none
+				display: none;
 			}
 			.overlay h1{
 				margin: 0;
-				font-size: clamp(1.6rem, 6vw, 2.4rem)
+				font-size: clamp(1.6rem, 6vw, 2.4rem);
 			}
 			.overlay p{
 				margin: 0;
 				font-size: 1rem;
 				opacity: .95;
-				max-width: 30ch
+				max-width: 30ch;
 			}
 			.play{
 				background: #fff;
@@ -133,66 +130,66 @@
 				border-radius: 999px;
 				padding: 10px 28px;
 				font-size: 1.1rem;
-				font-weight: 700
+				font-weight: 700;
 			}
 			.play:hover{
-				background: #eaf5d8
+				background: #eaf5d8;
 			}
 			.pad{
 				display: none;
 				grid-template-columns: repeat(3, 64px);
 				grid-template-rows: repeat(2, 64px);
 				gap: 6px;
-				justify-content: center
+				justify-content: center;
 			}
 			.pad button{
 				background: var(--bar);
 				border: 0;
 				border-radius: 14px;
 				font-size: 1.5rem;
-				color: #fff
+				color: #fff;
 			}
 			.pad button:active{
-				background: #3a5f22
+				background: #3a5f22;
 			}
 			.pad .up{
 				grid-column: 2;
-				grid-row: 1
+				grid-row: 1;
 			}
 			.pad .left{
 				grid-column: 1;
-				grid-row: 2
+				grid-row: 2;
 			}
 			.pad .down{
 				grid-column: 2;
-				grid-row: 2
+				grid-row: 2;
 			}
 			.pad .right{
 				grid-column: 3;
-				grid-row: 2
+				grid-row: 2;
 			}
 			@media (hover:none) and (pointer:coarse){
 				.pad{
-					display: grid
+					display: grid;
 				}
 				.wrap{
-					width: min(100%, 560px, calc((100dvh - 320px) * 17 / 15))
+					width: min(100%, 560px, calc((100dvh - 320px)*17/15));
 				}
 			}
 			.hint{
 				font-size: .85rem;
 				opacity: .85;
 				text-align: center;
-				margin: 0
+				margin: 0;
 			}
 			@media (hover:none) and (pointer:coarse){
-				.hint.kbd {
-					display: none
+				.hint.kbd{
+					display: none;
 				}
 			}
 			@media (hover:hover) and (pointer:fine){
-				.hint.touch {
-					display: none
+				.hint.touch{
+					display: none;
 				}
 			}
 		</style>

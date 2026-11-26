@@ -5,45 +5,45 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 		<title>OutRun</title>
 		<style>
-		html, body{
-			margin: 0;
-			height: 100%;
-			background: #000;
-			overflow: hidden;
-			touch-action: none;
-			user-select: none;
-			-webkit-user-select: none
-		}
-		body{
-			display: flex;
-			align-items: center;
-			justify-content: center
-		}
-		canvas{
-			image-rendering: pixelated;
-			aspect-ratio: 4/3;
-			width: min(100vw, calc(100vh*4/3));
-			height: auto
-		}
-		.b{
-			display: none;
-			position: fixed;
-			bottom: calc(14px + env(safe-area-inset-bottom, 0px));
-			width: 72px;
-			height: 72px;
-			border-radius: 50%;
-			background: #ffffff30;
-			border: 2px solid #ffffff70;
-			color: #fff;
-			font: 700 22px sans-serif;
-			align-items: center;
-			justify-content: center
-		}
-		@media(pointer:coarse){
-			.b{
-				display: flex
+			html, body{
+				margin: 0;
+				height: 100%;
+				background: #000;
+				overflow: hidden;
+				touch-action: none;
+				user-select: none;
+				-webkit-user-select: none;
 			}
-		}
+			body{
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			canvas{
+				image-rendering: pixelated;
+				aspect-ratio: 4/3;
+				width: min(100vw, calc(100vh*4/3));
+				height: auto;
+			}
+			.b{
+				display: none;
+				position: fixed;
+				bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+				width: 72px;
+				height: 72px;
+				border-radius: 50%;
+				background: #ffffff30;
+				border: 2px solid #ffffff70;
+				color: #fff;
+				font: 700 22px sans-serif;
+				align-items: center;
+				justify-content: center;
+			}
+			@media(pointer:coarse){
+				.b{
+					display: flex;
+				}
+			}
 		</style>
 	</head>
 	<body>
