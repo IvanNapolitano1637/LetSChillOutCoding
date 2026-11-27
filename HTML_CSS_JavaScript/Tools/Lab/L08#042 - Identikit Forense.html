@@ -609,7 +609,7 @@
 						</filter>
 						<mask id="baldMask">
 							<rect x="0" y="0" width="400" height="520" fill="white"/>
-							<ellipse cx="${cx}" cy="${cy-hChub*0.85}" rx="${wChub * (s.baldness/100) * 0.95}" ry="${hChub * 0.28 * (s.baldness/100)}" fill="black"/>
+							<ellipse cx="${cx}" cy="${cy-hChub*0.85}" rx="${wChub*(s.baldness/100)*0.95}" ry="${hChub*0.28*(s.baldness/100)}" fill="black"/>
 						</mask>
 					</defs>
 				`;
@@ -719,7 +719,7 @@
 				for(const sd of [-1, 1]){
 					for(let i = 0; i < 34; i++){
 						const t = i/33;
-						const x = cx + sd * (eyeSpacing + eyeW*1.1 - t*eyeW*2.0);
+						const x = cx + sd*(eyeSpacing + eyeW*1.1 - t*eyeW*2.0);
 						const y = browY + browAngle*0.3*(1-2*t) + browT*0.3 - browT*0.8*Math.sin(Math.PI*t) + (rnd()-0.5)*browT*0.5;
 						const len = 3 + rnd()*3 + browT*0.3;
 						browHairs += `<line x1="${x.toFixed(1)}" y1="${y.toFixed(1)}" x2="${(x+sd*len*0.8).toFixed(1)}" y2="${(y-len*(0.15+0.6*t)).toFixed(1)}" stroke="${rnd()>0.5?darken(s.browColor,15):s.browColor}" stroke-width="0.9" stroke-linecap="round" opacity="0.85"/>`;
@@ -806,7 +806,7 @@
 							let afro = `<path d="M ${cx-wChub-2} ${cy-hChub*0.3} Q ${cx-wChub-3} ${cy-hChub-4} ${cx} ${cy-hChub-6} Q ${cx+wChub+3} ${cy-hChub-4} ${cx+wChub+2} ${cy-hChub*0.3} Q ${cx+wChub*0.9} ${cy-hChub*0.75} ${cx} ${cy-hChub*0.82} Q ${cx-wChub*0.9} ${cy-hChub*0.75} ${cx-wChub-2} ${cy-hChub*0.3} Z" fill="url(#hairGrad)"/>`;
 							for(let i = 0; i < 30; i++){
 								const ang = Math.PI*0.95 + (i/29)*Math.PI*1.1;
-								afro += `<circle cx="${(cx + Math.cos(ang) * (wChub + 14)).toFixed(1)}" cy="${(cy - hChub*0.2 + Math.sin(ang) * (hChub + 14)).toFixed(1)}" r="${(16 + rnd()*7).toFixed(1)}" fill="url(#hairGrad)" stroke="${hairDark}" stroke-width="0.8"/>`;
+								afro += `<circle cx="${(cx + Math.cos(ang)*(wChub + 14)).toFixed(1)}" cy="${(cy - hChub*0.2 + Math.sin(ang)*(hChub + 14)).toFixed(1)}" r="${(16 + rnd()*7).toFixed(1)}" fill="url(#hairGrad)" stroke="${hairDark}" stroke-width="0.8"/>`;
 							}
 							hairContent = afro;
 							break;

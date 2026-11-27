@@ -50,7 +50,7 @@
 				color: #fff;
 				font-family: "Courier New", monospace;
 				font-weight: bold;
-				font-size: calc(var(--u) * .2);
+				font-size: calc(var(--u)*.2);
 				display: flex;
 				align-items: center;
 				justify-content: center;
@@ -234,7 +234,7 @@
 
 				const K = {l: 0, r: 0, t: 0, f: 0};
 				let hreq = false, paused = false, st = 'title', overT = 0, waveT = -1, banner = 0;
-				let ship = {alive: false, x: 0, y: 0, vx: 0, vy: 0, a: -PI / 2, inv: 0, cd: 0, hc: 0, t: 0};
+				let ship = {alive: false, x: 0, y: 0, vx: 0, vy: 0, a: -PI/2, inv: 0, cd: 0, hc: 0, t: 0};
 				let rocks = [], bul = [], ub = [], ufo = null, parts = [];
 				let score = 0, hi = 0, lives = 3, wave = 0, nextLife = 10000, beatT = 1, beatI = 0, mass0 = 1, ufoT = 15, tm = 0;
 
@@ -255,7 +255,7 @@
 						const a = i/n*TAU, k = .7 + R()*.3;
 						v.push([Math.cos(a)*k, Math.sin(a)*k])
 					}
-					return {sz, x, y, vx, vy, r, v, a: R() * TAU, w: rnd(-1, 1)};
+					return {sz, x, y, vx, vy, r, v, a: R()*TAU, w: rnd(-1, 1)};
 				}
 
 				function newWave(){
@@ -277,7 +277,7 @@
 						const a = R()*TAU, s = rnd(35, 75)*S*(1 + Math.min(wave, 10)*.05);
 						rocks.push(mkRock(3, x, y, Math.cos(a)*s, Math.sin(a)*s));
 					}
-					mass0 = n * 7;
+					mass0 = n*7;
 				}
 
 				function spawnShip(){
@@ -344,7 +344,7 @@
 						addScore([0, 100, 50, 20][o.sz]);
 					}
 					boom(o.sz);
-					dots(o.x, o.y, 5 + o.sz * 4, o.vx, o.vy);
+					dots(o.x, o.y, 5 + o.sz*4, o.vx, o.vy);
 					if(o.sz > 1){
 						for(let k = 0; k < 2; k++){
 							const a = R()*TAU, c = o.sz - 1, s = (c === 2 ? 62 : 105)*S*rnd(.8, 1.3)*(1 + Math.min(wave, 10)*.04);

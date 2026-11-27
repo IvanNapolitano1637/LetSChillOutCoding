@@ -140,7 +140,7 @@
 				for(let r = 0; r < 5; r++){
 					for(let i = 0; i <= r; i++){
 						const n = (r === 2 && i === 1) ? 8 : nums[k++];
-						balls.push({n, x: 560 + r * R * 1.74, y: 200 + (i - r/2)*(2*R + .3), vx: 0, vy: 0, in: false});
+						balls.push({n, x: 560 + r*R*1.74, y: 200 + (i - r/2)*(2*R + .3), vx: 0, vy: 0, in: false});
 					}
 				}
 				turn = 0;
@@ -205,7 +205,7 @@
 								continue;
 							}
 							let dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy);
-							if(d < 2 * R && d > 0){
+							if(d < 2*R && d > 0){
 								const nx = dx/d, ny = dy/d, o = 2*R - d;
 								a.x -= nx*o/2;
 								a.y -= ny*o/2;

@@ -149,7 +149,7 @@
 						}
 						const m = T.l[s];
 						if(m){
-							tn(mf(m), t, sd * 1.8, T.w, .08);
+							tn(mf(m), t, sd*1.8, T.w, .08);
 						}
 						if((d == 0 ? [0, 7, 10] : d == 1 ? [0, 8, 10] : [0, 4, 8, 12]).includes(q)){
 							tn(120, t, .12, 'sine', .3, 40);
@@ -215,7 +215,7 @@
 				nextCp = 4000;
 				cars = [];
 				for(let i = 0; i < 14; i++){
-					cars.push(nc(500 + i * 220));
+					cars.push(nc(500 + i*220));
 				}
 				st = 1;
 				cdn = 3.9;
@@ -456,7 +456,7 @@
 					g.fillStyle = Math.floor(p/36)&1 ? '#e22' : '#fff';
 					g.fillRect(ctr - w*1.13, i, w*2.26, 1);
 					g.fillStyle = band ? '#6d6d75' : '#777780';
-					g.fillRect(ctr - w, i, w * 2, 1);
+					g.fillRect(ctr - w, i, w*2, 1);
 					if(band){
 						const lw = Math.max(1, w*.035);
 						g.fillStyle = '#fff';
@@ -493,7 +493,7 @@
 					}else if(s.t){
 						car(sx, i, w*.5, s.c);
 					}else{
-						const h = t * 70 + 2;
+						const h = t*70 + 2;
 						g.fillStyle = '#6b3d1c';
 						g.fillRect(sx - h*.05, i - h*.7, h*.1 + 1, h*.7);
 						g.fillStyle = '#1b8a2c';

@@ -174,9 +174,9 @@
 						return [];
 					}
 					const n = Math.floor(ver/7) + 2;
-					const step = ver === 32 ? 26 : Math.ceil((ver*4 + 4) / (n*2 - 2))*2;
+					const step = ver === 32 ? 26 : Math.ceil((ver*4 + 4)/(n*2 - 2))*2;
 					const res = [6];
-					for(let pos = ver * 4 + 10; res.length < n; pos -= step){
+					for(let pos = ver*4 + 10; res.length < n; pos -= step){
 						res.splice(1, 0, pos);
 					}
 					return res;

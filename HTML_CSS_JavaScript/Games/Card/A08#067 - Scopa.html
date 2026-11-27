@@ -813,7 +813,7 @@
 						const [sw, sh] = symSize(v, s);
 						const symFn = {D: svgDenaro, C: svgCoppa, S: svgSpada, B: svgBastone}[s];
 						const symbols = positions.map(({x, y}) => {
-							return `<div class="sym" style="position:absolute;left:${x}%;top:${y}%;width:${(sw / 85 * 100).toFixed(2)}%;height:${(sh / 78.4 * 100).toFixed(2)}%;transform:translate(-50%,-50%);line-height:0">${symFn(sw, sh)}</div>`;
+							return `<div class="sym" style="position:absolute;left:${x}%;top:${y}%;width:${(sw/85*100).toFixed(2)}%;height:${(sh/78.4*100).toFixed(2)}%;transform:translate(-50%,-50%);line-height:0">${symFn(sw, sh)}</div>`;
 						}).join('');
 						centerHtml = `<div style="position:absolute;inset:22% 0 22%;z-index:2;pointer-events:none;overflow:hidden">${symbols}</div>`;
 					}
@@ -858,7 +858,7 @@
 					var d = [];
 					for(var s = 0; s < 4; s++){
 						for(var r = 1; r <= 10; r++){
-							d.push({s: s, r: r, id: s * 10 + r});
+							d.push({s: s, r: r, id: s*10 + r});
 						}
 					}
 					for(var i = d.length - 1; i > 0; i--){

@@ -523,7 +523,7 @@
 					for(var dy = -1; dy <= 1; dy++){
 						for(var dx = -1; dx <= 1; dx++){
 							var nx = x + dx, ny = y + dy;
-							if(nx >= 0 && ny >= 0 && nx < W && ny < H && grid[ny * W + nx] === 0){
+							if(nx >= 0 && ny >= 0 && nx < W && ny < H && grid[ny*W + nx] === 0){
 								return true;
 							}
 						}
@@ -679,7 +679,7 @@
 				}
 				function floodClaim(type){
 					var lab = new Int16Array(W*H).fill(-1), sizes = [], i, k, c, q, gained = 0;
-					for(i = 0; i < W * H; i++){
+					for(i = 0; i < W*H; i++){
 						if(grid[i] !== 0 || lab[i] >= 0){
 							continue;
 						}
@@ -928,7 +928,7 @@
 						var tr = true;
 						for(var tk = 0; tk < 4; tk++){
 							var tx2 = px + D4[tk][0], ty2 = py + D4[tk][1];
-							if(tx2 >= 0 && ty2 >= 0 && tx2 < W && ty2 < H && grid[ty2 * W + tx2] <= 1){
+							if(tx2 >= 0 && ty2 >= 0 && tx2 < W && ty2 < H && grid[ty2*W + tx2] <= 1){
 								tr = false;
 							}
 						}

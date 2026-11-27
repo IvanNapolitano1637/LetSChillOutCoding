@@ -629,7 +629,7 @@
 						}
 					}
 									}
-				var rgb = function (r, gg, b, s){return `rgb(${r * s | 0},${gg * s | 0},${b * s | 0})`;};
+				var rgb = function (r, gg, b, s){return `rgb(${r*s | 0},${gg*s | 0},${b*s | 0})`;};
 				function render(){
 					for(var y = 0; y < VH; y++){
 						var dd = Math.max(.5, Math.abs(y - VH/2 + .5)), sf = Math.round(Math.max(.12, 1 - VH/2/dd/12)*16)/16;
@@ -752,7 +752,7 @@
 						g.fillRect(0, 0, W, VH);
 					}
 					if(hurt > 0){
-						g.fillStyle = `rgba(200,0,0,${Math.min(.5, hurt * 1.6)})`;
+						g.fillStyle = `rgba(200,0,0,${Math.min(.5, hurt*1.6)})`;
 						g.fillRect(0, 0, W, VH);
 					}
 					g.font = "bold 7px monospace";

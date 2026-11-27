@@ -49,7 +49,7 @@
 			canvas{
 				height: 100%;
 				max-width: 100%;
-				aspect-ratio: 400 / 740;
+				aspect-ratio: 400/740;
 				background: #0b1040;
 			}
 			#bar{
@@ -190,7 +190,7 @@
 					if(prog >= goal()){
 						prog = 0;
 						rank = Math.min(9, rank + 1);
-						add(10000 * rank);
+						add(10000*rank);
 						say('MISSIONE COMPLETATA!');
 						beep(1000, .4);
 					}
@@ -350,7 +350,7 @@
 					BU.forEach((b, i) => {
 						const x = B.x - b[0], y = B.y - b[1], dd = Math.hypot(x, y), R = b[2] + B.r;
 						if(dd < R && dd > 0){
-							const nx = x / dd, ny = y / dd;
+							const nx = x/dd, ny = y/dd;
 							B.x = b[0] + nx*R;
 							B.y = b[1] + ny*R;
 							const rv = B.vx*nx + B.vy*ny;
@@ -795,7 +795,7 @@
 					T += dt;
 					if(charging && st === 'ready'){
 						power = Math.min(1, power + dt*.9);
-						B.y = 690 + power * 30;
+						B.y = 690 + power*30;
 					}
 					if((nT -= dt) <= 0){
 						nc = 0;

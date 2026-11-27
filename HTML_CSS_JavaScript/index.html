@@ -2420,7 +2420,7 @@ document.addEventListener('click', function(e) {
 								v.a = false;
 								alive--;
 								addScore(SC[v.r]);
-								expl.push({x: l + w / 2, y: t + 4, t: .2});
+								expl.push({x: l + w/2, y: t + 4, t: .2});
 								beep(200, .09, 'sawtooth');
 								pb = null; break;
 							}
@@ -2561,7 +2561,7 @@ document.addEventListener('click', function(e) {
 					for(const s of shields){
 						s.g.forEach((row, r) => row.forEach((on, c) => {
 								if(on){
-									ctx.fillRect(s.x + c * 2, SY + r * 2, 2, 2);
+									ctx.fillRect(s.x + c*2, SY + r*2, 2, 2);
 								}
 							})
 						);
@@ -2781,7 +2781,7 @@ document.addEventListener('click', function(e) {
 				color: #fff;
 				font-family: "Courier New", monospace;
 				font-weight: bold;
-				font-size: calc(var(--u) * .2);
+				font-size: calc(var(--u)*.2);
 				display: flex;
 				align-items: center;
 				justify-content: center;
@@ -2965,7 +2965,7 @@ document.addEventListener('click', function(e) {
 
 				const K = {l: 0, r: 0, t: 0, f: 0};
 				let hreq = false, paused = false, st = 'title', overT = 0, waveT = -1, banner = 0;
-				let ship = {alive: false, x: 0, y: 0, vx: 0, vy: 0, a: -PI / 2, inv: 0, cd: 0, hc: 0, t: 0};
+				let ship = {alive: false, x: 0, y: 0, vx: 0, vy: 0, a: -PI/2, inv: 0, cd: 0, hc: 0, t: 0};
 				let rocks = [], bul = [], ub = [], ufo = null, parts = [];
 				let score = 0, hi = 0, lives = 3, wave = 0, nextLife = 10000, beatT = 1, beatI = 0, mass0 = 1, ufoT = 15, tm = 0;
 
@@ -2986,7 +2986,7 @@ document.addEventListener('click', function(e) {
 						const a = i/n*TAU, k = .7 + R()*.3;
 						v.push([Math.cos(a)*k, Math.sin(a)*k])
 					}
-					return {sz, x, y, vx, vy, r, v, a: R() * TAU, w: rnd(-1, 1)};
+					return {sz, x, y, vx, vy, r, v, a: R()*TAU, w: rnd(-1, 1)};
 				}
 
 				function newWave(){
@@ -3008,7 +3008,7 @@ document.addEventListener('click', function(e) {
 						const a = R()*TAU, s = rnd(35, 75)*S*(1 + Math.min(wave, 10)*.05);
 						rocks.push(mkRock(3, x, y, Math.cos(a)*s, Math.sin(a)*s));
 					}
-					mass0 = n * 7;
+					mass0 = n*7;
 				}
 
 				function spawnShip(){
@@ -3075,7 +3075,7 @@ document.addEventListener('click', function(e) {
 						addScore([0, 100, 50, 20][o.sz]);
 					}
 					boom(o.sz);
-					dots(o.x, o.y, 5 + o.sz * 4, o.vx, o.vy);
+					dots(o.x, o.y, 5 + o.sz*4, o.vx, o.vy);
 					if(o.sz > 1){
 						for(let k = 0; k < 2; k++){
 							const a = R()*TAU, c = o.sz - 1, s = (c === 2 ? 62 : 105)*S*rnd(.8, 1.3)*(1 + Math.min(wave, 10)*.04);
@@ -4339,7 +4339,7 @@ document.addEventListener('click', function(e) {
 						}
 					}
 					for(const p of parts){
-						g.globalAlpha = Math.max(0, Math.min(1, p.l * 2));
+						g.globalAlpha = Math.max(0, Math.min(1, p.l*2));
 						g.fillStyle = p.c;
 						g.fillRect(p.x - 2, p.y - 2, 4, 4);
 						g.globalAlpha = 1
@@ -5770,7 +5770,7 @@ document.addEventListener('click', function(e) {
 			canvas{
 				height: 100%;
 				max-width: 100%;
-				aspect-ratio: 400 / 740;
+				aspect-ratio: 400/740;
 				background: #0b1040;
 			}
 			#bar{
@@ -5911,7 +5911,7 @@ document.addEventListener('click', function(e) {
 					if(prog >= goal()){
 						prog = 0;
 						rank = Math.min(9, rank + 1);
-						add(10000 * rank);
+						add(10000*rank);
 						say('MISSIONE COMPLETATA!');
 						beep(1000, .4);
 					}
@@ -6071,7 +6071,7 @@ document.addEventListener('click', function(e) {
 					BU.forEach((b, i) => {
 						const x = B.x - b[0], y = B.y - b[1], dd = Math.hypot(x, y), R = b[2] + B.r;
 						if(dd < R && dd > 0){
-							const nx = x / dd, ny = y / dd;
+							const nx = x/dd, ny = y/dd;
 							B.x = b[0] + nx*R;
 							B.y = b[1] + ny*R;
 							const rv = B.vx*nx + B.vy*ny;
@@ -6516,7 +6516,7 @@ document.addEventListener('click', function(e) {
 					T += dt;
 					if(charging && st === 'ready'){
 						power = Math.min(1, power + dt*.9);
-						B.y = 690 + power * 30;
+						B.y = 690 + power*30;
 					}
 					if((nT -= dt) <= 0){
 						nc = 0;
@@ -7575,7 +7575,7 @@ document.addEventListener('click', function(e) {
 				for(let r = 0; r < 5; r++){
 					for(let i = 0; i <= r; i++){
 						const n = (r === 2 && i === 1) ? 8 : nums[k++];
-						balls.push({n, x: 560 + r * R * 1.74, y: 200 + (i - r/2)*(2*R + .3), vx: 0, vy: 0, in: false});
+						balls.push({n, x: 560 + r*R*1.74, y: 200 + (i - r/2)*(2*R + .3), vx: 0, vy: 0, in: false});
 					}
 				}
 				turn = 0;
@@ -7640,7 +7640,7 @@ document.addEventListener('click', function(e) {
 								continue;
 							}
 							let dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy);
-							if(d < 2 * R && d > 0){
+							if(d < 2*R && d > 0){
 								const nx = dx/d, ny = dy/d, o = 2*R - d;
 								a.x -= nx*o/2;
 								a.y -= ny*o/2;
@@ -9664,7 +9664,7 @@ document.addEventListener('click', function(e) {
 						var tr = true;
 						for(var tk = 0; tk < 4; tk++){
 							var tx2 = px + D4[tk][0], ty2 = py + D4[tk][1];
-							if(tx2 >= 0 && ty2 >= 0 && tx2 < W && ty2 < H && grid[ty2 * W + tx2] <= 1){
+							if(tx2 >= 0 && ty2 >= 0 && tx2 < W && ty2 < H && grid[ty2*W + tx2] <= 1){
 								tr = false;
 							}
 						}
@@ -11218,7 +11218,7 @@ document.addEventListener('click', function(e) {
 					for(var dy = -1; dy <= 1; dy++){
 						for(var dx = -1; dx <= 1; dx++){
 							var nx = x + dx, ny = y + dy;
-							if(nx >= 0 && ny >= 0 && nx < W && ny < H && grid[ny * W + nx] === 0){
+							if(nx >= 0 && ny >= 0 && nx < W && ny < H && grid[ny*W + nx] === 0){
 								return true;
 							}
 						}
@@ -11374,7 +11374,7 @@ document.addEventListener('click', function(e) {
 				}
 				function floodClaim(type){
 					var lab = new Int16Array(W*H).fill(-1), sizes = [], i, k, c, q, gained = 0;
-					for(i = 0; i < W * H; i++){
+					for(i = 0; i < W*H; i++){
 						if(grid[i] !== 0 || lab[i] >= 0){
 							continue;
 						}
@@ -11623,7 +11623,7 @@ document.addEventListener('click', function(e) {
 						var tr = true;
 						for(var tk = 0; tk < 4; tk++){
 							var tx2 = px + D4[tk][0], ty2 = py + D4[tk][1];
-							if(tx2 >= 0 && ty2 >= 0 && tx2 < W && ty2 < H && grid[ty2 * W + tx2] <= 1){
+							if(tx2 >= 0 && ty2 >= 0 && tx2 < W && ty2 < H && grid[ty2*W + tx2] <= 1){
 								tr = false;
 							}
 						}
@@ -12695,7 +12695,7 @@ document.addEventListener('click', function(e) {
 					}
 					if(v === 0){
 						grid[ny*W + nx] = 2;
-						trail.push(ny * W + nx);
+						trail.push(ny*W + nx);
 						px = nx;
 						py = ny;
 						inSea = true;
@@ -15199,7 +15199,7 @@ document.addEventListener('click', function(e) {
 						}
 						const m = T.l[s];
 						if(m){
-							tn(mf(m), t, sd * 1.8, T.w, .08);
+							tn(mf(m), t, sd*1.8, T.w, .08);
 						}
 						if((d == 0 ? [0, 7, 10] : d == 1 ? [0, 8, 10] : [0, 4, 8, 12]).includes(q)){
 							tn(120, t, .12, 'sine', .3, 40);
@@ -15265,7 +15265,7 @@ document.addEventListener('click', function(e) {
 				nextCp = 4000;
 				cars = [];
 				for(let i = 0; i < 14; i++){
-					cars.push(nc(500 + i * 220));
+					cars.push(nc(500 + i*220));
 				}
 				st = 1;
 				cdn = 3.9;
@@ -15506,7 +15506,7 @@ document.addEventListener('click', function(e) {
 					g.fillStyle = Math.floor(p/36)&1 ? '#e22' : '#fff';
 					g.fillRect(ctr - w*1.13, i, w*2.26, 1);
 					g.fillStyle = band ? '#6d6d75' : '#777780';
-					g.fillRect(ctr - w, i, w * 2, 1);
+					g.fillRect(ctr - w, i, w*2, 1);
 					if(band){
 						const lw = Math.max(1, w*.035);
 						g.fillStyle = '#fff';
@@ -15543,7 +15543,7 @@ document.addEventListener('click', function(e) {
 					}else if(s.t){
 						car(sx, i, w*.5, s.c);
 					}else{
-						const h = t * 70 + 2;
+						const h = t*70 + 2;
 						g.fillStyle = '#6b3d1c';
 						g.fillRect(sx - h*.05, i - h*.7, h*.1 + 1, h*.7);
 						g.fillStyle = '#1b8a2c';
@@ -16293,7 +16293,7 @@ document.addEventListener('click', function(e) {
 						}
 					}
 									}
-				var rgb = function (r, gg, b, s){return \`rgb(\${r * s | 0},\${gg * s | 0},\${b * s | 0})\`;};
+				var rgb = function (r, gg, b, s){return \`rgb(\${r*s | 0},\${gg*s | 0},\${b*s | 0})\`;};
 				function render(){
 					for(var y = 0; y < VH; y++){
 						var dd = Math.max(.5, Math.abs(y - VH/2 + .5)), sf = Math.round(Math.max(.12, 1 - VH/2/dd/12)*16)/16;
@@ -16416,7 +16416,7 @@ document.addEventListener('click', function(e) {
 						g.fillRect(0, 0, W, VH);
 					}
 					if(hurt > 0){
-						g.fillStyle = \`rgba(200,0,0,\${Math.min(.5, hurt * 1.6)})\`;
+						g.fillStyle = \`rgba(200,0,0,\${Math.min(.5, hurt*1.6)})\`;
 						g.fillRect(0, 0, W, VH);
 					}
 					g.font = "bold 7px monospace";
@@ -17933,7 +17933,7 @@ document.addEventListener('click', function(e) {
 				for(let r = 0; r < 6; r++){
 					t[r] = [];
 					for(let c = 0; c < 7; c++){
-						t[r][c] = [rnd() * 0x100000000 + rnd(), rnd()*0x100000000 + rnd()];
+						t[r][c] = [rnd()*0x100000000 + rnd(), rnd()*0x100000000 + rnd()];
 					}
 				}
 				return t;
@@ -31489,9 +31489,9 @@ document.addEventListener('click', function(e) {
 			.poker-table{
 				position: relative;
 				width: min(680px, 72vw);
-				aspect-ratio: 2 / 1.1;
+				aspect-ratio: 2/1.1;
 				background: radial-gradient(ellipse at center, var(--felt-light) 0%, var(--felt) 50%, var(--felt-dark) 100%);
-				border-radius: 50% / 45%;
+				border-radius: 50%/45%;
 				border: 8px solid #5a3a1a;
 				box-shadow: 0 0 0 3px #8b6332, 0 0 0 6px #5a3a1a, 0 20px 60px rgba(0, 0, 0, 0.8);
 				display: flex;
@@ -37094,7 +37094,7 @@ document.addEventListener('click', function(e) {
 						const [sw, sh] = symSize(v, s);
 						const symFn = {D: svgDenaro, C: svgCoppa, S: svgSpada, B: svgBastone}[s];
 						const symbols = positions.map(({x, y}) => {
-							return \`<div class="sym" style="position:absolute;left:\${x}%;top:\${y}%;width:\${(sw / 85 * 100).toFixed(2)}%;height:\${(sh / 78.4 * 100).toFixed(2)}%;transform:translate(-50%,-50%);line-height:0">\${symFn(sw, sh)}</div>\`;
+							return \`<div class="sym" style="position:absolute;left:\${x}%;top:\${y}%;width:\${(sw/85*100).toFixed(2)}%;height:\${(sh/78.4*100).toFixed(2)}%;transform:translate(-50%,-50%);line-height:0">\${symFn(sw, sh)}</div>\`;
 						}).join('');
 						centerHtml = \`<div style="position:absolute;inset:22% 0 22%;z-index:2;pointer-events:none;overflow:hidden">\${symbols}</div>\`;
 					}
@@ -37139,7 +37139,7 @@ document.addEventListener('click', function(e) {
 					var d = [];
 					for(var s = 0; s < 4; s++){
 						for(var r = 1; r <= 10; r++){
-							d.push({s: s, r: r, id: s * 10 + r});
+							d.push({s: s, r: r, id: s*10 + r});
 						}
 					}
 					for(var i = d.length - 1; i > 0; i--){
@@ -54619,7 +54619,7 @@ document.addEventListener('click', function(e) {
 						</filter>
 						<mask id="baldMask">
 							<rect x="0" y="0" width="400" height="520" fill="white"/>
-							<ellipse cx="\${cx}" cy="\${cy-hChub*0.85}" rx="\${wChub * (s.baldness/100) * 0.95}" ry="\${hChub * 0.28 * (s.baldness/100)}" fill="black"/>
+							<ellipse cx="\${cx}" cy="\${cy-hChub*0.85}" rx="\${wChub*(s.baldness/100)*0.95}" ry="\${hChub*0.28*(s.baldness/100)}" fill="black"/>
 						</mask>
 					</defs>
 				\`;
@@ -54729,7 +54729,7 @@ document.addEventListener('click', function(e) {
 				for(const sd of [-1, 1]){
 					for(let i = 0; i < 34; i++){
 						const t = i/33;
-						const x = cx + sd * (eyeSpacing + eyeW*1.1 - t*eyeW*2.0);
+						const x = cx + sd*(eyeSpacing + eyeW*1.1 - t*eyeW*2.0);
 						const y = browY + browAngle*0.3*(1-2*t) + browT*0.3 - browT*0.8*Math.sin(Math.PI*t) + (rnd()-0.5)*browT*0.5;
 						const len = 3 + rnd()*3 + browT*0.3;
 						browHairs += \`<line x1="\${x.toFixed(1)}" y1="\${y.toFixed(1)}" x2="\${(x+sd*len*0.8).toFixed(1)}" y2="\${(y-len*(0.15+0.6*t)).toFixed(1)}" stroke="\${rnd()>0.5?darken(s.browColor,15):s.browColor}" stroke-width="0.9" stroke-linecap="round" opacity="0.85"/>\`;
@@ -54816,7 +54816,7 @@ document.addEventListener('click', function(e) {
 							let afro = \`<path d="M \${cx-wChub-2} \${cy-hChub*0.3} Q \${cx-wChub-3} \${cy-hChub-4} \${cx} \${cy-hChub-6} Q \${cx+wChub+3} \${cy-hChub-4} \${cx+wChub+2} \${cy-hChub*0.3} Q \${cx+wChub*0.9} \${cy-hChub*0.75} \${cx} \${cy-hChub*0.82} Q \${cx-wChub*0.9} \${cy-hChub*0.75} \${cx-wChub-2} \${cy-hChub*0.3} Z" fill="url(#hairGrad)"/>\`;
 							for(let i = 0; i < 30; i++){
 								const ang = Math.PI*0.95 + (i/29)*Math.PI*1.1;
-								afro += \`<circle cx="\${(cx + Math.cos(ang) * (wChub + 14)).toFixed(1)}" cy="\${(cy - hChub*0.2 + Math.sin(ang) * (hChub + 14)).toFixed(1)}" r="\${(16 + rnd()*7).toFixed(1)}" fill="url(#hairGrad)" stroke="\${hairDark}" stroke-width="0.8"/>\`;
+								afro += \`<circle cx="\${(cx + Math.cos(ang)*(wChub + 14)).toFixed(1)}" cy="\${(cy - hChub*0.2 + Math.sin(ang)*(hChub + 14)).toFixed(1)}" r="\${(16 + rnd()*7).toFixed(1)}" fill="url(#hairGrad)" stroke="\${hairDark}" stroke-width="0.8"/>\`;
 							}
 							hairContent = afro;
 							break;
@@ -62546,9 +62546,9 @@ document.addEventListener('click', function(e) {
 					function hslToRgb(h, s, l){
 						s /= 100;
 						l /= 100;
-						const k = n => (n + h / 30)%12;
-						const a = s * Math.min(l, 1 - l);
-						const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+						const k = n => (n + h/30)%12;
+						const a = s*Math.min(l, 1 - l);
+						const f = n => l - a*Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
 						return [Math.round(f(0)*255), Math.round(f(8)*255), Math.round(f(4)*255)];
 					}
 
@@ -63122,9 +63122,9 @@ document.addEventListener('click', function(e) {
 						return [];
 					}
 					const n = Math.floor(ver/7) + 2;
-					const step = ver === 32 ? 26 : Math.ceil((ver*4 + 4) / (n*2 - 2))*2;
+					const step = ver === 32 ? 26 : Math.ceil((ver*4 + 4)/(n*2 - 2))*2;
 					const res = [6];
-					for(let pos = ver * 4 + 10; res.length < n; pos -= step){
+					for(let pos = ver*4 + 10; res.length < n; pos -= step){
 						res.splice(1, 0, pos);
 					}
 					return res;
@@ -64331,10 +64331,10 @@ document.addEventListener('click', function(e) {
 				let s = \`<svg viewBox = "0 0 320 320" role = "img" aria-label = "Modello di Bohr"><circle cx = 160 cy = 160 r = \${R0} fill = "#f59e0b"/><text x = 160 y = 156 text-anchor = middle font-size = 11 fill = "#111">\${z}p⁺</text><text x = 160 y = 170 text-anchor = middle font-size = 11 fill = "#111">\${nn}n⁰</text>\`;
 				sh.forEach((n, i) => {
 					const r = R0 + st*(i + 1) - st*0.3;
-					s += \`<circle cx = 160 cy = 160 r = \${r} fill = none stroke = currentColor opacity = .25 /><g><animateTransform attributeName = transform type = rotate from = "\${i % 2 ? 360 : 0} 160 160" to = "\${i % 2 ? 0 : 360} 160 160" dur = \${10 + i * 6}s repeatCount = indefinite />\`;
+					s += \`<circle cx = 160 cy = 160 r = \${r} fill = none stroke = currentColor opacity = .25 /><g><animateTransform attributeName = transform type = rotate from = "\${i % 2 ? 360 : 0} 160 160" to = "\${i % 2 ? 0 : 360} 160 160" dur = \${10 + i*6}s repeatCount = indefinite />\`;
 					for(let k = 0; k < n; k++){
 						const a = 2*Math.PI*k/n - Math.PI/2;
-						s += \`<circle cx = \${(160 + r * Math.cos(a)).toFixed(1)} cy = \${(160 + r * Math.sin(a)).toFixed(1)} r = \${dr} fill = "#3b82f6"/>\`;
+						s += \`<circle cx = \${(160 + r*Math.cos(a)).toFixed(1)} cy = \${(160 + r*Math.sin(a)).toFixed(1)} r = \${dr} fill = "#3b82f6"/>\`;
 					}
 					s += '</g>';
 				});
@@ -65846,8 +65846,7 @@ document.addEventListener('click', function(e) {
 });
 <\/script>
 </body>
-</html>
-` },
+</html>` },
 
 	// --- Fisica ---
 	'Utilities_U10_053___Fisica_html': { name: `Fisica`, content: `<!DOCTYPE html>
