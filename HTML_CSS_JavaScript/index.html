@@ -47432,6 +47432,23 @@ document.addEventListener('click', function(e) {
 					return inv ? invertNotation(n) : n;
 				}
 
+				function remapMove(notation){
+					const isDouble = notation.includes('2');
+					const isPrime = notation.includes("'");
+					const base = notation.replace(/['2]/g, '');
+					let mapped = viewMove(base, false);
+					const mappedHasPrime = mapped.includes("'");
+					const mappedBase = mapped.replace("'", "");
+					const finalPrime = mappedHasPrime !== isPrime;
+					let result = mappedBase;
+					if(isDouble){
+						result += '2';
+					}else if(finalPrime){
+						result += "'";
+					}
+					return result;
+				}
+
 				function orbitCam(axis, dir){
 					if(isCamAnim){
 						return;
@@ -47684,7 +47701,7 @@ document.addEventListener('click', function(e) {
 						bm.innerHTML = '<span class="an">' + a.name + '</span><span class="am">' + a.moves + '</span>';
 						bm.onclick = ()  => {
 							closeDrawer();
-							a.moves.split(' ').forEach(m =>  mv(m));
+							a.moves.split(' ').forEach(m => mv(remapMove(m)));
 						};
 						alM.appendChild(bm);
 					}
@@ -47693,7 +47710,7 @@ document.addEventListener('click', function(e) {
 						const bd = document.createElement('button');
 						bd.className = 'ab-d';
 						bd.innerHTML = '<span class="an-d">' + a.name + '</span><span class="am-d">' + a.moves + '</span>';
-						bd.onclick = ()  =>  a.moves.split(' ').forEach(m =>  mv(m));
+						bd.onclick = ()  => a.moves.split(' ').forEach(m => mv(remapMove(m)));
 						alD.appendChild(bd);
 					}
 				});
