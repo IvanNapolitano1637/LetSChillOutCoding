@@ -1742,13 +1742,26 @@
 					return result;
 				}
 
+				function getViewAxis(axis, pos, up){
+					const camOut = pos.clone().normalize();
+					const camUp = up.clone().normalize();
+					const camRight = new THREE.Vector3().crossVectors(camUp, camOut).normalize();
+					if(axis === 'x'){
+						return camRight;
+					}
+					if(axis === 'y'){
+						return camUp;
+					}
+					return camOut;
+				}
+
 				function orbitCam(axis, dir){
 					if(isCamAnim){
 						return;
 					}
 					const startPos = camera.position.clone();
 					const startUp = camera.up.clone();
-					const axVec = new THREE.Vector3(axis === 'x' ? 1 : 0, axis === 'y' ? 1 : 0, axis === 'z' ? 1 : 0);
+					const axVec = getViewAxis(axis, startPos, startUp);
 					const RDUR = 220, t0 = performance.now();
 					isCamAnim = true;
 					function step(now){
