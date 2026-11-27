@@ -4181,7 +4181,7 @@ document.addEventListener('click', function(e) {
 						respT -= dt;
 						if(respT <= 0){
 							if(lives <= 0){
-								gameOver(); 
+								gameOver();
 							}else{
 								resetPower();
 								newBall()
@@ -17820,7 +17820,9 @@ document.addEventListener('click', function(e) {
 					ttHash = 0;
 					for(let r = 0; r < ROW_NUMBER; r++){
 						for(let c = 0; c < COLUMN_NUMBER; c++){
-							if(grid[r][c] !== -1) ttHashUpdate(r, c, grid[r][c]);
+							if(grid[r][c] !== -1){
+								ttHashUpdate(r, c, grid[r][c]);
+							}
 						}
 					}
 					TT.clear();
@@ -20820,7 +20822,9 @@ document.addEventListener('click', function(e) {
 			const AI_PIECE_VALUES = {'p':100,'n':320,'b':330,'r':500,'q':900,'k':20000};
 			const AI_PST = (() => {
 				const tables = [];
-				for(let i = 0; i < 12; i++) tables.push(new Int16Array(64));
+				for(let i = 0; i < 12; i++){
+					tables.push(new Int16Array(64));
+				}
 				const bases = [AI_PV,AI_KN,AI_BI,AI_RK,AI_QN,AI_KG];
 				const vals = [100,320,330,500,900,20000];
 				for(let t = 0; t < 6; t++){
@@ -22117,7 +22121,9 @@ document.addEventListener('click', function(e) {
 				document.getElementById('btnExit').textContent = t('exit');
 				['int','it','en','br','ru','es','pool','ca','tu'].forEach(k => {
 					const el = document.getElementById('v-' + k);
-					if(el) el.textContent = tv(k);
+					if(el){
+						el.textContent = tv(k);
+					}
 				});
 				const flag = FLAGS_SVG[currentLangIndex];
 				document.getElementById('btnLang1').innerHTML = flag;
@@ -25695,20 +25701,20 @@ document.addEventListener('click', function(e) {
 					<tbody>
 						<tr>
 							<td>
-								<span class="kbd">C</span> 
-								<span class="kbd">V</span> 
-								<span class="kbd">B</span> 
-								<span class="kbd">N</span> 
-								<span class="kbd">M</span> 
+								<span class="kbd">C</span>
+								<span class="kbd">V</span>
+								<span class="kbd">B</span>
+								<span class="kbd">N</span>
+								<span class="kbd">M</span>
 								<span class="kbd" id="help-comma-key">,</span>
 							</td>
 							<td id="help-col-range">Seleziona Colonna (1-6)</td>
 						</tr>
 						<tr>
 							<td>
-								<span class="kbd">U</span> 
-								<span class="kbd">I</span> 
-								<span class="kbd">O</span> 
+								<span class="kbd">U</span>
+								<span class="kbd">I</span>
+								<span class="kbd">O</span>
 								<span class="kbd">P</span>
 							</td>
 							<td>Sposta su base Assi (1-4)</td>
@@ -26459,10 +26465,7 @@ document.addEventListener('click', function(e) {
 				}else{
 					if(inFoundation){
 						handleFoundationSlotClick(parseInt(parent.dataset.fslot));
-					}else if(inColumn &&
-						parseInt(card.dataset.value) === selection.value + 1 &&
-						card.dataset.suit !== selection.suit &&
-						card === parent.lastElementChild){
+					}else if(inColumn && parseInt(card.dataset.value) === selection.value + 1 && card.dataset.suit !== selection.suit && card === parent.lastElementChild){
 						moveSelectionToColumn(parent);
 					}else{
 						clearSelection();
@@ -29750,7 +29753,9 @@ document.addEventListener('click', function(e) {
 
 			function makePipsSVG(rank, suit, color){
 				const positions = SUIT_PIPS[rank];
-				if(!positions) return '';
+				if(!positions){
+						return '';
+				}
 				const isRed = color === 'red';
 				const sc = isRed ? '#d63031' : '#1a1a1a';
 				const fs = rank === 'A' ? 28 : 13;
@@ -30537,7 +30542,7 @@ document.addEventListener('click', function(e) {
 			</div>
 		</div>
 		<div id="toast"></div>
-		<div id="helpOverlay" onclick="if(event.target===this)closeHelp()">
+		<div id="helpOverlay" onclick="if(event.target===this){closeHelp();}">
 			<div id="helpBox">
 			<button id="helpClose" onclick="closeHelp()">✕</button>
 			<h2>How to Play</h2>
@@ -35696,7 +35701,9 @@ document.addEventListener('click', function(e) {
 				melds.forEach((meld, mi) => {
 					const grp = document.createElement('div');
 					grp.className = 'meld-group';
-					if(isPlayer && state.targetMeld === mi) grp.classList.add('can-add');
+					if(isPlayer && state.targetMeld === mi){
+						grp.classList.add('can-add');
+					}
 					meld.forEach(card => grp.appendChild(cardEl(card)));
 					if(isPlayer){
 						grp.addEventListener('click',() => {
@@ -36139,7 +36146,9 @@ document.addEventListener('click', function(e) {
 			function findBestMeld(hand){
 				const byRank = {};
 				hand.forEach(c => {
-					if(c.rank === JOKER) return;
+					if(c.rank === JOKER){
+						return;
+					}
 					(byRank [c.rank] = byRank [c.rank] || []).push(c);
 				});
 				for(const rank in byRank){
@@ -36149,7 +36158,9 @@ document.addEventListener('click', function(e) {
 				}
 				const bySuit = {};
 				hand.forEach(c => {
-					if(c.rank === JOKER) return;
+					if(c.rank === JOKER){
+						return;
+					}
 					(bySuit [c.suit] = bySuit [c.suit] || []).push(c);
 				});
 				for(const suit in bySuit){
@@ -37665,7 +37676,7 @@ document.addEventListener('click', function(e) {
 		</style>
 	</head>
 	<body>
-		<div id="helpOverlay" role="dialog" aria-modal="true" onclick="if(event.target===this)closeHelp()">
+		<div id="helpOverlay" role="dialog" aria-modal="true" onclick="if(event.target===this){closeHelp();}">
 			<div id="helpBox">
 				<button id="helpCloseBtn" onclick="closeHelp()" aria-label="Close">✕</button>
 				<h2 id="helpTitle">Keyboard Shortcuts</h2>
@@ -37853,7 +37864,9 @@ document.addEventListener('click', function(e) {
 			}
 
 			function loadPattern(type){
-				if(!type) return;
+				if(!type){
+					return;
+				}
 				refreshPage();
 				const midX = Math.floor(ROW_NUMBER/2);
 				const midY = Math.floor(COLUMN_NUMBER/2);
@@ -37894,8 +37907,11 @@ document.addEventListener('click', function(e) {
 				for(let i = 0; i < ROW_NUMBER; i++){
 					for(let j = 0; j < COLUMN_NUMBER; j++){
 						let neighbors = countNeighbors(i, j);
-						if(grid[i][j]) dummyGrid[i][j] = (neighbors === 2 || neighbors === 3);
-						else dummyGrid[i][j] = (neighbors === 3);
+						if(grid[i][j]){
+							dummyGrid[i][j] = (neighbors === 2 || neighbors === 3);
+						}else{
+							dummyGrid[i][j] = (neighbors === 3);
+						}
 					}
 				}
 				for(let i = 0; i < ROW_NUMBER; i++){
@@ -37951,7 +37967,9 @@ document.addEventListener('click', function(e) {
 			}
 
 			function refreshPage(){
-				if(goOnAlone) live();
+				if(goOnAlone){
+					live();
+				}
 				drawUniverse();
 				generationCount = 0;
 				document.getElementById("generationVal").innerText = 0;
@@ -38243,7 +38261,7 @@ document.addEventListener('click', function(e) {
 			<button type="button" id="loadBtn" onclick="openLoadModal()">📂</button>
 			<button type="button" id="langBtn" onclick="nextLanguage()"></button>
 		</div>
-		<div id="saveModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:2000;justify-content:center;align-items:center;" onclick="if(event.target===this)closeSaveModal();">
+		<div id="saveModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:2000;justify-content:center;align-items:center;" onclick="if(event.target===this){closeSaveModal();}">
 			<div style="background:#fff;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.35);padding:24px 28px;max-width:420px;width:90%;position:relative;">
 				<button onclick="closeSaveModal()" style="position:absolute;top:10px;right:14px;background:none;border:none;font-size:1.4em;cursor:pointer;color:#555;padding:2px 6px;">✕</button>
 				<h2 id="modalTitle" style="margin:0 0 16px;font-size:1.2em;text-align:center;color:#4a90e2;"></h2>
@@ -38698,7 +38716,9 @@ document.addEventListener('click', function(e) {
 			function loadGame(slot){
 				try{
 					const raw = localStorage.getItem(storageKey(slot));
-					if(!raw) throw new Error("empty");
+					if(!raw){
+						throw new Error("empty");
+					}
 					const snap = JSON.parse(raw);
 					applySnapshot(snap);
 					showToast(tr("load_ok"));
@@ -38753,7 +38773,9 @@ document.addEventListener('click', function(e) {
 					let snap = null;
 					try{
 						const raw = localStorage.getItem(storageKey(slot));
-						if(raw) snap = JSON.parse(raw);
+						if(raw){
+							snap = JSON.parse(raw);
+						}
 					}catch(e){}
 					if(modalMode === 'load' && !snap){
 						continue;
@@ -39507,7 +39529,7 @@ document.addEventListener('click', function(e) {
 					cellHeight = Math.max(cellHeight, minCellHeight);
 					const fontSizeByHeight = cellHeight*0.45;
 					const targetCharCount = 11;
-					const avgCharWidthRatio = 0.55; 
+					const avgCharWidthRatio = 0.55;
 					const fontSizeByWidth = (naturalCellSize*0.9)/(targetCharCount*avgCharWidthRatio);
 					const fontSize = Math.max(8, Math.min(18, fontSizeByHeight, fontSizeByWidth));
 					cells.forEach(cell => {
@@ -47001,7 +47023,9 @@ document.addEventListener('click', function(e) {
 
 			(function buildLangBar(){
 				const bar = document.getElementById('lang-bar');
-				if(!bar) return;
+				if(!bar){
+					return;
+				}
 				FLAGS_SVG.forEach((svg, i) => {
 					const code = LANG_CODES[i];
 					const btn = document.createElement('button');
@@ -47199,7 +47223,9 @@ document.addEventListener('click', function(e) {
 					isScrambling = active;
 					['scramble-btn-desk', 'scramble-btn-mobile'].forEach(id => {
 						const el = document.getElementById(id);
-						if(el) el.disabled = active;
+						if(el){
+							el.disabled = active;
+						}
 					});
 				}
 
@@ -47502,7 +47528,9 @@ document.addEventListener('click', function(e) {
 				function addTag(n){
 					['mlog', 'mlog-d'].forEach(id => {
 						const el = document.getElementById(id);
-						if(!el) return;
+						if(!el){
+							return;
+						}
 						const s = document.createElement('span');
 						s.className = 'mt';
 						s.textContent = n;
@@ -47567,7 +47595,9 @@ document.addEventListener('click', function(e) {
 					const enabled = history.length > 0;
 					['undo-btn-desk', 'undo-btn-mobile'].forEach(id => {
 						const el = document.getElementById(id);
-						if(!el) return;
+						if(!el){
+							return;
+						}
 						el.disabled =!enabled;
 						el.style.opacity = enabled ? '1': '0.35';
 						el.style.cursor = enabled ? 'pointer': 'not-allowed';
@@ -47587,7 +47617,9 @@ document.addEventListener('click', function(e) {
 					setText('tm', '00:00');
 					['mlog', 'mlog-d'].forEach(id => {
 						const el = document.getElementById(id);
-						if(el) el.innerHTML = '';
+						if(el){
+							el.innerHTML = '';
+						}
 					});
 					const ban = document.getElementById('ban');
 					if(ban){
@@ -47614,8 +47646,9 @@ document.addEventListener('click', function(e) {
 					let prev = '';
 					for(let i = 0; i < n; i++){
 						let m;
-						do{m = bs [Math.floor(Math.random()*6)];}
-						while(m === prev);
+						do{
+							m = bs [Math.floor(Math.random()*6)];
+						}while(m === prev);
 						if(Math.random() >.5){
 							m += "'";
 						}
@@ -47674,7 +47707,9 @@ document.addEventListener('click', function(e) {
 					my = e.clientY;
 				});
 				window.addEventListener('mousemove', e => {
-					if(!drag) return;
+					if(!drag){
+						return;
+					}
 					const dx = e.clientX - mx;
 					const dy = e.clientY - my;
 					mx = e.clientX;
@@ -62038,11 +62073,15 @@ document.addEventListener('click', function(e) {
 				}
 
 				function v3_brighterAll(){
-					if(v3_canMoveAll(1)) [0, 1, 2].forEach(i => v3_brighterBasic(i));
+					if(v3_canMoveAll(1)){
+						[0, 1, 2].forEach(i => v3_brighterBasic(i));
+					}
 				}
 
 				function v3_darkerAll(){
-					if(v3_canMoveAll(-1)) [0, 1, 2].forEach(i => v3_darkerBasic(i));
+					if(v3_canMoveAll(-1)){
+						[0, 1, 2].forEach(i => v3_darkerBasic(i));
+					}
 				}
 
 				function v3_color(r, g, b){
@@ -64637,8 +64676,9 @@ document.addEventListener('click', function(e) {
 				const v = +document.getElementById('ph').value;
 				let ex = PH[0][1];
 				PH.forEach(([a, t]) => {
-					if(v >= a)
+					if(v >= a){
 						ex = t;
+					}
 				});
 				document.getElementById('phr').innerHTML = \`<b>pH \${v.toFixed(1)}</b> — \${v < 6.95 ? 'acido' : v > 7.05 ? 'basico' : 'neutro'}<br>[H⁺] = 10<sup>−\${v.toFixed(1)}</sup> = \${Math.pow(10, -v).toExponential(2)} mol/L · [OH⁻] = \${Math.pow(10, v - 14).toExponential(2)} mol/L<div class = ex>Esempio: \${ex}</div>\`;
 			}
@@ -65687,13 +65727,15 @@ document.addEventListener('click', function(e) {
 			}
 
 			$('ov').onclick = e => {
-				if(e.target == $('ov'))
+				if(e.target == $('ov')){
 					closeD();
+				}
 			};
 
 			document.addEventListener('keydown', e => {
-				if(e.key == 'Escape')
+				if(e.key == 'Escape'){
 					closeD();
+				}
 			});
 
 			$('s1').innerHTML = N.map(([t, h]) => \`<details><summary>\${t}<\\/summary>\${h}<\\/details>\`).join('');
