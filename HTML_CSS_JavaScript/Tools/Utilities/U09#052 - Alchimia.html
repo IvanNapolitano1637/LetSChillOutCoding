@@ -783,7 +783,7 @@
 			$('dq').oninput = dict;
 			dict();
 
-			const R = a => a[Math.floor(Math.random() * a.length)];
+			const R = a => a[Math.floor(Math.random()*a.length)];
 
 			function newQ(){
 				qn++;
@@ -791,7 +791,7 @@
 					$('qz').innerHTML = `<h3>Punteggio: ${qs}/10<\/h3><button class = btn onclick = "qn=0;qs=0;newQ()">Rigioca<\/button>`;
 					return;
 				}
-				const t = Math.floor(Math.random() * 5);
+				const t = Math.floor(Math.random()*5);
 				let q, ok, pool;
 				if(t == 0){
 					const p = R(PL);

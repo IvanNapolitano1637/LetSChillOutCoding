@@ -569,7 +569,7 @@
 			const MU = {f: 1e-15, p: 1e-12, n: 1e-9, u: 1e-6, m: 1e-3, k: 1e3, M: 1e6, G: 1e9}, PF = ['f', 'p', 'n', 'µ', 'm', '', 'k', 'M', 'G'];
 			const PN = s => {s = String(s).trim().replace(',', '.').replace('µ', 'u');
 				const m = s.match(/^([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)\s*([fpnumkMG])?/);
-				return m ? +m[1] * (m[2] ? MU[m[2]] : 1) : NaN;
+				return m ? +m[1]*(m[2] ? MU[m[2]] : 1) : NaN;
 			};
 
 			function fm(x, u){
@@ -583,7 +583,7 @@
 					return '0 ' + u;
 				}
 				const e = Math.max(-5, Math.min(3, Math.floor(Math.log10(Math.abs(x))/3)));
-				return +(x / Math.pow(10, 3*e)).toPrecision(4) + ' ' + PF[e + 5] + u;
+				return +(x/Math.pow(10, 3*e)).toPrecision(4) + ' ' + PF[e + 5] + u;
 			}
 
 			const E0 = 8.854187817e-12, MU0 = 4*Math.PI*1e-7, K = 1/(4*Math.PI*E0), N = isNaN;
@@ -633,14 +633,14 @@
 				{t: '📻 Risonanza RLC serie', d: 'Frequenza di risonanza e selettività.', i: [['R', 'R', '10', 'Ω'], ['L', 'L', '10m', 'H'], ['C', 'C', '1u', 'F']], f: v => {const w = 1/Math.sqrt(v.L*v.C), Q = w*v.L/v.R; return [['f0', w/(2*Math.PI), 'Hz'], ['ω0', w, 'rad/s'], ['Fattore Q', Q, '!'], ['Banda f0/Q', w/(2*Math.PI)/Q, 'Hz'], ['Smorzamento α = R/2L', v.R/(2*v.L), 's⁻¹']]}},
 				{
 					t: '〰️ Impedenza in alternata', d: 'RLC serie: lascia vuoti L o C se assenti.', i: [['f', 'Frequenza', '50', 'Hz'], ['R', 'R', '100', 'Ω'], ['L', 'L', '0.5', 'H'], ['C', 'C', '10u', 'F'], ['V', 'V eff.', '230', 'V']], f: v => {
-						const L = N(v.L) ? 0 : v.L, w = 2*Math.PI*v.f, XL = w*L, XC = (N(v.C) || v.C <= 0) ? 0 : 1 / (w*v.C), X = XL - XC, Z = Math.hypot(v.R, X), I = v.V/Z;
-						return [['XL', XL, 'Ω'], ['XC', XC, 'Ω'], ['Impedenza |Z|', Z, 'Ω'], ['Fase φ', Math.atan2(X, v.R)*180/Math.PI, '!°'], ['Corrente', I, 'A'], ['cos φ', v.R / Z, '!'], ['P attiva', I*I*v.R, 'W'], ['Q reattiva', I*I*X, 'VAr'], ['S apparente', v.V*I, 'VA']];
+						const L = N(v.L) ? 0 : v.L, w = 2*Math.PI*v.f, XL = w*L, XC = (N(v.C) || v.C <= 0) ? 0 : 1/(w*v.C), X = XL - XC, Z = Math.hypot(v.R, X), I = v.V/Z;
+						return [['XL', XL, 'Ω'], ['XC', XC, 'Ω'], ['Impedenza |Z|', Z, 'Ω'], ['Fase φ', Math.atan2(X, v.R)*180/Math.PI, '!°'], ['Corrente', I, 'A'], ['cos φ', v.R/Z, '!'], ['P attiva', I*I*v.R, 'W'], ['Q reattiva', I*I*X, 'VAr'], ['S apparente', v.V*I, 'VA']];
 					}
 				},
 				{t: '🔌 Trasformatore ideale', d: 'Rapporto spire, tensioni e correnti.', i: [['V', 'V primario', '230', 'V'], ['a', 'Spire N1', '1000', ''], ['b', 'Spire N2', '100', ''], ['I', 'I secondaria', '1', 'A']], f: v => [['V secondaria', v.V*v.b/v.a, 'V'], ['I primaria', v.I*v.b/v.a, 'A'], ['Potenza', v.V*v.b/v.a*v.I, 'W'], ['Rapporto N1/N2', v.a/v.b, '!']]},
 				{t: '💶 Consumo e costo', d: 'Quanto costa far funzionare un apparecchio.', i: [['P', 'Potenza', '2000', 'W'], ['h', 'Ore al giorno', '3', 'h'], ['c', 'Costo', '0.30', '€/kWh']], f: v => {const k = v.P/1000*v.h; return [['Energia al giorno', k, '!kWh'], ['Costo al giorno', k*v.c, '!€'], ['Costo al mese', k*v.c*30, '!€'], ['Costo all\'anno', k*v.c*365, '!€']]}},
 				{t: '🌀 Solenoide e induttanza', d: 'Campo magnetico, induttanza ed energia.', i: [['N', 'Spire N', '500', ''], ['l', 'Lunghezza', '0.2', 'm'], ['I', 'Corrente', '2', 'A'], ['A', 'Sezione', '1e-4', 'm²'], ['u', 'μr', '1', '']], f: v => {const L = MU0*v.u*v.N*v.N*v.A/v.l, B = MU0*v.u*v.N*v.I/v.l; return [['Campo B', B, 'T'], ['Induttanza L', L, 'H'], ['Energia ½LI²', L*v.I*v.I/2, 'J'], ['Flusso totale NΦ', L*v.I, 'Wb']]}},
-				{t: '🔁 Thevenin e massimo trasferimento', d: 'Generatore equivalente collegato a un carico RL.', i: [['V', 'V Thevenin', '12', 'V'], ['R', 'R Thevenin', '50', 'Ω'], ['L', 'Carico RL', '100', 'Ω']], f: v => {const I = v.V / (v.R + v.L); return [['Corrente', I, 'A'], ['Tensione sul carico', I*v.L, 'V'], ['Potenza sul carico', I*I*v.L, 'W'], ['Rendimento', v.L/(v.R + v.L)*100, '!%'], ['RL ottimo', v.R, 'Ω'], ['Pmax = V²/4R', v.V*v.V/(4*v.R), 'W']]}},
+				{t: '🔁 Thevenin e massimo trasferimento', d: 'Generatore equivalente collegato a un carico RL.', i: [['V', 'V Thevenin', '12', 'V'], ['R', 'R Thevenin', '50', 'Ω'], ['L', 'Carico RL', '100', 'Ω']], f: v => {const I = v.V/(v.R + v.L); return [['Corrente', I, 'A'], ['Tensione sul carico', I*v.L, 'V'], ['Potenza sul carico', I*I*v.L, 'W'], ['Rendimento', v.L/(v.R + v.L)*100, '!%'], ['RL ottimo', v.R, 'Ω'], ['Pmax = V²/4R', v.V*v.V/(4*v.R), 'W']]}},
 				{t: '🏭 Sistema trifase', d: 'Potenze e grandezze di fase da valori di linea.', i: [['V', 'V di linea', '400', 'V'], ['I', 'I di linea', '10', 'A'], ['c', 'cos φ', '0.85', '']], f: v => {const S = Math.sqrt(3)*v.V*v.I; return [['P attiva', S*v.c, 'W'], ['Q reattiva', S*Math.sqrt(1 - v.c*v.c), 'VAr'], ['S apparente', S, 'VA'], ['V di fase (stella)', v.V/Math.sqrt(3), 'V'], ['I di fase (triangolo)', v.I/Math.sqrt(3), 'A']]}},
 				{t: '📉 Filtro RC passa-basso / passa-alto', d: 'Risposta alla frequenza scelta.', i: [['R', 'R', '1k', 'Ω'], ['C', 'C', '100n', 'F'], ['f', 'Frequenza', '1k', 'Hz']], f: v => {const fc = 1/(2*Math.PI*v.R*v.C), x = v.f/fc, lp = 1/Math.sqrt(1 + x*x), hp = x*lp; return [['Taglio fc', fc, 'Hz'], ['Passa-basso |H|', lp, '!'], ['Passa-basso', 20*Math.log10(lp), '!dB'], ['Passa-alto |H|', hp, '!'], ['Passa-alto', 20*Math.log10(hp), '!dB'], ['Fase passa-basso', -Math.atan(x)*180/Math.PI, '!°']]}},
 				{t: '📐 Rifasamento', d: 'Condensatore per portare cos φ al valore desiderato.', i: [['P', 'Potenza attiva', '5000', 'W'], ['V', 'V eff.', '230', 'V'], ['f', 'Frequenza', '50', 'Hz'], ['a', 'cos φ attuale', '0.7', ''], ['b', 'cos φ voluto', '0.95', '']], f: v => {const t1 = Math.tan(Math.acos(v.a)), t2 = Math.tan(Math.acos(v.b)), Q = v.P*(t1 - t2); return [['Capacità C', Q/(2*Math.PI*v.f*v.V*v.V), 'F'], ['Reattiva compensata', Q, 'VAr'], ['Corrente prima', v.P/(v.V*v.a), 'A'], ['Corrente dopo', v.P/(v.V*v.b), 'A']]}},

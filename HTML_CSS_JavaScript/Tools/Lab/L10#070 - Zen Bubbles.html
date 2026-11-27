@@ -10,7 +10,7 @@
 				user-select: none;
 				-webkit-user-select: none;
 				-webkit-tap-highlight-color: transparent;
-				tap-highlight-color: transparent;
+				-tap-highlight-color: transparent;
 				touch-action: manipulation;
 			}
 			body, html{
@@ -293,7 +293,7 @@
 				}
 
 				draw(ctx, time){
-					const currentRadius = Math.max(0, this.targetRadius * this.scale);
+					const currentRadius = Math.max(0, this.targetRadius*this.scale);
 					if(currentRadius <= 0){
 						return;
 					}

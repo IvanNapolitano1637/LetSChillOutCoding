@@ -213,7 +213,7 @@
 				gap: 2px;
 			}
 			.card-val .num{
-				font-size: calc(var(--font-val) * 1.15);
+				font-size: calc(var(--font-val)*1.15);
 				font-weight: 700;
 				line-height: 1;
 			}
@@ -1242,9 +1242,7 @@
 					card.style.zIndex = i + 1;
 					card.style.setProperty('--stack-i', i);
 				});
-				col.style.minHeight = children.length > 0
-					? `calc(${children.length - 1} * var(--reveal) + var(--card-height))`
-					: '';
+				col.style.minHeight = children.length > 0 ? `calc(${children.length - 1}*var(--reveal) + var(--card-height))` : '';
 			}
 
 			function moveSelectionToColumn(destCol){

@@ -195,7 +195,7 @@
 				justify-content: center;
 			}
 			.slot.foundation .suit-hint{
-				font-size: calc(var(--cw) * 0.52);
+				font-size: calc(var(--cw)*0.52);
 				opacity: 0.65;
 				pointer-events: none;
 				text-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
@@ -1010,7 +1010,7 @@
 					groupCards.forEach(({card, wasteIdx}, i) => {
 						const cEl = createCardEl({...card, faceUp: true});
 						cEl.style.position = 'absolute';
-						cEl.style.left = ((n - 1 - i) * fanOffset) + 'px';
+						cEl.style.left = ((n - 1 - i)*fanOffset) + 'px';
 						cEl.style.top = '0';
 						cEl.style.zIndex = (n - i);
 						const isPlayable = (card.groupPos === 0);
@@ -1170,7 +1170,7 @@
 				const ghosts = cards.map((card, i) => {
 					const el = createCardEl({...card, faceUp: true } );
 					el.style.cssText = `position:fixed;width:${cw}px;height:${ch}px;z-index:${9000 + i};
-						pointer-events:none;left:${clientX - offsetX}px;top:${clientY - offsetY + i * oup}px;
+						pointer-events:none;left:${clientX - offsetX}px;top:${clientY - offsetY + i*oup}px;
 						box-shadow:4px 6px 16px rgba(0,0,0,0.6);opacity:0.92;`;
 					document.body.appendChild(el);
 					return el;
