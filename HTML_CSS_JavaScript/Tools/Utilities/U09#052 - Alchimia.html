@@ -746,13 +746,15 @@
 			}
 
 			$('ov').onclick = e => {
-				if(e.target == $('ov'))
+				if(e.target == $('ov')){
 					closeD();
+				}
 			};
 
 			document.addEventListener('keydown', e => {
-				if(e.key == 'Escape')
+				if(e.key == 'Escape'){
 					closeD();
+				}
 			});
 
 			$('s1').innerHTML = N.map(([t, h]) => `<details><summary>${t}<\/summary>${h}<\/details>`).join('');

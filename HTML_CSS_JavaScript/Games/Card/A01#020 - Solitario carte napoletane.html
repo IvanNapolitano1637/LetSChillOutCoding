@@ -385,20 +385,20 @@
 					<tbody>
 						<tr>
 							<td>
-								<span class="kbd">C</span> 
-								<span class="kbd">V</span> 
-								<span class="kbd">B</span> 
-								<span class="kbd">N</span> 
-								<span class="kbd">M</span> 
+								<span class="kbd">C</span>
+								<span class="kbd">V</span>
+								<span class="kbd">B</span>
+								<span class="kbd">N</span>
+								<span class="kbd">M</span>
 								<span class="kbd" id="help-comma-key">,</span>
 							</td>
 							<td id="help-col-range">Seleziona Colonna (1-6)</td>
 						</tr>
 						<tr>
 							<td>
-								<span class="kbd">U</span> 
-								<span class="kbd">I</span> 
-								<span class="kbd">O</span> 
+								<span class="kbd">U</span>
+								<span class="kbd">I</span>
+								<span class="kbd">O</span>
 								<span class="kbd">P</span>
 							</td>
 							<td>Sposta su base Assi (1-4)</td>
@@ -1149,10 +1149,7 @@
 				}else{
 					if(inFoundation){
 						handleFoundationSlotClick(parseInt(parent.dataset.fslot));
-					}else if(inColumn &&
-						parseInt(card.dataset.value) === selection.value + 1 &&
-						card.dataset.suit !== selection.suit &&
-						card === parent.lastElementChild){
+					}else if(inColumn && parseInt(card.dataset.value) === selection.value + 1 && card.dataset.suit !== selection.suit && card === parent.lastElementChild){
 						moveSelectionToColumn(parent);
 					}else{
 						clearSelection();

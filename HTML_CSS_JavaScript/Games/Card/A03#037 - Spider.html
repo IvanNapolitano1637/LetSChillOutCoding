@@ -1126,7 +1126,9 @@
 
 			function makePipsSVG(rank, suit, color){
 				const positions = SUIT_PIPS[rank];
-				if(!positions) return '';
+				if(!positions){
+						return '';
+				}
 				const isRed = color === 'red';
 				const sc = isRed ? '#d63031' : '#1a1a1a';
 				const fs = rank === 'A' ? 28 : 13;

@@ -174,7 +174,7 @@
 		</style>
 	</head>
 	<body>
-		<div id="helpOverlay" role="dialog" aria-modal="true" onclick="if(event.target===this)closeHelp()">
+		<div id="helpOverlay" role="dialog" aria-modal="true" onclick="if(event.target===this){closeHelp();}">
 			<div id="helpBox">
 				<button id="helpCloseBtn" onclick="closeHelp()" aria-label="Close">✕</button>
 				<h2 id="helpTitle">Keyboard Shortcuts</h2>
@@ -362,7 +362,9 @@
 			}
 
 			function loadPattern(type){
-				if(!type) return;
+				if(!type){
+					return;
+				}
 				refreshPage();
 				const midX = Math.floor(ROW_NUMBER/2);
 				const midY = Math.floor(COLUMN_NUMBER/2);
@@ -403,8 +405,11 @@
 				for(let i = 0; i < ROW_NUMBER; i++){
 					for(let j = 0; j < COLUMN_NUMBER; j++){
 						let neighbors = countNeighbors(i, j);
-						if(grid[i][j]) dummyGrid[i][j] = (neighbors === 2 || neighbors === 3);
-						else dummyGrid[i][j] = (neighbors === 3);
+						if(grid[i][j]){
+							dummyGrid[i][j] = (neighbors === 2 || neighbors === 3);
+						}else{
+							dummyGrid[i][j] = (neighbors === 3);
+						}
 					}
 				}
 				for(let i = 0; i < ROW_NUMBER; i++){
@@ -460,7 +465,9 @@
 			}
 
 			function refreshPage(){
-				if(goOnAlone) live();
+				if(goOnAlone){
+					live();
+				}
 				drawUniverse();
 				generationCount = 0;
 				document.getElementById("generationVal").innerText = 0;

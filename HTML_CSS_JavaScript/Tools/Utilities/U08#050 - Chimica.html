@@ -1130,8 +1130,9 @@
 				const v = +document.getElementById('ph').value;
 				let ex = PH[0][1];
 				PH.forEach(([a, t]) => {
-					if(v >= a)
+					if(v >= a){
 						ex = t;
+					}
 				});
 				document.getElementById('phr').innerHTML = `<b>pH ${v.toFixed(1)}</b> — ${v < 6.95 ? 'acido' : v > 7.05 ? 'basico' : 'neutro'}<br>[H⁺] = 10<sup>−${v.toFixed(1)}</sup> = ${Math.pow(10, -v).toExponential(2)} mol/L · [OH⁻] = ${Math.pow(10, v - 14).toExponential(2)} mol/L<div class = ex>Esempio: ${ex}</div>`;
 			}

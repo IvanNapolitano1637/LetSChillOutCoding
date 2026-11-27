@@ -1313,7 +1313,9 @@
 
 			(function buildLangBar(){
 				const bar = document.getElementById('lang-bar');
-				if(!bar) return;
+				if(!bar){
+					return;
+				}
 				FLAGS_SVG.forEach((svg, i) => {
 					const code = LANG_CODES[i];
 					const btn = document.createElement('button');
@@ -1511,7 +1513,9 @@
 					isScrambling = active;
 					['scramble-btn-desk', 'scramble-btn-mobile'].forEach(id => {
 						const el = document.getElementById(id);
-						if(el) el.disabled = active;
+						if(el){
+							el.disabled = active;
+						}
 					});
 				}
 
@@ -1814,7 +1818,9 @@
 				function addTag(n){
 					['mlog', 'mlog-d'].forEach(id => {
 						const el = document.getElementById(id);
-						if(!el) return;
+						if(!el){
+							return;
+						}
 						const s = document.createElement('span');
 						s.className = 'mt';
 						s.textContent = n;
@@ -1879,7 +1885,9 @@
 					const enabled = history.length > 0;
 					['undo-btn-desk', 'undo-btn-mobile'].forEach(id => {
 						const el = document.getElementById(id);
-						if(!el) return;
+						if(!el){
+							return;
+						}
 						el.disabled =!enabled;
 						el.style.opacity = enabled ? '1': '0.35';
 						el.style.cursor = enabled ? 'pointer': 'not-allowed';
@@ -1899,7 +1907,9 @@
 					setText('tm', '00:00');
 					['mlog', 'mlog-d'].forEach(id => {
 						const el = document.getElementById(id);
-						if(el) el.innerHTML = '';
+						if(el){
+							el.innerHTML = '';
+						}
 					});
 					const ban = document.getElementById('ban');
 					if(ban){
@@ -1926,8 +1936,9 @@
 					let prev = '';
 					for(let i = 0; i < n; i++){
 						let m;
-						do{m = bs [Math.floor(Math.random()*6)];}
-						while(m === prev);
+						do{
+							m = bs [Math.floor(Math.random()*6)];
+						}while(m === prev);
 						if(Math.random() >.5){
 							m += "'";
 						}
@@ -1986,7 +1997,9 @@
 					my = e.clientY;
 				});
 				window.addEventListener('mousemove', e => {
-					if(!drag) return;
+					if(!drag){
+						return;
+					}
 					const dx = e.clientX - mx;
 					const dy = e.clientY - my;
 					mx = e.clientX;

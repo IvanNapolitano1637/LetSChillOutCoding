@@ -905,7 +905,9 @@
 				melds.forEach((meld, mi) => {
 					const grp = document.createElement('div');
 					grp.className = 'meld-group';
-					if(isPlayer && state.targetMeld === mi) grp.classList.add('can-add');
+					if(isPlayer && state.targetMeld === mi){
+						grp.classList.add('can-add');
+					}
 					meld.forEach(card => grp.appendChild(cardEl(card)));
 					if(isPlayer){
 						grp.addEventListener('click',() => {
@@ -1348,7 +1350,9 @@
 			function findBestMeld(hand){
 				const byRank = {};
 				hand.forEach(c => {
-					if(c.rank === JOKER) return;
+					if(c.rank === JOKER){
+						return;
+					}
 					(byRank [c.rank] = byRank [c.rank] || []).push(c);
 				});
 				for(const rank in byRank){
@@ -1358,7 +1362,9 @@
 				}
 				const bySuit = {};
 				hand.forEach(c => {
-					if(c.rank === JOKER) return;
+					if(c.rank === JOKER){
+						return;
+					}
 					(bySuit [c.suit] = bySuit [c.suit] || []).push(c);
 				});
 				for(const suit in bySuit){

@@ -612,7 +612,9 @@
 				document.getElementById('btnExit').textContent = t('exit');
 				['int','it','en','br','ru','es','pool','ca','tu'].forEach(k => {
 					const el = document.getElementById('v-' + k);
-					if(el) el.textContent = tv(k);
+					if(el){
+						el.textContent = tv(k);
+					}
 				});
 				const flag = FLAGS_SVG[currentLangIndex];
 				document.getElementById('btnLang1').innerHTML = flag;

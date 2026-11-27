@@ -1127,11 +1127,15 @@
 				}
 
 				function v3_brighterAll(){
-					if(v3_canMoveAll(1)) [0, 1, 2].forEach(i => v3_brighterBasic(i));
+					if(v3_canMoveAll(1)){
+						[0, 1, 2].forEach(i => v3_brighterBasic(i));
+					}
 				}
 
 				function v3_darkerAll(){
-					if(v3_canMoveAll(-1)) [0, 1, 2].forEach(i => v3_darkerBasic(i));
+					if(v3_canMoveAll(-1)){
+						[0, 1, 2].forEach(i => v3_darkerBasic(i));
+					}
 				}
 
 				function v3_color(r, g, b){

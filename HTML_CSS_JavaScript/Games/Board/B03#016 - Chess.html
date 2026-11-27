@@ -2397,7 +2397,9 @@
 			const AI_PIECE_VALUES = {'p':100,'n':320,'b':330,'r':500,'q':900,'k':20000};
 			const AI_PST = (() => {
 				const tables = [];
-				for(let i = 0; i < 12; i++) tables.push(new Int16Array(64));
+				for(let i = 0; i < 12; i++){
+					tables.push(new Int16Array(64));
+				}
 				const bases = [AI_PV,AI_KN,AI_BI,AI_RK,AI_QN,AI_KG];
 				const vals = [100,320,330,500,900,20000];
 				for(let t = 0; t < 6; t++){
