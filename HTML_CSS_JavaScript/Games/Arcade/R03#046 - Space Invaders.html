@@ -320,7 +320,7 @@
 
 				function erode(s, ci, ri){
 					for(let dr = -1; dr <= 1; dr++){
-						for (let dc = -1; dc <= 1; dc++) {
+						for(let dc = -1; dc <= 1; dc++){
 							const r = ri + dr, c = ci + dc;
 							if(r >= 0 && r < 8 && c >= 0 && c < 11 && ((!dr && !dc) || Math.random() < .55)){
 								s.g[r][c] = false;

@@ -278,7 +278,7 @@
 			};
 			let currentLangIndex = 0;
 
-			function updateUI() {
+			function updateUI(){
 				const lang = TRANSLATIONS[LANG_KEYS[currentLangIndex]];
 				document.getElementById('roll-btn').innerText = lang.roll;
 				document.getElementById('undo-btn').innerText = lang.undo;
@@ -295,7 +295,7 @@
 				}
 			}
 
-			function nextLang() {
+			function nextLang(){
 				currentLangIndex = (currentLangIndex + 1)%(LANG_KEYS.length);
 				updateUI();
 				if(document.getElementById('helpOverlay').classList.contains('visible')){ updateHelpContent(); }

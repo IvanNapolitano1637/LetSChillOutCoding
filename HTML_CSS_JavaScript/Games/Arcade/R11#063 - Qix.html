@@ -452,7 +452,7 @@
 					pauseGame();
 				}
 				addEventListener("blur", lostFocus);
-				document.addEventListener("visibilitychange", function () {if(document.hidden){lostFocus();}});
+				document.addEventListener("visibilitychange", function (){if(document.hidden){lostFocus();}});
 				var dp = $("dpad"), dbtn = dp ? dp.querySelectorAll("button") : [], dpId = null;
 				function dpClear(){
 					touchDir = null;

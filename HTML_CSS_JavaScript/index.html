@@ -910,7 +910,7 @@
 					}
 					const c = cell;
 					for(let x = 0; x < COLS; x++){
-						for (let y = 0; y < ROWS; y++){
+						for(let y = 0; y < ROWS; y++){
 							ctx.fillStyle = (x + y)%2 ? getVar('--g1') : getVar('--g2');
 							ctx.fillRect(x*c, y*c, c + 1, c + 1);
 						}
@@ -2290,7 +2290,7 @@ document.addEventListener('click', function(e) {
 
 				function erode(s, ci, ri){
 					for(let dr = -1; dr <= 1; dr++){
-						for (let dc = -1; dc <= 1; dc++) {
+						for(let dc = -1; dc <= 1; dc++){
 							const r = ri + dr, c = ci + dc;
 							if(r >= 0 && r < 8 && c >= 0 && c < 11 && ((!dr && !dc) || Math.random() < .55)){
 								s.g[r][c] = false;
@@ -10372,7 +10372,7 @@ document.addEventListener('click', function(e) {
 						ctx.lineWidth = 2.5;
 						ctx.stroke();
 					}
-					if(state !== "dead" || (now >> 7)%2) {
+					if(state !== "dead" || (now >> 7)%2){
 						ctx.save();
 						var sox = 0, soy = 0, q4;
 						if(!drawing){
@@ -11147,7 +11147,7 @@ document.addEventListener('click', function(e) {
 					pauseGame();
 				}
 				addEventListener("blur", lostFocus);
-				document.addEventListener("visibilitychange", function () {if(document.hidden){lostFocus();}});
+				document.addEventListener("visibilitychange", function (){if(document.hidden){lostFocus();}});
 				var dp = $("dpad"), dbtn = dp ? dp.querySelectorAll("button") : [], dpId = null;
 				function dpClear(){
 					touchDir = null;
@@ -22753,7 +22753,7 @@ document.addEventListener('click', function(e) {
 			};
 			let currentLangIndex = 0;
 
-			function updateUI() {
+			function updateUI(){
 				const lang = TRANSLATIONS[LANG_KEYS[currentLangIndex]];
 				document.getElementById('roll-btn').innerText = lang.roll;
 				document.getElementById('undo-btn').innerText = lang.undo;
@@ -22770,7 +22770,7 @@ document.addEventListener('click', function(e) {
 				}
 			}
 
-			function nextLang() {
+			function nextLang(){
 				currentLangIndex = (currentLangIndex + 1)%(LANG_KEYS.length);
 				updateUI();
 				if(document.getElementById('helpOverlay').classList.contains('visible')){ updateHelpContent(); }
@@ -23793,7 +23793,7 @@ document.addEventListener('click', function(e) {
 					}
 				}
 				for(const nb of neighbors(pos)){
-					if(newBd[nb] === color) {
+					if(newBd[nb] === color){
 						const grp = getGroup(nb, newBd);
 						const libs = getLiberties(grp, newBd).size;
 						if(libs >= 3){
@@ -37167,7 +37167,7 @@ document.addEventListener('click', function(e) {
 					return res;
 				}
 				function options(card, tbl){
-					var same = tbl.filter(function (t) {return t.r === card.r;});
+					var same = tbl.filter(function (t){return t.r === card.r;});
 					if(same.length){
 						return same.map(function (t){return [t];});
 					}
@@ -37318,7 +37318,7 @@ document.addEventListener('click', function(e) {
 							}
 							var sum = rest.reduce(function (a, c){return a + c.r;}, 0);
 							if(rest.length && sum <= 10 && un.length){
-								var k = un.filter(function (u) {return u.r === sum;}).length, p = 1 - Math.pow((un.length - k)/un.length, 3);
+								var k = un.filter(function (u){return u.r === sum;}).length, p = 1 - Math.pow((un.length - k)/un.length, 3);
 								s -= 11*p;
 							}
 							s += Math.random()*.6;
@@ -52775,7 +52775,7 @@ document.addEventListener('click', function(e) {
 			}
 			let menuLinks = document.querySelectorAll('.menu li a');
 			menuLinks.forEach(link => {
-				link.onclick = function(e) {
+				link.onclick = function(e){
 					e.preventDefault();
 				}
 			});
@@ -60242,7 +60242,7 @@ document.addEventListener('click', function(e) {
 			const PATCH = 5;
 			let currentLang = "English";
 
-			function init() {
+			function init(){
 				const currentFlagDiv = document.getElementById("currentFlag");
 				const optionsContainer = document.getElementById("optionsContainer");
 				const langKeys = Object.keys(TRANSLATIONS);
@@ -62832,7 +62832,7 @@ document.addEventListener('click', function(e) {
 				document.getElementById(id).style.display = 'block';
 			}
 
-			function switchVersion(versionId) {
+			function switchVersion(versionId){
 				const selector = document.getElementById('selector-screen');
 				if(selector){
 					selector.style.display = 'none';

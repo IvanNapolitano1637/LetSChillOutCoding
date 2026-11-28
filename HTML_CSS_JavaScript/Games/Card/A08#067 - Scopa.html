@@ -887,7 +887,7 @@
 					return res;
 				}
 				function options(card, tbl){
-					var same = tbl.filter(function (t) {return t.r === card.r;});
+					var same = tbl.filter(function (t){return t.r === card.r;});
 					if(same.length){
 						return same.map(function (t){return [t];});
 					}
@@ -1038,7 +1038,7 @@
 							}
 							var sum = rest.reduce(function (a, c){return a + c.r;}, 0);
 							if(rest.length && sum <= 10 && un.length){
-								var k = un.filter(function (u) {return u.r === sum;}).length, p = 1 - Math.pow((un.length - k)/un.length, 3);
+								var k = un.filter(function (u){return u.r === sum;}).length, p = 1 - Math.pow((un.length - k)/un.length, 3);
 								s -= 11*p;
 							}
 							s += Math.random()*.6;

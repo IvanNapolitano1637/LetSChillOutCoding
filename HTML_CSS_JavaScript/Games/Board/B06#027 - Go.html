@@ -763,7 +763,7 @@
 					}
 				}
 				for(const nb of neighbors(pos)){
-					if(newBd[nb] === color) {
+					if(newBd[nb] === color){
 						const grp = getGroup(nb, newBd);
 						const libs = getLiberties(grp, newBd).size;
 						if(libs >= 3){
