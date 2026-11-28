@@ -381,8 +381,8 @@
 				}
 				function hudBtn(id, fn){
 					var b = $(id);
-					b.addEventListener("mousedown", function (e) {e.preventDefault();});
-					b.addEventListener("click", function () {fn(); b.blur();});
+					b.addEventListener("mousedown", function (e){e.preventDefault();});
+					b.addEventListener("click", function (){fn(); b.blur();});
 				}
 				function fit(){
 					var pad = $("pad"), ph = 0;
@@ -445,14 +445,14 @@
 					keys.length = 0;
 					btn = {};
 					touchDir = null;
-					Array.prototype.forEach.call(document.querySelectorAll("#dpad button, .act"), function (b) {b.classList.remove("on");});
+					Array.prototype.forEach.call(document.querySelectorAll("#dpad button, .act"), function (b){b.classList.remove("on");});
 				}
 				function lostFocus(){
 					releaseInputs();
 					pauseGame();
 				}
 				addEventListener("blur", lostFocus);
-				document.addEventListener("visibilitychange", function () {if (document.hidden) lostFocus();});
+				document.addEventListener("visibilitychange", function () {if(document.hidden){lostFocus();}});
 				var dp = $("dpad"), dbtn = dp ? dp.querySelectorAll("button") : [], dpId = null;
 				function dpClear(){
 					touchDir = null;
@@ -466,8 +466,8 @@
 					Array.prototype.forEach.call(dbtn, function (b){b.classList.toggle("on", !!d && b.dataset.d === d[0] + "," + d[1]);});
 				}
 				if(dp){
-					dp.addEventListener("pointerdown", function (e) {e.preventDefault(); dpId = e.pointerId; try{dp.setPointerCapture(e.pointerId);}catch(x){}dpSet(e);});
-					dp.addEventListener("pointermove", function (e) {if(e.pointerId === dpId){dpSet(e);}});
+					dp.addEventListener("pointerdown", function (e){e.preventDefault(); dpId = e.pointerId; try{dp.setPointerCapture(e.pointerId);}catch(x){}dpSet(e);});
+					dp.addEventListener("pointermove", function (e){if(e.pointerId === dpId){dpSet(e);}});
 					["pointerup", "pointercancel", "lostpointercapture"].forEach(function (ev){
 						dp.addEventListener(ev, function (e){if(e.pointerId === dpId){dpId = null; dpClear();}});
 					});
@@ -1059,7 +1059,7 @@
 					}
 					if(c.length > 1 && Math.random() < chase){
 						var bd = 1e9;
-						c.forEach(function (m) {var dd = Math.abs(m[0] - px) + Math.abs(m[1] - py); if(dd < bd){bd = dd; n = m;}});
+						c.forEach(function (m){var dd = Math.abs(m[0] - px) + Math.abs(m[1] - py); if(dd < bd){bd = dd; n = m;}});
 					}else{
 						n = c.length ? c[(Math.random()*c.length) | 0] : back;
 					}

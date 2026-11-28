@@ -773,11 +773,11 @@
 					};
 					optionsContainer.appendChild(opt);
 				});
-				document.getElementById("customSelect").onclick = function(e) {
+				document.getElementById("customSelect").onclick = function(e){
 					optionsContainer.classList.toggle("show");
 					e.stopPropagation();
 				};
-				window.onclick = function() {
+				window.onclick = function(){
 					optionsContainer.classList.remove("show");
 				};
 				currentFlagDiv.innerHTML = FLAGS_SVG[0];

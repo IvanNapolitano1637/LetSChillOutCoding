@@ -725,7 +725,7 @@
 
 				let last = 0;
 
-				function frameLoop(ts) {
+				function frameLoop(ts){
 					requestAnimationFrame(frameLoop);
 					const dt = Math.min(.05, (ts - last)/1000||0);
 					last = ts;

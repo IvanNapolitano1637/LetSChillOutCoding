@@ -388,7 +388,7 @@
 			<div id="box"></div>
 		</div>
 		<script>
-			(function () {
+			(function (){
 				"use strict";
 				var $ = function (id){return document.getElementById(id);};
 				var SUITS = ["Denari", "Coppe", "Spade", "Bastoni"];
@@ -1186,7 +1186,7 @@
 				}
 				$("bn").addEventListener("click", function (){tot = {p: 0, c: 0}; dealer = Math.random() < .5 ? "p" : "c"; $("modal").style.display = "none"; startRound(); this.blur();});
 				$("goal").addEventListener("change", function (){this.blur();});
-				function setMute() {$("bm").innerHTML = muted ? "&#128263;" : "&#128266;";}
+				function setMute(){$("bm").innerHTML = muted ? "&#128263;" : "&#128266;";}
 				$("bm").addEventListener("click", function (){muted = !muted; try{localStorage.setItem("scopa_mute", muted ? "1" : "0");}catch(e){} setMute(); this.blur(); if(!muted){snd(660, .08);}});
 				addEventListener("keydown", function (e){if (e.key === "m" || e.key === "M") $("bm").click();});
 				setMute();

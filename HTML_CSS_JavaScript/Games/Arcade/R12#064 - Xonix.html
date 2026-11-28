@@ -206,7 +206,7 @@
 			</div>
 		</div>
 		<script>
-			(function () {
+			(function (){
 				"use strict";
 				var KEY = "xonix";
 				var KEYBTN = {};
@@ -442,7 +442,7 @@
 					keys.length = 0;
 					btn = {};
 					touchDir = null;
-					Array.prototype.forEach.call(document.querySelectorAll("#dpad button, .act"), function (b) {b.classList.remove("on");});
+					Array.prototype.forEach.call(document.querySelectorAll("#dpad button, .act"), function (b){b.classList.remove("on");});
 				}
 				function lostFocus(){
 					releaseInputs();
@@ -470,7 +470,7 @@
 				if(dp){
 					dp.addEventListener("pointerdown", function (e){e.preventDefault(); dpId = e.pointerId; try{dp.setPointerCapture(e.pointerId);}catch(x){} dpSet(e);});
 					dp.addEventListener("pointermove", function (e){if(e.pointerId === dpId){dpSet(e);}});
-					["pointerup", "pointercancel", "lostpointercapture"].forEach(function (ev) {
+					["pointerup", "pointercancel", "lostpointercapture"].forEach(function (ev){
 						dp.addEventListener(ev, function (e){if(e.pointerId === dpId){dpId = null; dpClear();}});
 					});
 				}

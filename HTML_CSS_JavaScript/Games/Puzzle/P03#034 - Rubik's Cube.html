@@ -1531,10 +1531,10 @@
 					}
 					const{axis, coord, sign} = def;
 					const angle = (inv ?-sign: sign)*Math.PI/2;
-					const affected = cubies.filter(c  =>  Math.round(c.pos [axis]) === coord);
+					const affected = cubies.filter(c => Math.round(c.pos [axis]) === coord);
 					const pivot = new THREE.Group();
 					cubeGroup.add(pivot);
-					affected.forEach(c  =>  pivot.attach(c.g));
+					affected.forEach(c => pivot.attach(c.g));
 					const t0 = performance.now();
 					let prevA = 0;
 					const axVec3 = new THREE.Vector3(axis === 'x' ? 1: 0, axis === 'y' ? 1: 0, axis === 'z' ? 1: 0);
@@ -1551,7 +1551,7 @@
 							requestAnimationFrame(step);
 							return;
 						}
-						affected.forEach(c  =>  {
+						affected.forEach(c => {
 							cubeGroup.attach(c.g);
 							c.g.position.x = Math.round(c.g.position.x/STEP)*STEP;
 							c.g.position.y = Math.round(c.g.position.y/STEP)*STEP;
@@ -1587,7 +1587,7 @@
 					const gen = animGen;
 					const{move, inv, logical} = animQ.shift();
 					const snapBeforeMove = logical ? takeSnap() : null;
-					runAnim(move, inv, gen, ()  =>  {
+					runAnim(move, inv, gen, () => {
 						if(gen !== animGen){
 							return;
 						}
@@ -1622,17 +1622,17 @@
 				}
 
 				function takeSnap(){
-					return cubies.map(c  =>  ({pos:{...c.pos}, quat: c.g.quaternion.clone(), stickers: c.g.children.filter(ch  =>  ch instanceof THREE.Mesh && ch.geometry === planeGeo).map(ch  =>  ch.material.color.getHex())}));
+					return cubies.map(c => ({pos:{...c.pos}, quat: c.g.quaternion.clone(), stickers: c.g.children.filter(ch => ch instanceof THREE.Mesh && ch.geometry === planeGeo).map(ch => ch.material.color.getHex())}));
 				}
 
 				function applySnap(snap){
 					buildCube();
-					snap.forEach((s, i)  =>  {
+					snap.forEach((s, i) => {
 						cubies [i].g.position.set(s.pos.x*STEP, s.pos.y*STEP, s.pos.z*STEP);
 						cubies [i].g.quaternion.copy(s.quat);
 						cubies [i].pos = {...s.pos};
 						const planes = cubies [i].g.children.filter(ch =>  ch instanceof THREE.Mesh && ch.geometry === planeGeo);
-						planes.forEach((p, j)  =>  {
+						planes.forEach((p, j) => {
 							if(s.stickers [j] !== undefined){
 								p.material.color.setHex(s.stickers [j]);
 							}
@@ -1793,7 +1793,7 @@
 				const scrollEl = document.getElementById('moves-scroll');
 
 				if(scrollEl){
-					ALL_PAIRS.forEach(( [cw, ccw])  =>  {
+					ALL_PAIRS.forEach(([cw, ccw]) => {
 						const base = cw.replace("'", "");
 						const isRemap = true;
 						const pair = document.createElement('div');
@@ -1810,11 +1810,11 @@
 						if(isRemap){
 							bcw.id = 'mb-' + base;
 							bccw.id = 'mb-' + base + 'i';
-							bcw.onclick = ()  =>  mv(viewMove(base, false));
-							bccw.onclick = ()  =>  mv(viewMove(base, true));
+							bcw.onclick = () => mv(viewMove(base, false));
+							bccw.onclick = () => mv(viewMove(base, true));
 						}else{
-							bcw.onclick = ()  =>  mv(cw);
-							bccw.onclick = ()  =>  mv(ccw);
+							bcw.onclick = () => mv(cw);
+							bccw.onclick = () => mv(ccw);
 						}
 						pair.append(lbl, bcw, bccw);
 						scrollEl.appendChild(pair);
@@ -1822,7 +1822,7 @@
 				}
 				const deskEl = document.getElementById('desk-moves');
 				if(deskEl){
-					ALL_PAIRS.forEach(( [cw, ccw])  =>  {
+					ALL_PAIRS.forEach(([cw, ccw]) => {
 						const base = cw.replace("'", "");
 						const isRemap = true;
 						const bcw = document.createElement('button');
@@ -1834,11 +1834,11 @@
 						if(isRemap){
 							bcw.id = 'db-' + base;
 							bccw.id = 'db-' + base + 'i';
-							bcw.onclick = ()  =>  mv(viewMove(base, false));
-							bccw.onclick = ()  =>  mv(viewMove(base, true));
+							bcw.onclick = () => mv(viewMove(base, false));
+							bccw.onclick = () => mv(viewMove(base, true));
 						}else{
-							bcw.onclick = ()  =>  mv(cw);
-							bccw.onclick = ()  =>  mv(ccw);
+							bcw.onclick = () => mv(cw);
+							bccw.onclick = () => mv(ccw);
 						}
 						deskEl.appendChild(bcw);
 						deskEl.appendChild(bccw);

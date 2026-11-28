@@ -1106,7 +1106,7 @@
 						rows += '<tr><td>' + e + ' × ' + c[e] + '</td><td>' + (M[e]*c[e]/mm*100).toFixed(2) + ' %</td></tr>';
 					});
 					o.innerHTML = '<table class="k">' + '<tr><td>Massa molare</td><td><b>' + mm.toFixed(3) + ' g/mol</b></td></tr>' + '<tr><td>Moli in ' + (g || 0) + ' g</td><td>' + n.toPrecision(4) + ' mol</td></tr>' + '<tr><td>Molecole/particelle</td><td>' + (n*6.022e+23).toExponential(3) + '</td></tr>' + rows + '</table>';
-				} catch(e){
+				}catch(e){
 					o.innerHTML = 'Formula non valida (usa maiuscole/minuscole corrette, es. NaCl, ' + fsub('Ca(OH)2') + ').';
 				}
 			}

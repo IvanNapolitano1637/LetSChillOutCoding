@@ -1151,10 +1151,10 @@
 
 			function stopAll(){
 				activeNodes.forEach(n => {
-					try {
+					try{
 						n.stop && n.stop();
 						n.disconnect && n.disconnect();
-					} catch(e){}
+					}catch(e){}
 				});
 				activeNodes = [];
 			}
@@ -1265,12 +1265,12 @@
 				ensureCtx();
 				stopAll();
 				Object.values(loopNodes).forEach(n => {
-					try {
+					try{
 						n.stop && n.stop(0);
-					} catch(e) {}
-					try {
+					}catch(e){}
+					try{
 						n.disconnect && n.disconnect();
-					} catch(e) {}
+					}catch(e){}
 				});
 				loopNodes = {};
 				isLooping = false;
@@ -1340,16 +1340,16 @@
 			function stopLoop(updateUI = true){
 				if(loopNodes.osc){
 					const now = audioCtx ? audioCtx.currentTime : 0;
-					try {
+					try{
 						loopNodes.masterGain.gain.setValueAtTime(loopNodes.masterGain.gain.value, now);
 						loopNodes.masterGain.gain.linearRampToValueAtTime(0, now + 0.08);
-					} catch(e) {}
+					}catch(e){}
 					setTimeout(() => {
 						Object.values(loopNodes).forEach(n => {
-							try {
+							try{
 								n.stop && n.stop();
 								n.disconnect && n.disconnect();
-							} catch(e) {}
+							}catch(e){}
 						});
 					}, 100);
 				}

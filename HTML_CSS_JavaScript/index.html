@@ -2695,7 +2695,7 @@ document.addEventListener('click', function(e) {
 
 				let last = 0;
 
-				function frameLoop(ts) {
+				function frameLoop(ts){
 					requestAnimationFrame(frameLoop);
 					const dt = Math.min(.05, (ts - last)/1000||0);
 					last = ts;
@@ -5096,7 +5096,7 @@ document.addEventListener('click', function(e) {
 					}
 				}
 
-				function nextPiece() {
+				function nextPiece(){
 					spawn(queue.shift());
 					while(queue.length < 7){
 						queue.push(...bag());
@@ -11076,8 +11076,8 @@ document.addEventListener('click', function(e) {
 				}
 				function hudBtn(id, fn){
 					var b = $(id);
-					b.addEventListener("mousedown", function (e) {e.preventDefault();});
-					b.addEventListener("click", function () {fn(); b.blur();});
+					b.addEventListener("mousedown", function (e){e.preventDefault();});
+					b.addEventListener("click", function (){fn(); b.blur();});
 				}
 				function fit(){
 					var pad = $("pad"), ph = 0;
@@ -11140,14 +11140,14 @@ document.addEventListener('click', function(e) {
 					keys.length = 0;
 					btn = {};
 					touchDir = null;
-					Array.prototype.forEach.call(document.querySelectorAll("#dpad button, .act"), function (b) {b.classList.remove("on");});
+					Array.prototype.forEach.call(document.querySelectorAll("#dpad button, .act"), function (b){b.classList.remove("on");});
 				}
 				function lostFocus(){
 					releaseInputs();
 					pauseGame();
 				}
 				addEventListener("blur", lostFocus);
-				document.addEventListener("visibilitychange", function () {if (document.hidden) lostFocus();});
+				document.addEventListener("visibilitychange", function () {if(document.hidden){lostFocus();}});
 				var dp = $("dpad"), dbtn = dp ? dp.querySelectorAll("button") : [], dpId = null;
 				function dpClear(){
 					touchDir = null;
@@ -11161,8 +11161,8 @@ document.addEventListener('click', function(e) {
 					Array.prototype.forEach.call(dbtn, function (b){b.classList.toggle("on", !!d && b.dataset.d === d[0] + "," + d[1]);});
 				}
 				if(dp){
-					dp.addEventListener("pointerdown", function (e) {e.preventDefault(); dpId = e.pointerId; try{dp.setPointerCapture(e.pointerId);}catch(x){}dpSet(e);});
-					dp.addEventListener("pointermove", function (e) {if(e.pointerId === dpId){dpSet(e);}});
+					dp.addEventListener("pointerdown", function (e){e.preventDefault(); dpId = e.pointerId; try{dp.setPointerCapture(e.pointerId);}catch(x){}dpSet(e);});
+					dp.addEventListener("pointermove", function (e){if(e.pointerId === dpId){dpSet(e);}});
 					["pointerup", "pointercancel", "lostpointercapture"].forEach(function (ev){
 						dp.addEventListener(ev, function (e){if(e.pointerId === dpId){dpId = null; dpClear();}});
 					});
@@ -11754,7 +11754,7 @@ document.addEventListener('click', function(e) {
 					}
 					if(c.length > 1 && Math.random() < chase){
 						var bd = 1e9;
-						c.forEach(function (m) {var dd = Math.abs(m[0] - px) + Math.abs(m[1] - py); if(dd < bd){bd = dd; n = m;}});
+						c.forEach(function (m){var dd = Math.abs(m[0] - px) + Math.abs(m[1] - py); if(dd < bd){bd = dd; n = m;}});
 					}else{
 						n = c.length ? c[(Math.random()*c.length) | 0] : back;
 					}
@@ -12175,7 +12175,7 @@ document.addEventListener('click', function(e) {
 			</div>
 		</div>
 		<script>
-			(function () {
+			(function (){
 				"use strict";
 				var KEY = "xonix";
 				var KEYBTN = {};
@@ -12411,7 +12411,7 @@ document.addEventListener('click', function(e) {
 					keys.length = 0;
 					btn = {};
 					touchDir = null;
-					Array.prototype.forEach.call(document.querySelectorAll("#dpad button, .act"), function (b) {b.classList.remove("on");});
+					Array.prototype.forEach.call(document.querySelectorAll("#dpad button, .act"), function (b){b.classList.remove("on");});
 				}
 				function lostFocus(){
 					releaseInputs();
@@ -12439,7 +12439,7 @@ document.addEventListener('click', function(e) {
 				if(dp){
 					dp.addEventListener("pointerdown", function (e){e.preventDefault(); dpId = e.pointerId; try{dp.setPointerCapture(e.pointerId);}catch(x){} dpSet(e);});
 					dp.addEventListener("pointermove", function (e){if(e.pointerId === dpId){dpSet(e);}});
-					["pointerup", "pointercancel", "lostpointercapture"].forEach(function (ev) {
+					["pointerup", "pointercancel", "lostpointercapture"].forEach(function (ev){
 						dp.addEventListener(ev, function (e){if(e.pointerId === dpId){dpId = null; dpClear();}});
 					});
 				}
@@ -20284,7 +20284,7 @@ document.addEventListener('click', function(e) {
 					const isPlayerTurn = turn === playerColor;
 					if(isPlayerTurn){
 						startClockTick();
-					} else {
+					}else{
 						setTimeout(pcMove, 600);
 					}
 				}
@@ -25026,7 +25026,7 @@ document.addEventListener('click', function(e) {
 						cls += ' goose';
 						icon = '🪿';
 						tooltip = 'Oca — rilancia!';
-					}else if(special) {
+					}else if(special){
 						cls += \` \${special.type}\`;
 						icon = special.icon;
 						tooltip = \`\${special.label}: \${special.desc}\`;
@@ -36668,7 +36668,7 @@ document.addEventListener('click', function(e) {
 			<div id="box"></div>
 		</div>
 		<script>
-			(function () {
+			(function (){
 				"use strict";
 				var $ = function (id){return document.getElementById(id);};
 				var SUITS = ["Denari", "Coppe", "Spade", "Bastoni"];
@@ -37466,7 +37466,7 @@ document.addEventListener('click', function(e) {
 				}
 				$("bn").addEventListener("click", function (){tot = {p: 0, c: 0}; dealer = Math.random() < .5 ? "p" : "c"; $("modal").style.display = "none"; startRound(); this.blur();});
 				$("goal").addEventListener("change", function (){this.blur();});
-				function setMute() {$("bm").innerHTML = muted ? "&#128263;" : "&#128266;";}
+				function setMute(){$("bm").innerHTML = muted ? "&#128263;" : "&#128266;";}
 				$("bm").addEventListener("click", function (){muted = !muted; try{localStorage.setItem("scopa_mute", muted ? "1" : "0");}catch(e){} setMute(); this.blur(); if(!muted){snd(660, .08);}});
 				addEventListener("keydown", function (e){if (e.key === "m" || e.key === "M") $("bm").click();});
 				setMute();
@@ -41328,7 +41328,7 @@ document.addEventListener('click', function(e) {
 				}
 			}
 
-			function newGame() {
+			function newGame(){
 				$('msg').textContent = 'Generazione... (i livelli più difficili e il 16×16 possono richiedere qualche secondo)';
 				clearInterval(timer);
 				clearTimeout(gt);
@@ -45161,7 +45161,7 @@ document.addEventListener('click', function(e) {
 				}
 			});
 
-			function checkWin() {
+			function checkWin(){
 				const alive = Object.keys(groups).filter(g => groups[g] && groups[g].size > 0);
 				if(rotationMode){
 					const allCorrect = pieces.every(p => (p.rotation || 0) === 0);
@@ -47238,10 +47238,10 @@ document.addEventListener('click', function(e) {
 					}
 					const{axis, coord, sign} = def;
 					const angle = (inv ?-sign: sign)*Math.PI/2;
-					const affected = cubies.filter(c  =>  Math.round(c.pos [axis]) === coord);
+					const affected = cubies.filter(c => Math.round(c.pos [axis]) === coord);
 					const pivot = new THREE.Group();
 					cubeGroup.add(pivot);
-					affected.forEach(c  =>  pivot.attach(c.g));
+					affected.forEach(c => pivot.attach(c.g));
 					const t0 = performance.now();
 					let prevA = 0;
 					const axVec3 = new THREE.Vector3(axis === 'x' ? 1: 0, axis === 'y' ? 1: 0, axis === 'z' ? 1: 0);
@@ -47258,7 +47258,7 @@ document.addEventListener('click', function(e) {
 							requestAnimationFrame(step);
 							return;
 						}
-						affected.forEach(c  =>  {
+						affected.forEach(c => {
 							cubeGroup.attach(c.g);
 							c.g.position.x = Math.round(c.g.position.x/STEP)*STEP;
 							c.g.position.y = Math.round(c.g.position.y/STEP)*STEP;
@@ -47294,7 +47294,7 @@ document.addEventListener('click', function(e) {
 					const gen = animGen;
 					const{move, inv, logical} = animQ.shift();
 					const snapBeforeMove = logical ? takeSnap() : null;
-					runAnim(move, inv, gen, ()  =>  {
+					runAnim(move, inv, gen, () => {
 						if(gen !== animGen){
 							return;
 						}
@@ -47329,17 +47329,17 @@ document.addEventListener('click', function(e) {
 				}
 
 				function takeSnap(){
-					return cubies.map(c  =>  ({pos:{...c.pos}, quat: c.g.quaternion.clone(), stickers: c.g.children.filter(ch  =>  ch instanceof THREE.Mesh && ch.geometry === planeGeo).map(ch  =>  ch.material.color.getHex())}));
+					return cubies.map(c => ({pos:{...c.pos}, quat: c.g.quaternion.clone(), stickers: c.g.children.filter(ch => ch instanceof THREE.Mesh && ch.geometry === planeGeo).map(ch => ch.material.color.getHex())}));
 				}
 
 				function applySnap(snap){
 					buildCube();
-					snap.forEach((s, i)  =>  {
+					snap.forEach((s, i) => {
 						cubies [i].g.position.set(s.pos.x*STEP, s.pos.y*STEP, s.pos.z*STEP);
 						cubies [i].g.quaternion.copy(s.quat);
 						cubies [i].pos = {...s.pos};
 						const planes = cubies [i].g.children.filter(ch =>  ch instanceof THREE.Mesh && ch.geometry === planeGeo);
-						planes.forEach((p, j)  =>  {
+						planes.forEach((p, j) => {
 							if(s.stickers [j] !== undefined){
 								p.material.color.setHex(s.stickers [j]);
 							}
@@ -47500,7 +47500,7 @@ document.addEventListener('click', function(e) {
 				const scrollEl = document.getElementById('moves-scroll');
 
 				if(scrollEl){
-					ALL_PAIRS.forEach(( [cw, ccw])  =>  {
+					ALL_PAIRS.forEach(([cw, ccw]) => {
 						const base = cw.replace("'", "");
 						const isRemap = true;
 						const pair = document.createElement('div');
@@ -47517,11 +47517,11 @@ document.addEventListener('click', function(e) {
 						if(isRemap){
 							bcw.id = 'mb-' + base;
 							bccw.id = 'mb-' + base + 'i';
-							bcw.onclick = ()  =>  mv(viewMove(base, false));
-							bccw.onclick = ()  =>  mv(viewMove(base, true));
+							bcw.onclick = () => mv(viewMove(base, false));
+							bccw.onclick = () => mv(viewMove(base, true));
 						}else{
-							bcw.onclick = ()  =>  mv(cw);
-							bccw.onclick = ()  =>  mv(ccw);
+							bcw.onclick = () => mv(cw);
+							bccw.onclick = () => mv(ccw);
 						}
 						pair.append(lbl, bcw, bccw);
 						scrollEl.appendChild(pair);
@@ -47529,7 +47529,7 @@ document.addEventListener('click', function(e) {
 				}
 				const deskEl = document.getElementById('desk-moves');
 				if(deskEl){
-					ALL_PAIRS.forEach(( [cw, ccw])  =>  {
+					ALL_PAIRS.forEach(([cw, ccw]) => {
 						const base = cw.replace("'", "");
 						const isRemap = true;
 						const bcw = document.createElement('button');
@@ -47541,11 +47541,11 @@ document.addEventListener('click', function(e) {
 						if(isRemap){
 							bcw.id = 'db-' + base;
 							bccw.id = 'db-' + base + 'i';
-							bcw.onclick = ()  =>  mv(viewMove(base, false));
-							bccw.onclick = ()  =>  mv(viewMove(base, true));
+							bcw.onclick = () => mv(viewMove(base, false));
+							bccw.onclick = () => mv(viewMove(base, true));
 						}else{
-							bcw.onclick = ()  =>  mv(cw);
-							bccw.onclick = ()  =>  mv(ccw);
+							bcw.onclick = () => mv(cw);
+							bccw.onclick = () => mv(ccw);
 						}
 						deskEl.appendChild(bcw);
 						deskEl.appendChild(bccw);
@@ -48638,8 +48638,8 @@ document.addEventListener('click', function(e) {
 			.clock.reflected{
 				--reflect: -1;
 			}
-			@media (max-width: 768px) {
-				.clock {
+			@media (max-width: 768px){
+				.clock{
 					--base-scale: 1.2;
 				}
 			}
@@ -49813,7 +49813,7 @@ document.addEventListener('click', function(e) {
 	<body>
 		<div id="clock">00:00:00</div>
 		<script>
-			function updateClock() {
+			function updateClock(){
 				const now = new Date();
 				const h = String(now.getHours()).padStart(2, '0');
 				const m = String(now.getMinutes()).padStart(2, '0');
@@ -50862,7 +50862,7 @@ document.addEventListener('click', function(e) {
 				}
 			}
 
-			function fallbackCopy(inputField, callback) {
+			function fallbackCopy(inputField, callback){
 				inputField.select();
 				inputField.setSelectionRange(0, 99999);
 				try{
@@ -52215,10 +52215,10 @@ document.addEventListener('click', function(e) {
 
 			function stopAll(){
 				activeNodes.forEach(n => {
-					try {
+					try{
 						n.stop && n.stop();
 						n.disconnect && n.disconnect();
-					} catch(e){}
+					}catch(e){}
 				});
 				activeNodes = [];
 			}
@@ -52329,12 +52329,12 @@ document.addEventListener('click', function(e) {
 				ensureCtx();
 				stopAll();
 				Object.values(loopNodes).forEach(n => {
-					try {
+					try{
 						n.stop && n.stop(0);
-					} catch(e) {}
-					try {
+					}catch(e){}
+					try{
 						n.disconnect && n.disconnect();
-					} catch(e) {}
+					}catch(e){}
 				});
 				loopNodes = {};
 				isLooping = false;
@@ -52404,16 +52404,16 @@ document.addEventListener('click', function(e) {
 			function stopLoop(updateUI = true){
 				if(loopNodes.osc){
 					const now = audioCtx ? audioCtx.currentTime : 0;
-					try {
+					try{
 						loopNodes.masterGain.gain.setValueAtTime(loopNodes.masterGain.gain.value, now);
 						loopNodes.masterGain.gain.linearRampToValueAtTime(0, now + 0.08);
-					} catch(e) {}
+					}catch(e){}
 					setTimeout(() => {
 						Object.values(loopNodes).forEach(n => {
-							try {
+							try{
 								n.stop && n.stop();
 								n.disconnect && n.disconnect();
-							} catch(e) {}
+							}catch(e){}
 						});
 					}, 100);
 				}
@@ -60258,11 +60258,11 @@ document.addEventListener('click', function(e) {
 					};
 					optionsContainer.appendChild(opt);
 				});
-				document.getElementById("customSelect").onclick = function(e) {
+				document.getElementById("customSelect").onclick = function(e){
 					optionsContainer.classList.toggle("show");
 					e.stopPropagation();
 				};
-				window.onclick = function() {
+				window.onclick = function(){
 					optionsContainer.classList.remove("show");
 				};
 				currentFlagDiv.innerHTML = FLAGS_SVG[0];
@@ -64706,7 +64706,7 @@ document.addEventListener('click', function(e) {
 						rows += '<tr><td>' + e + ' × ' + c[e] + '</td><td>' + (M[e]*c[e]/mm*100).toFixed(2) + ' %</td></tr>';
 					});
 					o.innerHTML = '<table class="k">' + '<tr><td>Massa molare</td><td><b>' + mm.toFixed(3) + ' g/mol</b></td></tr>' + '<tr><td>Moli in ' + (g || 0) + ' g</td><td>' + n.toPrecision(4) + ' mol</td></tr>' + '<tr><td>Molecole/particelle</td><td>' + (n*6.022e+23).toExponential(3) + '</td></tr>' + rows + '</table>';
-				} catch(e){
+				}catch(e){
 					o.innerHTML = 'Formula non valida (usa maiuscole/minuscole corrette, es. NaCl, ' + fsub('Ca(OH)2') + ').';
 				}
 			}
@@ -68705,7 +68705,7 @@ document.addEventListener('click', function(e) {
 				};
 			}
 
-			document.getElementById("q").oninput = function () {
+			document.getElementById("q").oninput = function (){
 				q = this.value.toLowerCase().trim();
 				render();
 			};

@@ -2566,7 +2566,7 @@
 				}
 			});
 
-			function checkWin() {
+			function checkWin(){
 				const alive = Object.keys(groups).filter(g => groups[g] && groups[g].size > 0);
 				if(rotationMode){
 					const allCorrect = pieces.every(p => (p.rotation || 0) === 0);
